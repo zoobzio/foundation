@@ -1,0 +1,33 @@
+{
+  "name": "@foundation/content-layer",
+  "type": "module",
+  "license": "MIT",
+  "version": "0.0.1",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "lint": "eslint .",
+    "typecheck": "nuxi typecheck",
+    "prepare": "nuxi prepare"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "@foundation/base-layer": "workspace:*",
+    "@foundation/untheme": "workspace:*",
+    "@nuxt/content": "^3.8.0",
+    "better-sqlite3": "^12.4.1",
+    "nuxt": "catalog:",
+    "shiki": "^3.15.0"
+  }
+}

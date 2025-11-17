@@ -1,0 +1,21 @@
+{
+  "name": "@foundation/iconic",
+  "version": "0.0.1",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "exports": {
+    ".": "./src/config.ts"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "@iconify-json/circle-flags": "^1.2.10",
+    "@iconify-json/ic": "^1.2.4"
+  }
+}
