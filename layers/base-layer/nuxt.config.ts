@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     dirs: ["types", "recipes"],
   },
   modules: [
+    "@foundation/iconic/module",
     "@foundation/untheme/module",
     "@pinia/nuxt",
     "@unocss/nuxt",
@@ -17,6 +18,7 @@ export default defineNuxtConfig({
     presets: [unthemePreset],
   },
   untheme: vanilla,
+  iconic: {},
   vite: {
     optimizeDeps: {
       exclude: ["#build/untheme.config.mjs", "#build/iconic.config.mjs"],

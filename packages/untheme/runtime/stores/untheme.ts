@@ -9,7 +9,8 @@ import type {
 import theme from "#build/untheme.config.mjs";
 import defu from "defu";
 
-import { defineStore } from "pinia";
+import { computed } from "vue";
+import { useState, useCookie } from "#app";
 import { tokenize, keys } from "../utils/untheme";
 
 export interface UnthemeState {
@@ -17,52 +18,56 @@ export interface UnthemeState {
   theme: Untheme;
 }
 
-export const accessUnthemeStore = defineStore("untheme", {
-  state: (): UnthemeState => ({
-    mode: "dark",
-    theme: { ...theme },
-  }),
+export const accessUnthemeStore = () => {
+  const mode = useCookie<"light" | "dark">("untheme-mode", { default: () => "dark" });
+  const themeState = useState<Untheme>("untheme-theme", () => ({ ...theme }));
 
-  getters: {
-    tokens: (state): Record<Token, string> => {
-      const roles = keys(state.theme.roles);
-      const roleTokens = roles.reduce(
-        (tokens, role) => {
-          const roleAttrs = keys(state.theme.roles[role]);
+  const tokens = computed<Record<Token, string>>(() => {
+    const roles = keys(themeState.value.roles);
+    const roleTokens = roles.reduce(
+      (tokens, role) => {
+        const roleAttrs = keys(themeState.value.roles[role]);
 
-          roleAttrs.forEach((attr) => {
-            const key = tokenize(role, attr);
-            tokens[key] = state.theme.roles[role][attr];
-          });
+        roleAttrs.forEach((attr) => {
+          const key = tokenize(role, attr);
+          tokens[key] = themeState.value.roles[role][attr];
+        });
 
-          return tokens;
-        },
-        {} as Record<RoleToken, string>,
-      );
-      return {
-        ...state.theme.reference,
-        ...state.theme.modes[state.mode],
-        ...roleTokens,
-      };
-    },
-  },
+        return tokens;
+      },
+      {} as Record<RoleToken, string>,
+    );
+    return {
+      ...themeState.value.reference,
+      ...themeState.value.modes[mode.value],
+      ...roleTokens,
+    };
+  });
 
-  actions: {
-    setMode(mode: "light" | "dark") {
-      this.mode = mode;
-    },
+  const setMode = (newMode: "light" | "dark") => {
+    mode.value = newMode;
+  };
 
-    setTheme(theme: UnthemeConfig) {
-      this.theme = defu<Untheme, [Untheme]>(theme, this.theme);
-    },
+  const setTheme = (newTheme: UnthemeConfig) => {
+    themeState.value = defu<Untheme, [Untheme]>(newTheme, themeState.value);
+  };
 
-    isToken(value: unknown): value is Token {
-      return typeof value === "string" && value in this.tokens;
-    },
+  const isToken = (value: unknown): value is Token => {
+    return typeof value === "string" && value in tokens.value;
+  };
 
-    resolve(token: Token): string {
-      const value = this.tokens[token];
-      return this.isToken(value) ? this.resolve(value) : value;
-    },
-  },
-});
+  const resolve = (token: Token): string => {
+    const value = tokens.value[token];
+    return isToken(value) ? resolve(value) : value;
+  };
+
+  return {
+    mode,
+    theme: themeState,
+    tokens,
+    setMode,
+    setTheme,
+    isToken,
+    resolve,
+  };
+};

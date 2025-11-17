@@ -2,16 +2,14 @@ import type { Untheme, Tokens } from "@foundation/untheme/config";
 
 import { accessUnthemeStore } from "../stores/untheme";
 import { keys } from "../utils/untheme";
-import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 export const useUntheme = () => {
   const store = accessUnthemeStore();
-  const { mode, theme, tokens } = storeToRefs(store);
   return {
-    mode,
-    theme,
-    tokens,
+    mode: store.mode,
+    theme: store.theme,
+    tokens: store.tokens,
     setMode: store.setMode,
     setTheme: store.setTheme,
     resolve: store.resolve,

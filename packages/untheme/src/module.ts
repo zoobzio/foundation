@@ -32,9 +32,6 @@ export default defineNuxtModule<UnthemeConfig>({
     // Auto-import composables
     addImportsDir(resolver.resolve("../runtime/composables"));
 
-    // Auto-import stores
-    addImportsDir(resolver.resolve("../runtime/stores"));
-
     // Auto-import types from untheme package
     addImports([
       { name: "RefToken", from: "@foundation/untheme/config", type: true },

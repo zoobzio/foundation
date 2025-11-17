@@ -9,13 +9,28 @@
     "url": "https://zoobz.io"
   },
   "exports": {
-    ".": "./src/config.ts"
+    ".": "./src/config.ts",
+    "./module": "./src/module.ts",
+    "./types": "./src/types.ts"
+  },
+  "imports": {
+    "#iconic/*": "./src/*",
+    "#runtime/*": "./runtime/*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "@iconify-json/circle-flags": "^1.2.10",
-    "@iconify-json/ic": "^1.2.4"
+    "@iconify-json/ic": "^1.2.4",
+    "vue": "^3.5.24"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^4.2.1",
+    "@nuxt/schema": "^4.2.1",
+    "nuxt": "^4.2.1"
   }
 }
