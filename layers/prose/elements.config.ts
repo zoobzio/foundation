@@ -1,0 +1,32 @@
+import { defineElement } from "@foundation/untheme/config";
+
+export default {
+  tocRoot: defineElement(),
+  tocContent: defineElement("flexbox"),
+  tocItem: defineElement(
+    "flexbox",
+    "interactive",
+    "selected",
+    "animated",
+  ),
+  attributionRoot: defineElement("flexbox"),
+  attributionContainer: defineElement("flexbox"),
+  attributionMeta: defineElement("grid"),
+  attributionAuthor: defineElement("textflow"),
+  attributionPublished: defineElement("textflow"),
+  attributionTags: defineElement("flexbox"),
+  contentGrid: defineElement("grid"),
+  contentGridItem: defineElement("flexbox", "interactive", "animated"),
+  contentGridTitle: defineElement(),
+  contentGridDescription: defineElement(),
+  contentGridMeta: defineElement("flexbox"),
+  contentGridAuthor: defineElement("flexbox", "textflow"),
+  contentGridPublished: defineElement("flexbox", "textflow"),
+  surroundRoot: defineElement("flexbox"),
+  surroundPrev: defineElement("flexbox", "interactive", "animated"),
+  surroundNext: defineElement("flexbox", "interactive", "animated"),
+  surroundLabel: defineElement("flexbox"),
+  surroundTitle: defineElement(),
+  surroundPrevDescription: defineElement(),
+  surroundNextDescription: defineElement(),
+};

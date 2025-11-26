@@ -9,11 +9,7 @@
     "url": "https://zoobz.io"
   },
   "exports": {
-    ".": "./src/theme.ts",
-    "./defaults": "./src/defaults.ts",
-    "./module": "./src/module.ts",
-    "./config": "./src/config.ts",
-    "./preset": "./src/preset.ts",
+    "./*": "./src/*.ts",
     "./themes/*": "./themes/*.ts"
   },
   "imports": {

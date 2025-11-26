@@ -1,10 +1,18 @@
+---
+title: Syntax Highlighting Test
+description: Testing syntax highlighting with Shiki.
+author: Foundation Team
+published: 2025-01-20
+tags: [Testing, Development, Code Examples, TypeScript, JavaScript, Vue, Nuxt, Syntax Highlighting, Markdown, Components, Theming, Design System, Frontend, Web Development]
+---
+
 # Syntax Highlighting Test
 
 Welcome to the **Foundation** theming system with _Shiki syntax highlighting_.
 
 ## Code Examples
 
-Inline code like `const x = 42` should be styled but not highlighted.
+Inline code like `const x = 42`{lang="ts"} should be styled but not highlighted.
 
 ### TypeScript Example
 
@@ -123,6 +131,15 @@ Some content under H5.
 ###### H6 Heading
 
 Some content under H6.
+
+## Tables
+
+| Feature             | Status  | Notes       |
+| ------------------- | ------- | ----------- |
+| Syntax Highlighting | Done    | Using Shiki |
+| Tables              | Pending | GFM support |
+| Task Lists          | Pending | Coming soon |
+| Images              | Pending | Coming soon |
 
 ## Links
 
