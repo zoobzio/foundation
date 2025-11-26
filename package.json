@@ -10,10 +10,10 @@
     "url": "https://zoobz.io"
   },
   "scripts": {
-    "blog:dev": "pnpm --filter @foundation/blog dev",
-    "blog:build": "pnpm --filter @foundation/blog build",
-    "blog:generate": "pnpm --filter @foundation/blog generate",
-    "blog:preview": "pnpm --filter @foundation/blog preview",
+    "docula:dev": "pnpm --filter @foundation/docula dev",
+    "docula:build": "pnpm --filter @foundation/docula build",
+    "docula:generate": "pnpm --filter @foundation/docula generate",
+    "docula:preview": "pnpm --filter @foundation/docula preview",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck"
   },

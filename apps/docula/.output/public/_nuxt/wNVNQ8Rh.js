@@ -1,0 +1,1 @@
+import{_ as s}from"./CrMhBNTp.js";import{k as n,e as a,o as r,w as _,y as c}from"./Cldp7-no.js";const i=n({__name:"ProseH1",props:{id:{}},setup(e){return(o,m)=>{const t=s;return r(),a(t,{id:e.id},{default:_(()=>[c(o.$slots,"default")]),_:3},8,["id"])}}}),f=Object.assign(i,{__name:"ProseH1"});export{f as default};

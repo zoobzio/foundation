@@ -1,0 +1,1 @@
+import{_ as r}from"./bu9snhQh.js";import{k as a,e as n,o as s,w as _,y as c}from"./Cldp7-no.js";import"./DaaR0m0a.js";const f=a({__name:"ProseA",props:{href:{},target:{}},setup(e){return(t,m)=>{const o=r;return s(),n(o,{href:e.href,target:e.target},{default:_(()=>[c(t.$slots,"default")]),_:3},8,["href","target"])}}}),u=Object.assign(f,{__name:"ProseA"});export{u as default};
