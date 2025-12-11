@@ -15,7 +15,6 @@
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
-    "lint": "eslint .",
     "typecheck": "nuxi typecheck",
     "prepare": "nuxi prepare"
   },

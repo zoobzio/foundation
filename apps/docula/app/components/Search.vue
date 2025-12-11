@@ -1,14 +1,41 @@
 <script setup lang="ts">
+import type { CollectionConfig } from "@foundation/prose/app/composables/search";
+
 const open = ref(false);
+const searchRef = ref<InstanceType<typeof ContentSearch>>();
+
+const appConfig = useAppConfig();
+
+const searchCollections = computed<CollectionConfig[]>(() =>
+  appConfig.collections?.map((c: { key: string; title: string; icon?: string }) => ({
+    key: c.key,
+    basePath: `/${c.key}`,
+    title: c.title,
+    icon: c.icon,
+  })) ?? []
+);
 
 const isMac = computed(() => {
   if (typeof navigator !== "undefined") {
-    return navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    return navigator.platform.toUpperCase().includes("MAC");
   }
   return false;
 });
 
 const modKey = computed(() => (isMac.value ? "⌘" : "Ctrl"));
+
+watch(open, (isOpen) => {
+  if (isOpen) {
+    searchRef.value?.focus();
+  } else {
+    searchRef.value?.clear();
+  }
+});
+
+const onSelect = (path: string) => {
+  open.value = false;
+  navigateTo(path);
+};
 </script>
 
 <template>
@@ -26,7 +53,11 @@ const modKey = computed(() => (isMac.value ? "⌘" : "Ctrl"));
     </template>
   </Tooltip>
 
-  <Dialog v-model:open="open" title="Search for stuff" description="SEARCH BRO">
-    <P>Search dialog content</P>
+  <Dialog v-model:open="open" title="Search" description="Search documentation">
+    <ContentSearch
+      ref="searchRef"
+      :collections="searchCollections"
+      @select="onSelect"
+    />
   </Dialog>
 </template>

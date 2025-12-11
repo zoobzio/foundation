@@ -3,7 +3,7 @@ const open = ref(false);
 
 const isMac = computed(() => {
   if (typeof navigator !== "undefined") {
-    return navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    return navigator.platform.toUpperCase().includes("MAC");
   }
   return false;
 });

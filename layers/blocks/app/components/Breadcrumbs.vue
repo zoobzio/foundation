@@ -1,12 +1,6 @@
 <script lang="ts">
-export interface BreadcrumbItem {
-  label: string;
-  to: string;
-  icon?: IconAlias;
-}
-
 export interface BreadcrumbsProps {
-  items: BreadcrumbItem[];
+  items: Link[];
   separator?: IconAlias;
   tokens?: Tokens<
     | "breadcrumbs-root"

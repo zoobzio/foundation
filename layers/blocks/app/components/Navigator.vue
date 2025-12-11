@@ -1,26 +1,11 @@
 <script lang="ts">
-export interface NavigatorLink {
-  label: string;
-  to: string;
-  icon?: IconAlias;
-}
-
-export interface NavigatorMenu {
-  label: string;
-  value: string;
-  icon?: IconAlias;
-  children: NavigatorItem[];
-}
-
-export type NavigatorItem = NavigatorLink | NavigatorMenu;
-
 export interface NavigatorProps {
   items: NavigatorItem[];
   orientation?: "horizontal" | "vertical";
   indicator?: boolean;
   delayDuration?: number;
   skipDelayDuration?: number;
-  featured?: NavigatorLink;
+  featured?: Link;
   tokens?: Tokens<
     | "navigator-root"
     | "navigator-list"
@@ -33,7 +18,11 @@ export interface NavigatorProps {
     | "navigator-indicator"
     | "navigator-grid"
     | "navigator-card"
+    | "navigator-card-title"
+    | "navigator-card-description"
     | "navigator-featured"
+    | "navigator-featured-title"
+    | "navigator-featured-description"
   >;
 }
 
@@ -54,6 +43,14 @@ const {
 } = defineProps<NavigatorProps>();
 
 const styles = useTokenStyle(tokens);
+const route = useRoute();
+
+const isActive = (item: NavigatorItem): boolean => {
+  if (isMenu(item)) {
+    return item.children.some((child) => isActive(child));
+  }
+  return route.path.startsWith(item.to);
+};
 </script>
 
 <template>
@@ -78,6 +75,7 @@ const styles = useTokenStyle(tokens);
         <!-- Menu with children -->
         <template v-if="isMenu(item)">
           <NavigationMenuTrigger
+            :data-selected="isActive(item) || undefined"
             :style="styles['navigator-trigger']"
             class="f-navigator-trigger"
           >
@@ -104,7 +102,19 @@ const styles = useTokenStyle(tokens);
                   >
                     <slot name="featured" :item="featured">
                       <Icon v-if="featured.icon" :alias="featured.icon" />
-                      {{ featured.label }}
+                      <span
+                        :style="styles['navigator-featured-title']"
+                        class="f-navigator-featured-title"
+                      >
+                        {{ featured.label }}
+                      </span>
+                      <span
+                        v-if="featured.description"
+                        :style="styles['navigator-featured-description']"
+                        class="f-navigator-featured-description"
+                      >
+                        {{ featured.description }}
+                      </span>
                     </slot>
                   </NuxtLink>
                 </NavigationMenuLink>
@@ -121,7 +131,19 @@ const styles = useTokenStyle(tokens);
                   >
                     <slot name="card" :item="child">
                       <Icon v-if="child.icon" :alias="child.icon" />
-                      {{ child.label }}
+                      <span
+                        :style="styles['navigator-card-title']"
+                        class="f-navigator-card-title"
+                      >
+                        {{ child.label }}
+                      </span>
+                      <span
+                        v-if="child.description"
+                        :style="styles['navigator-card-description']"
+                        class="f-navigator-card-description"
+                      >
+                        {{ child.description }}
+                      </span>
                     </slot>
                   </NuxtLink>
                 </NavigationMenuLink>
@@ -154,6 +176,7 @@ const styles = useTokenStyle(tokens);
           <NavigationMenuLink as-child>
             <NuxtLink
               :to="item.to"
+              :data-selected="isActive(item) || undefined"
               :style="styles['navigator-link']"
               class="f-navigator-link"
             >
@@ -204,5 +227,9 @@ const styles = useTokenStyle(tokens);
 @import '#build/untheme/navigator-indicator.css';
 @import '#build/untheme/navigator-grid.css';
 @import '#build/untheme/navigator-card.css';
+@import '#build/untheme/navigator-card-title.css';
+@import '#build/untheme/navigator-card-description.css';
 @import '#build/untheme/navigator-featured.css';
+@import '#build/untheme/navigator-featured-title.css';
+@import '#build/untheme/navigator-featured-description.css';
 </style>

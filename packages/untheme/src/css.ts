@@ -139,19 +139,23 @@ export const generateElementCSS = (elementName: string, elementTokens: Record<st
     return buildCSS([{ selector: `.f-${elementName}`, props: baseCSS }]);
   }
 
+  // Build :not(:disabled) guard for interactive states when element supports disabled
+  const notDisabled = features.hasDisabled ? ":not(:disabled):not([aria-disabled='true']):not([data-disabled])" : "";
+
   const states = [
-    features.hasDisabled && { suffix: "-disabled", pseudos: [":disabled", "[aria-disabled='true']", "[data-disabled]"] },
-    features.hasSelected && { suffix: "-selected", pseudos: ["[aria-selected='true']", "[data-state='checked']", "[data-selected]"] },
-    features.hasSelected && { suffix: "-selected-hover", pseudos: ["[aria-selected='true']:hover", "[data-state='checked']:hover", "[data-selected]:hover"] },
-    features.hasSelected && { suffix: "-selected-active", pseudos: ["[aria-selected='true']:active", "[data-state='checked']:active", "[data-selected]:active"] },
-    features.hasSelected && { suffix: "-selected-focus", pseudos: ["[aria-selected='true']:focus-visible", "[data-state='checked']:focus-visible", "[data-selected]:focus-visible"] },
+    features.hasSelected && { suffix: "-selected", pseudos: ["[aria-selected='true']", "[data-state='checked']", "[data-selected]", "[data-highlighted]"] },
+    features.hasSelected && { suffix: "-selected-hover", pseudos: [`[aria-selected='true']${notDisabled}:hover`, `[data-state='checked']${notDisabled}:hover`, `[data-selected]${notDisabled}:hover`, `[data-highlighted]${notDisabled}:hover`] },
+    features.hasSelected && { suffix: "-selected-active", pseudos: [`[aria-selected='true']${notDisabled}:active`, `[data-state='checked']${notDisabled}:active`, `[data-selected]${notDisabled}:active`, `[data-highlighted]${notDisabled}:active`] },
+    features.hasSelected && { suffix: "-selected-focus", pseudos: [`[aria-selected='true']${notDisabled}:focus-visible`, `[data-state='checked']${notDisabled}:focus-visible`, `[data-selected]${notDisabled}:focus-visible`, `[data-highlighted]${notDisabled}:focus-visible`] },
     features.hasOpen && { suffix: "-open", pseudos: ["[data-state='open']", "[data-expanded]"] },
-    features.hasOpen && { suffix: "-open-hover", pseudos: ["[data-state='open']:hover", "[data-expanded]:hover"] },
-    features.hasOpen && { suffix: "-open-active", pseudos: ["[data-state='open']:active", "[data-expanded]:active"] },
-    features.hasOpen && { suffix: "-open-focus", pseudos: ["[data-state='open']:focus-visible", "[data-expanded]:focus-visible"] },
-    features.hasInteractive && { suffix: "-hover", pseudos: [":hover"] },
-    features.hasInteractive && { suffix: "-active", pseudos: [":active"] },
-    features.hasInteractive && { suffix: "-focus", pseudos: [":focus-visible"] },
+    features.hasOpen && { suffix: "-open-hover", pseudos: [`[data-state='open']${notDisabled}:hover`, `[data-expanded]${notDisabled}:hover`] },
+    features.hasOpen && { suffix: "-open-active", pseudos: [`[data-state='open']${notDisabled}:active`, `[data-expanded]${notDisabled}:active`] },
+    features.hasOpen && { suffix: "-open-focus", pseudos: [`[data-state='open']${notDisabled}:focus-visible`, `[data-expanded]${notDisabled}:focus-visible`] },
+    features.hasInteractive && { suffix: "-hover", pseudos: [`${notDisabled}:hover`] },
+    features.hasInteractive && { suffix: "-active", pseudos: [`${notDisabled}:active`] },
+    features.hasInteractive && { suffix: "-focus", pseudos: [`${notDisabled}:focus-visible`] },
+    // Disabled comes last for highest cascade priority
+    features.hasDisabled && { suffix: "-disabled", pseudos: [":disabled", "[aria-disabled='true']", "[data-disabled]"] },
   ].filter(Boolean) as Array<{ suffix: string; pseudos: string[] }>;
 
   const cssBlocks = states

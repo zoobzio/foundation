@@ -4,7 +4,7 @@ export interface CheckboxProps {
   name?: string;
   value?: string;
   required?: boolean;
-  tokens?: Tokens<"checkboxRoot" | "checkboxIndicator">;
+  tokens?: Tokens<"checkbox-root" | "checkbox-indicator">;
 }
 </script>
 
@@ -23,11 +23,11 @@ const styles = useTokenStyle(tokens);
     :name="name"
     :value="value"
     :required="required"
-    :style="styles.checkboxRoot"
+    :style="styles['checkbox-root']"
     class="f-checkbox-root"
   >
     <CheckboxIndicator
-      :style="styles.checkboxIndicator"
+      :style="styles['checkbox-indicator']"
       class="f-checkbox-indicator"
     >
       <slot>

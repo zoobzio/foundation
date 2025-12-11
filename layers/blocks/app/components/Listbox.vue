@@ -1,12 +1,6 @@
 <script lang="ts">
-export interface ListboxItem {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
-
 export interface ListboxProps {
-  items: ListboxItem[];
+  items: Option[];
   modelValue?: string | string[];
   multiple?: boolean;
   disabled?: boolean;
@@ -29,7 +23,7 @@ const emit = defineEmits<{
 
 const styles = useTokenStyle(tokens);
 
-const handleUpdate = (value: string | string[]) => {
+const _handleUpdate = (value: string | string[]) => {
   emit("update:modelValue", value);
 };
 </script>

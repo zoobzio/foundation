@@ -6,6 +6,8 @@ export default {
   "ref-viewport-height-min": "100svh", // Small viewport
   "ref-viewport-height-max": "100lvh", // Large viewport
   "ref-viewport-height-dynamic": "100dvh", // Dynamic viewport
+  "ref-viewport-80": "80vh",
+  "ref-viewport-60": "60vh",
 
   // Percentage
   "ref-full": "100%",

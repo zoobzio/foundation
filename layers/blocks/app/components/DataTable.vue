@@ -1,10 +1,4 @@
 <script lang="ts">
-export interface DataTableColumn<T> {
-  key: keyof T;
-  label: string;
-  align?: "left" | "center" | "right";
-}
-
 export interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
   data: T[];

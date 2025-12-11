@@ -23,6 +23,11 @@ useHead({
 html,
 body {
   background: var(--sys-surface);
+  font-family: var(--ref-font-sans);
+}
+
+code, pre, kbd {
+  font-family: var(--ref-font-mono);
 }
 
 ::selection {

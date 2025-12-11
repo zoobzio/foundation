@@ -12,3 +12,4 @@ catalog:
   "reka-ui": ^2.6.0
   unocss: ^66.5.5
   "@unocss/nuxt": ^66.5.5
+  "@nuxt/content": ^3.9.0

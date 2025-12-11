@@ -1,13 +1,27 @@
 import { defineElement } from "@foundation/untheme/config";
 
 export default {
-  tocRoot: defineElement(),
+  // Content Search
+  contentSearchRoot: defineElement("flexbox", "overflow"),
+  contentSearchStatus: defineElement("textflow"),
+  contentSearchResults: defineElement("flexbox", "overflow"),
+  contentSearchGroup: defineElement("flexbox"),
+  contentSearchGroupTitle: defineElement("textflow"),
+  contentSearchResult: defineElement("flexbox", "interactive", "animated"),
+  contentSearchResultTitle: defineElement("textflow", "overflow"),
+  contentSearchResultSeparator: defineElement("flexbox"),
+  contentSearchResultDate: defineElement("textflow"),
+
+  // Table of Contents
+  tocRoot: defineElement("flexbox"),
   tocContent: defineElement("flexbox"),
   tocItem: defineElement(
     "flexbox",
     "interactive",
     "selected",
     "animated",
+    "textflow",
+    "overflow",
   ),
   attributionRoot: defineElement("flexbox"),
   attributionContainer: defineElement("flexbox"),
@@ -30,4 +44,5 @@ export default {
   surroundPrevDescription: defineElement(),
   surroundNextDescription: defineElement(),
   contentFiltersSection: defineElement("flexbox"),
+  contentAccordion: defineElement("flexbox"),
 };

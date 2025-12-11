@@ -17,10 +17,12 @@ const copyCode = async () => {
 
 <template>
   <Pre>
-    <Button class="f-prose-pre" @click="copyCode">
+    <Button class="f-prose-pre" :disabled="copied" @click="copyCode">
       <Icon :alias="copied ? 'check' : 'copy'" />
     </Button>
-    <slot />
+    <Scroller orientation="horizontal">
+      <slot />
+    </Scroller>
   </Pre>
 </template>
 

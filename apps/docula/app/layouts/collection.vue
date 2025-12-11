@@ -1,11 +1,3 @@
-<script setup lang="ts">
-const tabs = [
-  { value: "blog", label: "Blog" },
-  { value: "projects", label: "Projects" },
-  { value: "about", label: "About" },
-];
-</script>
-
 <template>
   <Main
     :tokens="{
@@ -14,15 +6,7 @@ const tabs = [
       },
     }"
   >
-    <TopBar>
-      <template #logo>
-        <Avatar
-          src="https://github.com/zoobzio.png"
-          alt="zoobzio"
-          fallback="Z"
-        />
-      </template>
-    </TopBar>
+    <TopBar />
     <slot />
   </Main>
 </template>

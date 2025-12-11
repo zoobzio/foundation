@@ -10,6 +10,7 @@ export default {
   "sys-surface-container": "ref-slate-900",
   "sys-surface-container-low": "ref-slate-950",
   "sys-surface-container-high": "ref-slate-800",
+  "sys-surface-container-highest": "ref-slate-700",
   "sys-surface-variant": "ref-slate-900",
 
   // Content tokens
@@ -93,9 +94,12 @@ export default {
   "shiki-regex": "ref-rose-400",
   "shiki-regex-constant": "ref-violet-400",
   "shiki-tag": "ref-amber-300",
-  "shiki-punctuation": "ref-slate-400",
+  "shiki-punctuation": "ref-slate-500",
   "shiki-operator": "ref-pink-400",
   "shiki-label": "ref-slate-300",
   "shiki-header": "ref-indigo-300",
   "shiki-list-marker": "ref-blue-400",
+  "shiki-builtin": "ref-cyan-400",
+  "shiki-property": "ref-violet-300",
+  "shiki-placeholder": "ref-cyan-300",
 } satisfies Record<string, RefToken>;

@@ -1,27 +1,9 @@
-import type { UnthemeOptions } from "./config";
+import type { UnthemeOptions, ElementDefinition } from "./config";
 
 import { generateElementCSS } from "./css";
 import reference from "./tokens/reference";
 import modes from "./tokens/modes";
-
-/**
- * Merge token objects with null-preservation semantics.
- * First defined value wins (including null). Unlike defu, null values
- * are treated as real values and not overridden by later sources.
- */
-function mergeTokens(
-  ...sources: Record<string, string | null>[]
-): Record<string, string | null> {
-  const result: Record<string, string | null> = {};
-  for (const source of sources) {
-    for (const [key, value] of Object.entries(source)) {
-      if (!(key in result)) {
-        result[key] = value;
-      }
-    }
-  }
-  return result;
-}
+import defu from "defu";
 
 import {
   defineNuxtModule,
@@ -33,23 +15,13 @@ import {
 
 // Generate TypeScript declarations for element registry
 function generateElementRegistry(
-  elements: Record<
-    string,
-    {
-      defaults: Record<string, Record<string, string | null>>;
-      tokens: Record<string, string | null>;
-    }
-  >,
+  elements: Record<string, ElementDefinition>,
 ): string {
   const entries = Object.entries(elements).map(([name, elementConfig]) => {
-    // Extract role names from defaults (excluding "base")
-    const roles = Object.keys(elementConfig.defaults).filter(
-      (r) => r !== "base",
-    );
-
-    // Generate type for this element
     const rolesArray =
-      roles.length > 0 ? `[${roles.map((r) => `"${r}"`).join(", ")}]` : "[]";
+      elementConfig.roles.length > 0
+        ? `[${elementConfig.roles.map((r) => `"${r}"`).join(", ")}]`
+        : "[]";
     return `    "${name}": Partial<ElementTokens<${rolesArray}>>;`;
   });
 
@@ -68,23 +40,11 @@ export default defineNuxtModule<UnthemeOptions>({
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url);
 
-    // Use provided theme or default to base system tokens
-    const theme = options.theme || { reference, modes };
+    // Merge provided theme with defaults
+    const theme = defu(options.theme || {}, { reference, modes });
 
-    // Merge elements: role tokens + user overrides (Nuxt auto-merged from all layers)
-    const mergedElements: Record<string, Record<string, string | null>> = {};
-
-    for (const [elementName, elementConfig] of Object.entries(
-      options.elements || {},
-    )) {
-      // elementConfig contains { defaults: { base: {...}, role1: {...}, ... }, tokens: {...} }
-      // Merge user tokens with role defaults (user tokens take priority)
-      const roleDefaults = Object.values(elementConfig.defaults);
-      mergedElements[elementName] = mergeTokens(
-        elementConfig.tokens,
-        ...roleDefaults,
-      );
-    }
+    // Elements are now directly serializable { roles, keys }
+    const elements = options.elements || {};
 
     // Generate global reset CSS
     const resetCSS = `* {
@@ -156,17 +116,6 @@ export default defineNuxtModule<UnthemeOptions>({
         lines.push('}');
       }
 
-      // Element tokens (reference sys-/ref- tokens)
-      lines.push('\n:root {');
-      Object.entries(mergedElements).forEach(([elementName, tokens]) => {
-        Object.entries(tokens).forEach(([key, value]) => {
-          if (value !== null) {
-            lines.push(`  --${elementName}-${key}: ${wrapValue(value)};`);
-          }
-        });
-      });
-      lines.push('}');
-
       return lines.join('\n');
     };
 
@@ -178,9 +127,14 @@ export default defineNuxtModule<UnthemeOptions>({
     });
     nuxt.options.css.push(tokensTemplate.dst);
 
-    // Generate individual CSS files per element
-    for (const [elementName, elementTokens] of Object.entries(mergedElements)) {
-      const elementCSS = generateElementCSS(elementName, elementTokens);
+    // Generate individual CSS files per element (with unresolved var() references)
+    for (const [elementName, elementConfig] of Object.entries(elements)) {
+      // Create token map with null values - CSS generator will create var() references
+      const tokenMap: Record<string, string | null> = {};
+      for (const key of elementConfig.keys) {
+        tokenMap[key] = null; // Actual values come from runtime defineTokens()
+      }
+      const elementCSS = generateElementCSS(elementName, tokenMap);
 
       addTemplate({
         filename: `untheme/${elementName}.css`,
@@ -192,17 +146,17 @@ export default defineNuxtModule<UnthemeOptions>({
     // Generate TypeScript declarations for element registry
     addTemplate({
       filename: "types/untheme.d.ts",
-      getContents: () => generateElementRegistry(options.elements || {}),
+      getContents: () => generateElementRegistry(elements),
       write: true,
     });
 
-    // Generate runtime config with all tokens per element (including null)
-    const runtimeConfig: Record<string, string[]> = {};
-    Object.entries(mergedElements).forEach(([elementName, tokens]) => {
-      const allTokens = Object.keys(tokens);
-      if (allTokens.length > 0) {
-        runtimeConfig[elementName] = allTokens;
-      }
+    // Runtime config is now the elements directly (already has keys and roles)
+    const runtimeConfig: Record<string, { keys: string[]; roles: string[] }> = {};
+    Object.entries(elements).forEach(([elementName, elementConfig]) => {
+      runtimeConfig[elementName] = {
+        keys: elementConfig.keys,
+        roles: elementConfig.roles,
+      };
     });
 
     addTemplate({
@@ -221,6 +175,10 @@ export default defineNuxtModule<UnthemeOptions>({
       { name: "useUntheme", from: resolver.resolve("../runtime/composables") },
       {
         name: "useTokenStyle",
+        from: resolver.resolve("../runtime/composables"),
+      },
+      {
+        name: "defineTokens",
         from: resolver.resolve("../runtime/composables"),
       },
       {

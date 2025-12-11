@@ -1,12 +1,6 @@
 <script lang="ts">
-export interface SelectOption {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
-
 export interface SelectProps {
-  options: SelectOption[];
+  options: Option[];
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;

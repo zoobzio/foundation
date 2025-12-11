@@ -4,7 +4,7 @@ export interface ContentFiltersProps {
   tokens?: Tokens<"content-filters-section">;
 }
 
-const { collection, tokens } = defineProps<ContentFiltersProps>();
+const { collection: _collection, tokens } = defineProps<ContentFiltersProps>();
 
 const styles = useTokenStyle(tokens);
 

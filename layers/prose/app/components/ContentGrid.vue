@@ -1,6 +1,8 @@
-<script setup lang="ts">
+<script lang="ts">
+import type { PageCollections } from "@nuxt/content";
+
 export interface ContentGridProps {
-  collection: string;
+  collection: keyof PageCollections;
   tokens?: Tokens<
     | "content-grid"
     | "content-grid-item"
@@ -11,14 +13,16 @@ export interface ContentGridProps {
     | "content-grid-published"
   >;
 }
+</script>
 
+<script setup lang="ts">
 const { collection, tokens } = defineProps<ContentGridProps>();
 
 const styles = useTokenStyle(tokens);
 
 const { data: items } = await useAsyncData(
-  `content-grid-${collection}`,
-  () => queryCollection(collection as "example").all(),
+  `content-grid-${String(collection)}`,
+  () => queryCollection(collection).all(),
 );
 
 const formatDate = (dateString: string) => {

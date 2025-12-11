@@ -14,11 +14,21 @@
     "docula:build": "pnpm --filter @foundation/docula build",
     "docula:generate": "pnpm --filter @foundation/docula generate",
     "docula:preview": "pnpm --filter @foundation/docula preview",
-    "lint": "pnpm -r lint",
+    "docula:typecheck": "pnpm --filter @foundation/docula typecheck",
+    "capitan:dev": "pnpm --filter @foundation/capitan dev",
+    "capitan:build": "pnpm --filter @foundation/capitan build",
+    "capitan:generate": "pnpm --filter @foundation/capitan generate",
+    "capitan:preview": "pnpm --filter @foundation/capitan preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "pnpm -r typecheck"
   },
   "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^1.4.0",
+    "eslint": "^9.0.0"
   }
 }

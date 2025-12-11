@@ -4,6 +4,7 @@ import type { PageCollections } from "@nuxt/content";
 export interface ContentTreeProps {
   collection: keyof PageCollections;
   title?: string;
+  icon?: IconAlias;
   tokens?: Tokens<
     | "caption"
     | "tree-root"
@@ -18,11 +19,12 @@ export interface ContentTreeProps {
 <script setup lang="ts">
 const {
   collection,
-  title = "Navigation",
+  title,
+  icon,
   tokens,
 } = defineProps<ContentTreeProps>();
 
-const styles = useTokenStyle(tokens);
+const _styles = useTokenStyle(tokens);
 
 const { data: navigation } = await useAsyncData(
   `content-tree-${collection}`,
@@ -38,12 +40,12 @@ const transformNavigation = (
   return items.map((item) => ({
     value: item.path,
     label: item.title,
-    to: `/${collection}${item.path}`,
+    to: item.path,
     children: item.children ? transformNavigation(item.children) : undefined,
   }));
 };
 
-const treeItems = computed(() => transformNavigation(navigation.value));
+const treeItems = computed(() => transformNavigation(navigation.value ?? null));
 
 const route = useRoute();
 
@@ -63,17 +65,22 @@ const selectedValue = computed(() => {
   const currentPath = route.path;
   return findNodeByPath(treeItems.value, currentPath);
 });
+
+// Use persisted tree state
+const { expanded, handleExpandedUpdate } = useContentTreeState(collection);
 </script>
 
 <template>
-  <Caption icon="explore" :tokens="tokens">
+  <Caption v-if="title" :icon="icon" :tokens="tokens">
     {{ title }}
   </Caption>
   <Tree
     :items="treeItems"
     :tokens="tokens"
     :model-value="selectedValue"
+    :expanded="expanded"
     :multiple="false"
     selection-behavior="replace"
+    @update:expanded="handleExpandedUpdate"
   />
 </template>

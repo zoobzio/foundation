@@ -1,18 +1,11 @@
 <script lang="ts">
-export interface Tab {
-  value: string;
-  label: string;
-  icon?: IconAlias;
-  disabled?: boolean;
-}
-
-export interface TabsProps<T extends Tab> {
+export interface TabsProps<T extends Option> {
   tabs: T[];
   tokens?: Tokens<"tabs-root" | "tabs-list" | "tabs-trigger" | "tabs-content">;
 }
 </script>
 
-<script setup lang="ts" generic="T extends Tab">
+<script setup lang="ts" generic="T extends Option">
 const { tabs, tokens } = defineProps<TabsProps<T>>();
 
 const model = defineModel<string>();

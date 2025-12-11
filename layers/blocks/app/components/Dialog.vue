@@ -3,7 +3,9 @@ export interface DialogProps {
   title: string;
   description: string;
   open?: boolean;
-  tokens?: Tokens<"dialog-overlay" | "dialog-content">;
+  tokens?: Tokens<
+    "dialog-overlay" | "dialog-content" | "dialog-title" | "dialog-description"
+  >;
 }
 </script>
 
@@ -25,8 +27,18 @@ const styles = useTokenStyle(tokens);
         class="f-dialog-overlay"
       />
       <DialogContent :style="styles['dialog-content']" class="f-dialog-content">
-        <DialogTitle>{{ title }}</DialogTitle>
-        <DialogDescription>{{ description }}</DialogDescription>
+        <DialogTitle
+          :style="styles['dialog-title']"
+          class="f-dialog-title"
+        >
+          {{ title }}
+        </DialogTitle>
+        <DialogDescription
+          :style="styles['dialog-description']"
+          class="f-dialog-description"
+        >
+          {{ description }}
+        </DialogDescription>
         <slot />
       </DialogContent>
     </DialogPortal>
@@ -36,4 +48,6 @@ const styles = useTokenStyle(tokens);
 <style>
 @import '#build/untheme/dialog-overlay.css';
 @import '#build/untheme/dialog-content.css';
+@import '#build/untheme/dialog-title.css';
+@import '#build/untheme/dialog-description.css';
 </style>

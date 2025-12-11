@@ -1,6 +1,8 @@
 <script lang="ts">
-export interface SurroundProps {
-  collection: string;
+import type { PageCollections } from "@nuxt/content";
+
+export interface SurroundProps<T extends keyof PageCollections> {
+  collection: T;
   path?: string;
   prevLabel?: string;
   nextLabel?: string;
@@ -10,14 +12,14 @@ export interface SurroundProps {
 }
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends keyof PageCollections">
 const {
   collection,
   path,
   prevLabel = "Previous",
   nextLabel = "Next",
   tokens,
-} = defineProps<SurroundProps>();
+} = defineProps<SurroundProps<T>>();
 
 const { prev, next } = useContentSurround(collection, path);
 
@@ -32,7 +34,7 @@ const styles = useTokenStyle(tokens);
   >
     <NuxtLink
       v-if="prev"
-      :to="`/${collection}${prev.path}`"
+      :to="prev.path"
       :style="styles['surround-prev']"
       class="f-surround-prev"
     >
@@ -49,7 +51,7 @@ const styles = useTokenStyle(tokens);
     </NuxtLink>
     <NuxtLink
       v-if="next"
-      :to="`/${collection}${next.path}`"
+      :to="next.path"
       :style="styles['surround-next']"
       class="f-surround-next"
     >

@@ -4,8 +4,9 @@ import {
   addImports,
   createResolver,
 } from "@nuxt/kit";
+import type { IconData } from "./config";
 
-export default defineNuxtModule<Record<string, string>>({
+export default defineNuxtModule<Record<string, IconData>>({
   meta: {
     name: "iconic",
     configKey: "iconic",

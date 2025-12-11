@@ -530,6 +530,279 @@ export default {
         foreground: "var(--shiki-label)",
       },
     },
+
+    // Go-specific scopes
+    {
+      scope: [
+        "keyword.function.go",
+        "keyword.package.go",
+        "keyword.import.go",
+        "keyword.struct.go",
+        "keyword.interface.go",
+        "keyword.map.go",
+        "keyword.channel.go",
+        "keyword.const.go",
+        "keyword.var.go",
+        "keyword.type.go",
+        "keyword.control.import.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-keyword)",
+      },
+    },
+    {
+      scope: [
+        "constant.language.boolean.go",
+        "constant.language.null.go",
+        "constant.language.iota.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-keyword)",
+      },
+    },
+    {
+      scope: "entity.name.function.support.builtin.go",
+      settings: {
+        foreground: "var(--shiki-builtin)",
+      },
+    },
+    {
+      scope: [
+        "entity.name.type.go",
+        "entity.name.type.package.go",
+        "entity.name.type.any.go",
+        "entity.name.type.comparable.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-type)",
+      },
+    },
+    {
+      scope: "variable.parameter.go",
+      settings: {
+        foreground: "var(--shiki-parameter)",
+      },
+    },
+    {
+      scope: "variable.other.constant.go",
+      settings: {
+        foreground: "var(--shiki-variable)",
+      },
+    },
+    {
+      scope: [
+        "variable.other.go",
+        "variable.other.assignment.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-text)",
+      },
+    },
+    {
+      scope: "variable.other.property.go",
+      settings: {
+        foreground: "var(--shiki-property)",
+      },
+    },
+    {
+      scope: "entity.name.import.go",
+      settings: {
+        foreground: "var(--shiki-string)",
+      },
+    },
+    {
+      scope: [
+        "keyword.operator.address.go",
+        "keyword.operator.channel.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-operator)",
+      },
+    },
+    {
+      scope: [
+        "keyword.operator.comparison.go",
+        "keyword.operator.logical.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-operator)",
+      },
+    },
+    {
+      scope: [
+        "keyword.operator.assignment.go",
+        "keyword.operator.arithmetic.go",
+        "keyword.operator.arithmetic.bitwise.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-text)",
+      },
+    },
+    {
+      scope: "keyword.operator.ellipsis.go",
+      settings: {
+        foreground: "var(--shiki-operator)",
+      },
+    },
+    {
+      scope: "constant.other.placeholder.go",
+      settings: {
+        foreground: "var(--shiki-placeholder)",
+      },
+    },
+    {
+      scope: [
+        "punctuation.definition.begin.bracket.curly.go",
+        "punctuation.definition.end.bracket.curly.go",
+        "punctuation.definition.begin.bracket.round.go",
+        "punctuation.definition.end.bracket.round.go",
+        "punctuation.definition.begin.bracket.square.go",
+        "punctuation.definition.end.bracket.square.go",
+        "punctuation.other.comma.go",
+        "punctuation.other.period.go",
+        "punctuation.other.colon.go",
+        "punctuation.terminator.go",
+      ],
+      settings: {
+        foreground: "var(--shiki-punctuation)",
+      },
+    },
+
+    // SQL-specific scopes
+    {
+      scope: [
+        "keyword.other.sql",
+        "keyword.other.create.sql",
+        "keyword.other.DML.sql",
+        "keyword.other.DML.II.sql",
+        "keyword.other.DDL.create.II.sql",
+        "keyword.other.LUW.sql",
+        "keyword.other.authorization.sql",
+        "keyword.other.data-integrity.sql",
+        "keyword.other.alias.sql",
+        "keyword.other.order.sql",
+        "keyword.other.object-comments.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-keyword)",
+      },
+    },
+    {
+      scope: [
+        "support.function.aggregate.sql",
+        "support.function.analytic.sql",
+        "support.function.bitmanipulation.sql",
+        "support.function.conversion.sql",
+        "support.function.datetime.sql",
+        "support.function.mathematical.sql",
+        "support.function.string.sql",
+        "support.function.system.sql",
+        "support.function.metadata.sql",
+        "support.function.ranking.sql",
+        "support.function.rowset.sql",
+        "support.function.security.sql",
+        "support.function.json.sql",
+        "support.function.logical.sql",
+        "support.function.collation.sql",
+        "support.function.cryptographic.sql",
+        "support.function.cursor.sql",
+        "support.function.datatype.sql",
+        "support.function.expression.sql",
+        "support.function.globalvar.sql",
+        "support.function.textimage.sql",
+        "support.function.vector.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-builtin)",
+      },
+    },
+    {
+      scope: "entity.name.function.sql",
+      settings: {
+        foreground: "var(--shiki-function)",
+      },
+    },
+    {
+      scope: [
+        "storage.type.sql",
+        "storage.modifier.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-type)",
+      },
+    },
+    {
+      scope: [
+        "constant.other.database-name.sql",
+        "constant.other.table-name.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-property)",
+      },
+    },
+    {
+      scope: "text.variable",
+      settings: {
+        foreground: "var(--shiki-parameter)",
+      },
+    },
+    {
+      scope: [
+        "keyword.operator.star.sql",
+        "keyword.operator.comparison.sql",
+        "keyword.operator.concatenator.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-operator)",
+      },
+    },
+    {
+      scope: "keyword.operator.math.sql",
+      settings: {
+        foreground: "var(--shiki-text)",
+      },
+    },
+    {
+      scope: [
+        "string.quoted.single.sql",
+        "string.quoted.double.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-string)",
+      },
+    },
+    {
+      scope: "string.quoted.other.backtick.sql",
+      settings: {
+        foreground: "var(--shiki-property)",
+      },
+    },
+    {
+      scope: "constant.numeric.sql",
+      settings: {
+        foreground: "var(--shiki-number)",
+      },
+    },
+    {
+      scope: [
+        "comment.line.double-dash.sql",
+        "comment.block.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-comment)",
+      },
+    },
+    {
+      scope: [
+        "punctuation.section.scope.begin.sql",
+        "punctuation.section.scope.end.sql",
+        "punctuation.definition.string.begin.sql",
+        "punctuation.definition.string.end.sql",
+      ],
+      settings: {
+        foreground: "var(--shiki-punctuation)",
+      },
+    },
   ],
   type: "dark",
 } satisfies ThemeRegistrationRaw;

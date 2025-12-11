@@ -13,7 +13,7 @@ const styles = useTokenStyle(tokens);
 </script>
 
 <template>
-  <img :src="src" :alt="alt" :style="styles.img" class="f-img" />
+  <img :src="src" :alt="alt" :style="styles.img" class="f-img" >
 </template>
 
 <style>

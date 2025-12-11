@@ -1,11 +1,5 @@
 <script lang="ts">
-export interface AccordionItem {
-  label: string;
-  value: string;
-  icon?: IconAlias;
-}
-
-export interface AccordionProps<T extends AccordionItem> {
+export interface AccordionProps<T extends Option> {
   items: T[];
   type?: "single" | "multiple";
   collapsible?: boolean;
@@ -21,7 +15,7 @@ export interface AccordionProps<T extends AccordionItem> {
 }
 </script>
 
-<script setup lang="ts" generic="T extends AccordionItem">
+<script setup lang="ts" generic="T extends Option">
 const {
   items,
   type = "single",
@@ -44,8 +38,8 @@ const styles = useTokenStyle(tokens);
     <AccordionItem
       v-for="item in items"
       :key="item.value"
-      :value="item.value"
       v-slot="{ open }"
+      :value="item.value"
       :style="styles['accordion-item']"
       class="f-accordion-item"
     >
@@ -63,8 +57,10 @@ const styles = useTokenStyle(tokens);
               :style="styles['accordion-trigger-content']"
               class="f-accordion-trigger-content"
             >
+              <slot name="prepend" :item="item" :open="open" />
               <Icon v-if="item.icon" :alias="item.icon" />
               {{ item.label }}
+              <slot name="append" :item="item" :open="open" />
             </span>
             <Icon :alias="open ? 'chevron-down' : 'chevron-right'" />
           </slot>

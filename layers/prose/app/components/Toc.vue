@@ -1,11 +1,8 @@
 <script lang="ts">
-export interface TocLink {
-  id: string;
-  text: string;
-  depth: number;
-  children?: TocLink[];
-}
+</script>
 
+<script setup lang="ts">
+import { useIntersectionObserver } from "@vueuse/core";
 export interface TocProps {
   links: TocLink[];
   title?: string;
@@ -17,10 +14,6 @@ interface FlatTocLink {
   text: string;
   depth: number;
 }
-</script>
-
-<script setup lang="ts">
-import { useIntersectionObserver } from "@vueuse/core";
 
 const { links, title = "On this page", tokens } = defineProps<TocProps>();
 
@@ -53,7 +46,8 @@ onMounted(() => {
     if (element) {
       useIntersectionObserver(
         element,
-        ([{ isIntersecting }]) => {
+        (entries) => {
+          const isIntersecting = entries[0]?.isIntersecting;
           if (isIntersecting) {
             visibleHeadings.value.add(link.id);
           } else {
@@ -92,20 +86,22 @@ const getItemStyle = (depth: number) => {
     <Caption icon="toc" :tokens="tokens">
       {{ title }}
     </Caption>
-    <div :style="styles['toc-content']" class="f-toc-content">
-      <NuxtLink
-        v-for="link in flatLinks"
-        :key="link.id"
-        :to="`#${link.id}`"
-        :aria-selected="activeId === link.id ? 'true' : undefined"
-        :style="getItemStyle(link.depth)"
-        class="f-toc-item"
-      >
-        <slot name="item" :link="link">
-          {{ link.text }}
-        </slot>
-      </NuxtLink>
-    </div>
+    <Scroller>
+      <div :style="styles['toc-content']" class="f-toc-content">
+        <NuxtLink
+          v-for="link in flatLinks"
+          :key="link.id"
+          :to="`#${link.id}`"
+          :aria-selected="activeId === link.id ? 'true' : undefined"
+          :style="getItemStyle(link.depth)"
+          class="f-toc-item"
+        >
+          <slot name="item" :link="link">
+            {{ link.text }}
+          </slot>
+        </NuxtLink>
+      </div>
+    </Scroller>
   </nav>
 </template>
 

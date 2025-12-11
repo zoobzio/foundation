@@ -3,19 +3,22 @@
   "type": "module",
   "private": true,
   "version": "0.0.1",
+  "main": "./nuxt.config.ts",
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
     "generate": "nuxi generate",
     "preview": "nuxi preview",
-    "prepare": "nuxi prepare"
+    "prepare": "nuxi prepare",
+    "typecheck": "nuxi typecheck"
   },
   "dependencies": {
     "@foundation/blocks": "workspace:*",
     "@foundation/iconic": "workspace:*",
     "@foundation/prose": "workspace:*",
     "@foundation/untheme": "workspace:*",
-    "@nuxt/content": "^3.8.0"
+    "@nuxt/content": "catalog:",
+    "@nuxt/fonts": "^0.12.1"
   },
   "devDependencies": {
     "@iconify-json/circle-flags": "^1.2.10",

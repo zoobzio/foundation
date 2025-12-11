@@ -3,7 +3,7 @@ export default {
   // Font families
   "ref-font-sans": "system-ui, -apple-system, sans-serif",
   "ref-font-serif": "ui-serif, Georgia, serif",
-  "ref-font-mono": "ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace",
+  "ref-font-mono": "ui-monospace, monospace",
 
   // Font sizes
   "ref-text-xs": "0.75rem", // 12px
@@ -49,4 +49,8 @@ export default {
   "ref-text-align-start": "start",
   "ref-text-align-center": "center",
   "ref-text-align-end": "end",
+
+  // Text overflow
+  "ref-text-overflow-ellipsis": "ellipsis",
+  "ref-text-overflow-clip": "clip",
 };

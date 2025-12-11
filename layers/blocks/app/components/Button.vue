@@ -1,6 +1,8 @@
 <script lang="ts">
-export type ButtonShortcut = "k" | "l" | "t" | "d";
+</script>
 
+<script setup lang="ts">
+import { useMagicKeys, whenever } from "@vueuse/core";
 export interface ButtonProps {
   label?: string;
   disabled?: boolean;
@@ -8,10 +10,6 @@ export interface ButtonProps {
   shortcut?: ButtonShortcut;
   tokens?: Tokens<"button">;
 }
-</script>
-
-<script setup lang="ts">
-import { useMagicKeys, whenever } from "@vueuse/core";
 
 const {
   label,
@@ -23,11 +21,11 @@ const {
 
 const styles = useTokenStyle(tokens);
 
-const buttonRef = useTemplateRef("button");
+const buttonRef = useTemplateRef<HTMLButtonElement>("button");
 
 if (shortcut) {
   const keys = useMagicKeys();
-  const combo = computed(() => keys[`meta+${shortcut}`].value);
+  const combo = computed(() => keys[`meta+${shortcut}`]?.value);
 
   whenever(combo, () => {
     buttonRef.value?.click();

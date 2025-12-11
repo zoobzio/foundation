@@ -34,7 +34,7 @@ const styles = useTokenStyle(tokens);
     :name="name"
     :style="styles.input"
     class="f-input"
-  />
+  >
 </template>
 
 <style>

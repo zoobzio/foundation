@@ -1,13 +1,4 @@
 <script lang="ts">
-export interface TreeNode {
-  value: string;
-  label: string;
-  icon?: IconAlias;
-  to?: string;
-  children?: TreeNode[];
-  disabled?: boolean;
-}
-
 export interface TreeProps {
   items: TreeNode[];
   modelValue?: TreeNode | TreeNode[];

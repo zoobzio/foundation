@@ -1,1 +1,0 @@
-import{k as t,M as o,c as a,o as c,H as r,z as l,y as _}from"./Cldp7-no.js";const p=t({__name:"P",props:{tokens:{}},setup(e){const s=o(e.tokens);return(n,m)=>(c(),a("p",{style:r(l(s).p),class:"f-p"},[_(n.$slots,"default")],4))}}),f=Object.assign(p,{__name:"P"});export{f as _};

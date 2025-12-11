@@ -1,17 +1,14 @@
+import type { PageCollections } from "@nuxt/content";
+
 export interface SurroundItem {
   path: string;
   title: string;
   description?: string;
 }
 
-export interface UseContentSurroundOptions {
-  fields?: string[];
-}
-
-export const useContentSurround = (
-  collection: string,
+export const useContentSurround = <T extends keyof PageCollections>(
+  collection: T,
   path?: MaybeRef<string>,
-  options?: UseContentSurroundOptions,
 ) => {
   const route = useRoute();
   const pathRef = computed(() => toValue(path) ?? route.path);
@@ -19,8 +16,8 @@ export const useContentSurround = (
   const { data, pending, error } = useAsyncData(
     `surround-${pathRef.value}`,
     () =>
-      queryCollectionItemSurroundings(collection as any, pathRef.value, {
-        fields: options?.fields ?? ["description"],
+      queryCollectionItemSurroundings(collection, pathRef.value, {
+        fields: ["description"],
       }),
     { watch: [pathRef] },
   );

@@ -151,7 +151,7 @@ export type Schema = {
   "font-style": TypographyToken | BaseToken;
   "line-height": TypographyToken | BaseToken;
   "letter-spacing": TypographyToken | BaseToken;
-  "text-align": FlexboxToken | BaseToken;
+  "text-align": TypographyToken | BaseToken;
   "text-decoration": TypographyToken | BaseToken;
   "text-decoration-hover": TypographyToken | BaseToken;
   "text-decoration-active": TypographyToken | BaseToken;
@@ -279,6 +279,12 @@ export type Schema = {
   "border-collapse": TableToken | BaseToken;
   "table-layout": TableToken | BaseToken;
   "vertical-align": TableToken | BaseToken;
+
+  // === TEXT FLOW ===
+  "white-space": InteractionToken | BaseToken;
+  "word-break": InteractionToken | BaseToken;
+  "overflow-wrap": InteractionToken | BaseToken;
+  "text-overflow": InteractionToken | BaseToken;
 };
 
 /**
@@ -286,6 +292,6 @@ export type Schema = {
  * Maps each key to its semantically valid tokens from PropertyTokenMap.
  * Allows null for unset/ignored values.
  */
-export type SchemaFor<T extends Record<string, any>> = {
+export type SchemaFor<T extends Record<string, unknown>> = {
   [K in keyof T]: K extends keyof Schema ? Schema[K] | null : never;
 };

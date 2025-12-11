@@ -73,6 +73,7 @@ export default {
   "align-self": null,
   "flex-grow": null,
   "flex-shrink": null,
+  "flex-basis": null,
 
   // === GRID CHILD ===
   "grid-column": null,

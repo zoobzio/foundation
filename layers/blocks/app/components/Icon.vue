@@ -8,21 +8,41 @@ export interface IconProps {
 <script setup lang="ts">
 const { alias, tokens } = defineProps<IconProps>();
 
-const icon = computed(() => {
-  return useIconAlias(alias);
-});
+const icon = computed(() => useIconAlias(alias));
 
-const styles = useTokenStyle(tokens);
+const tokenStyles = useTokenStyle(tokens);
+
+const iconStyle = computed(() => {
+  const base = tokenStyles.value.icon ?? {};
+  const { uri, mode } = icon.value;
+
+  if (mode === "mask") {
+    return {
+      ...base,
+      maskImage: `url("${uri}")`,
+      maskRepeat: "no-repeat",
+      maskPosition: "center",
+      maskSize: "contain",
+      WebkitMaskImage: `url("${uri}")`,
+      WebkitMaskRepeat: "no-repeat",
+      WebkitMaskPosition: "center",
+      WebkitMaskSize: "contain",
+      backgroundColor: "currentColor",
+    };
+  }
+
+  return {
+    ...base,
+    backgroundImage: `url("${uri}")`,
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    backgroundSize: "contain",
+  };
+});
 </script>
 
 <template>
-  <svg
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-    class="f-icon"
-    :style="styles.icon"
-    v-html="icon"
-  />
+  <i class="f-icon" :style="iconStyle" />
 </template>
 
 <style>

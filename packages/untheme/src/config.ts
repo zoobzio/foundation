@@ -41,7 +41,7 @@ export type Roles = typeof roles;
 
 export type Role = Exclude<keyof Roles, "base">;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (
   k: infer I,
 ) => void
   ? I
@@ -49,7 +49,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 export type ElementTokens<T extends readonly Role[]> =
   UnionToIntersection<Roles["base"] | Roles[T[number]]> extends infer U
-    ? U extends Record<string, any>
+    ? U extends Record<string, unknown>
       ? SchemaFor<U>
       : never
     : never;
@@ -70,14 +70,13 @@ export type TokensFrom<E> = E extends {
   ? S
   : never;
 
+export interface ElementDefinition {
+  roles: string[];
+  keys: string[];
+}
+
 export interface UnthemeOptions {
-  elements?: Record<
-    string,
-    {
-      defaults: Record<string, Record<string, string | null>>;
-      tokens: Record<string, string | null>;
-    }
-  >;
+  elements?: Record<string, ElementDefinition>;
   theme?: UserTheme;
 }
 
@@ -88,44 +87,32 @@ export const defineTheme =
 
 /**
  * Define an element by composing roles.
- * Returns an object with:
- * - `defaults()`: Get merged tokens from base + roles
- * - `configure(settings)`: Type-safe configuration with autocomplete
+ * Returns a serializable object with role names and merged token keys.
  *
  * @example
  * ```typescript
- * // Define element
- * export const button = defineElement(['interactive', 'animated'])
- *
- * // Use in nuxt.config
+ * // In elements.config.ts
  * export default {
- *   untheme: {
- *     elements: {
- *       button: button.configure({ background: 'sys-primary' })
- *     }
- *   }
+ *   button: defineElement("interactive", "animated")
  * }
  *
- * // Use in component
- * import { button } from '@layers/blocks/elements'
- * const custom = button.configure({ background: 'sys-secondary' })
- * const all = defu(custom, button.defaults())
+ * // In nuxt.config.ts
+ * import elements from "./elements.config"
+ * export default {
+ *   untheme: { elements }
+ * }
  * ```
  */
-export const defineElement =
-  <T extends readonly Role[]>(...features: T) =>
-  (tokens: Partial<ElementTokens<T>>) => {
-    const defaults = { base: roles.base } as Record<
-      "base" | T[number],
-      Record<string, string | null>
-    >;
-    for (const role of features) {
-      defaults[role as T[number]] = roles[role];
-    }
-    return {
-      defaults,
-      tokens,
-    };
+export const defineElement = <T extends readonly Role[]>(...features: T) => {
+  // Merge base + role tokens to get complete key set
+  const merged: Record<string, string | null> = { ...roles.base };
+  for (const role of features) {
+    Object.assign(merged, roles[role]);
+  }
+  return {
+    roles: features as unknown as string[],
+    keys: Object.keys(merged),
   };
+};
 
 export const defineUntheme = (options: UnthemeOptions) => options;
