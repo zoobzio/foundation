@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ScrollerProps } from "../types/scroller";
+
 const {
   type = "hover",
   scrollHideDelay = 600,

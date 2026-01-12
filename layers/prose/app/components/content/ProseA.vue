@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { AnchorProps } from "#imports";
+
 defineProps<{
   href?: string;
   target?: "_self" | "_blank";
@@ -6,5 +8,5 @@ defineProps<{
 </script>
 
 <template>
-  <A :href="href" :target="target"><slot /></A>
+  <Anchor :href="href" :target="target"><slot /></Anchor>
 </template>

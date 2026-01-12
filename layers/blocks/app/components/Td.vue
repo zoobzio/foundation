@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TdProps } from "../types/td";
+
 const { tokens } = defineProps<TdProps>();
 
 const styles = useTokenStyle(tokens);

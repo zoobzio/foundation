@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CheckboxProps } from "../types/checkbox";
+
 const { disabled, name, value, required, tokens } = defineProps<CheckboxProps>();
 
 const model = defineModel<boolean | "indeterminate">();

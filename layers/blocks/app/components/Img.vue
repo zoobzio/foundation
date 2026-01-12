@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ImgProps } from "../types/img";
+
 const { src, alt, tokens } = defineProps<ImgProps>();
 
 const styles = useTokenStyle(tokens);

@@ -20,9 +20,7 @@ const copyCode = async () => {
     <Button class="f-prose-pre" :disabled="copied" @click="copyCode">
       <Icon :alias="copied ? 'check' : 'copy'" />
     </Button>
-    <Scroller orientation="horizontal">
-      <slot />
-    </Scroller>
+    <slot />
   </Pre>
 </template>
 

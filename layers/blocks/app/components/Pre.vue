@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PreProps } from "../types/pre";
+
 const { tokens } = defineProps<PreProps>();
 
 const styles = useTokenStyle(tokens);

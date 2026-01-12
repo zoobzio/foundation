@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { MainProps } from "../types/main";
+
 const { tokens } = defineProps<MainProps>();
 
 const styles = useTokenStyle(tokens);

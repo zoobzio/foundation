@@ -1,5 +1,5 @@
 export type AvatarProps = {
-  src?: string;
+  src: string;
   alt?: string;
   fallback?: string;
   tokens?: Tokens<"avatar-root" | "avatar-image" | "avatar-fallback">;

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { HrProps } from "../types/hr";
+
 const { tokens } = defineProps<HrProps>();
 
 const styles = useTokenStyle(tokens);

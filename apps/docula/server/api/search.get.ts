@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
 
   // Ensure index is built (lazy init on first request)
   await buildSearchIndex(async (collection) => {
-    return await queryCollectionSearchSections(event, collection as any, {
+    return await queryCollectionSearchSections(event, collection, {
       ignoredTags: ["pre", "code"],
     });
   });

@@ -10,7 +10,7 @@ export default defineNitroPlugin((nitroApp) => {
 
     // Fire and forget - don't block the request
     buildSearchIndex(async (collection) => {
-      return await queryCollectionSearchSections(event, collection as any, {
+      return await queryCollectionSearchSections(event, collection, {
         ignoredTags: ["pre", "code"],
       });
     }).catch((error) => {

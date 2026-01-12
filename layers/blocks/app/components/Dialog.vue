@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DialogProps, DialogEmits } from "../types/dialog";
+
 const { title, description, open, tokens } = defineProps<DialogProps>();
 
 const emit = defineEmits<DialogEmits>();

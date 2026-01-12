@@ -1,4 +1,6 @@
 <script lang="ts">
+import type { NavigatorProps } from "../types/navigator";
+
 const isMenu = (item: NavigatorItem): item is NavigatorMenu => {
   return "children" in item;
 };

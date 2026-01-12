@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { EmProps } from "../types/em";
+
 const { tokens } = defineProps<EmProps>();
 
 const styles = useTokenStyle(tokens);

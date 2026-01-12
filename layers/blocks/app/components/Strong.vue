@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { StrongProps } from "../types/strong";
+
 const { tokens } = defineProps<StrongProps>();
 
 const styles = useTokenStyle(tokens);

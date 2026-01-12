@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { H3Props } from "../types/h3";
+
 const { tokens } = defineProps<H3Props>();
 
 const styles = useTokenStyle(tokens);

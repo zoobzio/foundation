@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ChipProps } from "../types/chip";
+
 const { label, tokens } = defineProps<ChipProps>();
 
 const styles = useTokenStyle(tokens);

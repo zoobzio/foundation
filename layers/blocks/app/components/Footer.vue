@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FooterProps } from "../types/footer";
+
 const { tokens } = defineProps<FooterProps>();
 
 const styles = useTokenStyle(tokens);

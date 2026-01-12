@@ -1,5 +1,5 @@
 export type CaptionProps = {
-  icon?: string;
+  icon?: IconAlias;
   tokens?: Tokens<"caption">;
 };
 

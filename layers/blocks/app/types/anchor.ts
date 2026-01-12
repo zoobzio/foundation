@@ -1,4 +1,13 @@
-export type AnchorProps = Link & {
+export type AnchorProps = {
+  label?: string;
+  to?: string;
+  icon?: IconAlias;
+  description?: string;
+  external?: boolean;
+  target?: "_blank" | "_self";
+  replace?: boolean;
+  prefetch?: boolean;
+  disabled?: boolean;
   tokens?: Tokens<"a">;
 };
 

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ListboxProps, ListboxEmits } from "../types/listbox";
+
 const {
   items,
   modelValue,

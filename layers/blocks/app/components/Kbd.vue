@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { KbdProps } from "../types/kbd";
+
 const { tokens } = defineProps<KbdProps>();
 
 const styles = useTokenStyle(tokens);

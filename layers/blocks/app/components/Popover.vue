@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PopoverProps, PopoverEmits } from "../types/popover";
+
 const {
   open,
   defaultOpen = false,

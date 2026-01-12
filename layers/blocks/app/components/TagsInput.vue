@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TagsInputProps } from "../types/tags-input";
+
 const {
   placeholder = "Add tags...",
   disabled,

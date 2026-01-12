@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { BreadcrumbsProps } from "../types/breadcrumbs";
+
 const {
   items,
   separator = "chevron-right",

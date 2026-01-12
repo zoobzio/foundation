@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { FormLabelProps } from "../types/form-label";
+
 const { for: htmlFor, tokens } = defineProps<FormLabelProps>();
 
 const styles = useTokenStyle(tokens);

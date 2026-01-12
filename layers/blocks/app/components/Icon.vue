@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { IconProps } from "../types/icon";
+
 const { alias, tokens } = defineProps<IconProps>();
 
 const icon = computed(() => useIconAlias(alias));

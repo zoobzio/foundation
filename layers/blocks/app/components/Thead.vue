@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TheadProps } from "../types/thead";
+
 const { tokens } = defineProps<TheadProps>();
 
 const styles = useTokenStyle(tokens);

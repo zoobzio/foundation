@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { AvatarProps } from "../types/avatar";
+
 const { src, alt, fallback, tokens } = defineProps<AvatarProps>();
 
 const styles = useTokenStyle(tokens);

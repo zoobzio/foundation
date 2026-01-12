@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CaptionProps } from "../types/caption";
+
 const { icon, tokens } = defineProps<CaptionProps>();
 
 const styles = useTokenStyle(tokens);

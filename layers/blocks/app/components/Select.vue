@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SelectProps } from "../types/select";
+
 const {
   options,
   placeholder = "Select an option",

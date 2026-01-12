@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CardProps } from "../types/card";
+
 const { tokens } = defineProps<CardProps>();
 
 const styles = useTokenStyle(tokens);

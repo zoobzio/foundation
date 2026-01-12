@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { UlProps } from "../types/ul";
+
 const { tokens } = defineProps<UlProps>();
 
 const styles = useTokenStyle(tokens);

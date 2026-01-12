@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { LiProps } from "../types/li";
+
 const { tokens } = defineProps<LiProps>();
 
 const styles = useTokenStyle(tokens);

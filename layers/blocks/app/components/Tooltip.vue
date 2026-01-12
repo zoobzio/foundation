@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TooltipProps } from "../types/tooltip";
+
 const {
   content,
   delayDuration = 0,

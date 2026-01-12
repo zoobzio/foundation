@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { AnchorProps } from "../types/anchor";
+
 const { label, to, external, target, replace, prefetch, disabled, tokens } =
-  defineProps<AProps>();
+  defineProps<AnchorProps>();
 
 const styles = useTokenStyle(tokens);
 </script>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { BlockquoteProps } from "../types/blockquote";
+
 const { tokens } = defineProps<BlockquoteProps>();
 
 const styles = useTokenStyle(tokens);

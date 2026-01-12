@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ArticleProps } from "../types/article";
+
 const { tokens } = defineProps<ArticleProps>();
 
 const styles = useTokenStyle(tokens);

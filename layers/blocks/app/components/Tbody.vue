@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TbodyProps } from "../types/tbody";
+
 const { tokens } = defineProps<TbodyProps>();
 
 const styles = useTokenStyle(tokens);

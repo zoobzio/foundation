@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TrProps } from "../types/tr";
+
 const { tokens } = defineProps<TrProps>();
 
 const styles = useTokenStyle(tokens);

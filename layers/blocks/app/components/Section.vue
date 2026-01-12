@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SectionProps } from "../types/section";
+
 const { tokens } = defineProps<SectionProps>();
 
 const styles = useTokenStyle(tokens);

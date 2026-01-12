@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ButtonProps } from "../types/button";
+
 const {
   label,
   disabled,
@@ -42,7 +44,6 @@ const linkProps = computed(() => ({
     :style="styles.button"
     v-bind="link ? linkProps : buttonProps"
     class="f-button"
-    @click=""
   >
     <slot name="prepend" />
     <slot>

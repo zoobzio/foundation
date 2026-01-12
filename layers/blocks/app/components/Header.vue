@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { HeaderProps } from "../types/header";
+
 const { tokens } = defineProps<HeaderProps>();
 
 const styles = useTokenStyle(tokens);

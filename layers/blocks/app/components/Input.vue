@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { InputProps } from "../types/input";
+
 const {
   type = "text",
   placeholder,

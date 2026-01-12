@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TreeProps, TreeEmits, TreeNode } from "../types/tree";
+
 const {
   items,
   modelValue,

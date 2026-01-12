@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DelProps } from "../types/del";
+
 const { tokens } = defineProps<DelProps>();
 
 const styles = useTokenStyle(tokens);

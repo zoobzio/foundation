@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { CommandProps, CommandEmits } from "../types/command";
+
+import type { AcceptableValue } from "reka-ui";
 import {
   ComboboxRoot,
   ComboboxInput,
@@ -23,8 +26,8 @@ const searchTerm = defineModel<string>("searchTerm", { default: "" });
 
 const styles = useTokenStyle(tokens);
 
-const handleSelect = (ev: CustomEvent) => {
-  const value = ev.detail?.value;
+const handleSelect = (ev: AcceptableValue) => {
+  const value = ev?.toString();
   if (value) {
     emit("select", value);
   }
@@ -55,10 +58,7 @@ const handleSelect = (ev: CustomEvent) => {
         :style="styles['command-viewport']"
         class="f-command-viewport"
       >
-        <ComboboxEmpty
-          :style="styles['command-empty']"
-          class="f-command-empty"
-        >
+        <ComboboxEmpty :style="styles['command-empty']" class="f-command-empty">
           <slot name="empty">No results found</slot>
         </ComboboxEmpty>
 

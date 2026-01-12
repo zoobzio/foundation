@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { GroupProps } from "../types/group";
+
 const { tokens } = defineProps<GroupProps>();
 
 const styles = useTokenStyle(tokens);
