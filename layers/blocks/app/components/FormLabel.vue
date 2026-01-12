@@ -1,10 +1,3 @@
-<script lang="ts">
-export interface FormLabelProps {
-  for?: string;
-  tokens?: Tokens<"label">;
-}
-</script>
-
 <script setup lang="ts">
 const { for: htmlFor, tokens } = defineProps<FormLabelProps>();
 

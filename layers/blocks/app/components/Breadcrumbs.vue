@@ -1,18 +1,3 @@
-<script lang="ts">
-export interface BreadcrumbsProps {
-  items: Link[];
-  separator?: IconAlias;
-  tokens?: Tokens<
-    | "breadcrumbs-root"
-    | "breadcrumbs-list"
-    | "breadcrumbs-item"
-    | "breadcrumbs-link"
-    | "breadcrumbs-current"
-    | "breadcrumbs-separator"
-  >;
-}
-</script>
-
 <script setup lang="ts">
 const {
   items,

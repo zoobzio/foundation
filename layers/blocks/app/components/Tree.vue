@@ -1,26 +1,3 @@
-<script lang="ts">
-export interface TreeProps {
-  items: TreeNode[];
-  modelValue?: TreeNode | TreeNode[];
-  expanded?: string[];
-  multiple?: boolean;
-  selectionBehavior?: "replace" | "toggle";
-  tokens?: Tokens<
-    | "tree-root"
-    | "tree-branch"
-    | "tree-branch-content"
-    | "tree-branch-label"
-    | "tree-leaf"
-    | "tree-leaf-content"
-  >;
-}
-
-export interface TreeEmits {
-  "update:modelValue": [TreeNode | TreeNode[]];
-  "update:expanded": [string[]];
-}
-</script>
-
 <script setup lang="ts">
 const {
   items,

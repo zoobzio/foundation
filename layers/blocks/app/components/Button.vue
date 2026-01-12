@@ -1,21 +1,10 @@
-<script lang="ts">
-</script>
-
 <script setup lang="ts">
-import { useMagicKeys, whenever } from "@vueuse/core";
-export interface ButtonProps {
-  label?: string;
-  disabled?: boolean;
-  type?: "button" | "submit" | "reset";
-  shortcut?: ButtonShortcut;
-  tokens?: Tokens<"button">;
-}
-
 const {
   label,
   disabled,
   type = "button",
   shortcut,
+  link,
   tokens,
 } = defineProps<ButtonProps>();
 
@@ -31,23 +20,36 @@ if (shortcut) {
     buttonRef.value?.click();
   });
 }
+
+const NuxtLink = defineNuxtLink({});
+
+const buttonProps = computed(() => ({
+  type,
+  disabled,
+}));
+
+const linkProps = computed(() => ({
+  ...link,
+  disabled,
+}));
 </script>
 
 <template>
-  <button
+  <Primitive
     ref="button"
-    :disabled="disabled"
-    :type="type"
+    :as="link ? NuxtLink : 'button'"
     :aria-label="label"
     :style="styles.button"
+    v-bind="link ? linkProps : buttonProps"
     class="f-button"
+    @click=""
   >
     <slot name="prepend" />
     <slot>
       {{ label }}
     </slot>
     <slot name="append" />
-  </button>
+  </Primitive>
 </template>
 
 <style>

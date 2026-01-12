@@ -1,10 +1,3 @@
-<script lang="ts">
-export interface IconProps {
-  alias: IconAlias;
-  tokens?: Tokens<"icon">;
-}
-</script>
-
 <script setup lang="ts">
 const { alias, tokens } = defineProps<IconProps>();
 

@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface FooterProps {
-  tokens?: Tokens<"footer">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<FooterProps>();
 

@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     "@foundation/iconic/module",
     "@foundation/untheme/module",
     "@pinia/nuxt",
+    "@vueuse/nuxt",
     "reka-ui/nuxt",
   ],
   iconic: defineIconic(icIcons, {
@@ -220,7 +221,6 @@ export default defineNuxtConfig({
       "command-label": elements.commandLabel,
       "command-item": elements.commandItem,
       "command-empty": elements.commandEmpty,
-
 
       // Typography
       p: elements.p,

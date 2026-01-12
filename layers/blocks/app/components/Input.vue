@@ -1,14 +1,3 @@
-<script lang="ts">
-export interface InputProps {
-  type?: "text" | "email" | "password" | "search" | "url" | "tel" | "number";
-  placeholder?: string;
-  disabled?: boolean;
-  required?: boolean;
-  name?: string;
-  tokens?: Tokens<"input">;
-}
-</script>
-
 <script setup lang="ts">
 const {
   type = "text",

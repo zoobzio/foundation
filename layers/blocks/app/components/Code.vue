@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface CodeProps {
-  tokens?: Tokens<"code">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<CodeProps>();
 

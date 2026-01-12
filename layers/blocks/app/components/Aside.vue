@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface AsideProps {
-  tokens?: Tokens<"aside">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<AsideProps>();
 

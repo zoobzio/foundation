@@ -1,12 +1,3 @@
-<script lang="ts">
-export interface ScrollerProps {
-  type?: "always" | "scroll" | "hover" | "auto";
-  scrollHideDelay?: number;
-  dir?: "ltr" | "rtl";
-  orientation?: "vertical" | "horizontal" | "both";
-}
-</script>
-
 <script setup lang="ts">
 const {
   type = "hover",

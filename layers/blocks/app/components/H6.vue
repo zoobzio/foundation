@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface H6Props {
-  tokens?: Tokens<"h6">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<H6Props>();
 

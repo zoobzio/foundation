@@ -1,19 +1,3 @@
-<script lang="ts">
-export interface PopoverProps {
-  open?: boolean;
-  defaultOpen?: boolean;
-  modal?: boolean;
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
-  alignOffset?: number;
-  arrow?: boolean;
-  tokens?: Tokens<
-    "popover-trigger" | "popover-content" | "popover-arrow" | "popover-close"
-  >;
-}
-</script>
-
 <script setup lang="ts">
 const {
   open,
@@ -27,9 +11,7 @@ const {
   tokens,
 } = defineProps<PopoverProps>();
 
-const emit = defineEmits<{
-  "update:open": [value: boolean];
-}>();
+const emit = defineEmits<PopoverEmits>();
 
 const styles = useTokenStyle(tokens);
 </script>

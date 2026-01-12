@@ -1,10 +1,3 @@
-<script lang="ts">
-export interface CaptionProps {
-  icon?: string;
-  tokens?: Tokens<"caption">;
-}
-</script>
-
 <script setup lang="ts">
 const { icon, tokens } = defineProps<CaptionProps>();
 

@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface TrProps {
-  tokens?: Tokens<"tr">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<TrProps>();
 

@@ -1,33 +1,3 @@
-<script lang="ts">
-export interface CommandItem {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
-
-export interface CommandGroup {
-  key: string;
-  label?: string;
-  items: CommandItem[];
-}
-
-export interface CommandProps {
-  groups: CommandGroup[];
-  placeholder?: string;
-  disabled?: boolean;
-  tokens?: Tokens<
-    | "command-root"
-    | "command-input"
-    | "command-content"
-    | "command-viewport"
-    | "command-group"
-    | "command-label"
-    | "command-item"
-    | "command-empty"
-  >;
-}
-</script>
-
 <script setup lang="ts">
 import {
   ComboboxRoot,
@@ -47,9 +17,7 @@ const {
   tokens,
 } = defineProps<CommandProps>();
 
-const emit = defineEmits<{
-  select: [value: string];
-}>();
+const emit = defineEmits<CommandEmits>();
 
 const searchTerm = defineModel<string>("searchTerm", { default: "" });
 

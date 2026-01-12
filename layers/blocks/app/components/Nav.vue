@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface NavProps {
-  tokens?: Tokens<"nav">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<NavProps>();
 

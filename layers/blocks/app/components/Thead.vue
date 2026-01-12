@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface TheadProps {
-  tokens?: Tokens<"thead">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<TheadProps>();
 

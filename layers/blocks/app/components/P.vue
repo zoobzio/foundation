@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface PProps {
-  tokens?: Tokens<"p">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<PProps>();
 

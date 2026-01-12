@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface H2Props {
-  tokens?: Tokens<"h2">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<H2Props>();
 

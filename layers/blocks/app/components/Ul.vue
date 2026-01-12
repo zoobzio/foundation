@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface UlProps {
-  tokens?: Tokens<"ul">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<UlProps>();
 

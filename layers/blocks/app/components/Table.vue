@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface TableProps {
-  tokens?: Tokens<"table">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<TableProps>();
 

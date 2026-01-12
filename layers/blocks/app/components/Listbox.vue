@@ -1,13 +1,3 @@
-<script lang="ts">
-export interface ListboxProps {
-  items: Option[];
-  modelValue?: string | string[];
-  multiple?: boolean;
-  disabled?: boolean;
-  tokens?: Tokens<"listbox-root" | "listbox-content" | "listbox-item">;
-}
-</script>
-
 <script setup lang="ts">
 const {
   items,
@@ -17,9 +7,7 @@ const {
   tokens,
 } = defineProps<ListboxProps>();
 
-const emit = defineEmits<{
-  "update:modelValue": [string | string[]];
-}>();
+const emit = defineEmits<ListboxEmits>();
 
 const styles = useTokenStyle(tokens);
 

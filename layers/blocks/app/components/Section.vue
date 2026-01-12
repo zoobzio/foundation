@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface SectionProps {
-  tokens?: Tokens<"section">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<SectionProps>();
 

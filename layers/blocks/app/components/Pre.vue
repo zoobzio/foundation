@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface PreProps {
-  tokens?: Tokens<"pre">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<PreProps>();
 

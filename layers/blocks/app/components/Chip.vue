@@ -1,10 +1,3 @@
-<script lang="ts">
-export interface ChipProps {
-  label?: string;
-  tokens?: Tokens<"chip">;
-}
-</script>
-
 <script setup lang="ts">
 const { label, tokens } = defineProps<ChipProps>();
 

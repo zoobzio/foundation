@@ -9,13 +9,18 @@ export interface Option {
 }
 
 /**
- * Base type for navigation links (breadcrumbs, navigator links)
+ * Base type for navigation links
  */
 export interface Link {
   label: string;
   to: string;
   icon?: IconAlias;
   description?: string;
+  external?: boolean;
+  target?: "_blank" | "_self";
+  replace?: boolean;
+  prefetch?: boolean;
+  disabled?: boolean;
 }
 
 /**

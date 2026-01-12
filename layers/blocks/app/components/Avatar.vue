@@ -1,12 +1,3 @@
-<script lang="ts">
-export interface AvatarProps {
-  src?: string;
-  alt?: string;
-  fallback?: string;
-  tokens?: Tokens<"avatar-root" | "avatar-image" | "avatar-fallback">;
-}
-</script>
-
 <script setup lang="ts">
 const { src, alt, fallback, tokens } = defineProps<AvatarProps>();
 

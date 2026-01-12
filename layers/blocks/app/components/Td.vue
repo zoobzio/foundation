@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface TdProps {
-  tokens?: Tokens<"td">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<TdProps>();
 

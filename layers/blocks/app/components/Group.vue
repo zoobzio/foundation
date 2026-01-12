@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface GroupProps {
-  tokens?: Tokens<"group">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<GroupProps>();
 

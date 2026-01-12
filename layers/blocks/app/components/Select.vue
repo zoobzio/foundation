@@ -1,19 +1,3 @@
-<script lang="ts">
-export interface SelectProps {
-  options: Option[];
-  placeholder?: string;
-  disabled?: boolean;
-  required?: boolean;
-  name?: string;
-  tokens?: Tokens<
-    | "select-root"
-    | "select-trigger"
-    | "select-content"
-    | "select-item"
-  >;
-}
-</script>
-
 <script setup lang="ts">
 const {
   options,

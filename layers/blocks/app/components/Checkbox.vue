@@ -1,13 +1,3 @@
-<script lang="ts">
-export interface CheckboxProps {
-  disabled?: boolean;
-  name?: string;
-  value?: string;
-  required?: boolean;
-  tokens?: Tokens<"checkbox-root" | "checkbox-indicator">;
-}
-</script>
-
 <script setup lang="ts">
 const { disabled, name, value, required, tokens } = defineProps<CheckboxProps>();
 

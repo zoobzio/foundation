@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface OlProps {
-  tokens?: Tokens<"ol">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<OlProps>();
 

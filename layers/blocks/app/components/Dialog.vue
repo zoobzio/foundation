@@ -1,20 +1,7 @@
-<script lang="ts">
-export interface DialogProps {
-  title: string;
-  description: string;
-  open?: boolean;
-  tokens?: Tokens<
-    "dialog-overlay" | "dialog-content" | "dialog-title" | "dialog-description"
-  >;
-}
-</script>
-
 <script setup lang="ts">
 const { title, description, open, tokens } = defineProps<DialogProps>();
 
-const emit = defineEmits<{
-  "update:open": [value: boolean];
-}>();
+const emit = defineEmits<DialogEmits>();
 
 const styles = useTokenStyle(tokens);
 </script>

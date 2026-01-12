@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface StrongProps {
-  tokens?: Tokens<"strong">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<StrongProps>();
 

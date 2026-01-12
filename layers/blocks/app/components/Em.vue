@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface EmProps {
-  tokens?: Tokens<"em">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<EmProps>();
 

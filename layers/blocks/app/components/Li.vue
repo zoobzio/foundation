@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface LiProps {
-  tokens?: Tokens<"li">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<LiProps>();
 

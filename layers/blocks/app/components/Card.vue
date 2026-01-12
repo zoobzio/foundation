@@ -1,8 +1,4 @@
 <script setup lang="ts">
-export interface CardProps {
-  tokens?: Tokens<"card">;
-}
-
 const { tokens } = defineProps<CardProps>();
 
 const styles = useTokenStyle(tokens);

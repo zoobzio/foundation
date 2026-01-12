@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface HrProps {
-  tokens?: Tokens<"hr">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<HrProps>();
 

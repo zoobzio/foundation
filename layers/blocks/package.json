@@ -26,6 +26,7 @@
     "@foundation/untheme": "workspace:*",
     "@pinia/nuxt": "catalog:",
     "@vueuse/core": "^11.3.0",
+    "@vueuse/nuxt": "^14.1.0",
     "defu": "catalog:",
     "nuxt": "catalog:",
     "pinia": "catalog:",

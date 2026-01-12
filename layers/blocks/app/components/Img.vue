@@ -1,11 +1,3 @@
-<script lang="ts">
-export interface ImgProps {
-  src: string;
-  alt?: string;
-  tokens?: Tokens<"img">;
-}
-</script>
-
 <script setup lang="ts">
 const { src, alt, tokens } = defineProps<ImgProps>();
 

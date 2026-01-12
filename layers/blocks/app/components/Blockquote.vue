@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface BlockquoteProps {
-  tokens?: Tokens<"blockquote">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<BlockquoteProps>();
 

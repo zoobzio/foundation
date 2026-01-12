@@ -1,26 +1,3 @@
-<script lang="ts">
-export interface TagsInputProps {
-  placeholder?: string;
-  disabled?: boolean;
-  required?: boolean;
-  name?: string;
-  max?: number;
-  addOnBlur?: boolean;
-  addOnPaste?: boolean;
-  addOnTab?: boolean;
-  delimiter?: string;
-  duplicate?: boolean;
-  tokens?: Tokens<
-    | "tags-input-root"
-    | "tags-input-item"
-    | "tags-input-item-text"
-    | "tags-input-item-delete"
-    | "tags-input-input"
-    | "tags-input-clear"
-  >;
-}
-</script>
-
 <script setup lang="ts">
 const {
   placeholder = "Add tags...",

@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface KbdProps {
-  tokens?: Tokens<"kbd">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<KbdProps>();
 

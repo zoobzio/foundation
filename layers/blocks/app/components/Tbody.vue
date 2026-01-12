@@ -1,9 +1,3 @@
-<script lang="ts">
-export interface TbodyProps {
-  tokens?: Tokens<"tbody">;
-}
-</script>
-
 <script setup lang="ts">
 const { tokens } = defineProps<TbodyProps>();
 

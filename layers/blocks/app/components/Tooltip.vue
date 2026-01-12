@@ -1,14 +1,3 @@
-<script lang="ts">
-export interface TooltipProps {
-  content?: string;
-  delayDuration?: number;
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
-  tokens?: Tokens<"tooltip-content">;
-}
-</script>
-
 <script setup lang="ts">
 const {
   content,
