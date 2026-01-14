@@ -60,6 +60,7 @@ export default {
   "ref-layout-holy-grail": "auto 1fr auto / auto 1fr auto", // 3x3 grid shell
   "ref-layout-header-main-footer": "auto 1fr auto", // Vertical app layout
   "ref-layout-nav-content": "auto 1fr", // Horizontal app layout
+  "ref-layout-shell-header-content": "auto 1fr", // Header row + content row
 
   // === SPECIAL PATTERNS ===
   // Pancake stack (full-bleed header/footer, constrained content)

@@ -33,6 +33,8 @@ export default {
   "ref-height-min": "min-content",
   "ref-height-max": "max-content",
   "ref-height-fit": "fit-content",
+  "ref-height-header": "3.5rem",
+  "ref-height-aside": "calc(100vh - 3.5rem)",
 
   // Intrinsic sizing
   "ref-fit": "fit-content",

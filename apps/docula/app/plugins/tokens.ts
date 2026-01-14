@@ -181,9 +181,12 @@ export default defineNuxtPlugin(() => {
     "border-bottom-width": "ref-border-width-thin",
     "border-color": "sys-outline",
     width: "ref-full",
-    "max-width": "ref-width-container",
-    "margin-left": "ref-auto",
-    "margin-right": "ref-auto",
+    height: "ref-height-header",
+    "padding-left": "ref-spacing-lg",
+    "padding-right": "ref-spacing-lg",
+    position: "ref-position-sticky",
+    top: "ref-position-zero",
+    "z-index": "ref-z-sticky",
   });
 
   defineTokens("footer", {
@@ -210,9 +213,6 @@ export default defineNuxtPlugin(() => {
     "min-height": "ref-viewport-height",
     "max-height": "ref-viewport-height",
     width: "ref-full",
-    "max-width": "ref-width-container",
-    "margin-left": "ref-auto",
-    "margin-right": "ref-auto",
     display: "ref-display-grid",
     "grid-template-columns": "ref-full",
     "grid-template-rows": "ref-grid-rows-header-content-footer",
@@ -241,6 +241,18 @@ export default defineNuxtPlugin(() => {
   defineTokens("nav", {
     background: "ref-color-transparent",
     text: "sys-on-surface",
+    position: "ref-position-sticky",
+    top: "ref-height-header",
+    height: "ref-height-aside",
+    "overflow-y": "ref-overflow-auto",
+  });
+
+  defineTokens("container", {
+    display: "ref-display-grid",
+    "grid-template-columns": "ref-layout-sidebar-right",
+    "max-width": "ref-width-container",
+    "margin-left": "ref-auto",
+    "margin-right": "ref-auto",
   });
 
   // Checkbox
@@ -632,39 +644,6 @@ export default defineNuxtPlugin(() => {
     "white-space": "ref-whitespace-nowrap",
     "overflow-x": "ref-overflow-hidden",
     "text-overflow": "ref-text-overflow-ellipsis",
-  });
-
-  // Community
-  defineTokens("community-root", {
-    background: "ref-color-transparent",
-    display: "ref-display-flex",
-    "flex-direction": "ref-flex-col",
-  });
-
-  defineTokens("community-content", {
-    background: "ref-color-transparent",
-    display: "ref-display-flex",
-    "flex-direction": "ref-flex-col",
-    gap: "ref-spacing-none",
-  });
-
-  defineTokens("community-item", {
-    background: "ref-color-transparent",
-    text: "sys-on-surface-variant",
-    "text-hover": "sys-on-surface",
-    "background-hover": "sys-hover",
-    "padding-left": "ref-spacing-md",
-    "padding-right": "ref-spacing-md",
-    "padding-top": "ref-spacing-xs",
-    "padding-bottom": "ref-spacing-xs",
-    cursor: "ref-cursor-pointer",
-    "font-size": "ref-text-base",
-    display: "ref-display-flex",
-    "align-items": "ref-align-center",
-    gap: "ref-spacing-xs",
-    "text-decoration": "ref-decoration-none",
-    "background-focus": "sys-hover",
-    "box-shadow-focus": "ref-shadow-focus-inset",
   });
 
   // Content Accordion
@@ -1817,5 +1796,4 @@ export default defineNuxtPlugin(() => {
     "padding-top": "ref-spacing-md",
     "padding-bottom": "ref-spacing-md",
   });
-
 });

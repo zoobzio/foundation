@@ -1,8 +1,6 @@
 <template>
   <Main>
-    <TopBar>
-      <template #logo> zoobz.io </template>
-    </TopBar>
+    <TopBar />
     <slot />
   </Main>
 </template>

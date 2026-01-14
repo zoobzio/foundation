@@ -9,10 +9,12 @@ export interface DoculaCollection {
 
 declare module "nuxt/schema" {
   interface AppConfigInput {
+    title?: string;
     collection?: DoculaCollection;
   }
 }
 
 export default defineAppConfig({
+  title: "Foundation",
   collection: undefined as unknown as DoculaCollection,
 });

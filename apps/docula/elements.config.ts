@@ -4,4 +4,5 @@ export default {
   communityRoot: defineElement("flexbox"),
   communityContent: defineElement("flexbox"),
   communityItem: defineElement("flexbox", "interactive"),
+  container: defineElement("grid"),
 };

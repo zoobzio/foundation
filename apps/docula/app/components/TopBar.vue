@@ -23,7 +23,6 @@ const { data: collectionArticles } = await useAsyncData(
       const articles = await queryCollection(
         collection.key as keyof PageCollections,
       )
-        .order("published", "DESC")
         .limit(4)
         .all();
 
@@ -88,7 +87,7 @@ const featured = computed(() => {
 <template>
   <Header>
     <slot name="logo">
-      <span>zoobz.io</span>
+      <span>{{ appConfig.title }}</span>
     </slot>
     <Nav>
       <slot name="navigation">
@@ -98,7 +97,6 @@ const featured = computed(() => {
     <slot name="actions">
       <Group :tokens="{ group: { 'margin-left': 'ref-auto' } }">
         <Search />
-        <Translate />
         <Theme />
         <ColorMode />
       </Group>
