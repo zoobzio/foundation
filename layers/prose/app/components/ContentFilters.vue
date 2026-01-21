@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { contentFiltersSection } from "../../elements.config";
+
 export interface ContentFiltersProps {
   collection: string;
-  tokens?: Tokens<"content-filters-section">;
+  tokens?: Tokens<typeof contentFiltersSection.key>;
 }
 
 const { collection: _collection, tokens } = defineProps<ContentFiltersProps>();

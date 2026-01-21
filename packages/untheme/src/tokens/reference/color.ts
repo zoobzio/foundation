@@ -5,6 +5,8 @@ export default {
   // Special
   "ref-color-transparent": "transparent",
   "ref-color-current": "currentColor",
+  "ref-black": "#000000",
+  "ref-white": "#ffffff",
 
   // Slate (neutral gray)
   "ref-slate-50": "#f8fafc",

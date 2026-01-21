@@ -1,6 +1,8 @@
+import type { icon } from "../../elements.config";
+
 export type IconProps = {
   alias: IconAlias;
-  tokens?: Tokens<"icon">;
+  tokens?: Tokens<typeof icon.key>;
 };
 
 export type IconEmits = {};

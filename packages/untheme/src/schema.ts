@@ -186,6 +186,7 @@ export type Schema = {
   "pointer-events": InteractionToken | BaseToken;
   "box-shadow": ShadowToken | BaseToken;
   "box-shadow-hover": ShadowToken | BaseToken;
+  "box-shadow-active": ShadowToken | BaseToken;
   "box-shadow-focus": ShadowToken | BaseToken;
   "box-shadow-selected": ShadowToken | BaseToken;
   "box-shadow-selected-hover": ShadowToken | BaseToken;

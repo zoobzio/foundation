@@ -1,24 +1,26 @@
 <script lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
+import type { contentAccordion, contentGrid } from "../../elements.config";
+import type { accordion } from "@foundation/blocks/elements";
 
 export interface ContentAccordionProps {
   items: ContentNavigationItem[];
   collection: string;
   tokens?: Tokens<
-    | "content-accordion"
-    | "accordion-root"
-    | "accordion-item"
-    | "accordion-header"
-    | "accordion-trigger"
-    | "accordion-trigger-content"
-    | "accordion-content"
-    | "content-grid"
-    | "content-grid-item"
-    | "content-grid-title"
-    | "content-grid-description"
-    | "content-grid-meta"
-    | "content-grid-author"
-    | "content-grid-published"
+    | typeof contentAccordion.key
+    | typeof accordion.root
+    | typeof accordion.item
+    | typeof accordion.header
+    | typeof accordion.trigger
+    | typeof accordion.triggerContent
+    | typeof accordion.content
+    | typeof contentGrid.root
+    | typeof contentGrid.item
+    | typeof contentGrid.title
+    | typeof contentGrid.description
+    | typeof contentGrid.meta
+    | typeof contentGrid.author
+    | typeof contentGrid.published
   >;
 }
 </script>
@@ -69,7 +71,7 @@ const formatDate = (dateString: string) => {
 <template>
   <div :style="styles['content-accordion']" class="f-content-accordion">
     <!-- Render leaves as cards in a grid -->
-    <div v-if="leaves.length" :style="styles['content-grid']" class="f-content-grid">
+    <div v-if="leaves.length" :style="styles['content-grid-root']" class="f-content-grid-root">
       <NuxtLink
         v-for="leaf in leaves"
         :key="leaf.path"

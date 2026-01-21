@@ -85,26 +85,29 @@ export const defineTheme =
   (override: UserTheme = {}) =>
     defu(override, theme, { reference, modes }) as Theme;
 
+// ============================================================================
+// Element Definition API
+// ============================================================================
+
 /**
- * Define an element by composing roles.
- * Returns a serializable object with role names and merged token keys.
- *
- * @example
- * ```typescript
- * // In elements.config.ts
- * export default {
- *   button: defineElement("interactive", "animated")
- * }
- *
- * // In nuxt.config.ts
- * import elements from "./elements.config"
- * export default {
- *   untheme: { elements }
- * }
- * ```
+ * Convert camelCase to kebab-case.
+ * e.g., "triggerContent" -> "trigger-content"
  */
-export const defineElement = <T extends readonly Role[]>(...features: T) => {
-  // Merge base + role tokens to get complete key set
+const toKebabCase = (str: string): string =>
+  str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
+/**
+ * Type-level camelCase to kebab-case conversion.
+ */
+type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
+  ? `${T extends Capitalize<T> ? "-" : ""}${Lowercase<T>}${CamelToKebab<U>}`
+  : S;
+
+/**
+ * Build an ElementDefinition from a list of roles.
+ * Internal helper used by defineElement and defineElements.
+ */
+const buildElementDefinition = (features: readonly Role[]): ElementDefinition => {
   const merged: Record<string, string | null> = { ...roles.base };
   for (const role of features) {
     Object.assign(merged, roles[role]);
@@ -112,6 +115,105 @@ export const defineElement = <T extends readonly Role[]>(...features: T) => {
   return {
     roles: features as unknown as string[],
     keys: Object.keys(merged),
+  };
+};
+
+/**
+ * Type for deriving element keys from namespace + property name.
+ * Property names are converted from camelCase to kebab-case.
+ */
+type ElementKey<N extends string, P extends string> = `${N}-${CamelToKebab<P>}`;
+
+/**
+ * Result type for defineElements().
+ * Contains both the key constants and the element definitions.
+ */
+type ElementsResult<N extends string, E extends Record<string, readonly Role[]>> = {
+  readonly [P in keyof E]: ElementKey<N, P & string>;
+} & {
+  readonly $defs: {
+    readonly [P in keyof E as ElementKey<N, P & string>]: ElementDefinition;
+  };
+};
+
+/**
+ * Result type for defineElement().
+ * Contains the key constant and the element definition.
+ */
+type ElementResult<N extends string> = {
+  readonly key: N;
+  readonly $def: ElementDefinition;
+};
+
+/**
+ * Define a compound element with multiple parts.
+ * Each part becomes a namespaced key (e.g., "accordion-root").
+ *
+ * @example
+ * ```typescript
+ * // In elements.config.ts
+ * export const accordion = defineElements("accordion", {
+ *   root: ["flexbox"],
+ *   item: [],
+ *   trigger: ["flexbox", "interactive", "selected"],
+ * });
+ *
+ * // accordion.root === "accordion-root"
+ * // accordion.item === "accordion-item"
+ * // accordion.trigger === "accordion-trigger"
+ * // accordion.$defs === { "accordion-root": {...}, "accordion-item": {...}, ... }
+ *
+ * // In component:
+ * tokenize(accordion.root)  // type-safe
+ *
+ * // In nuxt.config.ts:
+ * untheme: { elements: { ...accordion.$defs } }
+ * ```
+ */
+export const defineElements = <
+  N extends string,
+  E extends Record<string, readonly Role[]>,
+>(
+  namespace: N,
+  elements: E,
+): ElementsResult<N, E> => {
+  const result: Record<string, string> = {};
+  const defs: Record<string, ElementDefinition> = {};
+
+  for (const [prop, propRoles] of Object.entries(elements)) {
+    const key = `${namespace}-${toKebabCase(prop)}`;
+    result[prop] = key;
+    defs[key] = buildElementDefinition(propRoles as readonly Role[]);
+  }
+
+  return { ...result, $defs: defs } as ElementsResult<N, E>;
+};
+
+/**
+ * Define a standalone element with a single key.
+ *
+ * @example
+ * ```typescript
+ * // In elements.config.ts
+ * export const button = defineElement("button", "interactive", "disabled");
+ *
+ * // button.key === "button"
+ * // button.$def === { roles: [...], keys: [...] }
+ *
+ * // In component:
+ * tokenize(button.key)  // type-safe
+ *
+ * // In nuxt.config.ts:
+ * untheme: { elements: { [button.key]: button.$def } }
+ * ```
+ */
+export const defineElement = <N extends string, T extends readonly Role[]>(
+  name: N,
+  ...features: T
+): ElementResult<N> => {
+  return {
+    key: name,
+    $def: buildElementDefinition(features),
   };
 };
 

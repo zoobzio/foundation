@@ -1,5 +1,7 @@
+import type { thead } from "../../elements.config";
+
 export type TheadProps = {
-  tokens?: Tokens<"thead">;
+  tokens?: Tokens<typeof thead.key>;
 };
 
 export type TheadEmits = {};

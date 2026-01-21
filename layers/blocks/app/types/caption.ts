@@ -1,6 +1,8 @@
+import type { caption } from "../../elements.config";
+
 export type CaptionProps = {
   icon?: IconAlias;
-  tokens?: Tokens<"caption">;
+  tokens?: Tokens<typeof caption.key>;
 };
 
 export type CaptionEmits = {};

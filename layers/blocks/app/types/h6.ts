@@ -1,5 +1,7 @@
+import type { h6 } from "../../elements.config";
+
 export type H6Props = {
-  tokens?: Tokens<"h6">;
+  tokens?: Tokens<typeof h6.key>;
 };
 
 export type H6Emits = {};

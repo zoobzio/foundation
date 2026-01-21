@@ -1,5 +1,7 @@
+import type { td } from "../../elements.config";
+
 export type TdProps = {
-  tokens?: Tokens<"td">;
+  tokens?: Tokens<typeof td.key>;
 };
 
 export type TdEmits = {};

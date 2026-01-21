@@ -10,9 +10,6 @@ defineProps<{
 </script>
 
 <template>
-  <Left border>
-    <ContentFilters :collection="collection" />
-  </Left>
   <Section>
     <Article>
       <H1>{{ title }}</H1>

@@ -1,3 +1,5 @@
+import type { popover } from "../../elements.config";
+
 export type PopoverProps = {
   open?: boolean;
   defaultOpen?: boolean;
@@ -8,7 +10,7 @@ export type PopoverProps = {
   alignOffset?: number;
   arrow?: boolean;
   tokens?: Tokens<
-    "popover-trigger" | "popover-content" | "popover-arrow" | "popover-close"
+    typeof popover.trigger | typeof popover.content | typeof popover.arrow | typeof popover.close
   >;
 };
 

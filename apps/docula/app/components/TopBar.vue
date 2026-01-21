@@ -8,6 +8,7 @@ interface CollectionConfig {
   icon?: IconAlias;
 }
 
+const styles = useTokenStyle();
 const appConfig = useAppConfig();
 const collections = computed(
   () => (appConfig.collections as CollectionConfig[]) || [],
@@ -82,24 +83,32 @@ const featured = computed(() => {
   const first = collections.value[0];
   return first ? getFeatured(first.key) : undefined;
 });
+
 </script>
 
 <template>
   <Header>
-    <slot name="logo">
-      <span>{{ appConfig.title }}</span>
-    </slot>
-    <Nav>
-      <slot name="navigation">
-        <Navigator :items="navItems" :featured="featured" />
+    <div :style="styles['topbar-left']" class="f-topbar-left">
+      <slot name="logo">
+        <AsciiLogo :text="appConfig.title ?? 'Docula'" />
       </slot>
-    </Nav>
-    <slot name="actions">
-      <Group :tokens="{ group: { 'margin-left': 'ref-auto' } }">
-        <Search />
+      <VersionSelector />
+    </div>
+    <div :style="styles['topbar-center']" class="f-topbar-center">
+      <Search />
+    </div>
+    <div :style="styles['topbar-right']" class="f-topbar-right">
+      <slot name="actions">
+        <FontMode />
         <Theme />
         <ColorMode />
-      </Group>
-    </slot>
+      </slot>
+    </div>
   </Header>
 </template>
+
+<style>
+@import '#build/untheme/topbar-left.css';
+@import '#build/untheme/topbar-center.css';
+@import '#build/untheme/topbar-right.css';
+</style>

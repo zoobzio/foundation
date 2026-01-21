@@ -1,9 +1,11 @@
+import type { dialog } from "../../elements.config";
+
 export type DialogProps = {
   title: string;
   description: string;
   open?: boolean;
   tokens?: Tokens<
-    "dialog-overlay" | "dialog-content" | "dialog-title" | "dialog-description"
+    typeof dialog.overlay | typeof dialog.content | typeof dialog.title | typeof dialog.description
   >;
 };
 

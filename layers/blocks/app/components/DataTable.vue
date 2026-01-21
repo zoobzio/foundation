@@ -1,8 +1,10 @@
 <script lang="ts">
+import type { table, thead, tbody, tr, th, td } from "../../elements.config";
+
 export interface DataTableProps<T> {
   columns: DataTableColumn<T>[];
   data: T[];
-  tokens?: Tokens<"table" | "thead" | "tbody" | "tr" | "th" | "td">;
+  tokens?: Tokens<typeof table.key | typeof thead.key | typeof tbody.key | typeof tr.key | typeof th.key | typeof td.key>;
 }
 </script>
 

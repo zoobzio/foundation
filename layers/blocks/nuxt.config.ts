@@ -66,11 +66,24 @@ export default defineNuxtConfig({
     community: "twotone-groups",
     "edit-document": "twotone-edit-note",
     "report-issue": "twotone-bug-report",
+    external: "twotone-open-in-new",
+
+    // Alerts
+    lightbulb: "twotone-lightbulb",
+    important: "twotone-campaign",
+
+    // Font
+    font: "twotone-text-fields",
 
     // UI
     settings: "twotone-settings",
     user: "twotone-person",
     calendar: "twotone-calendar-today",
+    "book-open": "twotone-menu-book",
+    learn: "twotone-school",
+    guides: "twotone-map",
+    integration: "twotone-extension",
+    reference: "twotone-library-books",
     check: "twotone-check",
     info: "twotone-info",
     warning: "twotone-warning",

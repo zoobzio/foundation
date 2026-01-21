@@ -1,11 +1,99 @@
 import { defineNuxtConfig } from "nuxt/config";
-import blocks from "@foundation/blocks/elements";
-import prose from "@foundation/prose/elements";
-import elements from "./elements.config";
+
+// Blocks: Standalone elements
+import {
+  a,
+  alertNote,
+  alertNoteIcon,
+  alertTip,
+  alertTipIcon,
+  alertImportant,
+  alertImportantIcon,
+  alertWarning,
+  alertWarningIcon,
+  alertCaution,
+  alertCautionIcon,
+  article,
+  aside,
+  banner,
+  blockquote,
+  button,
+  caption,
+  card,
+  chip,
+  code,
+  del,
+  em,
+  fab,
+  footer,
+  group,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  header,
+  hr,
+  icon,
+  img,
+  input,
+  kbd,
+  label,
+  li,
+  link,
+  main,
+  nav,
+  ol,
+  p,
+  pre,
+  section,
+  strong,
+  table,
+  tbody,
+  td,
+  th,
+  thead,
+  tr,
+  ul,
+} from "@foundation/blocks/elements";
+
+// Blocks: Compound elements
+import {
+  accordion,
+  avatar,
+  breadcrumbs,
+  checkbox,
+  command,
+  dialog,
+  listbox,
+  navigator,
+  popover,
+  select,
+  tabs,
+  tagsInput,
+  tooltip,
+  tree,
+} from "@foundation/blocks/elements";
+
+// Prose: Elements
+import {
+  attribution,
+  contentAccordion,
+  contentFiltersSection,
+  contentGrid,
+  contentSearch,
+  navList,
+  surround,
+  toc,
+} from "@foundation/prose/elements";
+
+// Docula: App-specific elements
+import { community, container, search, topbar, versionSelect } from "./elements.config";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-11-17",
-  extends: ["@foundation/prose"],
+  extends: ["@foundation/prose", "@foundation/giscus"],
   modules: ["nuxt-typed-router"],
   app: {
     head: {
@@ -20,222 +108,94 @@ export default defineNuxtConfig({
   },
   untheme: {
     elements: {
-      // Blocks: Interactive elements
-      a: blocks.a,
-      button: blocks.button,
-      card: blocks.card,
-      link: blocks.link,
-      group: blocks.group,
+      // Blocks: Standalone elements
+      [a.key]: a.$def,
+      [alertNote.key]: alertNote.$def,
+      [alertNoteIcon.key]: alertNoteIcon.$def,
+      [alertTip.key]: alertTip.$def,
+      [alertTipIcon.key]: alertTipIcon.$def,
+      [alertImportant.key]: alertImportant.$def,
+      [alertImportantIcon.key]: alertImportantIcon.$def,
+      [alertWarning.key]: alertWarning.$def,
+      [alertWarningIcon.key]: alertWarningIcon.$def,
+      [alertCaution.key]: alertCaution.$def,
+      [alertCautionIcon.key]: alertCautionIcon.$def,
+      [article.key]: article.$def,
+      [aside.key]: aside.$def,
+      [banner.key]: banner.$def,
+      [blockquote.key]: blockquote.$def,
+      [button.key]: button.$def,
+      [caption.key]: caption.$def,
+      [card.key]: card.$def,
+      [chip.key]: chip.$def,
+      [code.key]: code.$def,
+      [del.key]: del.$def,
+      [em.key]: em.$def,
+      [fab.key]: fab.$def,
+      [footer.key]: footer.$def,
+      [group.key]: group.$def,
+      [h1.key]: h1.$def,
+      [h2.key]: h2.$def,
+      [h3.key]: h3.$def,
+      [h4.key]: h4.$def,
+      [h5.key]: h5.$def,
+      [h6.key]: h6.$def,
+      [header.key]: header.$def,
+      [hr.key]: hr.$def,
+      [icon.key]: icon.$def,
+      [img.key]: img.$def,
+      ...input.$defs,
+      [kbd.key]: kbd.$def,
+      [label.key]: label.$def,
+      [li.key]: li.$def,
+      [link.key]: link.$def,
+      [main.key]: main.$def,
+      [nav.key]: nav.$def,
+      [ol.key]: ol.$def,
+      [p.key]: p.$def,
+      [pre.key]: pre.$def,
+      [section.key]: section.$def,
+      [strong.key]: strong.$def,
+      [table.key]: table.$def,
+      [tbody.key]: tbody.$def,
+      [td.key]: td.$def,
+      [th.key]: th.$def,
+      [thead.key]: thead.$def,
+      [tr.key]: tr.$def,
+      [ul.key]: ul.$def,
 
-      // Blocks: Accordion
-      "accordion-root": blocks.accordionRoot,
-      "accordion-item": blocks.accordionItem,
-      "accordion-header": blocks.accordionHeader,
-      "accordion-trigger": blocks.accordionTrigger,
-      "accordion-trigger-content": blocks.accordionTriggerContent,
-      "accordion-content": blocks.accordionContent,
+      // Blocks: Compound elements
+      ...accordion.$defs,
+      ...avatar.$defs,
+      ...breadcrumbs.$defs,
+      ...checkbox.$defs,
+      ...command.$defs,
+      ...dialog.$defs,
+      ...listbox.$defs,
+      ...navigator.$defs,
+      ...popover.$defs,
+      ...select.$defs,
+      ...tabs.$defs,
+      ...tagsInput.$defs,
+      ...tooltip.$defs,
+      ...tree.$defs,
 
-      // Blocks: Breadcrumbs
-      "breadcrumbs-root": blocks.breadcrumbsRoot,
-      "breadcrumbs-list": blocks.breadcrumbsList,
-      "breadcrumbs-item": blocks.breadcrumbsItem,
-      "breadcrumbs-link": blocks.breadcrumbsLink,
-      "breadcrumbs-current": blocks.breadcrumbsCurrent,
-      "breadcrumbs-separator": blocks.breadcrumbsSeparator,
+      // Prose: Elements
+      ...attribution.$defs,
+      ...contentGrid.$defs,
+      ...contentSearch.$defs,
+      ...navList.$defs,
+      ...surround.$defs,
+      ...toc.$defs,
+      [contentAccordion.key]: contentAccordion.$def,
+      [contentFiltersSection.key]: contentFiltersSection.$def,
 
-      // Blocks: Checkbox
-      "checkbox-root": blocks.checkboxRoot,
-      "checkbox-indicator": blocks.checkboxIndicator,
-
-      // Blocks: Layout
-      aside: blocks.aside,
-      header: blocks.header,
-      footer: blocks.footer,
-      main: blocks.main,
-      section: blocks.section,
-      article: blocks.article,
-      nav: blocks.nav,
-
-      // Blocks: Avatar
-      "avatar-root": blocks.avatarRoot,
-      "avatar-image": blocks.avatarImage,
-      "avatar-fallback": blocks.avatarFallback,
-
-      // Blocks: Icon
-      icon: blocks.icon,
-
-      // Blocks: Img
-      img: blocks.img,
-
-      // Blocks: Input
-      input: blocks.input,
-
-      // Blocks: Label
-      label: blocks.label,
-
-      // Blocks: Caption
-      caption: blocks.caption,
-
-      // Blocks: Chip
-      chip: blocks.chip,
-
-      // Blocks: Select
-      "select-root": blocks.selectRoot,
-      "select-trigger": blocks.selectTrigger,
-      "select-content": blocks.selectContent,
-      "select-item": blocks.selectItem,
-
-      // Blocks: Tags Input
-      "tags-input-root": blocks.tagsInputRoot,
-      "tags-input-item": blocks.tagsInputItem,
-      "tags-input-item-text": blocks.tagsInputItemText,
-      "tags-input-item-delete": blocks.tagsInputItemDelete,
-      "tags-input-input": blocks.tagsInputInput,
-      "tags-input-clear": blocks.tagsInputClear,
-
-      // Blocks: Listbox
-      "listbox-root": blocks.listboxRoot,
-      "listbox-content": blocks.listboxContent,
-      "listbox-item": blocks.listboxItem,
-
-      // Blocks: Table
-      table: blocks.table,
-      thead: blocks.thead,
-      tbody: blocks.tbody,
-      tr: blocks.tr,
-      th: blocks.th,
-      td: blocks.td,
-
-      // Blocks: Tabs
-      "tabs-root": blocks.tabsRoot,
-      "tabs-list": blocks.tabsList,
-      "tabs-trigger": blocks.tabsTrigger,
-      "tabs-content": blocks.tabsContent,
-
-      // Blocks: Tree
-      "tree-root": blocks.treeRoot,
-      "tree-branch": blocks.treeBranch,
-      "tree-branch-content": blocks.treeBranchContent,
-      "tree-branch-label": blocks.treeBranchLabel,
-      "tree-leaf": blocks.treeLeaf,
-      "tree-leaf-content": blocks.treeLeafContent,
-
-      // Blocks: Tooltip
-      "tooltip-content": blocks.tooltipContent,
-
-      // Blocks: Navigator
-      "navigator-root": blocks.navigatorRoot,
-      "navigator-list": blocks.navigatorList,
-      "navigator-item": blocks.navigatorItem,
-      "navigator-trigger": blocks.navigatorTrigger,
-      "navigator-link": blocks.navigatorLink,
-      "navigator-content": blocks.navigatorContent,
-      "navigator-viewport": blocks.navigatorViewport,
-      "navigator-viewport-wrapper": blocks.navigatorViewportWrapper,
-      "navigator-indicator": blocks.navigatorIndicator,
-      "navigator-grid": blocks.navigatorGrid,
-      "navigator-card": blocks.navigatorCard,
-      "navigator-card-title": blocks.navigatorCardTitle,
-      "navigator-card-description": blocks.navigatorCardDescription,
-      "navigator-featured": blocks.navigatorFeatured,
-      "navigator-featured-title": blocks.navigatorFeaturedTitle,
-      "navigator-featured-description": blocks.navigatorFeaturedDescription,
-
-      // Blocks: Dialog
-      "dialog-overlay": blocks.dialogOverlay,
-      "dialog-content": blocks.dialogContent,
-      "dialog-title": blocks.dialogTitle,
-      "dialog-description": blocks.dialogDescription,
-
-      // Blocks: Popover
-      "popover-trigger": blocks.popoverTrigger,
-      "popover-content": blocks.popoverContent,
-      "popover-arrow": blocks.popoverArrow,
-      "popover-close": blocks.popoverClose,
-
-      // Blocks: Command
-      "command-root": blocks.commandRoot,
-      "command-input": blocks.commandInput,
-      "command-content": blocks.commandContent,
-      "command-viewport": blocks.commandViewport,
-      "command-group": blocks.commandGroup,
-      "command-label": blocks.commandLabel,
-      "command-item": blocks.commandItem,
-      "command-empty": blocks.commandEmpty,
-
-      // Blocks: Typography
-      p: blocks.p,
-      h1: blocks.h1,
-      h2: blocks.h2,
-      h3: blocks.h3,
-      h4: blocks.h4,
-      h5: blocks.h5,
-      h6: blocks.h6,
-      code: blocks.code,
-      kbd: blocks.kbd,
-      pre: blocks.pre,
-      strong: blocks.strong,
-      em: blocks.em,
-      del: blocks.del,
-      blockquote: blocks.blockquote,
-      hr: blocks.hr,
-      ul: blocks.ul,
-      ol: blocks.ol,
-      li: blocks.li,
-
-      // Prose: Table of Contents
-      "toc-root": prose.tocRoot,
-      "toc-content": prose.tocContent,
-      "toc-item": prose.tocItem,
-
-      // Prose: Attribution
-      "attribution-root": prose.attributionRoot,
-      "attribution-container": prose.attributionContainer,
-      "attribution-meta": prose.attributionMeta,
-      "attribution-author": prose.attributionAuthor,
-      "attribution-published": prose.attributionPublished,
-      "attribution-tags": prose.attributionTags,
-
-      // Prose: Content Grid
-      "content-grid": prose.contentGrid,
-      "content-grid-item": prose.contentGridItem,
-      "content-grid-title": prose.contentGridTitle,
-      "content-grid-description": prose.contentGridDescription,
-      "content-grid-meta": prose.contentGridMeta,
-      "content-grid-author": prose.contentGridAuthor,
-      "content-grid-published": prose.contentGridPublished,
-
-      // Prose: Surround (Prev/Next)
-      "surround-root": prose.surroundRoot,
-      "surround-prev": prose.surroundPrev,
-      "surround-next": prose.surroundNext,
-      "surround-label": prose.surroundLabel,
-      "surround-title": prose.surroundTitle,
-      "surround-prev-description": prose.surroundPrevDescription,
-      "surround-next-description": prose.surroundNextDescription,
-
-      // Prose: Content Filters
-      "content-filters-section": prose.contentFiltersSection,
-
-      // Prose: Content Accordion
-      "content-accordion": prose.contentAccordion,
-
-      // Prose: Content Search
-      "content-search-root": prose.contentSearchRoot,
-      "content-search-status": prose.contentSearchStatus,
-      "content-search-results": prose.contentSearchResults,
-      "content-search-group": prose.contentSearchGroup,
-      "content-search-group-title": prose.contentSearchGroupTitle,
-      "content-search-result": prose.contentSearchResult,
-      "content-search-result-title": prose.contentSearchResultTitle,
-      "content-search-result-separator": prose.contentSearchResultSeparator,
-      "content-search-result-date": prose.contentSearchResultDate,
-
-      // Docula: App-specific
-      "community-root": elements.communityRoot,
-      "community-content": elements.communityContent,
-      "community-item": elements.communityItem,
-      container: elements.container,
+      // Docula: App-specific elements
+      ...community.$defs,
+      ...search.$defs,
+      ...topbar.$defs,
+      ...versionSelect.$defs,
+      [container.key]: container.$def,
     },
   },
 });

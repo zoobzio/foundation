@@ -1,5 +1,7 @@
+import type { del } from "../../elements.config";
+
 export type DelProps = {
-  tokens?: Tokens<"del">;
+  tokens?: Tokens<typeof del.key>;
 };
 
 export type DelEmits = {};

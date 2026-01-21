@@ -1,5 +1,7 @@
+import type { th } from "../../elements.config";
+
 export type ThProps = {
-  tokens?: Tokens<"th">;
+  tokens?: Tokens<typeof th.key>;
 };
 
 export type ThEmits = {};

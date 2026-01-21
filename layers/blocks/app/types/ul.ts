@@ -1,5 +1,7 @@
+import type { ul } from "../../elements.config";
+
 export type UlProps = {
-  tokens?: Tokens<"ul">;
+  tokens?: Tokens<typeof ul.key>;
 };
 
 export type UlEmits = {};

@@ -5,12 +5,20 @@ export interface DoculaCollection {
   title: string;
   description?: string;
   repo?: string;
+  navIcons?: Record<string, IconAlias>;
+}
+
+export interface DoculaVersion {
+  current: string;
+  versions: string[];
+  latest: string;
 }
 
 declare module "nuxt/schema" {
   interface AppConfigInput {
     title?: string;
     collection?: DoculaCollection;
+    version?: DoculaVersion;
   }
 }
 

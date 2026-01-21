@@ -1,5 +1,7 @@
+import type { pre } from "../../elements.config";
+
 export type PreProps = {
-  tokens?: Tokens<"pre">;
+  tokens?: Tokens<typeof pre.key>;
 };
 
 export type PreEmits = {};

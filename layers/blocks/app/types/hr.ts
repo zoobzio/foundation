@@ -1,5 +1,7 @@
+import type { hr } from "../../elements.config";
+
 export type HrProps = {
-  tokens?: Tokens<"hr">;
+  tokens?: Tokens<typeof hr.key>;
 };
 
 export type HrEmits = {};

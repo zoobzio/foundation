@@ -1,5 +1,7 @@
+import type { em } from "../../elements.config";
+
 export type EmProps = {
-  tokens?: Tokens<"em">;
+  tokens?: Tokens<typeof em.key>;
 };
 
 export type EmEmits = {};

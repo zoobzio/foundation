@@ -1,9 +1,11 @@
+import type { checkbox } from "../../elements.config";
+
 export type CheckboxProps = {
   disabled?: boolean;
   name?: string;
   value?: string;
   required?: boolean;
-  tokens?: Tokens<"checkbox-root" | "checkbox-indicator">;
+  tokens?: Tokens<typeof checkbox.root | typeof checkbox.indicator>;
 };
 
 export type CheckboxEmits = {};

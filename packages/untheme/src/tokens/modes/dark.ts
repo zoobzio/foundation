@@ -16,6 +16,7 @@ export default {
   // Content tokens
   "sys-on-surface": "ref-slate-100",
   "sys-on-surface-variant": "ref-slate-300",
+  "sys-muted": "ref-slate-500",
   "sys-outline": "ref-slate-700",
   "sys-outline-variant": "ref-slate-800",
 
@@ -79,6 +80,7 @@ export default {
   // Special
   "sys-scrim": "ref-slate-50",
   "sys-shadow": "ref-slate-950",
+  "sys-void": "ref-black",
 
   // Shiki syntax highlighting
   "shiki-text": "ref-slate-100",

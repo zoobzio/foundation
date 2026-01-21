@@ -1,9 +1,11 @@
+import type { listbox } from "../../elements.config";
+
 export type ListboxProps = {
   items: Option[];
   modelValue?: string | string[];
   multiple?: boolean;
   disabled?: boolean;
-  tokens?: Tokens<"listbox-root" | "listbox-content" | "listbox-item">;
+  tokens?: Tokens<typeof listbox.root | typeof listbox.content | typeof listbox.item>;
 };
 
 export type ListboxEmits = {

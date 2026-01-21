@@ -1,5 +1,7 @@
+import type { header } from "../../elements.config";
+
 export type HeaderProps = {
-  tokens?: Tokens<"header">;
+  tokens?: Tokens<typeof header.key>;
 };
 
 export type HeaderEmits = {};

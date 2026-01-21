@@ -43,6 +43,10 @@ const { data: content } = await useAsyncData(
       .first(),
   { immediate: !isCollectionRoot.value },
 );
+
+useHead({
+  title: "Testing~",
+});
 </script>
 
 <template>

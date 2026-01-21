@@ -1,16 +1,17 @@
 <script lang="ts">
 import type { PageCollections } from "@nuxt/content";
+import type { contentGrid } from "../../elements.config";
 
 export interface ContentGridProps {
   collection: keyof PageCollections;
   tokens?: Tokens<
-    | "content-grid"
-    | "content-grid-item"
-    | "content-grid-title"
-    | "content-grid-description"
-    | "content-grid-meta"
-    | "content-grid-author"
-    | "content-grid-published"
+    | typeof contentGrid.root
+    | typeof contentGrid.item
+    | typeof contentGrid.title
+    | typeof contentGrid.description
+    | typeof contentGrid.meta
+    | typeof contentGrid.author
+    | typeof contentGrid.published
   >;
 }
 </script>
@@ -36,7 +37,7 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
-  <div v-if="items" :style="styles['content-grid']" class="f-content-grid">
+  <div v-if="items" :style="styles['content-grid-root']" class="f-content-grid-root">
     <NuxtLink
       v-for="item in items"
       :key="item.id"
@@ -69,7 +70,7 @@ const formatDate = (dateString: string) => {
 </template>
 
 <style>
-@import '#build/untheme/content-grid.css';
+@import '#build/untheme/content-grid-root.css';
 @import '#build/untheme/content-grid-item.css';
 @import '#build/untheme/content-grid-title.css';
 @import '#build/untheme/content-grid-description.css';

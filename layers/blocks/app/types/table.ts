@@ -1,5 +1,7 @@
+import type { table } from "../../elements.config";
+
 export type TableProps = {
-  tokens?: Tokens<"table">;
+  tokens?: Tokens<typeof table.key>;
 };
 
 export type TableEmits = {};

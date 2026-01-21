@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PageCollections } from "@nuxt/content";
+import type { surround } from "../../elements.config";
 
 export interface SurroundProps<T extends keyof PageCollections> {
   collection: T;
@@ -7,7 +8,13 @@ export interface SurroundProps<T extends keyof PageCollections> {
   prevLabel?: string;
   nextLabel?: string;
   tokens?: Tokens<
-    "surround-root" | "surround-prev" | "surround-next" | "surround-label" | "surround-title" | "surround-prev-description" | "surround-next-description"
+    | typeof surround.root
+    | typeof surround.prev
+    | typeof surround.next
+    | typeof surround.label
+    | typeof surround.title
+    | typeof surround.prevDescription
+    | typeof surround.nextDescription
   >;
 }
 </script>

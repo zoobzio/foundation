@@ -13,9 +13,7 @@ const modKey = computed(() => (isMac.value ? "⌘" : "Ctrl"));
 
 <template>
   <Tooltip>
-    <Button shortcut="l" @click="open = true">
-      <Icon alias="translate" />
-    </Button>
+    <Fab shortcut="meta+l" icon="translate" @click="open = true" />
     <template #content>
       <span>Translate</span>
       <Kbd>

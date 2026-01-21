@@ -29,6 +29,10 @@
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^1.4.0",
+    "@types/figlet": "^1.7.0",
     "eslint": "^9.0.0"
+  },
+  "dependencies": {
+    "figlet": "^1.9.4"
   }
 }

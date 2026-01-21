@@ -1,3 +1,5 @@
+import type { navigator } from "../../elements.config";
+
 export type NavigatorProps = {
   items: NavigatorItem[];
   orientation?: "horizontal" | "vertical";
@@ -6,22 +8,22 @@ export type NavigatorProps = {
   skipDelayDuration?: number;
   featured?: Link;
   tokens?: Tokens<
-    | "navigator-root"
-    | "navigator-list"
-    | "navigator-item"
-    | "navigator-trigger"
-    | "navigator-link"
-    | "navigator-content"
-    | "navigator-viewport"
-    | "navigator-viewport-wrapper"
-    | "navigator-indicator"
-    | "navigator-grid"
-    | "navigator-card"
-    | "navigator-card-title"
-    | "navigator-card-description"
-    | "navigator-featured"
-    | "navigator-featured-title"
-    | "navigator-featured-description"
+    | typeof navigator.root
+    | typeof navigator.list
+    | typeof navigator.item
+    | typeof navigator.trigger
+    | typeof navigator.link
+    | typeof navigator.content
+    | typeof navigator.viewport
+    | typeof navigator.viewportWrapper
+    | typeof navigator.indicator
+    | typeof navigator.grid
+    | typeof navigator.card
+    | typeof navigator.cardTitle
+    | typeof navigator.cardDescription
+    | typeof navigator.featured
+    | typeof navigator.featuredTitle
+    | typeof navigator.featuredDescription
   >;
 };
 

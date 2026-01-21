@@ -1,5 +1,7 @@
+import type { strong } from "../../elements.config";
+
 export type StrongProps = {
-  tokens?: Tokens<"strong">;
+  tokens?: Tokens<typeof strong.key>;
 };
 
 export type StrongEmits = {};

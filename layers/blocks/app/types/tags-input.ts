@@ -1,3 +1,5 @@
+import type { tagsInput } from "../../elements.config";
+
 export type TagsInputProps = {
   placeholder?: string;
   disabled?: boolean;
@@ -10,12 +12,12 @@ export type TagsInputProps = {
   delimiter?: string;
   duplicate?: boolean;
   tokens?: Tokens<
-    | "tags-input-root"
-    | "tags-input-item"
-    | "tags-input-item-text"
-    | "tags-input-item-delete"
-    | "tags-input-input"
-    | "tags-input-clear"
+    | typeof tagsInput.root
+    | typeof tagsInput.item
+    | typeof tagsInput.itemText
+    | typeof tagsInput.itemDelete
+    | typeof tagsInput.input
+    | typeof tagsInput.clear
   >;
 };
 

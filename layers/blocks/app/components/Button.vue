@@ -12,14 +12,19 @@ const {
 
 const styles = useTokenStyle(tokens);
 
-const buttonRef = useTemplateRef<HTMLButtonElement>("button");
+const buttonRef = useTemplateRef("button");
 
 if (shortcut) {
   const keys = useMagicKeys();
-  const combo = computed(() => keys[`meta+${shortcut}`]?.value);
+  const combo = computed(() => keys[shortcut]?.value);
 
   whenever(combo, () => {
-    buttonRef.value?.click();
+    const el = buttonRef.value as { $el?: HTMLElement } | HTMLElement | null;
+    if (el && '$el' in el) {
+      el.$el?.click();
+    } else if (el instanceof HTMLElement) {
+      el.click();
+    }
   });
 }
 

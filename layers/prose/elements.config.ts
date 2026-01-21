@@ -1,48 +1,65 @@
-import { defineElement } from "@foundation/untheme/config";
+import { defineElement, defineElements } from "@foundation/untheme/config";
 
-export default {
-  // Content Search
-  contentSearchRoot: defineElement("flexbox", "overflow"),
-  contentSearchStatus: defineElement("textflow"),
-  contentSearchResults: defineElement("flexbox", "overflow"),
-  contentSearchGroup: defineElement("flexbox"),
-  contentSearchGroupTitle: defineElement("textflow"),
-  contentSearchResult: defineElement("flexbox", "interactive", "animated"),
-  contentSearchResultTitle: defineElement("textflow", "overflow"),
-  contentSearchResultSeparator: defineElement("flexbox"),
-  contentSearchResultDate: defineElement("textflow"),
+// ============================================================================
+// Standalone Elements
+// ============================================================================
 
-  // Table of Contents
-  tocRoot: defineElement("flexbox"),
-  tocContent: defineElement("flexbox"),
-  tocItem: defineElement(
-    "flexbox",
-    "interactive",
-    "selected",
-    "animated",
-    "textflow",
-    "overflow",
-  ),
-  attributionRoot: defineElement("flexbox"),
-  attributionContainer: defineElement("flexbox"),
-  attributionMeta: defineElement("grid"),
-  attributionAuthor: defineElement("textflow"),
-  attributionPublished: defineElement("textflow"),
-  attributionTags: defineElement("flexbox"),
-  contentGrid: defineElement("grid"),
-  contentGridItem: defineElement("flexbox", "interactive", "animated"),
-  contentGridTitle: defineElement(),
-  contentGridDescription: defineElement(),
-  contentGridMeta: defineElement("flexbox"),
-  contentGridAuthor: defineElement("flexbox", "textflow"),
-  contentGridPublished: defineElement("flexbox", "textflow"),
-  surroundRoot: defineElement("flexbox"),
-  surroundPrev: defineElement("flexbox", "interactive", "animated"),
-  surroundNext: defineElement("flexbox", "interactive", "animated"),
-  surroundLabel: defineElement("flexbox"),
-  surroundTitle: defineElement(),
-  surroundPrevDescription: defineElement(),
-  surroundNextDescription: defineElement(),
-  contentFiltersSection: defineElement("flexbox"),
-  contentAccordion: defineElement("flexbox"),
-};
+export const contentFiltersSection = defineElement("content-filters-section", "flexbox");
+export const contentAccordion = defineElement("content-accordion", "flexbox");
+
+// ============================================================================
+// Compound Elements
+// ============================================================================
+
+export const contentSearch = defineElements("content-search", {
+  root: ["flexbox", "overflow"],
+  status: ["textflow"],
+  results: ["flexbox", "overflow"],
+  group: ["flexbox"],
+  groupTitle: ["textflow"],
+  result: ["flexbox", "interactive", "animated"],
+  resultTitle: ["textflow", "overflow"],
+  resultSeparator: ["flexbox"],
+  resultDate: ["textflow"],
+});
+
+export const toc = defineElements("toc", {
+  root: ["flexbox"],
+  content: ["flexbox"],
+  item: ["flexbox", "interactive", "selected", "animated", "textflow", "overflow"],
+});
+
+export const attribution = defineElements("attribution", {
+  root: ["flexbox"],
+  author: ["flexbox", "textflow"],
+  published: ["flexbox", "textflow"],
+  readtime: ["flexbox", "textflow"],
+  edit: ["flexbox", "interactive", "textflow"],
+});
+
+export const navList = defineElements("nav-list", {
+  root: ["flexbox"],
+  group: ["flexbox"],
+  item: ["flexbox", "interactive", "selected", "animated", "textflow", "overflow"],
+  label: ["textflow", "overflow"],
+});
+
+export const contentGrid = defineElements("content-grid", {
+  root: ["grid"],
+  item: ["flexbox", "interactive", "animated"],
+  title: [],
+  description: [],
+  meta: ["flexbox"],
+  author: ["flexbox", "textflow"],
+  published: ["flexbox", "textflow"],
+});
+
+export const surround = defineElements("surround", {
+  root: ["flexbox"],
+  prev: ["flexbox", "interactive", "animated"],
+  next: ["flexbox", "interactive", "animated"],
+  label: ["flexbox"],
+  title: [],
+  prevDescription: [],
+  nextDescription: [],
+});

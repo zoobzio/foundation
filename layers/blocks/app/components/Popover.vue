@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { PopoverProps, PopoverEmits } from "../types/popover";
+import type { PopoverProps } from "../types/popover";
+import type { ReferenceElement } from "reka-ui";
 
 const {
-  open,
+  reference,
   defaultOpen = false,
   modal = false,
   side = "bottom",
@@ -11,27 +12,21 @@ const {
   alignOffset = 0,
   arrow = false,
   tokens,
-} = defineProps<PopoverProps>();
+} = defineProps<
+  Omit<PopoverProps, "open"> & { reference?: ReferenceElement }
+>();
 
-const emit = defineEmits<PopoverEmits>();
+const open = defineModel<boolean>("open", { default: false });
 
 const styles = useTokenStyle(tokens);
 </script>
 
 <template>
-  <PopoverRoot
-    :open="open"
-    :default-open="defaultOpen"
-    :modal="modal"
-    @update:open="emit('update:open', $event)"
-  >
-    <PopoverTrigger
-      as-child
-      :style="styles['popover-trigger']"
-      class="f-popover-trigger"
-    >
+  <PopoverRoot v-model:open="open" :default-open="defaultOpen" :modal="modal">
+    <PopoverAnchor v-if="reference" :reference="reference" />
+    <PopoverAnchor v-else as-child>
       <slot />
-    </PopoverTrigger>
+    </PopoverAnchor>
     <PopoverPortal>
       <PopoverContent
         :side="side"
@@ -60,8 +55,8 @@ const styles = useTokenStyle(tokens);
 </template>
 
 <style>
-@import '#build/untheme/popover-trigger.css';
-@import '#build/untheme/popover-content.css';
-@import '#build/untheme/popover-arrow.css';
-@import '#build/untheme/popover-close.css';
+@import "#build/untheme/popover-trigger.css";
+@import "#build/untheme/popover-content.css";
+@import "#build/untheme/popover-arrow.css";
+@import "#build/untheme/popover-close.css";
 </style>

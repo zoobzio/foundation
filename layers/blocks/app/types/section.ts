@@ -1,5 +1,7 @@
+import type { section } from "../../elements.config";
+
 export type SectionProps = {
-  tokens?: Tokens<"section">;
+  tokens?: Tokens<typeof section.key>;
 };
 
 export type SectionEmits = {};

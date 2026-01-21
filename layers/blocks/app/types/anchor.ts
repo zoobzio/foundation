@@ -1,3 +1,5 @@
+import type { a } from "../../elements.config";
+
 export type AnchorProps = {
   label?: string;
   to?: string;
@@ -8,7 +10,7 @@ export type AnchorProps = {
   replace?: boolean;
   prefetch?: boolean;
   disabled?: boolean;
-  tokens?: Tokens<"a">;
+  tokens?: Tokens<typeof a.key>;
 };
 
 export type AnchorEmits = {};

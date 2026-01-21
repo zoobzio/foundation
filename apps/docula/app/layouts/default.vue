@@ -1,6 +1,9 @@
 <template>
+  <VersionBanner />
   <Main>
     <TopBar />
-    <slot />
+    <Scroller>
+      <slot />
+    </Scroller>
   </Main>
 </template>

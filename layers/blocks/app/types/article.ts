@@ -1,5 +1,7 @@
+import type { article } from "../../elements.config";
+
 export type ArticleProps = {
-  tokens?: Tokens<"article">;
+  tokens?: Tokens<typeof article.key>;
 };
 
 export type ArticleEmits = {};

@@ -76,6 +76,6 @@ export interface DataTableColumn<T> {
 }
 
 /**
- * Button keyboard shortcut keys
+ * Keyboard shortcut string (e.g., "meta+k", "ctrl+shift+p")
  */
-export type ButtonShortcut = "k" | "l" | "t" | "d";
+export type ButtonShortcut = string;

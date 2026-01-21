@@ -53,6 +53,7 @@ export default {
 
   // Content-focused patterns
   "ref-layout-trifold": "1fr auto 1fr", // Edges flex, center fixed
+  "ref-layout-quadfold": "auto 1fr 1fr auto", // Edges auto, center 2-col flex
   "ref-layout-split": "1fr 1fr", // Equal halves
   "ref-layout-golden": "1.618fr 1fr", // Golden ratio split
 

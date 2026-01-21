@@ -1,23 +1,25 @@
 <script lang="ts">
 import type { CollectionConfig, SearchResult, GroupedResults } from "../composables/search";
 import type { CommandGroup } from "@foundation/blocks/app/components/Command.vue";
+import type { command, icon } from "@foundation/blocks/elements";
+import type { contentSearch } from "../../elements.config";
 
 export interface ContentSearchProps {
   collections: CollectionConfig[];
   tokens?: Tokens<
-    | "command-root"
-    | "command-input"
-    | "command-content"
-    | "command-viewport"
-    | "command-group"
-    | "command-label"
-    | "command-item"
-    | "command-empty"
-    | "icon"
-    | "content-search-result"
-    | "content-search-result-title"
-    | "content-search-result-separator"
-    | "content-search-result-date"
+    | typeof command.root
+    | typeof command.input
+    | typeof command.content
+    | typeof command.viewport
+    | typeof command.group
+    | typeof command.label
+    | typeof command.item
+    | typeof command.empty
+    | typeof icon.key
+    | typeof contentSearch.result
+    | typeof contentSearch.resultTitle
+    | typeof contentSearch.resultSeparator
+    | typeof contentSearch.resultDate
   >;
 }
 </script>

@@ -1,5 +1,7 @@
+import type { ol } from "../../elements.config";
+
 export type OlProps = {
-  tokens?: Tokens<"ol">;
+  tokens?: Tokens<typeof ol.key>;
 };
 
 export type OlEmits = {};

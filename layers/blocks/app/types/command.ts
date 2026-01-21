@@ -1,3 +1,5 @@
+import type { command } from "../../elements.config";
+
 export type CommandItem = {
   value: string;
   label: string;
@@ -15,14 +17,14 @@ export type CommandProps = {
   placeholder?: string;
   disabled?: boolean;
   tokens?: Tokens<
-    | "command-root"
-    | "command-input"
-    | "command-content"
-    | "command-viewport"
-    | "command-group"
-    | "command-label"
-    | "command-item"
-    | "command-empty"
+    | typeof command.root
+    | typeof command.input
+    | typeof command.content
+    | typeof command.viewport
+    | typeof command.group
+    | typeof command.label
+    | typeof command.item
+    | typeof command.empty
   >;
 };
 

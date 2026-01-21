@@ -1,3 +1,5 @@
+import type { tree } from "../../elements.config";
+
 export type TreeProps = {
   items: TreeNode[];
   modelValue?: TreeNode | TreeNode[];
@@ -5,12 +7,12 @@ export type TreeProps = {
   multiple?: boolean;
   selectionBehavior?: "replace" | "toggle";
   tokens?: Tokens<
-    | "tree-root"
-    | "tree-branch"
-    | "tree-branch-content"
-    | "tree-branch-label"
-    | "tree-leaf"
-    | "tree-leaf-content"
+    | typeof tree.root
+    | typeof tree.branch
+    | typeof tree.branchContent
+    | typeof tree.branchLabel
+    | typeof tree.leaf
+    | typeof tree.leafContent
   >;
 };
 

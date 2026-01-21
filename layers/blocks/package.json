@@ -28,6 +28,7 @@
     "@vueuse/core": "^11.3.0",
     "@vueuse/nuxt": "^14.1.0",
     "defu": "catalog:",
+    "figlet": "^1.9.4",
     "nuxt": "catalog:",
     "pinia": "catalog:",
     "reka-ui": "catalog:"
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@iconify-json/circle-flags": "^1.2.10",
     "@iconify-json/ic": "^1.2.4",
+    "@types/figlet": "^1.7.0",
     "@unocss/nuxt": "catalog:",
     "typescript": "catalog:",
     "unocss": "catalog:"

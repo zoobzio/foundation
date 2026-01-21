@@ -1,86 +1,58 @@
 <script lang="ts">
 import type { PageCollections } from "@nuxt/content";
+import type { caption } from "@foundation/blocks/elements";
+import type { navList } from "../../elements.config";
+import type { NavListGroup } from "./NavList.vue";
 
 export interface ContentTreeProps {
   collection: keyof PageCollections;
   title?: string;
   icon?: IconAlias;
   tokens?: Tokens<
-    | "caption"
-    | "tree-root"
-    | "tree-branch"
-    | "tree-branch-content"
-    | "tree-leaf"
-    | "tree-leaf-content"
+    | typeof caption.key
+    | typeof navList.root
+    | typeof navList.group
+    | typeof navList.item
   >;
 }
 </script>
 
 <script setup lang="ts">
-const {
-  collection,
-  title,
-  icon,
-  tokens,
-} = defineProps<ContentTreeProps>();
+const props = defineProps<ContentTreeProps>();
 
-const _styles = useTokenStyle(tokens);
+const styles = useTokenStyle(props.tokens);
+
+const appConfig = useAppConfig();
+const navIcons = computed(() => appConfig.collection?.navIcons ?? {});
 
 const { data: navigation } = await useAsyncData(
-  `content-tree-${collection}`,
-  () => queryCollectionNavigation(collection),
+  `content-tree-${props.collection}`,
+  () => queryCollectionNavigation(props.collection),
 );
 
-// Transform ContentNavigationItem[] to TreeNode[]
-const transformNavigation = (
-  items: Awaited<ReturnType<typeof queryCollectionNavigation>> | null,
-): TreeNode[] => {
-  if (!items) return [];
+// Transform navigation into flat groups (1 level deep only)
+const groups = computed<NavListGroup[]>(() => {
+  if (!navigation.value) return [];
 
-  return items.map((item) => ({
-    value: item.path,
-    label: item.title,
-    to: item.path,
-    children: item.children ? transformNavigation(item.children) : undefined,
-  }));
-};
-
-const treeItems = computed(() => transformNavigation(navigation.value ?? null));
-
-const route = useRoute();
-
-// Recursively find tree node by path
-const findNodeByPath = (items: TreeNode[], path: string): TreeNode | null => {
-  for (const item of items) {
-    if (item.to === path) return item;
-    if (item.children) {
-      const found = findNodeByPath(item.children, path);
-      if (found) return found;
-    }
-  }
-  return null;
-};
-
-const selectedValue = computed(() => {
-  const currentPath = route.path;
-  return findNodeByPath(treeItems.value, currentPath);
+  return navigation.value
+    .filter((item) => item.children && item.children.length > 0)
+    .map((folder) => ({
+      label: folder.title,
+      icon: navIcons.value[folder.title],
+      items: (folder.children ?? [])
+        .filter((child) => !child.children) // Only leaf items, ignore nested folders
+        .map((child) => ({
+          label: child.title,
+          to: child.path,
+        })),
+    }))
+    .filter((group) => group.items.length > 0); // Only groups with items
 });
-
-// Use persisted tree state
-const { expanded, handleExpandedUpdate } = useContentTreeState(collection);
 </script>
 
 <template>
-  <Caption v-if="title" :icon="icon" :tokens="tokens">
-    {{ title }}
+  <Caption v-if="props.title" :icon="props.icon" :tokens="props.tokens">
+    {{ props.title }}
   </Caption>
-  <Tree
-    :items="treeItems"
-    :tokens="tokens"
-    :model-value="selectedValue"
-    :expanded="expanded"
-    :multiple="false"
-    selection-behavior="replace"
-    @update:expanded="handleExpandedUpdate"
-  />
+  <NavList :groups="groups" :tokens="props.tokens" />
 </template>

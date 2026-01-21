@@ -1,5 +1,7 @@
+import type { h3 } from "../../elements.config";
+
 export type H3Props = {
-  tokens?: Tokens<"h3">;
+  tokens?: Tokens<typeof h3.key>;
 };
 
 export type H3Emits = {};

@@ -1,3 +1,5 @@
+import type { select } from "../../elements.config";
+
 export type SelectProps = {
   options: Option[];
   placeholder?: string;
@@ -5,10 +7,10 @@ export type SelectProps = {
   required?: boolean;
   name?: string;
   tokens?: Tokens<
-    | "select-root"
-    | "select-trigger"
-    | "select-content"
-    | "select-item"
+    | typeof select.root
+    | typeof select.trigger
+    | typeof select.content
+    | typeof select.item
   >;
 };
 

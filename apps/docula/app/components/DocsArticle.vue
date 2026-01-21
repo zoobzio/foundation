@@ -1,35 +1,46 @@
 <script setup lang="ts">
 import type { ParsedContent } from "@nuxt/content";
 
+interface ContentWithMeta extends ParsedContent {
+  author?: string;
+  published?: string;
+  updated?: string;
+  readtime?: string;
+}
+
 const props = defineProps<{
   collection: string;
   path: string;
-  content: ParsedContent;
+  content: ContentWithMeta;
   repo?: string;
 }>();
+
+const editUrl = computed(() => {
+  if (!props.repo) return undefined;
+  // Convert repo URL to edit URL: https://github.com/owner/repo -> https://github.com/owner/repo/edit/main/content/...
+  const repoBase = props.repo.replace(/\/$/, "");
+  return `${repoBase}/edit/main/content${props.path}.md`;
+});
 </script>
 
 <template>
-  <Left border>
-    <ContentTree
-      :collection="collection"
-      title="In this collection"
-      icon="folder-open"
-    />
-  </Left>
   <Container>
     <Section>
+      <Attribution
+        :author="content?.author"
+        :published="content?.published"
+        :updated="content?.updated"
+        :readtime="content?.readtime"
+        :edit-url="editUrl"
+      />
       <Article>
         <ContentRenderer :value="content" />
       </Article>
-      <Attribution
-        :author="content.author"
-        :published="content.published"
-        :tags="content.tags"
-      />
       <Surround :collection="collection" :path="path" />
+      <Hr />
+      <Giscus />
     </Section>
-    <Right border>
+    <Right>
       <Toc v-if="content?.body?.toc?.links" :links="content.body.toc.links" />
     </Right>
   </Container>

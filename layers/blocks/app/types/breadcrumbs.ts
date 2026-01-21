@@ -1,13 +1,15 @@
+import type { breadcrumbs } from "../../elements.config";
+
 export type BreadcrumbsProps = {
   items: Link[];
   separator?: IconAlias;
   tokens?: Tokens<
-    | "breadcrumbs-root"
-    | "breadcrumbs-list"
-    | "breadcrumbs-item"
-    | "breadcrumbs-link"
-    | "breadcrumbs-current"
-    | "breadcrumbs-separator"
+    | typeof breadcrumbs.root
+    | typeof breadcrumbs.list
+    | typeof breadcrumbs.item
+    | typeof breadcrumbs.link
+    | typeof breadcrumbs.current
+    | typeof breadcrumbs.separator
   >;
 };
 

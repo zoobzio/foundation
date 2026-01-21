@@ -1,8 +1,10 @@
+import type { avatar } from "../../elements.config";
+
 export type AvatarProps = {
   src: string;
   alt?: string;
   fallback?: string;
-  tokens?: Tokens<"avatar-root" | "avatar-image" | "avatar-fallback">;
+  tokens?: Tokens<typeof avatar.root | typeof avatar.image | typeof avatar.fallback>;
 };
 
 export type AvatarEmits = {};

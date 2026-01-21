@@ -2,78 +2,99 @@
 export interface AttributionProps {
   author?: string;
   published?: string;
-  tags?: string[];
+  updated?: string;
+  readtime?: string;
+  editUrl?: string;
   tokens?: Tokens<
     | "attribution-root"
-    | "attribution-container"
-    | "attribution-meta"
     | "attribution-author"
     | "attribution-published"
-    | "attribution-tags"
+    | "attribution-readtime"
+    | "attribution-edit"
   >;
 }
 
-const { author, published, tags, tokens } = defineProps<AttributionProps>();
+const props = defineProps<AttributionProps>();
 
-const styles = useTokenStyle(tokens);
+const styles = useTokenStyle(props.tokens);
 
-const formattedDate = computed(() => {
-  if (!published) return "";
-  const date = new Date(published);
+const formatDate = (dateStr: string | Date) => {
+  const date = dateStr instanceof Date ? dateStr : new Date(dateStr);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+};
+
+const formattedDate = computed(() => {
+  const dateValue = props.updated || props.published;
+  if (!dateValue) return "";
+  return formatDate(dateValue);
 });
 </script>
 
 <template>
   <div
-    v-if="author || published || tags?.length"
+    v-if="props.author || props.published || props.updated || props.readtime"
     :style="styles['attribution-root']"
     class="f-attribution-root"
   >
-    <div
-      :style="styles['attribution-container']"
-      class="f-attribution-container"
+    <span
+      v-if="props.author"
+      :style="styles['attribution-author']"
+      class="f-attribution-author"
     >
-      <div :style="styles['attribution-meta']" class="f-attribution-meta">
-        <template v-if="author">
-          <Icon alias="user" />
-          <span
-            :style="styles['attribution-author']"
-            class="f-attribution-author"
-          >
-            {{ author }}
-          </span>
-        </template>
-        <template v-if="published">
-          <Icon alias="calendar" />
-          <span
-            :style="styles['attribution-published']"
-            class="f-attribution-published"
-          >
-            {{ formattedDate }}
-          </span>
-        </template>
-      </div>
-      <div
-        v-if="tags?.length"
-        :style="styles['attribution-tags']"
-        class="f-attribution-tags"
+      <Avatar
+        :src="`https://github.com/${props.author}.png`"
+        :alt="props.author"
+        :tokens="{
+          'avatar-root': {
+            width: 'ref-spacing-md',
+            height: 'ref-spacing-md',
+          },
+        }"
       >
-        <Chip v-for="tag in tags" :key="tag" :label="tag" />
-      </div>
-    </div>
+        <template #fallback>
+          <Icon alias="user" />
+        </template>
+      </Avatar>
+      {{ props.author }}
+    </span>
+    <span
+      v-if="props.published || props.updated"
+      :style="styles['attribution-published']"
+      class="f-attribution-published"
+    >
+      <Icon alias="calendar" />
+      {{ formattedDate }}
+    </span>
+    <span
+      v-if="props.readtime"
+      :style="styles['attribution-readtime']"
+      class="f-attribution-readtime"
+    >
+      <Icon alias="book-open" />
+      {{ props.readtime }}
+    </span>
+    <a
+      v-if="props.editUrl"
+      :href="props.editUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      :style="styles['attribution-edit']"
+      class="f-attribution-edit"
+    >
+      Edit this page
+      <Icon alias="external" />
+    </a>
   </div>
 </template>
 
 <style>
 @import '#build/untheme/attribution-root.css';
-@import '#build/untheme/attribution-container.css';
-@import '#build/untheme/attribution-meta.css';
 @import '#build/untheme/attribution-author.css';
 @import '#build/untheme/attribution-published.css';
-@import '#build/untheme/attribution-tags.css';
+@import '#build/untheme/attribution-readtime.css';
+@import '#build/untheme/attribution-edit.css';
 </style>

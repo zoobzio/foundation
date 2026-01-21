@@ -1,5 +1,7 @@
+import type { group } from "../../elements.config";
+
 export type GroupProps = {
-  tokens?: Tokens<"group">;
+  tokens?: Tokens<typeof group.key>;
 };
 
 export type GroupEmits = {};

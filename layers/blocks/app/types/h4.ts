@@ -1,5 +1,7 @@
+import type { h4 } from "../../elements.config";
+
 export type H4Props = {
-  tokens?: Tokens<"h4">;
+  tokens?: Tokens<typeof h4.key>;
 };
 
 export type H4Emits = {};

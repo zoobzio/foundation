@@ -1,12 +1,14 @@
 <script lang="ts">
+import type { tabs } from "../../elements.config";
+
 export interface TabsProps<T extends Option> {
   tabs: T[];
-  tokens?: Tokens<"tabs-root" | "tabs-list" | "tabs-trigger" | "tabs-content">;
+  tokens?: Tokens<typeof tabs.root | typeof tabs.list | typeof tabs.trigger | typeof tabs.content>;
 }
 </script>
 
 <script setup lang="ts" generic="T extends Option">
-const { tabs, tokens } = defineProps<TabsProps<T>>();
+const { tabs: tabItems, tokens } = defineProps<TabsProps<T>>();
 
 const model = defineModel<string>();
 
@@ -17,7 +19,7 @@ const styles = useTokenStyle(tokens);
   <TabsRoot v-model="model" :style="styles['tabs-root']" class="f-tabs-root">
     <TabsList :style="styles['tabs-list']" class="f-tabs-list">
       <TabsTrigger
-        v-for="tab in tabs"
+        v-for="tab in tabItems"
         :key="tab.value"
         :value="tab.value"
         :disabled="tab.disabled"
@@ -30,7 +32,7 @@ const styles = useTokenStyle(tokens);
     </TabsList>
 
     <TabsContent
-      v-for="tab in tabs"
+      v-for="tab in tabItems"
       :key="tab.value"
       :value="tab.value"
       :style="styles['tabs-content']"

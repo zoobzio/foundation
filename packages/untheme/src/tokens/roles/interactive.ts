@@ -20,5 +20,6 @@ export default {
   "opacity-hover": null,
   "opacity-active": null,
   "box-shadow-hover": null,
+  "box-shadow-active": null,
   "box-shadow-focus": null,
 };
