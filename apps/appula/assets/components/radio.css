@@ -1,0 +1,83 @@
+.f-radio-root {
+  display: flex;
+  gap: var(--ref-spacing-sm);
+  padding-left: var(--ref-spacing-md);
+  padding-right: var(--ref-spacing-md);
+}
+
+.f-radio-root[data-orientation="vertical"] {
+  flex-direction: column;
+}
+
+.f-radio-root[data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.f-radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ref-spacing-xs);
+  font-size: var(--ref-text-sm);
+  color: var(--sys-on-surface);
+  cursor: pointer;
+}
+
+.f-radio-option:has(.f-radio-item:disabled),
+.f-radio-option:has(.f-radio-item[data-disabled]) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.f-radio-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ref-spacing-md);
+  height: var(--ref-spacing-md);
+  background: var(--sys-surface);
+  border-top-width: var(--ref-border-width-thin);
+  border-right-width: var(--ref-border-width-thin);
+  border-bottom-width: var(--ref-border-width-thin);
+  border-left-width: var(--ref-border-width-thin);
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-color: var(--sys-outline);
+  cursor: pointer;
+}
+
+.f-radio-item:not(:disabled):not([data-disabled]):hover {
+  background: var(--sys-hover);
+}
+
+.f-radio-item[data-state="checked"] {
+  background: var(--sys-primary);
+  border-color: var(--sys-primary);
+}
+
+.f-radio-item[data-state="checked"]:not(:disabled):not([data-disabled]):hover {
+  background: var(--sys-primary-hover);
+  border-color: var(--sys-primary-hover);
+}
+
+.f-radio-item:focus-visible {
+  outline-width: 2px;
+  outline-style: solid;
+  outline-color: var(--sys-primary);
+  outline-offset: 2px;
+}
+
+.f-radio-item:disabled,
+.f-radio-item[data-disabled] {
+  cursor: default;
+}
+
+.f-radio-indicator {
+  display: none;
+}
+
+.f-radio-label {
+  user-select: none;
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TheadProps } from "../types/thead";
 
-const { tokens } = defineProps<TheadProps>();
+defineProps<TheadProps>();
 
 </script>
 

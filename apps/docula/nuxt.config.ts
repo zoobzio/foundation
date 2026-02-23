@@ -2,7 +2,7 @@ import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
   compatibilityDate: "2025-11-17",
-  extends: ["@foundation/prose", "@foundation/giscus"],
+  extends: ["@foundation/prose", "@foundation/github", "@foundation/flash"],
   modules: ["nuxt-typed-router"],
   app: {
     head: {

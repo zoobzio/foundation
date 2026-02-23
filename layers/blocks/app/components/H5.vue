@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { H5Props } from "../types/h5";
 
-const { tokens } = defineProps<H5Props>();
+defineProps<H5Props>();
 
 </script>
 

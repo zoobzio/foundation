@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DelProps } from "../types/del";
 
-const { tokens } = defineProps<DelProps>();
+defineProps<DelProps>();
 
 </script>
 

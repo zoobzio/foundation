@@ -18,12 +18,14 @@
   },
   "dependencies": {
     "@foundation/blocks": "workspace:*",
-    "@foundation/giscus": "workspace:*",
+    "@foundation/flash": "workspace:*",
+    "@foundation/github": "workspace:*",
     "@foundation/iconic": "workspace:*",
     "@foundation/prose": "workspace:*",
     "@foundation/untheme": "workspace:*",
     "@nuxt/content": "catalog:",
-    "@nuxt/fonts": "^0.12.1"
+    "@nuxt/fonts": "^0.12.1",
+    "minisearch": "^7.2.0"
   },
   "devDependencies": {
     "@iconify-json/circle-flags": "^1.2.10",

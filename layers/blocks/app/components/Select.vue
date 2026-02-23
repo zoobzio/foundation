@@ -11,6 +11,10 @@ const {
 
 const model = defineModel<string>();
 
+const displayText = computed(() => {
+  const selected = options.find((o) => o.value === model.value);
+  return selected?.label ?? placeholder;
+});
 </script>
 
 <template>
@@ -24,12 +28,15 @@ const model = defineModel<string>();
     <SelectTrigger
       class="f-select-trigger"
     >
-      <SelectValue :placeholder="placeholder" />
+      <span>{{ displayText }}</span>
       <Icon alias="chevron-down" />
     </SelectTrigger>
-    <SelectContent
-      class="f-select-content"
-    >
+    <SelectPortal>
+      <SelectContent
+        class="f-select-content"
+        position="popper"
+        :side-offset="4"
+      >
       <SelectItem
         v-for="option in options"
         :key="option.value"
@@ -37,9 +44,10 @@ const model = defineModel<string>();
         :disabled="option.disabled"
         class="f-select-item"
       >
-        {{ option.label }}
+        <SelectItemText>{{ option.label }}</SelectItemText>
       </SelectItem>
-    </SelectContent>
+      </SelectContent>
+    </SelectPortal>
   </SelectRoot>
 </template>
 

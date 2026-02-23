@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AsideProps } from "../types/aside";
 
-const { tokens } = defineProps<AsideProps>();
+defineProps<AsideProps>();
 
 </script>
 

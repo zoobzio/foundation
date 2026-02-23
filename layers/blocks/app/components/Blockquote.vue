@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BlockquoteProps } from "../types/blockquote";
 
-const { tokens } = defineProps<BlockquoteProps>();
+defineProps<BlockquoteProps>();
 
 </script>
 

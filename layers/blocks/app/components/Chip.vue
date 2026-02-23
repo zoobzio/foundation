@@ -1,12 +1,25 @@
 <script setup lang="ts">
-import type { ChipProps } from "../types/chip";
+import type { ChipProps, ChipEmits } from "../types/chip";
 
-const { label } = defineProps<ChipProps>();
+const { label, closable } = defineProps<ChipProps>();
+const emit = defineEmits<ChipEmits>();
 
+const handleClick = () => {
+  if (closable) emit('close');
+};
 </script>
 
 <template>
-  <span class="f-chip">
+  <button
+    v-if="closable"
+    type="button"
+    class="f-chip f-chip--closable"
+    @click="handleClick"
+  >
+    <slot>{{ label }}</slot>
+    <Icon alias="close" class="f-chip-close" />
+  </button>
+  <span v-else class="f-chip">
     <slot>{{ label }}</slot>
   </span>
 </template>

@@ -8,6 +8,7 @@ figlet.parseFont("ANSI Regular", ansiRegular);
 const props = defineProps<{
   text: string;
   font?: string;
+  link?: boolean;
 }>();
 
 const ascii = computed(() => {
@@ -28,9 +29,10 @@ const ascii = computed(() => {
 </script>
 
 <template>
-  <NuxtLink to="/" class="f-ascii-logo-link">
+  <NuxtLink v-if="link !== false" to="/" class="f-ascii-logo-link">
     <pre class="f-ascii-logo">{{ ascii }}</pre>
   </NuxtLink>
+  <pre v-else class="f-ascii-logo">{{ ascii }}</pre>
 </template>
 
 <style>

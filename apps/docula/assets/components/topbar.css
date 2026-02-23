@@ -7,7 +7,7 @@
 .f-topbar-center {
   display: flex;
   align-items: center;
-  width: var(--ref-width-xl);
+  min-width: 24rem;
 }
 
 .f-topbar-right {

@@ -1,12 +1,9 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "article",
-});
-
 const route = useRoute();
 
 // Collection config from app config (single collection mode)
 const { collection: collectionConfig } = useAppConfig();
+const { versions } = useVersion();
 
 if (!collectionConfig?.key) {
   throw createError({
@@ -25,49 +22,77 @@ const contentPath = computed(() => {
   return `/${Array.isArray(s) ? s.join("/") : s}`;
 });
 
-// Root path means collection landing
-const isCollectionRoot = computed(() => contentPath.value === "");
+// Check if this is a version landing page (e.g., /v1.0.0)
+const isVersionLanding = computed(() => {
+  const path = contentPath.value.replace(/^\//, "");
+  return versions.includes(path);
+});
 
-// Query navigation (needed for collection view)
-const { data: navigation } = await useAsyncData(
-  `navigation-${collection}`,
-  () => queryCollectionNavigation(collection),
-);
-
-// Query content (for article view)
+// Query content for article view (only if not a version landing)
 const { data: content } = await useAsyncData(
   `content-${contentPath.value}`,
-  () =>
-    queryCollection(collection)
-      .path(contentPath.value || "/index")
-      .first(),
-  { immediate: !isCollectionRoot.value },
+  async () => {
+    if (isVersionLanding.value) return null;
+    return queryCollection(collection).path(contentPath.value).first();
+  },
 );
 
+// Set layout based on content type
+definePageMeta({
+  layout: false,
+});
+
+const layout = computed(() => (isVersionLanding.value ? "default" : "article"));
+
+if (!isVersionLanding.value && !content.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Page not found",
+    fatal: true,
+  });
+}
+
 useHead({
-  title: "Testing~",
+  title: isVersionLanding.value
+    ? collectionConfig.title
+    : (content.value?.title ?? "Docula"),
+});
+
+// Extract version prefix from path for filtering ContentTable
+const versionPrefix = computed(() => {
+  const match = contentPath.value.match(/^\/(v[\d.]+)/);
+  return match ? match[1] : "";
 });
 </script>
 
 <template>
-  <DocsCollection
-    v-if="isCollectionRoot && navigation"
-    :collection="collection"
-    :title="collectionConfig.title"
-    :description="collectionConfig.description"
-    :navigation="navigation"
-  />
-  <DocsArticle
-    v-else-if="content"
-    :collection="collection"
-    :path="contentPath"
-    :content="content"
-    :repo="collectionConfig.repo"
-  />
-  <Section v-else>
-    <Article>
-      <H1>Not Found</H1>
-      <P>Content not found at {{ contentPath }}</P>
-    </Article>
-  </Section>
+  <NuxtLayout :name="layout">
+    <!-- Version landing page -->
+    <Container v-if="isVersionLanding">
+      <Section>
+        <Hero
+          :tagline="collectionConfig.hero.tagline"
+          :description="collectionConfig.hero.description"
+          :action="collectionConfig.hero.action"
+        >
+          <template v-if="collectionConfig.hero.example" #showcase>
+            <CodeExample
+              :code="collectionConfig.hero.example.code"
+              :lang="collectionConfig.hero.example.lang"
+            />
+          </template>
+        </Hero>
+        <ContentTable :collection="collection" :version-prefix="versionPrefix" />
+      </Section>
+    </Container>
+
+    <!-- Article page -->
+    <DocsArticle
+      v-else
+      :collection="collection"
+      :path="contentPath"
+      :content="content!"
+      :repo="collectionConfig.repo"
+    />
+  </NuxtLayout>
 </template>

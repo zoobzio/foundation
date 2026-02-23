@@ -8,6 +8,7 @@ const {
   type = "button",
   shortcut,
   link,
+  badge,
 } = defineProps<FabProps>();
 
 const fabRef = useTemplateRef("fab");
@@ -47,7 +48,10 @@ const linkProps = computed(() => ({
     v-bind="link ? linkProps : buttonProps"
     class="f-fab"
   >
-    <Icon :alias="icon" />
+    <slot>
+      <Icon v-if="icon" :alias="icon" />
+    </slot>
+    <span v-if="badge !== undefined" class="f-fab-badge">{{ badge }}</span>
   </Primitive>
 </template>
 

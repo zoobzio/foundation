@@ -1,0 +1,29 @@
+{
+  "name": "@foundation/appula",
+  "type": "module",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./assets/*": "./assets/*"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate",
+    "preview": "nuxi preview",
+    "prepare": "nuxi prepare",
+    "typecheck": "nuxi typecheck"
+  },
+  "dependencies": {
+    "@foundation/blocks": "workspace:*",
+    "@foundation/iconic": "workspace:*",
+    "@pinia/nuxt": "catalog:",
+    "pinia": "catalog:"
+  },
+  "devDependencies": {
+    "nuxt": "catalog:",
+    "typescript": "catalog:"
+  }
+}

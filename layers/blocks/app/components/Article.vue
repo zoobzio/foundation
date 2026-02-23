@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ArticleProps } from "../types/article";
 
-const { tokens } = defineProps<ArticleProps>();
+defineProps<ArticleProps>();
 
 </script>
 

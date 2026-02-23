@@ -1,0 +1,25 @@
+{
+  "name": "@foundation/blogula",
+  "type": "module",
+  "private": true,
+  "version": "0.0.1",
+  "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate",
+    "preview": "nuxi preview",
+    "prepare": "nuxi prepare",
+    "typecheck": "nuxi typecheck"
+  },
+  "dependencies": {
+    "@foundation/prose": "workspace:*"
+  },
+  "devDependencies": {
+    "nuxt": "catalog:",
+    "typescript": "catalog:"
+  }
+}

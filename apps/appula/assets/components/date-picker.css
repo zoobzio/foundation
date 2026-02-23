@@ -1,0 +1,69 @@
+.f-date-picker,
+.f-date-range-picker {
+  position: relative;
+}
+
+.f-date-picker-field {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-2xs);
+  padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+  background: var(--sys-surface);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  font-size: var(--ref-text-sm);
+}
+
+.f-date-picker-field:focus-within {
+  box-shadow: var(--ref-shadow-focus-inset);
+}
+
+.f-date-picker-segment {
+  padding: var(--ref-spacing-2xs);
+  color: var(--sys-on-surface);
+  outline: none;
+}
+
+.f-date-picker-segment:focus {
+  background: var(--sys-primary);
+  color: var(--sys-on-primary);
+}
+
+.f-date-picker-segment[data-placeholder] {
+  color: var(--sys-on-surface-variant);
+}
+
+.f-date-picker-literal {
+  color: var(--sys-on-surface-variant);
+}
+
+.f-date-picker-separator {
+  color: var(--sys-on-surface-variant);
+  padding: 0 var(--ref-spacing-xs);
+}
+
+.f-date-picker-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sys-on-surface-variant);
+  padding: var(--ref-spacing-2xs);
+}
+
+.f-date-picker-trigger:hover {
+  color: var(--sys-on-surface);
+}
+
+.f-date-picker-trigger:focus-visible {
+  box-shadow: var(--ref-shadow-focus-inset);
+}
+
+.f-date-picker-content {
+  background: var(--sys-surface);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  box-shadow: var(--ref-shadow-lg);
+  z-index: var(--ref-z-popover);
+}

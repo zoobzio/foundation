@@ -4,8 +4,11 @@ import type { NavListGroup } from "./NavList.vue";
 
 export interface ContentTreeProps {
   collection: keyof PageCollections;
+  /** Version prefix to scope navigation (e.g. "v1.0.0") */
+  versionPrefix?: string;
   title?: string;
-  icon?: IconAlias;}
+  icon?: IconAlias;
+}
 </script>
 
 <script setup lang="ts">
@@ -20,10 +23,21 @@ const { data: navigation } = await useAsyncData(
 );
 
 // Transform navigation into flat groups (1 level deep only)
+// When a versionPrefix is provided, drill into the matching version subtree first
 const groups = computed<NavListGroup[]>(() => {
   if (!navigation.value) return [];
 
-  return navigation.value
+  let sections = navigation.value;
+
+  if (props.versionPrefix) {
+    const versionNode = sections.find(
+      (item) => item.path === `/${props.versionPrefix}`,
+    );
+    if (!versionNode?.children) return [];
+    sections = versionNode.children;
+  }
+
+  return sections
     .filter((item) => item.children && item.children.length > 0)
     .map((folder) => ({
       label: folder.title,

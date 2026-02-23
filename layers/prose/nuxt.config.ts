@@ -3,6 +3,9 @@ import highlights from "./config/highlights";
 
 export default defineNuxtConfig({
   extends: ["@foundation/blocks"],
+  imports: {
+    dirs: ["types"],
+  },
   modules: ["@nuxt/content"],
   content: {
     database: process.env.DATABASE_URL

@@ -7,17 +7,22 @@ const options = versions.map((v) => ({
   label: v === latest ? `${v} (latest)` : v,
 }));
 
-const selected = ref(current || latest);
+const selected = ref(current.value || latest);
 
 const displayLabel = computed(() => {
   if (!selected.value) return "Version";
   return selected.value === latest ? `${selected.value} (latest)` : selected.value;
 });
 
+// Sync selected when URL changes
+watch(current, (v) => {
+  if (v) selected.value = v;
+});
+
 watch(selected, (version) => {
-  if (version && version !== current) {
+  if (version && version !== current.value) {
     const path = route.path.replace(/^\/v[\d.]+/, "");
-    navigateTo(`/v${version}${path}`);
+    navigateTo(`/${version}${path}`);
   }
 });
 </script>

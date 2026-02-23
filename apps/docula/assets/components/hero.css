@@ -1,0 +1,19 @@
+.f-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: var(--ref-spacing-xl);
+  padding-top: var(--ref-spacing-3xl);
+  padding-bottom: var(--ref-spacing-3xl);
+}
+
+.f-hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-md);
+}
+
+.f-hero-showcase {
+  display: flex;
+  align-items: center;
+}

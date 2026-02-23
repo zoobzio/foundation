@@ -1,6 +1,7 @@
 export type CommandItem = {
   value: string;
   label: string;
+  count?: number;
   disabled?: boolean;
 };
 
@@ -13,7 +14,9 @@ export type CommandGroup = {
 export type CommandProps = {
   groups: CommandGroup[];
   placeholder?: string;
-  disabled?: boolean;};
+  disabled?: boolean;
+  multiple?: boolean;
+};
 
 export type CommandEmits = {
   select: [value: string];

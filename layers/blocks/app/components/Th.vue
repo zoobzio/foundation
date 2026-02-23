@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ThProps } from "../types/th";
 
-const { tokens } = defineProps<ThProps>();
+defineProps<ThProps>();
 
 </script>
 

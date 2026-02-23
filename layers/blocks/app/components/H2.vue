@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { H2Props } from "../types/h2";
 
-const { tokens } = defineProps<H2Props>();
+defineProps<H2Props>();
 
 </script>
 

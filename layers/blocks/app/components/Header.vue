@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HeaderProps } from "../types/header";
 
-const { tokens } = defineProps<HeaderProps>();
+defineProps<HeaderProps>();
 
 </script>
 

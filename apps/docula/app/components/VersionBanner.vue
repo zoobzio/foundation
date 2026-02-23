@@ -4,7 +4,7 @@ const { current, latest, isLatest } = useVersion();
 
 const latestUrl = computed(() => {
   const path = route.path.replace(/^\/v[\d.]+/, "");
-  return `/v${latest}${path}`;
+  return `/${latest}${path}`;
 });
 </script>
 
@@ -14,9 +14,9 @@ const latestUrl = computed(() => {
     icon="info"
   >
     <span>
-      You're viewing docs for <Strong>v{{ current }}</Strong
+      You're viewing docs for <Strong>{{ current }}</Strong
       >.
     </span>
-    <Anchor :to="latestUrl">View latest (v{{ latest }})</Anchor>
+    <Anchor :to="latestUrl">View latest ({{ latest }})</Anchor>
   </Banner>
 </template>

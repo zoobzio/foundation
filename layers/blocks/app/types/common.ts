@@ -31,32 +31,6 @@ export interface Hierarchy<T> {
 }
 
 /**
- * Tree node - hierarchical item with optional link
- */
-export interface TreeNode extends Hierarchy<TreeNode> {
-  value: string;
-  label: string;
-  icon?: IconAlias;
-  to?: string;
-  disabled?: boolean;
-}
-
-/**
- * Navigator menu item - expands to show child items
- */
-export interface NavigatorMenu extends Hierarchy<NavigatorItem> {
-  label: string;
-  value: string;
-  icon?: IconAlias;
-  children: NavigatorItem[];
-}
-
-/**
- * Navigator item - either a direct link or an expandable menu
- */
-export type NavigatorItem = Link | NavigatorMenu;
-
-/**
  * Table of contents link with depth for indentation
  */
 export interface TocLink extends Hierarchy<TocLink> {
@@ -76,6 +50,127 @@ export interface DataTableColumn<T> {
 }
 
 /**
+ * Sort direction for table columns
+ */
+export type SortDirection = "asc" | "desc";
+
+/**
+ * Pagination store interface
+ * Subset of TableStore for components that only need pagination
+ */
+export interface PaginationStore {
+  page: Ref<number>;
+  pageSize: Ref<number>;
+  pageCount: ComputedRef<number>;
+  total: Ref<number>;
+  goToPage: (page: number) => void;
+}
+
+/**
+ * Table store interface for managing table state
+ * Consumers implement this to provide sorting, filtering, pagination, and search
+ */
+export interface TableStore<T> extends PaginationStore {
+  // Data
+  data: Ref<T[]>;
+  loading: Ref<boolean>;
+
+  // Sorting
+  sortKey: Ref<keyof T | null>;
+  sortDirection: Ref<SortDirection>;
+  sort: (key: keyof T) => void;
+
+  // Search & Filtering
+  search: Ref<string>;
+  filters: Ref<Record<string, unknown>>;
+  setFilter: (key: string, value: unknown) => void;
+  clearFilters: () => void;
+}
+
+/**
+ * Action available when items are selected
+ */
+export interface SelectionAction<K = unknown> {
+  icon: IconAlias;
+  label: string;
+  action: (selected: Set<K>) => void;
+}
+
+/**
+ * Facet item with count
+ */
+export interface FacetItem {
+  value: string;
+  label: string;
+  count: number;
+}
+
+/**
+ * Facet group
+ */
+export interface FacetGroup {
+  key: string;
+  label: string;
+  items: FacetItem[];
+}
+
+/**
+ * Faceting mixin for table stores
+ */
+export interface FacetableStore {
+  facets: ComputedRef<FacetGroup[]>;
+  selectedFacets: Ref<Set<string>>;
+}
+
+/**
+ * Selection mixin for table stores
+ * Stores can implement this to support row selection
+ */
+export interface SelectableStore<K = unknown> {
+  selected: Ref<Set<K>>;
+  isAllSelected: ComputedRef<boolean>;
+  isIndeterminate: ComputedRef<boolean>;
+  selectionActions: SelectionAction<K>[];
+  toggleRow: (key: K) => void;
+  toggleAll: () => void;
+  clearSelection: () => void;
+}
+
+/**
  * Keyboard shortcut string (e.g., "meta+k", "ctrl+shift+p")
  */
 export type ButtonShortcut = string;
+
+/**
+ * Date filter operator types
+ */
+export type DateFilterOperator = "before" | "after" | "between";
+
+/**
+ * Date filter definition
+ */
+export interface DateFilter {
+  field: string;
+  operator: DateFilterOperator;
+  value: Date;
+  endValue?: Date;
+}
+
+/**
+ * Date field configuration
+ */
+export interface DateFieldConfig {
+  key: string;
+  label: string;
+}
+
+/**
+ * Date filtering mixin for table stores
+ */
+export interface DateFilterableStore {
+  dateFields: DateFieldConfig[];
+  dateFilters: Ref<DateFilter[]>;
+  addDateFilter: (filter: DateFilter) => void;
+  removeDateFilter: (field: string) => void;
+  clearDateFilters: () => void;
+}

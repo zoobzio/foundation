@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PreProps } from "../types/pre";
 
-const { tokens } = defineProps<PreProps>();
+defineProps<PreProps>();
 
 </script>
 

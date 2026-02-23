@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { KbdProps } from "../types/kbd";
 
-const { tokens } = defineProps<KbdProps>();
+defineProps<KbdProps>();
 
 </script>
 

@@ -10,7 +10,8 @@
   },
   "exports": {
     ".": "./nuxt.config.ts",
-    "./elements": "./elements.config.ts"
+    "./elements": "./elements.config.ts",
+    "./types": "./app/types/index.ts"
   },
   "scripts": {
     "dev": "nuxi dev",
@@ -24,6 +25,7 @@
   "dependencies": {
     "@foundation/iconic": "workspace:*",
     "@foundation/untheme": "workspace:*",
+    "@internationalized/date": "^3.7.0",
     "@pinia/nuxt": "catalog:",
     "@vueuse/core": "^11.3.0",
     "@vueuse/nuxt": "^14.1.0",

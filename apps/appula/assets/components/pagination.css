@@ -1,0 +1,72 @@
+.f-data-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ref-spacing-md);
+  padding: var(--ref-spacing-sm);
+}
+
+.f-data-pagination-info {
+  color: var(--sys-on-surface-variant);
+  font-size: var(--ref-text-sm);
+}
+
+.f-data-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-sm);
+}
+
+.f-data-pagination-numbers {
+  display: flex;
+  align-items: center;
+}
+
+.f-data-pagination-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ref-spacing-sm);
+  background: var(--sys-surface);
+  color: var(--sys-on-surface-variant);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  cursor: pointer;
+  outline: none;
+  line-height: 1;
+}
+
+.f-data-pagination-number:not(:first-child) {
+  margin-left: calc(-1 * var(--ref-border-width-thin));
+}
+
+
+.f-data-pagination-number:not(:disabled):not([data-disabled]):hover {
+  color: var(--sys-on-surface);
+  background: var(--sys-hover);
+  z-index: 1;
+}
+
+.f-data-pagination-number:not(:disabled):not([data-disabled]):focus-visible {
+  box-shadow: var(--ref-shadow-focus-inset);
+  z-index: 2;
+}
+
+.f-data-pagination-number[data-selected] {
+  color: var(--sys-primary);
+  background: var(--sys-hover);
+  z-index: 1;
+}
+
+.f-data-pagination-number[data-selected]:not(:disabled):not([data-disabled]):hover {
+  color: var(--sys-primary);
+}
+
+.f-data-pagination-number:disabled:not([data-selected]),
+.f-data-pagination-number[data-disabled]:not([data-selected]) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.f-data-pagination-number[data-selected] {
+  cursor: default;
+}

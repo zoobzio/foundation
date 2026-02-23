@@ -1,0 +1,44 @@
+.f-code-example {
+  position: relative;
+  width: 100%;
+}
+
+.f-code-example-copy {
+  position: absolute;
+  top: var(--ref-spacing-sm);
+  right: var(--ref-spacing-sm);
+  z-index: 1;
+}
+
+.f-code-example-content {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.f-code-example-content pre {
+  color: var(--sys-on-surface);
+  background: var(--sys-surface-container) !important;
+  font-family: var(--ref-font-mono);
+  font-size: var(--ref-text-sm);
+  padding-top: var(--ref-spacing-md);
+  padding-right: var(--ref-spacing-md);
+  padding-bottom: var(--ref-spacing-md);
+  padding-left: var(--ref-spacing-md);
+  border-top-width: var(--ref-border-width-thin);
+  border-right-width: var(--ref-border-width-thin);
+  border-bottom-width: var(--ref-border-width-thin);
+  border-left-width: var(--ref-border-width-thin);
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-color: var(--sys-outline);
+  display: block;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.f-code-example-content code {
+  font-family: inherit;
+  font-size: inherit;
+}

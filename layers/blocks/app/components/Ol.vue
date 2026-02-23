@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { OlProps } from "../types/ol";
 
-const { tokens } = defineProps<OlProps>();
+defineProps<OlProps>();
 
 </script>
 

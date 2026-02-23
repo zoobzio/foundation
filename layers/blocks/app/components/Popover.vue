@@ -22,9 +22,9 @@ const open = defineModel<boolean>("open", { default: false });
 <template>
   <PopoverRoot v-model:open="open" :default-open="defaultOpen" :modal="modal">
     <PopoverAnchor v-if="reference" :reference="reference" />
-    <PopoverAnchor v-else as-child>
+    <PopoverTrigger v-else as-child>
       <slot />
-    </PopoverAnchor>
+    </PopoverTrigger>
     <PopoverPortal>
       <PopoverContent
         :side="side"

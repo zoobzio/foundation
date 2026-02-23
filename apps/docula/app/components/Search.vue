@@ -1,8 +1,13 @@
+<script lang="ts">
+export interface SearchProps {
+  placeholder?: string;
+}
+</script>
+
 <script setup lang="ts">
 import {
   ComboboxRoot,
   ComboboxAnchor,
-  ComboboxInput,
   ComboboxPortal,
   ComboboxContent,
   ComboboxViewport,
@@ -10,20 +15,47 @@ import {
   ComboboxEmpty,
 } from "reka-ui";
 
-interface SearchResult {
-  path: string;
-  breadcrumbs: string[];
-  icon?: IconAlias;
-}
+withDefaults(defineProps<SearchProps>(), {
+  placeholder: "Search...",
+});
+
+const router = useRouter();
+const { results, search } = useSearch();
+const { collection: collectionConfig } = useAppConfig();
+
+const collection = collectionConfig?.key ?? "content";
+const { data: navigation } = await useAsyncData(
+  `nav-${collection}`,
+  () => queryCollectionNavigation(collection),
+);
+
+const pathToIcon = computed(() => {
+  const map = new Map<string, IconAlias>();
+  if (!collectionConfig?.navIcons || !navigation.value) return map;
+
+  for (const folder of navigation.value) {
+    if (folder.path && folder.title) {
+      const icon = collectionConfig.navIcons[folder.title];
+      if (icon) {
+        map.set(folder.path, icon);
+      }
+    }
+  }
+  return map;
+});
+
+const getIcon = (path: string) => {
+  for (const [folderPath, icon] of pathToIcon.value) {
+    if (path.startsWith(folderPath)) {
+      return icon;
+    }
+  }
+  return undefined;
+};
 
 const open = ref(false);
-const searchQuery = ref("");
-
-const appConfig = useAppConfig();
-const collectionKey = computed(() => appConfig.collection?.key);
-const navIcons = computed<Record<string, IconAlias>>(
-  () => appConfig.collection?.navIcons ?? {},
-);
+const searchTerm = ref("");
+const closingTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 
 const isMac = computed(() => {
   if (typeof navigator !== "undefined") {
@@ -34,128 +66,75 @@ const isMac = computed(() => {
 
 const modKey = computed(() => (isMac.value ? "⌘" : "Ctrl"));
 
-// Query navigation data
-const { data: navigation } = await useAsyncData(
-  `search-navigation-${collectionKey.value}`,
-  () =>
-    collectionKey.value
-      ? queryCollectionNavigation(collectionKey.value)
-      : Promise.resolve([]),
-);
-
-// Flatten navigation into searchable results
-const allResults = computed<SearchResult[]>(() => {
-  if (!navigation.value) return [];
-
-  const results: SearchResult[] = [];
-
-  const traverse = (
-    items: typeof navigation.value,
-    breadcrumbs: string[] = [],
-  ) => {
-    for (const item of items) {
-      const currentBreadcrumbs = [...breadcrumbs, item.title];
-
-      if (item.children && item.children.length > 0) {
-        traverse(item.children, currentBreadcrumbs);
-      } else {
-        const sectionTitle = breadcrumbs[0];
-        results.push({
-          path: item.path,
-          breadcrumbs: currentBreadcrumbs,
-          icon: sectionTitle ? navIcons.value[sectionTitle] : undefined,
-        });
-      }
-    }
-  };
-
-  traverse(navigation.value);
-  return results;
+watch(open, (isOpen) => {
+  if (!isOpen) {
+    closingTimeout.value = setTimeout(() => {
+      closingTimeout.value = null;
+    }, 100);
+  }
 });
-
-// Filter results based on search query
-const filteredResults = computed(() => {
-  if (!searchQuery.value.trim()) return allResults.value;
-
-  const query = searchQuery.value.toLowerCase();
-  return allResults.value.filter((result) =>
-    result.breadcrumbs.some((crumb) => crumb.toLowerCase().includes(query)),
-  );
-});
-
-const inputRef = useTemplateRef("inputRef");
 
 const handleFocus = () => {
-  open.value = true;
+  if (!closingTimeout.value) {
+    open.value = true;
+  }
 };
 
-const handleBlur = () => {
+const handleInput = (value: string) => {
+  searchTerm.value = value;
+  search(value);
+};
+
+const handleSelect = (path: string) => {
   open.value = false;
+  searchTerm.value = "";
+  router.push(path);
 };
 </script>
 
 <template>
   <ComboboxRoot
-    v-model:search-term="searchQuery"
-    :open="open"
+    v-model:open="open"
     :ignore-filter="true"
     class="f-search-root"
   >
     <ComboboxAnchor as-child>
-      <ComboboxInput as-child>
-        <Input
-          ref="inputRef"
-          placeholder="Search..."
-          shortcut="meta+k"
-          @focus="handleFocus"
-          @blur="handleBlur"
-        >
-          <template #prepend>
-            <Icon alias="search" />
-          </template>
-          <template #append>
-            <Kbd>{{ modKey }} + K</Kbd>
-          </template>
-        </Input>
-      </ComboboxInput>
+      <Input
+        :model-value="searchTerm"
+        :placeholder="placeholder"
+        shortcut="meta+k"
+        @focus="handleFocus"
+        @update:model-value="handleInput"
+      >
+        <template #prepend>
+          <Icon alias="search" />
+        </template>
+        <template #append>
+          <Kbd>{{ modKey }} + K</Kbd>
+        </template>
+      </Input>
     </ComboboxAnchor>
     <ComboboxPortal>
-      <ComboboxContent
-        position="popper"
-        class="f-search-results"
-        @mousedown.prevent
-      >
+      <ComboboxContent class="f-search-results" position="popper">
         <ComboboxViewport>
           <ComboboxEmpty class="f-search-empty">
-            {{ searchQuery ? "No results found" : "Start typing to search..." }}
+            {{ searchTerm ? "No results found" : "Start typing to search..." }}
           </ComboboxEmpty>
 
           <ComboboxItem
-            v-for="result in filteredResults"
-            :key="result.path"
+            v-for="result in results"
+            :key="result.id"
             :value="result.path"
             class="f-search-item"
             as-child
           >
-            <NuxtLink :to="result.path">
-              <Icon
-                v-if="result.icon"
-                :alias="result.icon"
-                class="f-search-icon"
-              />
-              <span
-                class="f-search-breadcrumb"
-              >
-                <template v-for="(crumb, i) in result.breadcrumbs" :key="i">
-                  <span
-                    v-if="i > 0"
-                    class="f-search-separator"
-                  >
-                    <Icon alias="chevron-right" />
-                  </span>
-                  <span>{{ crumb }}</span>
-                </template>
-              </span>
+            <NuxtLink :to="result.path" @click="handleSelect(result.path)">
+              <Icon v-if="getIcon(result.path)" :alias="getIcon(result.path)" class="f-search-icon" />
+              <span>{{ result.title }}</span>
+              <template v-if="result.titles.length > 0">
+                <Icon alias="chevron-right" class="f-search-separator" />
+                <span>{{ result.titles[result.titles.length - 1] }}</span>
+              </template>
             </NuxtLink>
           </ComboboxItem>
         </ComboboxViewport>

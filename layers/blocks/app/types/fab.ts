@@ -1,10 +1,12 @@
 export type FabProps = {
-  icon: IconAlias;
+  icon?: IconAlias;
   label?: string;
   type?: "button" | "submit" | "reset";
   link?: Link;
   disabled?: boolean;
-  shortcut?: ButtonShortcut;};
+  shortcut?: ButtonShortcut;
+  badge?: number | string;
+};
 
 export type FabEmits = {};
 

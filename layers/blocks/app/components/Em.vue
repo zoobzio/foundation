@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { EmProps } from "../types/em";
 
-const { tokens } = defineProps<EmProps>();
+defineProps<EmProps>();
 
 </script>
 

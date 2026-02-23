@@ -1,0 +1,86 @@
+.f-date-filters {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+}
+
+.f-date-filters-content {
+  flex: 1;
+  min-height: 0;
+  max-height: 320px;
+}
+
+.f-date-filters-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ref-spacing-lg);
+  color: var(--sys-on-surface-variant);
+  font-size: var(--ref-text-sm);
+}
+
+.f-date-filters-list {
+  list-style: none;
+  margin: var(--ref-spacing-none);
+  padding: var(--ref-spacing-none);
+}
+
+.f-date-filters-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm);
+  border-bottom-width: var(--ref-border-width-thin);
+  border-bottom-style: solid;
+  border-bottom-color: var(--sys-outline);
+}
+
+.f-date-filters-list-item:last-child {
+  border-bottom: none;
+}
+
+.f-date-filters-list-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-2xs);
+}
+
+.f-date-filters-list-item-field {
+  font-size: var(--ref-text-xs);
+  font-weight: var(--ref-font-medium);
+  color: var(--sys-on-surface-variant);
+}
+
+.f-date-filters-list-item-value {
+  font-size: var(--ref-text-sm);
+  color: var(--sys-on-surface);
+}
+
+.f-date-filters-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-xs);
+  border: none;
+  padding: var(--ref-spacing-none);
+  margin: var(--ref-spacing-none);
+}
+
+.f-date-filters-fieldset .f-segmented-control {
+  margin-left: var(--ref-spacing-md);
+  margin-right: var(--ref-spacing-md);
+}
+
+.f-date-filters-calendar {
+  padding-top: var(--ref-spacing-xs);
+}
+
+.f-date-filters-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ref-spacing-xs);
+  padding: var(--ref-spacing-sm);
+  border-top-width: var(--ref-border-width-thin);
+  border-top-style: solid;
+  border-top-color: var(--sys-outline);
+}

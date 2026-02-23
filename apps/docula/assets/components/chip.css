@@ -1,14 +1,14 @@
 .f-chip {
   background: var(--sys-surface-container-high);
   color: var(--sys-on-surface);
-  font-size: var(--ref-text-sm);
+  font-size: var(--ref-text-xs);
   font-weight: var(--ref-font-medium);
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: var(--ref-spacing-2xs);
-  padding-left: var(--ref-spacing-sm);
-  padding-right: var(--ref-spacing-sm);
+  padding-left: var(--ref-spacing-xs);
+  padding-right: var(--ref-spacing-xs);
   padding-top: var(--ref-spacing-2xs);
   padding-bottom: var(--ref-spacing-2xs);
   border-top-width: var(--ref-border-width-thin);

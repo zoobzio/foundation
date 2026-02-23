@@ -1,0 +1,8 @@
+.f-icon {
+  color: var(--ref-color-current);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ref-width-1em);
+  height: var(--ref-height-1em);
+}

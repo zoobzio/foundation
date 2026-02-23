@@ -4,7 +4,6 @@ import type { CheckboxProps } from "../types/checkbox";
 const { disabled, name, value, required } = defineProps<CheckboxProps>();
 
 const model = defineModel<boolean | "indeterminate">();
-
 </script>
 
 <template>
@@ -16,13 +15,11 @@ const model = defineModel<boolean | "indeterminate">();
     :required="required"
     class="f-checkbox-root"
   >
-    <CheckboxIndicator
-      class="f-checkbox-indicator"
-    >
+    <span class="f-checkbox-indicator">
       <slot>
-        <Icon alias="check" />
+        <Icon :alias="model === 'indeterminate' ? 'minus' : 'check'" />
       </slot>
-    </CheckboxIndicator>
+    </span>
   </CheckboxRoot>
 </template>
 

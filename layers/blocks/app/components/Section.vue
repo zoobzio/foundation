@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SectionProps } from "../types/section";
 
-const { tokens } = defineProps<SectionProps>();
+defineProps<SectionProps>();
 
 </script>
 

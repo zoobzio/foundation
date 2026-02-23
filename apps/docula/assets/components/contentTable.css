@@ -1,0 +1,109 @@
+.f-content-table-layout {
+  display: grid;
+  grid-template-columns: var(--ref-width-sm) 1fr;
+  border-top-width: var(--ref-border-width-thin);
+  border-top-style: solid;
+  border-top-color: var(--sys-outline);
+}
+
+.f-content-table-filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-md);
+  padding: var(--ref-spacing-md);
+  position: sticky;
+  top: 0;
+  align-self: start;
+  min-height: min-content;
+  border-right-width: var(--ref-border-width-thin);
+  border-right-style: solid;
+  border-right-color: var(--sys-outline);
+}
+
+.f-content-table-filter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-xs);
+}
+
+.f-content-table-clear {
+  background: var(--ref-color-transparent);
+  color: var(--sys-primary);
+  font-size: var(--ref-text-sm);
+  padding-top: var(--ref-spacing-xs);
+  padding-right: var(--ref-spacing-sm);
+  padding-bottom: var(--ref-spacing-xs);
+  padding-left: var(--ref-spacing-sm);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition-duration: var(--ref-duration-fast);
+  transition-timing-function: var(--ref-ease-out);
+}
+
+.f-content-table-clear:hover {
+  color: var(--sys-primary);
+  text-decoration: underline;
+}
+
+.f-content-table-main {
+  overflow-x: auto;
+}
+
+.f-content-table-empty {
+  color: var(--sys-on-surface-variant);
+  padding: var(--ref-spacing-lg);
+  text-align: center;
+}
+
+.f-content-table-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.f-content-table-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.f-content-table-card.f-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-sm);
+  height: 100%;
+  padding: var(--ref-spacing-md);
+  border: none;
+  border-radius: 0;
+  transition-property: background-color;
+  transition-duration: var(--ref-duration-fast);
+  transition-timing-function: var(--ref-ease-out);
+}
+
+.f-content-table-card-link:hover .f-content-table-card.f-card {
+  background: var(--sys-hover);
+}
+
+.f-content-table-card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--ref-text-sm);
+  color: var(--sys-muted);
+}
+
+.f-content-table-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.f-content-table-card-description {
+  font-size: var(--ref-text-sm);
+  color: var(--sys-on-surface-variant);
+  margin: 0;
+}
+
+.f-content-table-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ref-spacing-xs);
+}

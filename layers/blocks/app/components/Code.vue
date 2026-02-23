@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CodeProps } from "../types/code";
 
-const { tokens } = defineProps<CodeProps>();
+defineProps<CodeProps>();
 
 </script>
 

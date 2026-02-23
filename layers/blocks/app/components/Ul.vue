@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UlProps } from "../types/ul";
 
-const { tokens } = defineProps<UlProps>();
+defineProps<UlProps>();
 
 </script>
 

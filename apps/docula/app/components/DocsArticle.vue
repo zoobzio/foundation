@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ParsedContent } from "@nuxt/content";
+import type { ParsedContentv2 } from "@nuxt/content";
 
-interface ContentWithMeta extends ParsedContent {
+interface ContentWithMeta extends ParsedContentv2 {
   author?: string;
   published?: string;
   updated?: string;
@@ -37,8 +37,6 @@ const editUrl = computed(() => {
         <ContentRenderer :value="content" />
       </Article>
       <Surround :collection="collection" :path="path" />
-      <Hr />
-      <Giscus />
     </Section>
     <Right>
       <Toc v-if="content?.body?.toc?.links" :links="content.body.toc.links" />

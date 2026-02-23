@@ -60,6 +60,8 @@ export default defineNuxtConfig({
     "chevron-down": "twotone-keyboard-arrow-down",
     "chevron-left": "twotone-keyboard-arrow-left",
     "chevron-right": "twotone-keyboard-arrow-right",
+    "chevron-first": "twotone-keyboard-double-arrow-left",
+    "chevron-last": "twotone-keyboard-double-arrow-right",
 
     // External
     github: "twotone-code", // placeholder until we add a brand icon set
@@ -76,6 +78,7 @@ export default defineNuxtConfig({
     font: "twotone-text-fields",
 
     // UI
+    tag: "twotone-sell",
     settings: "twotone-settings",
     user: "twotone-person",
     calendar: "twotone-calendar-today",
@@ -85,6 +88,7 @@ export default defineNuxtConfig({
     integration: "twotone-extension",
     reference: "twotone-library-books",
     check: "twotone-check",
+    minus: "twotone-remove",
     info: "twotone-info",
     warning: "twotone-warning",
     error: "twotone-error",
