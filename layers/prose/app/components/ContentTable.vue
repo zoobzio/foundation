@@ -16,7 +16,7 @@ export interface ContentTableProps {
 <script setup lang="ts">
 const { collection, versionPrefix, nodes, headingDepth = 3 } = defineProps<ContentTableProps>();
 
-const appConfig = useAppConfig();
+const appConfig = useAppConfig() as { collection?: { navIcons?: Record<string, IconAlias> } };
 const navIcons = computed(() => appConfig.collection?.navIcons ?? {});
 
 const { data: navigation } = collection
@@ -35,8 +35,8 @@ const resolvedNodes = computed(() => {
     );
     return versionNode?.children ?? [];
   }
-  if (navigation.value.length === 1 && navigation.value[0].children?.length) {
-    return navigation.value[0].children;
+  if (navigation.value.length === 1 && navigation.value[0]?.children?.length) {
+    return navigation.value[0]!.children!
   }
   return navigation.value;
 });
@@ -65,7 +65,7 @@ const heading = computed(() => headingComponents[Math.min(headingDepth, 6) as ke
       <!-- Category with children -->
       <div v-else class="f-content-table-section">
         <component :is="heading">
-          <Icon v-if="node.title && navIcons[node.title]" :alias="navIcons[node.title]" />
+          <Icon v-if="node.title && navIcons[node.title]" :alias="navIcons[node.title]!" />
           {{ node.title }}
         </component>
         <div class="f-content-table-grid">

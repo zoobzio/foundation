@@ -8,14 +8,13 @@ export const useHighlight = (code: string, lang: string) => {
     async () => {
       const tree = await codeToHast(code, { lang, theme: highlights });
       const pre = tree.children.find(
-        (n): n is typeof n & { tagName: string } =>
-          "tagName" in n && n.tagName === "pre",
+        (n) => "tagName" in n && n.tagName === "pre",
       );
-      const codeEl = pre?.children.find(
-        (n): n is typeof n & { tagName: string } =>
-          "tagName" in n && n.tagName === "code",
+      if (!pre || !("children" in pre)) return "";
+      const codeEl = pre.children.find(
+        (n) => "tagName" in n && n.tagName === "code",
       );
-      if (!codeEl) return "";
+      if (!codeEl || !("children" in codeEl)) return "";
       return toHtml(codeEl.children);
     },
   );

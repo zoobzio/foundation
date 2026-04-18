@@ -6,3 +6,5 @@ export type AvatarProps = {
 export type AvatarEmits = {};
 
 export const defineAvatar = useComponentRecipe<AvatarProps, AvatarEmits>();
+
+export type AvatarRecipe = ComponentRecipe<AvatarProps, AvatarEmits>;

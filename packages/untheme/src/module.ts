@@ -3,6 +3,7 @@ import type { ThemeRegistry } from "./config";
 import {
   defineNuxtModule,
   addTemplate,
+  addTypeTemplate,
   addPlugin,
   addImports,
   createResolver,
@@ -33,6 +34,12 @@ export default defineNuxtModule<UnthemeModuleOptions>({
       getContents: () =>
         `export const defaultTheme = ${JSON.stringify(defaultTheme || null)};\nexport const themeNames = ${JSON.stringify(Object.keys(themes))};\nexport const themes = ${JSON.stringify(themes)};`,
       write: true,
+    });
+
+    addTypeTemplate({
+      filename: "untheme.themes.d.ts",
+      getContents: () =>
+        `import type { ThemeRegistry } from "${resolver.resolve("../src/config")}";\nexport type Themes = ThemeRegistry;`,
     });
 
     // Register plugin for color mode + theme management

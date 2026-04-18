@@ -14,3 +14,5 @@ export const defineFab = useComponentRecipe<
   FabProps,
   FabEmits & MouseEvents & FocusEvents
 >();
+
+export type FabRecipe = ComponentRecipe<FabProps, FabEmits & MouseEvents & FocusEvents>;

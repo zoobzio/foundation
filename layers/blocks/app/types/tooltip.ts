@@ -8,3 +8,5 @@ export type TooltipProps = {
 export type TooltipEmits = {};
 
 export const defineTooltip = useComponentRecipe<TooltipProps, TooltipEmits>();
+
+export type TooltipRecipe = ComponentRecipe<TooltipProps, TooltipEmits>;

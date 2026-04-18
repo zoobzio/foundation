@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import figlet from "figlet";
+import figlet, { type FontName } from "figlet";
 // @ts-expect-error - figlet font import
 import ansiRegular from "figlet/importable-fonts/ANSI Regular";
 
@@ -14,13 +14,13 @@ const props = defineProps<{
 const ascii = computed(() => {
   try {
     const raw = figlet.textSync(props.text, {
-      font: (props.font as figlet.Fonts) ?? "ANSI Regular",
+      font: (props.font as FontName) ?? "ANSI Regular",
     });
     // Trim trailing whitespace from each line and remove empty lines at start/end
     const lines = raw.split("\n").map((line) => line.trimEnd());
     // Remove empty lines from start and end
-    while (lines.length && !lines[0].trim()) lines.shift();
-    while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+    while (lines.length && !lines[0]!.trim()) lines.shift();
+    while (lines.length && !lines[lines.length - 1]!.trim()) lines.pop();
     return lines.join("\n");
   } catch {
     return props.text;

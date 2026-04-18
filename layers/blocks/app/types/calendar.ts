@@ -14,3 +14,5 @@ export type CalendarProps = {
 export type CalendarEmits = {};
 
 export const defineCalendar = useComponentRecipe<CalendarProps, CalendarEmits>();
+
+export type CalendarRecipe = ComponentRecipe<CalendarProps, CalendarEmits>;

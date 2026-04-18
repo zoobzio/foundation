@@ -46,6 +46,8 @@ export default createConfigForNuxt({
       "vue/require-default-prop": "off",
       // Allow @ts-ignore for runtime module imports
       "@typescript-eslint/ban-ts-comment": "off",
+      // Allow {} in type aliases for empty props/emits
+      "@typescript-eslint/no-empty-object-type": ["error", { allowObjectTypes: "always" }],
     },
   },
 );

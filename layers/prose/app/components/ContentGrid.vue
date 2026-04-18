@@ -1,5 +1,10 @@
 <script lang="ts">
-import type { PageCollections } from "@nuxt/content";
+import type { PageCollections, ContentCollectionItem } from "@nuxt/content";
+
+type ContentGridItem = ContentCollectionItem & {
+  author?: string;
+  published?: string;
+};
 
 export interface ContentGridProps {
   collection: keyof PageCollections;}
@@ -10,7 +15,7 @@ const { collection } = defineProps<ContentGridProps>();
 
 const { data: items } = await useAsyncData(
   `content-grid-${String(collection)}`,
-  () => queryCollection(collection).all(),
+  () => queryCollection(collection).all() as Promise<ContentGridItem[]>,
 );
 
 const formatDate = (dateString: string) => {

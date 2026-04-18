@@ -14,7 +14,7 @@ export interface ContentTreeProps {
 <script setup lang="ts">
 const props = defineProps<ContentTreeProps>();
 
-const appConfig = useAppConfig();
+const appConfig = useAppConfig() as { collection?: { navIcons?: Record<string, IconAlias> } };
 const navIcons = computed(() => appConfig.collection?.navIcons ?? {});
 
 const { data: navigation } = await useAsyncData(

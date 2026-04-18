@@ -10,7 +10,7 @@ const emit = defineEmits<ToastEmits>();
   <ToastRoot
     :class="`f-toast f-toast-${variant}`"
     :duration="duration"
-    @update:open="(open) => { if (!open) emit('close') }"
+    @update:open="(open: boolean) => { if (!open) emit('close') }"
   >
     <ToastTitle v-if="title" class="f-toast-title">
       {{ title }}

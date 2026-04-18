@@ -38,3 +38,6 @@ export type ThemeRegistry = Record<string, Theme>;
 
 export const defineTheme = (theme: UserTheme): Theme =>
   defu(theme, { reference, modes }) as Theme;
+
+export const isTheme = (value: unknown): value is Theme =>
+  typeof value === "object" && value !== null && "reference" in value && "modes" in value;

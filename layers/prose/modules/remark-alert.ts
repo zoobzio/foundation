@@ -9,16 +9,13 @@ export default defineNuxtModule({
     const nuxt = useNuxt();
 
     // Extend content config to add our remark plugin
-    // @ts-expect-error - content options type
-    nuxt.options.content = nuxt.options.content || {};
-    // @ts-expect-error - content options type
-    nuxt.options.content.build = nuxt.options.content.build || {};
-    // @ts-expect-error - content options type
-    nuxt.options.content.build.markdown = nuxt.options.content.build.markdown || {};
-    // @ts-expect-error - content options type
-    nuxt.options.content.build.markdown.remarkPlugins = {
-      // @ts-expect-error - content options type
-      ...nuxt.options.content.build.markdown.remarkPlugins,
+    const opts = nuxt.options as unknown as Record<string, Record<string, Record<string, Record<string, unknown>>>>;
+    opts.content = opts.content || {};
+    opts.content.build = opts.content.build || {};
+    opts.content.build.markdown = opts.content.build.markdown || {};
+    const existing = (opts.content.build.markdown.remarkPlugins ?? {}) as Record<string, unknown>;
+    opts.content.build.markdown.remarkPlugins = {
+      ...existing,
       "remark-alert": {
         instance: remarkAlert,
       },

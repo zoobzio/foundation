@@ -12,3 +12,5 @@ export const defineListbox = useComponentRecipe<
   ListboxProps,
   ListboxEmits & FocusEvents
 >();
+
+export type ListboxRecipe = ComponentRecipe<ListboxProps, ListboxEmits & FocusEvents>;

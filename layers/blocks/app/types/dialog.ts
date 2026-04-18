@@ -8,3 +8,5 @@ export type DialogEmits = {
 };
 
 export const defineDialog = useComponentRecipe<DialogProps, DialogEmits>();
+
+export type DialogRecipe = ComponentRecipe<DialogProps, DialogEmits>;

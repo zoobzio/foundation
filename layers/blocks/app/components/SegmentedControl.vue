@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SegmentedControlProps } from "../types/segmented-control";
+import type { AcceptableValue } from "reka-ui";
 import {
   ToggleGroupRoot,
   ToggleGroupItem,
@@ -14,9 +15,10 @@ const {
 const model = defineModel<string>();
 
 // Prevent deselection when required
-const handleUpdate = (value: string) => {
-  if (required && !value) return;
-  model.value = value;
+const handleUpdate = (value: AcceptableValue | AcceptableValue[]) => {
+  const val = Array.isArray(value) ? value[0] : value;
+  if (required && !val) return;
+  if (typeof val === "string") model.value = val;
 };
 </script>
 

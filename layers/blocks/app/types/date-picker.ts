@@ -13,3 +13,5 @@ export type DatePickerProps = {
 export type DatePickerEmits = {};
 
 export const defineDatePicker = useComponentRecipe<DatePickerProps, DatePickerEmits>();
+
+export type DatePickerRecipe = ComponentRecipe<DatePickerProps, DatePickerEmits>;

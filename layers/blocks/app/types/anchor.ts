@@ -15,3 +15,5 @@ export const defineAnchor = useComponentRecipe<
   AnchorProps,
   AnchorEmits & MouseEvents & FocusEvents
 >();
+
+export type AnchorRecipe = ComponentRecipe<AnchorProps, AnchorEmits & MouseEvents & FocusEvents>;

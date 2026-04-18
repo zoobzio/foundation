@@ -41,7 +41,7 @@ onMounted(() => {
     if (element) {
       useIntersectionObserver(
         element,
-        (entries) => {
+        (entries: IntersectionObserverEntry[]) => {
           const isIntersecting = entries[0]?.isIntersecting;
           if (isIntersecting) {
             visibleHeadings.value.add(link.id);

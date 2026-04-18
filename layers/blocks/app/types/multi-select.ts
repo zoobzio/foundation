@@ -12,3 +12,5 @@ export const defineMultiSelect = useComponentRecipe<
   MultiSelectProps,
   MultiSelectEmits & FocusEvents
 >();
+
+export type MultiSelectRecipe = ComponentRecipe<MultiSelectProps, MultiSelectEmits & FocusEvents>;

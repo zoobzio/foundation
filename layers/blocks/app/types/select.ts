@@ -11,3 +11,5 @@ export const defineSelect = useComponentRecipe<
   SelectProps,
   SelectEmits & FocusEvents
 >();
+
+export type SelectRecipe = ComponentRecipe<SelectProps, SelectEmits & FocusEvents>;

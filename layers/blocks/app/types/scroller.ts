@@ -8,3 +8,5 @@ export type ScrollerProps = {
 export type ScrollerEmits = {};
 
 export const defineScroller = useComponentRecipe<ScrollerProps, ScrollerEmits>();
+
+export type ScrollerRecipe = ComponentRecipe<ScrollerProps, ScrollerEmits>;

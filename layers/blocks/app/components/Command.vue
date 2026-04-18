@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CommandProps, CommandEmits } from "../types/command";
 
+import type { AcceptableValue } from "reka-ui";
 import {
   ListboxRoot,
   ListboxFilter,
@@ -56,10 +57,10 @@ const filteredGroups = computed(() => {
 const hasResults = computed(() => filteredGroups.value.length > 0);
 
 // Single-select mode: emit select event
-const handleSingleSelect = (value: string | string[]) => {
+const handleSingleSelect = (value: AcceptableValue) => {
   if (multiple) return;
   const val = Array.isArray(value) ? value[0] : value;
-  if (val) emit("select", val);
+  if (val && typeof val === "string") emit("select", val);
 };
 </script>
 

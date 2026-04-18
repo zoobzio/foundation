@@ -27,3 +27,5 @@ export const defineCommand = useComponentRecipe<
   CommandProps,
   CommandEmits & FocusEvents
 >();
+
+export type CommandRecipe = ComponentRecipe<CommandProps, CommandEmits & FocusEvents>;

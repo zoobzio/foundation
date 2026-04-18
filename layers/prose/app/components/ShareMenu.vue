@@ -10,7 +10,7 @@ const resolvedTitle = computed(() => props.title ?? "");
 const encodedUrl = computed(() => encodeURIComponent(resolvedUrl.value));
 const encodedTitle = computed(() => encodeURIComponent(resolvedTitle.value));
 
-const links = computed(() => [
+const links = computed<{ label: string; icon: IconAlias; href: string }[]>(() => [
   {
     label: "X",
     icon: "x",

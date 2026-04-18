@@ -22,7 +22,6 @@ import {
 } from "reka-ui";
 
 const {
-  placeholder = "Select date",
   minValue,
   maxValue,
   locale,
@@ -36,7 +35,6 @@ const model = defineModel<DateValue>();
 
 <template>
   <DatePickerRoot
-    v-slot="{ weekDays, grid }"
     v-model="model"
     :min-value="minValue"
     :max-value="maxValue"

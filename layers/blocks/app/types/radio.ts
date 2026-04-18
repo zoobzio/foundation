@@ -12,3 +12,5 @@ export const defineRadio = useComponentRecipe<
   RadioProps,
   RadioEmits & FocusEvents
 >();
+
+export type RadioRecipe = ComponentRecipe<RadioProps, RadioEmits & FocusEvents>;

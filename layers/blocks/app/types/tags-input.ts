@@ -16,3 +16,5 @@ export const defineTagsInput = useComponentRecipe<
   TagsInputProps,
   TagsInputEmits & FocusEvents
 >();
+
+export type TagsInputRecipe = ComponentRecipe<TagsInputProps, TagsInputEmits & FocusEvents>;

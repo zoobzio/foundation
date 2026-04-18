@@ -13,3 +13,5 @@ export type PopoverEmits = {
 };
 
 export const definePopover = useComponentRecipe<PopoverProps, PopoverEmits>();
+
+export type PopoverRecipe = ComponentRecipe<PopoverProps, PopoverEmits>;

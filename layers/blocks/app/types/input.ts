@@ -14,3 +14,5 @@ export const defineInput = useComponentRecipe<
   InputProps,
   InputEmits & InputEvents & FocusEvents
 >();
+
+export type InputRecipe = ComponentRecipe<InputProps, InputEmits & InputEvents & FocusEvents>;

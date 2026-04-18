@@ -8,3 +8,5 @@ export type ChipEmits = {
 };
 
 export const defineChip = useComponentRecipe<ChipProps, ChipEmits>();
+
+export type ChipRecipe = ComponentRecipe<ChipProps, ChipEmits>;

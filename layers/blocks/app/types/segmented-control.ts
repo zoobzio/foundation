@@ -10,3 +10,5 @@ export const defineSegmentedControl = useComponentRecipe<
   SegmentedControlProps,
   SegmentedControlEmits & FocusEvents
 >();
+
+export type SegmentedControlRecipe = ComponentRecipe<SegmentedControlProps, SegmentedControlEmits & FocusEvents>;

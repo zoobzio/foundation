@@ -4,3 +4,5 @@ export type CaptionProps = {
 export type CaptionEmits = {};
 
 export const defineCaption = useComponentRecipe<CaptionProps, CaptionEmits>();
+
+export type CaptionRecipe = ComponentRecipe<CaptionProps, CaptionEmits>;

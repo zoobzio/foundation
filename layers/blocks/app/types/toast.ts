@@ -12,3 +12,5 @@ export type ToastEmits = {
 };
 
 export const defineToast = useComponentRecipe<ToastProps, ToastEmits>();
+
+export type ToastRecipe = ComponentRecipe<ToastProps, ToastEmits>;

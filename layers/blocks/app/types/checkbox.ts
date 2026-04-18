@@ -10,3 +10,5 @@ export const defineCheckbox = useComponentRecipe<
   CheckboxProps,
   CheckboxEmits & FocusEvents
 >();
+
+export type CheckboxRecipe = ComponentRecipe<CheckboxProps, CheckboxEmits & FocusEvents>;

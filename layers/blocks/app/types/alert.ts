@@ -8,3 +8,5 @@ export type AlertProps = {
 export type AlertEmits = {};
 
 export const defineAlert = useComponentRecipe<AlertProps, AlertEmits>();
+
+export type AlertRecipe = ComponentRecipe<AlertProps, AlertEmits>;

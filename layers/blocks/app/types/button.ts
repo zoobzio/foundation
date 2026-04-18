@@ -12,3 +12,5 @@ export const defineButton = useComponentRecipe<
   ButtonProps,
   ButtonEmits & MouseEvents & FocusEvents
 >();
+
+export type ButtonRecipe = ComponentRecipe<ButtonProps, ButtonEmits & MouseEvents & FocusEvents>;

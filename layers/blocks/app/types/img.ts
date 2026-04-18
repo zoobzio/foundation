@@ -5,3 +5,5 @@ export type ImgProps = {
 export type ImgEmits = {};
 
 export const defineImg = useComponentRecipe<ImgProps, ImgEmits>();
+
+export type ImgRecipe = ComponentRecipe<ImgProps, ImgEmits>;

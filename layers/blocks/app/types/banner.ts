@@ -4,3 +4,5 @@ export type BannerProps = {
 export type BannerEmits = {};
 
 export const defineBanner = useComponentRecipe<BannerProps, BannerEmits>();
+
+export type BannerRecipe = ComponentRecipe<BannerProps, BannerEmits>;

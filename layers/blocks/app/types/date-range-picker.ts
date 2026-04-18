@@ -17,3 +17,5 @@ export type DateRangePickerProps = {
 export type DateRangePickerEmits = {};
 
 export const defineDateRangePicker = useComponentRecipe<DateRangePickerProps, DateRangePickerEmits>();
+
+export type DateRangePickerRecipe = ComponentRecipe<DateRangePickerProps, DateRangePickerEmits>;

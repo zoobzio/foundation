@@ -1,5 +1,4 @@
 import type { DateValue } from "@internationalized/date";
-import type { DateRange } from "./date-range-picker";
 
 export type RangeCalendarProps = {
   minValue?: DateValue;
@@ -15,3 +14,5 @@ export type RangeCalendarProps = {
 export type RangeCalendarEmits = {};
 
 export const defineRangeCalendar = useComponentRecipe<RangeCalendarProps, RangeCalendarEmits>();
+
+export type RangeCalendarRecipe = ComponentRecipe<RangeCalendarProps, RangeCalendarEmits>;
