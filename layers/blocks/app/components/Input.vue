@@ -55,7 +55,7 @@ defineExpose({ focus, blur });
       @focus="emit('focus', $event)"
       @blur="emit('blur', $event)"
       @keydown="emit('keydown', $event)"
-    />
+    >
     <span
       v-if="$slots.append"
       class="f-input-append"

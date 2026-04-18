@@ -22,8 +22,8 @@ export default defineNuxtModule<Record<string, IconData>>({
 
     // Auto-import types
     addImports([
-      { name: "Iconic", from: "@foundation/iconic/types", type: true },
-      { name: "IconAlias", from: "@foundation/iconic/types", type: true },
+      { name: "Iconic", from: "@zoobz-io/iconic/types", type: true },
+      { name: "IconAlias", from: "@zoobz-io/iconic/types", type: true },
     ]);
 
     // Auto-import composables

@@ -34,7 +34,7 @@ export type Theme = {
   };
 };
 
-export const defineTheme =
-  (theme: UserTheme) =>
-  (override: UserTheme = {}) =>
-    defu(override, theme, { reference, modes }) as Theme;
+export type ThemeRegistry = Record<string, Theme>;
+
+export const defineTheme = (theme: UserTheme): Theme =>
+  defu(theme, { reference, modes }) as Theme;

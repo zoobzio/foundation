@@ -44,7 +44,7 @@ export async function fetchTags(options: FetchTagsOptions): Promise<GitHubTag[]>
         const remaining = response.headers.get("x-ratelimit-remaining");
         if (remaining === "0") {
           const reset = response.headers.get("x-ratelimit-reset");
-          const resetDate = reset ? new Date(parseInt(reset, 10) * 1000) : null;
+          const resetDate = reset ? new Date(Number.parseInt(reset, 10) * 1000) : null;
           throw new Error(
             `GitHub rate limit exceeded. Resets at ${resetDate?.toISOString() ?? "unknown"}`,
           );

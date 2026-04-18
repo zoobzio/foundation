@@ -16,6 +16,7 @@ export type CommandProps = {
   placeholder?: string;
   disabled?: boolean;
   multiple?: boolean;
+  filtered?: boolean;
 };
 
 export type CommandEmits = {

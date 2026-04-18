@@ -3,7 +3,7 @@ import type { IconProps } from "../types/icon";
 
 const { alias } = defineProps<IconProps>();
 
-const icon = computed(() => useIconAlias(alias));
+const icon = computed(() => useIconAlias(alias) ?? useIconAlias("warning"));
 
 const iconStyle = computed(() => {
   const { uri, mode } = icon.value;

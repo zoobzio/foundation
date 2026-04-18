@@ -2,8 +2,9 @@
 
 export interface NavListItem {
   label: string;
-  to: string;
+  to?: string;
   icon?: IconAlias;
+  children?: NavListItem[];
 }
 
 export interface NavListGroup {
@@ -33,20 +34,30 @@ const isActive = (to: string) => route.path === to;
       :key="group.label"
       class="f-nav-list-group"
     >
-      <Caption :icon="group.icon">
+      <Caption v-if="group.label" :icon="group.icon">
         {{ group.label }}
       </Caption>
-      <NuxtLink
-        v-for="item in group.items"
-        :key="item.to"
-        :to="item.to"
-        :aria-selected="isActive(item.to) ? 'true' : undefined"
-        :data-selected="isActive(item.to) ? '' : undefined"
-        class="f-nav-list-item"
-      >
-        <Icon v-if="item.icon" :alias="item.icon" />
-        <span class="f-nav-list-label">{{ item.label }}</span>
-      </NuxtLink>
+      <template v-for="item in group.items" :key="item.to ?? item.label">
+        <NuxtLink
+          v-if="item.to && !item.children?.length"
+          :to="item.to"
+          :aria-selected="isActive(item.to) ? 'true' : undefined"
+          :data-selected="isActive(item.to) ? '' : undefined"
+          class="f-nav-list-item"
+        >
+          <Icon v-if="item.icon" :alias="item.icon" />
+          <span class="f-nav-list-label">{{ item.label }}</span>
+        </NuxtLink>
+        <div v-else-if="item.children?.length" class="f-nav-list-nested">
+          <span class="f-nav-list-nested-label">
+            <Icon v-if="item.icon" :alias="item.icon" />
+            {{ item.label }}
+          </span>
+          <NavList
+            :groups="[{ label: '', items: item.children }]"
+          />
+        </div>
+      </template>
     </div>
   </nav>
 </template>

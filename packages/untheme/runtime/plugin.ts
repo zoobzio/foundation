@@ -1,25 +1,17 @@
 import { defineNuxtPlugin, useHead } from "#app";
-import { watch } from "vue";
+import { computed } from "vue";
 import { useUntheme } from "./composables";
 
 export default defineNuxtPlugin(() => {
-  const { mode } = useUntheme();
+  const { mode, themeCSS } = useUntheme();
 
-  // Set initial class via useHead for SSR
-  useHead({
+  // Reactive head — mode class + theme style injection
+  useHead(computed(() => ({
     htmlAttrs: {
       class: mode.value === "dark" ? "dark" : "",
     },
-  });
-
-  // Direct DOM updates on client for instant mode switching
-  if (import.meta.client) {
-    watch(mode, (newMode) => {
-      if (newMode === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    }, { flush: 'sync' });
-  }
+    style: themeCSS.value
+      ? [{ key: "untheme-active", innerHTML: themeCSS.value }]
+      : [],
+  })));
 });

@@ -1,11 +1,14 @@
 <script lang="ts">
 import type { PageCollections } from "@nuxt/content";
+import type { SurroundOrder } from "../composables/surround";
 
 export interface SurroundProps<T extends keyof PageCollections> {
   collection: T;
   path?: string;
   prevLabel?: string;
-  nextLabel?: string;}
+  nextLabel?: string;
+  order?: SurroundOrder<T>;
+}
 </script>
 
 <script setup lang="ts" generic="T extends keyof PageCollections">
@@ -14,9 +17,10 @@ const {
   path,
   prevLabel = "Previous",
   nextLabel = "Next",
+  order,
 } = defineProps<SurroundProps<T>>();
 
-const { prev, next } = useContentSurround(collection, path);
+const { prev, next } = useContentSurround(collection, path, order);
 
 </script>
 

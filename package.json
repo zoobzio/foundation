@@ -10,15 +10,6 @@
     "url": "https://zoobz.io"
   },
   "scripts": {
-    "docula:dev": "pnpm --filter @foundation/docula dev",
-    "docula:build": "pnpm --filter @foundation/docula build",
-    "docula:generate": "pnpm --filter @foundation/docula generate",
-    "docula:preview": "pnpm --filter @foundation/docula preview",
-    "docula:typecheck": "pnpm --filter @foundation/docula typecheck",
-    "capitan:dev": "pnpm --filter @foundation/capitan dev",
-    "capitan:build": "pnpm --filter @foundation/capitan build",
-    "capitan:generate": "pnpm --filter @foundation/capitan generate",
-    "capitan:preview": "pnpm --filter @foundation/capitan preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "pnpm -r typecheck"

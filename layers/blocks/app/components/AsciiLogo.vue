@@ -58,4 +58,10 @@ const ascii = computed(() => {
   white-space: pre;
   color: currentColor;
 }
+
+@media (max-width: 1024px) {
+  .f-ascii-logo {
+    font-size: 0.25rem;
+  }
+}
 </style>

@@ -1,5 +1,5 @@
 {
-  "name": "@foundation/blocks",
+  "name": "@zoobz-io/blocks",
   "type": "module",
   "license": "MIT",
   "version": "0.0.1",
@@ -23,11 +23,10 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "@foundation/iconic": "workspace:*",
-    "@foundation/untheme": "workspace:*",
+    "@zoobz-io/iconic": "workspace:*",
+    "@zoobz-io/untheme": "workspace:*",
     "@internationalized/date": "^3.7.0",
     "@pinia/nuxt": "catalog:",
-    "@vueuse/core": "^11.3.0",
     "@vueuse/nuxt": "^14.1.0",
     "defu": "catalog:",
     "figlet": "^1.9.4",
@@ -38,6 +37,7 @@
   "devDependencies": {
     "@iconify-json/circle-flags": "^1.2.10",
     "@iconify-json/ic": "^1.2.4",
+    "@iconify-json/simple-icons": "^1.2.72",
     "@types/figlet": "^1.7.0",
     "@unocss/nuxt": "catalog:",
     "typescript": "catalog:",

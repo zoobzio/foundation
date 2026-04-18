@@ -2,14 +2,12 @@
 import type { CommandProps, CommandEmits } from "../types/command";
 
 import {
-  ComboboxRoot,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxViewport,
-  ComboboxGroup,
-  ComboboxLabel,
-  ComboboxItem,
-  ComboboxEmpty,
+  ListboxRoot,
+  ListboxFilter,
+  ListboxContent,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxItem,
 } from "reka-ui";
 
 const {
@@ -17,6 +15,7 @@ const {
   placeholder = "Search...",
   disabled,
   multiple = false,
+  filtered = false,
 } = defineProps<CommandProps>();
 
 const emit = defineEmits<CommandEmits>();
@@ -24,7 +23,7 @@ const emit = defineEmits<CommandEmits>();
 const searchTerm = defineModel<string>("searchTerm", { default: "" });
 const selected = defineModel<Set<string>>("selected", { default: () => new Set() });
 
-// Sync Set <-> Array for Combobox v-model
+// Sync Set <-> Array for Listbox v-model
 const modelArray = computed({
   get: () => [...selected.value],
   set: (val: string[]) => {
@@ -34,8 +33,11 @@ const modelArray = computed({
 
 const isSelected = (value: string) => selected.value.has(value);
 
-// Filter groups: match Combobox filtering + hide items with count=0
+// Filter groups: match search term + hide items with count=0
+// Skip when `filtered` — the parent already performed external search.
 const filteredGroups = computed(() => {
+  if (filtered) return groups.filter((g) => g.items.length > 0);
+
   const search = searchTerm.value.toLowerCase();
   const isSearching = search.length > 0;
 
@@ -43,15 +45,15 @@ const filteredGroups = computed(() => {
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
-        // Match search term against label
         if (isSearching && !item.label.toLowerCase().includes(search)) return false;
-        // When searching, hide items with count=0
         if (isSearching && item.count === 0) return false;
         return true;
       }),
     }))
     .filter((group) => group.items.length > 0);
 });
+
+const hasResults = computed(() => filteredGroups.value.length > 0);
 
 // Single-select mode: emit select event
 const handleSingleSelect = (value: string | string[]) => {
@@ -62,56 +64,53 @@ const handleSingleSelect = (value: string | string[]) => {
 </script>
 
 <template>
-  <ComboboxRoot
+  <ListboxRoot
     v-model="modelArray"
-    v-model:search-term="searchTerm"
     :disabled="disabled"
     :multiple="multiple"
-    :open="true"
-    :display-value="() => ''"
-    :reset-search-term-on-blur="false"
     class="f-command-root"
     @update:model-value="handleSingleSelect"
   >
-    <ComboboxInput
-      :placeholder="placeholder"
-      class="f-command-input"
-    />
-    <ComboboxContent
-      class="f-command-content"
-      :dismissable="false"
-    >
-      <ComboboxViewport as-child>
-        <Scroller class="f-command-viewport">
-          <ComboboxEmpty class="f-command-empty">
-            <slot name="empty">No results found</slot>
-          </ComboboxEmpty>
+    <div class="f-command-input-wrapper">
+      <slot name="input-icon" />
+      <ListboxFilter
+        v-model="searchTerm"
+        :placeholder="placeholder"
+        auto-focus
+        class="f-command-input"
+      />
+    </div>
+    <ListboxContent class="f-command-content">
+      <Scroller class="f-command-viewport">
+        <div v-if="!hasResults" class="f-command-empty">
+          <slot name="empty">No results found</slot>
+        </div>
 
-          <ComboboxGroup
-            v-for="group in filteredGroups"
-            :key="group.key"
-            class="f-command-group"
+        <ListboxGroup
+          v-for="group in filteredGroups"
+          :key="group.key"
+          class="f-command-group"
+        >
+          <ListboxGroupLabel v-if="group.label" as-child>
+            <Caption>
+              <slot name="group-label" :group="group">{{ group.label }}</slot>
+            </Caption>
+          </ListboxGroupLabel>
+          <ListboxItem
+            v-for="item in group.items"
+            :key="item.value"
+            :value="item.value"
+            :disabled="item.disabled"
+            class="f-command-item"
           >
-            <ComboboxLabel v-if="group.label" as-child>
-              <Caption>{{ group.label }}</Caption>
-            </ComboboxLabel>
-            <ComboboxItem
-              v-for="item in group.items"
-              :key="item.value"
-              :value="item.value"
-              :disabled="item.disabled"
-              class="f-command-item"
-            >
-              <slot name="item" :item="item" :selected="isSelected(item.value)">
-                <Checkbox v-if="multiple" :model-value="isSelected(item.value)" />
-                <span class="f-command-item-label">{{ item.label }}</span>
-                <Kbd v-if="item.count !== undefined" class="f-command-item-count">{{ item.count }}</Kbd>
-              </slot>
-            </ComboboxItem>
-          </ComboboxGroup>
-        </Scroller>
-      </ComboboxViewport>
-    </ComboboxContent>
-  </ComboboxRoot>
+            <slot name="item" :item="item" :selected="isSelected(item.value)">
+              <Checkbox v-if="multiple" :model-value="isSelected(item.value)" />
+              <span class="f-command-item-label">{{ item.label }}</span>
+              <Kbd v-if="item.count !== undefined" class="f-command-item-count">{{ item.count }}</Kbd>
+            </slot>
+          </ListboxItem>
+        </ListboxGroup>
+      </Scroller>
+    </ListboxContent>
+  </ListboxRoot>
 </template>
-

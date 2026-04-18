@@ -2,11 +2,17 @@ import { defineNuxtConfig } from "nuxt/config";
 import highlights from "./config/highlights";
 
 export default defineNuxtConfig({
-  extends: ["@foundation/blocks"],
+  extends: ["@zoobz-io/blocks"],
   imports: {
     dirs: ["types"],
   },
-  modules: ["@nuxt/content"],
+  modules: [
+    "@nuxt/content",
+    "@nuxtjs/sitemap",
+    "@nuxtjs/robots",
+    "nuxt-schema-org",
+    "nuxt-seo-utils",
+  ],
   content: {
     database: process.env.DATABASE_URL
       ? {

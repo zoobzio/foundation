@@ -1,7 +1,0 @@
-{
-  "name": "@foundation/flash",
-  "type": "module",
-  "private": true,
-  "version": "0.0.1",
-  "main": "./nuxt.config.ts"
-}

@@ -1,0 +1,80 @@
+/* Box sizing and base reset */
+:where(*),
+:where(*::before),
+:where(*::after) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  box-sizing: border-box;
+}
+
+/* Remove default list styles */
+:where(ol, ul, menu) {
+  list-style: none;
+}
+
+/* Interactive elements */
+:where(button, [type="button"], [type="reset"], [type="submit"]) {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+:where(input, textarea, select) {
+  appearance: none;
+  background: transparent;
+}
+
+/* Remove outline - components should provide their own focus styles */
+:where(*:focus) {
+  outline: none;
+}
+
+/* Links */
+:where(a) {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/* Media elements */
+:where(img, picture, video, canvas, svg) {
+  display: block;
+  max-width: 100%;
+}
+
+/* Tables */
+:where(table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Remove default quote styles */
+:where(blockquote, q) {
+  quotes: none;
+}
+
+:where(blockquote::before, blockquote::after, q::before, q::after) {
+  content: '';
+  content: none;
+}
+
+/* Screen-reader only utility */
+:where(.sr-only) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Text selection */
+::selection {
+  background: var(--sys-secondary);
+  color: var(--sys-on-secondary);
+}

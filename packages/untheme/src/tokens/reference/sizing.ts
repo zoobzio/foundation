@@ -12,10 +12,6 @@ export default {
   "ref-width-container": "80rem", // 1280px - Max container width
   "ref-width-prose": "65ch", // Optimal reading width
 
-  // Structural heights
-  "ref-height-header": "3.5rem",
-  "ref-height-aside": "calc(100vh - 3.5rem)",
-
   // Em-based sizing (scales with font-size)
   "ref-width-1em": "1em",
   "ref-height-1em": "1em",

@@ -14,7 +14,10 @@ const { data: items } = await useAsyncData(
 );
 
 const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
+  const raw = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+    ? dateString + "T00:00:00"
+    : dateString;
+  const date = new Date(raw);
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",

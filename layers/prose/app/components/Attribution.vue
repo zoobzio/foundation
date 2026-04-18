@@ -4,12 +4,22 @@ export interface AttributionProps {
   published?: string;
   updated?: string;
   readtime?: string;
-  editUrl?: string;}
+  editUrl?: string;
+  share?: boolean;
+  shareTitle?: string;
+}
 
 const props = defineProps<AttributionProps>();
 
 const formatDate = (dateStr: string | Date) => {
-  const date = dateStr instanceof Date ? dateStr : new Date(dateStr);
+  let date: Date;
+  if (dateStr instanceof Date) {
+    date = dateStr;
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    date = new Date(dateStr + "T00:00:00");
+  } else {
+    date = new Date(dateStr);
+  }
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -29,12 +39,15 @@ const formattedDate = computed(() => {
     v-if="props.author || props.published || props.updated || props.readtime"
     class="f-attribution-root"
   >
-    <span
+    <a
       v-if="props.author"
+      :href="`https://github.com/${props.author}`"
+      target="_blank"
+      rel="noopener noreferrer"
       class="f-attribution-author"
     >
       <Avatar
-        :src="`https://github.com/${props.author}.png`"
+        :src="`/avatars/${props.author}.png`"
         :alt="props.author"
       >
         <template #fallback>
@@ -42,7 +55,7 @@ const formattedDate = computed(() => {
         </template>
       </Avatar>
       {{ props.author }}
-    </span>
+    </a>
     <span
       v-if="props.published || props.updated"
       class="f-attribution-published"
@@ -67,6 +80,10 @@ const formattedDate = computed(() => {
       Edit this page
       <Icon alias="external" />
     </a>
+    <ShareMenu
+      v-if="props.share"
+      :title="props.shareTitle"
+    />
   </div>
 </template>
 

@@ -308,21 +308,21 @@ export default defineTheme({
       "sys-outline": "ref-neutral-400", // #bdae93 (light3)
       "sys-outline-variant": "ref-neutral-300", // #d5c4a1 (light2)
 
-      // Primary - using blue (neutral variants for light mode)
-      "sys-primary": "ref-blue-600", // #458588 (neutral_blue)
-      "sys-primary-hover": "ref-blue-700", // #076678 (faded_blue)
-      "sys-primary-active": "ref-blue-800",
-      "sys-primary-container": "ref-blue-200",
+      // Primary - using orange (Gruvbox's warm signature accent)
+      "sys-primary": "ref-orange-600", // #d65d0e (neutral_orange)
+      "sys-primary-hover": "ref-orange-700", // #af3a03 (faded_orange)
+      "sys-primary-active": "ref-orange-800",
+      "sys-primary-container": "ref-orange-200",
       "sys-on-primary": "ref-neutral-50",
-      "sys-on-primary-container": "ref-blue-950",
+      "sys-on-primary-container": "ref-orange-950",
 
-      // Secondary - using purple
-      "sys-secondary": "ref-purple-600", // #b16286 (neutral_purple)
-      "sys-secondary-hover": "ref-purple-700", // #8f3f71 (faded_purple)
-      "sys-secondary-active": "ref-purple-800",
-      "sys-secondary-container": "ref-purple-200",
+      // Secondary - using aqua (cool complement)
+      "sys-secondary": "ref-emerald-600", // #689d6a (neutral_aqua)
+      "sys-secondary-hover": "ref-emerald-700", // #427b58 (faded_aqua)
+      "sys-secondary-active": "ref-emerald-800",
+      "sys-secondary-container": "ref-emerald-200",
       "sys-on-secondary": "ref-neutral-50",
-      "sys-on-secondary-container": "ref-purple-950",
+      "sys-on-secondary-container": "ref-emerald-950",
 
       // Success - using green
       "sys-success": "ref-green-600", // #98971a (neutral_green)
@@ -361,7 +361,7 @@ export default defineTheme({
       "sys-pressed": "ref-neutral-300", // #d5c4a1 (light2)
       "sys-active": "ref-neutral-300",
       "sys-active-highlight": "ref-neutral-200",
-      "sys-focus": "ref-blue-500", // #83a598 (bright_blue)
+      "sys-focus": "ref-orange-500", // #fe8019 (bright_orange)
       "sys-disabled": "ref-neutral-300",
       "sys-on-disabled": "ref-neutral-500", // #a89984 (gray)
 
@@ -407,21 +407,21 @@ export default defineTheme({
       "sys-outline": "ref-neutral-700", // #665c54 (dark3)
       "sys-outline-variant": "ref-neutral-800", // #504945 (dark2)
 
-      // Primary - using blue (bright variants for dark mode)
-      "sys-primary": "ref-blue-500", // #83a598 (bright_blue)
-      "sys-primary-hover": "ref-blue-400",
-      "sys-primary-active": "ref-blue-300",
-      "sys-primary-container": "ref-blue-950",
-      "sys-on-primary": "ref-blue-950",
-      "sys-on-primary-container": "ref-blue-100",
+      // Primary - using orange (Gruvbox's warm signature accent)
+      "sys-primary": "ref-orange-500", // #fe8019 (bright_orange)
+      "sys-primary-hover": "ref-orange-400",
+      "sys-primary-active": "ref-orange-300",
+      "sys-primary-container": "ref-orange-950",
+      "sys-on-primary": "ref-orange-950",
+      "sys-on-primary-container": "ref-orange-100",
 
-      // Secondary - using purple
-      "sys-secondary": "ref-purple-500", // #d3869b (bright_purple)
-      "sys-secondary-hover": "ref-purple-400",
-      "sys-secondary-active": "ref-purple-300",
-      "sys-secondary-container": "ref-purple-950",
-      "sys-on-secondary": "ref-purple-950",
-      "sys-on-secondary-container": "ref-purple-100",
+      // Secondary - using aqua (cool complement)
+      "sys-secondary": "ref-emerald-500", // #8ec07c (bright_aqua)
+      "sys-secondary-hover": "ref-emerald-400",
+      "sys-secondary-active": "ref-emerald-300",
+      "sys-secondary-container": "ref-emerald-950",
+      "sys-on-secondary": "ref-emerald-950",
+      "sys-on-secondary-container": "ref-emerald-100",
 
       // Success - using green
       "sys-success": "ref-green-500", // #b8bb26 (bright_green)
@@ -460,7 +460,7 @@ export default defineTheme({
       "sys-pressed": "ref-neutral-700", // #665c54 (dark3)
       "sys-active": "ref-neutral-700",
       "sys-active-highlight": "ref-neutral-800",
-      "sys-focus": "ref-blue-500", // #83a598 (bright_blue)
+      "sys-focus": "ref-orange-500", // #fe8019 (bright_orange)
       "sys-disabled": "ref-neutral-800",
       "sys-on-disabled": "ref-neutral-600", // #7c6f64 (dark4)
 

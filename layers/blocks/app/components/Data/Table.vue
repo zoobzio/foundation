@@ -1,66 +1,65 @@
 <script lang="ts">
-import type { TableStore, SelectableStore, DataTableColumn } from "../../types/common";
+import type { DataTableColumn, TableStore, SelectableStore } from "../../types/common";
 
-export interface DataTableProps<T, K extends keyof T = keyof T> {
-  store: TableStore<T> & Partial<SelectableStore<T[K]>>;
+export interface DataTableProps<T, K = unknown> {
+  store: TableStore<T>;
   columns: DataTableColumn<T>[];
   selectable?: boolean;
-  rowKey?: K;
+  rowKey?: keyof T;
+  selection?: SelectableStore<K>;
 }
 </script>
 
-<script setup lang="ts" generic="T extends Record<string, unknown>, K extends keyof T = keyof T">
-const { store, columns, selectable = false, rowKey } = defineProps<DataTableProps<T, K>>();
+<script setup lang="ts" generic="T extends Record<string, unknown>, K = unknown">
+const props = defineProps<DataTableProps<T, K>>();
 
-const isSelectable = computed(() => selectable && rowKey && 'selected' in store);
+const { data, loading, sortField, sortDirection, sort } = props.store;
+
+const isSelectableRow = computed(() => props.selectable && props.rowKey && props.selection);
 
 const getSelectAllState = computed(() => {
-  if (!isSelectable.value) return false;
-  if (store.isIndeterminate?.value) return 'indeterminate' as const;
-  return store.isAllSelected?.value ?? false;
+  if (!isSelectableRow.value || !props.selection) return false;
+  if (props.selection.isIndeterminate.value) return 'indeterminate' as const;
+  return props.selection.isAllSelected.value;
 });
 
-const handleSelectAll = () => {
-  store.toggleAll?.();
-};
-
 const isRowSelected = (row: T) => {
-  if (!isSelectable.value || !rowKey) return false;
-  return store.selected?.value.has(row[rowKey]) ?? false;
+  if (!isSelectableRow.value || !props.rowKey || !props.selection) return false;
+  return props.selection.selected.value.has(row[props.rowKey] as K);
 };
 
-const handleRowSelect = (row: T) => {
-  if (!rowKey) return;
-  store.toggleRow?.(row[rowKey]);
-};
-
-const isSorted = (col: DataTableColumn<T>) => store.sortKey.value === col.key;
-const getSortIcon = (col: DataTableColumn<T>) => {
-  if (!isSorted(col)) return null;
-  return store.sortDirection.value === "asc" ? "chevron-up" : "chevron-down";
-};
-
-const handleSort = (col: DataTableColumn<T>) => {
-  if (col.sortable) {
-    store.sort(col.key);
+const toggleRow = (row: T) => {
+  if (props.rowKey && props.selection) {
+    props.selection.toggleRow(row[props.rowKey] as K);
   }
 };
 
-const colSpan = computed(() => columns.length + (isSelectable.value ? 1 : 0));
+const sortFieldFor = (col: DataTableColumn<T>) => col.sortKey ?? String(col.key);
+const isSorted = (col: DataTableColumn<T>) => sortField.value === sortFieldFor(col);
+const getSortIcon = (col: DataTableColumn<T>) => {
+  if (!isSorted(col)) return null;
+  return sortDirection.value === "asc" ? "chevron-up" : "chevron-down";
+};
+
+const handleSort = (col: DataTableColumn<T>) => {
+  if (col.sortable) sort(sortFieldFor(col));
+};
+
+const colSpan = computed(() => props.columns.length + (isSelectableRow.value ? 1 : 0));
 </script>
 
 <template>
   <div class="f-data-table">
-    <slot name="toolbar" :store="store" />
+    <slot name="toolbar" />
 
     <Scroller>
       <Table>
         <Thead>
           <Tr>
-            <Th v-if="isSelectable" class="f-data-table-select">
+            <Th v-if="isSelectableRow" class="f-data-table-select">
               <Checkbox
                 :model-value="getSelectAllState"
-                @update:model-value="handleSelectAll"
+                @update:model-value="selection!.toggleAll()"
               />
             </Th>
             <Th
@@ -88,22 +87,17 @@ const colSpan = computed(() => columns.length + (isSelectable.value ? 1 : 0));
           </Tr>
         </Thead>
         <Tbody>
-          <Tr v-if="store.loading?.value">
-            <Td :colspan="colSpan">
-              <slot name="loading">Loading...</slot>
-            </Td>
-          </Tr>
-          <Tr v-else-if="!store.data?.value?.length">
+          <Tr v-if="!data.length">
             <Td :colspan="colSpan">
               <slot name="empty">No data</slot>
             </Td>
           </Tr>
           <template v-else>
-            <Tr v-for="(row, rowIndex) in store.data.value" :key="rowIndex">
-              <Td v-if="isSelectable" class="f-data-table-select">
+            <Tr v-for="(row, rowIndex) in data" :key="rowIndex">
+              <Td v-if="isSelectableRow" class="f-data-table-select">
                 <Checkbox
                   :model-value="isRowSelected(row)"
-                  @update:model-value="() => handleRowSelect(row)"
+                  @update:model-value="toggleRow(row)"
                 />
               </Td>
               <Td v-for="col in columns" :key="String(col.key)">
@@ -117,8 +111,6 @@ const colSpan = computed(() => columns.length + (isSelectable.value ? 1 : 0));
       </Table>
     </Scroller>
 
-    <slot name="pagination" :store="store">
-      <DataPagination :store="store" />
-    </slot>
+    <slot name="pagination" />
   </div>
 </template>

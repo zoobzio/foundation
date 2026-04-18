@@ -23,11 +23,14 @@ export interface GitHubTagSourceOptions {
   includePrereleases?: boolean;
   /** Cache directory relative to rootDir (default: ".content-cache") */
   cacheDir?: string;
+  /** Only fetch docs from the latest version (default: false) */
+  latestOnly?: boolean;
 }
 
 export interface VersionManifest {
   versions: string[];
   latest: string;
+  latestOnly: boolean;
   generatedAt: string;
 }
 
@@ -36,7 +39,7 @@ export interface VersionManifest {
  *
  * @example
  * ```ts
- * import { defineGitHubTagSource } from "@foundation/github/sources/github-tags";
+ * import { defineGitHubTagSource } from "@zoobz-io/github/sources/github-tags";
  *
  * export default defineContentConfig({
  *   collections: {
@@ -60,6 +63,7 @@ export function defineGitHubTagSource(options: GitHubTagSourceOptions) {
     latestVersion,
     includePrereleases = false,
     cacheDir = ".content-cache",
+    latestOnly = false,
   } = options;
 
   let resolvedCacheDir: string;
@@ -124,7 +128,12 @@ export function defineGitHubTagSource(options: GitHubTagSourceOptions) {
         return;
       }
 
-      console.log(`[github-tags] Found ${versions.length} versions with docs: ${versions.join(", ")}`);
+      if (latestOnly) {
+        versions = [versions[0]];
+        console.log(`[github-tags] latestOnly: using ${versions[0]}`);
+      } else {
+        console.log(`[github-tags] Found ${versions.length} versions with docs: ${versions.join(", ")}`);
+      }
 
       // Download docs for each version
       for (const tag of versions) {
@@ -146,6 +155,7 @@ export function defineGitHubTagSource(options: GitHubTagSourceOptions) {
       const manifest: VersionManifest = {
         versions,
         latest: latestVersion ?? versions[0],
+        latestOnly,
         generatedAt: new Date().toISOString(),
       };
 

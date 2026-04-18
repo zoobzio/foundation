@@ -32,8 +32,8 @@ const model = defineModel<DateRange>();
 
 <template>
   <RangeCalendarRoot
-    v-model="model"
     v-slot="{ weekDays, grid }"
+    v-model="model"
     :min-value="minValue"
     :max-value="maxValue"
     :locale="locale"

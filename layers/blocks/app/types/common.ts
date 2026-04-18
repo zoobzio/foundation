@@ -47,6 +47,7 @@ export interface DataTableColumn<T> {
   label: string;
   align?: "left" | "center" | "right";
   sortable?: boolean;
+  sortKey?: string;
 }
 
 /**
@@ -56,19 +57,26 @@ export type SortDirection = "asc" | "desc";
 
 /**
  * Pagination store interface
- * Subset of TableStore for components that only need pagination
+ * Subset of TableStore for components that only need pagination.
+ * Uses page/pageSize for UI convenience; stores translate to from/size for the API.
  */
 export interface PaginationStore {
   page: Ref<number>;
   pageSize: Ref<number>;
   pageCount: ComputedRef<number>;
   total: Ref<number>;
+  hasMore: Ref<boolean>;
   goToPage: (page: number) => void;
 }
 
 /**
- * Table store interface for managing table state
- * Consumers implement this to provide sorting, filtering, pagination, and search
+ * Match mode for combining query and keywords
+ */
+export type MatchMode = "all" | "any";
+
+/**
+ * Table store interface for managing table state.
+ * Aligned to the search API shape: query + keywords + facets + sort.
  */
 export interface TableStore<T> extends PaginationStore {
   // Data
@@ -76,15 +84,18 @@ export interface TableStore<T> extends PaginationStore {
   loading: Ref<boolean>;
 
   // Sorting
-  sortKey: Ref<keyof T | null>;
+  sortField: Ref<string | null>;
   sortDirection: Ref<SortDirection>;
-  sort: (key: keyof T) => void;
+  sort: (field: string) => void;
 
-  // Search & Filtering
-  search: Ref<string>;
-  filters: Ref<Record<string, unknown>>;
-  setFilter: (key: string, value: unknown) => void;
-  clearFilters: () => void;
+  // Search
+  query: Ref<string>;
+  keywords: Ref<string>;
+  match: Ref<MatchMode>;
+
+  // Facets
+  facets: Ref<Record<string, unknown>>;
+  clearFacets: () => void;
 }
 
 /**

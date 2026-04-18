@@ -46,7 +46,9 @@ const linkProps = computed(() => ({
     v-bind="link ? linkProps : buttonProps"
     class="f-button"
   >
-    <slot name="prepend" />
+    <slot name="prepend">
+      <Icon v-if="link?.icon" :alias="link.icon" />
+    </slot>
     <slot>
       {{ label }}
     </slot>

@@ -6,8 +6,10 @@ defineProps<TableProps>();
 </script>
 
 <template>
-  <table class="f-table">
-    <slot />
-  </table>
+  <div class="f-table-wrapper">
+    <table class="f-table">
+      <slot />
+    </table>
+  </div>
 </template>
 

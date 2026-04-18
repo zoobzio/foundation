@@ -2,278 +2,93 @@
 import type { PageCollections, ContentNavigationItem } from "@nuxt/content";
 
 export interface ContentTableProps {
-  collection: keyof PageCollections;
+  /** Collection to query navigation from (only needed at root level) */
+  collection?: keyof PageCollections;
   /** Optional version prefix to filter content (e.g., "v1.0.0") */
   versionPrefix?: string;
+  /** Pre-resolved nodes for recursive rendering */
+  nodes?: ContentNavigationItem[];
+  /** Current heading depth — maps to H3, H4, H5, etc. */
+  headingDepth?: number;
 }
 </script>
 
 <script setup lang="ts">
-const { collection, versionPrefix } = defineProps<ContentTableProps>();
+const { collection, versionPrefix, nodes, headingDepth = 3 } = defineProps<ContentTableProps>();
 
-const { data: items } = await useAsyncData(
-  `content-table-items-${String(collection)}`,
-  () => queryCollection(collection).all(),
-);
+const appConfig = useAppConfig();
+const navIcons = computed(() => appConfig.collection?.navIcons ?? {});
 
-const { data: navigation } = await useAsyncData(
-  `content-table-nav-${String(collection)}`,
-  () => queryCollectionNavigation(collection),
-);
+const { data: navigation } = collection
+  ? await useAsyncData(
+      `content-table-nav-${String(collection)}`,
+      () => queryCollectionNavigation(collection, ["description"]),
+    )
+  : { data: ref(null) };
 
-// Extract filter options from data
-const categories = computed(() => {
+const resolvedNodes = computed(() => {
+  if (nodes) return nodes;
   if (!navigation.value) return [];
-  return navigation.value
-    .filter((item: ContentNavigationItem) => item.title && item.path)
-    .map((item: ContentNavigationItem) => ({
-      value: item.path!,
-      label: item.title!,
-    }));
-});
-
-const allTags = computed(() => {
-  if (!items.value) return [];
-  const tagSet = new Set<string>();
-  for (const item of items.value as PageContent[]) {
-    if (item.tags) {
-      for (const tag of item.tags) {
-        tagSet.add(tag);
-      }
-    }
-  }
-  return Array.from(tagSet)
-    .sort()
-    .map((tag) => ({ value: tag, label: tag }));
-});
-
-const allAuthors = computed(() => {
-  if (!items.value) return [];
-  const authorSet = new Set<string>();
-  for (const item of items.value as PageContent[]) {
-    if (item.author) {
-      authorSet.add(item.author);
-    }
-  }
-  return Array.from(authorSet)
-    .sort()
-    .map((author) => ({ value: author, label: author }));
-});
-
-// Filter state
-const selectedCategories = ref<string[]>([]);
-const selectedTags = ref<string[]>([]);
-const selectedAuthors = ref<string[]>([]);
-const dateRange = ref<DateRange | undefined>();
-const sortField = ref<string>("published");
-const sortDirection = ref<"asc" | "desc">("desc");
-
-const sortOptions = [
-  { value: "title-asc", label: "Title A-Z" },
-  { value: "title-desc", label: "Title Z-A" },
-  { value: "published-desc", label: "Newest first" },
-  { value: "published-asc", label: "Oldest first" },
-  { value: "author-asc", label: "Author A-Z" },
-  { value: "author-desc", label: "Author Z-A" },
-];
-
-const sortValue = computed({
-  get: () => `${sortField.value}-${sortDirection.value}`,
-  set: (val: string) => {
-    const [field, dir] = val.split("-");
-    sortField.value = field;
-    sortDirection.value = dir as "asc" | "desc";
-  },
-});
-
-// Filtered and sorted items
-const filteredItems = computed(() => {
-  if (!items.value) return [];
-  let result = items.value as PageContent[];
-
-  // Filter by version prefix
   if (versionPrefix) {
-    result = result.filter((item) => {
-      if (!item.path) return false;
-      return item.path.startsWith(`/${versionPrefix}/`);
-    });
-  }
-
-  // Filter by categories (path prefix match)
-  if (selectedCategories.value.length > 0) {
-    result = result.filter((item) => {
-      if (!item.path) return false;
-      return selectedCategories.value.some((cat) => item.path.startsWith(cat));
-    });
-  }
-
-  // Filter by tags
-  if (selectedTags.value.length > 0) {
-    result = result.filter((item) => {
-      if (!item.tags) return false;
-      return selectedTags.value.some((tag) => item.tags!.includes(tag));
-    });
-  }
-
-  // Filter by authors
-  if (selectedAuthors.value.length > 0) {
-    result = result.filter((item) => {
-      if (!item.author) return false;
-      return selectedAuthors.value.includes(item.author);
-    });
-  }
-
-  // Filter by date range
-  if (dateRange.value?.start && dateRange.value?.end) {
-    const startDate = new Date(
-      dateRange.value.start.year,
-      dateRange.value.start.month - 1,
-      dateRange.value.start.day,
+    const versionNode = navigation.value.find(
+      (item: ContentNavigationItem) => item.path === `/${versionPrefix}`,
     );
-    const endDate = new Date(
-      dateRange.value.end.year,
-      dateRange.value.end.month - 1,
-      dateRange.value.end.day,
-    );
-    result = result.filter((item) => {
-      if (!item.published) return false;
-      const itemDate = new Date(item.published);
-      return itemDate >= startDate && itemDate <= endDate;
-    });
+    return versionNode?.children ?? [];
   }
-
-  // Sort
-  result = [...result].sort((a, b) => {
-    let comparison = 0;
-    if (sortField.value === "title") {
-      comparison = (a.title ?? "").localeCompare(b.title ?? "");
-    } else if (sortField.value === "published") {
-      const dateA = a.published ? new Date(a.published).getTime() : 0;
-      const dateB = b.published ? new Date(b.published).getTime() : 0;
-      comparison = dateA - dateB;
-    } else if (sortField.value === "author") {
-      comparison = (a.author ?? "").localeCompare(b.author ?? "");
-    }
-    return sortDirection.value === "desc" ? -comparison : comparison;
-  });
-
-  return result;
+  if (navigation.value.length === 1 && navigation.value[0].children?.length) {
+    return navigation.value[0].children;
+  }
+  return navigation.value;
 });
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
-// Get category label from path
-const getCategoryLabel = (path: string) => {
-  for (const cat of categories.value) {
-    if (path.startsWith(cat.value)) {
-      return cat.label;
-    }
-  }
-  return "";
-};
-
-const clearFilters = () => {
-  selectedCategories.value = [];
-  selectedTags.value = [];
-  selectedAuthors.value = [];
-  dateRange.value = undefined;
-};
-
-const hasActiveFilters = computed(() => {
-  return (
-    selectedCategories.value.length > 0 ||
-    selectedTags.value.length > 0 ||
-    selectedAuthors.value.length > 0 ||
-    dateRange.value !== undefined
-  );
-});
+const headingComponents = { 3: resolveComponent("H3"), 4: resolveComponent("H4"), 5: resolveComponent("H5"), 6: resolveComponent("H6") } as const;
+const heading = computed(() => headingComponents[Math.min(headingDepth, 6) as keyof typeof headingComponents]);
 </script>
 
 <template>
-  <div class="f-content-table-layout">
-    <aside class="f-content-table-filters">
-      <div v-if="categories.length" class="f-content-table-filter">
-        <Caption>Categories</Caption>
-        <MultiSelect
-          v-model="selectedCategories"
-          :items="categories"
-          placeholder="All categories"
-        />
+  <div class="f-content-table">
+    <template v-for="node in resolvedNodes" :key="node.path">
+      <!-- Leaf page -->
+      <div v-if="!node.children?.length" class="f-content-table-section">
+        <div class="f-content-table-grid">
+          <div class="f-content-table-entry">
+            <Anchor :to="node.path" class="f-content-table-entry-title">{{ node.title }}</Anchor>
+            <span
+              v-if="node.description"
+              class="f-content-table-entry-description"
+            >
+              {{ node.description }}
+            </span>
+          </div>
+        </div>
       </div>
-
-      <div v-if="allTags.length" class="f-content-table-filter">
-        <Caption>Tags</Caption>
-        <MultiSelect
-          v-model="selectedTags"
-          :items="allTags"
-          placeholder="All tags"
-        />
-      </div>
-
-      <div v-if="allAuthors.length" class="f-content-table-filter">
-        <Caption>Authors</Caption>
-        <MultiSelect
-          v-model="selectedAuthors"
-          :items="allAuthors"
-          placeholder="All authors"
-        />
-      </div>
-
-      <div class="f-content-table-filter">
-        <Caption>Date Range</Caption>
-        <DateRangePicker v-model="dateRange" :number-of-months="1" />
-      </div>
-
-      <div class="f-content-table-filter">
-        <Caption>Sort</Caption>
-        <Select v-model="sortValue" :options="sortOptions" />
-      </div>
-
-      <button
-        v-if="hasActiveFilters"
-        type="button"
-        class="f-content-table-clear"
-        @click="clearFilters"
-      >
-        Clear filters
-      </button>
-    </aside>
-
-    <div class="f-content-table-main">
-      <div v-if="!filteredItems.length" class="f-content-table-empty">
-        No items found
-      </div>
-      <div v-else class="f-content-table-grid">
-        <NuxtLink
-          v-for="item in filteredItems"
-          :key="item.id"
-          :to="item.path"
-          class="f-content-table-card-link"
-        >
-          <Card class="f-content-table-card">
-            <div class="f-content-table-card-meta">
-              <span v-if="item.author">{{ item.author }}</span>
-              <span v-if="item.published">{{ formatDate(item.published) }}</span>
+      <!-- Category with children -->
+      <div v-else class="f-content-table-section">
+        <component :is="heading">
+          <Icon v-if="node.title && navIcons[node.title]" :alias="navIcons[node.title]" />
+          {{ node.title }}
+        </component>
+        <div class="f-content-table-grid">
+          <template v-for="child in node.children" :key="child.path">
+            <div v-if="!child.children?.length" class="f-content-table-entry">
+              <Anchor :to="child.path" class="f-content-table-entry-title">{{ child.title }}</Anchor>
+              <span
+                v-if="child.description"
+                class="f-content-table-entry-description"
+              >
+                {{ child.description }}
+              </span>
             </div>
-            <div class="f-content-table-card-content">
-              <Strong>{{ item.title }}</Strong>
-              <p v-if="item.description" class="f-content-table-card-description">
-                {{ item.description }}
-              </p>
-            </div>
-            <div v-if="item.tags?.length" class="f-content-table-tags">
-              <Chip v-for="tag in item.tags" :key="tag">{{ tag }}</Chip>
-            </div>
-          </Card>
-        </NuxtLink>
+          </template>
+        </div>
+        <template v-for="child in node.children" :key="`sub-${child.path}`">
+          <ContentTable
+            v-if="child.children?.length"
+            :nodes="[child]"
+            :heading-depth="headingDepth + 1"
+          />
+        </template>
       </div>
-    </div>
+    </template>
   </div>
 </template>
