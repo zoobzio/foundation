@@ -40,6 +40,12 @@ export interface BasePageConfig<W extends Record<string, unknown> = Record<strin
 }
 
 /**
+ * Helper to define a typed widget map that satisfies Record<string, unknown>.
+ * Adds the index signature so consumers don't have to.
+ */
+export type DefineWidgets<T extends Record<string, unknown>> = T & Record<string, unknown>;
+
+/**
  * Persistence adapter interface.
  * Consumer provides the implementation (localStorage, API, etc.).
  */
@@ -58,13 +64,18 @@ export interface PersistableWidget<S> {
 }
 
 /**
+ * Persistence config with optional debounce.
+ */
+export interface PagePersistConfig<C extends BasePageConfig> extends PagePersistence<C> {
+  debounce?: number;
+}
+
+/**
  * Factory config passed to createPageStore.
  */
 export interface PageFactoryConfig<C extends BasePageConfig = BasePageConfig> {
-  defaultConfig: C;
-  persistence?: PagePersistence<C>;
-  autoSave?: boolean | { debounceMs: number };
-  onInit?: (nuxt: ReturnType<typeof useNuxtApp>, config: Ref<C>, save: () => Promise<void>) => void;
+  layout: PageLayoutConfig;
+  persist?: PagePersistConfig<C>;
 }
 
 /**

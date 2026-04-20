@@ -1,9 +1,26 @@
 /**
+ * Column data type — drives rendering, filtering, and sorting behavior.
+ */
+export type ColumnType =
+  | "text"
+  | "number"
+  | "date"
+  | "datetime"
+  | "boolean"
+  | "enum"
+  | "currency"
+  | "email"
+  | "url"
+  | "image"
+  | "action";
+
+/**
  * Data table column definition
  */
 export interface DataTableColumn<T> {
   key: keyof T;
   label: string;
+  type?: ColumnType;
   align?: "left" | "center" | "right";
   sortable?: boolean;
   sortKey?: string;
@@ -35,14 +52,6 @@ export interface DateFilter {
 }
 
 /**
- * Date field configuration
- */
-export interface DateFieldConfig {
-  key: string;
-  label: string;
-}
-
-/**
  * Facet item with count
  */
 export interface FacetItem {
@@ -61,59 +70,58 @@ export interface FacetGroup {
 }
 
 /**
- * Action available when items are selected
+ * Row action — rendered per-row in an actions menu.
  */
-export interface SelectionAction<K = unknown> {
+export interface RowAction<T> {
   icon: IconAlias;
   label: string;
-  action: (selected: Set<K>) => void;
+  action: (row: T) => void;
 }
 
 /**
- * The interface that composables return and widgets accept.
- * Matches the shape of storeToRefs(store) + store methods.
+ * The interface that widgets accept.
+ * Matches the raw Pinia store shape.
  */
 export interface DataTableState<T, K = unknown> {
-  // Data (all Ref from storeToRefs)
-  data: Ref<T[]>;
-  loading: Ref<boolean>;
-  columns: Ref<DataTableColumn<T>[]>;
-  rowKey: Ref<keyof T>;
+  // Data
+  data: T[];
+  loading: boolean;
+  columns: DataTableColumn<T>[];
+  rowKey: keyof T;
+  actions: RowAction<T>[];
 
   // Pagination
-  page: Ref<number>;
-  pageSize: Ref<number>;
-  pageCount: Ref<number>;
-  total: Ref<number>;
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
   goToPage: (page: number) => void;
 
   // Sorting
-  sortField: Ref<string | null>;
-  sortDirection: Ref<SortDirection>;
+  sortField: string | null;
+  sortDirection: SortDirection;
   sortBy: (field: string) => void;
 
   // Search
-  query: Ref<string>;
-  keywords: Ref<string>;
-  match: Ref<MatchMode>;
+  query: string;
+  keywords: string;
+  match: MatchMode;
 
   // Facets
-  facetGroups: Ref<FacetGroup[]>;
-  selectedFacets: Ref<Set<string>>;
+  facetGroups: FacetGroup[];
+  selectedFacets: Set<string>;
   clearFacets: () => void;
 
   // Date filters
-  dateFields: Ref<DateFieldConfig[]>;
-  dateFilters: Ref<DateFilter[]>;
+  dateFilters: DateFilter[];
   addDateFilter: (filter: DateFilter) => void;
   removeDateFilter: (field: string) => void;
   clearDateFilters: () => void;
 
   // Selection
-  selected: Ref<Set<K>>;
-  selectionActions: Ref<SelectionAction<K>[]>;
-  isAllSelected: Ref<boolean>;
-  isIndeterminate: Ref<boolean>;
+  selected: Set<K>;
+  isAllSelected: boolean;
+  isIndeterminate: boolean;
   toggleRow: (key: K) => void;
   toggleAll: () => void;
   clearSelection: () => void;
@@ -123,9 +131,10 @@ export interface DataTableState<T, K = unknown> {
   isSorted: (col: DataTableColumn<T>) => boolean;
   getSortIcon: () => IconAlias;
   isRowSelected: (row: T) => boolean;
-  selectAllState: Ref<boolean | "indeterminate">;
-  colSpan: Ref<number>;
+  selectAllState: boolean | "indeterminate";
+  colSpan: number;
   setPageSize: (size: number) => void;
+  dateColumns: DataTableColumn<T>[];
 
   // Mutation
   update: (payload: Partial<DataTablePayload>) => void;
@@ -140,13 +149,11 @@ export interface DataTableState<T, K = unknown> {
 
 /**
  * Injection key for DataTable widget config lookup.
- * Pages provide this, DataTable widgets inject it to get their defaults.
  */
 export const DATA_TABLE_CONFIG: InjectionKey<(id: string) => DataTableSnapshot | undefined> = Symbol("DATA_TABLE_CONFIG");
 
 /**
  * The writable slice of table state.
- * Passed to update() for partial deep-merge mutations.
  */
 export interface DataTablePayload {
   query: string;
@@ -160,16 +167,12 @@ export interface DataTablePayload {
 
 /**
  * Config the consumer provides to the factory.
- * These are the app-specific implementations.
  */
-export interface DataTableConfig<T, K = unknown> {
+export interface DataTableConfig<T> {
   columns: DataTableColumn<T>[];
   rowKey: keyof T;
   fetch: (params: DataTableFetchParams) => Promise<DataTableFetchResult<T>>;
-  facetGroups?: (data: T[]) => FacetGroup[];
-  dateFields?: DateFieldConfig[];
-  selectionActions?: SelectionAction<K>[];
-  defaultPageSize?: number;
+  actions?: RowAction<T>[];
 }
 
 /**
@@ -193,6 +196,8 @@ export interface DataTableFetchParams {
 export interface DataTableFetchResult<T> {
   data: T[];
   total: number;
+  pageCount: number;
+  facets?: FacetGroup[];
 }
 
 export type DataTablePassthrough = {
@@ -206,7 +211,7 @@ export type DataTablePassthrough = {
 };
 
 export type DataTableProps<T, K = unknown> = {
-  store: DataTableState<T, K>;
+  store: WidgetStore<DataTableState<T, K>>;
   selectable?: boolean;
   pt?: DataTablePassthrough;
 };

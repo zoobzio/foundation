@@ -10,7 +10,7 @@ export const createPageStore = <C extends BasePageConfig = BasePageConfig>(
   factoryConfig: PageFactoryConfig<C>,
 ) => {
   return defineStore(`page-${id}`, () => {
-    const config = ref<C>(factoryConfig.defaultConfig) as Ref<C>;
+    const config = ref<C>({ layout: factoryConfig.layout, widgets: {} } as C);
     const layout = computed<PageLayoutConfig>({
       get: () => config.value.layout,
       set: (v) => { config.value = { ...config.value, layout: v }; },
@@ -19,28 +19,26 @@ export const createPageStore = <C extends BasePageConfig = BasePageConfig>(
 
     // Persistence
     let saveTimer: ReturnType<typeof setTimeout> | null = null;
-    const debounceMs = typeof factoryConfig.autoSave === "object"
-      ? factoryConfig.autoSave.debounceMs
-      : 500;
+    const debounceMs = factoryConfig.persist?.debounce ?? 500;
 
     const save = async () => {
-      if (!factoryConfig.persistence) return;
-      await factoryConfig.persistence.save(id, config.value);
+      if (!factoryConfig.persist) return;
+      await factoryConfig.persist.save(id, config.value);
     };
 
     const debouncedSave = () => {
-      if (!factoryConfig.autoSave) return;
+      if (!factoryConfig.persist) return;
       if (saveTimer) clearTimeout(saveTimer);
       saveTimer = setTimeout(() => save(), debounceMs);
     };
 
     const restore = async () => {
-      if (!factoryConfig.persistence) return;
-      const loaded = await factoryConfig.persistence.load(id);
+      if (!factoryConfig.persist) return;
+      const loaded = await factoryConfig.persist.load(id);
       if (loaded) {
         config.value = loaded;
       } else {
-        await factoryConfig.persistence.save(id, config.value);
+        await factoryConfig.persist.save(id, config.value);
       }
     };
 
@@ -48,9 +46,13 @@ export const createPageStore = <C extends BasePageConfig = BasePageConfig>(
       loading.value = true;
       try {
         await restore();
-        if (factoryConfig.onInit) {
-          factoryConfig.onInit(useNuxtApp(), config, save);
-        }
+
+        // Auto-wire widget snapshot hooks
+        const nuxt = useNuxtApp();
+        nuxt.hook("widget:table:snapshot", ({ id: widgetId, snapshot }) => {
+          config.value.widgets[widgetId] = snapshot;
+          debouncedSave();
+        });
       } finally {
         loading.value = false;
       }

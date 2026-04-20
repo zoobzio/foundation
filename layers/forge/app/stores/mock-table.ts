@@ -17,13 +17,24 @@ const mockData: MockRow[] = Array.from({ length: 50 }, (_, i) => ({
 export const accessMockTableStore = createTableStore<MockRow, number>("mock", {
   rowKey: "id",
   columns: [
-    { key: "id", label: "ID", sortable: true },
-    { key: "name", label: "Name", sortable: true },
-    { key: "email", label: "Email", sortable: true },
-    { key: "status", label: "Status" },
-    { key: "created", label: "Created", sortable: true },
+    { key: "id", label: "ID", type: "number", sortable: true },
+    { key: "name", label: "Name", type: "text", sortable: true },
+    { key: "email", label: "Email", type: "email", sortable: true },
+    { key: "status", label: "Status", type: "enum" },
+    { key: "created", label: "Created", type: "date", sortable: true },
   ],
-  defaultPageSize: 10,
+  actions: [
+    {
+      icon: "edit",
+      label: "Edit",
+      action: (row) => console.log("Edit:", row.id),
+    },
+    {
+      icon: "delete",
+      label: "Delete",
+      action: (row) => console.log("Delete:", row.id),
+    },
+  ],
   fetch: async (params) => {
     let result = [...mockData];
 
@@ -47,28 +58,22 @@ export const accessMockTableStore = createTableStore<MockRow, number>("mock", {
     }
 
     const total = result.length;
+    const pageCount = Math.max(1, Math.ceil(total / params.pageSize));
     const start = (params.page - 1) * params.pageSize;
     const data = result.slice(start, start + params.pageSize);
 
-    return { data, total };
+    const facets = [
+      {
+        key: "status",
+        label: "Status",
+        items: ["active", "inactive", "pending"].map((s) => ({
+          value: s,
+          label: s.charAt(0).toUpperCase() + s.slice(1),
+          count: result.filter((r) => r.status === s).length,
+        })),
+      },
+    ];
+
+    return { data, total, pageCount, facets };
   },
-  facetGroups: (data) => [
-    {
-      key: "status",
-      label: "Status",
-      items: ["active", "inactive", "pending"].map((s) => ({
-        value: s,
-        label: s.charAt(0).toUpperCase() + s.slice(1),
-        count: data.filter((r) => r.status === s).length,
-      })),
-    },
-  ],
-  dateFields: [{ key: "created", label: "Created" }],
-  selectionActions: [
-    {
-      icon: "delete",
-      label: "Delete selected",
-      action: (selected) => console.log("Delete:", [...selected]),
-    },
-  ],
 });
