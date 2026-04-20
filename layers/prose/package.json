@@ -10,8 +10,7 @@
   },
   "main": "./nuxt.config.ts",
   "exports": {
-    ".": "./nuxt.config.ts",
-    "./elements": "./elements.config.ts"
+    ".": "./nuxt.config.ts"
   },
   "scripts": {
     "dev": "nuxi dev",
@@ -26,8 +25,7 @@
     "@nuxt/content": "^3.8.0",
     "@nuxtjs/robots": "^5.7.1",
     "@nuxtjs/sitemap": "^7.6.0",
-    "@zoobz-io/blocks": "workspace:*",
-    "@zoobz-io/untheme": "workspace:*",
+    "@zoobz-io/alloy": "workspace:*",
     "better-sqlite3": "^12.4.1",
     "nuxt": "catalog:",
     "nuxt-schema-org": "^5.0.10",

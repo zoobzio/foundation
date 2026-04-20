@@ -1,11 +1,11 @@
 <script setup lang="ts">
-type AlertVariant = "note" | "tip" | "important" | "warning" | "caution";
+type AlertType = "note" | "tip" | "important" | "warning" | "caution";
 
-const { variant = "note" } = defineProps<{
-  variant?: AlertVariant;
+const { type = "note" } = defineProps<{
+  type?: AlertType;
 }>();
 
-const variantIcons: Record<AlertVariant, IconAlias> = {
+const typeIcons: Record<AlertType, IconAlias> = {
   note: "info",
   tip: "lightbulb",
   important: "important",
@@ -13,11 +13,11 @@ const variantIcons: Record<AlertVariant, IconAlias> = {
   caution: "error",
 };
 
-const icon = computed(() => variantIcons[variant]);
+const icon = computed(() => typeIcons[type]);
 </script>
 
 <template>
-  <Alert :icon="icon" :variant="variant">
+  <Alert :icon="icon" :data-type="type">
     <slot />
   </Alert>
 </template>

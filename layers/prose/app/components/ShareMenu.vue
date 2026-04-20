@@ -1,8 +1,12 @@
+<script lang="ts">
+import type { ShareMenuProps } from "../types/share-menu";
+</script>
+
 <script setup lang="ts">
-const props = defineProps<{
-  title?: string;
-  url?: string;
-}>();
+const props = defineProps<ShareMenuProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 const resolvedUrl = computed(() => props.url ?? (import.meta.client ? window.location.href : ""));
 const resolvedTitle = computed(() => props.title ?? "");
@@ -44,32 +48,38 @@ const copyLink = async () => {
   copied.value = true;
   setTimeout(() => (copied.value = false), 2000);
 };
+
+const ctx = computed(() => ({ title: props.title, url: resolvedUrl.value, links: links.value, copied: copied.value }));
 </script>
 
 <template>
-  <Popover side="bottom" align="end">
-    <button class="f-share-trigger">
-      <Icon :alias="copied ? 'link-copied' : 'share'" />
-      {{ copied ? "Copied" : "Share" }}
-    </button>
+  <Popover ref="el" side="bottom" align="end">
+    <slot name="trigger" v-bind="ctx">
+      <Button class="f-share-trigger">
+        <Icon :alias="copied ? 'link-copied' : 'share'" />
+        {{ copied ? "Copied" : "Share" }}
+      </Button>
+    </slot>
     <template #content>
-      <div class="f-share-menu">
-        <a
-          v-for="link in links"
-          :key="link.label"
-          :href="link.href"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="f-share-menu-item"
-        >
-          <Icon :alias="link.icon" />
-          {{ link.label }}
-        </a>
-        <button class="f-share-menu-item" @click="copyLink">
-          <Icon :alias="copied ? 'link-copied' : 'link'" />
-          {{ copied ? "Copied" : "Copy link" }}
-        </button>
-      </div>
+      <slot v-bind="ctx">
+        <Group class="f-share-menu">
+          <Anchor
+            v-for="link in links"
+            :key="link.label"
+            :to="link.href"
+            :external="true"
+            target="_blank"
+            class="f-share-menu-item"
+          >
+            <Icon :alias="link.icon" />
+            {{ link.label }}
+          </Anchor>
+          <Button class="f-share-menu-item" @click="copyLink">
+            <Icon :alias="copied ? 'link-copied' : 'link'" />
+            {{ copied ? "Copied" : "Copy link" }}
+          </Button>
+        </Group>
+      </slot>
     </template>
   </Popover>
 </template>

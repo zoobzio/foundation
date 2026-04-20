@@ -1,7 +1,12 @@
+<script lang="ts">
+import type { CodePreProps } from "../types/code-pre";
+</script>
+
 <script setup lang="ts">
-const { code } = defineProps<{
-  code: string;
-}>();
+const { code } = defineProps<CodePreProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 const copied = ref(false);
 
@@ -13,12 +18,14 @@ const copyCode = async () => {
     copied.value = false;
   }, 2000);
 };
+
+const ctx = computed(() => ({ code, copied: copied.value }));
 </script>
 
 <template>
-  <Pre>
+  <Pre ref="el">
     <Fab class="f-prose-pre" :disabled="copied" :icon="copied ? 'check' : 'copy'" label="Copy code" @click="copyCode" />
-    <slot />
+    <slot v-bind="ctx" />
   </Pre>
 </template>
 

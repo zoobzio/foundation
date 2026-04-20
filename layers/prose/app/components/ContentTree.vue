@@ -1,18 +1,13 @@
 <script lang="ts">
-import type { PageCollections } from "@nuxt/content";
-import type { NavListGroup } from "./NavList.vue";
-
-export interface ContentTreeProps {
-  collection: keyof PageCollections;
-  /** Version prefix to scope navigation (e.g. "v1.0.0") */
-  versionPrefix?: string;
-  title?: string;
-  icon?: IconAlias;
-}
+import type { ContentTreeProps } from "../types/content-tree";
+import type { NavListGroup } from "../types/nav-list";
 </script>
 
 <script setup lang="ts">
 const props = defineProps<ContentTreeProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 const appConfig = useAppConfig() as { collection?: { navIcons?: Record<string, IconAlias> } };
 const navIcons = computed(() => appConfig.collection?.navIcons ?? {});
@@ -54,11 +49,17 @@ const groups = computed<NavListGroup[]>(() => {
     }))
     .filter((group) => group.items.length > 0);
 });
+
+const ctx = computed(() => ({ collection: props.collection, versionPrefix: props.versionPrefix, title: props.title, icon: props.icon, groups: groups.value }));
 </script>
 
 <template>
-  <Caption v-if="props.title" :icon="props.icon">
-    {{ props.title }}
-  </Caption>
-  <NavList :groups="groups" />
+  <Group ref="el">
+    <slot v-bind="ctx">
+      <Caption v-if="props.title" :icon="props.icon">
+        {{ props.title }}
+      </Caption>
+      <NavList :groups="groups" />
+    </slot>
+  </Group>
 </template>

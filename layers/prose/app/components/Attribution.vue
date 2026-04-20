@@ -1,15 +1,12 @@
-<script setup lang="ts">
-export interface AttributionProps {
-  author?: string;
-  published?: string;
-  updated?: string;
-  readtime?: string;
-  editUrl?: string;
-  share?: boolean;
-  shareTitle?: string;
-}
+<script lang="ts">
+import type { AttributionProps } from "../types/attribution";
+</script>
 
+<script setup lang="ts">
 const props = defineProps<AttributionProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 const formatDate = (dateStr: string | Date) => {
   let date: Date;
@@ -32,58 +29,62 @@ const formattedDate = computed(() => {
   if (!dateValue) return "";
   return formatDate(dateValue);
 });
+
+const ctx = computed(() => ({ author: props.author, published: props.published, updated: props.updated, readtime: props.readtime, editUrl: props.editUrl, share: props.share, shareTitle: props.shareTitle, formattedDate: formattedDate.value }));
 </script>
 
 <template>
-  <div
+  <Group
     v-if="props.author || props.published || props.updated || props.readtime"
+    ref="el"
     class="f-attribution-root"
   >
-    <a
-      v-if="props.author"
-      :href="`https://github.com/${props.author}`"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="f-attribution-author"
-    >
-      <Avatar
-        :src="`/avatars/${props.author}.png`"
-        :alt="props.author"
+    <slot v-bind="ctx">
+      <Anchor
+        v-if="props.author"
+        :to="`https://github.com/${props.author}`"
+        :external="true"
+        target="_blank"
+        class="f-attribution-author"
       >
-        <template #fallback>
-          <Icon alias="user" />
-        </template>
-      </Avatar>
-      {{ props.author }}
-    </a>
-    <span
-      v-if="props.published || props.updated"
-      class="f-attribution-published"
-    >
-      <Icon alias="calendar" />
-      {{ formattedDate }}
-    </span>
-    <span
-      v-if="props.readtime"
-      class="f-attribution-readtime"
-    >
-      <Icon alias="book-open" />
-      {{ props.readtime }}
-    </span>
-    <a
-      v-if="props.editUrl"
-      :href="props.editUrl"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="f-attribution-edit"
-    >
-      Edit this page
-      <Icon alias="external" />
-    </a>
-    <ShareMenu
-      v-if="props.share"
-      :title="props.shareTitle"
-    />
-  </div>
+        <Avatar
+          :src="`/avatars/${props.author}.png`"
+          :alt="props.author"
+        >
+          <template #fallback>
+            <Icon alias="user" />
+          </template>
+        </Avatar>
+        {{ props.author }}
+      </Anchor>
+      <Span
+        v-if="props.published || props.updated"
+        class="f-attribution-published"
+      >
+        <Icon alias="calendar" />
+        {{ formattedDate }}
+      </Span>
+      <Span
+        v-if="props.readtime"
+        class="f-attribution-readtime"
+      >
+        <Icon alias="book-open" />
+        {{ props.readtime }}
+      </Span>
+      <Anchor
+        v-if="props.editUrl"
+        :to="props.editUrl"
+        :external="true"
+        target="_blank"
+        class="f-attribution-edit"
+      >
+        Edit this page
+        <Icon alias="external" />
+      </Anchor>
+      <ShareMenu
+        v-if="props.share"
+        :title="props.shareTitle"
+      />
+    </slot>
+  </Group>
 </template>
-

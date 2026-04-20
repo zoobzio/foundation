@@ -68,7 +68,7 @@ export function remarkAlert() {
       // Transform to containerComponent node for MDC
       node.type = "containerComponent";
       node.name = "prose-alert";
-      node.attributes = { variant };
+      node.attributes = { type: variant };
     });
   };
 }

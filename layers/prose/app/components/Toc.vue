@@ -1,18 +1,13 @@
-<script setup lang="ts">
+<script lang="ts">
 import { useIntersectionObserver } from "@vueuse/core";
+import type { TocProps, FlatTocLink  } from "../types/toc";
+</script>
 
-export interface TocProps {
-  links: TocLink[];
-  title?: string;
-}
-
-interface FlatTocLink {
-  id: string;
-  text: string;
-  depth: number;
-}
-
+<script setup lang="ts">
 const { links, title = "On this page" } = defineProps<TocProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 // Flatten nested links into a single array with depth preserved
 const flatLinks = computed<FlatTocLink[]>(() => {
@@ -72,26 +67,30 @@ const getItemStyle = (depth: number) => {
     paddingLeft: depthPadding,
   };
 };
+
+const ctx = computed(() => ({ links, title, flatLinks: flatLinks.value, activeId: activeId.value, visibleHeadings: visibleHeadings.value }));
 </script>
 
 <template>
-  <nav class="f-toc-root">
-    <Caption icon="toc">
-      {{ title }}
-    </Caption>
-    <div class="f-toc-content">
-      <NuxtLink
-        v-for="link in flatLinks"
-        :key="link.id"
-        :to="`#${link.id}`"
-        :aria-selected="visibleHeadings.has(link.id) ? 'true' : undefined"
-        :style="getItemStyle(link.depth)"
-        class="f-toc-item"
-      >
-        <slot name="item" :link="link">
-          {{ link.text }}
-        </slot>
-      </NuxtLink>
-    </div>
-  </nav>
+  <Nav ref="el" class="f-toc-root">
+    <slot v-bind="ctx">
+      <Caption icon="toc">
+        {{ title }}
+      </Caption>
+      <Group class="f-toc-content">
+        <NuxtLink
+          v-for="link in flatLinks"
+          :key="link.id"
+          :to="`#${link.id}`"
+          :aria-selected="visibleHeadings.has(link.id) ? 'true' : undefined"
+          :style="getItemStyle(link.depth)"
+          class="f-toc-item"
+        >
+          <slot name="item" :link="link">
+            {{ link.text }}
+          </slot>
+        </NuxtLink>
+      </Group>
+    </slot>
+  </Nav>
 </template>

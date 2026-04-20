@@ -1,9 +1,12 @@
+<script lang="ts">
+import type { ContentFiltersProps } from "../types/content-filters";
+</script>
+
 <script setup lang="ts">
-
-export interface ContentFiltersProps {
-  collection: string;}
-
 const { collection: _collection } = defineProps<ContentFiltersProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 // Placeholder data - will be dynamic later
 const searchQuery = ref("");
@@ -16,50 +19,51 @@ const sortOptions = [
   { value: "title-asc", label: "Title A-Z" },
   { value: "title-desc", label: "Title Z-A" },
 ];
+
+const ctx = computed(() => ({ searchQuery: searchQuery.value, tags: tags.value, sortBy: sortBy.value, sortOptions }));
 </script>
 
 <template>
-  <!-- Query Header -->
-  <Caption>
-    <Icon alias="filter" />
-    Query Content
-  </Caption>
+  <Group ref="el" class="f-content-filters">
+    <slot v-bind="ctx">
+      <!-- Query Header -->
+      <Caption>
+        <Icon alias="filter" />
+        Query Content
+      </Caption>
 
-  <!-- Query Section -->
-  <div
-    class="f-content-filters-section"
-  >
-    <FormLabel for="search">Search</FormLabel>
-    <Input
-      id="search"
-      v-model="searchQuery"
-      type="search"
-      placeholder="Search content..."
-    />
-    <FormLabel for="tags">Tags</FormLabel>
-    <TagsInput
-      id="tags"
-      v-model="tags"
-      placeholder="Add tags..."
-    />
-  </div>
+      <!-- Query Section -->
+      <Group class="f-content-filters-section">
+        <Label for="search">Search</Label>
+        <Input
+          id="search"
+          v-model="searchQuery"
+          type="search"
+          placeholder="Search content..."
+        />
+        <Label for="tags">Tags</Label>
+        <TagsInput
+          id="tags"
+          v-model="tags"
+          placeholder="Add tags..."
+        />
+      </Group>
 
-  <!-- Sort Header -->
-  <Caption>
-    <Icon alias="sort" />
-    Sort Content
-  </Caption>
+      <!-- Sort Header -->
+      <Caption>
+        <Icon alias="sort" />
+        Sort Content
+      </Caption>
 
-  <!-- Sort Section -->
-  <div
-    class="f-content-filters-section"
-  >
-    <FormLabel for="sort">Sort By</FormLabel>
-    <Select
-      id="sort"
-      v-model="sortBy"
-      :options="sortOptions"
-    />
-  </div>
+      <!-- Sort Section -->
+      <Group class="f-content-filters-section">
+        <Label for="sort">Sort By</Label>
+        <Select
+          id="sort"
+          v-model="sortBy"
+          :options="sortOptions"
+        />
+      </Group>
+    </slot>
+  </Group>
 </template>
-

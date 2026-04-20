@@ -1,0 +1,33 @@
+{
+  "name": "@zoobz-io/forge",
+  "type": "module",
+  "license": "MIT",
+  "version": "0.0.1",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "exports": {
+    ".": "./nuxt.config.ts"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "typecheck": "nuxi typecheck",
+    "prepare": "nuxi prepare"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "@zoobz-io/alloy": "workspace:*",
+    "@internationalized/date": "^3.7.0",
+    "nuxt": "catalog:",
+    "pinia": "catalog:",
+    "@pinia/nuxt": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

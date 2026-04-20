@@ -1,0 +1,43 @@
+{
+  "name": "@zoobz-io/alloy",
+  "type": "module",
+  "license": "MIT",
+  "version": "0.0.1",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./types": "./app/types/index.ts"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "typecheck": "nuxi typecheck",
+    "prepare": "nuxi prepare"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "@zoobz-io/ore": "workspace:*",
+    "@zoobz-io/untheme": "workspace:*",
+    "@internationalized/date": "^3.7.0",
+    "@pinia/nuxt": "catalog:",
+    "@vueuse/nuxt": "^14.1.0",
+    "defu": "catalog:",
+    "figlet": "^1.9.4",
+    "nuxt": "catalog:",
+    "pinia": "catalog:",
+    "reka-ui": "catalog:"
+  },
+  "devDependencies": {
+    "@iconify-json/circle-flags": "^1.2.10",
+    "@types/figlet": "^1.7.0",
+    "@unocss/nuxt": "catalog:",
+    "typescript": "catalog:",
+    "unocss": "catalog:"
+  }
+}

@@ -1,13 +1,13 @@
 <script lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
-
-export interface ContentAccordionProps {
-  items: ContentNavigationItem[];
-  collection: string;}
+import type { ContentAccordionProps } from "../types/content-accordion";
 </script>
 
 <script setup lang="ts">
 const { items, collection } = defineProps<ContentAccordionProps>();
+
+const el = useTemplateRef("el");
+defineExpose({ el });
 
 // Separate items into branches (have children) and leaves (no children)
 const branches = computed(() => items.filter((item) => item.children?.length));
@@ -48,56 +48,59 @@ const formatDate = (dateString: string) => {
     day: "numeric",
   });
 };
+
+const ctx = computed(() => ({ items, collection, branches: branches.value, leaves: leaves.value, accordionItems: accordionItems.value }));
 </script>
 
 <template>
-  <div class="f-content-accordion">
-    <!-- Render leaves as cards in a grid -->
-    <div v-if="leaves.length" class="f-content-grid-root">
-      <NuxtLink
-        v-for="leaf in leaves"
-        :key="leaf.path"
-        :to="leaf.path"
-        class="f-content-grid-item"
-      >
-        <span class="f-content-grid-title">
-          {{ leaf.title }}
-        </span>
-        <span v-if="leaf.description" class="f-content-grid-description">
-          {{ leaf.description }}
-        </span>
-        <div
-          v-if="leaf.author || leaf.published"
-          class="f-content-grid-meta"
+  <Group ref="el" class="f-content-accordion">
+    <slot v-bind="ctx">
+      <!-- Render leaves as cards in a grid -->
+      <Group v-if="leaves.length" class="f-content-grid-root">
+        <NuxtLink
+          v-for="leaf in leaves"
+          :key="leaf.path"
+          :to="leaf.path"
+          class="f-content-grid-item"
         >
-          <span v-if="leaf.author" class="f-content-grid-author">
-            <Icon alias="user" />
-            {{ leaf.author }}
-          </span>
-          <span v-if="leaf.published" class="f-content-grid-published">
-            <Icon alias="calendar" />
-            {{ formatDate(leaf.published as string) }}
-          </span>
-        </div>
-      </NuxtLink>
-    </div>
-
-    <!-- Render branches as accordion -->
-    <Accordion
-      v-if="branches.length"
-      :items="accordionItems"
-      type="multiple"
+          <Span class="f-content-grid-title">
+            {{ leaf.title }}
+          </Span>
+          <Span v-if="leaf.description" class="f-content-grid-description">
+            {{ leaf.description }}
+          </Span>
+          <Group
+            v-if="leaf.author || leaf.published"
+            class="f-content-grid-meta"
           >
-      <template #append="{ item }">
-        <Chip>{{ getArticleCount(item.value) }}</Chip>
-      </template>
-      <template #content="{ item }">
-        <ContentAccordion
-          :items="branches.find((b) => b.path === item.value)?.children ?? []"
-          :collection="collection"
-                  />
-      </template>
-    </Accordion>
-  </div>
-</template>
+            <Span v-if="leaf.author" class="f-content-grid-author">
+              <Icon alias="user" />
+              {{ leaf.author }}
+            </Span>
+            <Span v-if="leaf.published" class="f-content-grid-published">
+              <Icon alias="calendar" />
+              {{ formatDate(leaf.published as string) }}
+            </Span>
+          </Group>
+        </NuxtLink>
+      </Group>
 
+      <!-- Render branches as accordion -->
+      <Accordion
+        v-if="branches.length"
+        :items="accordionItems"
+        type="multiple"
+      >
+        <template #append="{ item }">
+          <Chip>{{ getArticleCount(item.value) }}</Chip>
+        </template>
+        <template #content="{ item }">
+          <ContentAccordion
+            :items="branches.find((b) => b.path === item.value)?.children ?? []"
+            :collection="collection"
+          />
+        </template>
+      </Accordion>
+    </slot>
+  </Group>
+</template>
