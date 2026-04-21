@@ -24,6 +24,24 @@ const colSpan = computed(
 );
 
 const ctx = computed(() => ({ table }));
+
+const formatCell = (value: unknown, type?: ColumnType) => {
+  if (value == null) return "";
+  switch (type) {
+    case "date":
+      return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(String(value)));
+    case "datetime":
+      return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(String(value)));
+    case "currency":
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value));
+    case "number":
+      return new Intl.NumberFormat("en-US").format(Number(value));
+    case "boolean":
+      return value ? "Yes" : "No";
+    default:
+      return String(value);
+  }
+};
 </script>
 
 <template>
@@ -103,11 +121,29 @@ const ctx = computed(() => ({ table }));
                 />
               </Td>
               <Td v-for="col in table.columns" :key="String(col.key)">
+                <!-- 1. cell:id — override a specific column -->
                 <slot
+                  v-if="$slots[`cell:${String(col.key)}`]"
+                  :name="`cell:${String(col.key)}`"
+                  v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+                />
+                <!-- 2. cell:variant — override all columns of a type -->
+                <slot
+                  v-else-if="col.type && $slots[`cell:${col.type}`]"
+                  :name="`cell:${col.type}`"
+                  v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+                />
+                <!-- 3. cell — override all cells -->
+                <slot
+                  v-else
                   name="cell"
                   v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
                 >
-                  {{ row[col.key] }}
+                  <!-- 4. Default type-based rendering -->
+                  <Anchor v-if="col.type === 'email'" :to="`mailto:${row[col.key]}`">{{ row[col.key] }}</Anchor>
+                  <Anchor v-else-if="col.type === 'url'" :to="String(row[col.key])" external>{{ row[col.key] }}</Anchor>
+                  <Img v-else-if="col.type === 'image'" :src="String(row[col.key])" :alt="col.label" />
+                  <Span v-else>{{ formatCell(row[col.key], col.type) }}</Span>
                 </slot>
               </Td>
             </Tr>

@@ -16,7 +16,11 @@ const { table, recipes } = useFakeTable();
     </template>
 
     <template #main-table>
-      <DataTable :table="table" selectable :recipes="recipes" />
+      <DataTable :table="table" selectable :recipes="recipes">
+        <template #cell:status="{ value }">
+          <Chip :label="String(value)" />
+        </template>
+      </DataTable>
     </template>
 
     <template #sidebar>
