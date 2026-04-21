@@ -16,7 +16,7 @@ export type RadioProps = {
   pt?: RadioPassthrough;
 };
 
-export type RadioEmits = {} & MouseEvents & FocusEvents;
+export type RadioEmits = {};
 
 export const defineRadio = useComponentRecipe<RadioProps, RadioEmits>();
 

@@ -1,0 +1,107 @@
+.f-dashboard-grid {
+  height: 100%;
+  width: 100%;
+  gap: var(--ref-spacing-md);
+  overflow: hidden;
+}
+
+.f-dashboard-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Base Widget */
+.f-widget {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  background: var(--sys-surface-container);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+}
+
+.f-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface-container);
+}
+
+.f-widget-title {
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-semibold);
+  color: var(--sys-on-surface);
+  text-align: center;
+}
+
+.f-widget-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-sm);
+}
+
+.f-widget-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.f-widget-body--padded {
+  padding: var(--ref-spacing-md);
+}
+
+/* Stats Widget */
+.f-widget-stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--ref-spacing-xs);
+}
+
+.f-widget-stats-value {
+  font-size: var(--ref-text-3xl);
+  font-weight: var(--ref-font-bold);
+  color: var(--sys-on-surface);
+}
+
+.f-widget-stats-description {
+  font-size: var(--ref-text-sm);
+  color: var(--sys-on-surface-variant);
+}
+
+/* Facets bar */
+.f-widget-facets-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ref-spacing-xs);
+  padding: var(--ref-spacing-xs) var(--ref-spacing-md);
+  background: var(--sys-surface-container);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+}
+
+.f-widget-facet-field {
+  font-size: var(--ref-text-xs);
+  font-weight: var(--ref-font-semibold);
+  color: var(--sys-on-surface-variant);
+  text-transform: capitalize;
+}
+
+/* Selection bar */
+.f-widget-selection-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  background: var(--sys-surface-container);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+}
+
+.f-widget-selection-count {
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-semibold);
+  color: var(--sys-on-surface);
+}

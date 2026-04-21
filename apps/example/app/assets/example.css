@@ -1,0 +1,45 @@
+/* Example app — reset + overrides */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--sys-surface);
+  color: var(--sys-on-surface);
+  line-height: 1.5;
+}
+
+/* Data table fills its workspace slot */
+.f-data-table {
+  flex: 1;
+  min-height: 0;
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface);
+}
+
+.f-data-table-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface-container);
+}
+
+/* Sidebar slot content */
+.f-example-sidebar {
+  flex: 1;
+  padding: var(--ref-spacing-md);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface-container);
+}

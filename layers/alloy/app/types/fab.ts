@@ -16,7 +16,7 @@ export type FabProps = {
   pt?: FabPassthrough;
 };
 
-export type FabEmits = {} & MouseEvents & FocusEvents;
+export type FabEmits = {};
 
 export const defineFab = useComponentRecipe<FabProps, FabEmits>();
 

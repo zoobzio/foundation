@@ -1,0 +1,59 @@
+.f-select-root {
+  position: relative;
+  display: inline-block;
+}
+
+.f-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ref-spacing-xs);
+  background: var(--sys-surface);
+  color: var(--sys-on-surface);
+  font-size: var(--ref-text-sm);
+  line-height: 1;
+  padding: var(--ref-spacing-sm);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.f-select-trigger:hover {
+  background: var(--sys-hover);
+}
+
+.f-select-trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--ref-shadow-focus-inset);
+}
+
+.f-select-content {
+  background: var(--sys-surface-container);
+  color: var(--sys-on-surface);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  z-index: var(--ref-z-dropdown);
+  min-width: var(--radix-select-trigger-width);
+}
+
+.f-select-item {
+  background: var(--ref-color-transparent);
+  color: var(--sys-on-surface);
+  padding: var(--ref-spacing-xs) var(--ref-spacing-sm);
+  cursor: pointer;
+  font-size: var(--ref-text-sm);
+  white-space: nowrap;
+}
+
+.f-select-item:hover,
+.f-select-item[data-highlighted] {
+  background: var(--sys-hover);
+}
+
+.f-select-item:focus-visible {
+  outline: none;
+  box-shadow: var(--ref-shadow-focus-inset);
+}
+
+.f-select-item[data-state='checked'] {
+  color: var(--sys-primary);
+}

@@ -4,11 +4,11 @@ type EmitHandlers<E> = {
 
 export type ComponentRecipe<Props, Emits> = {
   props: Props;
-  handlers?: EmitHandlers<Emits>;
+  handlers: EmitHandlers<Emits>;
 };
 
 export const useComponentRecipe = <Props, Emits>() => {
-  return (props: Props, handlers?: EmitHandlers<Emits>): ComponentRecipe<Props, Emits> => ({ props, handlers });
+  return (props: Props, handlers: EmitHandlers<Emits> = {}): ComponentRecipe<Props, Emits> => ({ props, handlers });
 };
 
 export type MouseEvents = {

@@ -12,7 +12,7 @@ export type SegmentedControlProps = {
   pt?: SegmentedControlPassthrough;
 };
 
-export type SegmentedControlEmits = {} & MouseEvents & FocusEvents;
+export type SegmentedControlEmits = {};
 
 export const defineSegmentedControl = useComponentRecipe<SegmentedControlProps, SegmentedControlEmits>();
 

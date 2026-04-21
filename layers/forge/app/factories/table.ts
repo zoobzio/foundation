@@ -1,39 +1,65 @@
-import type {
-  DataTableColumn,
-  DataTableConfig,
-  DataTableFetchParams,
-  DataTablePayload,
-  DateFilter,
-  FacetGroup,
-  MatchMode,
-  SortDirection,
-} from "../types/data-table";
-import { DATA_TABLE_CONFIG } from "../types/data-table";
-import { defaultTableSnapshot } from "../constants/table";
-import type { DataTableSnapshot } from "../schemas/data-table";
-
-export const createTableStore = <T, K = unknown>(
+export const createTable = <T, K = unknown>(
   id: string,
   config: DataTableConfig<T>,
 ) => {
-  return defineStore(`table-${id}`, () => {
-    // Resolve defaults from page config via inject, fall back to constants
-    const getConfig = inject(DATA_TABLE_CONFIG);
-    const defaults = getConfig?.(id) ?? defaultTableSnapshot;
+  return (): Table<T, K> => {
+    // Resolve defaults: inject pre-fetched configs, validate with zod, fall back to constants
+    const configs = inject(WIDGET_CONFIGS, {});
+    const raw = configs[id];
+    const defaults = raw
+      ? { ...defaultTableSnapshot, ...DataTableSnapshotSchema.partial().parse(raw) }
+      : defaultTableSnapshot;
 
-    // Data
-    const data = ref<T[]>([]) as Ref<T[]>;
-    const loading = ref(false);
+    // Initialization
+    const initialized = useState<boolean>(`table-${id}-initialized`, () => false);
+
+    // State
+    const data = useState<T[]>(`table-${id}-data`, () => []);
+    const loading = useState<boolean>(`table-${id}-loading`, () => false);
+    const page = useState<number>(`table-${id}-page`, () => defaults.page);
+    const pageSize = useState<number>(
+      `table-${id}-pageSize`,
+      () => defaults.pageSize,
+    );
+    const total = useState<number>(`table-${id}-total`, () => 0);
+    const pageCount = useState<number>(`table-${id}-pageCount`, () => 0);
+    const sortField = useState<string | null>(
+      `table-${id}-sortField`,
+      () => defaults.sortField,
+    );
+    const sortDirection = useState<SortDirection>(
+      `table-${id}-sortDirection`,
+      () => defaults.sortDirection,
+    );
+    const query = useState<string>(`table-${id}-query`, () => defaults.query);
+    const keywords = useState<string>(
+      `table-${id}-keywords`,
+      () => defaults.keywords,
+    );
+    const match = useState<MatchMode>(
+      `table-${id}-match`,
+      () => defaults.match,
+    );
+    const selectedFacets = useState<Set<string>>(
+      `table-${id}-selectedFacets`,
+      () => new Set(defaults.selectedFacets),
+    );
+    const facetGroups = useState<FacetGroup[]>(
+      `table-${id}-facetGroups`,
+      () => [],
+    );
+    const dateFilters = useState<DateFilter[]>(
+      `table-${id}-dateFilters`,
+      () => defaults.dateFilters,
+    );
+    const selected = useState<Set<K>>(`table-${id}-selected`, () => new Set());
+
+    // Static config
     const columns = config.columns;
     const rowKey = config.rowKey;
     const actions = config.actions ?? [];
 
     // Pagination
-    const page = ref(defaults.page);
-    const pageSize = ref(defaults.pageSize);
-    const total = ref(0);
-    const pageCount = ref(0);
-
     const goToPage = (p: number) => {
       if (p < 1 || p > pageCount.value) return;
       page.value = p;
@@ -41,9 +67,6 @@ export const createTableStore = <T, K = unknown>(
     };
 
     // Sorting
-    const sortField = ref<string | null>(defaults.sortField);
-    const sortDirection = ref<SortDirection>(defaults.sortDirection);
-
     const sortBy = (field: string) => {
       if (sortField.value === field) {
         sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
@@ -55,15 +78,7 @@ export const createTableStore = <T, K = unknown>(
       fetchData();
     };
 
-    // Search
-    const query = ref(defaults.query);
-    const keywords = ref(defaults.keywords);
-    const match = ref<MatchMode>(defaults.match);
-
     // Facets
-    const selectedFacets = ref(new Set<string>(defaults.selectedFacets));
-    const facetGroups = ref<FacetGroup[]>([]);
-
     const clearFacets = () => {
       selectedFacets.value = new Set();
       page.value = 1;
@@ -71,8 +86,6 @@ export const createTableStore = <T, K = unknown>(
     };
 
     // Date filters
-    const dateFilters = ref<DateFilter[]>(defaults.dateFilters);
-
     const addDateFilter = (filter: DateFilter) => {
       const existing = dateFilters.value.findIndex(
         (f) => f.field === filter.field,
@@ -101,8 +114,6 @@ export const createTableStore = <T, K = unknown>(
     };
 
     // Selection
-    const selected = ref(new Set<K>()) as Ref<Set<K>>;
-
     const isAllSelected = computed(() => {
       if (!data.value.length) return false;
       return data.value.every((row) =>
@@ -137,17 +148,22 @@ export const createTableStore = <T, K = unknown>(
     };
 
     // Getters
-    const sortFieldFor = (col: DataTableColumn<T>) => col.sortKey ?? String(col.key);
-    const isSorted = (col: DataTableColumn<T>) => sortField.value === sortFieldFor(col);
+    const sortFieldFor = (col: DataTableColumn<T>) =>
+      col.sortKey ?? String(col.key);
+    const isSorted = (col: DataTableColumn<T>) =>
+      sortField.value === sortFieldFor(col);
     const getSortIcon = (): IconAlias =>
       sortDirection.value === "asc" ? "chevron-up" : "chevron-down";
-    const isRowSelected = (row: T) => selected.value.has(row[config.rowKey] as K);
+    const isRowSelected = (row: T) =>
+      selected.value.has(row[config.rowKey] as K);
     const selectAllState = computed(() => {
       if (isIndeterminate.value) return "indeterminate" as const;
       return isAllSelected.value;
     });
     const colSpan = computed(() => columns.length + (actions.length ? 1 : 0));
-    const dateColumns = computed(() => columns.filter((c) => c.type === "date" || c.type === "datetime"));
+    const dateColumns = computed(() =>
+      columns.filter((c) => c.type === "date" || c.type === "datetime"),
+    );
 
     const setPageSize = (size: number) => {
       pageSize.value = size;
@@ -162,8 +178,10 @@ export const createTableStore = <T, K = unknown>(
       if (payload.match !== undefined) match.value = payload.match;
       if (payload.page !== undefined) page.value = payload.page;
       if (payload.pageSize !== undefined) pageSize.value = payload.pageSize;
-      if (payload.selectedFacets !== undefined) selectedFacets.value = payload.selectedFacets;
-      if (payload.dateFilters !== undefined) dateFilters.value = payload.dateFilters;
+      if (payload.selectedFacets !== undefined)
+        selectedFacets.value = payload.selectedFacets;
+      if (payload.dateFilters !== undefined)
+        dateFilters.value = payload.dateFilters;
       fetchData();
     };
 
@@ -193,6 +211,14 @@ export const createTableStore = <T, K = unknown>(
       fetchData();
     };
 
+    // Init — idempotent, returns true for useAsyncData
+    const init = async () => {
+      if (initialized.value) return true;
+      initialized.value = true;
+      await fetchData();
+      return true;
+    };
+
     // Fetch
     const fetchData = async () => {
       loading.value = true;
@@ -215,7 +241,10 @@ export const createTableStore = <T, K = unknown>(
         if (result.facets) facetGroups.value = result.facets;
       } finally {
         loading.value = false;
-        useNuxtApp().callHook("widget:table:snapshot", { id, snapshot: getSnapshot() });
+        useNuxtApp().callHook("widget:table:snapshot", {
+          id,
+          snapshot: getSnapshot(),
+        });
       }
     };
 
@@ -229,23 +258,26 @@ export const createTableStore = <T, K = unknown>(
       pageSize,
       pageCount,
       total,
-      goToPage,
       sortField,
       sortDirection,
-      sortBy,
       query,
       keywords,
       match,
       facetGroups,
       selectedFacets,
-      clearFacets,
       dateFilters,
-      addDateFilter,
-      removeDateFilter,
-      clearDateFilters,
       selected,
       isAllSelected,
       isIndeterminate,
+      selectAllState,
+      colSpan,
+      dateColumns,
+      goToPage,
+      sortBy,
+      clearFacets,
+      addDateFilter,
+      removeDateFilter,
+      clearDateFilters,
       toggleRow,
       toggleAll,
       clearSelection,
@@ -253,14 +285,13 @@ export const createTableStore = <T, K = unknown>(
       isSorted,
       getSortIcon,
       isRowSelected,
-      selectAllState,
-      colSpan,
-      dateColumns,
       setPageSize,
       update,
       getSnapshot,
       restoreSnapshot,
+      init,
+      initialized,
       fetch: fetchData,
     };
-  });
+  };
 };

@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-11-06",
   extends: ["@zoobz-io/forge"],
   imports: {
-    dirs: ["types", "factories", "schemas"],
+    dirs: ["types", "factories", "schemas", "stores"],
   },
   modules: ["@pinia/nuxt"],
 });

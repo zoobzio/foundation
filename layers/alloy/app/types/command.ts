@@ -31,7 +31,7 @@ export type CommandProps = {
 
 export type CommandEmits = {
   select: [value: string];
-} & MouseEvents & FocusEvents;
+};
 
 export const defineCommand = useComponentRecipe<CommandProps, CommandEmits>();
 

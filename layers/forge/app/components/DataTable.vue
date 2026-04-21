@@ -3,32 +3,48 @@ import type { DataTableProps } from "../types/data-table";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">
-const { store, selectable = false, pt } = defineProps<DataTableProps<T, K>>();
+const { table, pt, recipes } = defineProps<DataTableProps<T, K>>();
+
+useLazyAsyncData("init-table", table.init, { server: false });
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const {
-  keywordsRecipe,
-  facetsRecipe,
-  dateFiltersRecipe,
-  paginationRecipe,
-  selectAllRecipe,
-} = useTable(store);
+  keywords: keywordsRecipe,
+  facets: facetsRecipe,
+  dateFilters: dateFiltersRecipe,
+  pagination: paginationRecipe,
+  selectAll: selectAllRecipe,
+} = recipes ?? {};
 
-const isSelectableRow = computed(() => selectable && store.selected);
-const colSpan = computed(() => store.colSpan + (isSelectableRow.value ? 1 : 0));
+const isSelectableRow = computed(() => table.selected);
+const colSpan = computed(
+  () => table.colSpan.value + (isSelectableRow.value ? 1 : 0),
+);
 
-const ctx = computed(() => ({ store, selectable }));
+const ctx = computed(() => ({ table }));
 </script>
 
 <template>
   <Group ref="el" v-bind="pt?.root" class="f-data-table">
     <slot name="toolbar" v-bind="ctx">
       <Group v-bind="pt?.toolbar" class="f-data-table-toolbar">
-        <Keywords v-bind="keywordsRecipe.props" v-on="keywordsRecipe.handlers" />
-        <Facets v-bind="facetsRecipe.props" v-on="facetsRecipe.handlers" />
-        <DateFilters v-bind="dateFiltersRecipe.props" v-on="dateFiltersRecipe.handlers" />
+        <Keywords
+          v-if="keywordsRecipe"
+          v-bind="keywordsRecipe.props"
+          v-on="keywordsRecipe.handlers"
+        />
+        <Facets
+          v-if="facetsRecipe"
+          v-bind="facetsRecipe.props"
+          v-on="facetsRecipe.handlers"
+        />
+        <DateFilters
+          v-if="dateFiltersRecipe"
+          v-bind="dateFiltersRecipe.props"
+          v-on="dateFiltersRecipe.handlers"
+        />
       </Group>
     </slot>
 
@@ -37,14 +53,18 @@ const ctx = computed(() => ({ store, selectable }));
         <Thead v-bind="pt?.thead">
           <Tr>
             <Th v-if="isSelectableRow" class="f-data-table-select">
-              <Checkbox v-bind="selectAllRecipe.props" v-on="selectAllRecipe.handlers" />
+              <Checkbox
+                v-if="selectAllRecipe"
+                v-bind="selectAllRecipe.props"
+                v-on="selectAllRecipe.handlers"
+              />
             </Th>
             <Th
-              v-for="col in store.columns"
+              v-for="col in table.columns"
               :key="String(col.key)"
               :class="{
                 'f-data-table-sortable': col.sortable,
-                'f-data-table-sorted': store.isSorted(col),
+                'f-data-table-sorted': table.isSorted(col),
               }"
             >
               <slot name="header" v-bind="{ ...ctx, column: col }">
@@ -52,12 +72,12 @@ const ctx = computed(() => ({ store, selectable }));
                   v-if="col.sortable"
                   type="button"
                   class="f-data-table-header-btn"
-                  @click="store.sortBy(store.sortFieldFor(col))"
+                  @click="table.sortBy(table.sortFieldFor(col))"
                 >
                   {{ col.label }}
                   <Icon
-                    v-if="store.isSorted(col)"
-                    :alias="store.getSortIcon()"
+                    v-if="table.isSorted(col)"
+                    :alias="table.getSortIcon()"
                     class="f-data-table-sort-icon"
                   />
                 </Button>
@@ -69,21 +89,24 @@ const ctx = computed(() => ({ store, selectable }));
           </Tr>
         </Thead>
         <Tbody v-bind="pt?.tbody">
-          <Tr v-if="!store.data.length">
+          <Tr v-if="!table.data.value.length">
             <Td v-bind="pt?.empty" :colspan="colSpan">
               <slot name="empty" v-bind="ctx">No data</slot>
             </Td>
           </Tr>
           <template v-else>
-            <Tr v-for="(row, rowIndex) in store.data" :key="rowIndex">
+            <Tr v-for="(row, rowIndex) in table.data.value" :key="rowIndex">
               <Td v-if="isSelectableRow" class="f-data-table-select">
                 <Checkbox
-                  :model-value="store.isRowSelected(row)"
-                  @update:model-value="store.toggleRow(row[store.rowKey] as K)"
+                  :model-value="table.isRowSelected(row)"
+                  @update:model-value="table.toggleRow(row[table.rowKey] as K)"
                 />
               </Td>
-              <Td v-for="col in store.columns" :key="String(col.key)">
-                <slot name="cell" v-bind="{ ...ctx, row, column: col, value: row[col.key] }">
+              <Td v-for="col in table.columns" :key="String(col.key)">
+                <slot
+                  name="cell"
+                  v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+                >
                   {{ row[col.key] }}
                 </slot>
               </Td>
@@ -94,7 +117,11 @@ const ctx = computed(() => ({ store, selectable }));
     </Scroller>
 
     <slot name="pagination" v-bind="ctx">
-      <Pagination v-bind="paginationRecipe.props" v-on="paginationRecipe.handlers" />
+      <Pagination
+        v-if="paginationRecipe"
+        v-bind="paginationRecipe.props"
+        v-on="paginationRecipe.handlers"
+      />
     </slot>
   </Group>
 </template>

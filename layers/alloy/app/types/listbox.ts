@@ -16,7 +16,7 @@ export type ListboxProps = {
 
 export type ListboxEmits = {
   "update:modelValue": [string | string[]];
-} & MouseEvents & FocusEvents;
+};
 
 export const defineListbox = useComponentRecipe<ListboxProps, ListboxEmits>();
 

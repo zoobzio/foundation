@@ -1,0 +1,17 @@
+.f-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.f-page-header {
+  background: var(--sys-surface-container);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+  padding: var(--ref-spacing-md);
+}
+
+.f-page-content {
+  flex: 1;
+  min-height: 0;
+  padding: var(--ref-spacing-md);
+}

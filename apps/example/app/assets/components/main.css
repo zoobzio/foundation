@@ -1,0 +1,6 @@
+.f-main {
+  background: var(--sys-surface);
+  color: var(--sys-on-surface);
+  width: 100%;
+  height: 100vh;
+}

@@ -1,4 +1,4 @@
-interface MockRow {
+interface FakeRow {
   id: number;
   name: string;
   email: string;
@@ -6,7 +6,7 @@ interface MockRow {
   created: string;
 }
 
-const mockData: MockRow[] = Array.from({ length: 50 }, (_, i) => ({
+const fakeData: FakeRow[] = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   name: `User ${i + 1}`,
   email: `user${i + 1}@example.com`,
@@ -14,7 +14,7 @@ const mockData: MockRow[] = Array.from({ length: 50 }, (_, i) => ({
   created: new Date(2024, 0, i + 1).toISOString(),
 }));
 
-export const accessMockTableStore = createTableStore<MockRow, number>("mock", {
+export const accessFakeTable = createTable<FakeRow, number>("fake", {
   rowKey: "id",
   columns: [
     { key: "id", label: "ID", type: "number", sortable: true },
@@ -36,7 +36,7 @@ export const accessMockTableStore = createTableStore<MockRow, number>("mock", {
     },
   ],
   fetch: async (params) => {
-    let result = [...mockData];
+    let result = [...fakeData];
 
     if (params.query) {
       const q = params.query.toLowerCase();
@@ -47,7 +47,7 @@ export const accessMockTableStore = createTableStore<MockRow, number>("mock", {
     }
 
     if (params.sortField) {
-      const field = params.sortField as keyof MockRow;
+      const field = params.sortField as keyof FakeRow;
       result.sort((a, b) => {
         const av = String(a[field]);
         const bv = String(b[field]);

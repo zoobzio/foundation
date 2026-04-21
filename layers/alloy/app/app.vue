@@ -1,3 +1,7 @@
+<script lang="ts">
+import { ConfigProvider, TooltipProvider } from "reka-ui";
+</script>
+
 <script setup lang="ts">
 const useIdFunction = () => useId();
 

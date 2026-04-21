@@ -10,7 +10,7 @@ export type ChipProps = {
 
 export type ChipEmits = {
   close: [];
-} & MouseEvents & FocusEvents;
+};
 
 export const defineChip = useComponentRecipe<ChipProps, ChipEmits>();
 

@@ -17,7 +17,7 @@ export type SelectProps = {
   pt?: SelectPassthrough;
 };
 
-export type SelectEmits = {} & MouseEvents & FocusEvents;
+export type SelectEmits = {};
 
 export const defineSelect = useComponentRecipe<SelectProps, SelectEmits>();
 

@@ -1,0 +1,13 @@
+.f-kbd {
+  color: var(--sys-on-surface);
+  background: var(--sys-surface-container-high);
+  font-family: var(--ref-font-mono);
+  font-size: var(--ref-text-xs);
+  font-weight: var(--ref-font-semibold);
+  padding: var(--ref-spacing-2xs) var(--ref-spacing-xs);
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ref-spacing-2xs);
+  white-space: nowrap;
+}

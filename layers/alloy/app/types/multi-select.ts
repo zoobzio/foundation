@@ -11,7 +11,7 @@ export type MultiSelectProps = {
   pt?: MultiSelectPassthrough;
 };
 
-export type MultiSelectEmits = {} & MouseEvents & FocusEvents;
+export type MultiSelectEmits = {};
 
 export const defineMultiSelect = useComponentRecipe<MultiSelectProps, MultiSelectEmits>();
 

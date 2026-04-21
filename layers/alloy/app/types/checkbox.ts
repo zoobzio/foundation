@@ -13,7 +13,7 @@ export type CheckboxProps = {
   pt?: CheckboxPassthrough;
 };
 
-export type CheckboxEmits = {} & MouseEvents & FocusEvents;
+export type CheckboxEmits = {};
 
 export const defineCheckbox = useComponentRecipe<CheckboxProps, CheckboxEmits>();
 

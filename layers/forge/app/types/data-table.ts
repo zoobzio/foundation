@@ -79,78 +79,11 @@ export interface RowAction<T> {
 }
 
 /**
- * The interface that widgets accept.
- * Matches the raw Pinia store shape.
+ * Injection key for pre-fetched widget configs.
+ * Pages provide this. Widgets inject and validate their own slice.
  */
-export interface DataTableState<T, K = unknown> {
-  // Data
-  data: T[];
-  loading: boolean;
-  columns: DataTableColumn<T>[];
-  rowKey: keyof T;
-  actions: RowAction<T>[];
-
-  // Pagination
-  page: number;
-  pageSize: number;
-  pageCount: number;
-  total: number;
-  goToPage: (page: number) => void;
-
-  // Sorting
-  sortField: string | null;
-  sortDirection: SortDirection;
-  sortBy: (field: string) => void;
-
-  // Search
-  query: string;
-  keywords: string;
-  match: MatchMode;
-
-  // Facets
-  facetGroups: FacetGroup[];
-  selectedFacets: Set<string>;
-  clearFacets: () => void;
-
-  // Date filters
-  dateFilters: DateFilter[];
-  addDateFilter: (filter: DateFilter) => void;
-  removeDateFilter: (field: string) => void;
-  clearDateFilters: () => void;
-
-  // Selection
-  selected: Set<K>;
-  isAllSelected: boolean;
-  isIndeterminate: boolean;
-  toggleRow: (key: K) => void;
-  toggleAll: () => void;
-  clearSelection: () => void;
-
-  // Getters
-  sortFieldFor: (col: DataTableColumn<T>) => string;
-  isSorted: (col: DataTableColumn<T>) => boolean;
-  getSortIcon: () => IconAlias;
-  isRowSelected: (row: T) => boolean;
-  selectAllState: boolean | "indeterminate";
-  colSpan: number;
-  setPageSize: (size: number) => void;
-  dateColumns: DataTableColumn<T>[];
-
-  // Mutation
-  update: (payload: Partial<DataTablePayload>) => void;
-
-  // Persistence
-  getSnapshot: () => DataTableSnapshot;
-  restoreSnapshot: (snapshot: DataTableSnapshot) => void;
-
-  // Lifecycle
-  fetch: () => Promise<void>;
-}
-
-/**
- * Injection key for DataTable widget config lookup.
- */
-export const DATA_TABLE_CONFIG: InjectionKey<(id: string) => DataTableSnapshot | undefined> = Symbol("DATA_TABLE_CONFIG");
+export const WIDGET_CONFIGS: InjectionKey<Record<string, unknown>> =
+  Symbol("WIDGET_CONFIGS");
 
 /**
  * The writable slice of table state.
@@ -210,8 +143,16 @@ export type DataTablePassthrough = {
   pagination?: Passthrough<GroupProps>;
 };
 
+export type DataTableRecipes = {
+  keywords: ComputedRef<KeywordsRecipe | undefined>;
+  facets: ComputedRef<FacetsRecipe | undefined>;
+  dateFilters: ComputedRef<DateFiltersRecipe | undefined>;
+  pagination: ComputedRef<PaginationRecipe | undefined>;
+  selectAll: ComputedRef<CheckboxRecipe | undefined>;
+};
+
 export type DataTableProps<T, K = unknown> = {
-  store: WidgetStore<DataTableState<T, K>>;
-  selectable?: boolean;
+  table: Table<T, K>;
+  recipes?: DataTableRecipes;
   pt?: DataTablePassthrough;
 };

@@ -1,0 +1,28 @@
+.f-aside {
+  display: block;
+  background: var(--sys-surface);
+  color: var(--sys-on-surface);
+  border-color: var(--ref-color-transparent);
+}
+
+.f-dashboard-sidebar {
+  background: var(--sys-surface-container);
+  border-right: var(--ref-border-width-thin) solid var(--sys-outline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-sm);
+  padding-top: var(--ref-spacing-md);
+}
+
+.f-dashboard-logo {
+  padding-left: var(--ref-spacing-md);
+  padding-right: var(--ref-spacing-md);
+  padding-top: var(--ref-spacing-sm);
+  padding-bottom: var(--ref-spacing-sm);
+}
+
+.f-dashboard-search {
+  padding-left: var(--ref-spacing-md);
+  padding-right: var(--ref-spacing-md);
+  width: 16rem;
+}

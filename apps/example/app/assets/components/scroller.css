@@ -1,0 +1,75 @@
+/* Functional: required for scroll to work */
+.f-scroller-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.f-scroller-viewport {
+  flex: 1;
+  min-height: 0;
+  border-radius: inherit;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.f-scroller-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus ring overlay - inset to avoid clipping by overflow:hidden ancestors */
+.f-scroller-root::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px transparent;
+  transition: box-shadow var(--ref-duration-fast) var(--ref-ease-out);
+}
+
+.f-scroller-root:focus-visible::after {
+  box-shadow: 0 0 0 2px var(--sys-primary);
+}
+
+.f-scroller-scrollbar {
+  display: flex;
+  touch-action: none;
+  user-select: none;
+}
+
+.f-scroller-scrollbar[data-orientation="vertical"] {
+  width: 6px;
+}
+
+.f-scroller-scrollbar[data-orientation="horizontal"] {
+  flex-direction: column;
+  height: 6px;
+}
+
+.f-scroller-thumb {
+  flex: 1;
+  position: relative;
+  background: var(--sys-outline);
+}
+
+/* Accessibility: touch target */
+.f-scroller-thumb::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.f-scroller-corner {
+  background: var(--sys-surface-container);
+}

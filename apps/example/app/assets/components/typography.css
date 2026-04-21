@@ -1,0 +1,12 @@
+.f-h2 {
+  color: var(--sys-on-surface);
+  font-size: var(--ref-text-2xl);
+  font-weight: var(--ref-font-bold);
+  line-height: var(--ref-leading-snug);
+  display: block;
+  margin: 0;
+}
+
+.f-widget-title {
+  margin: 0;
+}

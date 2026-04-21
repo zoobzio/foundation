@@ -1,0 +1,146 @@
+.f-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm);
+  background: var(--sys-surface);
+}
+
+.f-calendar--range {
+  flex-direction: column;
+}
+
+.f-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.f-calendar-heading {
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-semibold);
+  color: var(--sys-on-surface);
+}
+
+.f-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ref-spacing-lg);
+  height: var(--ref-spacing-lg);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sys-on-surface-variant);
+}
+
+.f-calendar-nav:hover {
+  color: var(--sys-on-surface);
+  background: var(--sys-hover);
+}
+
+.f-calendar-nav:focus-visible {
+  box-shadow: var(--ref-shadow-focus-inset);
+}
+
+.f-calendar-nav:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.f-calendar-grids {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-md);
+}
+
+.f-calendar-grid {
+  border-collapse: collapse;
+}
+
+.f-calendar-row {
+  display: flex;
+}
+
+.f-calendar-head-cell {
+  width: var(--ref-spacing-xl);
+  height: var(--ref-spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ref-text-xs);
+  font-weight: var(--ref-font-medium);
+  color: var(--sys-on-surface-variant);
+}
+
+.f-calendar-cell {
+  width: var(--ref-spacing-xl);
+  height: var(--ref-spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.f-calendar-cell-trigger {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ref-text-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--sys-on-surface);
+}
+
+.f-calendar-cell-trigger:hover {
+  background: var(--sys-hover);
+}
+
+.f-calendar-cell-trigger:focus-visible {
+  box-shadow: var(--ref-shadow-focus-inset);
+}
+
+.f-calendar-cell-trigger[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.f-calendar-cell-trigger[data-outside-month] {
+  color: var(--sys-on-surface-variant);
+  opacity: 0.5;
+}
+
+.f-calendar-cell-trigger[data-selected] {
+  background: var(--sys-primary);
+  color: var(--sys-on-primary);
+}
+
+.f-calendar-cell-trigger[data-selected]:hover {
+  background: var(--sys-primary-hover);
+}
+
+.f-calendar-cell-trigger[data-selected]:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--sys-primary-hover);
+}
+
+.f-calendar-cell[data-selection-start] .f-calendar-cell-trigger,
+.f-calendar-cell[data-selection-end] .f-calendar-cell-trigger {
+  background: var(--sys-primary);
+  color: var(--sys-on-primary);
+}
+
+.f-calendar-cell[data-selection-start] .f-calendar-cell-trigger:focus-visible,
+.f-calendar-cell[data-selection-end] .f-calendar-cell-trigger:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--sys-primary-hover);
+}
+
+.f-calendar-cell[data-highlighted] .f-calendar-cell-trigger {
+  background: var(--sys-hover);
+}
+
+.f-calendar-cell-trigger[data-today] {
+  font-weight: var(--ref-font-bold);
+}

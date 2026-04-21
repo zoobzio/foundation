@@ -22,7 +22,7 @@ export type TagsInputProps = {
   pt?: TagsInputPassthrough;
 };
 
-export type TagsInputEmits = {} & MouseEvents & FocusEvents;
+export type TagsInputEmits = {};
 
 export const defineTagsInput = useComponentRecipe<TagsInputProps, TagsInputEmits>();
 
