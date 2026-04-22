@@ -118,6 +118,25 @@
   white-space: nowrap;
 }
 
+/* Bulk Actions */
+.f-data-table-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  background: var(--sys-surface-container);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+}
+
+.f-data-table-bulk-actions > .f-span {
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-bold);
+}
+
+.f-data-table-bulk-actions > .f-button:last-child {
+  margin-left: auto;
+}
+
 /* Pagination */
 .f-pagination {
   display: flex;

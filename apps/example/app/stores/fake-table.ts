@@ -19,7 +19,7 @@ export const accessFakeTable = createTable<FakeRow, number>("fake", {
   columns: [
     { key: "id", label: "ID", type: "number", sortable: true },
     { key: "name", label: "Name", type: "text", sortable: true },
-    { key: "email", label: "Email", type: "email", sortable: true },
+    { key: "email", label: "Email", type: "text", sortable: true },
     { key: "status", label: "Status", type: "enum" },
     { key: "created", label: "Created", type: "date", sortable: true },
   ],
@@ -33,6 +33,18 @@ export const accessFakeTable = createTable<FakeRow, number>("fake", {
       icon: "delete",
       label: "Delete",
       action: (row) => console.log("Delete:", row.id),
+    },
+  ],
+  bulkActions: [
+    {
+      icon: "delete",
+      label: "Delete",
+      action: (selected) => console.log("Bulk delete:", [...selected]),
+    },
+    {
+      icon: "save",
+      label: "Export",
+      action: (selected) => console.log("Bulk export:", [...selected]),
     },
   ],
   fetch: async (params) => {

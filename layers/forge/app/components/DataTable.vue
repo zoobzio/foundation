@@ -15,13 +15,30 @@ const {
   facets: facetsRecipe,
   dateFilters: dateFiltersRecipe,
   pagination: paginationRecipe,
-  selectAll: selectAllRecipe,
 } = recipes ?? {};
 
-const isSelectableRow = computed(() => table.selected);
-const colSpan = computed(
-  () => table.colSpan.value + (isSelectableRow.value ? 1 : 0),
-);
+const {
+  data,
+  columns,
+  actions,
+  bulkActions,
+  selected,
+  colSpan,
+  selectAllState,
+  sortBy,
+  sortFieldFor,
+  isSorted,
+  getSortIcon,
+  toggleAll,
+  toggleRow,
+  isRowSelected,
+  clearSelection,
+} = table;
+
+const getRowKey = (row: T) => row[table.rowKey] as K;
+
+const isSelectable = computed(() => bulkActions.length > 0);
+const hasSelection = computed(() => selected.value.size > 0);
 
 const ctx = computed(() => ({ table }));
 
@@ -66,39 +83,61 @@ const formatCell = (value: unknown, type?: ColumnType) => {
       </Group>
     </slot>
 
+    <Group v-if="hasSelection" v-bind="pt?.bulkActions" class="f-data-table-bulk-actions">
+      <Span class="f-data-table-bulk-actions-count">
+        {{ selected.size }} selected
+      </Span>
+      <Button
+        v-for="bulk in bulkActions"
+        :key="bulk.label"
+        type="button"
+        class="f-data-table-bulk-action"
+        @click="bulk.action(selected)"
+      >
+        <Icon :alias="bulk.icon" />
+        {{ bulk.label }}
+      </Button>
+      <Button
+        type="button"
+        class="f-data-table-bulk-action-clear"
+        @click="clearSelection()"
+      >
+        Clear
+      </Button>
+    </Group>
+
     <Scroller>
       <Table v-bind="pt?.table">
         <Thead v-bind="pt?.thead">
           <Tr>
-            <Th v-if="isSelectableRow" class="f-data-table-select">
+            <Th v-if="isSelectable" class="f-data-table-select">
               <Checkbox
-                v-if="selectAllRecipe"
-                v-bind="selectAllRecipe.props"
-                v-on="selectAllRecipe.handlers"
+                :model-value="selectAllState"
+                @update:model-value="toggleAll()"
               />
             </Th>
             <Th
-              v-for="col in table.columns"
+              v-for="col in columns"
               :key="String(col.key)"
               :class="{
                 'f-data-table-sortable': col.sortable,
-                'f-data-table-sorted': table.isSorted(col),
+                'f-data-table-sorted': isSorted(col),
               }"
             >
               <slot name="header" v-bind="{ ...ctx, column: col }">
-                <Button
+                <button
                   v-if="col.sortable"
                   type="button"
                   class="f-data-table-header-btn"
-                  @click="table.sortBy(table.sortFieldFor(col))"
+                  @click="sortBy(sortFieldFor(col))"
                 >
                   {{ col.label }}
                   <Icon
-                    v-if="table.isSorted(col)"
-                    :alias="table.getSortIcon()"
+                    v-if="isSorted(col)"
+                    :alias="getSortIcon()"
                     class="f-data-table-sort-icon"
                   />
-                </Button>
+                </button>
                 <Span v-else class="f-data-table-header">
                   {{ col.label }}
                 </Span>
@@ -107,20 +146,20 @@ const formatCell = (value: unknown, type?: ColumnType) => {
           </Tr>
         </Thead>
         <Tbody v-bind="pt?.tbody">
-          <Tr v-if="!table.data.value.length">
+          <Tr v-if="!data.length">
             <Td v-bind="pt?.empty" :colspan="colSpan">
               <slot name="empty" v-bind="ctx">No data</slot>
             </Td>
           </Tr>
           <template v-else>
-            <Tr v-for="(row, rowIndex) in table.data.value" :key="rowIndex">
-              <Td v-if="isSelectableRow" class="f-data-table-select">
+            <Tr v-for="(row, rowIndex) in data" :key="rowIndex">
+              <Td v-if="isSelectable" class="f-data-table-select">
                 <Checkbox
-                  :model-value="table.isRowSelected(row)"
-                  @update:model-value="table.toggleRow(row[table.rowKey] as K)"
+                  :model-value="isRowSelected(row)"
+                  @update:model-value="toggleRow(getRowKey(row))"
                 />
               </Td>
-              <Td v-for="col in table.columns" :key="String(col.key)">
+              <Td v-for="col in columns" :key="String(col.key)">
                 <!-- 1. cell:id — override a specific column -->
                 <slot
                   v-if="$slots[`cell:${String(col.key)}`]"
@@ -140,8 +179,7 @@ const formatCell = (value: unknown, type?: ColumnType) => {
                   v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
                 >
                   <!-- 4. Default type-based rendering -->
-                  <Anchor v-if="col.type === 'email'" :to="`mailto:${row[col.key]}`">{{ row[col.key] }}</Anchor>
-                  <Anchor v-else-if="col.type === 'url'" :to="String(row[col.key])" external>{{ row[col.key] }}</Anchor>
+                  <Anchor v-if="col.type === 'url'" :to="String(row[col.key])" external>{{ row[col.key] }}</Anchor>
                   <Img v-else-if="col.type === 'image'" :src="String(row[col.key])" :alt="col.label" />
                   <Span v-else>{{ formatCell(row[col.key], col.type) }}</Span>
                 </slot>

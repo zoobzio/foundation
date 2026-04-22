@@ -9,7 +9,6 @@ export type ColumnType =
   | "boolean"
   | "enum"
   | "currency"
-  | "email"
   | "url"
   | "image"
   | "action";
@@ -79,6 +78,15 @@ export interface RowAction<T> {
 }
 
 /**
+ * Bulk action — rendered when rows are selected.
+ */
+export interface BulkAction<K> {
+  icon: IconAlias;
+  label: string;
+  action: (selected: Set<K>) => void;
+}
+
+/**
  * Injection key for pre-fetched widget configs.
  * Pages provide this. Widgets inject and validate their own slice.
  */
@@ -101,11 +109,12 @@ export interface DataTablePayload {
 /**
  * Config the consumer provides to the factory.
  */
-export interface DataTableConfig<T> {
+export interface DataTableConfig<T, K = unknown> {
   columns: DataTableColumn<T>[];
   rowKey: keyof T;
   fetch: (params: DataTableFetchParams) => Promise<DataTableFetchResult<T>>;
   actions?: RowAction<T>[];
+  bulkActions?: BulkAction<K>[];
 }
 
 /**
@@ -136,6 +145,7 @@ export interface DataTableFetchResult<T> {
 export type DataTablePassthrough = {
   root?: Passthrough<GroupProps>;
   toolbar?: Passthrough<GroupProps>;
+  bulkActions?: Passthrough<GroupProps>;
   table?: Passthrough<TableProps>;
   thead?: Passthrough<TheadProps>;
   tbody?: Passthrough<TbodyProps>;
@@ -148,7 +158,6 @@ export type DataTableRecipes = {
   facets: ComputedRef<FacetsRecipe | undefined>;
   dateFilters: ComputedRef<DateFiltersRecipe | undefined>;
   pagination: ComputedRef<PaginationRecipe | undefined>;
-  selectAll: ComputedRef<CheckboxRecipe | undefined>;
 };
 
 export type DataTableProps<T, K = unknown> = {

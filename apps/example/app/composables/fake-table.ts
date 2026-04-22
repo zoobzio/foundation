@@ -34,7 +34,6 @@ export const useFakeTable = () => {
       ),
     ),
 
-    selectAll: computed(() => defineCheckbox({})),
   };
 
   return { table, recipes };

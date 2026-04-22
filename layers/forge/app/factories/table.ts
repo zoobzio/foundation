@@ -1,6 +1,6 @@
 export const createTable = <T, K = unknown>(
   id: string,
-  config: DataTableConfig<T>,
+  config: DataTableConfig<T, K>,
 ) => {
   return (): Table<T, K> => {
     // Resolve defaults: inject pre-fetched configs, validate with zod, fall back to constants
@@ -58,6 +58,7 @@ export const createTable = <T, K = unknown>(
     const columns = config.columns;
     const rowKey = config.rowKey;
     const actions = config.actions ?? [];
+    const bulkActions = config.bulkActions ?? [];
 
     // Pagination
     const goToPage = (p: number) => {
@@ -160,7 +161,12 @@ export const createTable = <T, K = unknown>(
       if (isIndeterminate.value) return "indeterminate" as const;
       return isAllSelected.value;
     });
-    const colSpan = computed(() => columns.length + (actions.length ? 1 : 0));
+    const colSpan = computed(
+      () =>
+        columns.length +
+        (actions.length ? 1 : 0) +
+        (bulkActions.length ? 1 : 0),
+    );
     const dateColumns = computed(() =>
       columns.filter((c) => c.type === "date" || c.type === "datetime"),
     );
@@ -254,6 +260,7 @@ export const createTable = <T, K = unknown>(
       columns,
       rowKey,
       actions,
+      bulkActions,
       page,
       pageSize,
       pageCount,

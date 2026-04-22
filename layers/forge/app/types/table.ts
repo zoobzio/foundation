@@ -12,6 +12,7 @@ export interface Table<T, K = unknown> {
   readonly columns: DataTableColumn<T>[];
   readonly rowKey: keyof T;
   readonly actions: RowAction<T>[];
+  readonly bulkActions: BulkAction<K>[];
 
   // Pagination
   page: Ref<number>;
