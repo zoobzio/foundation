@@ -137,6 +137,29 @@
   margin-left: auto;
 }
 
+/* Column header drag */
+.f-data-table-drag-handle {
+  opacity: 0;
+  cursor: grab;
+  color: var(--sys-on-surface-variant);
+}
+
+.f-th:hover .f-data-table-drag-handle {
+  opacity: 1;
+}
+
+.f-data-table-dragging {
+  opacity: 0.5;
+}
+
+.f-data-table-drop-left {
+  box-shadow: inset 2px 0 0 0 var(--sys-primary);
+}
+
+.f-data-table-drop-right {
+  box-shadow: inset -2px 0 0 0 var(--sys-primary);
+}
+
 /* Pagination */
 .f-pagination {
   display: flex;

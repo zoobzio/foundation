@@ -16,6 +16,7 @@ const fakeData: FakeRow[] = Array.from({ length: 50 }, (_, i) => ({
 
 export const accessFakeTable = createTable<FakeRow, number>("fake", {
   rowKey: "id",
+  pinnedColumns: ["id"],
   columns: [
     { key: "id", label: "ID", type: "number", sortable: true },
     { key: "name", label: "Name", type: "text", sortable: true },

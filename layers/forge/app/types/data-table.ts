@@ -115,6 +115,8 @@ export interface DataTableConfig<T, K = unknown> {
   fetch: (params: DataTableFetchParams) => Promise<DataTableFetchResult<T>>;
   actions?: RowAction<T>[];
   bulkActions?: BulkAction<K>[];
+  pinnedColumns?: (keyof T)[];
+  defaultColumnOrder?: (keyof T)[];
 }
 
 /**
@@ -151,6 +153,11 @@ export type DataTablePassthrough = {
   tbody?: Passthrough<TbodyProps>;
   empty?: Passthrough<TdProps>;
   pagination?: Passthrough<GroupProps>;
+};
+
+export type DataTableColumnsRecipes = {
+  trigger?: FabRecipe;
+  checkbox?: CheckboxRecipe;
 };
 
 export type DataTableRecipes = {

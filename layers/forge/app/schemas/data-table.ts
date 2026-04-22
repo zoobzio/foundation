@@ -17,6 +17,7 @@ export const DataTableSnapshotSchema = z.object({
   dateFilters: z.array(DateFilterSchema),
   sortField: z.string().nullable(),
   sortDirection: z.enum(["asc", "desc"]),
+  columnOrder: z.array(z.string()),
 });
 
 export type DataTableSnapshot = z.infer<typeof DataTableSnapshotSchema>;

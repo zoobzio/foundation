@@ -10,4 +10,5 @@ export const defaultTableSnapshot: DataTableSnapshot = {
   dateFilters: [],
   sortField: null,
   sortDirection: "asc",
+  columnOrder: [],
 };

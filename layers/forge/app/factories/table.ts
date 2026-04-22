@@ -59,6 +59,24 @@ export const createTable = <T, K = unknown>(
     const rowKey = config.rowKey;
     const actions = config.actions ?? [];
     const bulkActions = config.bulkActions ?? [];
+    const pinnedColumns = config.pinnedColumns ?? [];
+    const defaultColumnKeys = (
+      config.defaultColumnOrder ?? columns.map((c) => c.key)
+    ).map(String);
+
+    // Column ordering
+    const columnOrder = useState<string[]>(
+      `table-${id}-columnOrder`,
+      () => defaults.columnOrder.length ? defaults.columnOrder : defaultColumnKeys,
+    );
+
+    const columnMap = new Map(columns.map((c) => [String(c.key), c]));
+
+    const visibleColumns = computed(() =>
+      columnOrder.value
+        .map((key) => columnMap.get(key))
+        .filter((c): c is DataTableColumn<T> => c !== undefined),
+    );
 
     // Pagination
     const goToPage = (p: number) => {
@@ -163,13 +181,36 @@ export const createTable = <T, K = unknown>(
     });
     const colSpan = computed(
       () =>
-        columns.length +
+        visibleColumns.value.length +
         (actions.length ? 1 : 0) +
         (bulkActions.length ? 1 : 0),
     );
     const dateColumns = computed(() =>
       columns.filter((c) => c.type === "date" || c.type === "datetime"),
     );
+
+    // Column management
+    const pinnedSet = new Set(pinnedColumns.map(String));
+    const isColumnPinned = (key: keyof T) => pinnedSet.has(String(key));
+    const isColumnVisible = (key: keyof T) => columnOrder.value.includes(String(key));
+
+    const toggleColumn = (key: keyof T) => {
+      const k = String(key);
+      if (pinnedSet.has(k)) return;
+      if (columnOrder.value.includes(k)) {
+        columnOrder.value = columnOrder.value.filter((c) => c !== k);
+      } else {
+        columnOrder.value = [...columnOrder.value, k];
+      }
+    };
+
+    const reorderColumns = (order: string[]) => {
+      columnOrder.value = order;
+    };
+
+    const resetColumns = () => {
+      columnOrder.value = defaultColumnKeys;
+    };
 
     const setPageSize = (size: number) => {
       pageSize.value = size;
@@ -202,6 +243,7 @@ export const createTable = <T, K = unknown>(
       dateFilters: dateFilters.value,
       sortField: sortField.value,
       sortDirection: sortDirection.value,
+      columnOrder: columnOrder.value,
     });
 
     const restoreSnapshot = (snapshot: DataTableSnapshot) => {
@@ -214,6 +256,7 @@ export const createTable = <T, K = unknown>(
       dateFilters.value = snapshot.dateFilters;
       sortField.value = snapshot.sortField;
       sortDirection.value = snapshot.sortDirection;
+      columnOrder.value = snapshot.columnOrder;
       fetchData();
     };
 
@@ -261,6 +304,9 @@ export const createTable = <T, K = unknown>(
       rowKey,
       actions,
       bulkActions,
+      pinnedColumns,
+      columnOrder,
+      visibleColumns,
       page,
       pageSize,
       pageCount,
@@ -292,6 +338,11 @@ export const createTable = <T, K = unknown>(
       isSorted,
       getSortIcon,
       isRowSelected,
+      toggleColumn,
+      reorderColumns,
+      resetColumns,
+      isColumnPinned,
+      isColumnVisible,
       setPageSize,
       update,
       getSnapshot,

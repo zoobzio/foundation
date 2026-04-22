@@ -19,7 +19,7 @@ const {
 
 const {
   data,
-  columns,
+  visibleColumns,
   actions,
   bulkActions,
   selected,
@@ -37,10 +37,75 @@ const {
 
 const getRowKey = (row: T) => row[table.rowKey] as K;
 
+const {
+  columnOrder,
+  reorderColumns,
+} = table;
+
 const isSelectable = computed(() => bulkActions.length > 0);
 const hasSelection = computed(() => selected.value.size > 0);
 
 const ctx = computed(() => ({ table }));
+
+// Column header drag reorder
+const draggableKey = ref<string | null>(null);
+const dragKey = ref<string | null>(null);
+const dropKey = ref<string | null>(null);
+
+const onDragHandleEnter = (key: string) => {
+  draggableKey.value = key;
+};
+
+const onDragHandleLeave = (key: string) => {
+  if (!dragKey.value) {
+    draggableKey.value = null;
+  }
+};
+
+const onHeaderDragStart = (key: string, event: DragEvent) => {
+  dragKey.value = key;
+  dropKey.value = null;
+  event.dataTransfer!.effectAllowed = "move";
+};
+
+const onHeaderDragOver = (key: string, event: DragEvent) => {
+  event.preventDefault();
+  if (!dragKey.value || dragKey.value === key) return;
+  dropKey.value = key;
+};
+
+const dropDirection = computed(() => {
+  if (!dragKey.value || !dropKey.value) return null;
+  const order = columnOrder.value;
+  const fromIdx = order.indexOf(dragKey.value);
+  const toIdx = order.indexOf(dropKey.value);
+  if (fromIdx === -1 || toIdx === -1) return null;
+  return fromIdx < toIdx ? "right" : "left";
+});
+
+const onHeaderDragLeave = () => {
+  dropKey.value = null;
+};
+
+const onHeaderDrop = (key: string, event: DragEvent) => {
+  event.preventDefault();
+  if (!dragKey.value || dragKey.value === key) return;
+
+  const order = [...columnOrder.value];
+  const fromIdx = order.indexOf(dragKey.value);
+  const toIdx = order.indexOf(key);
+  if (fromIdx === -1 || toIdx === -1) return;
+
+  order.splice(fromIdx, 1);
+  order.splice(toIdx, 0, dragKey.value);
+  reorderColumns(order);
+};
+
+const onHeaderDragEnd = () => {
+  dragKey.value = null;
+  dropKey.value = null;
+  draggableKey.value = null;
+};
 
 const formatCell = (value: unknown, type?: ColumnType) => {
   if (value == null) return "";
@@ -80,6 +145,7 @@ const formatCell = (value: unknown, type?: ColumnType) => {
           v-bind="dateFiltersRecipe.props"
           v-on="dateFiltersRecipe.handlers"
         />
+        <DataTableColumns :table="table" />
       </Group>
     </slot>
 
@@ -117,30 +183,47 @@ const formatCell = (value: unknown, type?: ColumnType) => {
               />
             </Th>
             <Th
-              v-for="col in columns"
+              v-for="col in visibleColumns"
               :key="String(col.key)"
+              :draggable="draggableKey === String(col.key)"
               :class="{
                 'f-data-table-sortable': col.sortable,
                 'f-data-table-sorted': isSorted(col),
+                'f-data-table-dragging': dragKey === String(col.key),
+                'f-data-table-drop-left': dropKey === String(col.key) && dropDirection === 'left',
+                'f-data-table-drop-right': dropKey === String(col.key) && dropDirection === 'right',
               }"
+              @dragstart="onHeaderDragStart(String(col.key), $event)"
+              @dragover="onHeaderDragOver(String(col.key), $event)"
+              @dragleave="onHeaderDragLeave"
+              @drop="onHeaderDrop(String(col.key), $event)"
+              @dragend="onHeaderDragEnd"
             >
               <slot name="header" v-bind="{ ...ctx, column: col }">
-                <button
-                  v-if="col.sortable"
-                  type="button"
-                  class="f-data-table-header-btn"
-                  @click="sortBy(sortFieldFor(col))"
-                >
-                  {{ col.label }}
+                <Group class="f-data-table-header-wrap">
+                  <button
+                    v-if="col.sortable"
+                    type="button"
+                    class="f-data-table-header-btn"
+                    @click="sortBy(sortFieldFor(col))"
+                  >
+                    {{ col.label }}
+                    <Icon
+                      v-if="isSorted(col)"
+                      :alias="getSortIcon()"
+                      class="f-data-table-sort-icon"
+                    />
+                  </button>
+                  <Span v-else class="f-data-table-header">
+                    {{ col.label }}
+                  </Span>
                   <Icon
-                    v-if="isSorted(col)"
-                    :alias="getSortIcon()"
-                    class="f-data-table-sort-icon"
+                    alias="drag"
+                    class="f-data-table-drag-handle"
+                    @mouseenter="onDragHandleEnter(String(col.key))"
+                    @mouseleave="onDragHandleLeave(String(col.key))"
                   />
-                </button>
-                <Span v-else class="f-data-table-header">
-                  {{ col.label }}
-                </Span>
+                </Group>
               </slot>
             </Th>
           </Tr>
@@ -159,7 +242,7 @@ const formatCell = (value: unknown, type?: ColumnType) => {
                   @update:model-value="toggleRow(getRowKey(row))"
                 />
               </Td>
-              <Td v-for="col in columns" :key="String(col.key)">
+              <Td v-for="col in visibleColumns" :key="String(col.key)">
                 <!-- 1. cell:id — override a specific column -->
                 <slot
                   v-if="$slots[`cell:${String(col.key)}`]"

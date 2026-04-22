@@ -32,6 +32,7 @@ export default defineNuxtConfig({
       "folder-open": "twotone-folder-open",
 
       // Actions
+      drag: "twotone-drag-indicator",
       add: "twotone-add",
       plus: "twotone-add",
       edit: "twotone-edit",

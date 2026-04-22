@@ -13,6 +13,7 @@ export interface Table<T, K = unknown> {
   readonly rowKey: keyof T;
   readonly actions: RowAction<T>[];
   readonly bulkActions: BulkAction<K>[];
+  readonly pinnedColumns: (keyof T)[];
 
   // Pagination
   page: Ref<number>;
@@ -41,6 +42,10 @@ export interface Table<T, K = unknown> {
   isAllSelected: Ref<boolean>;
   isIndeterminate: Ref<boolean>;
 
+  // Columns
+  columnOrder: Ref<string[]>;
+  visibleColumns: Ref<DataTableColumn<T>[]>;
+
   // Getters
   selectAllState: Ref<boolean | "indeterminate">;
   colSpan: Ref<number>;
@@ -60,6 +65,11 @@ export interface Table<T, K = unknown> {
   isSorted: (col: DataTableColumn<T>) => boolean;
   getSortIcon: () => IconAlias;
   isRowSelected: (row: T) => boolean;
+  toggleColumn: (key: keyof T) => void;
+  reorderColumns: (order: string[]) => void;
+  resetColumns: () => void;
+  isColumnPinned: (key: keyof T) => boolean;
+  isColumnVisible: (key: keyof T) => boolean;
   setPageSize: (size: number) => void;
   update: (payload: Partial<DataTablePayload>) => void;
   getSnapshot: () => DataTableSnapshot;
