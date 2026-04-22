@@ -33,6 +33,7 @@ export default defineNuxtConfig({
 
       // Actions
       drag: "twotone-drag-indicator",
+      actions: "twotone-more-vert",
       add: "twotone-add",
       plus: "twotone-add",
       edit: "twotone-edit",

@@ -2,7 +2,8 @@
 .f-table {
   display: table;
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .f-thead {
@@ -22,7 +23,8 @@
   background: var(--sys-hover);
 }
 
-.f-tr:not(:last-child) {
+.f-thead .f-th,
+.f-tr:not(:last-child) > .f-td {
   border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
 }
 
@@ -34,7 +36,6 @@
   padding: var(--ref-spacing-sm) var(--ref-spacing-md);
   text-align: start;
   background: var(--sys-surface-container);
-  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
 }
 
 .f-data-table-header-wrap {
@@ -111,6 +112,21 @@
 .f-data-table-sorted .f-data-table-sort-icon {
   opacity: 1;
 }
+
+/* Actions column */
+.f-data-table-actions {
+  width: 1px;
+  white-space: nowrap;
+}
+
+.f-thead .f-data-table-actions {
+  background: var(--sys-surface-container);
+}
+
+.f-tbody .f-data-table-actions {
+  background: inherit;
+}
+
 
 /* Selection column */
 .f-data-table-select {

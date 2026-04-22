@@ -43,7 +43,22 @@ const {
 } = table;
 
 const isSelectable = computed(() => bulkActions.length > 0);
+const hasActions = computed(() => actions.length > 0);
 const hasSelection = computed(() => selected.value.size > 0);
+
+const actionMenuGroups = computed(() => [{
+  key: "actions",
+  items: actions.map((a) => ({
+    icon: a.icon,
+    label: a.label,
+  })),
+}]);
+
+const actionMap = new Map(actions.map((a) => [a.label, a]));
+
+const onActionSelect = (row: T, item: { label: string }) => {
+  actionMap.get(item.label)?.action(row);
+};
 
 const ctx = computed(() => ({ table }));
 
@@ -226,6 +241,7 @@ const formatCell = (value: unknown, type?: ColumnType) => {
                 </Group>
               </slot>
             </Th>
+            <Th v-if="hasActions" class="f-data-table-actions" />
           </Tr>
         </Thead>
         <Tbody v-bind="pt?.tbody">
@@ -266,6 +282,15 @@ const formatCell = (value: unknown, type?: ColumnType) => {
                   <Img v-else-if="col.type === 'image'" :src="String(row[col.key])" :alt="col.label" />
                   <Span v-else>{{ formatCell(row[col.key], col.type) }}</Span>
                 </slot>
+              </Td>
+              <Td v-if="hasActions" class="f-data-table-actions">
+                <Menu
+                  :groups="actionMenuGroups"
+                  align="end"
+                  @select="onActionSelect(row, $event)"
+                >
+                  <Fab icon="actions" />
+                </Menu>
               </Td>
             </Tr>
           </template>
