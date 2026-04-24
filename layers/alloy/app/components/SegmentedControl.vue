@@ -20,41 +20,51 @@ const model = defineModel<string>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const ctx = computed(() => ({
-  options,
-  disabled,
-  required,
-  model: model.value,
-}));
-
 // Prevent deselection when required
 const handleUpdate = (value: AcceptableValue | AcceptableValue[]) => {
   const val = Array.isArray(value) ? value[0] : value;
   if (required && !val) return;
   if (typeof val === "string") model.value = val;
 };
+
+const rootPT = usePassthrough(pt?.root, {
+  props: { modelValue: model.value, type: "single", disabled },
+  handlers: { "update:modelValue": handleUpdate },
+});
+
+const itemsPT = computed(() =>
+  options.map((option) => ({
+    item: option,
+    pt: passthrough(pt?.item, {
+      props: { value: option.value, disabled: option.disabled },
+    }),
+  })),
+);
+
+const ctx = computed(() => ({
+  options,
+  disabled,
+  required,
+  model: model.value,
+}));
 </script>
 
 <template>
   <ToggleGroupRoot
     ref="el"
-    :model-value="model"
-    type="single"
-    :disabled="disabled"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-segmented-control"
-    @update:model-value="handleUpdate"
   >
-    <slot v-for="option in options" name="item" v-bind="{ ...ctx, option }">
+    <slot v-for="entry in itemsPT" name="item" v-bind="{ ...ctx, option: entry.item }">
       <ToggleGroupItem
-        :key="option.value"
-        :value="option.value"
-        :disabled="option.disabled"
-        v-bind="pt?.item"
+        :key="entry.item.value"
+        v-bind="entry.pt.props"
+        v-on="entry.pt.handlers"
         class="f-segmented-control-item"
       >
-        <Icon v-if="option.icon" :alias="option.icon" />
-        <Span v-if="option.label">{{ option.label }}</Span>
+        <Icon v-if="entry.item.icon" :alias="entry.item.icon" />
+        <Span v-if="entry.item.label">{{ entry.item.label }}</Span>
       </ToggleGroupItem>
     </slot>
   </ToggleGroupRoot>

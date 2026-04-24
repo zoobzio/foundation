@@ -1,8 +1,8 @@
-import type { AvatarRootProps, AvatarImageProps, AvatarFallbackProps } from "reka-ui";
+import type { AvatarRootProps, AvatarImageProps, AvatarImageEmits, AvatarFallbackProps } from "reka-ui";
 
 export type AvatarPassthrough = {
   root?: Passthrough<AvatarRootProps>;
-  image?: Passthrough<AvatarImageProps>;
+  image?: Passthrough<AvatarImageProps, AvatarImageEmits>;
   fallback?: Passthrough<AvatarFallbackProps>;
 };
 
@@ -15,6 +15,6 @@ export type AvatarProps = {
 
 export type AvatarEmits = {};
 
-export const defineAvatar = useComponentRecipe<AvatarProps, AvatarEmits>();
+export const defineAvatar = defineComponentRecipe<AvatarProps, AvatarEmits>();
 
-export type AvatarRecipe = ComponentRecipe<AvatarProps, AvatarEmits>;
+export type AvatarRecipe = Recipe<AvatarProps, AvatarEmits>;

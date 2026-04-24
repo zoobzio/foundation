@@ -17,6 +17,6 @@ export type PaginationEmits = {
   "update:pageSize": [value: number];
 };
 
-export const definePagination = useComponentRecipe<PaginationProps, PaginationEmits>();
+export const definePagination = defineComponentRecipe<PaginationProps, PaginationEmits>();
 
-export type PaginationRecipe = ComponentRecipe<PaginationProps, PaginationEmits>;
+export type PaginationRecipe = Recipe<PaginationProps, PaginationEmits>;

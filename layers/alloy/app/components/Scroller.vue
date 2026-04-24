@@ -15,43 +15,52 @@ const {
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { type, scrollHideDelay, dir },
+});
+const viewportPT = usePassthrough(pt?.viewport, {});
+const scrollbarPT = usePassthrough(pt?.scrollbar, {});
+const thumbPT = usePassthrough(pt?.thumb, {});
+const cornerPT = usePassthrough(pt?.corner, {});
+
 const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation }));
 </script>
 
 <template>
   <ScrollAreaRoot
     ref="el"
-    :type="type"
-    :scroll-hide-delay="scrollHideDelay"
-    :dir="dir"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-scroller-root"
   >
-    <ScrollAreaViewport v-bind="pt?.viewport" class="f-scroller-viewport">
+    <ScrollAreaViewport v-bind="viewportPT.props" v-on="viewportPT.handlers" class="f-scroller-viewport">
       <slot v-bind="ctx" />
     </ScrollAreaViewport>
 
     <ScrollAreaScrollbar
       v-if="orientation === 'vertical' || orientation === 'both'"
       orientation="vertical"
-      v-bind="pt?.scrollbar"
+      v-bind="scrollbarPT.props"
+      v-on="scrollbarPT.handlers"
       class="f-scroller-scrollbar"
     >
-      <ScrollAreaThumb v-bind="pt?.thumb" class="f-scroller-thumb" />
+      <ScrollAreaThumb v-bind="thumbPT.props" v-on="thumbPT.handlers" class="f-scroller-thumb" />
     </ScrollAreaScrollbar>
 
     <ScrollAreaScrollbar
       v-if="orientation === 'horizontal' || orientation === 'both'"
       orientation="horizontal"
-      v-bind="pt?.scrollbar"
+      v-bind="scrollbarPT.props"
+      v-on="scrollbarPT.handlers"
       class="f-scroller-scrollbar"
     >
-      <ScrollAreaThumb v-bind="pt?.thumb" class="f-scroller-thumb" />
+      <ScrollAreaThumb v-bind="thumbPT.props" v-on="thumbPT.handlers" class="f-scroller-thumb" />
     </ScrollAreaScrollbar>
 
     <ScrollAreaCorner
       v-if="orientation === 'both'"
-      v-bind="pt?.corner"
+      v-bind="cornerPT.props"
+      v-on="cornerPT.handlers"
       class="f-scroller-corner"
     />
   </ScrollAreaRoot>

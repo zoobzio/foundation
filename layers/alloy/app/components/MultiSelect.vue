@@ -28,6 +28,29 @@ const displayText = computed(() => {
 
 const isSelected = (value: string) => model.value.includes(value);
 
+const toggle = (value: string) => {
+  if (isSelected(value)) {
+    model.value = model.value.filter((v) => v !== value);
+  } else {
+    model.value = [...model.value, value];
+  }
+};
+
+const triggerPT = usePassthrough(pt?.trigger, {
+  props: { disabled },
+});
+const contentPT = usePassthrough(pt?.content, {});
+
+const itemsPT = computed(() =>
+  items.map((item) => ({
+    item,
+    pt: passthrough(pt?.item, {
+      props: { disabled: item.disabled },
+      handlers: { click: () => toggle(item.value) },
+    }),
+  })),
+);
+
 const ctx = computed(() => ({
   items,
   placeholder,
@@ -37,46 +60,38 @@ const ctx = computed(() => ({
   displayText: displayText.value,
   isSelected,
 }));
-
-const toggle = (value: string) => {
-  if (isSelected(value)) {
-    model.value = model.value.filter((v) => v !== value);
-  } else {
-    model.value = [...model.value, value];
-  }
-};
 </script>
 
 <template>
   <Popover ref="el" v-model:open="open" :disabled="disabled">
     <slot name="trigger" v-bind="ctx">
       <Button
-        v-bind="pt?.trigger"
+        v-bind="triggerPT.props"
+        v-on="triggerPT.handlers"
         class="f-multiselect-trigger"
-        :disabled="disabled"
       >
         <Span>{{ displayText }}</Span>
         <Icon alias="chevron-down" />
       </Button>
     </slot>
     <template #content>
-      <Group v-bind="pt?.content" class="f-multiselect-content">
-        <slot v-for="item in items" name="item" v-bind="{ ...ctx, item, selected: isSelected(item.value) }">
-          <Button
-            :key="item.value"
-            v-bind="pt?.item"
-            class="f-multiselect-item"
-            :disabled="item.disabled"
-            @click="toggle(item.value)"
-          >
-            <Checkbox
-              :model-value="isSelected(item.value)"
-              :disabled="item.disabled"
-              tabindex="-1"
-            />
-            <Span>{{ item.label }}</Span>
-          </Button>
-        </slot>
+      <Group v-bind="contentPT.props" v-on="contentPT.handlers" class="f-multiselect-content">
+        <template v-for="entry in itemsPT" :key="entry.item.value">
+          <slot name="item" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
+            <Button
+              v-bind="entry.pt.props"
+              v-on="entry.pt.handlers"
+              class="f-multiselect-item"
+            >
+              <Checkbox
+                :model-value="isSelected(entry.item.value)"
+                :disabled="entry.item.disabled"
+                tabindex="-1"
+              />
+              <Span>{{ entry.item.label }}</Span>
+            </Button>
+          </slot>
+        </template>
       </Group>
     </template>
   </Popover>

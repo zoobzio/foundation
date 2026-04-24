@@ -1,11 +1,11 @@
-import type { AccordionRootProps, AccordionItemProps, AccordionHeaderProps, AccordionTriggerProps, AccordionContentProps } from "reka-ui";
+import type { AccordionRootProps, AccordionRootEmits, AccordionItemProps, AccordionHeaderProps, AccordionTriggerProps, AccordionContentProps, CollapsibleContentEmits } from "reka-ui";
 
 export type AccordionPassthrough = {
-  root?: Passthrough<AccordionRootProps>;
+  root?: Passthrough<AccordionRootProps, AccordionRootEmits>;
   item?: Passthrough<AccordionItemProps>;
   header?: Passthrough<AccordionHeaderProps>;
   trigger?: Passthrough<AccordionTriggerProps>;
-  content?: Passthrough<AccordionContentProps>;
+  content?: Passthrough<AccordionContentProps, CollapsibleContentEmits>;
 };
 
 export type AccordionProps = {
@@ -18,6 +18,6 @@ export type AccordionProps = {
 
 export type AccordionEmits = {};
 
-export const defineAccordion = useComponentRecipe<AccordionProps, AccordionEmits>();
+export const defineAccordion = defineComponentRecipe<AccordionProps, AccordionEmits>();
 
-export type AccordionRecipe = ComponentRecipe<AccordionProps, AccordionEmits>;
+export type AccordionRecipe = Recipe<AccordionProps, AccordionEmits>;

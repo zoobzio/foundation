@@ -1,16 +1,3 @@
-type EmitHandlers<E> = {
-  [K in keyof E]?: E[K] extends [infer A] ? (arg: A) => void : () => void;
-};
-
-export type ComponentRecipe<Props, Emits> = {
-  props: Props;
-  handlers: EmitHandlers<Emits>;
-};
-
-export const useComponentRecipe = <Props, Emits>() => {
-  return (props: Props, handlers: EmitHandlers<Emits> = {}): ComponentRecipe<Props, Emits> => ({ props, handlers });
-};
-
 export type MouseEvents = {
   click: [MouseEvent];
   dblclick: [MouseEvent];

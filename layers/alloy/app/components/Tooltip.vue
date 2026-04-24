@@ -16,20 +16,25 @@ const {
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { delayDuration },
+});
+const contentPT = usePassthrough(pt?.content, {
+  props: { side, align, sideOffset },
+});
+
 const ctx = computed(() => ({ content, delayDuration, side, align, sideOffset }));
 </script>
 
 <template>
-  <TooltipRoot ref="el" v-bind="pt?.root" :delay-duration="delayDuration">
+  <TooltipRoot ref="el" v-bind="rootPT.props" v-on="rootPT.handlers">
     <TooltipTrigger as-child>
       <slot v-bind="ctx" />
     </TooltipTrigger>
     <TooltipPortal>
       <TooltipContent
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        v-bind="pt?.content"
+        v-bind="contentPT.props"
+        v-on="contentPT.handlers"
         class="f-tooltip-content"
       >
         <slot name="content" v-bind="ctx">
@@ -39,4 +44,3 @@ const ctx = computed(() => ({ content, delayDuration, side, align, sideOffset })
     </TooltipPortal>
   </TooltipRoot>
 </template>
-

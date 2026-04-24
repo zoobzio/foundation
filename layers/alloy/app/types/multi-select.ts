@@ -13,6 +13,6 @@ export type MultiSelectProps = {
 
 export type MultiSelectEmits = {};
 
-export const defineMultiSelect = useComponentRecipe<MultiSelectProps, MultiSelectEmits>();
+export const defineMultiSelect = defineComponentRecipe<MultiSelectProps, MultiSelectEmits>();
 
-export type MultiSelectRecipe = ComponentRecipe<MultiSelectProps, MultiSelectEmits>;
+export type MultiSelectRecipe = Recipe<MultiSelectProps, MultiSelectEmits>;

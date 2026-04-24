@@ -52,7 +52,7 @@ const filteredGroups = computed(() => {
       ...group,
       items: group.items.filter((item) => {
         if (isSearching && !item.label.toLowerCase().includes(search)) return false;
-        if (isSearching && item.count === 0) return false;
+        if (item.count === 0 && !selected.value.has(item.value)) return false;
         return true;
       }),
     }))
@@ -60,6 +60,34 @@ const filteredGroups = computed(() => {
 });
 
 const hasResults = computed(() => filteredGroups.value.length > 0);
+
+// Single-select mode: emit select event
+const handleSingleSelect = (value: AcceptableValue) => {
+  if (multiple) return;
+  const val = Array.isArray(value) ? value[0] : value;
+  if (val && typeof val === "string") emit("select", val);
+};
+
+const rootPT = usePassthrough(pt?.root, {
+  props: { disabled, multiple },
+  handlers: { "update:modelValue": handleSingleSelect },
+});
+const filterPT = usePassthrough(pt?.filter, {
+  props: { autoFocus: true },
+});
+const contentPT = usePassthrough(pt?.content, {});
+
+const groupsPT = computed(() =>
+  filteredGroups.value.map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      item,
+      pt: passthrough(pt?.item, {
+        props: { value: item.value, disabled: item.disabled },
+      }),
+    })),
+  })),
+);
 
 const ctx = computed(() => ({
   groups,
@@ -72,24 +100,15 @@ const ctx = computed(() => ({
   filteredGroups: filteredGroups.value,
   hasResults: hasResults.value,
 }));
-
-// Single-select mode: emit select event
-const handleSingleSelect = (value: AcceptableValue) => {
-  if (multiple) return;
-  const val = Array.isArray(value) ? value[0] : value;
-  if (val && typeof val === "string") emit("select", val);
-};
 </script>
 
 <template>
   <ListboxRoot
     ref="el"
     v-model="modelArray"
-    :disabled="disabled"
-    :multiple="multiple"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-command-root"
-    @update:model-value="handleSingleSelect"
   >
     <Group class="f-command-input-wrapper">
       <slot name="input-icon" v-bind="ctx" />
@@ -97,21 +116,21 @@ const handleSingleSelect = (value: AcceptableValue) => {
         <ListboxFilter
           v-model="searchTerm"
           :placeholder="placeholder"
-          auto-focus
-          v-bind="pt?.filter"
+          v-bind="filterPT.props"
+          v-on="filterPT.handlers"
           class="f-command-input"
         />
       </slot>
     </Group>
     <slot name="content" v-bind="ctx">
-      <ListboxContent v-bind="pt?.content" class="f-command-content">
+      <ListboxContent v-bind="contentPT.props" v-on="contentPT.handlers" class="f-command-content">
         <Scroller class="f-command-viewport">
           <Group v-if="!hasResults" class="f-command-empty">
             <slot name="empty" v-bind="ctx">No results found</slot>
           </Group>
 
           <ListboxGroup
-            v-for="group in filteredGroups"
+            v-for="group in groupsPT"
             :key="group.key"
             class="f-command-group"
           >
@@ -121,17 +140,16 @@ const handleSingleSelect = (value: AcceptableValue) => {
               </Caption>
             </ListboxGroupLabel>
             <ListboxItem
-              v-for="item in group.items"
-              :key="item.value"
-              :value="item.value"
-              :disabled="item.disabled"
-              v-bind="pt?.item"
+              v-for="entry in group.items"
+              :key="entry.item.value"
+              v-bind="entry.pt.props"
+              v-on="entry.pt.handlers"
               class="f-command-item"
             >
-              <slot name="item" v-bind="{ ...ctx, item, selected: isSelected(item.value) }">
-                <Checkbox v-if="multiple" :model-value="isSelected(item.value)" />
-                <Span class="f-command-item-label">{{ item.label }}</Span>
-                <Kbd v-if="item.count !== undefined" class="f-command-item-count">{{ item.count }}</Kbd>
+              <slot name="item" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
+                <Checkbox v-if="multiple" :model-value="isSelected(entry.item.value)" />
+                <Span class="f-command-item-label">{{ entry.item.label }}</Span>
+                <Kbd v-if="entry.item.count !== undefined" class="f-command-item-count">{{ entry.item.count }}</Kbd>
               </slot>
             </ListboxItem>
           </ListboxGroup>

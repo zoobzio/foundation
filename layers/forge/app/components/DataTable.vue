@@ -15,7 +15,7 @@ const {
   facets: facetsRecipe,
   dateFilters: dateFiltersRecipe,
   pagination: paginationRecipe,
-} = recipes ?? {};
+} = recipes;
 
 const {
   data,
@@ -33,26 +33,49 @@ const {
   toggleRow,
   isRowSelected,
   clearSelection,
+  selectedFacets,
+  query,
+  keywords,
+  dateFilters,
 } = table;
 
 const getRowKey = (row: T) => row[table.rowKey] as K;
 
-const {
-  columnOrder,
-  reorderColumns,
-} = table;
+const { columnOrder, reorderColumns } = table;
 
 const isSelectable = computed(() => bulkActions.length > 0);
 const hasActions = computed(() => actions.length > 0);
 const hasSelection = computed(() => selected.value.size > 0);
 
-const actionMenuGroups = computed(() => [{
-  key: "actions",
-  items: actions.map((a) => ({
-    icon: a.icon,
-    label: a.label,
-  })),
-}]);
+// Semantic search
+const searchOpen = ref(false);
+const searchInput = ref("");
+const hasQuery = computed(() => !!query.value);
+
+watch(searchOpen, (open) => {
+  if (open) searchInput.value = query.value;
+});
+
+const searchDebounce = ref<ReturnType<typeof setTimeout> | null>(null);
+
+watch(searchInput, (val) => {
+  if (searchDebounce.value) clearTimeout(searchDebounce.value);
+  searchDebounce.value = setTimeout(() => {
+    query.value = val;
+    table.page.value = 1;
+    table.fetch();
+  }, 300);
+});
+
+const actionMenuGroups = computed(() => [
+  {
+    key: "actions",
+    items: actions.map((a) => ({
+      icon: a.icon,
+      label: a.label,
+    })),
+  },
+]);
 
 const actionMap = new Map(actions.map((a) => [a.label, a]));
 
@@ -126,11 +149,19 @@ const formatCell = (value: unknown, type?: ColumnType) => {
   if (value == null) return "";
   switch (type) {
     case "date":
-      return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(String(value)));
+      return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
+        new Date(String(value)),
+      );
     case "datetime":
-      return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(String(value)));
+      return new Intl.DateTimeFormat("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(String(value)));
     case "currency":
-      return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value));
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(Number(value));
     case "number":
       return new Intl.NumberFormat("en-US").format(Number(value));
     case "boolean":
@@ -145,18 +176,33 @@ const formatCell = (value: unknown, type?: ColumnType) => {
   <Group ref="el" v-bind="pt?.root" class="f-data-table">
     <slot name="toolbar" v-bind="ctx">
       <Group v-bind="pt?.toolbar" class="f-data-table-toolbar">
+        <DataTableFilters :table="table" />
+        <Popover v-model:open="searchOpen" align="end">
+          <Fab icon="search" :badge="hasQuery ? '' : undefined" />
+          <template #content>
+            <Group class="f-data-table-search">
+              <input
+                :value="searchInput"
+                placeholder="Search..."
+                class="f-command-input"
+                @input="searchInput = ($event.target as HTMLInputElement).value"
+                @keydown.escape="searchOpen = false"
+              />
+            </Group>
+          </template>
+        </Popover>
         <Keywords
-          v-if="keywordsRecipe"
+          v-model="keywords"
           v-bind="keywordsRecipe.props"
           v-on="keywordsRecipe.handlers"
         />
         <Facets
-          v-if="facetsRecipe"
+          v-model:selected="selectedFacets"
           v-bind="facetsRecipe.props"
           v-on="facetsRecipe.handlers"
         />
         <DateFilters
-          v-if="dateFiltersRecipe"
+          v-model="dateFilters"
           v-bind="dateFiltersRecipe.props"
           v-on="dateFiltersRecipe.handlers"
         />
@@ -164,7 +210,11 @@ const formatCell = (value: unknown, type?: ColumnType) => {
       </Group>
     </slot>
 
-    <Group v-if="hasSelection" v-bind="pt?.bulkActions" class="f-data-table-bulk-actions">
+    <Group
+      v-if="hasSelection"
+      v-bind="pt?.bulkActions"
+      class="f-data-table-bulk-actions"
+    >
       <Span class="f-data-table-bulk-actions-count">
         {{ selected.size }} selected
       </Span>
@@ -205,8 +255,10 @@ const formatCell = (value: unknown, type?: ColumnType) => {
                 'f-data-table-sortable': col.sortable,
                 'f-data-table-sorted': isSorted(col),
                 'f-data-table-dragging': dragKey === String(col.key),
-                'f-data-table-drop-left': dropKey === String(col.key) && dropDirection === 'left',
-                'f-data-table-drop-right': dropKey === String(col.key) && dropDirection === 'right',
+                'f-data-table-drop-left':
+                  dropKey === String(col.key) && dropDirection === 'left',
+                'f-data-table-drop-right':
+                  dropKey === String(col.key) && dropDirection === 'right',
               }"
               @dragstart="onHeaderDragStart(String(col.key), $event)"
               @dragover="onHeaderDragOver(String(col.key), $event)"
@@ -278,8 +330,17 @@ const formatCell = (value: unknown, type?: ColumnType) => {
                   v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
                 >
                   <!-- 4. Default type-based rendering -->
-                  <Anchor v-if="col.type === 'url'" :to="String(row[col.key])" external>{{ row[col.key] }}</Anchor>
-                  <Img v-else-if="col.type === 'image'" :src="String(row[col.key])" :alt="col.label" />
+                  <Anchor
+                    v-if="col.type === 'url'"
+                    :to="String(row[col.key])"
+                    external
+                    >{{ row[col.key] }}</Anchor
+                  >
+                  <Img
+                    v-else-if="col.type === 'image'"
+                    :src="String(row[col.key])"
+                    :alt="col.label"
+                  />
                   <Span v-else>{{ formatCell(row[col.key], col.type) }}</Span>
                 </slot>
               </Td>

@@ -9,23 +9,30 @@ const { src, alt, fallback, pt } = defineProps<AvatarProps>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {});
+const imagePT = usePassthrough(pt?.image, {
+  props: { src },
+});
+const fallbackPT = usePassthrough(pt?.fallback, {});
+
 const ctx = computed(() => ({ src, alt, fallback }));
 </script>
 
 <template>
   <slot ref="el" name="root" v-bind="ctx">
-    <AvatarRoot v-bind="pt?.root" class="f-avatar-root">
+    <AvatarRoot v-bind="rootPT.props" v-on="rootPT.handlers" class="f-avatar-root">
       <slot name="image" v-bind="ctx">
         <AvatarImage
-          :src="src"
           :alt="alt"
-          v-bind="pt?.image"
+          v-bind="imagePT.props"
+          v-on="imagePT.handlers"
           class="f-avatar-image"
         />
       </slot>
       <slot name="fallback" v-bind="ctx">
         <AvatarFallback
-          v-bind="pt?.fallback"
+          v-bind="fallbackPT.props"
+          v-on="fallbackPT.handlers"
           class="f-avatar-fallback"
         >
           {{ fallback }}
@@ -34,4 +41,3 @@ const ctx = computed(() => ({ src, alt, fallback }));
     </AvatarRoot>
   </slot>
 </template>
-

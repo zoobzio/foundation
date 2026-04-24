@@ -1,7 +1,7 @@
-import type { ToastRootProps, ToastTitleProps, ToastDescriptionProps, ToastCloseProps } from "reka-ui";
+import type { ToastRootProps, ToastRootEmits, ToastTitleProps, ToastDescriptionProps, ToastCloseProps } from "reka-ui";
 
 export type ToastPassthrough = {
-  root?: Passthrough<ToastRootProps>;
+  root?: Passthrough<ToastRootProps, ToastRootEmits>;
   title?: Passthrough<ToastTitleProps>;
   description?: Passthrough<ToastDescriptionProps>;
   close?: Passthrough<ToastCloseProps>;
@@ -19,6 +19,6 @@ export type ToastEmits = {
   close: [];
 };
 
-export const defineToast = useComponentRecipe<ToastProps, ToastEmits>();
+export const defineToast = defineComponentRecipe<ToastProps, ToastEmits>();
 
-export type ToastRecipe = ComponentRecipe<ToastProps, ToastEmits>;
+export type ToastRecipe = Recipe<ToastProps, ToastEmits>;

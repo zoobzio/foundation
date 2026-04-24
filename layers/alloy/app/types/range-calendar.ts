@@ -1,8 +1,8 @@
 import type { DateValue } from "@internationalized/date";
-import type { RangeCalendarRootProps, RangeCalendarHeaderProps, RangeCalendarHeadingProps, RangeCalendarGridProps, RangeCalendarCellProps, RangeCalendarCellTriggerProps, RangeCalendarPrevProps, RangeCalendarNextProps } from "reka-ui";
+import type { RangeCalendarRootProps, RangeCalendarRootEmits, RangeCalendarHeaderProps, RangeCalendarHeadingProps, RangeCalendarGridProps, RangeCalendarCellProps, RangeCalendarCellTriggerProps, RangeCalendarPrevProps, RangeCalendarNextProps } from "reka-ui";
 
 export type RangeCalendarPassthrough = {
-  root?: Passthrough<RangeCalendarRootProps>;
+  root?: Passthrough<RangeCalendarRootProps, RangeCalendarRootEmits>;
   header?: Passthrough<RangeCalendarHeaderProps>;
   heading?: Passthrough<RangeCalendarHeadingProps>;
   grid?: Passthrough<RangeCalendarGridProps>;
@@ -26,6 +26,6 @@ export type RangeCalendarProps = {
 
 export type RangeCalendarEmits = {};
 
-export const defineRangeCalendar = useComponentRecipe<RangeCalendarProps, RangeCalendarEmits>();
+export const defineRangeCalendar = defineComponentRecipe<RangeCalendarProps, RangeCalendarEmits>();
 
-export type RangeCalendarRecipe = ComponentRecipe<RangeCalendarProps, RangeCalendarEmits>;
+export type RangeCalendarRecipe = Recipe<RangeCalendarProps, RangeCalendarEmits>;

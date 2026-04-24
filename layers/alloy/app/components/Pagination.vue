@@ -46,19 +46,23 @@ const pageNumbers = computed(() => {
   return pages;
 });
 
+const rootPT = usePassthrough(pt?.root, {});
+const infoPT = usePassthrough(pt?.info, {});
+const pagesPT = usePassthrough(pt?.pages, {});
+
 const ctx = computed(() => ({ page, pageSize, pageCount, total, hasPrev: hasPrev.value, hasNext: hasNext.value, pageNumbers: pageNumbers.value }));
 </script>
 
 <template>
-  <Group ref="el" v-bind="pt?.root" class="f-pagination">
+  <Group ref="el" v-bind="rootPT.props" v-on="rootPT.handlers" class="f-pagination">
     <slot name="info" v-bind="ctx">
-      <Span v-bind="pt?.info" class="f-pagination-info">
+      <Span v-bind="infoPT.props" v-on="infoPT.handlers" class="f-pagination-info">
         Page {{ page }} of {{ pageCount }} ({{ total }} results)
       </Span>
     </slot>
 
     <slot name="pages" v-bind="ctx">
-      <Group v-bind="pt?.pages" class="f-pagination-pages">
+      <Group v-bind="pagesPT.props" v-on="pagesPT.handlers" class="f-pagination-pages">
         <Fab :disabled="!hasPrev" @click="first">
           <Icon alias="chevron-first" />
         </Fab>

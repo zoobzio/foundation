@@ -83,8 +83,6 @@
   text-align: start;
   width: 100%;
   font-size: var(--ref-text-sm);
-  transition-duration: var(--ref-duration-fast);
-  transition-timing-function: var(--ref-ease-out);
 }
 
 .f-command-item:hover {

@@ -11,38 +11,57 @@ const model = defineModel<string>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const ctx = computed(() => ({ tabs: tabItems, model }));
+const rootPT = usePassthrough(pt?.root, {});
+const listPT = usePassthrough(pt?.list, {});
 
+const triggersPT = computed(() =>
+  tabItems.map((tab) => ({
+    item: tab,
+    pt: passthrough(pt?.trigger, {
+      props: { value: tab.value, disabled: tab.disabled },
+    }),
+  })),
+);
+
+const contentsPT = computed(() =>
+  tabItems.map((tab) => ({
+    item: tab,
+    pt: passthrough(pt?.content, {
+      props: { value: tab.value },
+    }),
+  })),
+);
+
+const ctx = computed(() => ({ tabs: tabItems, model }));
 </script>
 
 <template>
-  <TabsRoot ref="el" v-model="model" v-bind="pt?.root" class="f-tabs-root">
+  <TabsRoot ref="el" v-model="model" v-bind="rootPT.props" v-on="rootPT.handlers" class="f-tabs-root">
     <slot name="list" v-bind="ctx">
-      <TabsList v-bind="pt?.list" class="f-tabs-list">
+      <TabsList v-bind="listPT.props" v-on="listPT.handlers" class="f-tabs-list">
         <TabsTrigger
-          v-for="tab in tabItems"
-          :key="tab.value"
-          :value="tab.value"
-          :disabled="tab.disabled"
-          v-bind="pt?.trigger"
+          v-for="entry in triggersPT"
+          :key="entry.item.value"
+          v-bind="entry.pt.props"
+          v-on="entry.pt.handlers"
           class="f-tabs-trigger"
         >
-          <slot name="trigger" v-bind="{ ...ctx, tab }">
-            <Icon v-if="tab.icon" :alias="tab.icon" />
-            {{ tab.label }}
+          <slot name="trigger" v-bind="{ ...ctx, tab: entry.item }">
+            <Icon v-if="entry.item.icon" :alias="entry.item.icon" />
+            {{ entry.item.label }}
           </slot>
         </TabsTrigger>
       </TabsList>
     </slot>
 
     <TabsContent
-      v-for="tab in tabItems"
-      :key="tab.value"
-      :value="tab.value"
-      v-bind="pt?.content"
+      v-for="entry in contentsPT"
+      :key="entry.item.value"
+      v-bind="entry.pt.props"
+      v-on="entry.pt.handlers"
       class="f-tabs-content"
     >
-      <slot :name="tab.value" v-bind="{ ...ctx, tab }" />
+      <slot :name="entry.item.value" v-bind="{ ...ctx, tab: entry.item }" />
     </TabsContent>
   </TabsRoot>
 </template>

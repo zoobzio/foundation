@@ -1,8 +1,8 @@
-import type { TooltipRootProps, TooltipContentProps } from "reka-ui";
+import type { TooltipRootProps, TooltipRootEmits, TooltipContentProps, TooltipContentEmits } from "reka-ui";
 
 export type TooltipPassthrough = {
-  root?: Passthrough<TooltipRootProps>;
-  content?: Passthrough<TooltipContentProps>;
+  root?: Passthrough<TooltipRootProps, TooltipRootEmits>;
+  content?: Passthrough<TooltipContentProps, TooltipContentEmits>;
 };
 
 export type TooltipProps = {
@@ -16,6 +16,6 @@ export type TooltipProps = {
 
 export type TooltipEmits = {};
 
-export const defineTooltip = useComponentRecipe<TooltipProps, TooltipEmits>();
+export const defineTooltip = defineComponentRecipe<TooltipProps, TooltipEmits>();
 
-export type TooltipRecipe = ComponentRecipe<TooltipProps, TooltipEmits>;
+export type TooltipRecipe = Recipe<TooltipProps, TooltipEmits>;

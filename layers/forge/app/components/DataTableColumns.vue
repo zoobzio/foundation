@@ -70,7 +70,7 @@ const groups = computed(() => [{
 </script>
 
 <template>
-  <Popover ref="el" v-model:open="open" align="start">
+  <Popover ref="el" v-model:open="open" align="end">
     <Fab
       v-if="triggerRecipe"
       v-bind="triggerRecipe.props"

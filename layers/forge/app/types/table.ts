@@ -37,6 +37,9 @@ export interface Table<T, K = unknown> {
   // Date filters
   dateFilters: Ref<DateFilter[]>;
 
+  // Filters
+  filters: ComputedRef<TableFilter[]>;
+
   // Selection
   selected: Ref<Set<K>>;
   isAllSelected: Ref<boolean>;
@@ -65,6 +68,9 @@ export interface Table<T, K = unknown> {
   isSorted: (col: DataTableColumn<T>) => boolean;
   getSortIcon: () => IconAlias;
   isRowSelected: (row: T) => boolean;
+  addFilter: (filter: TableFilter) => void;
+  removeFilter: (index: number) => void;
+  clearFilters: () => void;
   toggleColumn: (key: keyof T) => void;
   reorderColumns: (order: string[]) => void;
   resetColumns: () => void;

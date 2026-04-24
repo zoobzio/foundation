@@ -1,7 +1,7 @@
-import type { TagsInputRootProps, TagsInputItemProps, TagsInputItemTextProps, TagsInputItemDeleteProps, TagsInputInputProps } from "reka-ui";
+import type { TagsInputRootProps, TagsInputRootEmits, TagsInputItemProps, TagsInputItemTextProps, TagsInputItemDeleteProps, TagsInputInputProps } from "reka-ui";
 
 export type TagsInputPassthrough = {
-  root?: Passthrough<TagsInputRootProps>;
+  root?: Passthrough<TagsInputRootProps, TagsInputRootEmits>;
   item?: Passthrough<TagsInputItemProps>;
   itemText?: Passthrough<TagsInputItemTextProps>;
   itemDelete?: Passthrough<TagsInputItemDeleteProps>;
@@ -24,6 +24,6 @@ export type TagsInputProps = {
 
 export type TagsInputEmits = {};
 
-export const defineTagsInput = useComponentRecipe<TagsInputProps, TagsInputEmits>();
+export const defineTagsInput = defineComponentRecipe<TagsInputProps, TagsInputEmits>();
 
-export type TagsInputRecipe = ComponentRecipe<TagsInputProps, TagsInputEmits>;
+export type TagsInputRecipe = Recipe<TagsInputProps, TagsInputEmits>;

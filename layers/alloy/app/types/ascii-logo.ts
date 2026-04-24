@@ -12,6 +12,6 @@ export type AsciiLogoProps = {
 
 export type AsciiLogoEmits = {};
 
-export const defineAsciiLogo = useComponentRecipe<AsciiLogoProps, AsciiLogoEmits>();
+export const defineAsciiLogo = defineComponentRecipe<AsciiLogoProps, AsciiLogoEmits>();
 
-export type AsciiLogoRecipe = ComponentRecipe<AsciiLogoProps, AsciiLogoEmits>;
+export type AsciiLogoRecipe = Recipe<AsciiLogoProps, AsciiLogoEmits>;

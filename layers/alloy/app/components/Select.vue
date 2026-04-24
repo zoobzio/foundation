@@ -23,6 +23,24 @@ const displayText = computed(() => {
   return selected?.label ?? placeholder;
 });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { disabled, required, name },
+});
+const triggerPT = usePassthrough(pt?.trigger, {});
+const contentPT = usePassthrough(pt?.content, {
+  props: { position: "popper", sideOffset: 4 },
+});
+const itemTextPT = usePassthrough(pt?.itemText, {});
+
+const itemsPT = computed(() =>
+  options.map((option) => ({
+    item: option,
+    pt: passthrough(pt?.item, {
+      props: { value: option.value, disabled: option.disabled },
+    }),
+  })),
+);
+
 const ctx = computed(() => ({ options, placeholder, disabled, required, name, model: model.value, displayText: displayText.value }));
 </script>
 
@@ -30,15 +48,14 @@ const ctx = computed(() => ({ options, placeholder, disabled, required, name, mo
   <SelectRoot
     ref="el"
     v-model="model"
-    :disabled="disabled"
-    :required="required"
-    :name="name"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-select-root"
   >
     <slot name="trigger" v-bind="ctx">
       <SelectTrigger
-        v-bind="pt?.trigger"
+        v-bind="triggerPT.props"
+        v-on="triggerPT.handlers"
         class="f-select-trigger"
       >
         <Span>{{ displayText }}</Span>
@@ -47,25 +64,22 @@ const ctx = computed(() => ({ options, placeholder, disabled, required, name, mo
     </slot>
     <SelectPortal>
       <SelectContent
-        v-bind="pt?.content"
+        v-bind="contentPT.props"
+        v-on="contentPT.handlers"
         class="f-select-content"
-        position="popper"
-        :side-offset="4"
       >
-      <template v-for="option in options" :key="option.value">
-        <slot name="item" v-bind="{ ...ctx, option }">
-          <SelectItem
-            :value="option.value"
-            :disabled="option.disabled"
-            v-bind="pt?.item"
-            class="f-select-item"
-          >
-            <SelectItemText v-bind="pt?.itemText">{{ option.label }}</SelectItemText>
-          </SelectItem>
-        </slot>
-      </template>
+        <template v-for="entry in itemsPT" :key="entry.item.value">
+          <slot name="item" v-bind="{ ...ctx, option: entry.item }">
+            <SelectItem
+              v-bind="entry.pt.props"
+              v-on="entry.pt.handlers"
+              class="f-select-item"
+            >
+              <SelectItemText v-bind="itemTextPT.props" v-on="itemTextPT.handlers">{{ entry.item.label }}</SelectItemText>
+            </SelectItem>
+          </slot>
+        </template>
       </SelectContent>
     </SelectPortal>
   </SelectRoot>
 </template>
-

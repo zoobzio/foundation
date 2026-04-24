@@ -5,6 +5,11 @@ export type KeywordEntry = {
 
 export type KeywordsPassthrough = {
   root?: Passthrough<GroupProps>;
+  include?: Passthrough<GroupProps>;
+  exclude?: Passthrough<GroupProps>;
+  match?: Passthrough<GroupProps>;
+  includeInput?: Passthrough<TagsInputProps>;
+  excludeInput?: Passthrough<TagsInputProps>;
 };
 
 export type KeywordsProps = {
@@ -13,6 +18,6 @@ export type KeywordsProps = {
 
 export type KeywordsEmits = {};
 
-export const defineKeywords = useComponentRecipe<KeywordsProps, KeywordsEmits>();
+export const defineKeywords = defineComponentRecipe<KeywordsProps, KeywordsEmits>();
 
-export type KeywordsRecipe = ComponentRecipe<KeywordsProps, KeywordsEmits>;
+export type KeywordsRecipe = Recipe<KeywordsProps, KeywordsEmits>;

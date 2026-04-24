@@ -1,9 +1,9 @@
-import type { RadioGroupRootProps, RadioGroupItemProps, RadioGroupIndicatorProps } from "reka-ui";
+import type { RadioGroupRootProps, RadioGroupRootEmits, RadioGroupItemProps, RadioGroupItemEmits, RadioGroupIndicatorProps } from "reka-ui";
 
 export type RadioPassthrough = {
-  root?: Passthrough<RadioGroupRootProps>;
+  root?: Passthrough<RadioGroupRootProps, RadioGroupRootEmits>;
   option?: Passthrough<LabelProps>;
-  item?: Passthrough<RadioGroupItemProps>;
+  item?: Passthrough<RadioGroupItemProps, RadioGroupItemEmits>;
   indicator?: Passthrough<RadioGroupIndicatorProps>;
 };
 
@@ -18,6 +18,6 @@ export type RadioProps = {
 
 export type RadioEmits = {};
 
-export const defineRadio = useComponentRecipe<RadioProps, RadioEmits>();
+export const defineRadio = defineComponentRecipe<RadioProps, RadioEmits>();
 
-export type RadioRecipe = ComponentRecipe<RadioProps, RadioEmits>;
+export type RadioRecipe = Recipe<RadioProps, RadioEmits>;

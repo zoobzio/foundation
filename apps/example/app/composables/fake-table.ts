@@ -1,13 +1,21 @@
 export const useFakeTable = () => {
   const table = accessFakeTable();
 
+  const namespacedFacetGroups = computed(() =>
+    table.facetGroups.value.map((g) => ({
+      ...g,
+      items: g.items.map((item) => ({
+        ...item,
+        value: `${g.key}:${item.value}`,
+      })),
+    })),
+  );
+
   const recipes: DataTableRecipes = {
     keywords: computed(() => defineKeywords({})),
 
     facets: computed(() =>
-      defineFacets({
-        groups: table.facetGroups.value,
-      }),
+      defineFacets({ groups: namespacedFacetGroups.value }),
     ),
 
     dateFilters: computed(() =>
@@ -33,7 +41,6 @@ export const useFakeTable = () => {
         { "update:pageSize": table.setPageSize },
       ),
     ),
-
   };
 
   return { table, recipes };

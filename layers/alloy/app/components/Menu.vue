@@ -33,44 +33,68 @@ const onSelect = (item: MenuItem) => {
   emit("select", item);
 };
 
+const rootPT = usePassthrough(pt?.root, {});
+const contentPT = usePassthrough(pt?.content, {
+  props: { side, align, sideOffset, alignOffset },
+});
+const separatorPT = usePassthrough(pt?.separator, {});
+
+const groupsPT = computed(() =>
+  groups.map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      item,
+      pt: passthrough(pt?.item, {
+        props: { disabled: item.disabled },
+        handlers: { select: () => onSelect(item) },
+      }),
+    })),
+  })),
+);
+
 const ctx = computed(() => ({ groups, open: open.value }));
 </script>
 
 <template>
-  <DropdownMenuRoot ref="el" v-model:open="open">
+  <DropdownMenuRoot ref="el" v-model:open="open" v-bind="rootPT.props" v-on="rootPT.handlers">
     <DropdownMenuTrigger as-child>
       <slot v-bind="ctx" />
     </DropdownMenuTrigger>
     <DropdownMenuPortal>
       <DropdownMenuContent
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        :align-offset="alignOffset"
-        v-bind="pt?.content"
+        v-bind="contentPT.props"
+        v-on="contentPT.handlers"
         class="f-menu-content"
       >
-        <template v-for="(group, groupIndex) in groups" :key="group.key">
-          <DropdownMenuSeparator
-            v-if="groupIndex > 0"
-            class="f-menu-separator"
-          />
-          <DropdownMenuGroup>
-            <DropdownMenuLabel v-if="group.label" as-child>
-              <Caption>{{ group.label }}</Caption>
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-              v-for="item in group.items"
-              :key="item.label"
-              :disabled="item.disabled"
-              class="f-menu-item"
-              @select="onSelect(item)"
-            >
-              <Icon v-if="item.icon" :alias="item.icon" />
-              <Span class="f-menu-item-label">{{ item.label }}</Span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </template>
+        <slot name="content" v-bind="ctx">
+          <template v-for="(group, groupIndex) in groupsPT" :key="group.key">
+            <DropdownMenuSeparator
+              v-if="groupIndex > 0"
+              v-bind="separatorPT.props"
+              v-on="separatorPT.handlers"
+              class="f-menu-separator"
+            />
+            <DropdownMenuGroup>
+              <DropdownMenuLabel v-if="group.label" as-child>
+                <slot name="group-label" v-bind="{ ...ctx, group }">
+                  <Caption>{{ group.label }}</Caption>
+                </slot>
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                v-for="entry in group.items"
+                :key="entry.item.label"
+                v-bind="entry.pt.props"
+                v-on="entry.pt.handlers"
+                class="f-menu-item"
+              >
+                <slot name="item" v-bind="{ ...ctx, item: entry.item }">
+                  <Icon v-if="entry.item.icon" :alias="entry.item.icon" />
+                  <Span class="f-menu-item-label">{{ entry.item.label }}</Span>
+                </slot>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </template>
+        </slot>
       </DropdownMenuContent>
     </DropdownMenuPortal>
   </DropdownMenuRoot>

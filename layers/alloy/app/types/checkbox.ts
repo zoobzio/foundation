@@ -1,7 +1,7 @@
-import type { CheckboxRootProps } from "reka-ui";
+import type { CheckboxRootProps, CheckboxRootEmits } from "reka-ui";
 
 export type CheckboxPassthrough = {
-  root?: Passthrough<CheckboxRootProps>;
+  root?: Passthrough<CheckboxRootProps, CheckboxRootEmits>;
   indicator?: Passthrough<GroupProps>;
 };
 
@@ -13,8 +13,10 @@ export type CheckboxProps = {
   pt?: CheckboxPassthrough;
 };
 
-export type CheckboxEmits = {};
+export type CheckboxEmits = {
+  "update:modelValue": [value: boolean | "indeterminate"];
+};
 
-export const defineCheckbox = useComponentRecipe<CheckboxProps, CheckboxEmits>();
+export const defineCheckbox = defineComponentRecipe<CheckboxProps, CheckboxEmits>();
 
-export type CheckboxRecipe = ComponentRecipe<CheckboxProps, CheckboxEmits>;
+export type CheckboxRecipe = Recipe<CheckboxProps, CheckboxEmits>;

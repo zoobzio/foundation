@@ -17,9 +17,19 @@ const emit = defineEmits<ListboxEmits>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const _handleUpdate = (value: string | string[]) => {
-  emit("update:modelValue", value);
-};
+const rootPT = usePassthrough(pt?.root, {
+  props: { modelValue, multiple, disabled },
+});
+const contentPT = usePassthrough(pt?.content, {});
+
+const itemsPT = computed(() =>
+  items.map((item) => ({
+    item,
+    pt: passthrough(pt?.item, {
+      props: { value: item.value, disabled: item.disabled },
+    }),
+  })),
+);
 
 const ctx = computed(() => ({ items, modelValue, multiple, disabled }));
 </script>
@@ -27,31 +37,28 @@ const ctx = computed(() => ({ items, modelValue, multiple, disabled }));
 <template>
   <ListboxRoot
     ref="el"
-    :model-value="modelValue"
-    :multiple="multiple"
-    :disabled="disabled"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-listbox-root"
   >
     <slot name="content" v-bind="ctx">
       <ListboxContent
-        v-bind="pt?.content"
+        v-bind="contentPT.props"
+        v-on="contentPT.handlers"
         class="f-listbox-content"
       >
         <ListboxItem
-          v-for="item in items"
-          :key="item.value"
-          :value="item.value"
-          :disabled="item.disabled"
-          v-bind="pt?.item"
+          v-for="entry in itemsPT"
+          :key="entry.item.value"
+          v-bind="entry.pt.props"
+          v-on="entry.pt.handlers"
           class="f-listbox-item"
         >
-          <slot name="item" v-bind="{ ...ctx, item }">
-            {{ item.label }}
+          <slot name="item" v-bind="{ ...ctx, item: entry.item }">
+            {{ entry.item.label }}
           </slot>
         </ListboxItem>
       </ListboxContent>
     </slot>
   </ListboxRoot>
 </template>
-

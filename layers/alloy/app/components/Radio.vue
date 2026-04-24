@@ -18,6 +18,21 @@ const model = defineModel<string>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { disabled, required, name, orientation },
+});
+const indicatorPT = usePassthrough(pt?.indicator, {});
+
+const optionsPT = computed(() =>
+  options.map((option) => ({
+    item: option,
+    optionPt: passthrough(pt?.option, {}),
+    itemPt: passthrough(pt?.item, {
+      props: { value: option.value, disabled: option.disabled },
+    }),
+  })),
+);
+
 const ctx = computed(() => ({ options, disabled, required, name, orientation, model: model.value }));
 </script>
 
@@ -25,30 +40,27 @@ const ctx = computed(() => ({ options, disabled, required, name, orientation, mo
   <RadioGroupRoot
     ref="el"
     v-model="model"
-    :disabled="disabled"
-    :required="required"
-    :name="name"
-    :orientation="orientation"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-radio-root"
   >
-    <template v-for="option in options" :key="option.value">
-      <slot name="option" v-bind="{ ...ctx, option }">
+    <template v-for="entry in optionsPT" :key="entry.item.value">
+      <slot name="option" v-bind="{ ...ctx, option: entry.item }">
         <Label
-          v-bind="pt?.option"
+          v-bind="entry.optionPt.props"
+          v-on="entry.optionPt.handlers"
           class="f-radio-option"
         >
           <RadioGroupItem
-            :value="option.value"
-            :disabled="option.disabled"
-            v-bind="pt?.item"
+            v-bind="entry.itemPt.props"
+            v-on="entry.itemPt.handlers"
             class="f-radio-item"
           >
-            <slot name="indicator" v-bind="{ ...ctx, option }">
-              <RadioGroupIndicator v-bind="pt?.indicator" class="f-radio-indicator" />
+            <slot name="indicator" v-bind="{ ...ctx, option: entry.item }">
+              <RadioGroupIndicator v-bind="indicatorPT.props" v-on="indicatorPT.handlers" class="f-radio-indicator" />
             </slot>
           </RadioGroupItem>
-          <Span class="f-radio-label">{{ option.label }}</Span>
+          <Span class="f-radio-label">{{ entry.item.label }}</Span>
         </Label>
       </slot>
     </template>

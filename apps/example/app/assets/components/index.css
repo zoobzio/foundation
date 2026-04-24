@@ -1,4 +1,6 @@
 @import "./button.css";
+@import "./dialog.css";
+@import "./keywords.css";
 @import "./menu.css";
 @import "./main.css";
 @import "./aside.css";
@@ -17,6 +19,8 @@
 @import "./kbd.css";
 @import "./page.css";
 @import "./widget.css";
+@import "./tabs.css";
+@import "./tags-input.css";
 @import "./table.css";
 @import "./fab.css";
 @import "./icon.css";

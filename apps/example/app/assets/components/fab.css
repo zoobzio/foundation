@@ -14,8 +14,8 @@
 
 .f-fab-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -8px;
+  right: -8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,6 +27,14 @@
   background: var(--sys-primary);
   color: var(--sys-on-primary);
   border: var(--ref-border-width-thin) solid var(--sys-outline);
+}
+
+.f-fab-badge:empty {
+  min-width: 8px;
+  height: 8px;
+  padding: 0;
+  top: -4px;
+  right: -4px;
 }
 
 .f-fab:not(:disabled):not([data-disabled]):hover {

@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import type { DateRangePickerRootProps, DateRangePickerContentProps, DateRangePickerHeaderProps, DateRangePickerHeadingProps, DateRangePickerGridProps, DateRangePickerCellProps, DateRangePickerCellTriggerProps, DateRangePickerPrevProps, DateRangePickerNextProps } from "reka-ui";
+import type { DateRangePickerRootProps, DateRangePickerRootEmits, DateRangePickerContentProps, DateRangePickerHeaderProps, DateRangePickerHeadingProps, DateRangePickerGridProps, DateRangePickerCellProps, DateRangePickerCellTriggerProps, DateRangePickerPrevProps, DateRangePickerNextProps } from "reka-ui";
 
 export interface DateRange {
   start: DateValue;
@@ -7,7 +7,7 @@ export interface DateRange {
 }
 
 export type DateRangePickerPassthrough = {
-  root?: Passthrough<DateRangePickerRootProps>;
+  root?: Passthrough<DateRangePickerRootProps, DateRangePickerRootEmits>;
   content?: Passthrough<DateRangePickerContentProps>;
   header?: Passthrough<DateRangePickerHeaderProps>;
   heading?: Passthrough<DateRangePickerHeadingProps>;
@@ -30,6 +30,6 @@ export type DateRangePickerProps = {
 
 export type DateRangePickerEmits = {};
 
-export const defineDateRangePicker = useComponentRecipe<DateRangePickerProps, DateRangePickerEmits>();
+export const defineDateRangePicker = defineComponentRecipe<DateRangePickerProps, DateRangePickerEmits>();
 
-export type DateRangePickerRecipe = ComponentRecipe<DateRangePickerProps, DateRangePickerEmits>;
+export type DateRangePickerRecipe = Recipe<DateRangePickerProps, DateRangePickerEmits>;

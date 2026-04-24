@@ -10,6 +10,6 @@ export type ToasterProps = {
 
 export type ToasterEmits = {};
 
-export const defineToaster = useComponentRecipe<ToasterProps, ToasterEmits>();
+export const defineToaster = defineComponentRecipe<ToasterProps, ToasterEmits>();
 
-export type ToasterRecipe = ComponentRecipe<ToasterProps, ToasterEmits>;
+export type ToasterRecipe = Recipe<ToasterProps, ToasterEmits>;

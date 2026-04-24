@@ -1,7 +1,7 @@
-import type { ToggleGroupRootProps, ToggleGroupItemProps } from "reka-ui";
+import type { ToggleGroupRootProps, ToggleGroupRootEmits, ToggleGroupItemProps } from "reka-ui";
 
 export type SegmentedControlPassthrough = {
-  root?: Passthrough<ToggleGroupRootProps>;
+  root?: Passthrough<ToggleGroupRootProps, ToggleGroupRootEmits>;
   item?: Passthrough<ToggleGroupItemProps>;
 };
 
@@ -14,6 +14,6 @@ export type SegmentedControlProps = {
 
 export type SegmentedControlEmits = {};
 
-export const defineSegmentedControl = useComponentRecipe<SegmentedControlProps, SegmentedControlEmits>();
+export const defineSegmentedControl = defineComponentRecipe<SegmentedControlProps, SegmentedControlEmits>();
 
-export type SegmentedControlRecipe = ComponentRecipe<SegmentedControlProps, SegmentedControlEmits>;
+export type SegmentedControlRecipe = Recipe<SegmentedControlProps, SegmentedControlEmits>;

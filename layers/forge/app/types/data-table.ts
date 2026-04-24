@@ -23,6 +23,7 @@ export interface DataTableColumn<T> {
   align?: "left" | "center" | "right";
   sortable?: boolean;
   sortKey?: string;
+  enumValues?: string[];
 }
 
 /**
@@ -67,6 +68,69 @@ export interface FacetGroup {
   label: string;
   items: FacetItem[];
 }
+
+/**
+ * Filter value — discriminated by shape.
+ */
+export type FilterValue =
+  | { type: "text"; value: string }
+  | { type: "number"; value: number }
+  | { type: "number_range"; value: [number, number] }
+  | { type: "date"; value: Date }
+  | { type: "date_range"; value: [Date, Date] }
+  | { type: "enum"; value: string[] }
+  | { type: "boolean"; value: boolean };
+
+/**
+ * A single filter condition.
+ */
+export interface TableFilter {
+  field: string;
+  operator: string;
+  value: FilterValue;
+}
+
+/**
+ * Operators available per column type.
+ */
+export const filterOperators: Record<string, { value: string; label: string }[]> = {
+  text: [
+    { value: "contains", label: "contains" },
+    { value: "equals", label: "equals" },
+    { value: "starts_with", label: "starts with" },
+    { value: "ends_with", label: "ends with" },
+  ],
+  number: [
+    { value: "eq", label: "equals" },
+    { value: "gt", label: "greater than" },
+    { value: "lt", label: "less than" },
+    { value: "between", label: "between" },
+  ],
+  currency: [
+    { value: "eq", label: "equals" },
+    { value: "gt", label: "greater than" },
+    { value: "lt", label: "less than" },
+    { value: "between", label: "between" },
+  ],
+  date: [
+    { value: "before", label: "before" },
+    { value: "after", label: "after" },
+    { value: "between", label: "between" },
+  ],
+  datetime: [
+    { value: "before", label: "before" },
+    { value: "after", label: "after" },
+    { value: "between", label: "between" },
+  ],
+  enum: [
+    { value: "is", label: "is" },
+    { value: "is_not", label: "is not" },
+  ],
+  boolean: [
+    { value: "is_true", label: "is true" },
+    { value: "is_false", label: "is false" },
+  ],
+};
 
 /**
  * Row action — rendered per-row in an actions menu.
@@ -161,14 +225,14 @@ export type DataTableColumnsRecipes = {
 };
 
 export type DataTableRecipes = {
-  keywords: ComputedRef<KeywordsRecipe | undefined>;
-  facets: ComputedRef<FacetsRecipe | undefined>;
-  dateFilters: ComputedRef<DateFiltersRecipe | undefined>;
-  pagination: ComputedRef<PaginationRecipe | undefined>;
+  keywords: ComputedRef<KeywordsRecipe>;
+  facets: ComputedRef<FacetsRecipe>;
+  dateFilters: ComputedRef<DateFiltersRecipe>;
+  pagination: ComputedRef<PaginationRecipe>;
 };
 
 export type DataTableProps<T, K = unknown> = {
   table: Table<T, K>;
-  recipes?: DataTableRecipes;
+  recipes: DataTableRecipes;
   pt?: DataTablePassthrough;
 };

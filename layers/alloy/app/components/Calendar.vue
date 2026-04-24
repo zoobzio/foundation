@@ -35,6 +35,17 @@ const model = defineModel<DateValue>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { minValue, maxValue, locale, numberOfMonths, fixedWeeks, disabled, isDateDisabled, isDateUnavailable },
+});
+const headerPT = usePassthrough(pt?.header, {});
+const headingPT = usePassthrough(pt?.heading, {});
+const gridPT = usePassthrough(pt?.grid, {});
+const cellPT = usePassthrough(pt?.cell, {});
+const cellTriggerPT = usePassthrough(pt?.cellTrigger, {});
+const prevPT = usePassthrough(pt?.prev, {});
+const nextPT = usePassthrough(pt?.next, {});
+
 const ctx = computed(() => ({
   minValue,
   maxValue,
@@ -53,36 +64,29 @@ const ctx = computed(() => ({
     ref="el"
     v-slot="{ weekDays, grid }"
     v-model="model"
-    :min-value="minValue"
-    :max-value="maxValue"
-    :locale="locale"
-    :number-of-months="numberOfMonths"
-    :fixed-weeks="fixedWeeks"
-    :disabled="disabled"
-    :is-date-disabled="isDateDisabled"
-    :is-date-unavailable="isDateUnavailable"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-calendar"
   >
     <slot name="header" v-bind="{ ...ctx, weekDays, grid }">
-      <CalendarHeader v-bind="pt?.header" class="f-calendar-header">
+      <CalendarHeader v-bind="headerPT.props" v-on="headerPT.handlers" class="f-calendar-header">
         <slot name="prev" v-bind="{ ...ctx, weekDays, grid }">
-          <CalendarPrev v-bind="pt?.prev" class="f-calendar-nav">
+          <CalendarPrev v-bind="prevPT.props" v-on="prevPT.handlers" class="f-calendar-nav">
             <Icon alias="chevron-left" />
           </CalendarPrev>
         </slot>
         <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
-          <CalendarHeading v-bind="pt?.heading" class="f-calendar-heading" />
+          <CalendarHeading v-bind="headingPT.props" v-on="headingPT.handlers" class="f-calendar-heading" />
         </slot>
         <slot name="next" v-bind="{ ...ctx, weekDays, grid }">
-          <CalendarNext v-bind="pt?.next" class="f-calendar-nav">
+          <CalendarNext v-bind="nextPT.props" v-on="nextPT.handlers" class="f-calendar-nav">
             <Icon alias="chevron-right" />
           </CalendarNext>
         </slot>
       </CalendarHeader>
     </slot>
     <slot v-for="month in grid" name="grid" v-bind="{ ...ctx, weekDays, grid, month }">
-      <CalendarGrid :key="month.value.toString()" v-bind="pt?.grid" class="f-calendar-grid">
+      <CalendarGrid :key="month.value.toString()" v-bind="gridPT.props" v-on="gridPT.handlers" class="f-calendar-grid">
         <CalendarGridHead>
           <CalendarGridRow class="f-calendar-row">
             <CalendarHeadCell
@@ -103,15 +107,17 @@ const ctx = computed(() => ({
             <slot v-for="date in week" name="cell" v-bind="{ ...ctx, month, date }">
               <CalendarCell
                 :key="date.toString()"
+                v-bind="cellPT.props"
+                v-on="cellPT.handlers"
                 :date="date"
-                v-bind="pt?.cell"
                 class="f-calendar-cell"
               >
                 <slot name="cellTrigger" v-bind="{ ...ctx, month, date }">
                   <CalendarCellTrigger
+                    v-bind="cellTriggerPT.props"
+                    v-on="cellTriggerPT.handlers"
                     :day="date"
                     :month="month.value"
-                    v-bind="pt?.cellTrigger"
                     class="f-calendar-cell-trigger"
                   />
                 </slot>

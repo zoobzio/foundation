@@ -1,9 +1,9 @@
-import type { ListboxRootProps, ListboxContentProps, ListboxItemProps } from "reka-ui";
+import type { ListboxRootProps, ListboxRootEmits, ListboxContentProps, ListboxItemProps, ListboxItemEmits } from "reka-ui";
 
 export type ListboxPassthrough = {
-  root?: Passthrough<ListboxRootProps>;
+  root?: Passthrough<ListboxRootProps, ListboxRootEmits>;
   content?: Passthrough<ListboxContentProps>;
-  item?: Passthrough<ListboxItemProps>;
+  item?: Passthrough<ListboxItemProps, ListboxItemEmits>;
 };
 
 export type ListboxProps = {
@@ -18,6 +18,6 @@ export type ListboxEmits = {
   "update:modelValue": [string | string[]];
 };
 
-export const defineListbox = useComponentRecipe<ListboxProps, ListboxEmits>();
+export const defineListbox = defineComponentRecipe<ListboxProps, ListboxEmits>();
 
-export type ListboxRecipe = ComponentRecipe<ListboxProps, ListboxEmits>;
+export type ListboxRecipe = Recipe<ListboxProps, ListboxEmits>;

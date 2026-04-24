@@ -47,10 +47,10 @@ const linkProps = computed(() => ({
 }));
 
 const attrs = useAttrs();
-const primitiveProps = computed(() => ({
-  ...(link ? linkProps.value : buttonProps.value),
-  ...attrs,
-}));
+const rootPT = usePassthrough(pt?.root, {
+  props: { ...(link ? linkProps.value : buttonProps.value), ...attrs },
+});
+const badgePT = usePassthrough(pt?.badge, {});
 
 const ctx = computed(() => ({ icon, label, disabled, type, shortcut, link, badge }));
 </script>
@@ -61,14 +61,15 @@ const ctx = computed(() => ({ icon, label, disabled, type, shortcut, link, badge
       ref="el"
       :as="link ? NuxtLink : 'button'"
       :aria-label="label"
-      v-bind="{ ...primitiveProps, ...pt?.root }"
+      v-bind="rootPT.props"
+      v-on="rootPT.handlers"
       class="f-fab"
     >
       <slot v-bind="ctx">
         <Icon v-if="icon" :alias="icon" />
       </slot>
       <slot name="badge" v-bind="ctx">
-        <Group v-if="badge !== undefined" v-bind="pt?.badge" class="f-fab-badge">{{ badge }}</Group>
+        <Group v-if="badge !== undefined" v-bind="badgePT.props" v-on="badgePT.handlers" class="f-fab-badge">{{ badge }}</Group>
       </slot>
     </Primitive>
   </Tooltip>
@@ -77,14 +78,15 @@ const ctx = computed(() => ({ icon, label, disabled, type, shortcut, link, badge
     ref="el"
     :as="link ? NuxtLink : 'button'"
     :aria-label="label"
-    v-bind="{ ...primitiveProps, ...pt?.root }"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-fab"
   >
     <slot v-bind="ctx">
       <Icon v-if="icon" :alias="icon" />
     </slot>
     <slot name="badge" v-bind="ctx">
-      <Group v-if="badge !== undefined" v-bind="pt?.badge" class="f-fab-badge">{{ badge }}</Group>
+      <Group v-if="badge !== undefined" v-bind="badgePT.props" v-on="badgePT.handlers" class="f-fab-badge">{{ badge }}</Group>
     </slot>
   </Primitive>
 </template>

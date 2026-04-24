@@ -16,7 +16,7 @@ const ctx = computed(() => ({ groups, selected: selected.value, activeCount: act
 </script>
 
 <template>
-  <Popover v-model:open="open" align="start">
+  <Popover v-model:open="open" align="end">
     <slot name="trigger" v-bind="ctx">
       <Fab icon="filter" :badge="activeCount > 0 ? activeCount : undefined" />
     </slot>

@@ -9,6 +9,8 @@ const { pt } = defineProps<ToasterProps>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const viewportPT = usePassthrough(pt?.viewport, {});
+
 const ctx = computed(() => ({}));
 </script>
 
@@ -16,7 +18,7 @@ const ctx = computed(() => ({}));
   <ToastProvider ref="el">
     <slot v-bind="ctx" />
     <slot name="viewport" v-bind="ctx">
-      <ToastViewport v-bind="pt?.viewport" class="f-toast-viewport" />
+      <ToastViewport v-bind="viewportPT.props" v-on="viewportPT.handlers" class="f-toast-viewport" />
     </slot>
   </ToastProvider>
 </template>

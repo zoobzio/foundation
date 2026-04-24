@@ -1,8 +1,8 @@
 import type { DateValue } from "@internationalized/date";
-import type { CalendarRootProps, CalendarHeaderProps, CalendarHeadingProps, CalendarGridProps, CalendarCellProps, CalendarCellTriggerProps, CalendarPrevProps, CalendarNextProps } from "reka-ui";
+import type { CalendarRootProps, CalendarRootEmits, CalendarHeaderProps, CalendarHeadingProps, CalendarGridProps, CalendarCellProps, CalendarCellTriggerProps, CalendarPrevProps, CalendarNextProps } from "reka-ui";
 
 export type CalendarPassthrough = {
-  root?: Passthrough<CalendarRootProps>;
+  root?: Passthrough<CalendarRootProps, CalendarRootEmits>;
   header?: Passthrough<CalendarHeaderProps>;
   heading?: Passthrough<CalendarHeadingProps>;
   grid?: Passthrough<CalendarGridProps>;
@@ -26,6 +26,6 @@ export type CalendarProps = {
 
 export type CalendarEmits = {};
 
-export const defineCalendar = useComponentRecipe<CalendarProps, CalendarEmits>();
+export const defineCalendar = defineComponentRecipe<CalendarProps, CalendarEmits>();
 
-export type CalendarRecipe = ComponentRecipe<CalendarProps, CalendarEmits>;
+export type CalendarRecipe = Recipe<CalendarProps, CalendarEmits>;

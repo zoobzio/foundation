@@ -1,8 +1,8 @@
 import type { DateValue } from "@internationalized/date";
-import type { DatePickerRootProps, DatePickerContentProps, DatePickerHeaderProps, DatePickerHeadingProps, DatePickerGridProps, DatePickerCellProps, DatePickerCellTriggerProps, DatePickerPrevProps, DatePickerNextProps } from "reka-ui";
+import type { DatePickerRootProps, DatePickerRootEmits, DatePickerContentProps, DatePickerHeaderProps, DatePickerHeadingProps, DatePickerGridProps, DatePickerCellProps, DatePickerCellTriggerProps, DatePickerPrevProps, DatePickerNextProps } from "reka-ui";
 
 export type DatePickerPassthrough = {
-  root?: Passthrough<DatePickerRootProps>;
+  root?: Passthrough<DatePickerRootProps, DatePickerRootEmits>;
   content?: Passthrough<DatePickerContentProps>;
   header?: Passthrough<DatePickerHeaderProps>;
   heading?: Passthrough<DatePickerHeadingProps>;
@@ -26,6 +26,6 @@ export type DatePickerProps = {
 
 export type DatePickerEmits = {};
 
-export const defineDatePicker = useComponentRecipe<DatePickerProps, DatePickerEmits>();
+export const defineDatePicker = defineComponentRecipe<DatePickerProps, DatePickerEmits>();
 
-export type DatePickerRecipe = ComponentRecipe<DatePickerProps, DatePickerEmits>;
+export type DatePickerRecipe = Recipe<DatePickerProps, DatePickerEmits>;

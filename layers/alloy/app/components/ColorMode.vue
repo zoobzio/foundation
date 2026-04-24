@@ -27,14 +27,22 @@ const toggle = () => {
   mode.value = isDark.value ? "light" : "dark";
 };
 
+const tooltipPT = usePassthrough(pt?.tooltip, {
+  props: { align: "end" },
+});
+const fabPT = usePassthrough(pt?.fab, {
+  props: { shortcut: "meta+d" as ButtonShortcut, icon: mode.value as IconAlias, "aria-label": label.value },
+  handlers: { click: toggle },
+});
+
 const ctx = computed(() => ({ mode: mode.value, isDark: isDark.value, label: label.value, modKey: modKey.value, toggle }));
 </script>
 
 <template>
   <slot ref="el" name="tooltip" v-bind="ctx">
-    <Tooltip v-bind="pt?.tooltip" align="end">
+    <Tooltip v-bind="tooltipPT.props" v-on="tooltipPT.handlers">
       <slot name="fab" v-bind="ctx">
-        <Fab v-bind="pt?.fab" shortcut="meta+d" :icon="mode" :aria-label="label" @click="toggle" />
+        <Fab v-bind="fabPT.props" v-on="fabPT.handlers" />
       </slot>
       <template #content>
         <slot name="content" v-bind="ctx">

@@ -2,7 +2,7 @@ export type ThemePassthrough = {
   popover?: Passthrough<PopoverProps>;
   tooltip?: Passthrough<TooltipProps>;
   fab?: Passthrough<FabProps>;
-  command?: Passthrough<CommandProps>;
+  command?: Passthrough<CommandProps, CommandEmits>;
 };
 
 export type ThemeProps = {
@@ -11,6 +11,6 @@ export type ThemeProps = {
 
 export type ThemeEmits = {};
 
-export const defineTheme = useComponentRecipe<ThemeProps, ThemeEmits>();
+export const defineTheme = defineComponentRecipe<ThemeProps, ThemeEmits>();
 
-export type ThemeRecipe = ComponentRecipe<ThemeProps, ThemeEmits>;
+export type ThemeRecipe = Recipe<ThemeProps, ThemeEmits>;

@@ -11,8 +11,12 @@ const emit = defineEmits<DialogEmits>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const ctx = computed(() => ({ title, description, open }));
+const overlayPT = usePassthrough(pt?.overlay, {});
+const contentPT = usePassthrough(pt?.content, {});
+const titlePT = usePassthrough(pt?.title, {});
+const descriptionPT = usePassthrough(pt?.description, {});
 
+const ctx = computed(() => ({ title, description, open }));
 </script>
 
 <template>
@@ -20,15 +24,21 @@ const ctx = computed(() => ({ title, description, open }));
     <DialogPortal>
       <slot name="overlay" v-bind="ctx">
         <DialogOverlay
-          v-bind="pt?.overlay"
+          v-bind="overlayPT.props"
+          v-on="overlayPT.handlers"
           class="f-dialog-overlay"
         />
       </slot>
       <slot name="content" v-bind="ctx">
-        <DialogContent v-bind="pt?.content" class="f-dialog-content">
+        <DialogContent
+          v-bind="contentPT.props"
+          v-on="contentPT.handlers"
+          class="f-dialog-content"
+        >
           <slot name="title" v-bind="ctx">
             <DialogTitle
-              v-bind="pt?.title"
+              v-bind="titlePT.props"
+              v-on="titlePT.handlers"
               class="f-dialog-title"
             >
               {{ title }}
@@ -36,7 +46,8 @@ const ctx = computed(() => ({ title, description, open }));
           </slot>
           <slot name="description" v-bind="ctx">
             <DialogDescription
-              v-bind="pt?.description"
+              v-bind="descriptionPT.props"
+              v-on="descriptionPT.handlers"
               class="f-dialog-description"
             >
               {{ description }}
@@ -48,4 +59,3 @@ const ctx = computed(() => ({ title, description, open }));
     </DialogPortal>
   </DialogRoot>
 </template>
-

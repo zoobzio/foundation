@@ -21,6 +21,6 @@ export type FacetsProps = {
 
 export type FacetsEmits = {};
 
-export const defineFacets = useComponentRecipe<FacetsProps, FacetsEmits>();
+export const defineFacets = defineComponentRecipe<FacetsProps, FacetsEmits>();
 
-export type FacetsRecipe = ComponentRecipe<FacetsProps, FacetsEmits>;
+export type FacetsRecipe = Recipe<FacetsProps, FacetsEmits>;

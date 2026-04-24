@@ -97,7 +97,55 @@ export const createTable = <T, K = unknown>(
       fetchData();
     };
 
+    // Query/Keywords ordering
+    watch(query, (val) => {
+      if (val) touchFilterOrder("__query");
+      else removeFilterOrder("__query");
+    });
+
+    watch(keywords, (val) => {
+      if (val.trim()) touchFilterOrder("__keywords");
+      else removeFilterOrder("__keywords");
+    });
+
     // Facets
+    watch(selectedFacets, (val, oldVal) => {
+      // Determine which fields changed
+      const oldFields = new Map<string, Set<string>>();
+      for (const namespaced of oldVal ?? []) {
+        const sep = namespaced.indexOf(":");
+        if (sep === -1) continue;
+        const field = namespaced.slice(0, sep);
+        if (!oldFields.has(field)) oldFields.set(field, new Set());
+        oldFields.get(field)!.add(namespaced);
+      }
+
+      const newFields = new Map<string, Set<string>>();
+      for (const namespaced of val) {
+        const sep = namespaced.indexOf(":");
+        if (sep === -1) continue;
+        const field = namespaced.slice(0, sep);
+        if (!newFields.has(field)) newFields.set(field, new Set());
+        newFields.get(field)!.add(namespaced);
+      }
+
+      // Touch only fields whose values changed
+      for (const [field, values] of newFields) {
+        const old = oldFields.get(field);
+        if (!old || old.size !== values.size || ![...values].every((v) => old.has(v))) {
+          touchFilterOrder(`enum:${field}`);
+        }
+      }
+
+      // Remove order for fields that were fully cleared
+      for (const field of oldFields.keys()) {
+        if (!newFields.has(field)) removeFilterOrder(`enum:${field}`);
+      }
+
+      page.value = 1;
+      fetchData();
+    }, { deep: true });
+
     const clearFacets = () => {
       selectedFacets.value = new Set();
       page.value = 1;
@@ -116,6 +164,7 @@ export const createTable = <T, K = unknown>(
       } else {
         dateFilters.value = [...dateFilters.value, filter];
       }
+      touchFilterOrder(`date:${filter.field}:${filter.operator}`);
       page.value = 1;
       fetchData();
     };
@@ -128,6 +177,142 @@ export const createTable = <T, K = unknown>(
 
     const clearDateFilters = () => {
       dateFilters.value = [];
+      page.value = 1;
+      fetchData();
+    };
+
+    // Filter ordering — tracks insertion order by key
+    const filterOrder = useState<string[]>(`table-${id}-filterOrder`, () => []);
+
+    const touchFilterOrder = (key: string) => {
+      filterOrder.value = [...filterOrder.value.filter((k) => k !== key), key];
+    };
+
+    const removeFilterOrder = (key: string) => {
+      filterOrder.value = filterOrder.value.filter((k) => k !== key);
+    };
+
+    // Filters — computed view of underlying state, sorted by insertion order
+    const filters = computed<TableFilter[]>(() => {
+      const unordered: { key: string; filter: TableFilter }[] = [];
+
+      if (query.value) {
+        unordered.push({
+          key: "__query",
+          filter: {
+            field: "__query",
+            operator: "semantic",
+            value: { type: "text", value: query.value },
+          },
+        });
+      }
+
+      if (keywords.value.trim()) {
+        unordered.push({
+          key: "__keywords",
+          filter: {
+            field: "__keywords",
+            operator: "match",
+            value: { type: "text", value: keywords.value },
+          },
+        });
+      }
+
+      if (selectedFacets.value.size) {
+        const byField = new Map<string, string[]>();
+        for (const namespaced of selectedFacets.value) {
+          const sep = namespaced.indexOf(":");
+          if (sep === -1) continue;
+          const field = namespaced.slice(0, sep);
+          const value = namespaced.slice(sep + 1);
+          if (!byField.has(field)) byField.set(field, []);
+          byField.get(field)!.push(value);
+        }
+        for (const [field, values] of byField) {
+          unordered.push({
+            key: `enum:${field}`,
+            filter: {
+              field,
+              operator: "is",
+              value: { type: "enum", value: values },
+            },
+          });
+        }
+      }
+
+      for (const df of dateFilters.value) {
+        const key = `date:${df.field}:${df.operator}`;
+        if (df.operator === "between" && df.endValue) {
+          unordered.push({
+            key,
+            filter: {
+              field: df.field,
+              operator: "between",
+              value: { type: "date_range", value: [df.value, df.endValue] },
+            },
+          });
+        } else {
+          unordered.push({
+            key,
+            filter: {
+              field: df.field,
+              operator: df.operator,
+              value: { type: "date", value: df.value },
+            },
+          });
+        }
+      }
+
+      const order = filterOrder.value;
+      return unordered
+        .sort((a, b) => {
+          const ai = order.indexOf(a.key);
+          const bi = order.indexOf(b.key);
+          // Items not in order go to the end
+          if (ai === -1 && bi === -1) return 0;
+          if (ai === -1) return 1;
+          if (bi === -1) return -1;
+          return ai - bi;
+        })
+        .map((e) => e.filter);
+    });
+
+    const addFilter = (filter: TableFilter) => {
+      if (filter.value.type === "enum") {
+        const existing = [...selectedFacets.value];
+        const newValues = filter.value.value.map((v) => `${filter.field}:${v}`);
+        selectedFacets.value = new Set([...existing, ...newValues]);
+      }
+      page.value = 1;
+      fetchData();
+    };
+
+    const removeFilter = (index: number) => {
+      const filter = filters.value[index];
+      if (!filter) return;
+
+      if (filter.field === "__query") {
+        query.value = "";
+      } else if (filter.field === "__keywords") {
+        keywords.value = "";
+      } else if (filter.value.type === "enum") {
+        const toRemove = new Set(filter.value.value.map((v) => `${filter.field}:${v}`));
+        selectedFacets.value = new Set(
+          [...selectedFacets.value].filter((v) => !toRemove.has(v)),
+        );
+      } else if (filter.value.type === "date" || filter.value.type === "date_range") {
+        dateFilters.value = dateFilters.value.filter((f) => f.field !== filter.field);
+      }
+      page.value = 1;
+      fetchData();
+    };
+
+    const clearFilters = () => {
+      query.value = "";
+      keywords.value = "";
+      selectedFacets.value = new Set();
+      dateFilters.value = [];
+      filterOrder.value = [];
       page.value = 1;
       fetchData();
     };
@@ -319,6 +504,7 @@ export const createTable = <T, K = unknown>(
       facetGroups,
       selectedFacets,
       dateFilters,
+      filters,
       selected,
       isAllSelected,
       isIndeterminate,
@@ -338,6 +524,9 @@ export const createTable = <T, K = unknown>(
       isSorted,
       getSortIcon,
       isRowSelected,
+      addFilter,
+      removeFilter,
+      clearFilters,
       toggleColumn,
       reorderColumns,
       resetColumns,

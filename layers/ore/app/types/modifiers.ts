@@ -1,6 +1,6 @@
 type OreElements =
   | "alert" | "anchor" | "article" | "aside" | "banner" | "blockquote"
-  | "button" | "caption" | "card" | "code" | "container" | "del" | "em"
+  | "button" | "caption" | "card" | "chip" | "code" | "container" | "del" | "em"
   | "footer" | "group" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
   | "header" | "hr" | "icon" | "img" | "input" | "kbd" | "label" | "li"
   | "main" | "nav" | "ol" | "p" | "pre" | "section" | "span" | "strong"

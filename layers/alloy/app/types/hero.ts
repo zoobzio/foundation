@@ -17,6 +17,6 @@ export type HeroProps = {
 
 export type HeroEmits = {};
 
-export const defineHero = useComponentRecipe<HeroProps, HeroEmits>();
+export const defineHero = defineComponentRecipe<HeroProps, HeroEmits>();
 
-export type HeroRecipe = ComponentRecipe<HeroProps, HeroEmits>;
+export type HeroRecipe = Recipe<HeroProps, HeroEmits>;

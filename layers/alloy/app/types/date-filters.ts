@@ -25,6 +25,6 @@ export type DateFiltersProps = {
 
 export type DateFiltersEmits = {};
 
-export const defineDateFilters = useComponentRecipe<DateFiltersProps, DateFiltersEmits>();
+export const defineDateFilters = defineComponentRecipe<DateFiltersProps, DateFiltersEmits>();
 
-export type DateFiltersRecipe = ComponentRecipe<DateFiltersProps, DateFiltersEmits>;
+export type DateFiltersRecipe = Recipe<DateFiltersProps, DateFiltersEmits>;

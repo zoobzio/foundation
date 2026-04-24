@@ -1,4 +1,4 @@
-import type { DropdownMenuContentProps } from "reka-ui";
+import type { DropdownMenuRootProps, DropdownMenuRootEmits, DropdownMenuContentProps, DropdownMenuContentEmits, DropdownMenuItemProps, DropdownMenuItemEmits, DropdownMenuSeparatorProps } from "reka-ui";
 
 export type MenuItem = {
   icon?: IconAlias;
@@ -13,7 +13,10 @@ export type MenuGroup = {
 };
 
 export type MenuPassthrough = {
-  content?: Passthrough<DropdownMenuContentProps>;
+  root?: Passthrough<DropdownMenuRootProps, DropdownMenuRootEmits>;
+  content?: Passthrough<DropdownMenuContentProps, DropdownMenuContentEmits>;
+  item?: Passthrough<DropdownMenuItemProps, DropdownMenuItemEmits>;
+  separator?: Passthrough<DropdownMenuSeparatorProps>;
 };
 
 export type MenuProps = {
@@ -29,6 +32,6 @@ export type MenuEmits = {
   select: [item: MenuItem];
 };
 
-export const defineMenu = useComponentRecipe<MenuProps, MenuEmits>();
+export const defineMenu = defineComponentRecipe<MenuProps, MenuEmits>();
 
-export type MenuRecipe = ComponentRecipe<MenuProps, MenuEmits>;
+export type MenuRecipe = Recipe<MenuProps, MenuEmits>;

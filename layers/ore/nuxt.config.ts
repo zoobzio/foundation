@@ -34,6 +34,7 @@ export default defineNuxtConfig({
       // Actions
       drag: "twotone-drag-indicator",
       actions: "twotone-more-vert",
+      sparkle: "twotone-auto-awesome",
       add: "twotone-add",
       plus: "twotone-add",
       edit: "twotone-edit",

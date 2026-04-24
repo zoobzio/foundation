@@ -23,6 +23,24 @@ const model = defineModel<string[]>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { disabled, required, name, max, addOnBlur, addOnPaste, addOnTab, delimiter, duplicate },
+});
+const itemTextPT = usePassthrough(pt?.itemText, {});
+const itemDeletePT = usePassthrough(pt?.itemDelete, {});
+const inputPT = usePassthrough(pt?.input, {
+  props: { placeholder },
+});
+
+const tagsPT = computed(() =>
+  (model.value ?? []).map((tag) => ({
+    item: tag,
+    pt: passthrough(pt?.item, {
+      props: { value: tag },
+    }),
+  })),
+);
+
 const ctx = computed(() => ({ placeholder, disabled, required, name, max, model: model.value }));
 </script>
 
@@ -30,31 +48,25 @@ const ctx = computed(() => ({ placeholder, disabled, required, name, max, model:
   <TagsInputRoot
     ref="el"
     v-model="model"
-    :disabled="disabled"
-    :required="required"
-    :name="name"
-    :max="max"
-    :add-on-blur="addOnBlur"
-    :add-on-paste="addOnPaste"
-    :add-on-tab="addOnTab"
-    :delimiter="delimiter"
-    :duplicate="duplicate"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-tags-input-root"
   >
-    <template v-for="tag in model" :key="tag">
-      <slot name="item" v-bind="{ ...ctx, tag }">
+    <template v-for="entry in tagsPT" :key="entry.item">
+      <slot name="item" v-bind="{ ...ctx, tag: entry.item }">
         <TagsInputItem
-          :value="tag"
-          v-bind="pt?.item"
+          v-bind="entry.pt.props"
+          v-on="entry.pt.handlers"
           class="f-tags-input-item"
         >
           <TagsInputItemText
-            v-bind="pt?.itemText"
+            v-bind="itemTextPT.props"
+            v-on="itemTextPT.handlers"
             class="f-tags-input-item-text"
           />
           <TagsInputItemDelete
-            v-bind="pt?.itemDelete"
+            v-bind="itemDeletePT.props"
+            v-on="itemDeletePT.handlers"
             class="f-tags-input-item-delete"
           >
             <Icon alias="close" />
@@ -64,11 +76,10 @@ const ctx = computed(() => ({ placeholder, disabled, required, name, max, model:
     </template>
     <slot name="input" v-bind="ctx">
       <TagsInputInput
-        :placeholder="placeholder"
-        v-bind="pt?.input"
+        v-bind="inputPT.props"
+        v-on="inputPT.handlers"
         class="f-tags-input-input"
       />
     </slot>
   </TagsInputRoot>
 </template>
-

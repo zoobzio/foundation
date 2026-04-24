@@ -29,7 +29,6 @@
   inset: 2px;
   pointer-events: none;
   box-shadow: 0 0 0 2px transparent;
-  transition: box-shadow var(--ref-duration-fast) var(--ref-ease-out);
 }
 
 .f-scroller-root:focus-visible::after {

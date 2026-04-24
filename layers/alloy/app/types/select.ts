@@ -1,9 +1,9 @@
-import type { SelectRootProps, SelectTriggerProps, SelectContentProps, SelectItemProps, SelectItemTextProps } from "reka-ui";
+import type { SelectRootProps, SelectRootEmits, SelectTriggerProps, SelectContentProps, SelectContentEmits, SelectItemProps, SelectItemTextProps } from "reka-ui";
 
 export type SelectPassthrough = {
-  root?: Passthrough<SelectRootProps>;
+  root?: Passthrough<SelectRootProps, SelectRootEmits>;
   trigger?: Passthrough<SelectTriggerProps>;
-  content?: Passthrough<SelectContentProps>;
+  content?: Passthrough<SelectContentProps, SelectContentEmits>;
   item?: Passthrough<SelectItemProps>;
   itemText?: Passthrough<SelectItemTextProps>;
 };
@@ -19,6 +19,6 @@ export type SelectProps = {
 
 export type SelectEmits = {};
 
-export const defineSelect = useComponentRecipe<SelectProps, SelectEmits>();
+export const defineSelect = defineComponentRecipe<SelectProps, SelectEmits>();
 
-export type SelectRecipe = ComponentRecipe<SelectProps, SelectEmits>;
+export type SelectRecipe = Recipe<SelectProps, SelectEmits>;

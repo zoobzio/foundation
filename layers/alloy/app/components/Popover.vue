@@ -24,6 +24,12 @@ const open = defineModel<boolean>("open", { default: false });
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const contentPT = usePassthrough(pt?.content, {
+  props: { side, align, sideOffset, alignOffset },
+});
+const arrowPT = usePassthrough(pt?.arrow, {});
+const closePT = usePassthrough(pt?.close, {});
+
 const ctx = computed(() => ({ open: open.value, defaultOpen, modal, side, align, sideOffset, alignOffset, arrow }));
 </script>
 
@@ -35,22 +41,21 @@ const ctx = computed(() => ({ open: open.value, defaultOpen, modal, side, align,
     </PopoverTrigger>
     <PopoverPortal>
       <PopoverContent
-        :side="side"
-        :align="align"
-        :side-offset="sideOffset"
-        :align-offset="alignOffset"
-        v-bind="pt?.content"
+        v-bind="contentPT.props"
+        v-on="contentPT.handlers"
         class="f-popover-content"
       >
         <slot name="content" v-bind="ctx" />
         <PopoverArrow
           v-if="arrow"
-          v-bind="pt?.arrow"
+          v-bind="arrowPT.props"
+          v-on="arrowPT.handlers"
           class="f-popover-arrow"
         />
         <PopoverClose
           v-if="$slots.close"
-          v-bind="pt?.close"
+          v-bind="closePT.props"
+          v-on="closePT.handlers"
           class="f-popover-close"
         >
           <slot name="close" v-bind="ctx" />
@@ -59,4 +64,3 @@ const ctx = computed(() => ({ open: open.value, defaultOpen, modal, side, align,
     </PopoverPortal>
   </PopoverRoot>
 </template>
-

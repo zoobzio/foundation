@@ -9,6 +9,6 @@ export type ColorModeProps = {
 
 export type ColorModeEmits = {};
 
-export const defineColorMode = useComponentRecipe<ColorModeProps, ColorModeEmits>();
+export const defineColorMode = defineComponentRecipe<ColorModeProps, ColorModeEmits>();
 
-export type ColorModeRecipe = ComponentRecipe<ColorModeProps, ColorModeEmits>;
+export type ColorModeRecipe = Recipe<ColorModeProps, ColorModeEmits>;

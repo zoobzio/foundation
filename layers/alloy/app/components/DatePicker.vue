@@ -38,13 +38,22 @@ const model = defineModel<DateValue>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { minValue, maxValue, locale, disabled, granularity, isDateDisabled },
+});
+const contentPT = usePassthrough(pt?.content, {
+  props: { sideOffset: 8 },
+});
+const headerPT = usePassthrough(pt?.header, {});
+const headingPT = usePassthrough(pt?.heading, {});
+const gridPT = usePassthrough(pt?.grid, {});
+const cellPT = usePassthrough(pt?.cell, {});
+const cellTriggerPT = usePassthrough(pt?.cellTrigger, {});
+const prevPT = usePassthrough(pt?.prev, {});
+const nextPT = usePassthrough(pt?.next, {});
+
 const ctx = computed(() => ({
-  minValue,
-  maxValue,
-  locale,
-  disabled,
-  granularity,
-  isDateDisabled,
+  minValue, maxValue, locale, disabled, granularity, isDateDisabled,
   model: model.value,
 }));
 </script>
@@ -53,13 +62,8 @@ const ctx = computed(() => ({
   <DatePickerRoot
     ref="el"
     v-model="model"
-    :min-value="minValue"
-    :max-value="maxValue"
-    :locale="locale"
-    :disabled="disabled"
-    :granularity="granularity"
-    :is-date-disabled="isDateDisabled"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     class="f-date-picker"
   >
     <DatePickerField v-slot="{ segments }" class="f-date-picker-field">
@@ -84,56 +88,50 @@ const ctx = computed(() => ({
       </DatePickerTrigger>
     </DatePickerField>
     <slot name="content" v-bind="{ ...ctx }">
-      <DatePickerContent v-bind="pt?.content" class="f-date-picker-content" :side-offset="8">
+      <DatePickerContent v-bind="contentPT.props" v-on="contentPT.handlers" class="f-date-picker-content">
         <DatePickerCalendar v-slot="{ weekDays, grid }" class="f-calendar">
           <slot name="header" v-bind="{ ...ctx, weekDays, grid }">
-            <DatePickerHeader v-bind="pt?.header" class="f-calendar-header">
+            <DatePickerHeader v-bind="headerPT.props" v-on="headerPT.handlers" class="f-calendar-header">
               <slot name="prev" v-bind="{ ...ctx, weekDays, grid }">
-                <DatePickerPrev v-bind="pt?.prev" class="f-calendar-nav">
+                <DatePickerPrev v-bind="prevPT.props" v-on="prevPT.handlers" class="f-calendar-nav">
                   <Icon alias="chevron-left" />
                 </DatePickerPrev>
               </slot>
               <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
-                <DatePickerHeading v-bind="pt?.heading" class="f-calendar-heading" />
+                <DatePickerHeading v-bind="headingPT.props" v-on="headingPT.handlers" class="f-calendar-heading" />
               </slot>
               <slot name="next" v-bind="{ ...ctx, weekDays, grid }">
-                <DatePickerNext v-bind="pt?.next" class="f-calendar-nav">
+                <DatePickerNext v-bind="nextPT.props" v-on="nextPT.handlers" class="f-calendar-nav">
                   <Icon alias="chevron-right" />
                 </DatePickerNext>
               </slot>
             </DatePickerHeader>
           </slot>
           <slot v-for="month in grid" name="grid" v-bind="{ ...ctx, weekDays, grid, month }">
-            <DatePickerGrid :key="month.value.toString()" v-bind="pt?.grid" class="f-calendar-grid">
+            <DatePickerGrid :key="month.value.toString()" v-bind="gridPT.props" v-on="gridPT.handlers" class="f-calendar-grid">
               <DatePickerGridHead>
                 <DatePickerGridRow class="f-calendar-row">
-                  <DatePickerHeadCell
-                    v-for="day in weekDays"
-                    :key="day"
-                    class="f-calendar-head-cell"
-                  >
+                  <DatePickerHeadCell v-for="day in weekDays" :key="day" class="f-calendar-head-cell">
                     {{ day }}
                   </DatePickerHeadCell>
                 </DatePickerGridRow>
               </DatePickerGridHead>
               <DatePickerGridBody>
-                <DatePickerGridRow
-                  v-for="(week, i) in month.rows"
-                  :key="i"
-                  class="f-calendar-row"
-                >
+                <DatePickerGridRow v-for="(week, i) in month.rows" :key="i" class="f-calendar-row">
                   <slot v-for="date in week" name="cell" v-bind="{ ...ctx, month, date }">
                     <DatePickerCell
                       :key="date.toString()"
+                      v-bind="cellPT.props"
+                      v-on="cellPT.handlers"
                       :date="date"
-                      v-bind="pt?.cell"
                       class="f-calendar-cell"
                     >
                       <slot name="cellTrigger" v-bind="{ ...ctx, month, date }">
                         <DatePickerCellTrigger
+                          v-bind="cellTriggerPT.props"
+                          v-on="cellTriggerPT.handlers"
                           :day="date"
                           :month="month.value"
-                          v-bind="pt?.cellTrigger"
                           class="f-calendar-cell-trigger"
                         />
                       </slot>

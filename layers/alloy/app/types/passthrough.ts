@@ -1,9 +1,6 @@
-import type { StyleValue, HTMLAttributes } from "vue";
+import type { HtmlAttrs, EmitHandlers, DomHandlers } from "./recipe";
 
-type HtmlAttrs = {
-  class?: HTMLAttributes["class"];
-  id?: string;
-  style?: StyleValue;
-} & Record<string, unknown>;
-
-export type Passthrough<Props> = Props & HtmlAttrs;
+export type Passthrough<Props, Emits = {}> = {
+  props?: Partial<Props & HtmlAttrs>;
+  handlers?: Partial<EmitHandlers<Emits> & DomHandlers>;
+};

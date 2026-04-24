@@ -1,4 +1,4 @@
-import type { ListboxRootProps, ListboxFilterProps, ListboxContentProps, ListboxItemProps } from "reka-ui";
+import type { ListboxRootProps, ListboxRootEmits, ListboxFilterProps, ListboxFilterEmits, ListboxContentProps, ListboxItemProps, ListboxItemEmits } from "reka-ui";
 
 export type CommandItem = {
   value: string;
@@ -14,10 +14,10 @@ export type CommandGroup = {
 };
 
 export type CommandPassthrough = {
-  root?: Passthrough<ListboxRootProps>;
-  filter?: Passthrough<ListboxFilterProps>;
+  root?: Passthrough<ListboxRootProps, ListboxRootEmits>;
+  filter?: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
   content?: Passthrough<ListboxContentProps>;
-  item?: Passthrough<ListboxItemProps>;
+  item?: Passthrough<ListboxItemProps, ListboxItemEmits>;
 };
 
 export type CommandProps = {
@@ -33,6 +33,6 @@ export type CommandEmits = {
   select: [value: string];
 };
 
-export const defineCommand = useComponentRecipe<CommandProps, CommandEmits>();
+export const defineCommand = defineComponentRecipe<CommandProps, CommandEmits>();
 
-export type CommandRecipe = ComponentRecipe<CommandProps, CommandEmits>;
+export type CommandRecipe = Recipe<CommandProps, CommandEmits>;

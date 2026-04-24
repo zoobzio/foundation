@@ -1,7 +1,7 @@
-import type { TabsRootProps, TabsListProps, TabsTriggerProps, TabsContentProps } from "reka-ui";
+import type { TabsRootProps, TabsRootEmits, TabsListProps, TabsTriggerProps, TabsContentProps } from "reka-ui";
 
 export type TabsPassthrough = {
-  root?: Passthrough<TabsRootProps>;
+  root?: Passthrough<TabsRootProps, TabsRootEmits>;
   list?: Passthrough<TabsListProps>;
   trigger?: Passthrough<TabsTriggerProps>;
   content?: Passthrough<TabsContentProps>;
@@ -14,6 +14,6 @@ export type TabsProps = {
 
 export type TabsEmits = {};
 
-export const defineTabs = useComponentRecipe<TabsProps, TabsEmits>();
+export const defineTabs = defineComponentRecipe<TabsProps, TabsEmits>();
 
-export type TabsRecipe = ComponentRecipe<TabsProps, TabsEmits>;
+export type TabsRecipe = Recipe<TabsProps, TabsEmits>;

@@ -1,7 +1,7 @@
 import type { PrimitiveProps } from "reka-ui";
 
 export type FabPassthrough = {
-  root?: Passthrough<PrimitiveProps>;
+  root?: Passthrough<PrimitiveProps & Partial<Link & ButtonProps>>;
   badge?: Passthrough<GroupProps>;
 };
 
@@ -18,6 +18,6 @@ export type FabProps = {
 
 export type FabEmits = {};
 
-export const defineFab = useComponentRecipe<FabProps, FabEmits>();
+export const defineFab = defineComponentRecipe<FabProps, FabEmits>();
 
-export type FabRecipe = ComponentRecipe<FabProps, FabEmits>;
+export type FabRecipe = Recipe<FabProps, FabEmits>;

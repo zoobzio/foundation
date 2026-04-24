@@ -11,29 +11,36 @@ const emit = defineEmits<ToastEmits>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+const rootPT = usePassthrough(pt?.root, {
+  props: { duration },
+  handlers: { "update:open": (open: boolean) => { if (!open) emit("close"); } },
+});
+const titlePT = usePassthrough(pt?.title, {});
+const descriptionPT = usePassthrough(pt?.description, {});
+const closePT = usePassthrough(pt?.close, {});
+
 const ctx = computed(() => ({ title, description, variant, duration }));
 </script>
 
 <template>
   <ToastRoot
     ref="el"
-    v-bind="pt?.root"
+    v-bind="rootPT.props"
+    v-on="rootPT.handlers"
     :class="`f-toast f-toast-${variant}`"
-    :duration="duration"
-    @update:open="(open: boolean) => { if (!open) emit('close') }"
   >
     <slot name="title" v-bind="ctx">
-      <ToastTitle v-if="title" v-bind="pt?.title" class="f-toast-title">
+      <ToastTitle v-if="title" v-bind="titlePT.props" v-on="titlePT.handlers" class="f-toast-title">
         {{ title }}
       </ToastTitle>
     </slot>
     <slot name="description" v-bind="ctx">
-      <ToastDescription v-if="description || $slots.default" v-bind="pt?.description" class="f-toast-description">
+      <ToastDescription v-if="description || $slots.default" v-bind="descriptionPT.props" v-on="descriptionPT.handlers" class="f-toast-description">
         <slot>{{ description }}</slot>
       </ToastDescription>
     </slot>
     <slot name="close" v-bind="ctx">
-      <ToastClose v-bind="pt?.close" class="f-toast-close">
+      <ToastClose v-bind="closePT.props" v-on="closePT.handlers" class="f-toast-close">
         <Icon alias="close" />
       </ToastClose>
     </slot>
