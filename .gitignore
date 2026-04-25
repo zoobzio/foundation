@@ -4,3 +4,4 @@ dist
 .env
 .data
 node-compile-cache
+.coverage
