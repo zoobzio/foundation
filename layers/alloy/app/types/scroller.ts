@@ -18,6 +18,4 @@ export type ScrollerProps = {
 
 export type ScrollerEmits = {};
 
-export const defineScroller = defineComponentRecipe<ScrollerProps, ScrollerEmits>();
-
 export type ScrollerRecipe = Recipe<ScrollerProps, ScrollerEmits>;

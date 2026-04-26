@@ -20,7 +20,7 @@ defineExpose({ el });
     :prefetch="prefetch"
     :aria-label="label"
     :aria-disabled="disabled"
-    :aria-current="ariaCurrent ?? (disabled ? 'page' : undefined)"
+    :aria-current="ariaCurrent || (disabled ? 'page' : undefined)"
     :data-variant="variant"
     :data-size="size"
     :data-color="color"

@@ -11,7 +11,9 @@ export type FacetGroup = {
 };
 
 export type FacetsPassthrough = {
-  root?: Passthrough<GroupProps>;
+  popover?: Passthrough<PopoverProps, PopoverEmits>;
+  trigger?: Passthrough<FabProps>;
+  command?: Passthrough<CommandProps, CommandEmits>;
 };
 
 export type FacetsProps = {
@@ -20,7 +22,5 @@ export type FacetsProps = {
 };
 
 export type FacetsEmits = {};
-
-export const defineFacets = defineComponentRecipe<FacetsProps, FacetsEmits>();
 
 export type FacetsRecipe = Recipe<FacetsProps, FacetsEmits>;

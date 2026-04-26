@@ -8,12 +8,16 @@ const { tagline, taglineHighlight, description, action, pt } = defineProps<HeroP
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const rootPT = usePassthrough(pt?.root, {});
-const contentPT = usePassthrough(pt?.content, {});
-const taglinePT = usePassthrough(pt?.tagline, {});
-const descriptionPT = usePassthrough(pt?.description, {});
-const buttonPT = usePassthrough(pt?.button, {});
-const showcasePT = usePassthrough(pt?.showcase, {});
+const rootPT = usePassthrough(pt?.root, { props: {}, handlers: {} });
+const contentPT = usePassthrough(pt?.content, { props: {}, handlers: {} });
+const taglinePT = usePassthrough(pt?.tagline, { props: {}, handlers: {} });
+const taglineHighlightPT = usePassthrough(pt?.taglineHighlight, { props: {}, handlers: {} });
+const descriptionPT = usePassthrough(pt?.description, { props: {}, handlers: {} });
+const buttonPT = usePassthrough(pt?.button, {
+  props: { ...(action ? { label: action.label } : {}) },
+  handlers: {},
+});
+const showcasePT = usePassthrough(pt?.showcase, { props: {}, handlers: {} });
 
 const ctx = computed(() => ({ tagline, taglineHighlight, description, action }));
 </script>
@@ -25,16 +29,18 @@ const ctx = computed(() => ({ tagline, taglineHighlight, description, action }))
         <slot name="tagline" v-bind="ctx">
           <H1 v-bind="taglinePT.props" class="f-hero-tagline" v-on="taglinePT.handlers">
             {{ tagline }}
-            <Em v-if="taglineHighlight" class="f-hero-tagline-highlight">
-              {{ taglineHighlight }}
-            </Em>
+            <slot name="taglineHighlight" v-bind="ctx">
+              <Em v-if="taglineHighlight" v-bind="taglineHighlightPT.props" class="f-hero-tagline-highlight" v-on="taglineHighlightPT.handlers">
+                {{ taglineHighlight }}
+              </Em>
+            </slot>
           </H1>
         </slot>
         <slot name="description" v-bind="ctx">
           <P v-if="description" v-bind="descriptionPT.props" v-on="descriptionPT.handlers">{{ description }}</P>
         </slot>
         <slot name="button" v-bind="ctx">
-          <Button v-if="action" v-bind="buttonPT.props" :label="action.label" v-on="buttonPT.handlers" />
+          <Button v-if="action" v-bind="buttonPT.props" v-on="buttonPT.handlers" />
         </slot>
       </Group>
     </slot>

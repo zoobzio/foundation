@@ -15,9 +15,16 @@ export type CommandGroup = {
 
 export type CommandPassthrough = {
   root?: Passthrough<ListboxRootProps, ListboxRootEmits>;
+  inputWrapper?: Passthrough<GroupProps>;
   filter?: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
   content?: Passthrough<ListboxContentProps>;
+  viewport?: Passthrough<ScrollerProps>;
+  empty?: Passthrough<GroupProps>;
+  groupLabel?: Passthrough<CaptionProps>;
   item?: Passthrough<ListboxItemProps, ListboxItemEmits>;
+  itemCheckbox?: Passthrough<CheckboxProps, CheckboxEmits>;
+  itemLabel?: Passthrough<SpanProps>;
+  itemCount?: Passthrough<KbdProps>;
 };
 
 export type CommandProps = {
@@ -26,13 +33,15 @@ export type CommandProps = {
   disabled?: boolean;
   multiple?: boolean;
   filtered?: boolean;
+  selected?: Set<string>;
+  searchTerm?: string;
   pt?: CommandPassthrough;
 };
 
 export type CommandEmits = {
   select: [value: string];
+  "update:selected": [value: Set<string>];
+  "update:searchTerm": [value: string];
 };
-
-export const defineCommand = defineComponentRecipe<CommandProps, CommandEmits>();
 
 export type CommandRecipe = Recipe<CommandProps, CommandEmits>;

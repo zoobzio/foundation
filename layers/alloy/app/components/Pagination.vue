@@ -30,25 +30,21 @@ const pageSizeModel = computed({
   set: (v) => emit("update:pageSize", Number(v)),
 });
 
-const pageNumbers = computed(() => {
-  const pages: (number | "...")[] = [];
-  if (pageCount <= 7) {
-    for (let i = 1; i <= pageCount; i++) pages.push(i);
-  } else {
-    pages.push(1);
-    if (page > 3) pages.push("...");
-    for (let i = Math.max(2, page - 1); i <= Math.min(pageCount - 1, page + 1); i++) {
-      pages.push(i);
-    }
-    if (page < pageCount - 2) pages.push("...");
-    pages.push(pageCount);
-  }
-  return pages;
-});
+const pageNumbers = computed(() => Pagination.paginate(page, pageCount));
 
-const rootPT = usePassthrough(pt?.root, {});
-const infoPT = usePassthrough(pt?.info, {});
-const pagesPT = usePassthrough(pt?.pages, {});
+const rootPT = usePassthrough(pt?.root, { props: {}, handlers: {} });
+const infoPT = usePassthrough(pt?.info, { props: {}, handlers: {} });
+const pagesPT = usePassthrough(pt?.pages, { props: {}, handlers: {} });
+const firstPT = usePassthrough(pt?.first, { props: { disabled: !hasPrev.value, icon: "chevron-first" }, handlers: { click: first } });
+const prevPT = usePassthrough(pt?.prev, { props: { disabled: !hasPrev.value, icon: "chevron-left" }, handlers: { click: prev } });
+const nextPT = usePassthrough(pt?.next, { props: { disabled: !hasNext.value, icon: "chevron-right" }, handlers: { click: next } });
+const lastPT = usePassthrough(pt?.last, { props: { disabled: !hasNext.value, icon: "chevron-last" }, handlers: { click: last } });
+const numbersPT = usePassthrough(pt?.numbers, { props: {}, handlers: {} });
+const numberPT = usePassthrough(pt?.number, { props: { type: "button" as const }, handlers: {} });
+const pageSizePT = usePassthrough(pt?.pageSize, {
+  props: { modelValue: pageSizeModel.value, options: pageSizeOptions },
+  handlers: { "update:modelValue": (v: string) => { pageSizeModel.value = v; } },
+});
 
 const ctx = computed(() => ({ page, pageSize, pageCount, total, hasPrev: hasPrev.value, hasNext: hasNext.value, pageNumbers: pageNumbers.value }));
 </script>
@@ -63,39 +59,43 @@ const ctx = computed(() => ({ page, pageSize, pageCount, total, hasPrev: hasPrev
 
     <slot name="pages" v-bind="ctx">
       <Group v-bind="pagesPT.props" class="f-pagination-pages" v-on="pagesPT.handlers">
-        <Fab :disabled="!hasPrev" @click="first">
-          <Icon alias="chevron-first" />
-        </Fab>
-        <Fab :disabled="!hasPrev" @click="prev">
-          <Icon alias="chevron-left" />
-        </Fab>
+        <slot name="first" v-bind="ctx">
+          <Fab v-bind="firstPT.props" v-on="firstPT.handlers" />
+        </slot>
+        <slot name="prev" v-bind="ctx">
+          <Fab v-bind="prevPT.props" v-on="prevPT.handlers" />
+        </slot>
 
-        <Group class="f-pagination-numbers">
-          <Button
-            v-for="(p, i) in pageNumbers"
-            :key="i"
-            type="button"
-            class="f-pagination-number"
-            :disabled="p === '...' || p === page"
-            :data-selected="p === page ? '' : undefined"
-            @click="typeof p === 'number' && goToPage(p)"
-          >
-            {{ p }}
-          </Button>
-        </Group>
+        <slot name="numbers" v-bind="ctx">
+          <Group v-bind="numbersPT.props" class="f-pagination-numbers" v-on="numbersPT.handlers">
+            <slot v-for="(p, i) in pageNumbers" name="number" v-bind="{ ...ctx, page: p }">
+              <Button
+                :key="i"
+                v-bind="{ ...numberPT.props, disabled: p === '...' || p === page, 'data-selected': p === page ? '' : undefined }"
+                class="f-pagination-number"
+                v-on="numberPT.handlers"
+                @click="typeof p === 'number' && goToPage(p)"
+              >
+                {{ p }}
+              </Button>
+            </slot>
+          </Group>
+        </slot>
 
-        <Fab :disabled="!hasNext" @click="next">
-          <Icon alias="chevron-right" />
-        </Fab>
-        <Fab :disabled="!hasNext" @click="last">
-          <Icon alias="chevron-last" />
-        </Fab>
+        <slot name="next" v-bind="ctx">
+          <Fab v-bind="nextPT.props" v-on="nextPT.handlers" />
+        </slot>
+        <slot name="last" v-bind="ctx">
+          <Fab v-bind="lastPT.props" v-on="lastPT.handlers" />
+        </slot>
       </Group>
     </slot>
 
-    <Select
-      v-model="pageSizeModel"
-      :options="pageSizeOptions"
-    />
+    <slot name="pageSize" v-bind="ctx">
+      <Select
+        v-bind="pageSizePT.props"
+        v-on="pageSizePT.handlers"
+      />
+    </slot>
   </Group>
 </template>

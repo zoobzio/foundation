@@ -1,6 +1,8 @@
-import type { PopoverContentProps, PopoverContentEmits, PopoverArrowProps, PopoverCloseProps } from "reka-ui";
+import type { PopoverRootProps, PopoverRootEmits, PopoverAnchorProps, PopoverContentProps, PopoverContentEmits, PopoverArrowProps, PopoverCloseProps } from "reka-ui";
 
 export type PopoverPassthrough = {
+  root?: Passthrough<PopoverRootProps, PopoverRootEmits>;
+  anchor?: Passthrough<PopoverAnchorProps>;
   content?: Passthrough<PopoverContentProps, PopoverContentEmits>;
   arrow?: Passthrough<PopoverArrowProps>;
   close?: Passthrough<PopoverCloseProps>;
@@ -15,13 +17,12 @@ export type PopoverProps = {
   sideOffset?: number;
   alignOffset?: number;
   arrow?: boolean;
+  disabled?: boolean;
   pt?: PopoverPassthrough;
 };
 
 export type PopoverEmits = {
   "update:open": [value: boolean];
 };
-
-export const definePopover = defineComponentRecipe<PopoverProps, PopoverEmits>();
 
 export type PopoverRecipe = Recipe<PopoverProps, PopoverEmits>;

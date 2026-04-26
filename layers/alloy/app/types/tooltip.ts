@@ -16,6 +16,4 @@ export type TooltipProps = {
 
 export type TooltipEmits = {};
 
-export const defineTooltip = defineComponentRecipe<TooltipProps, TooltipEmits>();
-
 export type TooltipRecipe = Recipe<TooltipProps, TooltipEmits>;

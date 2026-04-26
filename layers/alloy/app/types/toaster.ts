@@ -1,6 +1,7 @@
-import type { ToastViewportProps } from "reka-ui";
+import type { ToastProviderProps, ToastViewportProps } from "reka-ui";
 
 export type ToasterPassthrough = {
+  provider?: Passthrough<ToastProviderProps>;
   viewport?: Passthrough<ToastViewportProps>;
 };
 
@@ -9,7 +10,5 @@ export type ToasterProps = {
 };
 
 export type ToasterEmits = {};
-
-export const defineToaster = defineComponentRecipe<ToasterProps, ToasterEmits>();
 
 export type ToasterRecipe = Recipe<ToasterProps, ToasterEmits>;

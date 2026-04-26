@@ -3,12 +3,15 @@ import type { SelectRootProps, SelectRootEmits, SelectTriggerProps, SelectConten
 export type SelectPassthrough = {
   root?: Passthrough<SelectRootProps, SelectRootEmits>;
   trigger?: Passthrough<SelectTriggerProps>;
+  triggerLabel?: Passthrough<SpanProps>;
+  triggerIcon?: Passthrough<IconProps>;
   content?: Passthrough<SelectContentProps, SelectContentEmits>;
   item?: Passthrough<SelectItemProps>;
   itemText?: Passthrough<SelectItemTextProps>;
 };
 
 export type SelectProps = {
+  modelValue?: string;
   options: Option[];
   placeholder?: string;
   disabled?: boolean;
@@ -17,8 +20,8 @@ export type SelectProps = {
   pt?: SelectPassthrough;
 };
 
-export type SelectEmits = {};
-
-export const defineSelect = defineComponentRecipe<SelectProps, SelectEmits>();
+export type SelectEmits = {
+  "update:modelValue": [value: string];
+};
 
 export type SelectRecipe = Recipe<SelectProps, SelectEmits>;

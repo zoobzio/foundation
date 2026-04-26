@@ -19,14 +19,16 @@ defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, {
   props: { modelValue, multiple, disabled },
+  handlers: {},
 });
-const contentPT = usePassthrough(pt?.content, {});
+const contentPT = usePassthrough(pt?.content, { props: {}, handlers: {} });
 
 const itemsPT = computed(() =>
   items.map((item) => ({
     item,
     pt: passthrough(pt?.item, {
       props: { value: item.value, disabled: item.disabled },
+      handlers: {},
     }),
   })),
 );

@@ -1,6 +1,7 @@
-import type { DialogContentProps, DialogContentEmits, DialogOverlayProps, DialogTitleProps, DialogDescriptionProps } from "reka-ui";
+import type { DialogRootProps, DialogRootEmits, DialogContentProps, DialogContentEmits, DialogOverlayProps, DialogTitleProps, DialogDescriptionProps } from "reka-ui";
 
 export type DialogPassthrough = {
+  root?: Passthrough<DialogRootProps, DialogRootEmits>;
   overlay?: Passthrough<DialogOverlayProps>;
   content?: Passthrough<DialogContentProps, DialogContentEmits>;
   title?: Passthrough<DialogTitleProps>;
@@ -17,7 +18,5 @@ export type DialogProps = {
 export type DialogEmits = {
   "update:open": [value: boolean];
 };
-
-export const defineDialog = defineComponentRecipe<DialogProps, DialogEmits>();
 
 export type DialogRecipe = Recipe<DialogProps, DialogEmits>;

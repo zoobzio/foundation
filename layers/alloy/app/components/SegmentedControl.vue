@@ -32,12 +32,18 @@ const rootPT = usePassthrough(pt?.root, {
   handlers: { "update:modelValue": handleUpdate },
 });
 
+const itemLabelPT = usePassthrough(pt?.itemLabel, { props: {}, handlers: {} });
+
 const itemsPT = computed(() =>
   options.map((option) => ({
     item: option,
     pt: passthrough(pt?.item, {
       props: { value: option.value, disabled: option.disabled },
+      handlers: {},
     }),
+    iconPT: option.icon
+      ? passthrough(pt?.itemIcon, { props: { alias: option.icon }, handlers: {} })
+      : null,
   })),
 );
 
@@ -63,8 +69,12 @@ const ctx = computed(() => ({
         class="f-segmented-control-item"
         v-on="entry.pt.handlers"
       >
-        <Icon v-if="entry.item.icon" :alias="entry.item.icon" />
-        <Span v-if="entry.item.label">{{ entry.item.label }}</Span>
+        <slot name="itemIcon" v-bind="{ ...ctx, option: entry.item }">
+          <Icon v-if="entry.iconPT" v-bind="entry.iconPT.props" v-on="entry.iconPT.handlers" />
+        </slot>
+        <slot name="itemLabel" v-bind="{ ...ctx, option: entry.item }">
+          <Span v-if="entry.item.label" v-bind="itemLabelPT.props" v-on="itemLabelPT.handlers">{{ entry.item.label }}</Span>
+        </slot>
       </ToggleGroupItem>
     </slot>
   </ToggleGroupRoot>

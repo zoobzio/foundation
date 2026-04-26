@@ -19,16 +19,19 @@ const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, {
-  props: { disabled, required, name, orientation },
+  props: { modelValue: model.value, disabled, required, name, orientation },
+  handlers: { "update:modelValue": (v: string) => { model.value = v; } },
 });
-const indicatorPT = usePassthrough(pt?.indicator, {});
+const indicatorPT = usePassthrough(pt?.indicator, { props: {}, handlers: {} });
+const optionLabelPT = usePassthrough(pt?.optionLabel, { props: {}, handlers: {} });
 
 const optionsPT = computed(() =>
   options.map((option) => ({
     item: option,
-    optionPt: passthrough(pt?.option, {}),
+    optionPt: passthrough(pt?.option, { props: {}, handlers: {} }),
     itemPt: passthrough(pt?.item, {
       props: { value: option.value, disabled: option.disabled },
+      handlers: {},
     }),
   })),
 );
@@ -39,7 +42,6 @@ const ctx = computed(() => ({ options, disabled, required, name, orientation, mo
 <template>
   <RadioGroupRoot
     ref="el"
-    v-model="model"
     v-bind="rootPT.props"
     class="f-radio-root"
     v-on="rootPT.handlers"
@@ -60,7 +62,9 @@ const ctx = computed(() => ({ options, disabled, required, name, orientation, mo
               <RadioGroupIndicator v-bind="indicatorPT.props" class="f-radio-indicator" v-on="indicatorPT.handlers" />
             </slot>
           </RadioGroupItem>
-          <Span class="f-radio-label">{{ entry.item.label }}</Span>
+          <slot name="optionLabel" v-bind="{ ...ctx, option: entry.item }">
+            <Span v-bind="optionLabelPT.props" class="f-radio-label" v-on="optionLabelPT.handlers">{{ entry.item.label }}</Span>
+          </slot>
         </Label>
       </slot>
     </template>

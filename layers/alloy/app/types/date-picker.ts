@@ -1,19 +1,31 @@
 import type { DateValue } from "@internationalized/date";
-import type { DatePickerRootProps, DatePickerRootEmits, DatePickerContentProps, DatePickerHeaderProps, DatePickerHeadingProps, DatePickerGridProps, DatePickerCellProps, DatePickerCellTriggerProps, DatePickerPrevProps, DatePickerNextProps } from "reka-ui";
+import type { PrimitiveProps, DatePickerRootProps, DatePickerRootEmits, DatePickerInputProps, DatePickerTriggerProps, DatePickerContentProps, DatePickerHeaderProps, DatePickerHeadingProps, DatePickerGridProps, DatePickerGridHeadProps, DatePickerGridBodyProps, DatePickerGridRowProps, DatePickerHeadCellProps, DatePickerCellProps, DatePickerCellTriggerProps, DatePickerPrevProps, DatePickerNextProps } from "reka-ui";
 
 export type DatePickerPassthrough = {
   root?: Passthrough<DatePickerRootProps, DatePickerRootEmits>;
+  field?: Passthrough<PrimitiveProps>;
+  input?: Passthrough<DatePickerInputProps>;
+  trigger?: Passthrough<DatePickerTriggerProps>;
+  triggerIcon?: Passthrough<IconProps>;
   content?: Passthrough<DatePickerContentProps>;
+  calendar?: Passthrough<PrimitiveProps>;
   header?: Passthrough<DatePickerHeaderProps>;
+  prev?: Passthrough<DatePickerPrevProps>;
+  prevIcon?: Passthrough<IconProps>;
   heading?: Passthrough<DatePickerHeadingProps>;
+  next?: Passthrough<DatePickerNextProps>;
+  nextIcon?: Passthrough<IconProps>;
   grid?: Passthrough<DatePickerGridProps>;
+  gridHead?: Passthrough<DatePickerGridHeadProps>;
+  gridBody?: Passthrough<DatePickerGridBodyProps>;
+  gridRow?: Passthrough<DatePickerGridRowProps>;
+  headCell?: Passthrough<DatePickerHeadCellProps>;
   cell?: Passthrough<DatePickerCellProps>;
   cellTrigger?: Passthrough<DatePickerCellTriggerProps>;
-  prev?: Passthrough<DatePickerPrevProps>;
-  next?: Passthrough<DatePickerNextProps>;
 };
 
 export type DatePickerProps = {
+  modelValue?: DateValue;
   placeholder?: string;
   minValue?: DateValue;
   maxValue?: DateValue;
@@ -24,8 +36,8 @@ export type DatePickerProps = {
   pt?: DatePickerPassthrough;
 };
 
-export type DatePickerEmits = {};
-
-export const defineDatePicker = defineComponentRecipe<DatePickerProps, DatePickerEmits>();
+export type DatePickerEmits = {
+  "update:modelValue": [value: DateValue | undefined];
+};
 
 export type DatePickerRecipe = Recipe<DatePickerProps, DatePickerEmits>;

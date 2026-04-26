@@ -11,7 +11,6 @@ const {
   label,
   disabled,
   type = "button",
-  shortcut,
   link,
   badge,
   pt,
@@ -19,20 +18,6 @@ const {
 
 const el = useTemplateRef("el");
 defineExpose({ el });
-
-if (shortcut) {
-  const keys = useMagicKeys();
-  const combo = computed(() => keys[shortcut]?.value);
-
-  whenever(combo, () => {
-    const target = el.value as { $el?: HTMLElement } | HTMLElement | null;
-    if (target && '$el' in target) {
-      target.$el?.click();
-    } else if (target instanceof HTMLElement) {
-      target.click();
-    }
-  });
-}
 
 const NuxtLink = defineNuxtLink({});
 
@@ -48,42 +33,43 @@ const linkProps = computed(() => ({
 
 const attrs = useAttrs();
 const rootPT = usePassthrough(pt?.root, {
-  props: { ...(link ? linkProps.value : buttonProps.value), ...attrs },
+  props: { as: link ? NuxtLink : "button", "aria-label": label, ...(link ? linkProps.value : buttonProps.value), ...attrs },
+  handlers: {},
 });
-const badgePT = usePassthrough(pt?.badge, {});
+const tooltipPT = usePassthrough(pt?.tooltip, { props: { content: label }, handlers: {} });
+const iconPT = usePassthrough(pt?.icon, { props: { alias: icon ?? "warning" }, handlers: {} });
+const badgePT = usePassthrough(pt?.badge, { props: {}, handlers: {} });
 
-const ctx = computed(() => ({ icon, label, disabled, type, shortcut, link, badge }));
+const ctx = computed(() => ({ icon, label, disabled, type, link, badge }));
 </script>
 
 <template>
-  <Tooltip v-if="label" :content="label">
-    <Primitive
-      ref="el"
-      :as="link ? NuxtLink : 'button'"
-      :aria-label="label"
-      v-bind="rootPT.props"
-      class="f-fab"
-      v-on="rootPT.handlers"
-    >
-      <slot v-bind="ctx">
-        <Icon v-if="icon" :alias="icon" />
-      </slot>
-      <slot name="badge" v-bind="ctx">
-        <Group v-if="badge !== undefined" v-bind="badgePT.props" class="f-fab-badge" v-on="badgePT.handlers">{{ badge }}</Group>
-      </slot>
-    </Primitive>
-  </Tooltip>
+  <slot name="tooltip" v-bind="ctx">
+    <Tooltip v-if="label" v-bind="tooltipPT.props" v-on="tooltipPT.handlers">
+      <Primitive
+        ref="el"
+        v-bind="rootPT.props"
+        class="f-fab"
+        v-on="rootPT.handlers"
+      >
+        <slot name="icon" v-bind="ctx">
+          <Icon v-if="icon" v-bind="iconPT.props" v-on="iconPT.handlers" />
+        </slot>
+        <slot name="badge" v-bind="ctx">
+          <Group v-if="badge !== undefined" v-bind="badgePT.props" class="f-fab-badge" v-on="badgePT.handlers">{{ badge }}</Group>
+        </slot>
+      </Primitive>
+    </Tooltip>
+  </slot>
   <Primitive
-    v-else
+    v-if="!label"
     ref="el"
-    :as="link ? NuxtLink : 'button'"
-    :aria-label="label"
     v-bind="rootPT.props"
     class="f-fab"
     v-on="rootPT.handlers"
   >
-    <slot v-bind="ctx">
-      <Icon v-if="icon" :alias="icon" />
+    <slot name="icon" v-bind="ctx">
+      <Icon v-if="icon" v-bind="iconPT.props" v-on="iconPT.handlers" />
     </slot>
     <slot name="badge" v-bind="ctx">
       <Group v-if="badge !== undefined" v-bind="badgePT.props" class="f-fab-badge" v-on="badgePT.handlers">{{ badge }}</Group>

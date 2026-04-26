@@ -11,15 +11,22 @@ const model = defineModel<string>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const rootPT = usePassthrough(pt?.root, {});
-const listPT = usePassthrough(pt?.list, {});
+const rootPT = usePassthrough(pt?.root, {
+  props: { modelValue: model.value },
+  handlers: { "update:modelValue": (v: string | number) => { model.value = String(v); } },
+});
+const listPT = usePassthrough(pt?.list, { props: {}, handlers: {} });
 
 const triggersPT = computed(() =>
   tabItems.map((tab) => ({
     item: tab,
     pt: passthrough(pt?.trigger, {
       props: { value: tab.value, disabled: tab.disabled },
+      handlers: {},
     }),
+    iconPT: tab.icon
+      ? passthrough(pt?.triggerIcon, { props: { alias: tab.icon }, handlers: {} })
+      : null,
   })),
 );
 
@@ -28,6 +35,7 @@ const contentsPT = computed(() =>
     item: tab,
     pt: passthrough(pt?.content, {
       props: { value: tab.value },
+      handlers: {},
     }),
   })),
 );
@@ -36,7 +44,7 @@ const ctx = computed(() => ({ tabs: tabItems, model }));
 </script>
 
 <template>
-  <TabsRoot ref="el" v-model="model" v-bind="rootPT.props" class="f-tabs-root" v-on="rootPT.handlers">
+  <TabsRoot ref="el" v-bind="rootPT.props" class="f-tabs-root" v-on="rootPT.handlers">
     <slot name="list" v-bind="ctx">
       <TabsList v-bind="listPT.props" class="f-tabs-list" v-on="listPT.handlers">
         <TabsTrigger
@@ -47,7 +55,7 @@ const ctx = computed(() => ({ tabs: tabItems, model }));
           v-on="entry.pt.handlers"
         >
           <slot name="trigger" v-bind="{ ...ctx, tab: entry.item }">
-            <Icon v-if="entry.item.icon" :alias="entry.item.icon" />
+            <Icon v-if="entry.iconPT" v-bind="entry.iconPT.props" v-on="entry.iconPT.handlers" />
             {{ entry.item.label }}
           </slot>
         </TabsTrigger>

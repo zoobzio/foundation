@@ -13,7 +13,18 @@ export type DateFieldConfig = {
 };
 
 export type DateFiltersPassthrough = {
+  popover?: Passthrough<PopoverProps, PopoverEmits>;
+  trigger?: Passthrough<FabProps>;
   root?: Passthrough<GroupProps>;
+  stepper?: Passthrough<GroupProps>;
+  stepSeparator?: Passthrough<IconProps>;
+  fieldCommand?: Passthrough<CommandProps, CommandEmits>;
+  operatorCommand?: Passthrough<CommandProps, CommandEmits>;
+  calendarWrapper?: Passthrough<GroupProps>;
+  calendar?: Passthrough<CalendarProps, CalendarEmits>;
+  rangeCalendar?: Passthrough<RangeCalendarProps, RangeCalendarEmits>;
+  actions?: Passthrough<GroupProps>;
+  applyButton?: Passthrough<ButtonProps>;
 };
 
 export type DateFiltersProps = {
@@ -24,7 +35,5 @@ export type DateFiltersProps = {
 };
 
 export type DateFiltersEmits = {};
-
-export const defineDateFilters = defineComponentRecipe<DateFiltersProps, DateFiltersEmits>();
 
 export type DateFiltersRecipe = Recipe<DateFiltersProps, DateFiltersEmits>;

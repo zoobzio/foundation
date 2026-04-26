@@ -17,11 +17,12 @@ defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, {
   props: { type, scrollHideDelay, dir },
+  handlers: {},
 });
-const viewportPT = usePassthrough(pt?.viewport, {});
-const scrollbarPT = usePassthrough(pt?.scrollbar, {});
-const thumbPT = usePassthrough(pt?.thumb, {});
-const cornerPT = usePassthrough(pt?.corner, {});
+const viewportPT = usePassthrough(pt?.viewport, { props: {}, handlers: {} });
+const scrollbarPT = usePassthrough(pt?.scrollbar, { props: {}, handlers: {} });
+const thumbPT = usePassthrough(pt?.thumb, { props: {}, handlers: {} });
+const cornerPT = usePassthrough(pt?.corner, { props: {}, handlers: {} });
 
 const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation }));
 </script>
@@ -33,35 +34,45 @@ const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation }));
     class="f-scroller-root"
     v-on="rootPT.handlers"
   >
-    <ScrollAreaViewport v-bind="viewportPT.props" class="f-scroller-viewport" v-on="viewportPT.handlers">
-      <slot v-bind="ctx" />
-    </ScrollAreaViewport>
+    <slot name="viewport" v-bind="ctx">
+      <ScrollAreaViewport v-bind="viewportPT.props" class="f-scroller-viewport" v-on="viewportPT.handlers">
+        <slot name="content" v-bind="ctx" />
+      </ScrollAreaViewport>
+    </slot>
 
-    <ScrollAreaScrollbar
-      v-if="orientation === 'vertical' || orientation === 'both'"
-      orientation="vertical"
-      v-bind="scrollbarPT.props"
-      class="f-scroller-scrollbar"
-      v-on="scrollbarPT.handlers"
-    >
-      <ScrollAreaThumb v-bind="thumbPT.props" class="f-scroller-thumb" v-on="thumbPT.handlers" />
-    </ScrollAreaScrollbar>
+    <slot name="scrollbar" v-bind="{ ...ctx, orientation: 'vertical' }">
+      <ScrollAreaScrollbar
+        v-if="orientation === 'vertical' || orientation === 'both'"
+        v-bind="{ ...scrollbarPT.props, orientation: 'vertical' }"
+        class="f-scroller-scrollbar"
+        v-on="scrollbarPT.handlers"
+      >
+        <slot name="thumb" v-bind="ctx">
+          <ScrollAreaThumb v-bind="thumbPT.props" class="f-scroller-thumb" v-on="thumbPT.handlers" />
+        </slot>
+      </ScrollAreaScrollbar>
+    </slot>
 
-    <ScrollAreaScrollbar
-      v-if="orientation === 'horizontal' || orientation === 'both'"
-      orientation="horizontal"
-      v-bind="scrollbarPT.props"
-      class="f-scroller-scrollbar"
-      v-on="scrollbarPT.handlers"
-    >
-      <ScrollAreaThumb v-bind="thumbPT.props" class="f-scroller-thumb" v-on="thumbPT.handlers" />
-    </ScrollAreaScrollbar>
+    <slot name="scrollbar" v-bind="{ ...ctx, orientation: 'horizontal' }">
+      <ScrollAreaScrollbar
+        v-if="orientation === 'horizontal' || orientation === 'both'"
+        v-bind="{ ...scrollbarPT.props, orientation: 'horizontal' }"
+        class="f-scroller-scrollbar"
+        v-on="scrollbarPT.handlers"
+      >
+        <slot name="thumb" v-bind="ctx">
+          <ScrollAreaThumb v-bind="thumbPT.props" class="f-scroller-thumb" v-on="thumbPT.handlers" />
+        </slot>
+      </ScrollAreaScrollbar>
+    </slot>
 
-    <ScrollAreaCorner
-      v-if="orientation === 'both'"
-      v-bind="cornerPT.props"
-      class="f-scroller-corner"
-      v-on="cornerPT.handlers"
-    />
+    <slot name="corner" v-bind="ctx">
+      <ScrollAreaCorner
+        v-if="orientation === 'both'"
+        v-bind="cornerPT.props"
+        class="f-scroller-corner"
+        v-on="cornerPT.handlers"
+      />
+    </slot>
   </ScrollAreaRoot>
 </template>

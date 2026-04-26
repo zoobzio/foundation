@@ -13,53 +13,22 @@ const open = ref(false);
 const includeInput = ref("");
 const excludeInput = ref("");
 
-// Detect if current keyword string uses OR mode
 const isOrMode = computed(() => keywords.value.includes("||"));
 const mode = ref<"and" | "or">(isOrMode.value ? "or" : "and");
 
-// Sync mode when keywords change externally
 watch(isOrMode, (v) => { mode.value = v ? "or" : "and"; });
 
-// Parse keyword string into include/exclude arrays
-// Handles: +term, -term, "quoted phrase", term1 || term2
-const parseEntries = (kw: string) => {
-  if (!kw.trim()) return { include: [] as string[], exclude: [] as string[] };
-  const include: string[] = [];
-  const exclude: string[] = [];
-  const cleaned = kw.replace(/\|\|/g, " ");
-  const regex = /([+-])(?:"([^"]+)"|([^\s"+-]\S*))/g;
-  let m;
-  while ((m = regex.exec(cleaned)) !== null) {
-    const prefix = m[1];
-    const term = m[2] ?? m[3] ?? "";
-    if (!term) continue;
-    if (prefix === "-") exclude.push(term);
-    else include.push(term);
-  }
-  return { include, exclude };
-};
+const parsed = computed(() => Keywords.parse(keywords.value));
 
-const parsed = computed(() => parseEntries(keywords.value));
-
-const quoteTerm = (t: string) => t.includes(" ") ? `"${t}"` : t;
-
-const buildKeywordString = (include: string[], exclude: string[]) => {
-  const parts: string[] = [];
-  if (include.length) {
-    const joiner = mode.value === "or" ? " || " : " ";
-    parts.push(include.map((t) => `+${quoteTerm(t)}`).join(joiner));
-  }
-  if (exclude.length) {
-    parts.push(exclude.map((t) => `-${quoteTerm(t)}`).join(" "));
-  }
-  return parts.join(" ");
+const rebuild = (include: string[], exclude: string[]) => {
+  keywords.value = Keywords.build(include, exclude, mode.value);
 };
 
 const includeModel = computed({
   get: () => parsed.value.include,
   set: (val: string[]) => {
     const excludeFiltered = parsed.value.exclude.filter((t) => !val.includes(t));
-    keywords.value = buildKeywordString(val, excludeFiltered);
+    rebuild(val, excludeFiltered);
   },
 });
 
@@ -67,13 +36,12 @@ const excludeModel = computed({
   get: () => parsed.value.exclude,
   set: (val: string[]) => {
     const includeFiltered = parsed.value.include.filter((t) => !val.includes(t));
-    keywords.value = buildKeywordString(includeFiltered, val);
+    rebuild(includeFiltered, val);
   },
 });
 
-// When mode changes, rebuild the string with new joiner
 watch(mode, () => {
-  keywords.value = buildKeywordString(parsed.value.include, parsed.value.exclude);
+  rebuild(parsed.value.include, parsed.value.exclude);
 });
 
 const activeCount = computed(() => parsed.value.include.length + parsed.value.exclude.length);
@@ -150,15 +118,32 @@ const matchOptions: Option[] = [
   { value: "or", label: "OR" },
 ];
 
-const rootPT = usePassthrough(pt?.root, {});
-const includePT = usePassthrough(pt?.include, {});
-const excludePT = usePassthrough(pt?.exclude, {});
-const matchPT = usePassthrough(pt?.match, {});
+const popoverPT = usePassthrough(pt?.popover, {
+  props: { open: open.value, align: "end" as const },
+  handlers: { "update:open": (v: boolean) => { open.value = v; } },
+});
+const triggerPT = usePassthrough(pt?.trigger, {
+  props: { icon: "tag" as IconAlias, badge: activeCount.value > 0 ? activeCount.value : undefined },
+  handlers: {},
+});
+const rootPT = usePassthrough(pt?.root, { props: {}, handlers: {} });
+const includePT = usePassthrough(pt?.include, { props: {}, handlers: {} });
+const includeLabelPT = usePassthrough(pt?.includeLabel, { props: {}, handlers: {} });
+const excludePT = usePassthrough(pt?.exclude, { props: {}, handlers: {} });
+const excludeLabelPT = usePassthrough(pt?.excludeLabel, { props: {}, handlers: {} });
+const matchPT = usePassthrough(pt?.match, { props: {}, handlers: {} });
+const matchLabelPT = usePassthrough(pt?.matchLabel, { props: {}, handlers: {} });
+const matchControlPT = usePassthrough(pt?.matchControl, {
+  props: { modelValue: mode.value, options: matchOptions },
+  handlers: { "update:modelValue": (v: string) => { mode.value = v as "and" | "or"; } },
+});
 const includeInputPT = usePassthrough(pt?.includeInput, {
-  props: { placeholder: "Add keyword...", delimiter: "" },
+  props: { modelValue: includeModel.value, placeholder: "Add keyword...", delimiter: "" },
+  handlers: { "update:modelValue": (v: string[]) => { includeModel.value = v; } },
 });
 const excludeInputPT = usePassthrough(pt?.excludeInput, {
-  props: { placeholder: "Exclude keyword...", delimiter: "" },
+  props: { modelValue: excludeModel.value, placeholder: "Exclude keyword...", delimiter: "" },
+  handlers: { "update:modelValue": (v: string[]) => { excludeModel.value = v; } },
 });
 
 const ctx = computed(() => ({
@@ -172,69 +157,75 @@ const ctx = computed(() => ({
 </script>
 
 <template>
-  <Popover v-model:open="open" align="end">
-    <slot name="trigger" v-bind="ctx">
-      <Fab icon="tag" :badge="activeCount > 0 ? activeCount : undefined" />
-    </slot>
-    <template #content>
-      <slot v-bind="ctx">
-        <Group ref="el" v-bind="rootPT.props" class="f-keywords" v-on="rootPT.handlers">
-          <slot name="include" v-bind="ctx">
-            <Group v-bind="includePT.props" class="f-keywords-section" v-on="includePT.handlers">
-              <slot name="include-label" v-bind="ctx">
-                <Caption class="f-keywords-label">Include</Caption>
-              </slot>
-              <TagsInput
-                v-model="includeModel"
-                v-bind="includeInputPT.props"
-                class="f-keywords-tags"
-                v-on="includeInputPT.handlers"
-              >
-                <template #input>
-                  <input
-                    :value="includeInput"
-                    placeholder="Add keyword..."
-                    class="f-tags-input-input"
-                    @input="onIncludeInput"
-                    @keydown="onIncludeKeydown"
-                  >
-                </template>
-              </TagsInput>
-            </Group>
-          </slot>
-          <slot name="exclude" v-bind="ctx">
-            <Group v-bind="excludePT.props" class="f-keywords-section" v-on="excludePT.handlers">
-              <slot name="exclude-label" v-bind="ctx">
-                <Caption class="f-keywords-label">Exclude</Caption>
-              </slot>
-              <TagsInput
-                v-model="excludeModel"
-                v-bind="excludeInputPT.props"
-                class="f-keywords-tags"
-                v-on="excludeInputPT.handlers"
-              >
-                <template #input>
-                  <input
-                    :value="excludeInput"
-                    placeholder="Exclude keyword..."
-                    class="f-tags-input-input"
-                    @input="onExcludeInput"
-                    @keydown="onExcludeKeydown"
-                  >
-                </template>
-              </TagsInput>
-            </Group>
-          </slot>
-          <slot name="match" v-bind="ctx">
-            <Group v-bind="matchPT.props" class="f-keywords-match" v-on="matchPT.handlers">
-              <slot name="match-label" v-bind="ctx">
-                <Caption class="f-keywords-label">Match</Caption>
-              </slot>
-              <SegmentedControl v-model="mode" :options="matchOptions" />
-            </Group>
-          </slot>
-        </Group>
+  <slot name="popover" v-bind="ctx">
+    <Popover v-bind="popoverPT.props" v-on="popoverPT.handlers">
+      <slot name="trigger" v-bind="ctx">
+        <Fab v-bind="triggerPT.props" v-on="triggerPT.handlers" />
       </slot>
-    </template>
-  </Popover>
+      <template #content>
+        <slot name="root" v-bind="ctx">
+          <Group ref="el" v-bind="rootPT.props" class="f-keywords" v-on="rootPT.handlers">
+            <slot name="include" v-bind="ctx">
+              <Group v-bind="includePT.props" class="f-keywords-section" v-on="includePT.handlers">
+                <slot name="includeLabel" v-bind="ctx">
+                  <Caption v-bind="includeLabelPT.props" class="f-keywords-label" v-on="includeLabelPT.handlers">Include</Caption>
+                </slot>
+                <slot name="includeInput" v-bind="ctx">
+                  <TagsInput
+                    v-bind="includeInputPT.props"
+                    class="f-keywords-tags"
+                    v-on="includeInputPT.handlers"
+                  >
+                    <template #input>
+                      <input
+                        :value="includeInput"
+                        placeholder="Add keyword..."
+                        class="f-tags-input-input"
+                        @input="onIncludeInput"
+                        @keydown="onIncludeKeydown"
+                      >
+                    </template>
+                  </TagsInput>
+                </slot>
+              </Group>
+            </slot>
+            <slot name="exclude" v-bind="ctx">
+              <Group v-bind="excludePT.props" class="f-keywords-section" v-on="excludePT.handlers">
+                <slot name="excludeLabel" v-bind="ctx">
+                  <Caption v-bind="excludeLabelPT.props" class="f-keywords-label" v-on="excludeLabelPT.handlers">Exclude</Caption>
+                </slot>
+                <slot name="excludeInput" v-bind="ctx">
+                  <TagsInput
+                    v-bind="excludeInputPT.props"
+                    class="f-keywords-tags"
+                    v-on="excludeInputPT.handlers"
+                  >
+                    <template #input>
+                      <input
+                        :value="excludeInput"
+                        placeholder="Exclude keyword..."
+                        class="f-tags-input-input"
+                        @input="onExcludeInput"
+                        @keydown="onExcludeKeydown"
+                      >
+                    </template>
+                  </TagsInput>
+                </slot>
+              </Group>
+            </slot>
+            <slot name="match" v-bind="ctx">
+              <Group v-bind="matchPT.props" class="f-keywords-match" v-on="matchPT.handlers">
+                <slot name="matchLabel" v-bind="ctx">
+                  <Caption v-bind="matchLabelPT.props" class="f-keywords-label" v-on="matchLabelPT.handlers">Match</Caption>
+                </slot>
+                <slot name="matchControl" v-bind="ctx">
+                  <SegmentedControl v-bind="matchControlPT.props" v-on="matchControlPT.handlers" />
+                </slot>
+              </Group>
+            </slot>
+          </Group>
+        </slot>
+      </template>
+    </Popover>
+  </slot>
 </template>

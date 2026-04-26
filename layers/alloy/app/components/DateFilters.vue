@@ -1,7 +1,8 @@
 <script lang="ts">
+import { today, getLocalTimeZone } from "@internationalized/date";
 import type { DateValue } from "@internationalized/date";
-import { today, getLocalTimeZone, CalendarDate } from "@internationalized/date";
-import type { DateFiltersProps, DateFilter, DateFilterOperator } from "../types/date-filters";
+import type { DateRange } from "reka-ui";
+import type { DateFiltersProps } from "../types/date-filters";
 </script>
 
 <script setup lang="ts">
@@ -12,8 +13,6 @@ defineExpose({ el });
 
 const filters = defineModel<DateFilter[]>({ default: () => [] });
 const open = ref(false);
-
-// Stepper state
 const step = ref<1 | 2 | 3>(1);
 const selectedField = ref("");
 const selectedOperator = ref<DateFilterOperator | "">("");
@@ -22,13 +21,9 @@ const selectedRange = ref<DateRange>();
 
 const activeCount = computed(() => filters.value.length);
 
-// Step 1 — field groups for Command
 const fieldGroups = computed(() => [{
   key: "fields",
-  items: fields.map((f) => ({
-    value: f.key,
-    label: f.label,
-  })),
+  items: fields.map((f) => ({ value: f.key, label: f.label })),
 }]);
 
 const fieldSelected = ref<Set<string>>(new Set());
@@ -42,7 +37,6 @@ const onFieldSelect = (value: string) => {
   step.value = 2;
 };
 
-// Step 2 — operator groups for Command
 const operatorGroups = computed(() => [{
   key: "operators",
   items: [
@@ -62,18 +56,21 @@ const onOperatorSelect = (value: string) => {
   step.value = 3;
 };
 
-// Step 3 — calendar
-const dateValueToDate = (dv: DateValue): Date => dv.toDate("UTC");
-
-const dateToCalendarDate = (d: Date): CalendarDate =>
-  new CalendarDate(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
-
 const isFormValid = computed(() => {
   if (selectedOperator.value === "between") {
     return !!(selectedRange.value?.start && selectedRange.value?.end);
   }
   return !!selectedDate.value;
 });
+
+const resetStepper = () => {
+  open.value = false;
+  step.value = 1;
+  selectedField.value = "";
+  selectedOperator.value = "";
+  selectedDate.value = undefined;
+  selectedRange.value = undefined;
+};
 
 const applyFilter = () => {
   if (!selectedField.value || !selectedOperator.value) return;
@@ -84,15 +81,15 @@ const applyFilter = () => {
     filter = {
       field: selectedField.value,
       operator: selectedOperator.value,
-      value: dateValueToDate(selectedRange.value.start),
-      endValue: dateValueToDate(selectedRange.value.end),
+      value: DateUtils.serialize(selectedRange.value.start),
+      endValue: DateUtils.serialize(selectedRange.value.end),
     };
   } else {
     if (!selectedDate.value) return;
     filter = {
       field: selectedField.value,
       operator: selectedOperator.value,
-      value: dateValueToDate(selectedDate.value),
+      value: DateUtils.serialize(selectedDate.value),
     };
   }
 
@@ -100,7 +97,6 @@ const applyFilter = () => {
   resetStepper();
 };
 
-// Navigation
 const goToStep = (target: 1 | 2 | 3) => {
   if (target === step.value) return;
   if (target === 1) {
@@ -117,16 +113,6 @@ const goToStep = (target: 1 | 2 | 3) => {
   }
 };
 
-const resetStepper = () => {
-  open.value = false;
-  step.value = 1;
-  selectedField.value = "";
-  selectedOperator.value = "";
-  selectedDate.value = undefined;
-  selectedRange.value = undefined;
-};
-
-// Step display
 const fieldLabel = computed(() =>
   fields.find((f) => f.key === selectedField.value)?.label ?? "Field",
 );
@@ -136,16 +122,13 @@ const operatorLabel = computed(() => {
   return selectedOperator.value.charAt(0).toUpperCase() + selectedOperator.value.slice(1);
 });
 
-const formatDateValue = (dv: DateValue) =>
-  `${dv.year}-${String(dv.month).padStart(2, "0")}-${String(dv.day).padStart(2, "0")}`;
-
 const valueLabel = computed(() => {
   if (selectedOperator.value === "between") {
     if (!selectedRange.value?.start || !selectedRange.value?.end) return "Value";
-    return `${formatDateValue(selectedRange.value.start)},${formatDateValue(selectedRange.value.end)}`;
+    return `${DateUtils.format(selectedRange.value.start)},${DateUtils.format(selectedRange.value.end)}`;
   }
   if (!selectedDate.value) return "Value";
-  return formatDateValue(selectedDate.value);
+  return DateUtils.format(selectedDate.value);
 });
 
 watch(open, (isOpen) => {
@@ -157,12 +140,12 @@ watch(open, (isOpen) => {
     nextTick(() => {
       if (last.operator === "between" && last.endValue) {
         selectedRange.value = {
-          start: dateToCalendarDate(last.value),
-          end: dateToCalendarDate(last.endValue),
+          start: DateUtils.deserialize(last.value),
+          end: DateUtils.deserialize(last.endValue),
         };
         selectedDate.value = undefined;
       } else {
-        selectedDate.value = dateToCalendarDate(last.value);
+        selectedDate.value = DateUtils.deserialize(last.value);
         selectedRange.value = undefined;
       }
     });
@@ -175,91 +158,131 @@ watch(open, (isOpen) => {
   }
 });
 
-const rootPT = usePassthrough(pt?.root, {});
+const popoverPT = usePassthrough(pt?.popover, {
+  props: { open: open.value, align: "end" as const },
+  handlers: { "update:open": (v: boolean) => { open.value = v; } },
+});
+const triggerPT = usePassthrough(pt?.trigger, {
+  props: { icon: "calendar" as IconAlias, badge: activeCount.value > 0 ? "" : undefined },
+  handlers: {},
+});
+const rootPT = usePassthrough(pt?.root, { props: {}, handlers: {} });
+const stepperPT = usePassthrough(pt?.stepper, { props: {}, handlers: {} });
+const stepSeparatorPT = usePassthrough(pt?.stepSeparator, { props: { alias: "chevron-right" }, handlers: {} });
+const fieldCommandPT = usePassthrough(pt?.fieldCommand, {
+  props: { groups: fieldGroups.value, placeholder: "Search fields...", selected: fieldSelected.value },
+  handlers: { select: onFieldSelect, "update:selected": (v: Set<string>) => { fieldSelected.value = v; } },
+});
+const operatorCommandPT = usePassthrough(pt?.operatorCommand, {
+  props: { groups: operatorGroups.value, placeholder: "Search operators...", selected: operatorSelected.value },
+  handlers: { select: onOperatorSelect, "update:selected": (v: Set<string>) => { operatorSelected.value = v; } },
+});
+const calendarWrapperPT = usePassthrough(pt?.calendarWrapper, { props: {}, handlers: {} });
+const calendarPTProp = usePassthrough(pt?.calendar, {
+  props: { modelValue: selectedDate.value, maxValue: today(getLocalTimeZone()) },
+  handlers: { "update:modelValue": (v: DateValue | undefined) => { selectedDate.value = v; } },
+});
+const rangeCalendarPTProp = usePassthrough(pt?.rangeCalendar, {
+  props: { modelValue: selectedRange.value, maxValue: today(getLocalTimeZone()) },
+  handlers: { "update:modelValue": (v: DateRange) => { selectedRange.value = v; } },
+});
+const actionsPT = usePassthrough(pt?.actions, { props: {}, handlers: {} });
+const applyButtonPT = usePassthrough(pt?.applyButton, {
+  props: { type: "button" as const, disabled: !isFormValid.value },
+  handlers: { click: () => applyFilter() },
+});
 
 const ctx = computed(() => ({ fields, filters: filters.value, activeCount: activeCount.value }));
 </script>
 
 <template>
-  <Popover v-model:open="open" align="end">
-    <slot name="trigger" v-bind="ctx">
-      <Fab icon="calendar" :badge="activeCount > 0 ? '' : undefined" />
-    </slot>
-    <template #content>
-      <slot v-bind="ctx">
-        <Group ref="el" v-bind="rootPT.props" class="f-date-filters" v-on="rootPT.handlers">
-          <!-- Stepper header -->
-          <Group class="f-date-filters-stepper">
-            <button
-              type="button"
-              :tabindex="step === 1 ? -1 : 0"
-              :class="[
-                'f-date-filters-step',
-                { 'f-date-filters-step--active': step === 1 },
-                { 'f-date-filters-step--completed': selectedField },
-                { 'f-date-filters-step--disabled': !selectedField && step !== 1 },
-              ]"
-              @click="goToStep(1)"
-            >
-              {{ fieldLabel }}
-            </button>
-            <Icon alias="chevron-right" class="f-date-filters-step-separator" />
-            <button
-              type="button"
-              :tabindex="step === 2 ? -1 : 0"
-              :class="[
-                'f-date-filters-step',
-                { 'f-date-filters-step--active': step === 2 },
-                { 'f-date-filters-step--completed': selectedOperator },
-                { 'f-date-filters-step--disabled': !selectedOperator && step !== 2 },
-              ]"
-              :disabled="!selectedField"
-              @click="goToStep(2)"
-            >
-              {{ operatorLabel }}
-            </button>
-            <Icon alias="chevron-right" class="f-date-filters-step-separator" />
-            <button
-              type="button"
-              :class="[
-                'f-date-filters-step',
-                { 'f-date-filters-step--active': step === 3 },
-                { 'f-date-filters-step--disabled': step !== 3 },
-              ]"
-              disabled
-            >
-              {{ valueLabel }}
-            </button>
-          </Group>
-
-          <!-- Step 1: Field -->
-          <Command
-            v-if="step === 1"
-            v-model:selected="fieldSelected"
-            :groups="fieldGroups"
-            placeholder="Search fields..."
-            @select="onFieldSelect"
-          />
-
-          <!-- Step 2: Operator -->
-          <Command
-            v-if="step === 2"
-            v-model:selected="operatorSelected"
-            :groups="operatorGroups"
-            placeholder="Search operators..."
-            @select="onOperatorSelect"
-          />
-
-          <!-- Step 3: Calendar -->
-          <Group v-if="step === 3" class="f-date-filters-calendar">
-            <RangeCalendar v-if="selectedOperator === 'between'" v-model="selectedRange" :max-value="today(getLocalTimeZone())" />
-            <Calendar v-else v-model="selectedDate" :max-value="today(getLocalTimeZone())" />
-            <Group class="f-date-filters-actions">
-              <Button type="button" :disabled="!isFormValid" @click="applyFilter">Apply</Button>
-            </Group>
-          </Group>
-        </Group>
+  <slot name="popover" v-bind="ctx">
+    <Popover v-bind="popoverPT.props" v-on="popoverPT.handlers">
+      <slot name="trigger" v-bind="ctx">
+        <Fab v-bind="triggerPT.props" v-on="triggerPT.handlers" />
       </slot>
-    </template>
-  </Popover>
+      <template #content>
+        <slot name="root" v-bind="ctx">
+          <Group ref="el" v-bind="rootPT.props" class="f-date-filters" v-on="rootPT.handlers">
+            <slot name="stepper" v-bind="ctx">
+              <Group v-bind="stepperPT.props" class="f-date-filters-stepper" v-on="stepperPT.handlers">
+                <button
+                  type="button"
+                  :tabindex="step === 1 ? -1 : 0"
+                  :class="[
+                    'f-date-filters-step',
+                    { 'f-date-filters-step--active': step === 1 },
+                    { 'f-date-filters-step--completed': selectedField },
+                    { 'f-date-filters-step--disabled': !selectedField && step !== 1 },
+                  ]"
+                  @click="goToStep(1)"
+                >
+                  {{ fieldLabel }}
+                </button>
+                <Icon v-bind="stepSeparatorPT.props" class="f-date-filters-step-separator" v-on="stepSeparatorPT.handlers" />
+                <button
+                  type="button"
+                  :tabindex="step === 2 ? -1 : 0"
+                  :class="[
+                    'f-date-filters-step',
+                    { 'f-date-filters-step--active': step === 2 },
+                    { 'f-date-filters-step--completed': selectedOperator },
+                    { 'f-date-filters-step--disabled': !selectedOperator && step !== 2 },
+                  ]"
+                  :disabled="!selectedField"
+                  @click="goToStep(2)"
+                >
+                  {{ operatorLabel }}
+                </button>
+                <Icon v-bind="stepSeparatorPT.props" class="f-date-filters-step-separator" v-on="stepSeparatorPT.handlers" />
+                <button
+                  type="button"
+                  :class="[
+                    'f-date-filters-step',
+                    { 'f-date-filters-step--active': step === 3 },
+                    { 'f-date-filters-step--disabled': step !== 3 },
+                  ]"
+                  disabled
+                >
+                  {{ valueLabel }}
+                </button>
+              </Group>
+            </slot>
+
+            <slot name="fieldCommand" v-bind="ctx">
+              <Command
+                v-if="step === 1"
+                v-bind="fieldCommandPT.props"
+                v-on="fieldCommandPT.handlers"
+              />
+            </slot>
+
+            <slot name="operatorCommand" v-bind="ctx">
+              <Command
+                v-if="step === 2"
+                v-bind="operatorCommandPT.props"
+                v-on="operatorCommandPT.handlers"
+              />
+            </slot>
+
+            <slot name="calendarWrapper" v-bind="ctx">
+              <Group v-if="step === 3" v-bind="calendarWrapperPT.props" class="f-date-filters-calendar" v-on="calendarWrapperPT.handlers">
+                <slot name="calendar" v-bind="ctx">
+                  <RangeCalendar v-if="selectedOperator === 'between'" v-bind="rangeCalendarPTProp.props" v-on="rangeCalendarPTProp.handlers" />
+                  <Calendar v-else v-bind="calendarPTProp.props" v-on="calendarPTProp.handlers" />
+                </slot>
+                <slot name="actions" v-bind="ctx">
+                  <Group v-bind="actionsPT.props" class="f-date-filters-actions" v-on="actionsPT.handlers">
+                    <slot name="applyButton" v-bind="ctx">
+                      <Button v-bind="applyButtonPT.props" v-on="applyButtonPT.handlers">Apply</Button>
+                    </slot>
+                  </Group>
+                </slot>
+              </Group>
+            </slot>
+          </Group>
+        </slot>
+      </template>
+    </Popover>
+  </slot>
 </template>

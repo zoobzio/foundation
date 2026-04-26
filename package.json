@@ -22,6 +22,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
+    "@internationalized/date": "^3.7.0",
     "@nuxt/eslint-config": "^1.4.0",
     "@types/figlet": "^1.7.0",
     "@vitejs/plugin-vue": "^6.0.6",
@@ -30,7 +31,8 @@
     "eslint": "^9.0.0",
     "happy-dom": "^20.9.0",
     "vitest": "^4.1.5",
-    "vue": "^3.5.24"
+    "vue": "^3.5.24",
+    "zod": "^3.23.0"
   },
   "dependencies": {
     "figlet": "^1.9.4"

@@ -5,6 +5,9 @@ export type AccordionPassthrough = {
   item?: Passthrough<AccordionItemProps>;
   header?: Passthrough<AccordionHeaderProps>;
   trigger?: Passthrough<AccordionTriggerProps>;
+  triggerContent?: Passthrough<GroupProps>;
+  triggerIcon?: Passthrough<IconProps>;
+  chevron?: Passthrough<IconProps>;
   content?: Passthrough<AccordionContentProps, CollapsibleContentEmits>;
 };
 
@@ -17,7 +20,5 @@ export type AccordionProps = {
 };
 
 export type AccordionEmits = {};
-
-export const defineAccordion = defineComponentRecipe<AccordionProps, AccordionEmits>();
 
 export type AccordionRecipe = Recipe<AccordionProps, AccordionEmits>;

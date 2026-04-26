@@ -17,29 +17,29 @@ defineExpose({ el });
 
 const open = ref(false);
 
-const displayText = computed(() => {
-  if (!model.value.length) return placeholder;
-  if (model.value.length === 1) {
-    const item = items.find((i) => i.value === model.value[0]);
-    return item?.label ?? model.value[0];
-  }
-  return `${model.value.length} selected`;
-});
+const displayText = computed(() =>
+  MultiSelect.display(items, model.value, placeholder),
+);
 
 const isSelected = (value: string) => model.value.includes(value);
 
 const toggle = (value: string) => {
-  if (isSelected(value)) {
-    model.value = model.value.filter((v) => v !== value);
-  } else {
-    model.value = [...model.value, value];
-  }
+  model.value = MultiSelect.toggle(model.value, value);
 };
 
+const popoverPT = usePassthrough(pt?.popover, {
+  props: { open: open.value, disabled },
+  handlers: { "update:open": (v: boolean) => { open.value = v; } },
+});
 const triggerPT = usePassthrough(pt?.trigger, {
   props: { disabled },
+  handlers: {},
 });
-const contentPT = usePassthrough(pt?.content, {});
+const triggerLabelPT = usePassthrough(pt?.triggerLabel, { props: {}, handlers: {} });
+const triggerIconPT = usePassthrough(pt?.triggerIcon, { props: { alias: "chevron-down" }, handlers: {} });
+const contentPT = usePassthrough(pt?.content, { props: {}, handlers: {} });
+const itemCheckboxPT = usePassthrough(pt?.itemCheckbox, { props: {}, handlers: {} });
+const itemLabelPT = usePassthrough(pt?.itemLabel, { props: {}, handlers: {} });
 
 const itemsPT = computed(() =>
   items.map((item) => ({
@@ -63,36 +63,45 @@ const ctx = computed(() => ({
 </script>
 
 <template>
-  <Popover ref="el" v-model:open="open" :disabled="disabled">
+  <Popover ref="el" v-bind="popoverPT.props" v-on="popoverPT.handlers">
     <slot name="trigger" v-bind="ctx">
       <Button
         v-bind="triggerPT.props"
         class="f-multiselect-trigger"
         v-on="triggerPT.handlers"
       >
-        <Span>{{ displayText }}</Span>
-        <Icon alias="chevron-down" />
+        <slot name="triggerLabel" v-bind="ctx">
+          <Span v-bind="triggerLabelPT.props" v-on="triggerLabelPT.handlers">{{ displayText }}</Span>
+        </slot>
+        <slot name="triggerIcon" v-bind="ctx">
+          <Icon v-bind="triggerIconPT.props" v-on="triggerIconPT.handlers" />
+        </slot>
       </Button>
     </slot>
     <template #content>
-      <Group v-bind="contentPT.props" class="f-multiselect-content" v-on="contentPT.handlers">
-        <template v-for="entry in itemsPT" :key="entry.item.value">
-          <slot name="item" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
-            <Button
-              v-bind="entry.pt.props"
-              class="f-multiselect-item"
-              v-on="entry.pt.handlers"
-            >
-              <Checkbox
-                :model-value="isSelected(entry.item.value)"
-                :disabled="entry.item.disabled"
-                tabindex="-1"
-              />
-              <Span>{{ entry.item.label }}</Span>
-            </Button>
-          </slot>
-        </template>
-      </Group>
+      <slot name="content" v-bind="ctx">
+        <Group v-bind="contentPT.props" class="f-multiselect-content" v-on="contentPT.handlers">
+          <template v-for="entry in itemsPT" :key="entry.item.value">
+            <slot name="item" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
+              <Button
+                v-bind="entry.pt.props"
+                class="f-multiselect-item"
+                v-on="entry.pt.handlers"
+              >
+                <slot name="itemCheckbox" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
+                  <Checkbox
+                    v-bind="{ ...itemCheckboxPT.props, modelValue: isSelected(entry.item.value), disabled: entry.item.disabled }"
+                    v-on="itemCheckboxPT.handlers"
+                  />
+                </slot>
+                <slot name="itemLabel" v-bind="{ ...ctx, item: entry.item }">
+                  <Span v-bind="itemLabelPT.props" v-on="itemLabelPT.handlers">{{ entry.item.label }}</Span>
+                </slot>
+              </Button>
+            </slot>
+          </template>
+        </Group>
+      </slot>
     </template>
   </Popover>
 </template>

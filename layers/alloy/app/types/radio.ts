@@ -5,9 +5,11 @@ export type RadioPassthrough = {
   option?: Passthrough<LabelProps>;
   item?: Passthrough<RadioGroupItemProps, RadioGroupItemEmits>;
   indicator?: Passthrough<RadioGroupIndicatorProps>;
+  optionLabel?: Passthrough<SpanProps>;
 };
 
 export type RadioProps = {
+  modelValue?: string;
   options: Option[];
   disabled?: boolean;
   required?: boolean;
@@ -16,8 +18,8 @@ export type RadioProps = {
   pt?: RadioPassthrough;
 };
 
-export type RadioEmits = {};
-
-export const defineRadio = defineComponentRecipe<RadioProps, RadioEmits>();
+export type RadioEmits = {
+  "update:modelValue": [value: string];
+};
 
 export type RadioRecipe = Recipe<RadioProps, RadioEmits>;

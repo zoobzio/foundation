@@ -5,6 +5,7 @@ export type ToastPassthrough = {
   title?: Passthrough<ToastTitleProps>;
   description?: Passthrough<ToastDescriptionProps>;
   close?: Passthrough<ToastCloseProps>;
+  closeIcon?: Passthrough<IconProps>;
 };
 
 export type ToastProps = {
@@ -18,7 +19,5 @@ export type ToastProps = {
 export type ToastEmits = {
   close: [];
 };
-
-export const defineToast = defineComponentRecipe<ToastProps, ToastEmits>();
 
 export type ToastRecipe = Recipe<ToastProps, ToastEmits>;

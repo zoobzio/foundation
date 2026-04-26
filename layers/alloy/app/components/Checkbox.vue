@@ -13,11 +13,15 @@ const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, {
-  props: { disabled, name, value, required },
-  handlers: { "update:modelValue": (v: boolean | "indeterminate") => emit("update:modelValue", v) },
+  props: { modelValue: model.value, disabled, name, value, required },
+  handlers: { "update:modelValue": (v: boolean | "indeterminate") => { model.value = v; emit("update:modelValue", v); } },
 });
 
-const indicatorPT = usePassthrough(pt?.indicator, {});
+const indicatorPT = usePassthrough(pt?.indicator, { props: {}, handlers: {} });
+const iconPT = computed(() => passthrough(pt?.icon, {
+  props: { alias: model.value === "indeterminate" ? "minus" : "check" },
+  handlers: {},
+}));
 
 const ctx = computed(() => ({ disabled, name, value, required, model: model.value }));
 </script>
@@ -25,15 +29,14 @@ const ctx = computed(() => ({ disabled, name, value, required, model: model.valu
 <template>
   <slot ref="el" name="root" v-bind="ctx">
     <CheckboxRoot
-      v-model="model"
       v-bind="rootPT.props"
       class="f-checkbox-root"
       v-on="rootPT.handlers"
     >
       <slot name="indicator" v-bind="ctx">
         <Group v-bind="indicatorPT.props" class="f-checkbox-indicator" v-on="indicatorPT.handlers">
-          <slot>
-            <Icon :alias="model === 'indeterminate' ? 'minus' : 'check'" />
+          <slot name="icon" v-bind="ctx">
+            <Icon v-bind="iconPT.props" v-on="iconPT.handlers" />
           </slot>
         </Group>
       </slot>

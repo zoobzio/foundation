@@ -11,16 +11,20 @@ const emit = defineEmits<DialogEmits>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const overlayPT = usePassthrough(pt?.overlay, {});
-const contentPT = usePassthrough(pt?.content, {});
-const titlePT = usePassthrough(pt?.title, {});
-const descriptionPT = usePassthrough(pt?.description, {});
+const rootPT = usePassthrough(pt?.root, {
+  props: { open },
+  handlers: { "update:open": (v: boolean) => emit("update:open", v) },
+});
+const overlayPT = usePassthrough(pt?.overlay, { props: {}, handlers: {} });
+const contentPT = usePassthrough(pt?.content, { props: {}, handlers: {} });
+const titlePT = usePassthrough(pt?.title, { props: {}, handlers: {} });
+const descriptionPT = usePassthrough(pt?.description, { props: {}, handlers: {} });
 
 const ctx = computed(() => ({ title, description, open }));
 </script>
 
 <template>
-  <DialogRoot ref="el" :open="open" @update:open="emit('update:open', $event)">
+  <DialogRoot ref="el" v-bind="rootPT.props" v-on="rootPT.handlers">
     <DialogPortal>
       <slot name="overlay" v-bind="ctx">
         <DialogOverlay

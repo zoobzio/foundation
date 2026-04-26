@@ -2,6 +2,13 @@ export type PaginationPassthrough = {
   root?: Passthrough<GroupProps>;
   info?: Passthrough<SpanProps>;
   pages?: Passthrough<GroupProps>;
+  first?: Passthrough<FabProps>;
+  prev?: Passthrough<FabProps>;
+  next?: Passthrough<FabProps>;
+  last?: Passthrough<FabProps>;
+  numbers?: Passthrough<GroupProps>;
+  number?: Passthrough<ButtonProps>;
+  pageSize?: Passthrough<SelectProps, SelectEmits>;
 };
 
 export type PaginationProps = {
@@ -16,7 +23,5 @@ export type PaginationProps = {
 export type PaginationEmits = {
   "update:pageSize": [value: number];
 };
-
-export const definePagination = defineComponentRecipe<PaginationProps, PaginationEmits>();
 
 export type PaginationRecipe = Recipe<PaginationProps, PaginationEmits>;

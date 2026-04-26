@@ -18,6 +18,4 @@ export type ListboxEmits = {
   "update:modelValue": [string | string[]];
 };
 
-export const defineListbox = defineComponentRecipe<ListboxProps, ListboxEmits>();
-
 export type ListboxRecipe = Recipe<ListboxProps, ListboxEmits>;

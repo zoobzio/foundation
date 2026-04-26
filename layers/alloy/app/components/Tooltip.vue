@@ -18,9 +18,11 @@ defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, {
   props: { delayDuration },
+  handlers: {},
 });
 const contentPT = usePassthrough(pt?.content, {
   props: { side, align, sideOffset },
+  handlers: {},
 });
 
 const ctx = computed(() => ({ content, delayDuration, side, align, sideOffset }));

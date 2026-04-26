@@ -4,6 +4,12 @@ export type HtmlAttrs = {
   class?: HTMLAttributes["class"];
   id?: string;
   style?: StyleValue;
+  title?: string;
+  alt?: string;
+  src?: string;
+  href?: string;
+  placeholder?: string;
+  tabindex?: number | string;
   [key: `aria-${string}`]: string | boolean | undefined;
   [key: `data-${string}`]: string | boolean | number | undefined;
 };
@@ -44,6 +50,3 @@ export type Recipe<Props, Emits = {}> = {
   handlers: EmitHandlers<Emits> & DomHandlers;
 };
 
-export const defineComponentRecipe = <Props, Emits = {}>() => {
-  return (props: Props & HtmlAttrs, handlers: EmitHandlers<Emits> & DomHandlers = {}): Recipe<Props, Emits> => ({ props, handlers });
-};

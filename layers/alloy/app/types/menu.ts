@@ -15,11 +15,15 @@ export type MenuGroup = {
 export type MenuPassthrough = {
   root?: Passthrough<DropdownMenuRootProps, DropdownMenuRootEmits>;
   content?: Passthrough<DropdownMenuContentProps, DropdownMenuContentEmits>;
+  groupLabel?: Passthrough<CaptionProps>;
   item?: Passthrough<DropdownMenuItemProps, DropdownMenuItemEmits>;
+  itemIcon?: Passthrough<IconProps>;
+  itemLabel?: Passthrough<SpanProps>;
   separator?: Passthrough<DropdownMenuSeparatorProps>;
 };
 
 export type MenuProps = {
+  open?: boolean;
   groups: MenuGroup[];
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
@@ -30,8 +34,7 @@ export type MenuProps = {
 
 export type MenuEmits = {
   select: [item: MenuItem];
+  "update:open": [value: boolean];
 };
-
-export const defineMenu = defineComponentRecipe<MenuProps, MenuEmits>();
 
 export type MenuRecipe = Recipe<MenuProps, MenuEmits>;
