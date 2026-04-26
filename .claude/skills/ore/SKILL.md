@@ -1,23 +1,23 @@
 ---
 name: ore
 description: >
-  Manage ore elements — the foundational 1:1 HTML wrappers in layers/ore/.
-  Use when creating, inspecting, modifying, or removing elements.
+  Conventions and playbooks for ore elements in layers/ore/.
+  Use when creating, reading, updating, or deleting files in layers/ore/app/.
   Elements are behavior-free HTML wrappers with a modifier system.
-  If JS behavior is needed, redirect to /alloy.
-argument-hint: [action] [description-or-name]
-arguments: [action, target]
+  If JS behavior is needed, the work belongs in alloy instead.
+user-invocable: false
 allowed-tools: Read Grep Glob Write Edit
 ---
 
-# Ore — Element Management
+# Ore — Element Conventions
 
-Route on `$action`: **create** | **read** | **update** | **delete**
+Follow the appropriate playbook based on the operation:
 
-- If action is "create": follow [create.md](create.md)
-- If action is "read": follow [read.md](read.md)
-- If action is "update": follow [update.md](update.md)
-- If action is "delete": follow [delete.md](delete.md)
+- Creating a new element: follow [create.md](create.md) → cascades to [test.md](test.md)
+- Finding the right element: follow [read.md](read.md)
+- Modifying an element: follow [update.md](update.md) → cascades to [test.md](test.md)
+- Removing an element: follow [delete.md](delete.md) (includes test cleanup)
+- Writing/updating tests: follow [test.md](test.md)
 
 ## What is an Element?
 

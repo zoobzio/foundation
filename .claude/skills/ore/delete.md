@@ -1,6 +1,6 @@
 # ore delete
 
-Remove an ore element: `$target`
+Remove an ore element
 
 ## Step 1 — Resolve
 
@@ -37,3 +37,4 @@ Only after explicit user confirmation:
 1. Remove from `OreElements` union in `layers/ore/app/types/modifiers.ts`
 2. Delete `layers/ore/app/types/{name}.ts`
 3. Delete `layers/ore/app/components/{Name}.vue`
+4. Delete `tests/unit/layers/ore/app/components/{Name}.test.ts`

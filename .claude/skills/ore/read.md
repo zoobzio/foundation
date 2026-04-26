@@ -1,6 +1,6 @@
 # ore read
 
-Find the right ore element for a use case: `$target`
+Find the right ore element for a use case
 
 ## Step 1 — Understand Intent
 

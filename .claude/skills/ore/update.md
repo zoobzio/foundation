@@ -1,6 +1,6 @@
 # ore update
 
-Modify an existing ore element: `$target`
+Modify an existing ore element
 
 ## Step 1 — Resolve & Read
 
@@ -48,3 +48,9 @@ Include before/after for modified sections. Wait for confirmation.
 ## Step 5 — Execute
 
 Only after user confirms, apply the changes to the type file and component file.
+
+## Step 6 — Test
+
+After updating the element, follow [test.md](test.md) to update the test file.
+Add tests for new props, remove tests for removed props, update assertions for changed behavior.
+Run the test to verify: `npx vitest run layers/ore/tests/components/{Name}.test.ts`

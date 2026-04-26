@@ -1,6 +1,6 @@
 # ore create
 
-Create a new ore element from the user's description: `$target`
+Create a new ore element from the user's description
 
 ## Step 1 — Parse Intent
 
@@ -53,3 +53,8 @@ Only after user confirms:
 Follow the exact patterns from existing elements. Match the style of the closest
 analog (e.g., if creating a void element, reference Img or Hr; if composing Icon,
 reference Alert or Chip).
+
+## Step 5 — Test
+
+After creating the element, follow [test.md](test.md) to generate the test file.
+Run the test to verify: `npx vitest run layers/ore/tests/components/{Name}.test.ts`
