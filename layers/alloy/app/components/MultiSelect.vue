@@ -1,16 +1,17 @@
 <script lang="ts">
-import type { MultiSelectProps } from "../types/multi-select";
+import type { MultiSelectProps, MultiSelectEmits } from "../types/multi-select";
 </script>
 
 <script setup lang="ts">
 const {
+  modelValue,
   pt,
   items,
   placeholder = "Select options",
   disabled,
 } = defineProps<MultiSelectProps>();
 
-const model = defineModel<string[]>({ default: () => [] });
+const emit = defineEmits<MultiSelectEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
@@ -18,13 +19,13 @@ defineExpose({ el });
 const open = ref(false);
 
 const displayText = computed(() =>
-  MultiSelect.display(items, model.value, placeholder),
+  MultiSelect.display(items, modelValue ?? [], placeholder),
 );
 
-const isSelected = (value: string) => model.value.includes(value);
+const isSelected = (value: string) => (modelValue ?? []).includes(value);
 
 const toggle = (value: string) => {
-  model.value = MultiSelect.toggle(model.value, value);
+  emit("update:modelValue", MultiSelect.toggle(modelValue ?? [], value));
 };
 
 const popoverPT = usePassthrough(pt?.popover, () => ({
@@ -55,7 +56,7 @@ const ctx = computed(() => ({
   items,
   placeholder,
   disabled,
-  model: model.value,
+  model: modelValue ?? [],
   open: open.value,
   displayText: displayText.value,
   isSelected,

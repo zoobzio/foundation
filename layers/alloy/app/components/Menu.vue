@@ -14,6 +14,7 @@ import {
 
 <script setup lang="ts">
 const {
+  open,
   groups,
   side = "bottom",
   align = "center",
@@ -27,15 +28,13 @@ const emit = defineEmits<MenuEmits>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const open = defineModel<boolean>("open", { default: false });
-
 const onSelect = (item: MenuItem) => {
   emit("select", item);
 };
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { open: open.value },
-  handlers: { "update:open": (v: boolean) => { open.value = v; } },
+  props: { open },
+  handlers: { "update:open": (v: boolean) => { emit("update:open", v); } },
 }));
 const contentPT = usePassthrough(pt?.content, {
   props: { side, align, sideOffset, alignOffset },
@@ -61,7 +60,7 @@ const groupsPT = computed(() =>
   })),
 );
 
-const ctx = computed(() => ({ groups, open: open.value }));
+const ctx = computed(() => ({ groups, open }));
 </script>
 
 <template>

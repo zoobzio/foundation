@@ -1,16 +1,16 @@
 <script lang="ts">
-import type { FacetsProps } from "../types/facets";
+import type { FacetsProps, FacetsEmits } from "../types/facets";
 </script>
 
 <script setup lang="ts">
-const { groups, pt } = defineProps<FacetsProps>();
+const { groups, selected, pt } = defineProps<FacetsProps>();
+
+const emit = defineEmits<FacetsEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
-
-const selected = defineModel<Set<string>>("selected", { default: () => new Set() });
 const open = ref(false);
-const activeCount = computed(() => selected.value.size);
+const activeCount = computed(() => selected?.size ?? 0);
 
 const popoverPT = usePassthrough(pt?.popover, () => ({
   props: { open: open.value, align: "end" as const },
@@ -21,11 +21,11 @@ const triggerPT = usePassthrough(pt?.trigger, () => ({
   handlers: {},
 }));
 const commandPT = usePassthrough(pt?.command, () => ({
-  props: { groups, placeholder: "Search filters...", multiple: true, selected: selected.value },
-  handlers: { "update:selected": (v: Set<string>) => { selected.value = v; } },
+  props: { groups, placeholder: "Search filters...", multiple: true, selected },
+  handlers: { "update:selected": (v: Set<string>) => { emit("update:selected", v); } },
 }));
 
-const ctx = computed(() => ({ groups, selected: selected.value, activeCount: activeCount.value }));
+const ctx = computed(() => ({ groups, selected, activeCount: activeCount.value }));
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { DatePickerProps } from "../types/date-picker";
+import type { DatePickerProps, DatePickerEmits } from "../types/date-picker";
 import type { DatePickerInputProps } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 import {
@@ -25,6 +25,7 @@ import {
 
 <script setup lang="ts">
 const {
+  modelValue,
   pt,
   minValue,
   maxValue,
@@ -34,14 +35,14 @@ const {
   isDateDisabled,
 } = defineProps<DatePickerProps>();
 
-const model = defineModel<DateValue>();
+const emit = defineEmits<DatePickerEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, minValue, maxValue, locale, disabled, granularity, isDateDisabled },
-  handlers: { "update:modelValue": (v: DateValue | undefined) => { model.value = v; } },
+  props: { modelValue, minValue, maxValue, locale, disabled, granularity, isDateDisabled },
+  handlers: { "update:modelValue": (v: DateValue | undefined) => { emit("update:modelValue", v); } },
 }));
 const contentPT = usePassthrough(pt?.content, {
   props: { sideOffset: 8 },
@@ -73,7 +74,7 @@ const cellTriggerPT = (day: DateValue, month: DateValue) =>
 
 const ctx = computed(() => ({
   minValue, maxValue, locale, disabled, granularity, isDateDisabled,
-  model: model.value,
+  model: modelValue,
 }));
 </script>
 

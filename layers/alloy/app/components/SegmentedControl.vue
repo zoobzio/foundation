@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { SegmentedControlProps } from "../types/segmented-control";
+import type { SegmentedControlProps, SegmentedControlEmits } from "../types/segmented-control";
 import type { AcceptableValue } from "reka-ui";
 import {
   ToggleGroupRoot,
@@ -9,13 +9,14 @@ import {
 
 <script setup lang="ts">
 const {
+  modelValue,
   pt,
   options,
   disabled,
   required,
 } = defineProps<SegmentedControlProps>();
 
-const model = defineModel<string>();
+const emit = defineEmits<SegmentedControlEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
@@ -24,11 +25,11 @@ defineExpose({ el });
 const handleUpdate = (value: AcceptableValue | AcceptableValue[]) => {
   const val = Array.isArray(value) ? value[0] : value;
   if (required && !val) return;
-  if (typeof val === "string") model.value = val;
+  if (typeof val === "string") emit("update:modelValue", val);
 };
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, type: "single" as const, disabled },
+  props: { modelValue, type: "single" as const, disabled },
   handlers: { "update:modelValue": handleUpdate },
 }));
 
@@ -51,7 +52,7 @@ const ctx = computed(() => ({
   options,
   disabled,
   required,
-  model: model.value,
+  model: modelValue,
 }));
 </script>
 

@@ -1,11 +1,12 @@
 <script lang="ts">
 import { SelectRoot, SelectTrigger, SelectPortal, SelectContent, SelectItem, SelectItemText } from "reka-ui";
 import type { AcceptableValue } from "reka-ui";
-import type { SelectProps } from "../types/select";
+import type { SelectProps, SelectEmits } from "../types/select";
 </script>
 
 <script setup lang="ts">
 const {
+  modelValue,
   options,
   placeholder = "Select an option",
   disabled,
@@ -14,19 +15,19 @@ const {
   pt,
 } = defineProps<SelectProps>();
 
-const model = defineModel<string>();
+const emit = defineEmits<SelectEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const displayText = computed(() => {
-  const selected = options.find((o) => o.value === model.value);
+  const selected = options.find((o) => o.value === modelValue);
   return selected?.label ?? placeholder;
 });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, disabled, required, name },
-  handlers: { "update:modelValue": (v: AcceptableValue) => { model.value = String(v); } },
+  props: { modelValue, disabled, required, name },
+  handlers: { "update:modelValue": (v: AcceptableValue) => { emit("update:modelValue", String(v)); } },
 }));
 const triggerPT = usePassthrough(pt?.trigger, { props: {}, handlers: {} });
 const contentPT = usePassthrough(pt?.content, {
@@ -47,7 +48,7 @@ const itemsPT = computed(() =>
   })),
 );
 
-const ctx = computed(() => ({ options, placeholder, disabled, required, name, model: model.value, displayText: displayText.value }));
+const ctx = computed(() => ({ options, placeholder, disabled, required, name, model: modelValue, displayText: displayText.value }));
 </script>
 
 <template>

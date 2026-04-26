@@ -4,26 +4,24 @@ import type { CheckboxProps, CheckboxEmits } from "../types/checkbox";
 </script>
 
 <script setup lang="ts">
-const { disabled, name, value, required, pt } = defineProps<CheckboxProps>();
+const { modelValue, disabled, name, value, required, pt } = defineProps<CheckboxProps>();
 const emit = defineEmits<CheckboxEmits>();
-
-const model = defineModel<boolean | "indeterminate">();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, disabled, name, value, required },
-  handlers: { "update:modelValue": (v: boolean | "indeterminate") => { model.value = v; emit("update:modelValue", v); } },
+  props: { modelValue, disabled, name, value, required },
+  handlers: { "update:modelValue": (v: boolean | "indeterminate") => { emit("update:modelValue", v); } },
 }));
 
 const indicatorPT = usePassthrough(pt?.indicator, { props: {}, handlers: {} });
 const iconPT = computed(() => passthrough(pt?.icon, {
-  props: { alias: model.value === "indeterminate" ? "minus" : "check" },
+  props: { alias: modelValue === "indeterminate" ? "minus" : "check" },
   handlers: {},
 }));
 
-const ctx = computed(() => ({ disabled, name, value, required, model: model.value }));
+const ctx = computed(() => ({ disabled, name, value, required, modelValue }));
 </script>
 
 <template>

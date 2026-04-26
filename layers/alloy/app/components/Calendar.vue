@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { CalendarProps } from "../types/calendar";
+import type { CalendarProps, CalendarEmits } from "../types/calendar";
 import type { DateValue } from "@internationalized/date";
 import {
   CalendarRoot,
@@ -19,6 +19,7 @@ import {
 
 <script setup lang="ts">
 const {
+  modelValue,
   pt,
   minValue,
   maxValue,
@@ -30,14 +31,14 @@ const {
   isDateUnavailable,
 } = defineProps<CalendarProps>();
 
-const model = defineModel<DateValue>();
+const emit = defineEmits<CalendarEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, minValue, maxValue, locale, numberOfMonths, fixedWeeks, disabled, isDateDisabled, isDateUnavailable },
-  handlers: { "update:modelValue": (v: DateValue | undefined) => { model.value = v; } },
+  props: { modelValue, minValue, maxValue, locale, numberOfMonths, fixedWeeks, disabled, isDateDisabled, isDateUnavailable },
+  handlers: { "update:modelValue": (v: DateValue | undefined) => { emit("update:modelValue", v); } },
 }));
 const headerPT = usePassthrough(pt?.header, { props: {}, handlers: {} });
 const headingPT = usePassthrough(pt?.heading, { props: {}, handlers: {} });
@@ -66,7 +67,7 @@ const ctx = computed(() => ({
   disabled,
   isDateDisabled,
   isDateUnavailable,
-  model: model.value,
+  model: modelValue,
 }));
 </script>
 

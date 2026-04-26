@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { RangeCalendarProps } from "../types/range-calendar";
+import type { RangeCalendarProps, RangeCalendarEmits } from "../types/range-calendar";
 import type { DateRange } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 import {
@@ -20,6 +20,7 @@ import {
 
 <script setup lang="ts">
 const {
+  modelValue,
   pt,
   minValue,
   maxValue,
@@ -31,14 +32,14 @@ const {
   isDateUnavailable,
 } = defineProps<RangeCalendarProps>();
 
-const model = defineModel<DateRange>();
+const emit = defineEmits<RangeCalendarEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, minValue, maxValue, locale, numberOfMonths, fixedWeeks, disabled, isDateDisabled, isDateUnavailable },
-  handlers: { "update:modelValue": (v: DateRange) => { model.value = v; } },
+  props: { modelValue, minValue, maxValue, locale, numberOfMonths, fixedWeeks, disabled, isDateDisabled, isDateUnavailable },
+  handlers: { "update:modelValue": (v: DateRange) => { emit("update:modelValue", v); } },
 }));
 const headerPT = usePassthrough(pt?.header, { props: {}, handlers: {} });
 const headingPT = usePassthrough(pt?.heading, { props: {}, handlers: {} });
@@ -61,7 +62,7 @@ const cellTriggerPT = (day: DateValue, month: DateValue) =>
 
 const ctx = computed(() => ({
   minValue, maxValue, locale, numberOfMonths, fixedWeeks, disabled, isDateDisabled, isDateUnavailable,
-  model: model.value,
+  model: modelValue,
 }));
 </script>
 

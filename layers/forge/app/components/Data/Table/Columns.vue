@@ -1,8 +1,6 @@
 <script lang="ts">
-import type {
-  DataTableColumn,
-  DataTableColumnsProps,
-} from "../../../types/data-table";
+import type { DataTableColumn } from "../../../types/data-table";
+import type { DataTableColumnsProps } from "../../../types/data-table-columns";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">

@@ -6,12 +6,10 @@ import type { DateFiltersProps } from "../types/date-filters";
 </script>
 
 <script setup lang="ts">
-const { fields, addFilter, removeFilter: _removeFilter, pt } = defineProps<DateFiltersProps>();
+const { modelValue: filters, fields, addFilter, removeFilter: _removeFilter, pt } = defineProps<DateFiltersProps>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
-
-const filters = defineModel<DateFilter[]>({ default: () => [] });
 const open = ref(false);
 const step = ref<1 | 2 | 3>(1);
 const selectedField = ref("");
@@ -19,7 +17,7 @@ const selectedOperator = ref<DateFilterOperator | "">("");
 const selectedDate = ref<DateValue>();
 const selectedRange = ref<DateRange>();
 
-const activeCount = computed(() => filters.value.length);
+const activeCount = computed(() => filters?.length ?? 0);
 
 const fieldGroups = computed(() => [{
   key: "fields",
@@ -132,8 +130,8 @@ const valueLabel = computed(() => {
 });
 
 watch(open, (isOpen) => {
-  if (isOpen && filters.value.length) {
-    const last = filters.value[filters.value.length - 1]!;
+  if (isOpen && filters?.length) {
+    const last = filters[filters.length - 1]!;
     selectedField.value = last.field;
     selectedOperator.value = last.operator;
     step.value = 3;
@@ -192,7 +190,7 @@ const applyButtonPT = usePassthrough(pt?.applyButton, () => ({
   handlers: { click: () => applyFilter() },
 }));
 
-const ctx = computed(() => ({ fields, filters: filters.value, activeCount: activeCount.value }));
+const ctx = computed(() => ({ fields, filters: filters, activeCount: activeCount.value }));
 </script>
 
 <template>

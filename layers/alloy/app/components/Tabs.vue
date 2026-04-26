@@ -1,19 +1,19 @@
 <script lang="ts">
 import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";
-import type { TabsProps } from "../types/tabs";
+import type { TabsProps, TabsEmits } from "../types/tabs";
 </script>
 
 <script setup lang="ts">
-const { tabs: tabItems, pt } = defineProps<TabsProps>();
+const { modelValue, tabs: tabItems, pt } = defineProps<TabsProps>();
 
-const model = defineModel<string>();
+const emit = defineEmits<TabsEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value },
-  handlers: { "update:modelValue": (v: string | number) => { model.value = String(v); } },
+  props: { modelValue },
+  handlers: { "update:modelValue": (v: string | number) => { emit("update:modelValue", String(v)); } },
 }));
 const listPT = usePassthrough(pt?.list, { props: {}, handlers: {} });
 
@@ -40,7 +40,7 @@ const contentsPT = computed(() =>
   })),
 );
 
-const ctx = computed(() => ({ tabs: tabItems, model }));
+const ctx = computed(() => ({ tabs: tabItems, model: modelValue }));
 </script>
 
 <template>

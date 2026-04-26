@@ -1,11 +1,12 @@
 <script lang="ts">
 import { PopoverRoot, PopoverAnchor, PopoverTrigger, PopoverPortal, PopoverContent, PopoverArrow, PopoverClose } from "reka-ui";
-import type { PopoverProps } from "../types/popover";
+import type { PopoverProps, PopoverEmits } from "../types/popover";
 import type { ReferenceElement } from "reka-ui";
 </script>
 
 <script setup lang="ts">
 const {
+  open,
   reference,
   defaultOpen = false,
   modal = false,
@@ -16,17 +17,17 @@ const {
   arrow = false,
   pt,
 } = defineProps<
-  Omit<PopoverProps, "open"> & { reference?: ReferenceElement }
+  PopoverProps & { reference?: ReferenceElement }
 >();
 
-const open = defineModel<boolean>("open", { default: false });
+const emit = defineEmits<PopoverEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { open: open.value, defaultOpen, modal },
-  handlers: { "update:open": (v: boolean) => { open.value = v; } },
+  props: { open, defaultOpen, modal },
+  handlers: { "update:open": (v: boolean) => { emit("update:open", v); } },
 }));
 const anchorPT = usePassthrough(pt?.anchor, {
   props: { ...(reference ? { reference } : {}) },
@@ -39,7 +40,7 @@ const contentPT = usePassthrough(pt?.content, {
 const arrowPT = usePassthrough(pt?.arrow, { props: {}, handlers: {} });
 const closePT = usePassthrough(pt?.close, { props: {}, handlers: {} });
 
-const ctx = computed(() => ({ open: open.value, defaultOpen, modal, side, align, sideOffset, alignOffset, arrow }));
+const ctx = computed(() => ({ open, defaultOpen, modal, side, align, sideOffset, alignOffset, arrow }));
 </script>
 
 <template>

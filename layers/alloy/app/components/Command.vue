@@ -19,6 +19,8 @@ const {
   disabled,
   multiple = false,
   filtered = false,
+  searchTerm,
+  selected,
 } = defineProps<CommandProps>();
 
 const emit = defineEmits<CommandEmits>();
@@ -26,18 +28,15 @@ const emit = defineEmits<CommandEmits>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const searchTerm = defineModel<string>("searchTerm", { default: "" });
-const selected = defineModel<Set<string>>("selected", { default: () => new Set() });
-
 const modelArray = computed({
-  get: () => [...selected.value],
-  set: (val: string[]) => { selected.value = new Set(val); },
+  get: () => [...(selected ?? new Set())],
+  set: (val: string[]) => { emit("update:selected", new Set(val)); },
 });
 
-const isSelected = (value: string) => selected.value.has(value);
+const isSelected = (value: string) => (selected ?? new Set()).has(value);
 
 const filteredGroups = computed(() =>
-  Command.filter(groups, searchTerm.value, selected.value, filtered),
+  Command.filter(groups, searchTerm ?? "", selected ?? new Set(), filtered),
 );
 
 const hasResults = computed(() => filteredGroups.value.length > 0);
@@ -54,8 +53,8 @@ const rootPT = usePassthrough(pt?.root, () => ({
   handlers: { "update:modelValue": (v: AcceptableValue | AcceptableValue[]) => { modelArray.value = (Array.isArray(v) ? v : [v]).map(String); handleSingleSelect(v); } },
 }));
 const filterPT = usePassthrough(pt?.filter, () => ({
-  props: { modelValue: searchTerm.value, autoFocus: true, placeholder },
-  handlers: { "update:modelValue": (v: string) => { searchTerm.value = v; } },
+  props: { modelValue: searchTerm ?? "", autoFocus: true, placeholder },
+  handlers: { "update:modelValue": (v: string) => { emit("update:searchTerm", v); } },
 }));
 const inputWrapperPT = usePassthrough(pt?.inputWrapper, { props: {}, handlers: {} });
 const contentPT = usePassthrough(pt?.content, { props: {}, handlers: {} });
@@ -85,8 +84,8 @@ const ctx = computed(() => ({
   disabled,
   multiple,
   filtered,
-  searchTerm: searchTerm.value,
-  selected: selected.value,
+  searchTerm: searchTerm ?? "",
+  selected: selected ?? new Set<string>(),
   filteredGroups: filteredGroups.value,
   hasResults: hasResults.value,
 }));

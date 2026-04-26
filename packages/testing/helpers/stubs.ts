@@ -84,7 +84,7 @@ export const alloyStubs = {
   Popover: createAllSlotsStub("Popover"),
   Radio: createStub("Radio"),
   RangeCalendar: createStub("RangeCalendar"),
-  Scroller: createStub("Scroller"),
+  Scroller: createAllSlotsStub("Scroller"),
   SegmentedControl: createStub("SegmentedControl"),
   Select: createStub("Select"),
   Tabs: createStub("Tabs"),

@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { DateRangePickerProps } from "../types/date-range-picker";
-import type { DateRange, DateRangePickerInputProps } from "reka-ui";
+import type { DateRangePickerProps, DateRangePickerEmits } from "../types/date-range-picker";
+import type { DateRange as RekaDateRange, DateRangePickerInputProps } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 import {
   DateRangePickerRoot,
@@ -25,6 +25,7 @@ import {
 
 <script setup lang="ts">
 const {
+  modelValue,
   pt,
   minValue,
   maxValue,
@@ -33,14 +34,14 @@ const {
   numberOfMonths = 2,
 } = defineProps<DateRangePickerProps>();
 
-const model = defineModel<DateRange>();
+const emit = defineEmits<DateRangePickerEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, minValue, maxValue, locale, disabled, numberOfMonths },
-  handlers: { "update:modelValue": (v: DateRange) => { model.value = v; } },
+  props: { modelValue, minValue, maxValue, locale, disabled, numberOfMonths },
+  handlers: { "update:modelValue": (v: RekaDateRange) => { if (v.start && v.end) emit("update:modelValue", { start: v.start, end: v.end }); } },
 }));
 const contentPT = usePassthrough(pt?.content, {
   props: { sideOffset: 8 },
@@ -74,7 +75,7 @@ const cellTriggerPT = (day: DateValue, month: DateValue) =>
 
 const ctx = computed(() => ({
   minValue, maxValue, locale, disabled, numberOfMonths,
-  model: model.value,
+  model: modelValue,
 }));
 </script>
 

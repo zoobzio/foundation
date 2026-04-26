@@ -28,12 +28,15 @@ export type DateFiltersPassthrough = {
 };
 
 export type DateFiltersProps = {
+  modelValue?: DateFilter[];
   fields: DateFieldConfig[];
   addFilter: (filter: DateFilter) => void;
   removeFilter: (field: string) => void;
   pt?: DateFiltersPassthrough;
 };
 
-export type DateFiltersEmits = {};
+export type DateFiltersEmits = {
+  "update:modelValue": [value: DateFilter[]];
+};
 
 export type DateFiltersRecipe = Recipe<DateFiltersProps, DateFiltersEmits>;

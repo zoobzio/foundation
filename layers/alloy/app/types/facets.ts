@@ -17,10 +17,13 @@ export type FacetsPassthrough = {
 };
 
 export type FacetsProps = {
+  selected?: Set<string>;
   groups: FacetGroup[];
   pt?: FacetsPassthrough;
 };
 
-export type FacetsEmits = {};
+export type FacetsEmits = {
+  "update:selected": [value: Set<string>];
+};
 
 export type FacetsRecipe = Recipe<FacetsProps, FacetsEmits>;

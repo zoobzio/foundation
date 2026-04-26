@@ -1,10 +1,11 @@
 <script lang="ts">
 import { RadioGroupRoot, RadioGroupItem, RadioGroupIndicator } from "reka-ui";
-import type { RadioProps } from "../types/radio";
+import type { RadioProps, RadioEmits } from "../types/radio";
 </script>
 
 <script setup lang="ts">
 const {
+  modelValue,
   options,
   disabled,
   required,
@@ -13,14 +14,14 @@ const {
   pt,
 } = defineProps<RadioProps>();
 
-const model = defineModel<string>();
+const emit = defineEmits<RadioEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, disabled, required, name, orientation },
-  handlers: { "update:modelValue": (v: string) => { model.value = v; } },
+  props: { modelValue, disabled, required, name, orientation },
+  handlers: { "update:modelValue": (v: string) => { emit("update:modelValue", v); } },
 }));
 const indicatorPT = usePassthrough(pt?.indicator, { props: {}, handlers: {} });
 const optionLabelPT = usePassthrough(pt?.optionLabel, { props: {}, handlers: {} });
@@ -36,7 +37,7 @@ const optionsPT = computed(() =>
   })),
 );
 
-const ctx = computed(() => ({ options, disabled, required, name, orientation, model: model.value }));
+const ctx = computed(() => ({ options, disabled, required, name, orientation, model: modelValue }));
 </script>
 
 <template>

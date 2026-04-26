@@ -1,20 +1,8 @@
 <script lang="ts">
-import type {
-  DataTableColumn,
-  TableFilter,
-  DataTableFiltersProps,
-} from "../../../types/data-table";
+import type { DataTableColumn, TableFilter } from "../../../types/data-table";
+import type { DataTableFiltersProps } from "../../../types/data-table-filters";
 import { parseShorthand } from "../../../utils/parse-shorthand";
 import { validateKeywords } from "../../../utils/validate-keywords";
-
-type Suggestion = {
-  label: string;
-  value: string;
-  disabled?: boolean;
-  hasChildren?: boolean;
-  type?: string;
-  icon?: IconAlias;
-};
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">
@@ -28,18 +16,14 @@ const {
   query,
   keywords,
   page,
-  selectedFacets,
   fetch: fetchData,
 } = table;
 
 const el = useTemplateRef("el");
-const inputRef = useTemplateRef<{ el: HTMLInputElement }>("input");
+const autocompleteRef = useTemplateRef<{ focus: () => void }>("autocomplete");
 defineExpose({ el });
 
 const inputValue = ref("");
-const helpOpen = ref(false);
-const focused = ref(false);
-const highlightIndex = ref(0);
 
 // Passthrough
 const rootPT = usePassthrough(pt?.root, { props: {}, handlers: {} });
@@ -49,63 +33,10 @@ const iconPT = usePassthrough(pt?.icon, {
   handlers: {},
 });
 const inputWrapPT = usePassthrough(pt?.inputWrap, { props: {}, handlers: {} });
-const mirrorWrapPT = usePassthrough(pt?.mirrorWrap, {
-  props: {},
-  handlers: {},
-});
-const mirrorTextPT = usePassthrough(pt?.mirrorText, {
-  props: {},
-  handlers: {},
-});
-const mirrorHintPT = usePassthrough(pt?.mirrorHint, {
-  props: {},
-  handlers: {},
-});
-const inputPT = usePassthrough(pt?.input, {
-  props: { placeholder: "Filter..." },
-  handlers: {},
-});
-const dropdownPT = usePassthrough(pt?.dropdown, { props: {}, handlers: {} });
-const dropdownPanelPT = usePassthrough(pt?.dropdownPanel, {
-  props: {},
-  handlers: {},
-});
-const dropdownScrollerPT = usePassthrough(pt?.dropdownScroller, {
-  props: {},
-  handlers: {},
-});
-const dropdownEmptyPT = usePassthrough(pt?.dropdownEmpty, {
-  props: {},
-  handlers: {},
-});
-const infoIconPT = usePassthrough(pt?.infoIcon, {
-  props: { alias: "info" as IconAlias },
-  handlers: {},
-});
-const dialogPT = usePassthrough(pt?.dialog, () => ({
-  props: {
-    open: helpOpen.value,
-    title: "Filter Shortcuts",
-    description: "Use these shortcuts in the filter input",
-  },
-  handlers: {
-    "update:open": (v: boolean) => {
-      helpOpen.value = v;
-    },
-  },
-}));
-const helpTablePT = usePassthrough(pt?.helpTable, { props: {}, handlers: {} });
-const helpTheadPT = usePassthrough(pt?.helpThead, { props: {}, handlers: {} });
-const helpTbodyPT = usePassthrough(pt?.helpTbody, { props: {}, handlers: {} });
-const helpThPT = usePassthrough(pt?.helpTh, { props: {}, handlers: {} });
-const helpTdPT = usePassthrough(pt?.helpTd, { props: {}, handlers: {} });
-const helpKbdPT = usePassthrough(pt?.helpKbd, { props: {}, handlers: {} });
 
 // Locked steps — each entry is a locked selection
-const lockedSteps = ref<
-  { label: string; value: string; icon?: IconAlias; hasChildren?: boolean }[]
->([]);
-const lockedField = ref<DataTableColumn<T> | null>(null);
+const lockedSteps = ref<AutocompleteItem[]>([]);
+const lockedField = shallowRef<DataTableColumn<T> | null>(null);
 const lockedOperator = ref<string | null>(null);
 const lockedDate1 = ref<string | null>(null);
 
@@ -191,18 +122,17 @@ const selectedValues = computed(() => {
   return set;
 });
 
-// Build the active (last) panel suggestions
-const activePanelSuggestions = computed<Suggestion[]>(() => {
-  if (!focused.value || isRawMode.value) return [];
+// Build suggestions for the active panel
+const suggestions = computed<AutocompleteItem[]>(() => {
+  if (isRawMode.value) return [];
   const search = activeText.value.toLowerCase();
 
   if (phase.value === "field") {
-    const items: Suggestion[] = [];
+    const items: AutocompleteItem[] = [];
     if (!search || "search".includes(search)) {
       items.push({
         label: "Search",
         value: "__search",
-        type: "shortcut",
         icon: "search",
       });
     }
@@ -210,7 +140,6 @@ const activePanelSuggestions = computed<Suggestion[]>(() => {
       items.push({
         label: "Keywords",
         value: "__keywords",
-        type: "shortcut",
         icon: "tag",
       });
     }
@@ -230,7 +159,6 @@ const activePanelSuggestions = computed<Suggestion[]>(() => {
           label: c.label,
           value: String(c.key),
           hasChildren: true,
-          type: "date",
           icon: "calendar",
         });
       }
@@ -273,45 +201,13 @@ const activePanelSuggestions = computed<Suggestion[]>(() => {
   return [];
 });
 
-// Whether to show empty state in the last panel
+// Whether to show empty state
 const showEmptyState = computed(
   () =>
-    focused.value &&
-    !isRawMode.value &&
     lockedSteps.value.length > 0 &&
-    activePanelSuggestions.value.length === 0 &&
+    suggestions.value.length === 0 &&
     activeText.value.length > 0,
 );
-
-// All panels: locked steps (each as single-item panel) + active panel
-const panels = computed(() => {
-  if (!focused.value || isRawMode.value) return [];
-  const result: Suggestion[][] = [];
-  for (const step of lockedSteps.value) {
-    result.push([{ ...step, hasChildren: true }]);
-  }
-  if (activePanelSuggestions.value.length) {
-    result.push(activePanelSuggestions.value);
-  }
-  return result;
-});
-
-const activePanel = computed(() =>
-  panels.value.length ? panels.value[panels.value.length - 1]! : [],
-);
-
-watch(activePanel, (items) => {
-  // For second date in Between, start one past the first date (which is disabled)
-  if (phase.value === "date-value-2" && lockedDate1.value) {
-    const idx = items.findIndex((i) => i.value === lockedDate1.value);
-    const next = idx >= 0 ? idx + 1 : 0;
-    highlightIndex.value = next < items.length ? next : 0;
-    return;
-  }
-  let idx = 0;
-  while (idx < items.length && items[idx]?.disabled) idx++;
-  highlightIndex.value = idx < items.length ? idx : 0;
-});
 
 // Actions
 const selectField = (col: DataTableColumn<T>) => {
@@ -325,7 +221,7 @@ const selectField = (col: DataTableColumn<T>) => {
   } else {
     inputValue.value = `${col.label}`;
   }
-  nextTick(() => inputRef.value?.el?.focus());
+  nextTick(() => autocompleteRef.value?.focus());
 };
 
 const operatorLabels: Record<string, string> = {
@@ -342,7 +238,7 @@ const selectDateOperator = (op: string) => {
     { label: operatorLabels[op] ?? op, value: op, hasChildren: true },
   ];
   inputValue.value = `${lockedField.value.label}${op}`;
-  nextTick(() => inputRef.value?.el?.focus());
+  nextTick(() => autocompleteRef.value?.focus());
 };
 
 const selectValue = (value: string) => {
@@ -360,17 +256,15 @@ const selectValue = (value: string) => {
 
   if (lockedOperator.value === "><") {
     if (!lockedDate1.value) {
-      // First date of Between — lock it and move to second date
       lockedDate1.value = value;
       lockedSteps.value = [
         ...lockedSteps.value,
         { label: value, value, hasChildren: true },
       ];
       inputValue.value = `${lockedField.value.label}><${value},`;
-      nextTick(() => inputRef.value?.el?.focus());
+      nextTick(() => autocompleteRef.value?.focus());
       return;
     }
-    // Second date of Between — submit
     const dates = [lockedDate1.value, value].sort();
     table.addDateFilter({
       field: String(lockedField.value.key),
@@ -393,7 +287,7 @@ const selectValue = (value: string) => {
   }
 };
 
-const selectSuggestion = (item: Suggestion) => {
+const onSelect = (item: AutocompleteItem) => {
   if (item.disabled) return;
 
   if (item.value === "__search") {
@@ -421,14 +315,12 @@ const selectSuggestion = (item: Suggestion) => {
 
 const unwindToPanel = (panelIndex: number) => {
   if (panelIndex === 0) {
-    // Back to field selection
     lockedField.value = null;
     lockedOperator.value = null;
     lockedDate1.value = null;
     lockedSteps.value = [];
     inputValue.value = "";
   } else if (panelIndex === 1 && lockedField.value) {
-    // Back to operator/value selection (keep field locked)
     lockedOperator.value = null;
     lockedDate1.value = null;
     lockedSteps.value = lockedSteps.value.slice(0, 1);
@@ -437,12 +329,11 @@ const unwindToPanel = (panelIndex: number) => {
         ? `${lockedField.value.label}=`
         : `${lockedField.value.label}`;
   } else if (panelIndex === 2 && lockedField.value && lockedOperator.value) {
-    // Back to first date value (keep field + operator locked)
     lockedDate1.value = null;
     lockedSteps.value = lockedSteps.value.slice(0, 2);
     inputValue.value = `${lockedField.value.label}${lockedOperator.value}`;
   }
-  nextTick(() => inputRef.value?.el?.focus());
+  nextTick(() => autocompleteRef.value?.focus());
 };
 
 const resetAutocomplete = () => {
@@ -451,12 +342,18 @@ const resetAutocomplete = () => {
   lockedOperator.value = null;
   lockedDate1.value = null;
   lockedSteps.value = [];
-  highlightIndex.value = 0;
 };
 
-// Input handler
-const onInput = (event: Event) => {
-  const raw = (event.target as HTMLInputElement).value;
+const { tryUnravel } = useFilterUnravel(table, {
+  inputValue,
+  lockedField,
+  lockedOperator,
+  lockedDate1,
+  lockedSteps,
+});
+
+// Handle input text changes — detect shorthand patterns
+const onModelUpdate = (raw: string) => {
   inputValue.value = raw;
 
   // Auto-submit on closing character
@@ -533,105 +430,46 @@ const onInput = (event: Event) => {
     const exactMatch = allFilterable.find(
       (c) => c.label.toLowerCase() === search,
     );
-    if (exactMatch && activePanelSuggestions.value.length === 1) {
+    if (exactMatch && suggestions.value.length === 1) {
       selectField(exactMatch);
     }
   }
 };
 
-// Scroll highlighted item into view
-watch(highlightIndex, () => {
-  nextTick(() => {
-    const container = el.value?.$el ?? el.value;
-    const highlighted = (container as HTMLElement | undefined)?.querySelector(
-      ".f-data-table-filters-dropdown-item--highlighted",
-    );
-    highlighted?.scrollIntoView({ block: "nearest" });
-  });
-});
+// Handle Enter with no active suggestion — shorthand parsing
+const onSubmit = (value: string) => {
+  if (value.startsWith('"') && value.endsWith('"') && value.length > 2) {
+    query.value = value.slice(1, -1);
+    page.value = 1;
+    fetchData();
+    resetAutocomplete();
+    return;
+  }
+  if (value.startsWith("(") && value.endsWith(")") && value.length > 2) {
+    const kw = value.slice(1, -1);
+    if (!validateKeywords(kw)) return;
+    keywords.value = kw;
+    page.value = 1;
+    fetchData();
+    resetAutocomplete();
+    return;
+  }
+  const result = parseShorthand(value, columns as DataTableColumn<T>[]);
+  if (result) {
+    addFilter(result.filter);
+    resetAutocomplete();
+  }
+};
 
-// Keyboard navigation
+// Handle forwarded keydown — Escape and Backspace
 const onKeydown = (event: KeyboardEvent) => {
-  const hasDropdown = panels.value.length > 0;
-  if (hasDropdown) {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      let next = highlightIndex.value + 1;
-      while (
-        next < activePanel.value.length &&
-        activePanel.value[next]?.disabled
-      )
-        next++;
-      if (next < activePanel.value.length) highlightIndex.value = next;
-      return;
-    }
-    if (event.key === "ArrowUp") {
-      event.preventDefault();
-      let next = highlightIndex.value - 1;
-      while (next >= 0 && activePanel.value[next]?.disabled) next--;
-      if (next >= 0) highlightIndex.value = next;
-      return;
-    }
-    if (event.key === "Enter") {
-      event.preventDefault();
-      // Only select from the suggestions panel, not from locked step panels
-      if (activePanelSuggestions.value.length) {
-        const item = activePanelSuggestions.value[highlightIndex.value];
-        if (item && !item.disabled) selectSuggestion(item);
-      }
-      return;
-    }
-    if (event.key === "Escape") {
-      event.preventDefault();
-      resetAutocomplete();
-      inputRef.value?.el?.blur();
-      return;
-    }
-  }
-
-  if (event.key === "Enter") {
-    if (
-      inputValue.value.startsWith('"') &&
-      inputValue.value.endsWith('"') &&
-      inputValue.value.length > 2
-    ) {
-      query.value = inputValue.value.slice(1, -1);
-      page.value = 1;
-      fetchData();
-      resetAutocomplete();
-      return;
-    }
-    if (
-      inputValue.value.startsWith("(") &&
-      inputValue.value.endsWith(")") &&
-      inputValue.value.length > 2
-    ) {
-      const kw = inputValue.value.slice(1, -1);
-      if (!validateKeywords(kw)) return;
-      keywords.value = kw;
-      page.value = 1;
-      fetchData();
-      resetAutocomplete();
-      return;
-    }
-    const result = parseShorthand(
-      inputValue.value,
-      columns as DataTableColumn<T>[],
-    );
-    if (result) {
-      addFilter(result.filter);
-      resetAutocomplete();
-    }
-  }
-
   if (event.key === "Escape") {
     resetAutocomplete();
-    inputRef.value?.el?.blur();
+    return;
   }
 
   if (event.key === "Backspace") {
     if (lockedField.value) {
-      // Between: backspace from second date
       if (lockedDate1.value) {
         const prefix = lockedPrefix.value;
         if (inputValue.value === prefix) {
@@ -659,120 +497,17 @@ const onKeydown = (event: KeyboardEvent) => {
       }
     } else if (!inputValue.value && filters.value.length) {
       event.preventDefault();
-      const lastFilter = filters.value[filters.value.length - 1]!;
-
-      // Enum — peel off the last value and unravel it
-      if (lastFilter.value.type === "enum") {
-        const col = (columns as DataTableColumn<T>[]).find(
-          (c) => String(c.key) === lastFilter.field,
-        );
-        if (col) {
-          const values = [...lastFilter.value.value];
-          const lastVal = values.pop()!;
-          // Remove the last value from selectedFacets
-          const namespacedKey = `${lastFilter.field}:${lastVal}`;
-          selectedFacets.value = new Set(
-            [...selectedFacets.value].filter((v) => v !== namespacedKey),
-          );
-          // Unravel into input
-          lockedField.value = col;
-          lockedSteps.value = [
-            { label: col.label, value: String(col.key), icon: "filter" },
-          ];
-          inputValue.value = `${col.label}=${lastVal.slice(0, -1)}`;
-          return;
-        }
-      }
-
-      // Date filter — unravel into input
-      if (lastFilter.value.type === "date") {
-        const col = (columns as DataTableColumn<T>[]).find(
-          (c) => String(c.key) === lastFilter.field,
-        );
-        if (col) {
-          const op = lastFilter.operator === "before" ? "<" : ">";
-          const dateStr = formatDate(lastFilter.value.value);
-          removeFilter(filters.value.length - 1);
-          lockedField.value = col;
-          lockedOperator.value = op;
-          lockedSteps.value = [
-            { label: col.label, value: String(col.key), icon: "calendar" },
-            {
-              label: op === ">" ? "After" : "Before",
-              value: op,
-              hasChildren: true,
-            },
-          ];
-          inputValue.value = `${col.label}${op}${dateStr.slice(0, -1)}`;
-          return;
-        }
-      }
-
-      // Date range filter — unravel the second date
-      if (lastFilter.value.type === "date_range") {
-        const col = (columns as DataTableColumn<T>[]).find(
-          (c) => String(c.key) === lastFilter.field,
-        );
-        if (col) {
-          const date1 = formatDate(lastFilter.value.value[0]);
-          const date2 = formatDate(lastFilter.value.value[1]);
-          removeFilter(filters.value.length - 1);
-          lockedField.value = col;
-          lockedOperator.value = "><";
-          lockedDate1.value = date1;
-          lockedSteps.value = [
-            { label: col.label, value: String(col.key), icon: "calendar" },
-            { label: "Between", value: "><", hasChildren: true },
-            { label: date1, value: date1, hasChildren: true },
-          ];
-          inputValue.value = `${col.label}><${date1},${date2.slice(0, -1)}`;
-          return;
-        }
-      }
-
-      // Query — unravel (just remove the closing ")
-      if (lastFilter.field === "__query" && lastFilter.value.type === "text") {
-        const val = lastFilter.value.value;
-        removeFilter(filters.value.length - 1);
-        inputValue.value = `"${val}`;
-        return;
-      }
-
-      // Keywords — unravel (just remove the closing ))
-      if (
-        lastFilter.field === "__keywords" &&
-        lastFilter.value.type === "text"
-      ) {
-        const val = lastFilter.value.value;
-        removeFilter(filters.value.length - 1);
-        inputValue.value = `(${val}`;
-        return;
-      }
-
-      // Fallback
-      removeFilter(filters.value.length - 1);
+      tryUnravel();
     }
   }
 };
 
-const onBlur = () => {
-  window.setTimeout(() => {
-    focused.value = false;
-  }, 150);
-};
-
+// Keyboard shortcut
 const keys = useMagicKeys();
 const combo = computed(() => keys["Meta+/"]?.value || keys["Ctrl+/"]?.value);
 whenever(combo, () => {
-  inputRef.value?.el?.focus();
+  autocompleteRef.value?.focus();
 });
-
-const formatDate = (d: Date) => {
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-};
 
 const formatFilter = (filter: TableFilter) => {
   if (filter.field === "__query" && filter.value.type === "text") {
@@ -801,33 +536,6 @@ const formatFilter = (filter: TableFilter) => {
       return `${label}=${v.value}`;
   }
 };
-
-const helpRows = computed(() => {
-  const rows = [
-    { syntax: '"your query here"', description: "Semantic search" },
-    { syntax: "(+include -exclude)", description: "Keyword search (AND)" },
-    { syntax: "(+term1 || +term2)", description: "Keyword search (OR)" },
-  ];
-  for (const col of columns as DataTableColumn<T>[]) {
-    if (col.type === "enum" && col.enumValues) {
-      rows.push({
-        syntax: `${col.label}=${col.enumValues[0] ?? "value"}`,
-        description: `Filter by ${col.label}`,
-      });
-    }
-    if (col.type === "date" || col.type === "datetime") {
-      rows.push({
-        syntax: `${col.label}>2025-01-01`,
-        description: `${col.label} after date`,
-      });
-      rows.push({
-        syntax: `${col.label}<2025-01-01`,
-        description: `${col.label} before date`,
-      });
-    }
-  }
-  return rows;
-});
 </script>
 
 <template>
@@ -863,169 +571,23 @@ const helpRows = computed(() => {
         class="f-data-table-filters-input-wrap"
         v-on="inputWrapPT.handlers"
       >
-        <ClientOnly>
-          <Group
-            v-show="closingHint"
-            v-bind="mirrorWrapPT.props"
-            class="f-data-table-filters-mirror"
-            aria-hidden="true"
-            v-on="mirrorWrapPT.handlers"
-          >
-            <Span
-              v-bind="mirrorTextPT.props"
-              class="f-data-table-filters-mirror-text"
-              v-on="mirrorTextPT.handlers"
-              >{{ inputValue }}</Span
-            >
-            <Span
-              v-bind="mirrorHintPT.props"
-              class="f-data-table-filters-mirror-hint"
-              v-on="mirrorHintPT.handlers"
-              >{{ closingHint }}</Span
-            >
-          </Group>
-        </ClientOnly>
-        <Input
-          ref="input"
-          v-bind="inputPT.props"
-          :value="inputValue"
-          :class="[
-            'f-data-table-filters-input',
-            { 'f-data-table-filters-input--ghost': closingHint },
-          ]"
-          @input="onInput"
+        <Autocomplete
+          ref="autocomplete"
+          :model-value="inputValue"
+          :suggestions="suggestions"
+          :steps="lockedSteps"
+          :hint="closingHint"
+          :show-empty="showEmptyState"
+          placeholder="Filter..."
+          :pt="pt?.autocomplete"
+          @update:model-value="onModelUpdate"
+          @select="onSelect"
+          @unwind="unwindToPanel"
+          @submit="onSubmit"
           @keydown="onKeydown"
-          @focus="focused = true"
-          @blur="onBlur"
         />
-        <Group
-          v-if="panels.length || showEmptyState"
-          v-bind="dropdownPT.props"
-          class="f-data-table-filters-dropdown"
-          v-on="dropdownPT.handlers"
-        >
-          <Group
-            v-for="(panel, panelIndex) in panels"
-            :key="panelIndex"
-            v-bind="dropdownPanelPT.props"
-            class="f-data-table-filters-dropdown-panel"
-            v-on="dropdownPanelPT.handlers"
-          >
-            <Scroller
-              v-bind="dropdownScrollerPT.props"
-              v-on="dropdownScrollerPT.handlers"
-            >
-              <template #content>
-              <Button
-                v-for="(item, i) in panel"
-                :key="item.value"
-                v-bind="
-                  passthrough(pt?.dropdownItem, {
-                    props: { disabled: item.disabled },
-                    handlers: {},
-                  }).props
-                "
-                :class="[
-                  'f-data-table-filters-dropdown-item',
-                  {
-                    'f-data-table-filters-dropdown-item--highlighted':
-                      panelIndex === panels.length - 1 && i === highlightIndex,
-                  },
-                  {
-                    'f-data-table-filters-dropdown-item--locked':
-                      panel.length === 1 && panelIndex < panels.length - 1,
-                  },
-                  {
-                    'f-data-table-filters-dropdown-item--disabled':
-                      item.disabled,
-                  },
-                ]"
-                @mousedown.prevent="
-                  panelIndex < panels.length - 1
-                    ? unwindToPanel(panelIndex)
-                    : !item.disabled && selectSuggestion(item)
-                "
-              >
-                <Icon
-                  v-if="item.icon"
-                  v-bind="
-                    passthrough(pt?.dropdownItemIcon, {
-                      props: { alias: item.icon },
-                      handlers: {},
-                    }).props
-                  "
-                  class="f-data-table-filters-dropdown-item-icon"
-                />
-                <Span
-                  v-bind="
-                    passthrough(pt?.dropdownItemLabel, {
-                      props: {},
-                      handlers: {},
-                    }).props
-                  "
-                  class="f-data-table-filters-dropdown-item-label"
-                  >{{ item.label }}</Span
-                >
-                <Icon
-                  v-if="item.hasChildren"
-                  v-bind="
-                    passthrough(pt?.dropdownItemArrow, {
-                      props: { alias: 'chevron-right' as IconAlias },
-                      handlers: {},
-                    }).props
-                  "
-                  class="f-data-table-filters-dropdown-item-arrow"
-                />
-              </Button>
-              </template>
-            </Scroller>
-          </Group>
-          <Group
-            v-if="showEmptyState"
-            v-bind="dropdownPanelPT.props"
-            class="f-data-table-filters-dropdown-panel"
-            v-on="dropdownPanelPT.handlers"
-          >
-            <Span
-              v-bind="dropdownEmptyPT.props"
-              class="f-data-table-filters-dropdown-empty"
-              v-on="dropdownEmptyPT.handlers"
-              >No matches</Span
-            >
-          </Group>
-        </Group>
       </Group>
-      <Icon
-        v-bind="infoIconPT.props"
-        class="f-data-table-filters-info"
-        v-on="infoIconPT.handlers"
-        @click="helpOpen = true"
-      />
+      <DataTableFilterHelp :columns="columns" :pt="pt?.help" />
     </Group>
-
-    <Dialog v-bind="dialogPT.props" v-on="dialogPT.handlers">
-      <Table v-bind="helpTablePT.props" v-on="helpTablePT.handlers">
-        <Thead v-bind="helpTheadPT.props" v-on="helpTheadPT.handlers">
-          <Tr>
-            <Th v-bind="helpThPT.props" v-on="helpThPT.handlers">Syntax</Th>
-            <Th v-bind="helpThPT.props" v-on="helpThPT.handlers"
-              >Description</Th
-            >
-          </Tr>
-        </Thead>
-        <Tbody v-bind="helpTbodyPT.props" v-on="helpTbodyPT.handlers">
-          <Tr v-for="row in helpRows" :key="row.syntax">
-            <Td v-bind="helpTdPT.props" v-on="helpTdPT.handlers"
-              ><Kbd v-bind="helpKbdPT.props" v-on="helpKbdPT.handlers">{{
-                row.syntax
-              }}</Kbd></Td
-            >
-            <Td v-bind="helpTdPT.props" v-on="helpTdPT.handlers">{{
-              row.description
-            }}</Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </Dialog>
   </Group>
 </template>

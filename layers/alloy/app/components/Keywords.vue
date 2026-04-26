@@ -1,27 +1,27 @@
 <script lang="ts">
-import type { KeywordsProps } from "../types/keywords";
+import type { KeywordsProps, KeywordsEmits } from "../types/keywords";
 </script>
 
 <script setup lang="ts">
-const { pt } = defineProps<KeywordsProps>();
+const { modelValue, pt } = defineProps<KeywordsProps>();
+
+const emit = defineEmits<KeywordsEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
-
-const keywords = defineModel<string>({ default: "" });
 const open = ref(false);
 const includeInput = ref("");
 const excludeInput = ref("");
 
-const isOrMode = computed(() => keywords.value.includes("||"));
+const isOrMode = computed(() => (modelValue ?? "").includes("||"));
 const mode = ref<"and" | "or">(isOrMode.value ? "or" : "and");
 
 watch(isOrMode, (v) => { mode.value = v ? "or" : "and"; });
 
-const parsed = computed(() => Keywords.parse(keywords.value));
+const parsed = computed(() => Keywords.parse(modelValue ?? ""));
 
 const rebuild = (include: string[], exclude: string[]) => {
-  keywords.value = Keywords.build(include, exclude, mode.value);
+  emit("update:modelValue", Keywords.build(include, exclude, mode.value));
 };
 
 const includeModel = computed({
@@ -147,7 +147,7 @@ const excludeInputPT = usePassthrough(pt?.excludeInput, () => ({
 }));
 
 const ctx = computed(() => ({
-  keywords: keywords.value,
+  keywords: modelValue ?? "",
   includeEntries: includeModel.value,
   excludeEntries: excludeModel.value,
   mode: mode.value,

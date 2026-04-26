@@ -1,11 +1,12 @@
 <script lang="ts">
 import { TagsInputRoot, TagsInputItem, TagsInputItemText, TagsInputItemDelete, TagsInputInput } from "reka-ui";
 import type { AcceptableInputValue } from "reka-ui";
-import type { TagsInputProps } from "../types/tags-input";
+import type { TagsInputProps, TagsInputEmits } from "../types/tags-input";
 </script>
 
 <script setup lang="ts">
 const {
+  modelValue,
   placeholder = "Add tags...",
   disabled,
   required,
@@ -19,14 +20,14 @@ const {
   pt,
 } = defineProps<TagsInputProps>();
 
-const model = defineModel<string[]>();
+const emit = defineEmits<TagsInputEmits>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 
 const rootPT = usePassthrough(pt?.root, () => ({
-  props: { modelValue: model.value, disabled, required, name, max, addOnBlur, addOnPaste, addOnTab, delimiter, duplicate },
-  handlers: { "update:modelValue": (v: AcceptableInputValue[]) => { model.value = v.map(String); } },
+  props: { modelValue, disabled, required, name, max, addOnBlur, addOnPaste, addOnTab, delimiter, duplicate },
+  handlers: { "update:modelValue": (v: AcceptableInputValue[]) => { emit("update:modelValue", v.map(String)); } },
 }));
 const itemTextPT = usePassthrough(pt?.itemText, { props: {}, handlers: {} });
 const itemDeletePT = usePassthrough(pt?.itemDelete, { props: {}, handlers: {} });
@@ -37,7 +38,7 @@ const inputPT = usePassthrough(pt?.input, {
 });
 
 const tagsPT = computed(() =>
-  (model.value ?? []).map((tag) => ({
+  (modelValue ?? []).map((tag) => ({
     item: tag,
     pt: passthrough(pt?.item, {
       props: { value: tag },
@@ -46,7 +47,7 @@ const tagsPT = computed(() =>
   })),
 );
 
-const ctx = computed(() => ({ placeholder, disabled, required, name, max, model: model.value }));
+const ctx = computed(() => ({ placeholder, disabled, required, name, max, model: modelValue }));
 </script>
 
 <template>

@@ -13,6 +13,7 @@ const useRecipe = <Props, Emits = {}>(
 ));
 
 export const useAccordion = (props: PropsInput<AccordionProps>, handlers: HandlersInput<AccordionEmits>) => useRecipe(props, handlers);
+export const useAutocomplete = (props: PropsInput<AutocompleteProps>, handlers: HandlersInput<AutocompleteEmits>) => useRecipe(props, handlers);
 export const useAvatar = (props: PropsInput<AvatarProps>, handlers: HandlersInput<AvatarEmits>) => useRecipe(props, handlers);
 export const useCalendar = (props: PropsInput<CalendarProps>, handlers: HandlersInput<CalendarEmits>) => useRecipe(props, handlers);
 export const useCheckbox = (props: PropsInput<CheckboxProps>, handlers: HandlersInput<CheckboxEmits>) => useRecipe(props, handlers);

@@ -25,19 +25,21 @@ describe("Checkbox", () => {
   });
 
   describe("interaction", () => {
-    it("updates model and icon on CheckboxRoot emit", async () => {
+    it("emits update:modelValue on CheckboxRoot emit", async () => {
       const { nextTick } = await import("vue");
       const wrapper = mountCheckbox();
       wrapper.findComponent({ name: "CheckboxRoot" }).vm.$emit("update:modelValue", true);
       await nextTick();
+      expect(wrapper.emitted("update:modelValue")?.[0]).toEqual([true]);
+    });
+
+    it("shows check icon when modelValue is true", () => {
+      const wrapper = mountCheckbox({ modelValue: true });
       expect(wrapper.find("i").attributes("alias")).toBe("check");
     });
 
-    it("shows minus icon when indeterminate", async () => {
-      const { nextTick } = await import("vue");
-      const wrapper = mountCheckbox();
-      wrapper.findComponent({ name: "CheckboxRoot" }).vm.$emit("update:modelValue", "indeterminate");
-      await nextTick();
+    it("shows minus icon when modelValue is indeterminate", () => {
+      const wrapper = mountCheckbox({ modelValue: "indeterminate" });
       expect(wrapper.find("i").attributes("alias")).toBe("minus");
     });
   });
