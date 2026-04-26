@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@zoobz-io/foundry": "workspace:*",
+    "reka-ui": "catalog:",
     "nuxt": "catalog:"
   },
   "devDependencies": {

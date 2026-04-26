@@ -58,13 +58,31 @@ export const H1 = createStub("H1", "h1");
 export const Em = createStub("Em", "em");
 export const P = createStub("P", "p");
 export const Kbd = createStub("Kbd", "kbd");
+export const Input = createStub("Input", "input");
+export const Table = createStub("Table", "table");
+export const Thead = createStub("Thead", "thead");
+export const Tbody = createStub("Tbody", "tbody");
+export const Tr = createStub("Tr", "tr");
+export const Th = createStub("Th", "th");
+export const Td = createStub("Td", "td");
+export const Anchor = createStub("Anchor", "a");
+export const Img = createStub("Img", "img");
+export const Chip = createStub("Chip", "button");
 
 /** All ore stubs keyed by component name */
-export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, Em, P, Kbd } as const;
+export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip } as const;
 
 // --- Alloy sub-component stubs (for composed components) ---
 export const alloyStubs = {
   Accordion: createStub("Accordion"),
+  Autocomplete: defineComponent({
+    name: "Autocomplete",
+    inheritAttrs: false,
+    setup(_, { attrs, slots, expose }) {
+      expose({ focus: () => {} });
+      return () => h("div", { ...attrs }, slots.default?.());
+    },
+  }),
   Avatar: createStub("Avatar"),
   Calendar: createStub("Calendar"),
   Checkbox: createStub("Checkbox"),

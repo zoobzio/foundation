@@ -36,10 +36,65 @@ body {
   background: var(--sys-surface-container);
 }
 
-/* Sidebar slot content */
-.f-example-sidebar {
-  flex: 1;
-  padding: var(--ref-spacing-md);
+/* Data chart fills its workspace slot */
+.f-data-chart {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
   border: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface);
+}
+
+.f-data-chart-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
   background: var(--sys-surface-container);
+}
+
+.f-data-chart-title-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ref-spacing-xs);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-semibold);
+  color: var(--sys-on-surface);
+  cursor: pointer;
+}
+
+.f-data-chart-title-btn:hover {
+  color: var(--sys-primary);
+}
+
+.f-data-chart-title-btn .f-icon {
+  color: var(--sys-on-surface-variant);
+}
+
+.f-data-chart-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-xs);
+}
+
+.f-data-chart-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  padding: var(--ref-spacing-sm);
+}
+
+.f-data-chart-canvas canvas {
+  position: absolute;
+  inset: var(--ref-spacing-sm);
+  width: calc(100% - 2 * var(--ref-spacing-sm)) !important;
+  height: calc(100% - 2 * var(--ref-spacing-sm)) !important;
 }

@@ -4,6 +4,7 @@ const workspace = accessExampleWorkspace();
 await useAsyncData("workspace", () => workspace.init());
 
 const { table } = useFakeTable();
+const { chart1, chart2, chart3 } = useFakeCharts();
 </script>
 
 <template>
@@ -11,7 +12,7 @@ const { table } = useFakeTable();
     <template #header>
       <Header class="f-example-header">
         <H1>Foundation Example</H1>
-        <P>A workspace demo with a data table widget.</P>
+        <P>A workspace demo with data table and chart widgets.</P>
       </Header>
     </template>
 
@@ -23,11 +24,16 @@ const { table } = useFakeTable();
       </DataTableWidget>
     </template>
 
-    <template #sidebar>
-      <Card class="f-example-sidebar">
-        <H3>Sidebar</H3>
-        <P>This slot is available for any widget.</P>
-      </Card>
+    <template #chart-breakdown>
+      <DataChartWidget :chart="chart1" />
+    </template>
+
+    <template #chart-series>
+      <DataChartWidget :chart="chart2" />
+    </template>
+
+    <template #chart-distribution>
+      <DataChartWidget :chart="chart3" />
     </template>
   </Workspace>
 </template>

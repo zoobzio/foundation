@@ -14,6 +14,34 @@ describe("RangeCalendar", () => {
     it("defaults numberOfMonths to 1", () => {
       expect(wrapper.find(".f-calendar").attributes("numberofmonths")).toBe("1");
     });
+
+    it("renders navigation buttons", () => {
+      expect(wrapper.find(".f-calendar-nav").exists()).toBe(true);
+    });
+
+    it("renders grid", () => {
+      expect(wrapper.find(".f-calendar-grid").exists()).toBe(true);
+    });
+
+    it("renders head cells for weekDays", () => {
+      const headCells = wrapper.findAll(".f-calendar-head-cell");
+      expect(headCells).toHaveLength(7);
+    });
+
+    it("renders grid rows", () => {
+      const rows = wrapper.findAll(".f-calendar-row");
+      expect(rows.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it("renders cell triggers", () => {
+      const cells = wrapper.findAll(".f-calendar-cell");
+      expect(cells).toHaveLength(7);
+    });
+
+    it("renders cell trigger elements", () => {
+      const triggers = wrapper.findAll(".f-calendar-cell-trigger");
+      expect(triggers).toHaveLength(7);
+    });
   });
 
   describe("passthrough", () => {

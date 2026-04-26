@@ -1,4 +1,6 @@
 import { mount } from "@vue/test-utils";
+import { passthrough } from "../../app/utils/passthrough";
+import { usePassthrough } from "../../app/composables/passthrough";
 import { oreStubs, alloyStubs, rekaStubs, createScopedStub } from "../../../../packages/testing/helpers/stubs";
 import { fakeOptions } from "../../../../packages/testing/data/options";
 import { fakeMenuGroups } from "../../../../packages/testing/data/menu";
@@ -6,6 +8,7 @@ import { fakeCommandGroups } from "../../../../packages/testing/data/command";
 import { fakeFacetGroups } from "../../../../packages/testing/data/facets";
 import { fakeDateFields } from "../../../../packages/testing/data/date-filters";
 
+import Autocomplete from "../../app/components/Autocomplete.vue";
 import Accordion from "../../app/components/Accordion.vue";
 import Avatar from "../../app/components/Avatar.vue";
 import Calendar from "../../app/components/Calendar.vue";
@@ -56,6 +59,26 @@ const alloyComposed = (component: object, defaultProps: MountProps = {}) =>
 
 const noop = () => {};
 
+const fakeSuggestions = [
+  { label: "Search", value: "__search", icon: "search" },
+  { label: "Status", value: "status", hasChildren: true, icon: "filter" },
+  { label: "Created", value: "created", hasChildren: true, icon: "calendar" },
+];
+
+export const mountAutocomplete = (props: MountProps = {}, slots: MountSlots = {}) =>
+  mount(Autocomplete, {
+    props: { modelValue: "", suggestions: fakeSuggestions, ...props },
+    slots,
+    global: {
+      stubs: {
+        ...oreStubs,
+        ...alloyStubs,
+        ClientOnly: { template: "<slot />" },
+      },
+      mocks: { passthrough, usePassthrough },
+    },
+  });
+
 export const mountAccordion = (props: MountProps = {}, slots: MountSlots = {}) =>
   mount(Accordion, {
     props: { items: fakeOptions, ...props },
@@ -82,7 +105,13 @@ export const mountCalendar = (props: MountProps = {}, slots: MountSlots = {}) =>
     global: {
       stubs: {
         ...oreStubs,
-        CalendarRoot: createScopedStub("CalendarRoot", { weekDays: ["Su", "Mo"], grid: [] }),
+        CalendarRoot: createScopedStub("CalendarRoot", {
+          weekDays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+          grid: [{
+            value: mockDate,
+            rows: [[mockDate, mockDate, mockDate, mockDate, mockDate, mockDate, mockDate]],
+          }],
+        }),
         ...rekaStubs("CalendarHeader", "CalendarHeading", "CalendarGrid", "CalendarGridHead", "CalendarGridBody", "CalendarGridRow", "CalendarHeadCell", "CalendarCell", "CalendarCellTrigger", "CalendarPrev", "CalendarNext"),
       },
     },
@@ -193,7 +222,13 @@ export const mountRangeCalendar = (props: MountProps = {}, slots: MountSlots = {
     global: {
       stubs: {
         ...oreStubs,
-        RangeCalendarRoot: createScopedStub("RangeCalendarRoot", { weekDays: ["Su", "Mo"], grid: [] }),
+        RangeCalendarRoot: createScopedStub("RangeCalendarRoot", {
+          weekDays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+          grid: [{
+            value: mockDate,
+            rows: [[mockDate, mockDate, mockDate, mockDate, mockDate, mockDate, mockDate]],
+          }],
+        }),
         ...rekaStubs("RangeCalendarHeader", "RangeCalendarHeading", "RangeCalendarGrid", "RangeCalendarGridHead", "RangeCalendarGridBody", "RangeCalendarGridRow", "RangeCalendarHeadCell", "RangeCalendarCell", "RangeCalendarCellTrigger", "RangeCalendarPrev", "RangeCalendarNext"),
       },
     },

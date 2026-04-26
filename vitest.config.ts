@@ -9,6 +9,11 @@ export default defineConfig({
     include: ["layers/*/tests/**/*.test.ts"],
     setupFiles: [resolve(__dirname, "packages/testing/setup.ts")],
     coverage: {
+      include: [
+        "layers/ore/app/**/*.{ts,vue}",
+        "layers/alloy/app/**/*.{ts,vue}",
+        "layers/forge/app/**/*.{ts,vue}",
+      ],
       reportsDirectory: ".coverage",
     },
   },

@@ -7,8 +7,6 @@
 .f-keywords-section {
   display: flex;
   flex-direction: column;
-  gap: var(--ref-spacing-2xs);
-  padding: var(--ref-spacing-sm);
   border: var(--ref-border-width-thin) solid var(--sys-outline);
   background: var(--sys-surface);
 }
@@ -19,7 +17,7 @@
 
 .f-keywords-section .f-tags-input-root {
   border: none;
-  padding: 0;
+  padding: var(--ref-spacing-xs) var(--ref-spacing-md);
   background: none;
 }
 
@@ -31,11 +29,17 @@
   font-size: var(--ref-text-xs);
   font-weight: var(--ref-font-bold);
   color: var(--sys-on-surface-variant);
+  padding-top: var(--ref-spacing-sm);
+  padding-right: var(--ref-spacing-md);
+  padding-bottom: var(--ref-spacing-xs);
+  padding-left: var(--ref-spacing-md);
 }
 
 .f-keywords-match {
   display: flex;
   flex-direction: column;
-  gap: var(--ref-spacing-2xs);
-  padding: var(--ref-spacing-sm);
+}
+
+.f-keywords-match .f-segmented-control {
+  margin: 0 var(--ref-spacing-md) var(--ref-spacing-sm);
 }

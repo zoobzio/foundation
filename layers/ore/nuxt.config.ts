@@ -79,6 +79,13 @@ export default defineNuxtConfig({
       // Font
       font: "twotone-text-fields",
 
+      // Charts
+      "bar-chart": "twotone-bar-chart",
+      "pie-chart": "twotone-pie-chart",
+      "show-chart": "twotone-show-chart",
+      layers: "twotone-layers",
+      schedule: "twotone-schedule",
+
       // UI
       tag: "twotone-sell",
       settings: "twotone-settings",
