@@ -18,12 +18,14 @@ describe("DataTableWidget", () => {
       expect(wrapper.findComponent({ name: "DataTableFilters" }).exists()).toBe(true);
     });
 
-    it("delegates to DataTableSearch", () => {
-      expect(wrapper.findComponent({ name: "DataTableSearch" }).exists()).toBe(true);
-    });
-
     it("delegates to DataTableColumns", () => {
       expect(wrapper.findComponent({ name: "DataTableColumns" }).exists()).toBe(true);
+    });
+
+    it("renders refresh Fab", () => {
+      const fab = wrapper.findComponent({ name: "Fab" });
+      expect(fab.exists()).toBe(true);
+      expect(fab.attributes("icon")).toBe("refresh");
     });
 
     it("delegates to DataTableHead", () => {
@@ -54,24 +56,6 @@ describe("DataTableWidget", () => {
   });
 
   describe("computed props", () => {
-    it("namespaces facet groups for Facets component", () => {
-      const table = mockTable();
-      table.facetGroups.value = [
-        { key: "status", label: "Status", items: [{ value: "Active", label: "Active", count: 2 }] },
-      ];
-      const wrapper = mountWidget({ table });
-      const facets = wrapper.findComponent({ name: "Facets" });
-      // The groups prop should have namespaced values like "status:Active"
-      expect(facets.attributes("groups")).toBeDefined();
-    });
-
-    it("computes date field configs from table.dateColumns", () => {
-      const table = mockTable();
-      const wrapper = mountWidget({ table });
-      const dateFilters = wrapper.findComponent({ name: "DateFilters" });
-      expect(dateFilters.attributes("fields")).toBeDefined();
-    });
-
     it("passes pagination props to Pagination", () => {
       const table = mockTable();
       table.page.value = 3;

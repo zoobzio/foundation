@@ -7,8 +7,8 @@ interface FakeRow {
   created: string;
 }
 
-const categories = ["engineering", "marketing", "sales", "support"];
-const statuses = ["active", "inactive", "pending"];
+const categories = ["Engineering", "Marketing", "Sales", "Support"];
+const statuses = ["Active", "Inactive", "Pending"];
 
 function generateBreakdown(field: keyof FakeRow): BreakdownData {
   const counts = new Map<string, number>();
@@ -17,7 +17,7 @@ function generateBreakdown(field: keyof FakeRow): BreakdownData {
     counts.set(val, (counts.get(val) ?? 0) + 1);
   }
   return {
-    labels: [...counts.keys()].map((k) => k.charAt(0).toUpperCase() + k.slice(1)),
+    labels: [...counts.keys()],
     values: [...counts.values()],
   };
 }
@@ -34,8 +34,20 @@ function generateSeries(field: keyof FakeRow, bucket: BucketSize): SeriesData {
   return {
     labels,
     datasets: values.map((v) => ({
-      label: v.charAt(0).toUpperCase() + v.slice(1),
+      label: v,
       data: labels.map(() => Math.floor(Math.random() * 20) + 1),
+    })),
+  };
+}
+
+function generateComparison(field: keyof FakeRow, groupBy: keyof FakeRow): ComparisonData {
+  const fieldValues = field === "status" ? statuses : categories;
+  const groupValues = groupBy === "status" ? statuses : categories;
+  return {
+    labels: fieldValues,
+    datasets: groupValues.map((g) => ({
+      label: g,
+      data: fieldValues.map(() => Math.floor(Math.random() * 30) + 1),
     })),
   };
 }
@@ -58,6 +70,16 @@ const noAnimation = { animation: false as const };
 const now = new Date();
 const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
 
+const colorMap: Record<string, string> = {
+  Active: "var(--ref-emerald-500)",
+  Inactive: "var(--ref-slate-400)",
+  Pending: "var(--ref-amber-500)",
+  Engineering: "var(--ref-blue-500)",
+  Marketing: "var(--ref-pink-500)",
+  Sales: "var(--ref-violet-500)",
+  Support: "var(--ref-teal-500)",
+};
+
 const chartParams = () => ({
   query: "",
   keywords: "",
@@ -68,6 +90,7 @@ const chartParams = () => ({
 
 const breakdownConfig: BreakdownConfig<FakeRow> = {
   fields: ["status", "category"],
+  limit: 3,
   renderers: [
     { type: "pie", label: "Pie", options: noAnimation },
     { type: "doughnut", label: "Doughnut", options: noAnimation },
@@ -99,26 +122,42 @@ const distributionConfig: DistributionConfig<FakeRow> = {
   fetch: async () => generateDistribution(),
 };
 
+const comparisonConfig: ComparisonConfig<FakeRow> = {
+  fields: ["status", "category"],
+  renderers: [
+    { type: "bar", label: "Bar", options: noAnimation },
+    { type: "line", label: "Line", options: noAnimation },
+    { type: "radar", label: "Radar", options: noAnimation },
+  ],
+  fetch: async ({ field, groupBy }) => generateComparison(field, groupBy),
+};
+
 export const accessChart1 = createChart<FakeRow>("chart-1", {
   topic: "User",
+  colorMap,
   params: chartParams,
   breakdown: breakdownConfig,
   series: seriesConfig,
   distribution: distributionConfig,
+  comparison: comparisonConfig,
 });
 
 export const accessChart2 = createChart<FakeRow>("chart-2", {
   topic: "User",
+  colorMap,
   params: chartParams,
   breakdown: breakdownConfig,
   series: seriesConfig,
   distribution: distributionConfig,
+  comparison: comparisonConfig,
 });
 
 export const accessChart3 = createChart<FakeRow>("chart-3", {
   topic: "User",
+  colorMap,
   params: chartParams,
   breakdown: breakdownConfig,
   series: seriesConfig,
   distribution: distributionConfig,
+  comparison: comparisonConfig,
 });

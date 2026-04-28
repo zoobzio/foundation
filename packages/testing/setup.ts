@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { computed, ref, shallowRef, watch, watchEffect, nextTick, onBeforeUnmount, useTemplateRef, useAttrs, useSlots, toValue } from "vue";
+import { computed, ref, shallowRef, watch, watchEffect, nextTick, onMounted, onBeforeUnmount, useTemplateRef, useAttrs, useSlots, toValue } from "vue";
 import { passthrough } from "../../layers/alloy/app/utils/passthrough";
 import { usePassthrough, useItemPassthrough } from "../../layers/alloy/app/composables/passthrough";
 
@@ -10,6 +10,7 @@ vi.stubGlobal("shallowRef", shallowRef);
 vi.stubGlobal("watch", watch);
 vi.stubGlobal("watchEffect", watchEffect);
 vi.stubGlobal("nextTick", nextTick);
+vi.stubGlobal("onMounted", onMounted);
 vi.stubGlobal("onBeforeUnmount", onBeforeUnmount);
 vi.stubGlobal("useTemplateRef", useTemplateRef);
 vi.stubGlobal("useAttrs", useAttrs);
@@ -30,6 +31,10 @@ vi.stubGlobal("MultiSelect", (await import("../../layers/alloy/app/utils/multi-s
 
 // Alloy util auto-imports
 vi.stubGlobal("recipe", (await import("../../layers/alloy/app/utils/recipe")).recipe);
+vi.stubGlobal("parseMarkdown", (await import("../../layers/alloy/app/utils/markdown")).parseMarkdown);
+
+// Stub useHighlight — returns empty string in tests (no async Shiki)
+vi.stubGlobal("useHighlight", () => ref(""));
 
 // Stub useIconAlias used by Icon component
 vi.stubGlobal("useIconAlias", (alias: string) => ({
@@ -52,6 +57,8 @@ vi.stubGlobal("useNuxtApp", () => ({ callHook: vi.fn() }));
 // Forge auto-imports
 vi.stubGlobal("DataTableSnapshotSchema", (await import("../../layers/forge/app/schemas/data-table")).DataTableSnapshotSchema);
 vi.stubGlobal("DataChartSnapshotSchema", (await import("../../layers/forge/app/schemas/data-chart")).DataChartSnapshotSchema);
+vi.stubGlobal("DataPreviewSnapshotSchema", (await import("../../layers/forge/app/schemas/data-preview")).DataPreviewSnapshotSchema);
+vi.stubGlobal("DataDeckSnapshotSchema", (await import("../../layers/forge/app/schemas/data-deck")).DataDeckSnapshotSchema);
 vi.stubGlobal("WIDGET_CONFIGS", (await import("../../layers/forge/app/factories/data-table")).WIDGET_CONFIGS);
 vi.stubGlobal("formatDate", (await import("../../layers/forge/app/utils/unravel")).formatDate);
 vi.stubGlobal("formatCell", (await import("../../layers/forge/app/utils/format-cell")).formatCell);

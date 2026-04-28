@@ -84,6 +84,12 @@ describe("DataChartWidget", () => {
       expect(popovers.length).toBeGreaterThan(0);
     });
 
+    it("renders refresh Fab in actions", () => {
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const refreshFab = fabs.find((f) => f.attributes("icon") === "refresh");
+      expect(refreshFab).toBeDefined();
+    });
+
     it("renders renderer popover in actions", () => {
       const popovers = wrapper.findAllComponents({ name: "Popover" });
       // At minimum: variant + field + renderer = 3 for breakdown

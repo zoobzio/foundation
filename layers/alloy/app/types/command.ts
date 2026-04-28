@@ -3,6 +3,7 @@ import type { ListboxRootProps, ListboxRootEmits, ListboxFilterProps, ListboxFil
 export type CommandItem = {
   value: string;
   label: string;
+  icon?: IconAlias;
   count?: number;
   disabled?: boolean;
 };
@@ -23,6 +24,7 @@ export type CommandPassthrough = {
   groupLabel?: Passthrough<CaptionProps>;
   item?: Passthrough<ListboxItemProps, ListboxItemEmits>;
   itemCheckbox?: Passthrough<CheckboxProps, CheckboxEmits>;
+  itemIcon?: Passthrough<IconProps>;
   itemLabel?: Passthrough<SpanProps>;
   itemCount?: Passthrough<KbdProps>;
 };

@@ -15,6 +15,28 @@ const {
 const el = useTemplateRef("el");
 defineExpose({ el });
 
+// Scroll tracking — always active, used by backToTop
+const viewportRef = useTemplateRef<InstanceType<typeof ScrollAreaViewport>>("viewport");
+const scrollY = ref(0);
+const isScrolled = computed(() => scrollY.value > 0);
+
+const getViewportEl = (): HTMLElement | null =>
+  viewportRef.value?.viewportElement ?? null;
+
+onMounted(() => {
+  const viewport = getViewportEl();
+  if (!viewport) return;
+  const onScroll = () => {
+    scrollY.value = viewport.scrollTop;
+  };
+  viewport.addEventListener("scroll", onScroll, { passive: true });
+  onBeforeUnmount(() => viewport.removeEventListener("scroll", onScroll));
+});
+
+const handleScrollToTop = () => {
+  getViewportEl()?.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 const rootPT = usePassthrough(pt?.root, {
   props: { type, scrollHideDelay, dir },
   handlers: {},
@@ -23,8 +45,12 @@ const viewportPT = usePassthrough(pt?.viewport, { props: {}, handlers: {} });
 const scrollbarPT = usePassthrough(pt?.scrollbar, { props: {}, handlers: {} });
 const thumbPT = usePassthrough(pt?.thumb, { props: {}, handlers: {} });
 const cornerPT = usePassthrough(pt?.corner, { props: {}, handlers: {} });
+const backToTopPT = usePassthrough(pt?.backToTop, () => ({
+  props: {},
+  handlers: { click: handleScrollToTop },
+}));
 
-const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation }));
+const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation, isScrolled: isScrolled.value }));
 </script>
 
 <template>
@@ -35,7 +61,7 @@ const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation }));
     v-on="rootPT.handlers"
   >
     <slot name="viewport" v-bind="ctx">
-      <ScrollAreaViewport v-bind="viewportPT.props" class="f-scroller-viewport" v-on="viewportPT.handlers">
+      <ScrollAreaViewport ref="viewport" v-bind="viewportPT.props" class="f-scroller-viewport" v-on="viewportPT.handlers">
         <slot name="content" v-bind="ctx" />
       </ScrollAreaViewport>
     </slot>
@@ -73,6 +99,18 @@ const ctx = computed(() => ({ type, scrollHideDelay, dir, orientation }));
         class="f-scroller-corner"
         v-on="cornerPT.handlers"
       />
+    </slot>
+
+    <slot name="backToTop" v-bind="ctx">
+      <Button
+        v-if="isScrolled"
+        v-bind="backToTopPT.props"
+        class="f-scroller-back-to-top"
+        v-on="backToTopPT.handlers"
+      >
+        <Icon alias="arrow-up" />
+        <Span class="f-scroller-back-to-top-label">Back to top</Span>
+      </Button>
     </slot>
   </ScrollAreaRoot>
 </template>

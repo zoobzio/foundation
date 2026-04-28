@@ -7,13 +7,13 @@ interface FakeRow {
   created: string;
 }
 
-const categories = ["engineering", "marketing", "sales", "support"];
+const categories = ["Engineering", "Marketing", "Sales", "Support"];
 
 const fakeData: FakeRow[] = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   name: `User ${i + 1}`,
   email: `user${i + 1}@example.com`,
-  status: i % 3 === 0 ? "active" : i % 3 === 1 ? "inactive" : "pending",
+  status: i % 3 === 0 ? "Active" : i % 3 === 1 ? "Inactive" : "Pending",
   category: categories[i % 4]!,
   created: new Date(2024, 0, i + 1).toISOString(),
 }));
@@ -25,7 +25,7 @@ export const accessFakeTable = createTable<FakeRow, number>("fake", {
     { key: "id", label: "ID", type: "number", sortable: true },
     { key: "name", label: "Name", type: "text", sortable: true },
     { key: "email", label: "Email", type: "text", sortable: true },
-    { key: "status", label: "Status", type: "enum", enumValues: ["active", "inactive", "pending"] },
+    { key: "status", label: "Status", type: "enum", enumValues: ["Active", "Inactive", "Pending"] },
     { key: "category", label: "Category", type: "enum", enumValues: categories },
     { key: "created", label: "Created", type: "date", sortable: true },
   ],
@@ -114,9 +114,9 @@ export const accessFakeTable = createTable<FakeRow, number>("fake", {
       {
         key: "status",
         label: "Status",
-        items: ["active", "inactive", "pending"].map((s) => ({
+        items: ["Active", "Inactive", "Pending"].map((s) => ({
           value: s,
-          label: s.charAt(0).toUpperCase() + s.slice(1),
+          label: s,
           count: result.filter((r) => r.status === s).length,
         })),
       },
@@ -125,7 +125,7 @@ export const accessFakeTable = createTable<FakeRow, number>("fake", {
         label: "Category",
         items: categories.map((c) => ({
           value: c,
-          label: c.charAt(0).toUpperCase() + c.slice(1),
+          label: c,
           count: result.filter((r) => r.category === c).length,
         })),
       },

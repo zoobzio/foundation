@@ -1,6 +1,7 @@
 export interface FilterItem {
   value: string;
   label: string;
+  icon?: IconAlias;
   count?: number;
   disabled?: boolean;
 }

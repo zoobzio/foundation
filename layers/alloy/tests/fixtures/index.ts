@@ -37,6 +37,10 @@ import TagsInput from "../../app/components/TagsInput.vue";
 import Toast from "../../app/components/Toast.vue";
 import Toaster from "../../app/components/Toaster.vue";
 import Tooltip from "../../app/components/Tooltip.vue";
+import Markdown from "../../app/components/Markdown.vue";
+import MarkdownNode from "../../app/components/MarkdownNode.vue";
+import MarkdownCode from "../../app/components/MarkdownCode.vue";
+import CodeView from "../../app/components/CodeView.vue";
 
 type MountProps = Record<string, unknown>;
 type MountSlots = Record<string, string | ((...args: unknown[]) => unknown)>;
@@ -260,3 +264,21 @@ export const mountToaster = alloy(Toaster, ["ToastProvider", "ToastViewport"]);
 export const mountTooltip = alloy(Tooltip, ["TooltipRoot", "TooltipTrigger", "TooltipPortal", "TooltipContent"], {
   content: "Tooltip text",
 });
+
+export const mountMarkdown = (props: MountProps = {}, slots: MountSlots = {}) =>
+  mount(Markdown, {
+    props: { content: "Hello **world**", ...props },
+    slots,
+    global: {
+      stubs: { ...oreStubs, MarkdownNode, MarkdownCode },
+    },
+  });
+
+export const mountCodeView = (props: MountProps = {}, slots: MountSlots = {}) =>
+  mount(CodeView, {
+    props: { content: '{"key": "value"}', ...props },
+    slots,
+    global: {
+      stubs: oreStubs,
+    },
+  });

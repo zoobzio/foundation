@@ -34,7 +34,9 @@ export interface DistributionData {
   datasets: DistributionDataset[];
 }
 
-export type VariantData = BreakdownData | SeriesData | DistributionData;
+export type ComparisonData = SeriesData;
+
+export type VariantData = BreakdownData | SeriesData | DistributionData | ComparisonData;
 
 // ---------------------------------------------------------------------------
 // Variant → renderer mapping
@@ -43,6 +45,7 @@ export type VariantData = BreakdownData | SeriesData | DistributionData;
 export type BreakdownRenderer = "pie" | "doughnut" | "polarArea" | "bar";
 export type SeriesRenderer = "line" | "bar" | "radar";
 export type DistributionRenderer = "scatter" | "bubble";
+export type ComparisonRenderer = "bar" | "line" | "radar";
 
 // ---------------------------------------------------------------------------
 // Bucket sizes for series time grouping
@@ -75,6 +78,7 @@ export interface DataChartQueryParams {
 
 export interface BreakdownFetchParams<T> {
   field: keyof T;
+  limit?: number;
   query: DataChartQueryParams;
 }
 
@@ -92,6 +96,13 @@ export interface DistributionFetchParams<T> {
   query: DataChartQueryParams;
 }
 
+export interface ComparisonFetchParams<T> {
+  field: keyof T;
+  groupBy: keyof T;
+  limit?: number;
+  query: DataChartQueryParams;
+}
+
 // ---------------------------------------------------------------------------
 // Variant configs (discriminated union, generic over T)
 // ---------------------------------------------------------------------------
@@ -103,6 +114,7 @@ interface VariantBase<T> {
 
 export interface BreakdownVariant<T> extends VariantBase<T> {
   type: "breakdown";
+  limit?: number;
   fetch: (params: BreakdownFetchParams<T>) => Promise<BreakdownData>;
 }
 
@@ -119,10 +131,17 @@ export interface DistributionVariant<T> extends VariantBase<T> {
   fetch: (params: DistributionFetchParams<T>) => Promise<DistributionData>;
 }
 
+export interface ComparisonVariant<T> extends VariantBase<T> {
+  type: "comparison";
+  limit?: number;
+  fetch: (params: ComparisonFetchParams<T>) => Promise<ComparisonData>;
+}
+
 export type DataChartVariant<T> =
   | BreakdownVariant<T>
   | SeriesVariant<T>
-  | DistributionVariant<T>;
+  | DistributionVariant<T>
+  | ComparisonVariant<T>;
 
 // ---------------------------------------------------------------------------
 // Variant config shapes — what the consumer provides (without the type disc.)
@@ -130,6 +149,7 @@ export type DataChartVariant<T> =
 
 export interface BreakdownConfig<T> {
   fields: (keyof T)[];
+  limit?: number;
   renderers: RendererConfig<BreakdownRenderer>[];
   fetch: (params: BreakdownFetchParams<T>) => Promise<BreakdownData>;
 }
@@ -149,16 +169,25 @@ export interface DistributionConfig<T> {
   fetch: (params: DistributionFetchParams<T>) => Promise<DistributionData>;
 }
 
+export interface ComparisonConfig<T> {
+  fields: (keyof T)[];
+  limit?: number;
+  renderers: RendererConfig<ComparisonRenderer>[];
+  fetch: (params: ComparisonFetchParams<T>) => Promise<ComparisonData>;
+}
+
 // ---------------------------------------------------------------------------
 // Config the consumer provides to the factory
 // ---------------------------------------------------------------------------
 
 export interface DataChartConfig<T> {
   topic: string;
+  colorMap?: Record<string, string>;
   params: () => DataChartQueryParams;
   breakdown?: BreakdownConfig<T>;
   series?: SeriesConfig<T>;
   distribution?: DistributionConfig<T>;
+  comparison?: ComparisonConfig<T>;
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +204,7 @@ export interface Chart<T> {
   activeVariant: Ref<string>;
   activeRenderer: Ref<string>;
   activeField: Ref<keyof T | null>;
+  activeGroupBy: Ref<keyof T | null>;
   activeX: Ref<keyof T | null>;
   activeY: Ref<keyof T | null>;
   activeBucket: Ref<BucketSize | null>;
@@ -193,6 +223,7 @@ export interface Chart<T> {
   setVariant: (type: string) => void;
   setRenderer: (type: string) => void;
   setField: (field: keyof T) => void;
+  setGroupBy: (field: keyof T) => void;
   setX: (field: keyof T) => void;
   setY: (field: keyof T) => void;
   setBucket: (bucket: BucketSize) => void;

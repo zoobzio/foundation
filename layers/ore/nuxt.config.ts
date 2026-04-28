@@ -82,9 +82,20 @@ export default defineNuxtConfig({
       // Charts
       "bar-chart": "twotone-bar-chart",
       "pie-chart": "twotone-pie-chart",
+      "doughnut-chart": "twotone-donut-large",
+      "polar-chart": "twotone-radar",
       "show-chart": "twotone-show-chart",
+      "radar-chart": "twotone-radar",
+      "scatter-chart": "twotone-scatter-plot",
+      "bubble-chart": "twotone-bubble-chart",
       layers: "twotone-layers",
       schedule: "twotone-schedule",
+
+      // Data
+      refresh: "twotone-refresh",
+      download: "twotone-download",
+      "unfold-less": "twotone-unfold-less",
+      "unfold-more": "twotone-unfold-more",
 
       // UI
       tag: "twotone-sell",

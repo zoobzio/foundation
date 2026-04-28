@@ -6,6 +6,7 @@ export type ScrollerPassthrough = {
   scrollbar?: Passthrough<ScrollAreaScrollbarProps>;
   thumb?: Passthrough<ScrollAreaThumbProps>;
   corner?: Passthrough<ScrollAreaCornerProps>;
+  backToTop?: Passthrough<ButtonProps>;
 };
 
 export type ScrollerProps = {

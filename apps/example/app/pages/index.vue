@@ -13,6 +13,7 @@ const { chart1, chart2, chart3 } = useFakeCharts();
       <Header class="f-example-header">
         <H1>Foundation Example</H1>
         <P>A workspace demo with data table and chart widgets.</P>
+        <Anchor to="/preview" label="Data Preview →" />
       </Header>
     </template>
 

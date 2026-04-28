@@ -98,3 +98,126 @@ body {
   width: calc(100% - 2 * var(--ref-spacing-sm)) !important;
   height: calc(100% - 2 * var(--ref-spacing-sm)) !important;
 }
+
+/* Data deck */
+.f-data-deck {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface);
+}
+
+.f-data-deck-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ref-spacing-sm);
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline);
+  background: var(--sys-surface-container);
+}
+
+.f-data-deck-title-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ref-spacing-xs);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-semibold);
+  color: var(--sys-on-surface);
+  cursor: pointer;
+}
+
+.f-data-deck-title-btn:hover {
+  color: var(--sys-primary);
+}
+
+.f-data-deck-title-btn .f-icon {
+  color: var(--sys-on-surface-variant);
+}
+
+.f-data-deck-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ref-spacing-xs);
+}
+
+.f-data-deck-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.f-data-deck-pending {
+  position: absolute;
+  top: var(--ref-spacing-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.f-data-deck-card {
+  padding: var(--ref-spacing-sm) var(--ref-spacing-md);
+  border-bottom: var(--ref-border-width-thin) solid var(--sys-outline-variant);
+}
+
+.f-data-deck-card:last-of-type {
+  border-bottom: none;
+}
+
+.f-data-deck-empty {
+  padding: var(--ref-spacing-lg) var(--ref-spacing-md);
+  text-align: center;
+  color: var(--sys-on-surface-variant);
+  font-size: var(--ref-text-sm);
+}
+
+/* Example card styles */
+.f-example-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ref-spacing-xs);
+}
+
+.f-example-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ref-spacing-sm);
+}
+
+.f-example-card-title {
+  font-size: var(--ref-text-sm);
+  font-weight: var(--ref-font-medium);
+  color: var(--sys-on-surface);
+}
+
+.f-example-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ref-spacing-sm);
+}
+
+.f-example-card-category {
+  font-size: var(--ref-text-xs);
+  color: var(--sys-on-surface-variant);
+}
+
+.f-example-card-date {
+  font-size: var(--ref-text-xs);
+  color: var(--sys-on-surface-variant);
+}
+
+.f-example-card--compact {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}

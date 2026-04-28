@@ -6,6 +6,7 @@ import type {
   BreakdownData,
   SeriesData,
   DistributionData,
+  ComparisonData,
 } from "../../app/types/data-chart";
 
 interface TestRow {
@@ -29,9 +30,18 @@ const fakeDistribution: DistributionData = {
   datasets: [{ label: "Users", data: [{ x: 1, y: 2 }, { x: 3, y: 4 }] }],
 };
 
+const fakeComparison: ComparisonData = {
+  labels: ["Engineering", "Sales", "Support"],
+  datasets: [
+    { label: "Active", data: [10, 8, 5] },
+    { label: "Inactive", data: [3, 2, 7] },
+  ],
+};
+
 const breakdownFetch = vi.fn(async () => fakeBreakdown);
 const seriesFetch = vi.fn(async () => fakeSeries);
 const distributionFetch = vi.fn(async () => fakeDistribution);
+const comparisonFetch = vi.fn(async () => fakeComparison);
 
 const now = new Date();
 const past = new Date(now.getFullYear(), now.getMonth() - 6, 1);
@@ -56,6 +66,11 @@ const config: DataChartConfig<TestRow> = {
     renderers: [{ type: "scatter" }],
     fetch: distributionFetch,
   },
+  comparison: {
+    fields: ["status", "category"],
+    renderers: [{ type: "bar" }, { type: "line" }, { type: "radar" }],
+    fetch: comparisonFetch,
+  },
   params: () => ({
     query: "",
     keywords: "",
@@ -72,6 +87,7 @@ describe("createChart", () => {
     breakdownFetch.mockClear();
     seriesFetch.mockClear();
     distributionFetch.mockClear();
+    comparisonFetch.mockClear();
   });
 
   describe("defaults", () => {
@@ -228,6 +244,18 @@ describe("createChart", () => {
       );
     });
 
+    it("fetch passes limit to breakdown params", async () => {
+      const limitConfig: DataChartConfig<TestRow> = {
+        ...config,
+        breakdown: { ...config.breakdown!, limit: 3 },
+      };
+      const chart = createChart<TestRow>("fetch-limit-test", limitConfig)();
+      await chart.fetch();
+      expect(breakdownFetch).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 3 }),
+      );
+    });
+
     it("fetch passes correct params for series", async () => {
       const chart = makeChart("fetch-series-test");
       chart.setVariant("series");
@@ -278,6 +306,121 @@ describe("createChart", () => {
     });
   });
 
+  describe("breakdown aggregation", () => {
+    const manyLabels: BreakdownData = {
+      labels: ["A", "B", "C", "D", "E"],
+      values: [10, 30, 5, 20, 15],
+    };
+
+    it("aggregates into top-N + Other when limit is set", async () => {
+      const limitFetch = vi.fn(async () => manyLabels);
+      const limitConfig: DataChartConfig<TestRow> = {
+        ...config,
+        breakdown: { ...config.breakdown!, limit: 3, fetch: limitFetch },
+      };
+      const chart = createChart<TestRow>("agg-limit-test", limitConfig)();
+      await chart.fetch();
+      const data = chart.variantData.value as BreakdownData;
+      // Top 3 by value: B(30), D(20), E(15) — Other = A(10) + C(5) = 15
+      expect(data.labels).toEqual(["B", "D", "E", "Other"]);
+      expect(data.values).toEqual([30, 20, 15, 15]);
+    });
+
+    it("does not aggregate when results are within limit", async () => {
+      const limitFetch = vi.fn(async () => manyLabels);
+      const limitConfig: DataChartConfig<TestRow> = {
+        ...config,
+        breakdown: { ...config.breakdown!, limit: 10, fetch: limitFetch },
+      };
+      const chart = createChart<TestRow>("agg-within-test", limitConfig)();
+      await chart.fetch();
+      const data = chart.variantData.value as BreakdownData;
+      expect(data.labels).toEqual(manyLabels.labels);
+      expect(data.values).toEqual(manyLabels.values);
+    });
+
+    it("does not aggregate when no limit is set", async () => {
+      const noLimitFetch = vi.fn(async () => manyLabels);
+      const noLimitConfig: DataChartConfig<TestRow> = {
+        ...config,
+        breakdown: { ...config.breakdown!, fetch: noLimitFetch },
+      };
+      const chart = createChart<TestRow>("agg-nolimit-test", noLimitConfig)();
+      await chart.fetch();
+      const data = chart.variantData.value as BreakdownData;
+      expect(data.labels).toEqual(manyLabels.labels);
+      expect(data.values).toEqual(manyLabels.values);
+    });
+  });
+
+  describe("comparison", () => {
+    it("setVariant to comparison resets field and groupBy", async () => {
+      const chart = makeChart("comp-variant-test");
+      chart.setVariant("comparison");
+      await nextTick();
+      expect(chart.activeVariant.value).toBe("comparison");
+      expect(chart.activeRenderer.value).toBe("bar");
+      expect(chart.activeField.value).toBe("status");
+      expect(chart.activeGroupBy.value).toBe("category");
+      expect(comparisonFetch).toHaveBeenCalledOnce();
+    });
+
+    it("setGroupBy updates groupBy and fetches", async () => {
+      const chart = makeChart("comp-groupby-test");
+      chart.setVariant("comparison");
+      await nextTick();
+      comparisonFetch.mockClear();
+      chart.setGroupBy("status");
+      await nextTick();
+      expect(chart.activeGroupBy.value).toBe("status");
+      expect(comparisonFetch).toHaveBeenCalled();
+    });
+
+    it("fetch passes correct params for comparison", async () => {
+      const chart = makeChart("comp-fetch-test");
+      chart.setVariant("comparison");
+      await nextTick();
+      comparisonFetch.mockClear();
+      chart.activeField.value = "category";
+      chart.activeGroupBy.value = "status";
+      await chart.fetch();
+      expect(comparisonFetch).toHaveBeenCalledWith(
+        expect.objectContaining({ field: "category", groupBy: "status" }),
+      );
+    });
+
+    it("fetch passes limit for comparison when configured", async () => {
+      const limitConfig: DataChartConfig<TestRow> = {
+        ...config,
+        comparison: { ...config.comparison!, limit: 5 },
+      };
+      const chart = createChart<TestRow>("comp-limit-test", limitConfig)();
+      chart.setVariant("comparison");
+      await nextTick();
+      expect(comparisonFetch).toHaveBeenCalledWith(
+        expect.objectContaining({ limit: 5 }),
+      );
+    });
+
+    it("fetch stores comparison data as variantData", async () => {
+      const chart = makeChart("comp-data-test");
+      chart.setVariant("comparison");
+      await nextTick();
+      expect(chart.variantData.value).toEqual(fakeComparison);
+    });
+  });
+
+  describe("colorMap", () => {
+    it("config accepts a colorMap", () => {
+      const colorConfig: DataChartConfig<TestRow> = {
+        ...config,
+        colorMap: { Active: "#ff0000", Inactive: "#00ff00" },
+      };
+      const chart = createChart<TestRow>("colormap-test", colorConfig)();
+      expect(chart.topic).toBe("User");
+    });
+  });
+
   describe("persistence", () => {
     it("getSnapshot captures current state", () => {
       const chart = makeChart("snapshot-get-test");
@@ -293,6 +436,7 @@ describe("createChart", () => {
         activeVariant: "series",
         activeRenderer: "bar",
         activeField: "category",
+        activeGroupBy: null,
         activeX: null,
         activeY: null,
         activeBucket: "1w",

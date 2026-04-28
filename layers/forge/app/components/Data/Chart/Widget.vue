@@ -16,6 +16,7 @@ const variant = computed(() => chart.activeVariantConfig.value);
 // Popover state
 const variantOpen = ref(false);
 const fieldOpen = ref(false);
+const groupByOpen = ref(false);
 const xOpen = ref(false);
 const yOpen = ref(false);
 const bucketOpen = ref(false);
@@ -36,9 +37,16 @@ const fieldGroups = computed(() => [{
   items: variant.value.fields.map((f) => ({
     value: String(f),
     label: String(f),
-    disabled: variant.value.type === "distribution"
-      ? false
-      : String(f) === String(chart.activeField.value),
+    disabled: String(f) === String(chart.activeField.value),
+  })),
+}]);
+
+const groupByGroups = computed(() => [{
+  key: "fields",
+  items: variant.value.fields.map((f) => ({
+    value: String(f),
+    label: String(f),
+    disabled: String(f) === String(chart.activeGroupBy.value),
   })),
 }]);
 
@@ -78,9 +86,21 @@ const rendererGroups = computed(() => [{
   items: variant.value.renderers.map((r) => ({
     value: r.type,
     label: r.label ?? r.type,
+    icon: RENDERER_ICONS[r.type],
     disabled: r.type === chart.activeRenderer.value,
   })),
 }]);
+
+const RENDERER_ICONS: Record<string, IconAlias> = {
+  pie: "pie-chart",
+  doughnut: "doughnut-chart",
+  polarArea: "polar-chart",
+  bar: "bar-chart",
+  line: "show-chart",
+  radar: "radar-chart",
+  scatter: "scatter-chart",
+  bubble: "bubble-chart",
+};
 
 // Passthrough
 const rootPT = usePassthrough(pt?.root, { props: {}, handlers: {} });
@@ -135,9 +155,9 @@ const actionsPT = usePassthrough(pt?.actions, { props: {}, handlers: {} });
           class="f-data-chart-actions"
           v-on="actionsPT.handlers"
         >
-          <!-- Field selector: breakdown + series -->
+          <!-- Field selector: breakdown + series + comparison -->
           <Popover
-            v-if="variant.type === 'breakdown' || variant.type === 'series'"
+            v-if="variant.type === 'breakdown' || variant.type === 'series' || variant.type === 'comparison'"
             :open="fieldOpen"
             align="end"
             @update:open="fieldOpen = $event"
@@ -151,6 +171,26 @@ const actionsPT = usePassthrough(pt?.actions, { props: {}, handlers: {} });
                 placeholder="Field..."
                 @select="chart.setField($event as keyof T); fieldOpen = false"
                 @keydown.escape="fieldOpen = false"
+              />
+            </template>
+          </Popover>
+
+          <!-- Group by selector: comparison -->
+          <Popover
+            v-if="variant.type === 'comparison'"
+            :open="groupByOpen"
+            align="end"
+            @update:open="groupByOpen = $event"
+          >
+            <template #trigger>
+              <Fab :icon="('filter' as IconAlias)" />
+            </template>
+            <template #content>
+              <Command
+                :groups="groupByGroups"
+                placeholder="Group by..."
+                @select="chart.setGroupBy($event as keyof T); groupByOpen = false"
+                @keydown.escape="groupByOpen = false"
               />
             </template>
           </Popover>
@@ -221,7 +261,7 @@ const actionsPT = usePassthrough(pt?.actions, { props: {}, handlers: {} });
             @update:open="rendererOpen = $event"
           >
             <template #trigger>
-              <Fab :icon="('bar-chart' as IconAlias)" />
+              <Fab :icon="RENDERER_ICONS[chart.activeRenderer.value] ?? 'bar-chart'" />
             </template>
             <template #content>
               <Command
@@ -231,6 +271,9 @@ const actionsPT = usePassthrough(pt?.actions, { props: {}, handlers: {} });
               />
             </template>
           </Popover>
+
+          <!-- Refresh -->
+          <Fab icon="refresh" @click="chart.fetch()" />
         </Group>
       </Group>
     </slot>

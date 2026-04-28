@@ -68,9 +68,24 @@ export const Td = createStub("Td", "td");
 export const Anchor = createStub("Anchor", "a");
 export const Img = createStub("Img", "img");
 export const Chip = createStub("Chip", "button");
+export const Article = createStub("Article", "article");
+export const Strong = createStub("Strong", "strong");
+export const Del = createStub("Del", "del");
+export const Blockquote = createStub("Blockquote", "blockquote");
+export const Ul = createStub("Ul", "ul");
+export const Ol = createStub("Ol", "ol");
+export const Li = createStub("Li", "li");
+export const Code = createStub("Code", "code");
+export const Pre = createStub("Pre", "pre");
+export const Hr = createStub("Hr", "hr");
+export const H2 = createStub("H2", "h2");
+export const H3 = createStub("H3", "h3");
+export const H4 = createStub("H4", "h4");
+export const H5 = createStub("H5", "h5");
+export const H6 = createStub("H6", "h6");
 
 /** All ore stubs keyed by component name */
-export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip } as const;
+export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, H2, H3, H4, H5, H6, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip, Article, Strong, Del, Blockquote, Ul, Ol, Li, Code, Pre, Hr } as const;
 
 // --- Alloy sub-component stubs (for composed components) ---
 export const alloyStubs = {
@@ -86,6 +101,7 @@ export const alloyStubs = {
   Avatar: createStub("Avatar"),
   Calendar: createStub("Calendar"),
   Checkbox: createStub("Checkbox"),
+  CodeView: createStub("CodeView"),
   Command: createStub("Command"),
   DateFilters: createStub("DateFilters"),
   DatePicker: createStub("DatePicker"),
@@ -96,6 +112,7 @@ export const alloyStubs = {
   Hero: createStub("Hero"),
   Keywords: createStub("Keywords"),
   Listbox: createStub("Listbox"),
+  Markdown: createStub("Markdown"),
   Menu: createStub("Menu"),
   MultiSelect: createStub("MultiSelect"),
   Pagination: createStub("Pagination"),

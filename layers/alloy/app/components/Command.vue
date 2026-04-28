@@ -62,6 +62,7 @@ const viewportPT = usePassthrough(pt?.viewport, { props: {}, handlers: {} });
 const emptyPT = usePassthrough(pt?.empty, { props: {}, handlers: {} });
 const groupLabelPT = usePassthrough(pt?.groupLabel, { props: {}, handlers: {} });
 const itemCheckboxPT = usePassthrough(pt?.itemCheckbox, { props: {}, handlers: {} });
+const itemIconPT = usePassthrough(pt?.itemIcon, { props: { alias: "warning" }, handlers: {} });
 const itemLabelPT = usePassthrough(pt?.itemLabel, { props: {}, handlers: {} });
 const itemCountPT = usePassthrough(pt?.itemCount, { props: {}, handlers: {} });
 
@@ -139,6 +140,9 @@ const ctx = computed(() => ({
                 <slot name="item" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
                   <slot name="itemCheckbox" v-bind="{ ...ctx, item: entry.item, selected: isSelected(entry.item.value) }">
                     <Checkbox v-if="multiple" v-bind="{ ...itemCheckboxPT.props, modelValue: isSelected(entry.item.value) }" v-on="itemCheckboxPT.handlers" />
+                  </slot>
+                  <slot name="itemIcon" v-bind="{ ...ctx, item: entry.item }">
+                    <Icon v-if="entry.item.icon" v-bind="{ ...itemIconPT.props, alias: entry.item.icon }" class="f-command-item-icon" v-on="itemIconPT.handlers" />
                   </slot>
                   <slot name="itemLabel" v-bind="{ ...ctx, item: entry.item }">
                     <Span v-bind="itemLabelPT.props" class="f-command-item-label" v-on="itemLabelPT.handlers">{{ entry.item.label }}</Span>

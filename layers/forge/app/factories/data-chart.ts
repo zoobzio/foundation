@@ -7,6 +7,8 @@ import type {
   BreakdownData,
   SeriesVariant,
   SeriesData,
+  ComparisonVariant,
+  ComparisonData,
   DistributionVariant,
   DistributionData,
   VariantData,
@@ -73,6 +75,24 @@ const PALETTE = [
   "hsl(300, 50%, 55%)",
 ];
 
+
+// ---------------------------------------------------------------------------
+// Color resolution — resolves CSS var() tokens to computed values for canvas
+// ---------------------------------------------------------------------------
+
+function resolveColor(value: string): string {
+  if (!value.startsWith("var(")) return value;
+  const prop = value.slice(4, -1).trim();
+  return getComputedStyle(document.documentElement).getPropertyValue(prop).trim() || value;
+}
+
+function resolveColors(labels: string[], colorMap?: Record<string, string>): string[] {
+  return labels.map((label, i) => {
+    const mapped = colorMap?.[label];
+    return mapped ? resolveColor(mapped) : PALETTE[i % PALETTE.length]!;
+  });
+}
+
 const BASE_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
@@ -90,7 +110,29 @@ const VARIANT_LABELS: Record<string, string> = {
   breakdown: "Breakdown",
   series: "Series",
   distribution: "Distribution",
+  comparison: "Comparison",
 };
+
+// ---------------------------------------------------------------------------
+// Breakdown aggregation — top-N + "Other"
+// ---------------------------------------------------------------------------
+
+function aggregateBreakdown(data: BreakdownData, limit?: number): BreakdownData {
+  if (!limit || data.labels.length <= limit) return data;
+
+  // Pair, sort descending by value, split at limit
+  const pairs = data.labels.map((label, i) => ({ label, value: data.values[i]! }));
+  pairs.sort((a, b) => b.value - a.value);
+
+  const top = pairs.slice(0, limit);
+  const rest = pairs.slice(limit);
+  const otherSum = rest.reduce((sum, p) => sum + p.value, 0);
+
+  return {
+    labels: [...top.map((p) => p.label), "Other"],
+    values: [...top.map((p) => p.value), otherSum],
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Narrowed renderers
@@ -101,15 +143,18 @@ function renderBreakdown<T>(
   variant: BreakdownVariant<T>,
   data: BreakdownData,
   rendererType: string,
+  colorMap?: Record<string, string>,
 ): ChartJS {
   const renderer = variant.renderers.find((r) => r.type === rendererType) ?? variant.renderers[0]!;
+  const colors = resolveColors(data.labels, colorMap);
   return new ChartJS(el, {
     type: renderer.type,
     data: {
       labels: data.labels,
       datasets: [{
         data: data.values,
-        backgroundColor: PALETTE.slice(0, data.values.length),
+        backgroundColor: colors,
+        borderWidth: 0,
       }],
     },
     options: mergeOptions(renderer),
@@ -121,8 +166,11 @@ function renderSeries<T>(
   variant: SeriesVariant<T>,
   data: SeriesData,
   rendererType: string,
+  colorMap?: Record<string, string>,
 ): ChartJS {
   const renderer = variant.renderers.find((r) => r.type === rendererType) ?? variant.renderers[0]!;
+  const dsLabels = data.datasets.map((ds) => ds.label);
+  const colors = resolveColors(dsLabels, colorMap);
   return new ChartJS(el, {
     type: renderer.type,
     data: {
@@ -130,8 +178,8 @@ function renderSeries<T>(
       datasets: data.datasets.map((ds, i) => ({
         label: ds.label,
         data: ds.data,
-        borderColor: PALETTE[i % PALETTE.length],
-        backgroundColor: PALETTE[i % PALETTE.length],
+        borderColor: colors[i],
+        backgroundColor: colors[i],
       })),
     },
     options: mergeOptions(renderer),
@@ -143,16 +191,44 @@ function renderDistribution<T>(
   variant: DistributionVariant<T>,
   data: DistributionData,
   rendererType: string,
+  colorMap?: Record<string, string>,
 ): ChartJS {
   const renderer = variant.renderers.find((r) => r.type === rendererType) ?? variant.renderers[0]!;
+  const dsLabels = data.datasets.map((ds) => ds.label);
+  const colors = resolveColors(dsLabels, colorMap);
   return new ChartJS(el, {
     type: renderer.type,
     data: {
       datasets: data.datasets.map((ds, i) => ({
         label: ds.label,
         data: ds.data,
-        borderColor: PALETTE[i % PALETTE.length],
-        backgroundColor: PALETTE[i % PALETTE.length],
+        borderColor: colors[i],
+        backgroundColor: colors[i],
+      })),
+    },
+    options: mergeOptions(renderer),
+  });
+}
+
+function renderComparison<T>(
+  el: HTMLCanvasElement,
+  variant: ComparisonVariant<T>,
+  data: ComparisonData,
+  rendererType: string,
+  colorMap?: Record<string, string>,
+): ChartJS {
+  const renderer = variant.renderers.find((r) => r.type === rendererType) ?? variant.renderers[0]!;
+  const dsLabels = data.datasets.map((ds) => ds.label);
+  const colors = resolveColors(dsLabels, colorMap);
+  return new ChartJS(el, {
+    type: renderer.type,
+    data: {
+      labels: data.labels,
+      datasets: data.datasets.map((ds, i) => ({
+        label: ds.label,
+        data: ds.data,
+        borderColor: colors[i],
+        backgroundColor: colors[i],
       })),
     },
     options: mergeOptions(renderer),
@@ -190,6 +266,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
     if (config.breakdown) variants.push({ type: "breakdown", ...config.breakdown });
     if (config.series) variants.push({ type: "series", ...config.series });
     if (config.distribution) variants.push({ type: "distribution", ...config.distribution });
+    if (config.comparison) variants.push({ type: "comparison", ...config.comparison });
     const variantMap: Map<string, DataChartVariant<T>> = new Map(variants.map((v) => [v.type, v]));
 
     // Resolve first variant defaults
@@ -207,6 +284,10 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
     const activeField = useState<keyof T | null>(
       `chart-${id}-activeField`,
       () => (defaults.activeField as keyof T | null) ?? firstVariant.fields[0] ?? null,
+    );
+    const activeGroupBy = useState<keyof T | null>(
+      `chart-${id}-activeGroupBy`,
+      () => (defaults.activeGroupBy as keyof T | null) ?? firstVariant.fields[1] ?? null,
     );
     const activeX = useState<keyof T | null>(
       `chart-${id}-activeX`,
@@ -257,15 +338,19 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
 
       if (!el || !data) return;
 
+      const cm = config.colorMap;
       switch (variant.type) {
         case "breakdown":
-          instance = renderBreakdown(el, variant, data as BreakdownData, rendererType);
+          instance = renderBreakdown(el, variant, data as BreakdownData, rendererType, cm);
           break;
         case "series":
-          instance = renderSeries(el, variant, data as SeriesData, rendererType);
+          instance = renderSeries(el, variant, data as SeriesData, rendererType, cm);
           break;
         case "distribution":
-          instance = renderDistribution(el, variant, data as DistributionData, rendererType);
+          instance = renderDistribution(el, variant, data as DistributionData, rendererType, cm);
+          break;
+        case "comparison":
+          instance = renderComparison(el, variant, data as ComparisonData, rendererType, cm);
           break;
       }
 
@@ -282,6 +367,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       activeVariant.value = type;
       activeRenderer.value = variant.renderers[0]?.type ?? "";
       activeField.value = variant.fields[0] ?? null;
+      activeGroupBy.value = variant.fields[1] ?? null;
       activeX.value = variant.fields[0] ?? null;
       activeY.value = variant.fields[1] ?? null;
       if (variant.type === "series") {
@@ -304,6 +390,11 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
 
     const setField = (field: keyof T) => {
       activeField.value = field;
+      fetchData();
+    };
+
+    const setGroupBy = (field: keyof T) => {
+      activeGroupBy.value = field;
       fetchData();
     };
 
@@ -332,6 +423,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       activeVariant: activeVariant.value,
       activeRenderer: activeRenderer.value,
       activeField: activeField.value as string | null,
+      activeGroupBy: activeGroupBy.value as string | null,
       activeX: activeX.value as string | null,
       activeY: activeY.value as string | null,
       activeBucket: activeBucket.value,
@@ -342,6 +434,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       activeVariant.value = snapshot.activeVariant;
       activeRenderer.value = snapshot.activeRenderer;
       activeField.value = snapshot.activeField as keyof T | null;
+      activeGroupBy.value = snapshot.activeGroupBy as keyof T | null;
       activeX.value = snapshot.activeX as keyof T | null;
       activeY.value = snapshot.activeY as keyof T | null;
       activeBucket.value = snapshot.activeBucket;
@@ -369,9 +462,10 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
             if (!activeField.value) break;
             const result = await variant.fetch({
               field: activeField.value,
+              limit: variant.limit,
               query: queryParams,
             });
-            variantData.value = result;
+            variantData.value = aggregateBreakdown(result, variant.limit);
             break;
           }
           case "series": {
@@ -396,6 +490,17 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
             variantData.value = result;
             break;
           }
+          case "comparison": {
+            if (!activeField.value || !activeGroupBy.value) break;
+            const result = await variant.fetch({
+              field: activeField.value,
+              groupBy: activeGroupBy.value,
+              limit: variant.limit,
+              query: queryParams,
+            });
+            variantData.value = result;
+            break;
+          }
         }
       } finally {
         loading.value = false;
@@ -413,6 +518,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       activeVariant,
       activeRenderer,
       activeField,
+      activeGroupBy,
       activeX,
       activeY,
       activeBucket,
@@ -425,6 +531,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       setVariant,
       setRenderer,
       setField,
+      setGroupBy,
       setX,
       setY,
       setBucket,

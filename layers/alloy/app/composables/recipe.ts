@@ -41,3 +41,5 @@ export const useTagsInput = (props: PropsInput<TagsInputProps>, handlers: Handle
 export const useToast = (props: PropsInput<ToastProps>, handlers: HandlersInput<ToastEmits>) => useRecipe(props, handlers);
 export const useToaster = (props: PropsInput<ToasterProps>, handlers: HandlersInput<ToasterEmits>) => useRecipe(props, handlers);
 export const useTooltip = (props: PropsInput<TooltipProps>, handlers: HandlersInput<TooltipEmits>) => useRecipe(props, handlers);
+export const useMarkdown = (props: PropsInput<MarkdownProps>, handlers: HandlersInput<MarkdownEmits>) => useRecipe(props, handlers);
+export const useCodeView = (props: PropsInput<CodeViewProps>, handlers: HandlersInput<CodeViewEmits>) => useRecipe(props, handlers);

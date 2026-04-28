@@ -24,6 +24,7 @@ export const createMockChart = <T>(options: MockChartOptions<T>): Chart<T> => {
     activeVariant,
     activeRenderer,
     activeField: ref<keyof T | null>(variants[0]?.fields[0] ?? null),
+    activeGroupBy: ref<keyof T | null>(variants[0]?.fields[1] ?? null),
     activeX: ref<keyof T | null>(variants[0]?.fields[0] ?? null),
     activeY: ref<keyof T | null>(variants[0]?.fields[1] ?? null),
     activeBucket: ref(null),
@@ -46,6 +47,7 @@ export const createMockChart = <T>(options: MockChartOptions<T>): Chart<T> => {
       activeRenderer.value = type;
     }),
     setField: vi.fn(),
+    setGroupBy: vi.fn(),
     setX: vi.fn(),
     setY: vi.fn(),
     setBucket: vi.fn(),
@@ -56,6 +58,7 @@ export const createMockChart = <T>(options: MockChartOptions<T>): Chart<T> => {
       activeVariant: activeVariant.value,
       activeRenderer: activeRenderer.value,
       activeField: null,
+      activeGroupBy: null,
       activeX: null,
       activeY: null,
       activeBucket: null,

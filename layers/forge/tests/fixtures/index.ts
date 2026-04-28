@@ -6,9 +6,12 @@ import { formatCell } from "../../app/utils/format-cell";
 import { formatFilter } from "../../app/utils/format-filter";
 import { oreStubs, alloyStubs, createStub, createAllSlotsStub } from "../../../../packages/testing/helpers/stubs";
 import { createMockTable } from "../../../../packages/testing/helpers/mock-table";
+import { createMockPreview } from "../../../../packages/testing/helpers/mock-preview";
+import { createMockDeck } from "../../../../packages/testing/helpers/mock-deck";
 import { fakeColumns, fakeRows, fakeBulkActions } from "../../../../packages/testing/data/table";
 import type { FakeRow } from "../../../../packages/testing/data/table";
 import type { Table } from "../../app/types/data-table";
+import type { Deck } from "../../app/types/data-deck";
 
 // Generic SFCs need a DefineComponent cast for Vue Test Utils
 const Widget = (await import("../../app/components/Data/Table/Widget.vue")).default as DefineComponent;
@@ -19,6 +22,14 @@ const Search = (await import("../../app/components/Data/Table/Search.vue")).defa
 const Columns = (await import("../../app/components/Data/Table/Columns.vue")).default as DefineComponent;
 const FilterHelp = (await import("../../app/components/Data/Table/FilterHelp.vue")).default as DefineComponent;
 const Filters = (await import("../../app/components/Data/Table/Filters.vue")).default as DefineComponent;
+
+const PreviewWidget = (await import("../../app/components/Data/Preview/Widget.vue")).default as DefineComponent;
+const PreviewFields = (await import("../../app/components/Data/Preview/Fields.vue")).default as DefineComponent;
+const PreviewContent = (await import("../../app/components/Data/Preview/Content.vue")).default as DefineComponent;
+
+const DeckWidget = (await import("../../app/components/Data/Deck/Widget.vue")).default as DefineComponent;
+const DeckToolbar = (await import("../../app/components/Data/Deck/Toolbar.vue")).default as DefineComponent;
+const DeckFeed = (await import("../../app/components/Data/Deck/Feed.vue")).default as DefineComponent;
 
 type MountProps = Record<string, unknown>;
 type MountSlots = Record<string, string | ((...args: unknown[]) => unknown)>;
@@ -32,6 +43,10 @@ const forgeStubs = {
   DataTableSearch: createStub("DataTableSearch"),
   DataTableBulkActions: createStub("DataTableBulkActions"),
   DataTableFilterHelp: createStub("DataTableFilterHelp"),
+  DataPreviewFields: createAllSlotsStub("DataPreviewFields"),
+  DataPreviewContent: createStub("DataPreviewContent"),
+  DataDeckToolbar: createStub("DataDeckToolbar"),
+  DataDeckFeed: createAllSlotsStub("DataDeckFeed"),
 };
 
 const stubs = { ...oreStubs, ...alloyStubs, ...forgeStubs };
@@ -79,3 +94,52 @@ export const mountFilterHelp = (props: MountProps = {}, slots: MountSlots = {}) 
   });
 
 export const mountFilters = forge(Filters);
+
+// ---------------------------------------------------------------------------
+// Data Preview
+// ---------------------------------------------------------------------------
+
+export const mockPreview = createMockPreview;
+
+export const mountPreviewWidget = (props: MountProps = {}, slots: MountSlots = {}) =>
+  shallowMount(PreviewWidget, {
+    props: { preview: createMockPreview(), ...props },
+    slots,
+    global: { stubs, mocks },
+  });
+
+const forgePreview = (component: DefineComponent, defaultProps: MountProps = {}) =>
+  (props: MountProps = {}, slots: MountSlots = {}) =>
+    shallowMount(component, {
+      props: { preview: createMockPreview(), ...defaultProps, ...props },
+      slots,
+      global: { stubs, mocks },
+    });
+
+export const mountPreviewFields = forgePreview(PreviewFields);
+export const mountPreviewContent = forgePreview(PreviewContent);
+
+// ---------------------------------------------------------------------------
+// Data Deck
+// ---------------------------------------------------------------------------
+
+export const mockDeck = (overrides: Partial<Deck<FakeRow>> = {}) =>
+  ({ ...createMockDeck<FakeRow>({ rowKey: "id", items: fakeRows }), ...overrides }) as Deck<FakeRow>;
+
+export const mountDeckWidget = (props: MountProps = {}, slots: MountSlots = {}) =>
+  shallowMount(DeckWidget, {
+    props: { deck: mockDeck(), ...props },
+    slots,
+    global: { stubs, mocks },
+  });
+
+const forgeDeck = (component: DefineComponent, defaultProps: MountProps = {}) =>
+  (props: MountProps = {}, slots: MountSlots = {}) =>
+    shallowMount(component, {
+      props: { deck: mockDeck(), ...defaultProps, ...props },
+      slots,
+      global: { stubs, mocks },
+    });
+
+export const mountDeckToolbar = forgeDeck(DeckToolbar);
+export const mountDeckFeed = forgeDeck(DeckFeed);
