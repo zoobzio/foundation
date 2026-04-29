@@ -1,10 +1,10 @@
 type OreElements =
   | "alert" | "anchor" | "article" | "aside" | "banner" | "blockquote"
   | "button" | "caption" | "card" | "chip" | "code" | "container" | "del" | "em"
-  | "footer" | "group" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
+  | "fieldset" | "footer" | "group" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
   | "header" | "hr" | "icon" | "img" | "input" | "kbd" | "label" | "li"
   | "main" | "nav" | "ol" | "p" | "pre" | "section" | "span" | "strong"
-  | "table" | "tbody" | "td" | "th" | "thead" | "tr" | "ul";
+  | "table" | "tbody" | "td" | "textarea" | "th" | "thead" | "tr" | "ul";
 
 type OreModifierMap = Record<OreElements, never>;
 

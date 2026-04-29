@@ -59,6 +59,7 @@ vi.stubGlobal("DataTableSnapshotSchema", (await import("../../layers/forge/app/s
 vi.stubGlobal("DataChartSnapshotSchema", (await import("../../layers/forge/app/schemas/data-chart")).DataChartSnapshotSchema);
 vi.stubGlobal("DataPreviewSnapshotSchema", (await import("../../layers/forge/app/schemas/data-preview")).DataPreviewSnapshotSchema);
 vi.stubGlobal("DataDeckSnapshotSchema", (await import("../../layers/forge/app/schemas/data-deck")).DataDeckSnapshotSchema);
+vi.stubGlobal("DataFormSnapshotSchema", (await import("../../layers/forge/app/schemas/data-form")).DataFormSnapshotSchema);
 vi.stubGlobal("WIDGET_CONFIGS", (await import("../../layers/forge/app/factories/data-table")).WIDGET_CONFIGS);
 vi.stubGlobal("formatDate", (await import("../../layers/forge/app/utils/unravel")).formatDate);
 vi.stubGlobal("formatCell", (await import("../../layers/forge/app/utils/format-cell")).formatCell);

@@ -83,9 +83,11 @@ export const H3 = createStub("H3", "h3");
 export const H4 = createStub("H4", "h4");
 export const H5 = createStub("H5", "h5");
 export const H6 = createStub("H6", "h6");
+export const Textarea = createStub("Textarea", "textarea");
+export const Fieldset = createStub("Fieldset", "fieldset");
 
 /** All ore stubs keyed by component name */
-export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, H2, H3, H4, H5, H6, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip, Article, Strong, Del, Blockquote, Ul, Ol, Li, Code, Pre, Hr } as const;
+export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, H2, H3, H4, H5, H6, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip, Article, Strong, Del, Blockquote, Ul, Ol, Li, Code, Pre, Hr, Textarea, Fieldset } as const;
 
 // --- Alloy sub-component stubs (for composed components) ---
 export const alloyStubs = {

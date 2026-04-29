@@ -14,6 +14,7 @@ const { chart1, chart2, chart3 } = useFakeCharts();
         <H1>Foundation Example</H1>
         <P>A workspace demo with data table and chart widgets.</P>
         <Anchor to="/preview" label="Data Preview →" />
+        <Anchor to="/form" label="Data Form →" />
       </Header>
     </template>
 

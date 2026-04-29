@@ -8,10 +8,13 @@ import { oreStubs, alloyStubs, createStub, createAllSlotsStub } from "../../../.
 import { createMockTable } from "../../../../packages/testing/helpers/mock-table";
 import { createMockPreview } from "../../../../packages/testing/helpers/mock-preview";
 import { createMockDeck } from "../../../../packages/testing/helpers/mock-deck";
+import { createMockForm } from "../../../../packages/testing/helpers/mock-form";
 import { fakeColumns, fakeRows, fakeBulkActions } from "../../../../packages/testing/data/table";
 import type { FakeRow } from "../../../../packages/testing/data/table";
 import type { Table } from "../../app/types/data-table";
 import type { Deck } from "../../app/types/data-deck";
+import type { Form } from "../../app/types/data-form";
+import type { FakeFormData } from "../../../../packages/testing/helpers/mock-form";
 
 // Generic SFCs need a DefineComponent cast for Vue Test Utils
 const Widget = (await import("../../app/components/Data/Table/Widget.vue")).default as DefineComponent;
@@ -31,6 +34,9 @@ const DeckWidget = (await import("../../app/components/Data/Deck/Widget.vue")).d
 const DeckToolbar = (await import("../../app/components/Data/Deck/Toolbar.vue")).default as DefineComponent;
 const DeckFeed = (await import("../../app/components/Data/Deck/Feed.vue")).default as DefineComponent;
 
+const FormWidget = (await import("../../app/components/Data/Form/Widget.vue")).default as DefineComponent;
+const FormField = (await import("../../app/components/Data/Form/Field.vue")).default as DefineComponent;
+
 type MountProps = Record<string, unknown>;
 type MountSlots = Record<string, string | ((...args: unknown[]) => unknown)>;
 
@@ -47,6 +53,7 @@ const forgeStubs = {
   DataPreviewContent: createStub("DataPreviewContent"),
   DataDeckToolbar: createStub("DataDeckToolbar"),
   DataDeckFeed: createAllSlotsStub("DataDeckFeed"),
+  DataFormField: createAllSlotsStub("DataFormField"),
 };
 
 const stubs = { ...oreStubs, ...alloyStubs, ...forgeStubs };
@@ -143,3 +150,28 @@ const forgeDeck = (component: DefineComponent, defaultProps: MountProps = {}) =>
 
 export const mountDeckToolbar = forgeDeck(DeckToolbar);
 export const mountDeckFeed = forgeDeck(DeckFeed);
+
+// ---------------------------------------------------------------------------
+// Data Form
+// ---------------------------------------------------------------------------
+
+export const mockForm = (overrides: Partial<Form<FakeFormData>> = {}) =>
+  ({ ...createMockForm(), ...overrides }) as Form<FakeFormData>;
+
+export const mountFormWidget = (props: MountProps = {}, slots: MountSlots = {}) =>
+  shallowMount(FormWidget, {
+    props: { form: mockForm(), ...props },
+    slots,
+    global: { stubs, mocks },
+  });
+
+export const mountFormField = (props: MountProps = {}, slots: MountSlots = {}) =>
+  shallowMount(FormField, {
+    props: {
+      form: createMockForm(),
+      field: { key: "name", type: "text", label: "Name", colspan: 6 },
+      ...props,
+    },
+    slots,
+    global: { stubs, mocks },
+  });
