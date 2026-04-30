@@ -3,7 +3,7 @@ import { shallowMount } from "@vue/test-utils";
 import type { DefineComponent } from "vue";
 import { passthrough } from "../../../../layers/alloy/app/utils/passthrough";
 import { usePassthrough } from "../../../../layers/alloy/app/composables/passthrough";
-import { oreStubs, alloyStubs, createStub } from "../../../../packages/testing/helpers/stubs";
+import { oreStubs, alloyStubs, createStub, createAllSlotsStub } from "../../../../packages/testing/helpers/stubs";
 import { createMockChart } from "../../../../packages/testing/helpers/mock-chart";
 import type { Chart, DataChartVariant } from "../../app/types/data-chart";
 
@@ -40,11 +40,18 @@ const fakeVariants: DataChartVariant<TestRow>[] = [
     renderers: [{ type: "scatter", label: "Scatter" }],
     fetch: vi.fn(async () => ({ datasets: [{ label: "X", data: [{ x: 1, y: 2 }] }] })),
   },
+  {
+    type: "comparison",
+    fields: ["status", "category"],
+    renderers: [{ type: "bar", label: "Bar" }],
+    fetch: vi.fn(async () => ({ labels: ["A"], datasets: [{ label: "X", data: [1] }] })),
+  },
 ];
 
 const stubs = {
   ...oreStubs,
   ...alloyStubs,
+  Popover: createAllSlotsStub("Popover"),
   DataChartCanvas: createStub("DataChartCanvas"),
 };
 const mocks = { passthrough, usePassthrough };
@@ -150,6 +157,185 @@ describe("DataChartWidget", () => {
       });
       expect(wrapper.find(".custom-toolbar").exists()).toBe(true);
       expect(wrapper.find(".f-data-chart-toolbar").exists()).toBe(false);
+    });
+  });
+
+  describe("variant-conditional popovers", () => {
+    describe("when activeVariant is series", () => {
+      it("renders bucket popover (schedule icon)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "series";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const bucketFab = fabs.find((f) => f.attributes("icon") === "schedule");
+        expect(bucketFab).toBeDefined();
+      });
+
+      it("renders field popover (layers icon)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "series";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const fieldFab = fabs.find((f) => f.attributes("icon") === "layers");
+        expect(fieldFab).toBeDefined();
+      });
+    });
+
+    describe("when activeVariant is distribution", () => {
+      it("renders X popover (label X)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "distribution";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const xFab = fabs.find((f) => f.attributes("label") === "X");
+        expect(xFab).toBeDefined();
+      });
+
+      it("renders Y popover (label Y)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "distribution";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const yFab = fabs.find((f) => f.attributes("label") === "Y");
+        expect(yFab).toBeDefined();
+      });
+
+      it("does NOT render field or bucket popovers", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "distribution";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const fieldFab = fabs.find((f) => f.attributes("icon") === "layers");
+        const bucketFab = fabs.find((f) => f.attributes("icon") === "schedule");
+        expect(fieldFab).toBeUndefined();
+        expect(bucketFab).toBeUndefined();
+      });
+    });
+
+    describe("when activeVariant is comparison", () => {
+      it("renders field popover (layers icon)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "comparison";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const fieldFab = fabs.find((f) => f.attributes("icon") === "layers");
+        expect(fieldFab).toBeDefined();
+      });
+
+      it("renders groupBy popover (filter icon)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "comparison";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const groupByFab = fabs.find((f) => f.attributes("icon") === "filter");
+        expect(groupByFab).toBeDefined();
+      });
+    });
+
+    describe("when activeVariant is breakdown", () => {
+      it("renders field popover (layers icon)", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "breakdown";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const fieldFab = fabs.find((f) => f.attributes("icon") === "layers");
+        expect(fieldFab).toBeDefined();
+      });
+
+      it("does NOT render bucket, x, y, or groupBy popovers", () => {
+        const chart = mockChart();
+        chart.activeVariant.value = "breakdown";
+        const wrapper = shallowMount(Widget, {
+          props: { chart },
+          global: { stubs, mocks },
+        });
+        const fabs = wrapper.findAllComponents({ name: "Fab" });
+        const bucketFab = fabs.find((f) => f.attributes("icon") === "schedule");
+        const xFab = fabs.find((f) => f.attributes("label") === "X");
+        const yFab = fabs.find((f) => f.attributes("label") === "Y");
+        const groupByFab = fabs.find((f) => f.attributes("icon") === "filter");
+        expect(bucketFab).toBeUndefined();
+        expect(xFab).toBeUndefined();
+        expect(yFab).toBeUndefined();
+        expect(groupByFab).toBeUndefined();
+      });
+    });
+  });
+
+  describe("actions", () => {
+    it("calls chart.fetch() when refresh Fab is clicked", async () => {
+      const chart = mockChart();
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const refreshFab = fabs.find((f) => f.attributes("icon") === "refresh");
+      expect(refreshFab).toBeDefined();
+      await refreshFab!.trigger("click");
+      expect(chart.fetch).toHaveBeenCalled();
+    });
+
+    it("variant Command @select calls chart.setVariant", async () => {
+      const chart = mockChart();
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      const commands = wrapper.findAllComponents({ name: "Command" });
+      // First Command is the variant selector
+      await commands[0].vm.$emit("select", "series");
+      expect(chart.setVariant).toHaveBeenCalledWith("series");
+    });
+
+    it("renderer Command @select calls chart.setRenderer", async () => {
+      const chart = mockChart();
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      const commands = wrapper.findAllComponents({ name: "Command" });
+      // Last Command is the renderer selector
+      const last = commands[commands.length - 1];
+      await last.vm.$emit("select", "bar");
+      expect(chart.setRenderer).toHaveBeenCalledWith("bar");
+    });
+
+    it("field Command @select calls chart.setField", async () => {
+      const chart = mockChart();
+      chart.activeVariant.value = "breakdown";
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      const commands = wrapper.findAllComponents({ name: "Command" });
+      // Second command is field selector (after variant)
+      await commands[1].vm.$emit("select", "category");
+      expect(chart.setField).toHaveBeenCalledWith("category");
     });
   });
 });

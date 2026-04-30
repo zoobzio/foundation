@@ -95,6 +95,35 @@ describe("CodeView", () => {
     });
   });
 
+  describe("search", () => {
+    it("exposes setQuery, nextMatch, prevMatch", () => {
+      const wrapper = mountCodeView({ content: "hello world" });
+      expect(wrapper.vm.setQuery).toBeTypeOf("function");
+      expect(wrapper.vm.nextMatch).toBeTypeOf("function");
+      expect(wrapper.vm.prevMatch).toBeTypeOf("function");
+    });
+
+    it("setQuery can be called without error", () => {
+      const wrapper = mountCodeView({ content: "hello world" });
+      expect(() => wrapper.vm.setQuery("hello")).not.toThrow();
+    });
+
+    it("nextMatch and prevMatch can be called without error", () => {
+      const wrapper = mountCodeView({ content: "hello world" });
+      expect(() => wrapper.vm.nextMatch()).not.toThrow();
+      expect(() => wrapper.vm.prevMatch()).not.toThrow();
+    });
+  });
+
+  describe("lifecycle", () => {
+    it("cleans up editor on unmount without error", async () => {
+      const wrapper = mountCodeView({ content: "test" });
+      await nextTick();
+      expect(wrapper.find(".cm-editor").exists()).toBe(true);
+      wrapper.unmount();
+    });
+  });
+
   describe("passthrough", () => {
     it("pt.root merges onto root", () => {
       const wrapper = mountCodeView({

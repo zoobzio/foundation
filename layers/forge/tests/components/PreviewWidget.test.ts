@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mountPreviewWidget, mockPreview } from "../fixtures";
 
 describe("DataPreviewWidget", () => {
@@ -60,6 +60,120 @@ describe("DataPreviewWidget", () => {
       const wrapper = mountPreviewWidget({ preview });
       expect(wrapper.find(".f-data-preview-toolbar").exists()).toBe(false);
       expect(wrapper.find(".f-data-preview-body").exists()).toBe(false);
+    });
+  });
+
+  describe("toolbar actions", () => {
+    it("renders copy Fab in actions", () => {
+      const wrapper = mountPreviewWidget();
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const copyFab = fabs.find((f) => f.attributes("icon") === "copy");
+      expect(copyFab).toBeDefined();
+    });
+
+    it("renders download Fab in actions", () => {
+      const wrapper = mountPreviewWidget();
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const downloadFab = fabs.find((f) => f.attributes("icon") === "download");
+      expect(downloadFab).toBeDefined();
+    });
+
+    it("renders external Fab when content type is code with externalUrl", () => {
+      const preview = mockPreview({
+        content: { type: "code", key: "content", language: "json", externalUrl: "https://example.com" },
+      });
+      const wrapper = mountPreviewWidget({ preview });
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const externalFab = fabs.find((f) => f.attributes("icon") === "external");
+      expect(externalFab).toBeDefined();
+    });
+
+    it("does not render external Fab when content has no externalUrl", () => {
+      const wrapper = mountPreviewWidget();
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const externalFab = fabs.find((f) => f.attributes("icon") === "external");
+      expect(externalFab).toBeUndefined();
+    });
+  });
+
+  describe("file actions", () => {
+    let clipboardSpy: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      clipboardSpy = vi.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText: clipboardSpy },
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("copy Fab triggers clipboard write on click", async () => {
+      const wrapper = mountPreviewWidget();
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const copyFab = fabs.find((f) => f.attributes("icon") === "copy");
+      expect(copyFab).toBeDefined();
+      await copyFab!.trigger("click");
+      expect(clipboardSpy).toHaveBeenCalledWith('{"key": "value"}');
+    });
+
+    it("download Fab triggers download on click", async () => {
+      const createObjectURL = vi.fn().mockReturnValue("blob:url");
+      const revokeObjectURL = vi.fn();
+      vi.stubGlobal("URL", { createObjectURL, revokeObjectURL });
+
+      const clickSpy = vi.fn();
+      const anchor = { href: "", download: "", click: clickSpy };
+      const origCreate = document.createElement.bind(document);
+      vi.spyOn(document, "createElement").mockImplementation((tag: string, options?: ElementCreationOptions) => {
+        if (tag === "a") return anchor as unknown as HTMLElement;
+        return origCreate(tag, options);
+      });
+
+      const wrapper = mountPreviewWidget();
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const downloadFab = fabs.find((f) => f.attributes("icon") === "download");
+      expect(downloadFab).toBeDefined();
+      await downloadFab!.trigger("click");
+
+      expect(createObjectURL).toHaveBeenCalled();
+      expect(clickSpy).toHaveBeenCalled();
+      expect(revokeObjectURL).toHaveBeenCalledWith("blob:url");
+    });
+
+    it("openExternal Fab opens window on click", async () => {
+      const openSpy = vi.fn();
+      vi.stubGlobal("open", openSpy);
+
+      const preview = mockPreview({
+        content: { type: "code", key: "content", language: "json", externalUrl: "https://example.com/file" },
+      });
+      const wrapper = mountPreviewWidget({ preview });
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const externalFab = fabs.find((f) => f.attributes("icon") === "external");
+      expect(externalFab).toBeDefined();
+      await externalFab!.trigger("click");
+
+      expect(openSpy).toHaveBeenCalledWith("https://example.com/file", "_blank");
+    });
+  });
+
+  describe("computed", () => {
+    it("filename returns content.filename when available", () => {
+      const preview = mockPreview({
+        content: { type: "code", key: "content", language: "json", filename: "data.json" },
+      });
+      const wrapper = mountPreviewWidget({ preview });
+      expect(wrapper.find(".f-data-preview-title").text()).toBe("data.json");
+    });
+
+    it("filename falls back to content.{language} when no filename", () => {
+      const wrapper = mountPreviewWidget();
+      expect(wrapper.find(".f-data-preview-title").text()).toBe("content.json");
     });
   });
 

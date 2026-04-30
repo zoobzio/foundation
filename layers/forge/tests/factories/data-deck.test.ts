@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { nextTick } from "vue";
 import { createDeck } from "../../app/factories/data-deck";
 import type { DataDeckConfig, DataDeckFetchResult } from "../../app/types/data-deck";
@@ -200,6 +200,87 @@ describe("createDeck", () => {
       await deck.fetch();
       expect(deck.facetGroups.value).toHaveLength(1);
       expect(deck.facetGroups.value[0]!.key).toBe("status");
+    });
+  });
+
+  describe("polling", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("startPolling sets up an interval", async () => {
+      const deck = makeDeck("poll-start-test");
+      await deck.init();
+      fakeFetch.mockClear();
+      deck.startPolling();
+      expect(fakeFetch).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(fakeFetch).toHaveBeenCalledOnce();
+      deck.stopPolling();
+    });
+
+    it("stopPolling clears the interval", async () => {
+      const deck = makeDeck("poll-stop-test");
+      await deck.init();
+      fakeFetch.mockClear();
+      deck.startPolling();
+      deck.stopPolling();
+      await vi.advanceTimersByTimeAsync(10000);
+      expect(fakeFetch).not.toHaveBeenCalled();
+    });
+
+    it("startPolling is idempotent — calling twice does not create duplicate timers", async () => {
+      const deck = makeDeck("poll-idempotent-test");
+      await deck.init();
+      fakeFetch.mockClear();
+      deck.startPolling();
+      deck.startPolling();
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(fakeFetch).toHaveBeenCalledTimes(1);
+      deck.stopPolling();
+    });
+
+    it("poll puts new items into pending", async () => {
+      const deck = makeDeck("poll-pending-test");
+      await deck.init();
+      fakeFetch.mockClear();
+      const newItem: TestRow = { id: 99, title: "New Poll", status: "Active", created: "2025-03-12T00:00:00Z", updated: "2025-03-17T00:00:00Z" };
+      fakeFetch.mockResolvedValueOnce({ data: [newItem], hasMore: true });
+      deck.startPolling();
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(deck.pending.value).toContainEqual(newItem);
+      deck.stopPolling();
+    });
+
+    it("poll updates facetGroups when facets are returned", async () => {
+      const deck = makeDeck("poll-facets-test");
+      await deck.init();
+      fakeFetch.mockClear();
+      fakeFetch.mockResolvedValueOnce({
+        data: [{ id: 99, title: "New", status: "Active", created: "2025-03-12T00:00:00Z", updated: "2025-03-17T00:00:00Z" }],
+        hasMore: true,
+        facets: [{ key: "status", label: "Status", items: [{ value: "Active", label: "Active", count: 5 }] }],
+      });
+      deck.startPolling();
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(deck.facetGroups.value).toHaveLength(1);
+      expect(deck.facetGroups.value[0]!.key).toBe("status");
+      deck.stopPolling();
+    });
+
+    it("showPending moves pending items to main items list", async () => {
+      const deck = makeDeck("poll-showpending-test");
+      await deck.init();
+      const newItem: TestRow = { id: 99, title: "Pending", status: "Active", created: "2025-03-12T00:00:00Z", updated: "2025-03-17T00:00:00Z" };
+      deck.pending.value = [newItem];
+      deck.showPending();
+      expect(deck.items.value[0]).toEqual(newItem);
+      expect(deck.items.value).toHaveLength(4);
+      expect(deck.pending.value).toEqual([]);
     });
   });
 
