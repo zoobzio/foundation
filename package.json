@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "pnpm --parallel --filter @zoobz-io/iconic --filter @zoobz-io/untheme --filter @zoobz-io/foundation --filter example typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
