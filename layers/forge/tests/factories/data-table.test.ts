@@ -273,7 +273,8 @@ describe("createTable", () => {
       table.selectedFacets.value = new Set(["status:Active", "status:Pending"]);
       const f = table.filters.value.find((f) => f.field === "status");
       expect(f).toBeDefined();
-      expect(f!.value).toEqual({ type: "enum", value: ["Active", "Pending"] });
+      if (!f) return;
+      expect(f.value).toEqual({ type: "enum", value: ["Active", "Pending"] });
     });
 
     it("addFilter adds enum facets to selectedFacets", async () => {
@@ -308,7 +309,8 @@ describe("createTable", () => {
       // filters computed should show an enum filter
       const enumFilter = table.filters.value.find((f) => f.field === "status");
       expect(enumFilter).toBeDefined();
-      const idx = table.filters.value.indexOf(enumFilter!);
+      if (!enumFilter) return;
+      const idx = table.filters.value.indexOf(enumFilter);
       table.removeFilter(idx);
       expect(table.selectedFacets.value.size).toBe(0);
     });
@@ -319,7 +321,8 @@ describe("createTable", () => {
       await nextTick();
       const dateFilter = table.filters.value.find((f) => f.field === "created");
       expect(dateFilter).toBeDefined();
-      const idx = table.filters.value.indexOf(dateFilter!);
+      if (!dateFilter) return;
+      const idx = table.filters.value.indexOf(dateFilter);
       table.removeFilter(idx);
       expect(table.dateFilters.value).toHaveLength(0);
     });
@@ -340,7 +343,8 @@ describe("createTable", () => {
       });
       const f = table.filters.value.find((f) => f.field === "created");
       expect(f).toBeDefined();
-      expect(f!.value.type).toBe("date_range");
+      if (!f) return;
+      expect(f.value.type).toBe("date_range");
     });
 
     it("clearFilters resets all filter state", () => {
@@ -503,6 +507,50 @@ describe("createTable", () => {
       await table.fetch();
       expect(table.facetGroups.value).toHaveLength(1);
       expect(table.facetGroups.value[0].key).toBe("status");
+    });
+  });
+
+  describe("isRowSelected", () => {
+    it("returns true for a selected row", () => {
+      const table = makeTable("row-selected-true");
+      table.selected.value = new Set([1]);
+      expect(table.isRowSelected(fakeRows[0])).toBe(true);
+    });
+
+    it("returns false for an unselected row", () => {
+      const table = makeTable("row-selected-false");
+      expect(table.isRowSelected(fakeRows[0])).toBe(false);
+    });
+  });
+
+  describe("isColumnVisible", () => {
+    it("returns true for a visible column", () => {
+      const table = makeTable("col-visible-true");
+      expect(table.isColumnVisible("id")).toBe(true);
+    });
+
+    it("returns false for a column removed from columnOrder", () => {
+      const table = makeTable("col-visible-false");
+      table.columnOrder.value = table.columnOrder.value.filter((k) => k !== "id");
+      expect(table.isColumnVisible("id")).toBe(false);
+    });
+  });
+
+  describe("filter sort order", () => {
+    it("sorts filters by filterOrder, unordered items go to end", async () => {
+      const table = makeTable("filter-sort-test");
+      // Add enum + query to create two filters
+      table.selectedFacets.value = new Set(["status:Active"]);
+      table.query.value = "hello";
+      await nextTick();
+
+      // Both should appear in filters
+      expect(table.filters.value.length).toBeGreaterThanOrEqual(2);
+
+      // The filterOrder determines display order; unordered items go to end
+      const fields = table.filters.value.map((f) => f.field);
+      expect(fields).toContain("__query");
+      expect(fields).toContain("status");
     });
   });
 });

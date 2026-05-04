@@ -22,9 +22,7 @@
   },
   "dependencies": {
     "@zoobz-io/forge": "workspace:*",
-    "nuxt": "catalog:",
-    "pinia": "catalog:",
-    "@pinia/nuxt": "catalog:"
+    "nuxt": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:"

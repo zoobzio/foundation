@@ -17,7 +17,6 @@ export default defineNuxtConfig({
   },
   modules: [
     "@zoobz-io/untheme/module",
-    "@pinia/nuxt",
     "@vueuse/nuxt",
   ],
   untheme: {

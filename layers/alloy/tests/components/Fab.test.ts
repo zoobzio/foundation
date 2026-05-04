@@ -45,7 +45,22 @@ describe("Fab", () => {
       expect(wrapper.find(".f-fab").exists()).toBe(true);
     });
 
+    it("does not render Icon when icon is undefined (with label)", () => {
+      const wrapper = mountFab({ icon: undefined, label: "Add" });
+      const tooltip = wrapper.findComponent({ name: "Tooltip" });
+      expect(tooltip.findAll("i")).toHaveLength(0);
+    });
 
+    it("does not render Icon when icon is undefined (no label)", () => {
+      const wrapper = mountFab({ icon: undefined });
+      expect(wrapper.findAll("i")).toHaveLength(0);
+    });
+
+    it("uses warning fallback alias in iconPT when icon is undefined", () => {
+      const wrapper = mountFab({ icon: undefined, label: "Warn" });
+      // iconPT computed falls back to "warning" — no crash
+      expect(wrapper.find(".f-fab").exists()).toBe(true);
+    });
   });
 
   describe("passthrough", () => {

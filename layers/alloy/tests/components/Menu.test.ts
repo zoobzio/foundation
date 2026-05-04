@@ -33,6 +33,19 @@ describe("Menu", () => {
       const wrapper = mountMenu();
       expect(wrapper.findAll("i").some((i) => i.attributes("alias") === "edit")).toBe(true);
     });
+
+    it("does not render Icon when item has no icon", () => {
+      const wrapper = mountMenu({
+        groups: [{
+          key: "plain",
+          items: [{ label: "No Icon" }, { label: "Also No Icon" }],
+        }],
+      });
+      const items = wrapper.findAllComponents({ name: "DropdownMenuItem" });
+      expect(items).toHaveLength(2);
+      // None of the items should have an Icon inside them
+      expect(wrapper.findAll("i")).toHaveLength(0);
+    });
   });
 
   describe("interaction", () => {

@@ -469,4 +469,18 @@ describe("createChart", () => {
       expect(chart.activeBucket.value).toBe("1w");
     });
   });
+
+  describe("setY", () => {
+    it("updates activeY and fetches", async () => {
+      const chart = makeChart("sety-test");
+      chart.setVariant("distribution");
+      await nextTick();
+      distributionFetch.mockClear();
+      chart.setY("category");
+      await nextTick();
+      expect(chart.activeY.value).toBe("category");
+      expect(distributionFetch).toHaveBeenCalled();
+    });
+  });
+
 });

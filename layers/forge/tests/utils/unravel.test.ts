@@ -29,13 +29,14 @@ describe("unravelFilter", () => {
       };
       const result = unravelFilter(filter, 0, columns);
       expect(result).not.toBeNull();
-      expect(result!.lockedField).toBe(columns[0]);
-      expect(result!.lockedOperator).toBeNull();
-      expect(result!.inputValue).toBe("Status=Activ");
-      expect(result!.lockedSteps).toHaveLength(1);
-      expect(result!.lockedSteps[0].icon).toBe("filter");
-      expect(result!.removeIndex).toBe(-1);
-      expect(result!.removeFacetKey).toBe("status:Active");
+      if (!result) return;
+      expect(result.lockedField).toBe(columns[0]);
+      expect(result.lockedOperator).toBeNull();
+      expect(result.inputValue).toBe("Status=Activ");
+      expect(result.lockedSteps).toHaveLength(1);
+      expect(result.lockedSteps[0].icon).toBe("filter");
+      expect(result.removeIndex).toBe(-1);
+      expect(result.removeFacetKey).toBe("status:Active");
     });
 
     it("returns null when column not found", () => {
@@ -57,12 +58,13 @@ describe("unravelFilter", () => {
       };
       const result = unravelFilter(filter, 2, columns);
       expect(result).not.toBeNull();
-      expect(result!.lockedField).toBe(columns[1]);
-      expect(result!.lockedOperator).toBe("<");
-      expect(result!.inputValue).toBe("Created<2025-06-1");
-      expect(result!.lockedSteps).toHaveLength(2);
-      expect(result!.lockedSteps[1].label).toBe("Before");
-      expect(result!.removeIndex).toBe(2);
+      if (!result) return;
+      expect(result.lockedField).toBe(columns[1]);
+      expect(result.lockedOperator).toBe("<");
+      expect(result.inputValue).toBe("Created<2025-06-1");
+      expect(result.lockedSteps).toHaveLength(2);
+      expect(result.lockedSteps[1].label).toBe("Before");
+      expect(result.removeIndex).toBe(2);
     });
 
     it("unravels an after-date filter", () => {
@@ -72,8 +74,9 @@ describe("unravelFilter", () => {
         value: { type: "date", value: new Date("2025-01-01T00:00:00Z") },
       };
       const result = unravelFilter(filter, 0, columns);
-      expect(result!.lockedOperator).toBe(">");
-      expect(result!.lockedSteps[1].label).toBe("After");
+      if (!result) return;
+      expect(result.lockedOperator).toBe(">");
+      expect(result.lockedSteps[1].label).toBe("After");
     });
   });
 
@@ -92,11 +95,12 @@ describe("unravelFilter", () => {
       };
       const result = unravelFilter(filter, 1, columns);
       expect(result).not.toBeNull();
-      expect(result!.lockedOperator).toBe("><");
-      expect(result!.lockedDate1).toBe("2025-01-01");
-      expect(result!.inputValue).toBe("Created><2025-01-01,2025-06-3");
-      expect(result!.lockedSteps).toHaveLength(3);
-      expect(result!.removeIndex).toBe(1);
+      if (!result) return;
+      expect(result.lockedOperator).toBe("><");
+      expect(result.lockedDate1).toBe("2025-01-01");
+      expect(result.inputValue).toBe("Created><2025-01-01,2025-06-3");
+      expect(result.lockedSteps).toHaveLength(3);
+      expect(result.removeIndex).toBe(1);
     });
   });
 
@@ -108,10 +112,11 @@ describe("unravelFilter", () => {
         value: { type: "text", value: "hello world" },
       };
       const result = unravelFilter(filter, 0, columns);
-      expect(result!.inputValue).toBe('"hello world');
-      expect(result!.lockedField).toBeNull();
-      expect(result!.lockedSteps).toHaveLength(0);
-      expect(result!.removeIndex).toBe(0);
+      if (!result) return;
+      expect(result.inputValue).toBe('"hello world');
+      expect(result.lockedField).toBeNull();
+      expect(result.lockedSteps).toHaveLength(0);
+      expect(result.removeIndex).toBe(0);
     });
   });
 
@@ -123,8 +128,9 @@ describe("unravelFilter", () => {
         value: { type: "text", value: "+foo -bar" },
       };
       const result = unravelFilter(filter, 3, columns);
-      expect(result!.inputValue).toBe("(+foo -bar");
-      expect(result!.removeIndex).toBe(3);
+      if (!result) return;
+      expect(result.inputValue).toBe("(+foo -bar");
+      expect(result.removeIndex).toBe(3);
     });
   });
 

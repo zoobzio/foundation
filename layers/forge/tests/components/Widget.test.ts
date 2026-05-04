@@ -67,6 +67,29 @@ describe("DataTableWidget", () => {
     });
   });
 
+  describe("interaction", () => {
+    it("calls table.fetch when refresh Fab is clicked", async () => {
+      const table = mockTable();
+      const wrapper = mountWidget({ table });
+      const fab = wrapper.findComponent({ name: "Fab" });
+      await fab.trigger("click");
+      expect(table.fetch).toHaveBeenCalled();
+    });
+  });
+
+  describe("slot forwarding", () => {
+    it("renders default Pagination when no pagination slot override", () => {
+      const wrapper = mountWidget();
+      expect(wrapper.findComponent({ name: "Pagination" }).exists()).toBe(true);
+    });
+
+    it("renders Scroller wrapping Table + Head + Body", () => {
+      const wrapper = mountWidget();
+      expect(wrapper.findComponent({ name: "Scroller" }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "Table" }).exists()).toBe(true);
+    });
+  });
+
   describe("passthrough", () => {
     it("pt.root merges onto root", () => {
       const wrapper = mountWidget({ pt: { root: { props: { class: "custom" } } } });

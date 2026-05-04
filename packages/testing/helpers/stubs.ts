@@ -85,9 +85,11 @@ export const H5 = createStub("H5", "h5");
 export const H6 = createStub("H6", "h6");
 export const Textarea = createStub("Textarea", "textarea");
 export const Fieldset = createStub("Fieldset", "fieldset");
+export const Header = createStub("Header", "header");
+export const Footer = createStub("Footer", "footer");
 
 /** All ore stubs keyed by component name */
-export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, H2, H3, H4, H5, H6, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip, Article, Strong, Del, Blockquote, Ul, Ol, Li, Code, Pre, Hr, Textarea, Fieldset } as const;
+export const oreStubs = { Icon, Group, Button, Span, Label, Caption, Section, H1, H2, H3, H4, H5, H6, Em, P, Kbd, Input, Table, Thead, Tbody, Tr, Th, Td, Anchor, Img, Chip, Article, Strong, Del, Blockquote, Ul, Ol, Li, Code, Pre, Hr, Textarea, Fieldset, Header, Footer } as const;
 
 // --- Alloy sub-component stubs (for composed components) ---
 export const alloyStubs = {
@@ -129,6 +131,28 @@ export const alloyStubs = {
   Toast: createStub("Toast"),
   Toaster: createStub("Toaster"),
   Tooltip: createStub("Tooltip"),
+} as const;
+
+// --- Forge sub-component stubs ---
+export const forgeStubs = {
+  DataTableWidget: createStub("DataTableWidget"),
+  DataTableHead: createStub("DataTableHead"),
+  DataTableBody: createAllSlotsStub("DataTableBody"),
+  DataTableFilters: createStub("DataTableFilters"),
+  DataTableColumns: createStub("DataTableColumns"),
+  DataTableSearch: createStub("DataTableSearch"),
+  DataTableBulkActions: createStub("DataTableBulkActions"),
+  DataTableFilterHelp: createStub("DataTableFilterHelp"),
+  DataChartWidget: createStub("DataChartWidget"),
+  DataChartCanvas: createStub("DataChartCanvas"),
+  DataPreviewWidget: createStub("DataPreviewWidget"),
+  DataPreviewFields: createAllSlotsStub("DataPreviewFields"),
+  DataPreviewContent: createStub("DataPreviewContent"),
+  DataDeckWidget: createStub("DataDeckWidget"),
+  DataDeckToolbar: createStub("DataDeckToolbar"),
+  DataDeckFeed: createAllSlotsStub("DataDeckFeed"),
+  DataFormWidget: createStub("DataFormWidget"),
+  DataFormField: createAllSlotsStub("DataFormField"),
 } as const;
 
 // --- Reka-UI stub factory ---

@@ -163,6 +163,73 @@ describe("Keywords", () => {
       expect(wrapper.emitted("update:modelValue")).toBeUndefined();
     });
 
+    it("does not add duplicate include tag", async () => {
+      const wrapper = mountKeywords({ modelValue: "+hello" });
+      await nextTick();
+      const includeInput = wrapper.findAll(".f-tags-input-input")[0];
+
+      await includeInput.setValue("hello");
+      await includeInput.trigger("keydown", { key: "Enter" });
+      await nextTick();
+
+      // Should not emit a new update since "hello" already exists
+      const emits = wrapper.emitted("update:modelValue") ?? [];
+      const hasDouble = emits.some((e) => {
+        const val = e[0] as string;
+        return (val.match(/\+hello/g) ?? []).length > 1;
+      });
+      expect(hasDouble).toBe(false);
+    });
+
+    it("does not add duplicate exclude tag", async () => {
+      const wrapper = mountKeywords({ modelValue: "-spam" });
+      await nextTick();
+      const excludeInput = wrapper.findAll(".f-tags-input-input")[1];
+
+      await excludeInput.setValue("spam");
+      await excludeInput.trigger("keydown", { key: "Enter" });
+      await nextTick();
+
+      const emits = wrapper.emitted("update:modelValue") ?? [];
+      const hasDouble = emits.some((e) => {
+        const val = e[0] as string;
+        return (val.match(/-spam/g) ?? []).length > 1;
+      });
+      expect(hasDouble).toBe(false);
+    });
+
+    it("does not add tag on Enter with empty include input", async () => {
+      const wrapper = mountKeywords();
+      const includeInput = wrapper.findAll(".f-tags-input-input")[0];
+
+      await includeInput.trigger("keydown", { key: "Enter" });
+      await nextTick();
+
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
+
+    it("does not add tag on Enter with empty exclude input", async () => {
+      const wrapper = mountKeywords();
+      const excludeInput = wrapper.findAll(".f-tags-input-input")[1];
+
+      await excludeInput.trigger("keydown", { key: "Enter" });
+      await nextTick();
+
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
+
+    it("does not add tag on space-only include input", async () => {
+      const wrapper = mountKeywords();
+      const includeInput = wrapper.findAll(".f-tags-input-input")[0];
+
+      const inputEvent = new Event("input", { bubbles: true });
+      Object.defineProperty(inputEvent, "target", { value: { value: " " } });
+      includeInput.element.dispatchEvent(inputEvent);
+      await nextTick();
+
+      expect(wrapper.emitted("update:modelValue")).toBeUndefined();
+    });
+
     it("toggles open via Popover emit", async () => {
       const wrapper = mountKeywords();
       const popover = wrapper.findComponent({ name: "Popover" });

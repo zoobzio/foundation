@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { mountBody, mockTable } from "../fixtures";
 import { fakeActions, fakeBulkActions } from "../../../../packages/testing/data/table";
 import type { FakeRow } from "../../../../packages/testing/data/table";
@@ -121,6 +121,45 @@ describe("DataTableBody", () => {
       const spans = wrapper.findAll("span");
       const nameSpan = spans.find((s) => s.text() === "");
       expect(nameSpan).toBeDefined();
+    });
+  });
+
+  describe("image column", () => {
+    it("renders Img for image-type columns", () => {
+      const table = mockTable();
+      table.data.value = [{ id: 1, name: "https://example.com/img.png", status: "Active", created: "", amount: 0 }];
+      table.visibleColumns.value = [{ key: "name", label: "Avatar", type: "image" }];
+      const wrapper = mountBody({ table });
+      expect(wrapper.findComponent({ name: "Img" }).exists()).toBe(true);
+    });
+  });
+
+  describe("checkbox interaction", () => {
+    it("calls toggleRow when checkbox emits update:model-value", async () => {
+      const table = mockTable({ bulkActions: fakeBulkActions });
+      const wrapper = mountBody({ table });
+      const checkbox = wrapper.findComponent({ name: "Checkbox" });
+      checkbox.vm.$emit("update:model-value", true);
+      expect(table.toggleRow).toHaveBeenCalled();
+    });
+  });
+
+  describe("action menu", () => {
+    it("calls action when Menu emits select with known label", async () => {
+      const actionSpy = vi.fn();
+      const table = mockTable({ actions: [{ icon: "edit", label: "Edit", action: actionSpy }] });
+      const wrapper = mountBody({ table });
+      const menu = wrapper.findComponent({ name: "Menu" });
+      menu.vm.$emit("select", { label: "Edit" });
+      expect(actionSpy).toHaveBeenCalled();
+    });
+
+    it("does not throw when Menu emits select with unknown label", () => {
+      const table = mockTable({ actions: fakeActions });
+      const wrapper = mountBody({ table });
+      const menu = wrapper.findComponent({ name: "Menu" });
+      // Should not throw
+      menu.vm.$emit("select", { label: "nonexistent" });
     });
   });
 

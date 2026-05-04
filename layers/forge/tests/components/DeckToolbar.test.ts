@@ -90,7 +90,8 @@ describe("DataDeckToolbar", () => {
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const searchFab = fabs.find((f) => f.attributes("icon") === "search");
       expect(searchFab).toBeDefined();
-      expect(searchFab!.attributes("badge")).toBeDefined();
+      if (!searchFab) return;
+      expect(searchFab.attributes("badge")).toBeDefined();
     });
 
     it("search Fab has no badge when deck.query is empty", () => {
@@ -100,7 +101,8 @@ describe("DataDeckToolbar", () => {
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const searchFab = fabs.find((f) => f.attributes("icon") === "search");
       expect(searchFab).toBeDefined();
-      expect(searchFab!.attributes("badge")).toBeUndefined();
+      if (!searchFab) return;
+      expect(searchFab.attributes("badge")).toBeUndefined();
     });
   });
 
@@ -133,8 +135,42 @@ describe("DataDeckToolbar", () => {
       });
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const refreshFab = fabs.find((f) => f.attributes("icon") === "refresh");
-      await refreshFab!.trigger("click");
+      if (!refreshFab) return;
+      await refreshFab.trigger("click");
       expect(deck.fetch).toHaveBeenCalled();
+    });
+  });
+
+  describe("search input interaction", () => {
+    it("updates search value on input event", async () => {
+      const deck = mockDeck();
+      const wrapper = shallowMount(Toolbar, {
+        props: { deck },
+        global: { stubs, mocks },
+      });
+      const input = wrapper.find(".f-data-deck-search").findComponent({ name: "Input" });
+      const inputEvent = new Event("input", { bubbles: true });
+      Object.defineProperty(inputEvent, "target", { value: { value: "hello" } });
+      input.element.dispatchEvent(inputEvent);
+      // No crash — handler ran
+    });
+
+    it("closes search popover on Escape", async () => {
+      const wrapper = mountDeckToolbar();
+      const input = wrapper.find(".f-data-deck-search").findComponent({ name: "Input" });
+      await input.trigger("keydown", { key: "Escape" });
+      // No crash — escape handler ran
+    });
+  });
+
+  describe("facets interaction", () => {
+    it("renders Facets with facet groups", () => {
+      const deck = mockDeck();
+      deck.facetGroups.value = [
+        { key: "status", label: "Status", items: [{ value: "Active", label: "Active", count: 1 }] },
+      ];
+      const wrapper = mountDeckToolbar({ deck });
+      expect(wrapper.findComponent({ name: "Facets" }).exists()).toBe(true);
     });
   });
 

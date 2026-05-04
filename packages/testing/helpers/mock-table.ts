@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { vi } from "vitest";
-import type { Table, DataTableColumn, RowAction, BulkAction } from "../../../layers/forge/app/types/data-table";
+import type { Table, DataTableColumn, RowAction, BulkAction, TableFilter } from "../../../layers/forge/app/types/data-table";
 import type { IconAlias } from "@zoobz-io/iconic/types";
 
 export interface MockTableOptions<T, K = unknown> {
@@ -10,6 +10,7 @@ export interface MockTableOptions<T, K = unknown> {
   actions?: RowAction<T>[];
   bulkActions?: BulkAction<K>[];
   pinnedColumns?: (keyof T)[];
+  filters?: TableFilter[];
 }
 
 /**
@@ -26,6 +27,7 @@ export const createMockTable = <T, K = unknown>(
     actions = [],
     bulkActions = [],
     pinnedColumns = [],
+    filters: initialFilters = [],
   } = options;
 
   const columnKeys = columns.map((c) => String(c.key));
@@ -51,7 +53,7 @@ export const createMockTable = <T, K = unknown>(
     facetGroups: ref([]),
     selectedFacets: ref(new Set()),
     dateFilters: ref([]),
-    filters: computed(() => []),
+    filters: computed(() => initialFilters),
     selected: ref<Set<K>>(new Set()),
     isAllSelected: ref(false),
     isIndeterminate: ref(false),

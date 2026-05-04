@@ -295,6 +295,76 @@ describe("Autocomplete", () => {
     });
   });
 
+  describe("disabled suggestions highlight", () => {
+    it("ArrowDown skips past all leading disabled items from index 0", async () => {
+      const wrapper = mountAutocomplete({
+        suggestions: [
+          { label: "Disabled1", value: "d1", disabled: true },
+          { label: "Disabled2", value: "d2", disabled: true },
+          { label: "Enabled", value: "e" },
+        ],
+      });
+      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      await nextTick();
+      // Press ArrowDown from index 0 — should skip both disabled items
+      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
+      expect(highlighted.text()).toContain("Enabled");
+    });
+
+    it("ArrowUp skips disabled items going backwards", async () => {
+      const wrapper = mountAutocomplete({
+        suggestions: [
+          { label: "First", value: "first" },
+          { label: "DisabledMid", value: "dm", disabled: true },
+          { label: "Last", value: "last" },
+        ],
+      });
+      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      await nextTick();
+      // Move to Last
+      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
+      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      // Move back up — should skip DisabledMid
+      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowUp" });
+      await nextTick();
+      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
+      expect(highlighted.text()).toContain("First");
+    });
+  });
+
+  describe("Enter on disabled highlighted item", () => {
+    it("emits submit instead of select when highlighted item is disabled", async () => {
+      const wrapper = mountAutocomplete({
+        modelValue: "test",
+        suggestions: [
+          { label: "Only", value: "only", disabled: true },
+        ],
+      });
+      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      await nextTick();
+      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Enter" });
+      expect(wrapper.emitted("select")).toBeFalsy();
+      expect(wrapper.emitted("submit")?.[0]).toEqual(["test"]);
+    });
+  });
+
+  describe("onInput", () => {
+    it("emits update:modelValue on input event", async () => {
+      const wrapper = mountAutocomplete({ modelValue: "" });
+      const input = wrapper.find(".f-autocomplete-input");
+
+      const inputEvent = new Event("input", { bubbles: true });
+      Object.defineProperty(inputEvent, "target", { value: { value: "typed" } });
+      input.element.dispatchEvent(inputEvent);
+      await nextTick();
+
+      expect(wrapper.emitted("update:modelValue")?.[0]).toEqual(["typed"]);
+    });
+  });
+
   describe("passthrough", () => {
     it("pt.root merges onto root", () => {
       const wrapper = mountAutocomplete({ pt: { root: { props: { class: "custom" } } } });

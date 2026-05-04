@@ -4,14 +4,14 @@ import { passthrough } from "../../../../layers/alloy/app/utils/passthrough";
 import { usePassthrough } from "../../../../layers/alloy/app/composables/passthrough";
 import { formatCell } from "../../app/utils/format-cell";
 import { formatFilter } from "../../app/utils/format-filter";
-import { oreStubs, alloyStubs, createStub, createAllSlotsStub } from "../../../../packages/testing/helpers/stubs";
+import { oreStubs, alloyStubs, forgeStubs } from "../../../../packages/testing/helpers/stubs";
 import { createMockTable } from "../../../../packages/testing/helpers/mock-table";
 import { createMockPreview } from "../../../../packages/testing/helpers/mock-preview";
 import { createMockDeck } from "../../../../packages/testing/helpers/mock-deck";
 import { createMockForm } from "../../../../packages/testing/helpers/mock-form";
 import { fakeColumns, fakeRows, fakeBulkActions } from "../../../../packages/testing/data/table";
 import type { FakeRow } from "../../../../packages/testing/data/table";
-import type { Table } from "../../app/types/data-table";
+import type { TableFilter, RowAction, BulkAction } from "../../app/types/data-table";
 import type { Deck } from "../../app/types/data-deck";
 import type { Form } from "../../app/types/data-form";
 import type { FakeFormData } from "../../../../packages/testing/helpers/mock-form";
@@ -40,28 +40,18 @@ const FormField = (await import("../../app/components/Data/Form/Field.vue")).def
 type MountProps = Record<string, unknown>;
 type MountSlots = Record<string, string | ((...args: unknown[]) => unknown)>;
 
-/** Stubs for forge sub-components when testing Widget */
-const forgeStubs = {
-  DataTableHead: createStub("DataTableHead"),
-  DataTableBody: createAllSlotsStub("DataTableBody"),
-  DataTableFilters: createStub("DataTableFilters"),
-  DataTableColumns: createStub("DataTableColumns"),
-  DataTableSearch: createStub("DataTableSearch"),
-  DataTableBulkActions: createStub("DataTableBulkActions"),
-  DataTableFilterHelp: createStub("DataTableFilterHelp"),
-  DataPreviewFields: createAllSlotsStub("DataPreviewFields"),
-  DataPreviewContent: createStub("DataPreviewContent"),
-  DataDeckToolbar: createStub("DataDeckToolbar"),
-  DataDeckFeed: createAllSlotsStub("DataDeckFeed"),
-  DataFormField: createAllSlotsStub("DataFormField"),
-};
-
 const stubs = { ...oreStubs, ...alloyStubs, ...forgeStubs };
 const mocks = { passthrough, usePassthrough, formatCell, formatFilter };
 
+interface MockTableOverrides {
+  actions?: RowAction<FakeRow>[];
+  bulkActions?: BulkAction<number>[];
+  filters?: TableFilter[];
+}
+
 /** Creates a default mock table for tests */
-export const mockTable = (overrides: Partial<Table<FakeRow, number>> = {}) =>
-  ({ ...createMockTable({ columns: fakeColumns, rows: fakeRows, rowKey: "id" }), ...overrides }) as Table<FakeRow, number>;
+export const mockTable = (overrides: MockTableOverrides = {}) =>
+  createMockTable<FakeRow, number>({ columns: fakeColumns, rows: fakeRows, rowKey: "id", ...overrides });
 
 /** Shallow-mount a forge component with table prop + stubs */
 const forge = (component: DefineComponent, defaultProps: MountProps = {}) =>

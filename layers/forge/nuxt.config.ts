@@ -6,5 +6,4 @@ export default defineNuxtConfig({
   imports: {
     dirs: ["types", "factories", "stores", "schemas"],
   },
-  modules: ["@pinia/nuxt"],
 });

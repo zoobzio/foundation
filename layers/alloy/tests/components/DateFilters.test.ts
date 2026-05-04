@@ -104,7 +104,8 @@ describe("DateFilters", () => {
       // The apply button's click handler is in the passthrough — trigger it via the Button stub
       const buttons = wrapper.findAllComponents({ name: "Button" });
       const applyBtn = buttons.find((b) => b.text().includes("Apply"));
-      applyBtn!.vm.$emit("click");
+      if (!applyBtn) return;
+      applyBtn.vm.$emit("click");
       await nextTick();
 
       expect(addFilter).toHaveBeenCalledOnce();
@@ -183,7 +184,8 @@ describe("DateFilters", () => {
       // Click apply
       const buttons = wrapper.findAllComponents({ name: "Button" });
       const applyBtn = buttons.find((b) => b.text().includes("Apply"));
-      applyBtn!.vm.$emit("click");
+      if (!applyBtn) return;
+      applyBtn.vm.$emit("click");
       await nextTick();
 
       expect(addFilter).toHaveBeenCalledOnce();

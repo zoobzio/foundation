@@ -296,7 +296,8 @@ describe("DataChartWidget", () => {
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const refreshFab = fabs.find((f) => f.attributes("icon") === "refresh");
       expect(refreshFab).toBeDefined();
-      await refreshFab!.trigger("click");
+      if (!refreshFab) return;
+      await refreshFab.trigger("click");
       expect(chart.fetch).toHaveBeenCalled();
     });
 
@@ -323,6 +324,43 @@ describe("DataChartWidget", () => {
       const last = commands[commands.length - 1];
       await last.vm.$emit("select", "bar");
       expect(chart.setRenderer).toHaveBeenCalledWith("bar");
+    });
+
+    it("renders bucket selector Popover for series variant", () => {
+      const chart = mockChart();
+      chart.setVariant("series");
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      // Series variant should have a bucket selector (schedule icon fab)
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const bucketFab = fabs.find((f) => f.attributes("icon") === "schedule");
+      expect(bucketFab).toBeDefined();
+    });
+
+    it("does not render bucket selector for breakdown variant", () => {
+      const chart = mockChart();
+      chart.setVariant("breakdown");
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const bucketFab = fabs.find((f) => f.attributes("icon") === "schedule");
+      expect(bucketFab).toBeUndefined();
+    });
+
+    it("uses fallback bar-chart icon for unknown renderer", () => {
+      const chart = mockChart();
+      chart.activeRenderer.value = "unknown-type";
+      const wrapper = shallowMount(Widget, {
+        props: { chart },
+        global: { stubs, mocks },
+      });
+      const fabs = wrapper.findAllComponents({ name: "Fab" });
+      const rendererFab = fabs.find((f) => f.attributes("icon") === "bar-chart");
+      expect(rendererFab).toBeDefined();
     });
 
     it("field Command @select calls chart.setField", async () => {

@@ -16,6 +16,22 @@ describe("Popover", () => {
     it("renders trigger when no reference prop", () => {
       expect(wrapper.findComponent({ name: "PopoverTrigger" }).exists()).toBe(true);
     });
+
+    it("does not render PopoverAnchor when no reference prop", () => {
+      expect(wrapper.findComponent({ name: "PopoverAnchor" }).exists()).toBe(false);
+    });
+  });
+
+  describe("reference mode", () => {
+    it("renders PopoverAnchor when reference prop provided", () => {
+      const wrapper = mountPopover({ reference: { getBoundingClientRect: () => ({}) } });
+      expect(wrapper.findComponent({ name: "PopoverAnchor" }).exists()).toBe(true);
+    });
+
+    it("does not render PopoverTrigger when reference prop provided", () => {
+      const wrapper = mountPopover({ reference: { getBoundingClientRect: () => ({}) } });
+      expect(wrapper.findComponent({ name: "PopoverTrigger" }).exists()).toBe(false);
+    });
   });
 
   describe("conditional", () => {

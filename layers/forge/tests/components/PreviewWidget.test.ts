@@ -117,7 +117,8 @@ describe("DataPreviewWidget", () => {
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const copyFab = fabs.find((f) => f.attributes("icon") === "copy");
       expect(copyFab).toBeDefined();
-      await copyFab!.trigger("click");
+      if (!copyFab) return;
+      await copyFab.trigger("click");
       expect(clipboardSpy).toHaveBeenCalledWith('{"key": "value"}');
     });
 
@@ -138,7 +139,8 @@ describe("DataPreviewWidget", () => {
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const downloadFab = fabs.find((f) => f.attributes("icon") === "download");
       expect(downloadFab).toBeDefined();
-      await downloadFab!.trigger("click");
+      if (!downloadFab) return;
+      await downloadFab.trigger("click");
 
       expect(createObjectURL).toHaveBeenCalled();
       expect(clickSpy).toHaveBeenCalled();
@@ -156,7 +158,8 @@ describe("DataPreviewWidget", () => {
       const fabs = wrapper.findAllComponents({ name: "Fab" });
       const externalFab = fabs.find((f) => f.attributes("icon") === "external");
       expect(externalFab).toBeDefined();
-      await externalFab!.trigger("click");
+      if (!externalFab) return;
+      await externalFab.trigger("click");
 
       expect(openSpy).toHaveBeenCalledWith("https://example.com/file", "_blank");
     });

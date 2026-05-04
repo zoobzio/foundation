@@ -199,7 +199,7 @@ describe("createDeck", () => {
       const deck = createDeck<TestRow>("facet-test", facetConfig)();
       await deck.fetch();
       expect(deck.facetGroups.value).toHaveLength(1);
-      expect(deck.facetGroups.value[0]!.key).toBe("status");
+      expect(deck.facetGroups.value[0]?.key).toBe("status");
     });
   });
 
@@ -268,7 +268,7 @@ describe("createDeck", () => {
       deck.startPolling();
       await vi.advanceTimersByTimeAsync(5000);
       expect(deck.facetGroups.value).toHaveLength(1);
-      expect(deck.facetGroups.value[0]!.key).toBe("status");
+      expect(deck.facetGroups.value[0]?.key).toBe("status");
       deck.stopPolling();
     });
 
