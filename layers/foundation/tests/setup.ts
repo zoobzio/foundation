@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import { ref, computed } from "vue";
 import { status } from "ltrl-http";
 
 // Foundation auto-imports
@@ -13,5 +14,15 @@ vi.stubGlobal("createError", (input: Record<string, unknown>) => {
   return err;
 });
 vi.stubGlobal("showError", vi.fn());
+const _unthemeMode = ref<"light" | "dark">("dark");
+const _unthemeTheme = ref("cyberdream");
+const _unthemeThemes = computed(() => ["cyberdream", "nord", "dracula"]);
+vi.stubGlobal("useUntheme", () => ({
+  mode: _unthemeMode,
+  theme: _unthemeTheme,
+  themes: _unthemeThemes,
+  setTheme: (name: string) => { _unthemeTheme.value = name; },
+  themeCSS: computed(() => ""),
+}));
 vi.stubGlobal("clearError", vi.fn());
 vi.stubGlobal("useHead", vi.fn());
