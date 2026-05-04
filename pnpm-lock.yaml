@@ -57,6 +57,9 @@ importers:
       happy-dom:
         specifier: ^20.9.0
         version: 20.9.0
+      ltrl-http:
+        specifier: ^0.0.20
+        version: 0.0.20
       vitest:
         specifier: ^4.1.5
         version: 4.1.5(@types/node@24.10.0)(@vitest/coverage-v8@4.1.5)(happy-dom@20.9.0)(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))
@@ -69,15 +72,12 @@ importers:
 
   apps/example:
     dependencies:
-      '@zoobz-io/foundry':
+      '@zoobz-io/foundation':
         specifier: workspace:*
-        version: link:../../layers/foundry
+        version: link:../../layers/foundation
       nuxt:
         specifier: 'catalog:'
         version: 4.2.0(@parcel/watcher@2.5.1)(@types/node@24.10.0)(@vue/compiler-sfc@3.5.24)(better-sqlite3@12.5.0)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.5.1)(optionator@0.9.4)(rollup@4.52.5)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(yaml@2.8.1)
-      reka-ui:
-        specifier: 'catalog:'
-        version: 2.6.0(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3))
     devDependencies:
       typescript:
         specifier: 'catalog:'
@@ -136,9 +136,6 @@ importers:
       '@zoobz-io/ore':
         specifier: workspace:*
         version: link:../ore
-      '@zoobz-io/untheme':
-        specifier: workspace:*
-        version: link:../../packages/untheme
       codemirror:
         specifier: ^6.0.2
         version: 6.0.2
@@ -214,11 +211,48 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  layers/foundry:
+  layers/foundation:
     dependencies:
+      '@zoobz-io/alloy':
+        specifier: workspace:*
+        version: link:../alloy
       '@zoobz-io/forge':
         specifier: workspace:*
         version: link:../forge
+      '@zoobz-io/foundry':
+        specifier: workspace:*
+        version: link:../foundry
+      '@zoobz-io/ore':
+        specifier: workspace:*
+        version: link:../ore
+      '@zoobz-io/untheme':
+        specifier: workspace:*
+        version: link:../../packages/untheme
+      ltrl-http:
+        specifier: ^0.0.20
+        version: 0.0.20
+      nuxt:
+        specifier: 'catalog:'
+        version: 4.2.0(@parcel/watcher@2.5.1)(@types/node@24.10.0)(@vue/compiler-sfc@3.5.24)(better-sqlite3@12.5.0)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.52.5)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(yaml@2.8.1)
+      reka-ui:
+        specifier: 'catalog:'
+        version: 2.6.0(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  layers/foundry:
+    dependencies:
+      '@zoobz-io/alloy':
+        specifier: workspace:*
+        version: link:../alloy
+      '@zoobz-io/forge':
+        specifier: workspace:*
+        version: link:../forge
+      '@zoobz-io/ore':
+        specifier: workspace:*
+        version: link:../ore
       nuxt:
         specifier: 'catalog:'
         version: 4.2.0(@parcel/watcher@2.5.1)(@types/node@24.10.0)(@vue/compiler-sfc@3.5.24)(better-sqlite3@12.5.0)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.52.5)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(yaml@2.8.1)
@@ -3978,6 +4012,12 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  ltrl-http@0.0.20:
+    resolution: {integrity: sha512-LbcTdcsVp5GP8UvIu5DeKiLXLvNWyOjv9Z1o00G7geGkvktUc1UdTtSu4ooYKtFLIinv3ZQa55ic4Zgga2n3hg==}
+
+  ltrl@0.0.20:
+    resolution: {integrity: sha512-1/yWW6tz8p1Uh748kSm+UkBlhKAD7Fer/nGLTDmHgSyqOAmet/3UwpPpd2taMhPOmc+Od8DUjpZqveMYE0+txg==}
+
   magic-regexp@0.10.0:
     resolution: {integrity: sha512-Uly1Bu4lO1hwHUW0CQeSWuRtzCMNO00CmXtS8N6fyvB3B979GOEEeAkiTUDsmbYLAbvpUS/Kt5c4ibosAzVyVg==}
 
@@ -7372,7 +7412,7 @@ snapshots:
     dependencies:
       '@nuxt/kit': 4.2.0(magicast@0.5.1)
       '@rollup/plugin-replace': 6.0.3(rollup@4.52.5)
-      '@vitejs/plugin-vue': 6.0.1(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(vue@3.5.24(typescript@5.9.3))
+      '@vitejs/plugin-vue': 6.0.6(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(vue@3.5.24(typescript@5.9.3))
       '@vitejs/plugin-vue-jsx': 5.1.1(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(vue@3.5.24(typescript@5.9.3))
       autoprefixer: 10.4.21(postcss@8.5.6)
       consola: 3.4.2
@@ -7431,7 +7471,7 @@ snapshots:
     dependencies:
       '@nuxt/kit': 4.2.0(magicast@0.5.2)
       '@rollup/plugin-replace': 6.0.3(rollup@4.52.5)
-      '@vitejs/plugin-vue': 6.0.1(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(vue@3.5.24(typescript@5.9.3))
+      '@vitejs/plugin-vue': 6.0.6(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(vue@3.5.24(typescript@5.9.3))
       '@vitejs/plugin-vue-jsx': 5.1.1(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(vue@3.5.24(typescript@5.9.3))
       autoprefixer: 10.4.21(postcss@8.5.6)
       consola: 3.4.2
@@ -10606,6 +10646,12 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  ltrl-http@0.0.20:
+    dependencies:
+      ltrl: 0.0.20
+
+  ltrl@0.0.20: {}
+
   magic-regexp@0.10.0:
     dependencies:
       estree-walker: 3.0.3
@@ -10626,8 +10672,8 @@ snapshots:
 
   magicast@0.3.5:
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.29.2
+      '@babel/types': 7.29.0
       source-map-js: 1.2.1
 
   magicast@0.5.1:

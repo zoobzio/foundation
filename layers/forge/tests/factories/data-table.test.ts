@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { nextTick } from "vue";
 import { createTable } from "../../app/factories/data-table";
-import { fakeColumns, fakeRows } from "../../../../packages/testing/data/table";
-import type { FakeRow } from "../../../../packages/testing/data/table";
+import { fakeColumns, fakeRows } from "../data/table";
+import type { FakeRow } from "../data/table";
 import type { DataTableConfig, DataTableFetchResult } from "../../app/types/data-table";
 
 const fakeFetch = vi.fn<[], Promise<DataTableFetchResult<FakeRow>>>(async () => ({

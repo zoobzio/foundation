@@ -1,4 +1,4 @@
-import type { CommandGroup } from "../../../layers/alloy/app/types/command";
+import type { CommandGroup } from "../../app/types/command";
 
 export const fakeCommandGroups: CommandGroup[] = [
   {

@@ -9,7 +9,8 @@
     "url": "https://zoobz.io"
   },
   "exports": {
-    ".": "./nuxt.config.ts"
+    ".": "./nuxt.config.ts",
+    "./stubs": "./tests/stubs.ts"
   },
   "scripts": {
     "dev": "nuxi dev",

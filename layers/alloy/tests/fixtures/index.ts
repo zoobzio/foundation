@@ -1,12 +1,12 @@
 import { mount } from "@vue/test-utils";
 import { passthrough } from "../../app/utils/passthrough";
 import { usePassthrough } from "../../app/composables/passthrough";
-import { oreStubs, alloyStubs, rekaStubs, createScopedStub } from "../../../../packages/testing/helpers/stubs";
-import { fakeOptions } from "../../../../packages/testing/data/options";
-import { fakeMenuGroups } from "../../../../packages/testing/data/menu";
-import { fakeCommandGroups } from "../../../../packages/testing/data/command";
-import { fakeFacetGroups } from "../../../../packages/testing/data/facets";
-import { fakeDateFields } from "../../../../packages/testing/data/date-filters";
+import { oreStubs, alloyStubs, rekaStubs, createScopedStub } from "../stubs";
+import { fakeOptions } from "../data/options";
+import { fakeMenuGroups } from "../data/menu";
+import { fakeCommandGroups } from "../data/command";
+import { fakeFacetGroups } from "../data/facets";
+import { fakeDateFields } from "../data/date-filters";
 
 import Autocomplete from "../../app/components/Autocomplete.vue";
 import Accordion from "../../app/components/Accordion.vue";

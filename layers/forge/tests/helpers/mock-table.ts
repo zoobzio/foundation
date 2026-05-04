@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { vi } from "vitest";
-import type { Table, DataTableColumn, RowAction, BulkAction, TableFilter } from "../../../layers/forge/app/types/data-table";
+import type { Table, DataTableColumn, RowAction, BulkAction, TableFilter } from "../../app/types/data-table";
 import type { IconAlias } from "@zoobz-io/iconic/types";
 
 export interface MockTableOptions<T, K = unknown> {

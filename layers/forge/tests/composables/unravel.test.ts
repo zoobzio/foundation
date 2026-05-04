@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { ref, shallowRef } from "vue";
 import { useFilterUnravel } from "../../app/composables/unravel";
-import { createMockTable } from "../../../../packages/testing/helpers/mock-table";
-import { fakeColumns } from "../../../../packages/testing/data/table";
-import type { FakeRow } from "../../../../packages/testing/data/table";
+import { createMockTable } from "../helpers/mock-table";
+import { fakeColumns } from "../data/table";
+import type { FakeRow } from "../data/table";
 import type { DataTableColumn, TableFilter } from "../../app/types/data-table";
 
 const makeState = () => ({

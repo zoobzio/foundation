@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick } from "vue";
 import { mountScroller } from "../fixtures";
-import { oreStubs, rekaStubs } from "../../../../packages/testing/helpers/stubs";
+import { oreStubs, rekaStubs } from "../stubs";
 import Scroller from "../../app/components/Scroller.vue";
 
 describe("Scroller", () => {

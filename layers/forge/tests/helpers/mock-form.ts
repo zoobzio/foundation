@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { vi } from "vitest";
-import type { Form, DataFormField } from "../../../layers/forge/app/types/data-form";
+import type { Form, DataFormField } from "../../app/types/data-form";
 
 export interface FakeFormData {
   name: string;

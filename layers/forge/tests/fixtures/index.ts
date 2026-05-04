@@ -4,17 +4,17 @@ import { passthrough } from "../../../../layers/alloy/app/utils/passthrough";
 import { usePassthrough } from "../../../../layers/alloy/app/composables/passthrough";
 import { formatCell } from "../../app/utils/format-cell";
 import { formatFilter } from "../../app/utils/format-filter";
-import { oreStubs, alloyStubs, forgeStubs } from "../../../../packages/testing/helpers/stubs";
-import { createMockTable } from "../../../../packages/testing/helpers/mock-table";
-import { createMockPreview } from "../../../../packages/testing/helpers/mock-preview";
-import { createMockDeck } from "../../../../packages/testing/helpers/mock-deck";
-import { createMockForm } from "../../../../packages/testing/helpers/mock-form";
-import { fakeColumns, fakeRows, fakeBulkActions } from "../../../../packages/testing/data/table";
-import type { FakeRow } from "../../../../packages/testing/data/table";
+import { oreStubs, alloyStubs, forgeStubs } from "../stubs";
+import { createMockTable } from "../helpers/mock-table";
+import { createMockPreview } from "../helpers/mock-preview";
+import { createMockDeck } from "../helpers/mock-deck";
+import { createMockForm } from "../helpers/mock-form";
+import { fakeColumns, fakeRows, fakeBulkActions } from "../data/table";
+import type { FakeRow } from "../data/table";
 import type { TableFilter, RowAction, BulkAction } from "../../app/types/data-table";
 import type { Deck } from "../../app/types/data-deck";
 import type { Form } from "../../app/types/data-form";
-import type { FakeFormData } from "../../../../packages/testing/helpers/mock-form";
+import type { FakeFormData } from "../helpers/mock-form";
 
 // Generic SFCs need a DefineComponent cast for Vue Test Utils
 const Widget = (await import("../../app/components/Data/Table/Widget.vue")).default as DefineComponent;

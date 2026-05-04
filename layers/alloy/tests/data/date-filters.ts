@@ -1,4 +1,4 @@
-import type { DateFilter, DateFieldConfig } from "../../../layers/alloy/app/types/date-filters";
+import type { DateFilter, DateFieldConfig } from "../../app/types/date-filters";
 
 export const fakeDateFields: DateFieldConfig[] = [
   { key: "created", label: "Created" },

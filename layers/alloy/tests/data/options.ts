@@ -1,4 +1,4 @@
-import type { Option } from "../../../layers/alloy/app/types/common";
+import type { Option } from "../../app/types/common";
 
 export const fakeOptions: Option[] = [
   { value: "apple", label: "Apple" },

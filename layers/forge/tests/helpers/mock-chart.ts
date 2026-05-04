@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { vi } from "vitest";
-import type { Chart, DataChartVariant } from "../../../layers/forge/app/types/data-chart";
+import type { Chart, DataChartVariant } from "../../app/types/data-chart";
 
 export interface MockChartOptions<T> {
   topic?: string;

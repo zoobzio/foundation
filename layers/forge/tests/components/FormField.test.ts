@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountFormField } from "../fixtures";
-import { createMockForm } from "../../../../packages/testing/helpers/mock-form";
+import { createMockForm } from "../helpers/mock-form";
 
 describe("DataFormField", () => {
   // ---------------------------------------------------------------------------

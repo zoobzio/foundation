@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { vi } from "vitest";
-import type { Deck, DateFieldConfig } from "../../../layers/forge/app/types/data-deck";
+import type { Deck, DateFieldConfig } from "../../app/types/data-deck";
 
 export interface MockDeckOptions<T> {
   topic?: string;

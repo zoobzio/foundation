@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { shallowMount } from "@vue/test-utils";
 import type { DefineComponent } from "vue";
 import { ref, computed } from "vue";
-import { oreStubs, alloyStubs, forgeStubs } from "../../../../packages/testing/helpers/stubs";
+import { oreStubs, alloyStubs, forgeStubs } from "@zoobz-io/forge/stubs";
 import type { Workspace, WorkspaceLayout } from "../../app/types/workspace";
 import type { PageSlot } from "../../app/types/page";
 

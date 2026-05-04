@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountDeckFeed, mockDeck } from "../fixtures";
-import { fakeRows } from "../../../../packages/testing/data/table";
+import { fakeRows } from "../data/table";
 
 describe("DataDeckFeed", () => {
   describe("static", () => {

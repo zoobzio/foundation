@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { mountBody, mockTable } from "../fixtures";
-import { fakeActions, fakeBulkActions } from "../../../../packages/testing/data/table";
-import type { FakeRow } from "../../../../packages/testing/data/table";
+import { fakeActions, fakeBulkActions } from "../data/table";
+import type { FakeRow } from "../data/table";
 
 describe("DataTableBody", () => {
   describe("static", () => {

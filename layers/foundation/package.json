@@ -1,5 +1,5 @@
 {
-  "name": "@zoobz-io/foundry",
+  "name": "@zoobz-io/foundation",
   "type": "module",
   "license": "MIT",
   "version": "0.0.1",
@@ -24,7 +24,11 @@
     "@zoobz-io/ore": "workspace:*",
     "@zoobz-io/alloy": "workspace:*",
     "@zoobz-io/forge": "workspace:*",
-    "nuxt": "catalog:"
+    "@zoobz-io/foundry": "workspace:*",
+    "@zoobz-io/untheme": "workspace:*",
+    "ltrl-http": "^0.0.20",
+    "nuxt": "catalog:",
+    "reka-ui": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:"

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountWidget, mockTable } from "../fixtures";
-import { fakeBulkActions } from "../../../../packages/testing/data/table";
+import { fakeBulkActions } from "../data/table";
 
 describe("DataTableWidget", () => {
   describe("static", () => {

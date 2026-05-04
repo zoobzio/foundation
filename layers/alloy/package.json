@@ -10,7 +10,8 @@
   },
   "exports": {
     ".": "./nuxt.config.ts",
-    "./types": "./app/types/index.ts"
+    "./types": "./app/types/index.ts",
+    "./stubs": "./tests/stubs.ts"
   },
   "scripts": {
     "dev": "nuxi dev",
@@ -39,7 +40,6 @@
     "@lezer/highlight": "^1.2.3",
     "@vueuse/nuxt": "^14.1.0",
     "@zoobz-io/ore": "workspace:*",
-    "@zoobz-io/untheme": "workspace:*",
     "codemirror": "^6.0.2",
     "defu": "catalog:",
     "figlet": "^1.9.4",

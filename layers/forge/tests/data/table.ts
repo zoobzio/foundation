@@ -1,4 +1,4 @@
-import type { DataTableColumn, RowAction, BulkAction } from "../../../layers/forge/app/types/data-table";
+import type { DataTableColumn, RowAction, BulkAction } from "../../app/types/data-table";
 
 export type FakeRow = {
   id: number;

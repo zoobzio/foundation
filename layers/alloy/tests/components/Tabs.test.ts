@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mountTabs } from "../fixtures";
-import { fakeOptionsWithIcons } from "../../../../packages/testing/data/options";
+import { fakeOptionsWithIcons } from "../data/options";
 
 describe("Tabs", () => {
   describe("static", () => {

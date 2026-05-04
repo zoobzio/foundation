@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { nextTick } from "vue";
 import { mountHead, mockTable } from "../fixtures";
-import { fakeActions, fakeBulkActions } from "../../../../packages/testing/data/table";
-import type { FakeRow } from "../../../../packages/testing/data/table";
+import { fakeActions, fakeBulkActions } from "../data/table";
+import type { FakeRow } from "../data/table";
 import type { DataTableColumn } from "../../app/types/data-table";
 
 describe("DataTableHead", () => {

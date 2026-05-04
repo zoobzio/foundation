@@ -1,4 +1,4 @@
-import type { MenuGroup } from "../../../layers/alloy/app/types/menu";
+import type { MenuGroup } from "../../app/types/menu";
 
 export const fakeMenuGroups: MenuGroup[] = [
   {

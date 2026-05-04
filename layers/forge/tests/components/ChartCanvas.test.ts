@@ -3,8 +3,8 @@ import { shallowMount } from "@vue/test-utils";
 import type { DefineComponent } from "vue";
 import { passthrough } from "../../../../layers/alloy/app/utils/passthrough";
 import { usePassthrough } from "../../../../layers/alloy/app/composables/passthrough";
-import { oreStubs, alloyStubs } from "../../../../packages/testing/helpers/stubs";
-import { createMockChart } from "../../../../packages/testing/helpers/mock-chart";
+import { oreStubs, alloyStubs } from "../stubs";
+import { createMockChart } from "../helpers/mock-chart";
 
 const Canvas = (await import("../../app/components/Data/Chart/Canvas.vue")).default as DefineComponent;
 const stubs = { ...oreStubs, ...alloyStubs };

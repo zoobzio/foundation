@@ -3,10 +3,10 @@ import { shallowMount } from "@vue/test-utils";
 import type { DefineComponent } from "vue";
 import { passthrough } from "../../../../layers/alloy/app/utils/passthrough";
 import { usePassthrough } from "../../../../layers/alloy/app/composables/passthrough";
-import { oreStubs, alloyStubs, createAllSlotsStub } from "../../../../packages/testing/helpers/stubs";
-import { createMockDeck } from "../../../../packages/testing/helpers/mock-deck";
-import { fakeRows } from "../../../../packages/testing/data/table";
-import type { FakeRow } from "../../../../packages/testing/data/table";
+import { oreStubs, alloyStubs, createAllSlotsStub } from "../stubs";
+import { createMockDeck } from "../helpers/mock-deck";
+import { fakeRows } from "../data/table";
+import type { FakeRow } from "../data/table";
 import type { Deck } from "../../app/types/data-deck";
 
 const Toolbar = (await import("../../app/components/Data/Deck/Toolbar.vue")).default as DefineComponent;

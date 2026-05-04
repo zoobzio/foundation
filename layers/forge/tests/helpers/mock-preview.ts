@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { vi } from "vitest";
-import type { Preview, PreviewField, ContentVariant } from "../../../layers/forge/app/types/data-preview";
+import type { Preview, PreviewField, ContentVariant } from "../../app/types/data-preview";
 
 export interface FakePreviewData {
   title: string;

@@ -9,8 +9,7 @@
     "prepare": "nuxi prepare"
   },
   "dependencies": {
-    "@zoobz-io/foundry": "workspace:*",
-    "reka-ui": "catalog:",
+    "@zoobz-io/foundation": "workspace:*",
     "nuxt": "catalog:"
   },
   "devDependencies": {

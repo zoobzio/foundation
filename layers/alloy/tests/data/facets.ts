@@ -1,4 +1,4 @@
-import type { FacetGroup } from "../../../layers/alloy/app/types/facets";
+import type { FacetGroup } from "../../app/types/facets";
 
 export const fakeFacetGroups: FacetGroup[] = [
   {
