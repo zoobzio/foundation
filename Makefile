@@ -19,7 +19,7 @@ lint-fix: ## Run ESLint with auto-fix
 	pnpm lint:fix
 
 typecheck: ## Run type checking across all packages
-	pnpm -r typecheck
+	pnpm typecheck
 
 test: ## Run all tests
 	pnpm test
