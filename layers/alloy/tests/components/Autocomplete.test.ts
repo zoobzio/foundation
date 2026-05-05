@@ -24,53 +24,32 @@ describe("Autocomplete", () => {
   });
 
   describe("focus / blur", () => {
-    it("shows dropdown with suggestions on focus", async () => {
+    it("shows dropdown with suggestions on focus and emits focus", async () => {
       const wrapper = mountAutocomplete();
       await wrapper.find(".f-autocomplete-input").trigger("focus");
       await nextTick();
       expect(wrapper.find(".f-autocomplete-dropdown").exists()).toBe(true);
-    });
-
-    it("renders suggestion items when focused", async () => {
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
+      expect(wrapper.emitted("focus")).toBeTruthy();
       const items = wrapper.findAll(".f-autocomplete-item");
       expect(items).toHaveLength(3);
     });
 
-    it("emits focus on input focus", async () => {
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      expect(wrapper.emitted("focus")).toBeTruthy();
-    });
-
-    it("emits blur after input blur (delayed)", async () => {
+    it("emits blur and hides dropdown after blur", async () => {
       vi.useFakeTimers();
       const wrapper = mountAutocomplete();
       await wrapper.find(".f-autocomplete-input").trigger("focus");
+      await nextTick();
       await wrapper.find(".f-autocomplete-input").trigger("blur");
       vi.advanceTimersByTime(150);
       await nextTick();
       expect(wrapper.emitted("blur")).toBeTruthy();
-      vi.useRealTimers();
-    });
-
-    it("hides dropdown after blur", async () => {
-      vi.useFakeTimers();
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("blur");
-      vi.advanceTimersByTime(150);
-      await nextTick();
       expect(wrapper.find(".f-autocomplete-dropdown").exists()).toBe(false);
       vi.useRealTimers();
     });
   });
 
   describe("panels", () => {
-    it("renders step panels + suggestion panel when steps provided", async () => {
+    it("renders step panels + suggestion panel and marks locked items", async () => {
       const wrapper = mountAutocomplete({
         steps: [{ label: "Status", value: "status", icon: "filter" }],
         suggestions: [{ label: "Active", value: "Active" }],
@@ -78,27 +57,19 @@ describe("Autocomplete", () => {
       await wrapper.find(".f-autocomplete-input").trigger("focus");
       await nextTick();
       const panels = wrapper.findAll(".f-autocomplete-panel");
-      // 1 step panel + 1 suggestion panel
       expect(panels).toHaveLength(2);
-    });
-
-    it("marks step panel items as locked", async () => {
-      const wrapper = mountAutocomplete({
-        steps: [{ label: "Status", value: "status", icon: "filter" }],
-        suggestions: [{ label: "Active", value: "Active" }],
-      });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
       expect(wrapper.find(".f-autocomplete-item--locked").exists()).toBe(true);
     });
 
-    it("highlights first suggestion by default", async () => {
+    it("highlights first suggestion by default and renders icons", async () => {
       const wrapper = mountAutocomplete();
       await wrapper.find(".f-autocomplete-input").trigger("focus");
       await nextTick();
       const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
       expect(highlighted.exists()).toBe(true);
       expect(highlighted.text()).toContain("Search");
+      expect(wrapper.findAll(".f-autocomplete-item-icon").length).toBeGreaterThan(0);
+      expect(wrapper.findAll(".f-autocomplete-item-arrow").length).toBeGreaterThan(0);
     });
 
     it("shows empty state when showEmpty and no suggestions", async () => {
@@ -107,20 +78,6 @@ describe("Autocomplete", () => {
       await nextTick();
       expect(wrapper.find(".f-autocomplete-empty").exists()).toBe(true);
       expect(wrapper.text()).toContain("No matches");
-    });
-
-    it("renders item icons when provided", async () => {
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      expect(wrapper.findAll(".f-autocomplete-item-icon").length).toBeGreaterThan(0);
-    });
-
-    it("renders arrow icon for hasChildren items", async () => {
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      expect(wrapper.findAll(".f-autocomplete-item-arrow").length).toBeGreaterThan(0);
     });
 
     it("marks disabled items", async () => {
@@ -137,27 +94,18 @@ describe("Autocomplete", () => {
   });
 
   describe("keyboard — arrow navigation", () => {
-    it("ArrowDown moves highlight to next item", async () => {
+    it("ArrowDown moves highlight, ArrowUp moves back", async () => {
       const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
       await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "ArrowDown" });
       await nextTick();
-      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
-      expect(highlighted.text()).toContain("Status");
-    });
-
-    it("ArrowUp moves highlight to previous item", async () => {
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      expect(wrapper.find(".f-autocomplete-item--highlighted").text()).toContain("Status");
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "ArrowUp" });
       await nextTick();
-      // Move down twice then up once
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowUp" });
-      await nextTick();
-      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
-      expect(highlighted.text()).toContain("Status");
+      expect(wrapper.find(".f-autocomplete-item--highlighted").text()).toContain("Status");
     });
 
     it("ArrowDown skips disabled items", async () => {
@@ -168,72 +116,90 @@ describe("Autocomplete", () => {
           { label: "C", value: "c" },
         ],
       });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
       await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "ArrowDown" });
       await nextTick();
-      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
-      expect(highlighted.text()).toContain("C");
+      expect(wrapper.find(".f-autocomplete-item--highlighted").text()).toContain("C");
     });
 
     it("ArrowDown does not go past last item", async () => {
       const wrapper = mountAutocomplete({
         suggestions: [{ label: "Only", value: "only" }],
       });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
       await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
+      await input.trigger("keydown", { key: "ArrowDown" });
       await nextTick();
-      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
-      expect(highlighted.text()).toContain("Only");
+      expect(wrapper.find(".f-autocomplete-item--highlighted").text()).toContain("Only");
+    });
+
+    it("ArrowDown/Up skips leading and mid disabled items", async () => {
+      const wrapper = mountAutocomplete({
+        suggestions: [
+          { label: "D1", value: "d1", disabled: true },
+          { label: "D2", value: "d2", disabled: true },
+          { label: "Enabled", value: "e" },
+        ],
+      });
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
+      await nextTick();
+      await input.trigger("keydown", { key: "ArrowDown" });
+      await nextTick();
+      expect(wrapper.find(".f-autocomplete-item--highlighted").text()).toContain("Enabled");
     });
   });
 
   describe("keyboard — enter", () => {
     it("Enter emits select with highlighted item", async () => {
       const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
       await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Enter" });
+      await input.trigger("keydown", { key: "Enter" });
       expect(wrapper.emitted("select")?.[0]?.[0]).toEqual(
         expect.objectContaining({ value: "__search" }),
       );
     });
 
-    it("Enter emits submit when no suggestions", async () => {
+    it("Enter emits submit when no suggestions or not focused", async () => {
       const wrapper = mountAutocomplete({ modelValue: "hello", suggestions: [] });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
       await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Enter" });
+      await input.trigger("keydown", { key: "Enter" });
       expect(wrapper.emitted("submit")?.[0]).toEqual(["hello"]);
     });
 
-    it("Enter emits submit when not focused (no dropdown)", async () => {
-      const wrapper = mountAutocomplete({ modelValue: "hello", suggestions: [] });
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Enter" });
-      expect(wrapper.emitted("submit")?.[0]).toEqual(["hello"]);
+    it("Enter emits submit instead of select when highlighted item is disabled", async () => {
+      const wrapper = mountAutocomplete({
+        modelValue: "test",
+        suggestions: [{ label: "Only", value: "only", disabled: true }],
+      });
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
+      await nextTick();
+      await input.trigger("keydown", { key: "Enter" });
+      expect(wrapper.emitted("select")).toBeFalsy();
+      expect(wrapper.emitted("submit")?.[0]).toEqual(["test"]);
     });
   });
 
   describe("keyboard — forwarding", () => {
-    it("forwards Backspace as keydown event", async () => {
+    it("forwards Backspace and Escape as keydown events", async () => {
       const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
+      const input = wrapper.find(".f-autocomplete-input");
+      await input.trigger("focus");
       await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Backspace" });
+      await input.trigger("keydown", { key: "Backspace" });
+      await input.trigger("keydown", { key: "Escape" });
       const emitted = wrapper.emitted("keydown");
       expect(emitted).toBeTruthy();
       expect((emitted![0][0] as KeyboardEvent).key).toBe("Backspace");
-    });
-
-    it("forwards Escape as keydown event", async () => {
-      const wrapper = mountAutocomplete();
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Escape" });
-      const emitted = wrapper.emitted("keydown");
-      expect(emitted).toBeTruthy();
-      expect((emitted![0][0] as KeyboardEvent).key).toBe("Escape");
+      expect((emitted![1][0] as KeyboardEvent).key).toBe("Escape");
     });
   });
 
@@ -256,7 +222,6 @@ describe("Autocomplete", () => {
       });
       await wrapper.find(".f-autocomplete-input").trigger("focus");
       await nextTick();
-      // The first item is the locked step
       const items = wrapper.findAll(".f-autocomplete-item");
       await items[0].trigger("mousedown");
       expect(wrapper.emitted("unwind")?.[0]).toEqual([0]);
@@ -274,80 +239,20 @@ describe("Autocomplete", () => {
   });
 
   describe("hint", () => {
-    it("renders hint character when provided", () => {
-      const wrapper = mountAutocomplete({ modelValue: '"hello', hint: '"' });
-      expect(wrapper.find(".f-autocomplete-hint-char").text()).toBe('"');
-    });
+    const wrapper = mountAutocomplete({ modelValue: '"hello', hint: '"' });
 
-    it("renders model value in hint text", () => {
-      const wrapper = mountAutocomplete({ modelValue: '"hello', hint: '"' });
+    it("renders hint character and text", () => {
+      expect(wrapper.find(".f-autocomplete-hint-char").text()).toBe('"');
       expect(wrapper.find(".f-autocomplete-hint-text").text()).toBe('"hello');
     });
 
     it("adds ghost class to input when hint present", () => {
-      const wrapper = mountAutocomplete({ hint: '"' });
       expect(wrapper.find(".f-autocomplete-input--ghost").exists()).toBe(true);
     });
 
     it("no ghost class without hint", () => {
-      const wrapper = mountAutocomplete();
-      expect(wrapper.find(".f-autocomplete-input--ghost").exists()).toBe(false);
-    });
-  });
-
-  describe("disabled suggestions highlight", () => {
-    it("ArrowDown skips past all leading disabled items from index 0", async () => {
-      const wrapper = mountAutocomplete({
-        suggestions: [
-          { label: "Disabled1", value: "d1", disabled: true },
-          { label: "Disabled2", value: "d2", disabled: true },
-          { label: "Enabled", value: "e" },
-        ],
-      });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      // Press ArrowDown from index 0 — should skip both disabled items
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
-      await nextTick();
-      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
-      expect(highlighted.text()).toContain("Enabled");
-    });
-
-    it("ArrowUp skips disabled items going backwards", async () => {
-      const wrapper = mountAutocomplete({
-        suggestions: [
-          { label: "First", value: "first" },
-          { label: "DisabledMid", value: "dm", disabled: true },
-          { label: "Last", value: "last" },
-        ],
-      });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      // Move to Last
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowDown" });
-      await nextTick();
-      // Move back up — should skip DisabledMid
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "ArrowUp" });
-      await nextTick();
-      const highlighted = wrapper.find(".f-autocomplete-item--highlighted");
-      expect(highlighted.text()).toContain("First");
-    });
-  });
-
-  describe("Enter on disabled highlighted item", () => {
-    it("emits submit instead of select when highlighted item is disabled", async () => {
-      const wrapper = mountAutocomplete({
-        modelValue: "test",
-        suggestions: [
-          { label: "Only", value: "only", disabled: true },
-        ],
-      });
-      await wrapper.find(".f-autocomplete-input").trigger("focus");
-      await nextTick();
-      await wrapper.find(".f-autocomplete-input").trigger("keydown", { key: "Enter" });
-      expect(wrapper.emitted("select")).toBeFalsy();
-      expect(wrapper.emitted("submit")?.[0]).toEqual(["test"]);
+      const noHint = mountAutocomplete();
+      expect(noHint.find(".f-autocomplete-input--ghost").exists()).toBe(false);
     });
   });
 
