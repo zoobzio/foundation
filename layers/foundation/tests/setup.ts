@@ -26,3 +26,14 @@ vi.stubGlobal("useUntheme", () => ({
 }));
 vi.stubGlobal("clearError", vi.fn());
 vi.stubGlobal("useHead", vi.fn());
+
+const _rosettaLocale = ref("en");
+const _rosettaLocales = computed(() => ["en", "es", "fr"]);
+const _rosettaMessages = ref<Record<string, string>>({});
+vi.stubGlobal("useRosetta", () => ({
+  locale: _rosettaLocale,
+  locales: _rosettaLocales,
+  messages: _rosettaMessages,
+  setLocale: async (code: string) => { _rosettaLocale.value = code; },
+}));
+vi.stubGlobal("$t", (text: string) => _rosettaMessages.value[text] ?? text);

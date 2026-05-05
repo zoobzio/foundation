@@ -22,7 +22,12 @@ export default defineNuxtConfig({
   },
   modules: [
     "@zoobz-io/untheme/module",
+    "@zoobz-io/rosetta/module",
   ],
+  rosetta: {
+    defaultLocale: "en",
+    locales: ["en"],
+  },
   untheme: {
     defaultTheme: "cyberdream",
     themes: {
@@ -39,7 +44,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      exclude: ["#build/untheme.themes.mjs"],
+      exclude: ["#build/untheme.themes.mjs", "#build/rosetta.config.mjs"],
     },
   },
 });

@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     environment: "happy-dom",
-    include: ["layers/*/tests/**/*.test.ts"],
+    include: ["layers/*/tests/**/*.test.ts", "packages/*/tests/**/*.test.ts"],
     setupFiles: [
       resolve(__dirname, "layers/ore/tests/setup.ts"),
       resolve(__dirname, "layers/alloy/tests/setup.ts"),
