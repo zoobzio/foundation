@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
+      "#build/crucible.config.mjs": resolve(__dirname, "packages/crucible/runtime/stubs/config.ts"),
       "#build/rampart.config.mjs": resolve(__dirname, "packages/rampart/runtime/stubs/config.ts"),
       "#build/rosetta.config.mjs": resolve(__dirname, "packages/rosetta/runtime/stubs/config.ts"),
     },

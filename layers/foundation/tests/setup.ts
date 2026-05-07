@@ -64,3 +64,11 @@ vi.stubGlobal("hasScope", (...scopes: string[]) => {
   if (!userScopes) return false;
   return scopes.every((s) => userScopes.includes(s));
 });
+
+vi.stubGlobal("log", {
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  fatal: vi.fn(),
+});

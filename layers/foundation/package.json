@@ -23,12 +23,13 @@
   "dependencies": {
     "@zoobz-io/ore": "workspace:*",
     "@zoobz-io/alloy": "workspace:*",
+    "@zoobz-io/crucible": "workspace:*",
     "@zoobz-io/forge": "workspace:*",
     "@zoobz-io/rampart": "workspace:*",
     "@zoobz-io/rosetta": "workspace:*",
     "@zoobz-io/foundry": "workspace:*",
     "@zoobz-io/untheme": "workspace:*",
-    "ltrl-http": "^0.0.20",
+    "ltrl-http": "catalog:",
     "nuxt": "catalog:",
     "reka-ui": "catalog:"
   },

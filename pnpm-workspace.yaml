@@ -4,10 +4,29 @@ packages:
   - "packages/*"
 
 catalog:
-  nuxt: ^4.2.0
+  nuxt: ^4.2.1
+  vue: ^3.5.24
   defu: ^6.1.4
   typescript: ^5.9.3
-  "reka-ui": ^2.6.0
+  reka-ui: ^2.6.0
   unocss: ^66.5.5
   "@unocss/nuxt": ^66.5.5
   "@nuxt/content": ^3.9.0
+  "@nuxt/kit": ^4.2.1
+  "@nuxt/schema": ^4.2.1
+  "@nuxt/eslint-config": ^1.4.0
+  h3: ^1.15.0
+  nitropack: ^2.12.0
+  vite: ^7.0.0
+  vitest: ^4.1.5
+  "@vitejs/plugin-vue": ^6.0.6
+  "@vitest/coverage-v8": ^4.1.5
+  "@vue/test-utils": ^2.4.8
+  eslint: ^9.0.0
+  happy-dom: ^20.9.0
+  "@internationalized/date": ^3.7.0
+  figlet: ^1.9.4
+  "@types/figlet": ^1.7.0
+  ltrl-http: ^0.0.20
+  zod: ^3.23.0
+  chart.js: ^4.5.1

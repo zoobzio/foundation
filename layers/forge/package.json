@@ -22,11 +22,11 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "@internationalized/date": "^3.7.0",
+    "@internationalized/date": "catalog:",
     "@zoobz-io/alloy": "workspace:*",
-    "chart.js": "^4.5.1",
+    "chart.js": "catalog:",
     "nuxt": "catalog:",
-    "zod": "^3.23.0"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "typescript": "catalog:"

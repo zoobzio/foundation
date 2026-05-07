@@ -42,6 +42,12 @@ export default defineNuxtModule<UnthemeModuleOptions>({
         `import type { ThemeRegistry } from "${resolver.resolve("../src/config")}";\nexport type Themes = ThemeRegistry;`,
     });
 
+    // Expose hook type augmentations to consumers
+    addTypeTemplate({
+      filename: "untheme.hooks.d.ts",
+      getContents: () => `export {} from "${resolver.resolve("./hooks")}";`,
+    });
+
     // Register plugin for color mode + theme management
     addPlugin(resolver.resolve("../runtime/plugin"));
 

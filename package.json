@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "pnpm --parallel --filter @zoobz-io/iconic --filter @zoobz-io/untheme --filter @zoobz-io/foundation --filter example typecheck",
+    "typecheck": "pnpm --parallel --filter @zoobz-io/iconic --filter @zoobz-io/untheme --filter @zoobz-io/rampart --filter @zoobz-io/rosetta --filter @zoobz-io/crucible --filter @zoobz-io/foundation typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -22,20 +22,20 @@
     "registry": "https://registry.npmjs.org"
   },
   "devDependencies": {
-    "@internationalized/date": "^3.7.0",
-    "@nuxt/eslint-config": "^1.4.0",
-    "@types/figlet": "^1.7.0",
-    "@vitejs/plugin-vue": "^6.0.6",
-    "@vitest/coverage-v8": "^4.1.5",
-    "@vue/test-utils": "^2.4.8",
-    "eslint": "^9.0.0",
-    "happy-dom": "^20.9.0",
-    "ltrl-http": "^0.0.20",
-    "vitest": "^4.1.5",
-    "vue": "^3.5.24",
-    "zod": "^3.23.0"
+    "@internationalized/date": "catalog:",
+    "@nuxt/eslint-config": "catalog:",
+    "@types/figlet": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "eslint": "catalog:",
+    "happy-dom": "catalog:",
+    "ltrl-http": "catalog:",
+    "vitest": "catalog:",
+    "vue": "catalog:",
+    "zod": "catalog:"
   },
   "dependencies": {
-    "figlet": "^1.9.4"
+    "figlet": "catalog:"
   }
 }

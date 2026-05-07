@@ -1,8 +1,10 @@
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useNuxtApp } from "#app";
 import { useCookie } from "#imports";
 import { generateThemeCSS } from "../src/css";
 import type { Theme } from "../src/config";
 import { isTheme } from "../src/config";
+import "../src/hooks";
 
 import { defaultTheme as buildDefault, themeNames, themes } from "#build/untheme.themes.mjs";
 
@@ -33,9 +35,17 @@ export const useUntheme = () => {
 
   const availableThemes = computed(() => names);
 
+  const nuxtApp = useNuxtApp();
+
   const setTheme = (name: string) => {
+    const prev = theme.value;
     theme.value = name;
+    nuxtApp.callHook("untheme:theme", { from: prev, to: name });
   };
+
+  watch(mode, (to, from) => {
+    nuxtApp.callHook("untheme:mode", { from, to });
+  });
 
   // Generate CSS for the active theme
   const themeCSS = computed(() => {

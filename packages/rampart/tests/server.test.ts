@@ -20,6 +20,11 @@ vi.mock("../runtime/session", () => ({
   clearSession: (...args: unknown[]) => mockClearSession(...args),
 }));
 
+const mockCallHook = vi.fn();
+vi.mock("nitropack/runtime", () => ({
+  useNitroApp: () => ({ hooks: { callHook: mockCallHook } }),
+}));
+
 const mockRedirect = vi.fn();
 vi.mock("h3", () => ({
   defineEventHandler: (fn: (event: unknown) => unknown) => fn,

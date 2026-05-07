@@ -4,6 +4,7 @@ import {
   addPlugin,
   addImports,
   addRouteMiddleware,
+  addTypeTemplate,
   createResolver,
   useLogger,
 } from "@nuxt/kit";
@@ -43,6 +44,12 @@ export default defineNuxtModule<RampartConfig>({
         `export const forbiddenRoute = ${JSON.stringify(forbiddenRoute)};`,
         `export const meCacheTTL = ${JSON.stringify(meCacheTTL)};`,
       ].join("\n"),
+    });
+
+    // Expose hook type augmentations to consumers
+    addTypeTemplate({
+      filename: "rampart.hooks.d.ts",
+      getContents: () => `export {} from "${resolver.resolve("./hooks")}";`,
     });
 
     // Auto-import composables and helpers

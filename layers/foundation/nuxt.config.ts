@@ -22,9 +22,23 @@ export default defineNuxtConfig({
   },
   modules: [
     "@zoobz-io/untheme/module",
+    "@zoobz-io/crucible/module",
     "@zoobz-io/rampart/module",
     "@zoobz-io/rosetta/module",
   ],
+  crucible: {
+    hooks: {
+      "rampart:login": "info",
+      "rampart:logout": "info",
+      "rampart:denied": "warn",
+      "rampart:refresh": "debug",
+      "rampart:expired": "warn",
+      "rosetta:locale": "info",
+      "rosetta:chunk": "debug",
+      "untheme:theme": "info",
+      "untheme:mode": "info",
+    },
+  },
   rampart: {
     basePath: "/auth",
   },
@@ -48,7 +62,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      exclude: ["#build/untheme.themes.mjs", "#build/rosetta.config.mjs", "#build/rampart.config.mjs"],
+      exclude: ["#build/untheme.themes.mjs", "#build/rosetta.config.mjs", "#build/rampart.config.mjs", "#build/crucible.config.mjs"],
     },
   },
 });
