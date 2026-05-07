@@ -4,6 +4,12 @@ import { resolve } from "node:path";
 
 export default defineConfig({
   plugins: [vue()],
+  resolve: {
+    alias: {
+      "#build/rampart.config.mjs": resolve(__dirname, "packages/rampart/runtime/stubs/config.ts"),
+      "#build/rosetta.config.mjs": resolve(__dirname, "packages/rosetta/runtime/stubs/config.ts"),
+    },
+  },
   test: {
     environment: "happy-dom",
     include: ["layers/*/tests/**/*.test.ts", "packages/*/tests/**/*.test.ts"],

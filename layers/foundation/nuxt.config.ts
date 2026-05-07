@@ -22,8 +22,12 @@ export default defineNuxtConfig({
   },
   modules: [
     "@zoobz-io/untheme/module",
+    "@zoobz-io/rampart/module",
     "@zoobz-io/rosetta/module",
   ],
+  rampart: {
+    basePath: "/auth",
+  },
   rosetta: {
     defaultLocale: "en",
     locales: ["en"],
@@ -44,7 +48,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: {
-      exclude: ["#build/untheme.themes.mjs", "#build/rosetta.config.mjs"],
+      exclude: ["#build/untheme.themes.mjs", "#build/rosetta.config.mjs", "#build/rampart.config.mjs"],
     },
   },
 });

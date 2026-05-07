@@ -1,0 +1,37 @@
+{
+  "name": "@zoobz-io/rampart",
+  "version": "0.0.1",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "exports": {
+    ".": "./src/config.ts",
+    "./module": "./src/module.ts",
+    "./types": "./src/types.ts",
+    "./server": "./runtime/server.ts"
+  },
+  "imports": {
+    "#rampart/*": "./src/*",
+    "#runtime/*": "./runtime/*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "dependencies": {
+    "vue": "^3.5.24"
+  },
+  "devDependencies": {
+    "@nuxt/kit": "^4.2.1",
+    "@nuxt/schema": "^4.2.1",
+    "h3": "^1.15.0",
+    "nuxt": "^4.2.1",
+    "typescript": "catalog:"
+  }
+}

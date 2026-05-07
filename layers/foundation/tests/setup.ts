@@ -37,3 +37,30 @@ vi.stubGlobal("useRosetta", () => ({
   setLocale: async (code: string) => { _rosettaLocale.value = code; },
 }));
 vi.stubGlobal("$t", (text: string) => _rosettaMessages.value[text] ?? text);
+
+interface MockUser {
+  id: string;
+  roles?: string[];
+  scopes?: string[];
+}
+const _authUser = ref<MockUser | null>(null);
+const _authInitialized = ref(false);
+vi.stubGlobal("useAuth", () => ({
+  user: _authUser,
+  authenticated: computed(() => _authUser.value !== null),
+  initialized: _authInitialized,
+  login: vi.fn(),
+  logout: vi.fn(),
+}));
+vi.stubGlobal("hasRole", (...roles: string[]) => {
+  if (!_authUser.value) return false;
+  const userRoles = _authUser.value.roles;
+  if (!userRoles) return false;
+  return roles.every((r) => userRoles.includes(r));
+});
+vi.stubGlobal("hasScope", (...scopes: string[]) => {
+  if (!_authUser.value) return false;
+  const userScopes = _authUser.value.scopes;
+  if (!userScopes) return false;
+  return scopes.every((s) => userScopes.includes(s));
+});

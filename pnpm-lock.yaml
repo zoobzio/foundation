@@ -225,6 +225,9 @@ importers:
       '@zoobz-io/ore':
         specifier: workspace:*
         version: link:../ore
+      '@zoobz-io/rampart':
+        specifier: workspace:*
+        version: link:../../packages/rampart
       '@zoobz-io/rosetta':
         specifier: workspace:*
         version: link:../../packages/rosetta
@@ -307,6 +310,28 @@ importers:
       nuxt:
         specifier: ^4.2.1
         version: 4.2.1(@parcel/watcher@2.5.1)(@types/node@24.10.0)(@vue/compiler-sfc@3.5.24)(better-sqlite3@12.5.0)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.52.5)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(yaml@2.8.1)
+
+  packages/rampart:
+    dependencies:
+      vue:
+        specifier: ^3.5.24
+        version: 3.5.24(typescript@5.9.3)
+    devDependencies:
+      '@nuxt/kit':
+        specifier: ^4.2.1
+        version: 4.4.2(magicast@0.3.5)
+      '@nuxt/schema':
+        specifier: ^4.2.1
+        version: 4.2.1
+      h3:
+        specifier: ^1.15.0
+        version: 1.15.11
+      nuxt:
+        specifier: ^4.2.1
+        version: 4.2.1(@parcel/watcher@2.5.1)(@types/node@24.10.0)(@vue/compiler-sfc@3.5.24)(better-sqlite3@12.5.0)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.1(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.52.5)(terser@5.44.1)(typescript@5.9.3)(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.1))(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/rosetta:
     dependencies:

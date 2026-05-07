@@ -24,6 +24,7 @@
     "@zoobz-io/ore": "workspace:*",
     "@zoobz-io/alloy": "workspace:*",
     "@zoobz-io/forge": "workspace:*",
+    "@zoobz-io/rampart": "workspace:*",
     "@zoobz-io/rosetta": "workspace:*",
     "@zoobz-io/foundry": "workspace:*",
     "@zoobz-io/untheme": "workspace:*",
