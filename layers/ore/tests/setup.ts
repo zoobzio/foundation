@@ -25,7 +25,6 @@ vi.stubGlobal("inject", (_key: unknown, defaultValue?: unknown) => defaultValue)
 vi.stubGlobal("useNuxtApp", () => ({ callHook: vi.fn() }));
 
 // Stub useIconAlias used by Icon component
-vi.stubGlobal("useIconAlias", (alias: string) => ({
-  uri: `/__mocked__/${alias}.svg`,
-  mode: "mask",
+vi.stubGlobal("useIconAlias", (_alias: string) => ({
+  viewBox: "0 0 24 24",
 }));

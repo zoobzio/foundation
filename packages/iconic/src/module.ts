@@ -3,30 +3,45 @@ import {
   addTemplate,
   addImports,
   createResolver,
+  useNuxt,
 } from "@nuxt/kit";
-import type { IconData } from "./config";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
+import type { IconEntry } from "./config";
 
-export default defineNuxtModule<Record<string, IconData>>({
+export default defineNuxtModule<{
+  entries: Record<string, IconEntry>;
+  sprite: string;
+}>({
   meta: {
     name: "iconic",
     configKey: "iconic",
   },
-  setup(iconData) {
+  setup({ entries, sprite }) {
     const resolver = createResolver(import.meta.url);
+    const nuxt = useNuxt();
+
+    const iconicDir = join(nuxt.options.buildDir, "iconic");
+    mkdirSync(iconicDir, { recursive: true });
+    writeFileSync(join(iconicDir, "icons.svg"), sprite, "utf-8");
+
+    nuxt.options.nitro.publicAssets = nuxt.options.nitro.publicAssets || [];
+    nuxt.options.nitro.publicAssets.push({
+      dir: iconicDir,
+      baseURL: "/",
+    });
 
     addTemplate({
       filename: "iconic.config.mjs",
       write: true,
-      getContents: () => `export default ${JSON.stringify(iconData, null, 2)};`,
+      getContents: () => `export default ${JSON.stringify(entries, null, 2)};`,
     });
 
-    // Auto-import types
     addImports([
       { name: "Iconic", from: "@zoobz-io/iconic/types", type: true },
       { name: "IconAlias", from: "@zoobz-io/iconic/types", type: true },
     ]);
 
-    // Auto-import composables
     addImports({
       name: "useIconAlias",
       from: resolver.resolve("../runtime/composables/iconic"),

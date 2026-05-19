@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from "nuxt/config";
-import { defineIconic } from "@zoobz-io/iconic";
+import { defineIconic, mergeIconic } from "@zoobz-io/iconic";
 
 import icIcons from "@iconify-json/ic/icons.json";
 import siIcons from "@iconify-json/simple-icons/icons.json";
@@ -10,8 +10,8 @@ export default defineNuxtConfig({
     dirs: ["types"],
   },
   modules: ["@zoobz-io/iconic/module"],
-  iconic: {
-    ...defineIconic(icIcons, {
+  iconic: mergeIconic(
+    defineIconic(icIcons, {
       // Theme
       light: "twotone-light-mode",
       dark: "twotone-dark-mode",
@@ -127,7 +127,7 @@ export default defineNuxtConfig({
       warning: "twotone-warning",
       error: "twotone-error",
     }),
-    ...defineIconic(siIcons, {
+    defineIconic(siIcons, {
       // Brands
       github: "github",
       discord: "discord",
@@ -141,5 +141,5 @@ export default defineNuxtConfig({
       docker: "docker",
       go: "go",
     }),
-  },
+  ),
 });
