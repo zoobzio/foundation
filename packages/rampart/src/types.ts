@@ -84,4 +84,6 @@ export interface RampartConfig {
   forbiddenRoute?: string;
   /** Milliseconds to cache the me() result in the session. 0 disables caching. Default: 5 minutes. */
   meCacheTTL?: number;
+  /** Route to redirect to after logout. Default: loginPath. */
+  logoutRedirect?: string;
 }

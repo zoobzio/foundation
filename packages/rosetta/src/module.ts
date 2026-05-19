@@ -81,7 +81,7 @@ export default defineNuxtModule<RosettaConfig>({
 
     // Register the server route handler
     addServerHandler({
-      route: "/api/rosetta/:locale/:route",
+      route: "/api/lang/:locale/:route",
       handler: resolver.resolve("../runtime/server"),
     });
   },

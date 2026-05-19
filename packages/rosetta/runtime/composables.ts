@@ -58,8 +58,8 @@ export const loadChunk = async (
     messages.value = { ...messages.value, ...commonChunk, ...routeChunk };
   } else {
     const [routeChunk, commonChunk] = await Promise.all([
-      $fetch<Record<string, string>>(`/api/rosetta/${locale}/${encoded}`),
-      $fetch<Record<string, string>>(`/api/rosetta/${locale}/__common`),
+      $fetch<Record<string, string>>(`/api/lang/${locale}/${encoded}`),
+      $fetch<Record<string, string>>(`/api/lang/${locale}/__common`),
     ]);
     messages.value = { ...messages.value, ...commonChunk, ...routeChunk };
   }

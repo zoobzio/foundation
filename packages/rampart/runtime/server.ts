@@ -7,7 +7,7 @@ import "../src/hooks";
 
 const nitro = () => useNitroApp();
 
-const INTERNAL_PREFIXES = ["/_nuxt/", "/__", "/api/_"];
+const INTERNAL_PREFIXES = ["/_nuxt/", "/__", "/api/_", "/api/lang/"];
 
 /**
  * Checks if the access token is near expiry and refreshes if needed.
@@ -56,13 +56,13 @@ export const defineAuthHandlers = (handlers: RampartHandlers, config?: Partial<R
   const publicRoutes = config?.publicRoutes || [];
   const refreshThreshold = config?.refreshThreshold || 600000;
   const meCacheTTL = config?.meCacheTTL ?? 300000;
+  const logoutRedirect = config?.logoutRedirect;
 
   const loginPath = `${basePath}/login`;
   const logoutPath = `${basePath}/logout`;
 
   const isPublic = (path: string): boolean => {
     if (INTERNAL_PREFIXES.some((p) => path.startsWith(p))) return true;
-    if (path.startsWith(`${basePath}/`)) return true;
     return publicRoutes.some((route) =>
       path === route || path.startsWith(`${route}/`),
     );
@@ -91,7 +91,7 @@ export const defineAuthHandlers = (handlers: RampartHandlers, config?: Partial<R
       await clearSession(event);
       await handlers.logout(event);
       nitro().hooks.callHook("rampart:logout");
-      return sendRedirect(event, loginPath);
+      return sendRedirect(event, logoutRedirect || loginPath);
     }
 
     // Public routes — no auth required
