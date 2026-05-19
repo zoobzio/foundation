@@ -232,4 +232,5 @@ export interface Chart<T> {
   init: () => Promise<boolean>;
   getSnapshot: () => DataChartSnapshot;
   restoreSnapshot: (snapshot: DataChartSnapshot) => void;
+  repaint: () => void;
 }

@@ -1,7 +1,8 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
-import type { ThemeRegistry, ThemeManifest } from "./config";
+import type { ThemeRegistry, ThemeManifest, CustomColor } from "./config";
+import type { RoleTokens } from "./types";
 
 import {
   defineNuxtModule,
@@ -13,9 +14,11 @@ import {
   createResolver,
 } from "@nuxt/kit";
 
-export interface UnthemeModuleOptions {
+export interface UnthemeModuleOptions<C extends string = string> {
   defaultTheme?: string;
   themes?: ThemeRegistry;
+  colors?: Record<C, CustomColor>;
+  roles?: RoleTokens<C>;
 }
 
 export default defineNuxtModule<UnthemeModuleOptions>({
@@ -27,25 +30,26 @@ export default defineNuxtModule<UnthemeModuleOptions>({
     const resolver = createResolver(import.meta.url);
 
     const themes = options.themes || {};
+    const colors = options.colors || {};
+    const roles = options.roles || {};
     const defaultTheme = options.defaultTheme || Object.keys(themes)[0];
     const defaultThemeData = defaultTheme ? themes[defaultTheme] : null;
 
-    // Build manifest — theme keys + labels for the client
     const manifest: ThemeManifest = Object.entries(themes).map(([key, theme]) => ({
       key,
       label: theme.label || key,
     }));
 
-    // Global reset CSS
     nuxt.options.css.push(resolver.resolve("../runtime/reset.css"));
 
-    // Virtual module — manifest + default theme data only
     addTemplate({
       filename: "untheme.config.mjs",
       getContents: () => [
         `export const defaultTheme = ${JSON.stringify(defaultTheme || null)};`,
         `export const manifest = ${JSON.stringify(manifest)};`,
         `export const defaultThemeData = ${JSON.stringify(defaultThemeData)};`,
+        `export const colors = ${JSON.stringify(colors)};`,
+        `export const roles = ${JSON.stringify(roles)};`,
       ].join("\n"),
       write: true,
     });
@@ -53,34 +57,31 @@ export default defineNuxtModule<UnthemeModuleOptions>({
     addTypeTemplate({
       filename: "untheme.config.d.ts",
       getContents: () => [
-        `import type { Theme, ThemeManifest } from "${resolver.resolve("../src/types")}";`,
+        `import type { Theme, ThemeManifest, CustomColor } from "${resolver.resolve("../src/types")}";`,
         `export declare const defaultTheme: string;`,
         `export declare const manifest: ThemeManifest;`,
         `export declare const defaultThemeData: Theme;`,
+        `export declare const colors: Record<string, CustomColor>;`,
+        `export declare const roles: Record<string, string>;`,
       ].join("\n"),
     });
 
-    // Expose hook type augmentations to consumers
     addTypeTemplate({
       filename: "untheme.hooks.d.ts",
       getContents: () => `export {} from "${resolver.resolve("./hooks")}";`,
     });
 
-    // Register server handler for on-demand theme loading
     addServerHandler({
       route: "/api/untheme/:theme",
       handler: resolver.resolve("../runtime/server"),
     });
 
-    // Register plugin for color mode + theme management
     addPlugin(resolver.resolve("../runtime/plugin"));
 
-    // Auto-import useUntheme composable
     addImports([
       { name: "useUntheme", from: resolver.resolve("../runtime/composables") },
     ]);
 
-    // Write theme artifacts to disk for the server handler
     const outputDir = join(nuxt.options.rootDir, ".untheme");
     mkdirSync(outputDir, { recursive: true });
 

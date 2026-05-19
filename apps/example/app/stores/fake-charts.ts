@@ -71,13 +71,13 @@ const now = new Date();
 const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
 
 const colorMap: Record<string, string> = {
-  Active: "var(--ref-emerald-500)",
-  Inactive: "var(--ref-slate-400)",
-  Pending: "var(--ref-amber-500)",
-  Engineering: "var(--ref-blue-500)",
-  Marketing: "var(--ref-pink-500)",
-  Sales: "var(--ref-violet-500)",
-  Support: "var(--ref-teal-500)",
+  Active: "var(--clr-active)",
+  Inactive: "var(--clr-inactive)",
+  Pending: "var(--clr-pending)",
+  Engineering: "var(--clr-engineering)",
+  Marketing: "var(--clr-marketing)",
+  Sales: "var(--clr-sales)",
+  Support: "var(--clr-support)",
 };
 
 const chartParams = () => ({
