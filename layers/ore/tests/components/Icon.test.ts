@@ -6,14 +6,34 @@ const factory = (props: Record<string, unknown> = {}) =>
   mount(Icon, { props: { alias: "home", ...props } });
 
 describe("Icon", () => {
-  it("renders i element with f-icon class", () => {
-    const wrapper = factory({ alias: "home" });
-    expect(wrapper.element.tagName).toBe("I");
+  it("renders svg element with f-icon class", () => {
+    const wrapper = factory();
+    expect(wrapper.element.tagName).toBe("svg");
     expect(wrapper.classes()).toContain("f-icon");
   });
 
+  it("renders use element with correct href", () => {
+    const wrapper = factory({ alias: "home" });
+    const use = wrapper.find("use");
+    expect(use.exists()).toBe(true);
+    expect(use.attributes("href")).toBe("/icons.svg#home");
+  });
+
+  it("sets fill to currentColor", () => {
+    const wrapper = factory();
+    expect(wrapper.attributes("fill")).toBe("currentColor");
+  });
+
   it("binds modifier data attributes", () => {
-    const wrapper = factory({ alias: "home", variant: "outlined", size: "sm", color: "primary", radius: "md", density: "compact", elevation: "sm" });
+    const wrapper = factory({
+      alias: "home",
+      variant: "outlined",
+      size: "sm",
+      color: "primary",
+      radius: "md",
+      density: "compact",
+      elevation: "sm",
+    });
     expect(wrapper.attributes("data-variant")).toBe("outlined");
     expect(wrapper.attributes("data-size")).toBe("sm");
     expect(wrapper.attributes("data-color")).toBe("primary");
@@ -22,38 +42,8 @@ describe("Icon", () => {
     expect(wrapper.attributes("data-elevation")).toBe("sm");
   });
 
-  it("applies mask styles when useIconAlias returns mode 'mask'", () => {
-    const wrapper = factory({ alias: "home" });
-    const style = wrapper.attributes("style") ?? "";
-    // happy-dom drops mask-* and -webkit-mask-* properties but preserves background-color
-    expect(style).toContain("background-color: currentcolor");
-  });
-
-  it("falls back to warning icon when alias is not found", () => {
-    const original = globalThis.useIconAlias;
-    globalThis.useIconAlias = (alias: string) => (alias === "warning" ? { uri: "/__mocked__/warning.svg", mode: "mask" } : null);
-    const wrapper = factory({ alias: "nonexistent" });
-    const style = wrapper.attributes("style") ?? "";
-    expect(style).toContain("background-color: currentcolor");
-    globalThis.useIconAlias = original;
-  });
-
-  it("applies background styles when useIconAlias returns non-mask mode", () => {
-    const original = globalThis.useIconAlias;
-    globalThis.useIconAlias = (alias: string) => ({
-      uri: `/__mocked__/${alias}.svg`,
-      mode: "bg",
-    });
-    const wrapper = factory({ alias: "home" });
-    const style = wrapper.attributes("style") ?? "";
-    expect(style).not.toContain("background-color");
-    expect(style).toContain("background-image");
-    expect(style).toContain("/__mocked__/home.svg");
-    globalThis.useIconAlias = original;
-  });
-
   it("sets aria-hidden when no label is provided", () => {
-    const wrapper = factory({ alias: "home" });
+    const wrapper = factory();
     expect(wrapper.attributes("aria-hidden")).toBe("true");
   });
 
@@ -64,7 +54,14 @@ describe("Icon", () => {
   });
 
   it("does not set role when no label", () => {
-    const wrapper = factory({ alias: "home" });
+    const wrapper = factory();
     expect(wrapper.attributes("role")).toBeUndefined();
+  });
+
+  it("updates href when alias changes", async () => {
+    const wrapper = factory({ alias: "home" });
+    await wrapper.setProps({ alias: "star" });
+    const use = wrapper.find("use");
+    expect(use.attributes("href")).toBe("/icons.svg#star");
   });
 });
