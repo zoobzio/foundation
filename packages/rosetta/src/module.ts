@@ -6,6 +6,7 @@ import {
   addTemplate,
   addPlugin,
   addImports,
+  addTypeTemplate,
   addVitePlugin,
   addServerHandler,
   createResolver,
@@ -68,6 +69,11 @@ export default defineNuxtModule<RosettaConfig>({
       write: true,
       getContents: () =>
         `export const defaultLocale = ${JSON.stringify(defaultLocale)};\nexport const locales = ${JSON.stringify(locales)};`,
+    });
+
+    addTypeTemplate({
+      filename: "rosetta.hooks.d.ts",
+      getContents: () => `export {} from "${resolver.resolve("./hooks")}";`,
     });
 
     // Auto-import composable + $t

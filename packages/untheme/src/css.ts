@@ -1,14 +1,21 @@
 import type { Theme } from "./config";
+import type { CustomColor } from "./types";
 
 export const isTokenReference = (value: string): boolean =>
   value.startsWith("ref-") ||
   value.startsWith("sys-") ||
-  value.startsWith("shiki-");
+  value.startsWith("shiki-") ||
+  value.startsWith("clr-") ||
+  value.startsWith("role-");
 
 export const wrapValue = (value: string): string =>
   isTokenReference(value) ? `var(--${value})` : value;
 
-export const generateThemeCSS = (theme: Theme): string => {
+export const generateThemeCSS = (
+  theme: Theme,
+  colors?: Record<string, CustomColor>,
+  roles?: Record<string, string>,
+): string => {
   const lines: string[] = [];
 
   // Reference tokens (hard values)
@@ -30,6 +37,11 @@ export const generateThemeCSS = (theme: Theme): string => {
         lines.push(`  --${key}: ${wrapValue(value)};`);
       }
     });
+    if (colors) {
+      for (const [name, color] of Object.entries(colors)) {
+        lines.push(`  --clr-${name}: var(--ref-${color.family}-${color.light});`);
+      }
+    }
     lines.push("}");
   }
 
@@ -41,6 +53,20 @@ export const generateThemeCSS = (theme: Theme): string => {
         lines.push(`  --${key}: ${wrapValue(value)};`);
       }
     });
+    if (colors) {
+      for (const [name, color] of Object.entries(colors)) {
+        lines.push(`  --clr-${name}: var(--ref-${color.family}-${color.dark});`);
+      }
+    }
+    lines.push("}");
+  }
+
+  // Role tokens (mode-independent, reference any token)
+  if (roles && Object.keys(roles).length > 0) {
+    lines.push("\n:root {");
+    for (const [name, value] of Object.entries(roles)) {
+      lines.push(`  --role-${name}: ${wrapValue(value)};`);
+    }
     lines.push("}");
   }
 

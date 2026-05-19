@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from "nuxt/config";
+import { defineUntheme } from "@zoobz-io/untheme";
 import cyberdream from "@zoobz-io/untheme/themes/cyberdream";
 import oneDark from "@zoobz-io/untheme/themes/one-dark";
 import catppuccin from "@zoobz-io/untheme/themes/catppuccin";
@@ -42,7 +43,7 @@ export default defineNuxtConfig({
       "sv", "da", "nb", "fi",
     ],
   },
-  untheme: {
+  untheme: defineUntheme({
     defaultTheme: "cyberdream",
     themes: {
       cyberdream,
@@ -55,7 +56,21 @@ export default defineNuxtConfig({
       "rose-pine": rosePine,
       gruvbox,
     },
-  },
+    colors: {
+      active: { family: "emerald", light: 600, dark: 400 },
+      inactive: { family: "slate", light: 400, dark: 500 },
+      pending: { family: "amber", light: 500, dark: 400 },
+      engineering: { family: "blue", light: 600, dark: 400 },
+      marketing: { family: "pink", light: 600, dark: 400 },
+      sales: { family: "violet", light: 600, dark: 400 },
+      support: { family: "teal", light: 600, dark: 400 },
+    },
+    roles: {
+      "card-radius": "ref-radius-md",
+      "card-padding": "ref-spacing-base",
+      "card-gap": "ref-spacing-sm",
+    },
+  }),
   vite: {
     optimizeDeps: {
       exclude: ["#build/untheme.config.mjs", "#build/rosetta.config.mjs", "#build/rampart.config.mjs", "#build/crucible.config.mjs"],

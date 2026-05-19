@@ -5,6 +5,16 @@ await useAsyncData("workspace", () => workspace.init());
 
 const { table } = useFakeTable();
 const { chart1, chart2, chart3 } = useFakeCharts();
+
+const nuxtApp = useNuxtApp();
+const repaintCharts = () => {
+  chart1.repaint();
+  chart2.repaint();
+  chart3.repaint();
+};
+
+nuxtApp.hook("untheme:theme", () => repaintCharts());
+nuxtApp.hook("untheme:mode", () => repaintCharts());
 </script>
 
 <template>

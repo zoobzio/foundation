@@ -360,6 +360,10 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       });
     });
 
+    const repaint = () => {
+      instance?.update();
+    };
+
     // Actions
     const setVariant = (type: string) => {
       if (!variantMap.has(type)) return;
@@ -540,6 +544,7 @@ export const createChart = <T>(id: string, config: DataChartConfig<T>) => {
       init,
       getSnapshot,
       restoreSnapshot,
+      repaint,
     };
   };
 };
