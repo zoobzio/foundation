@@ -86,7 +86,7 @@ describe("defineAuthHandlers", () => {
   });
 
   describe("logout", () => {
-    it("clears session, calls handler, and redirects", async () => {
+    it("clears session, calls handler, and redirects to login by default", async () => {
       const handlers = makeHandlers();
       const handler = defineAuthHandlers(handlers, testConfig);
       const event = makeEvent("/auth/logout");
@@ -94,6 +94,14 @@ describe("defineAuthHandlers", () => {
       expect(mockClearSession).toHaveBeenCalledWith(event);
       expect(handlers.logout).toHaveBeenCalledWith(event);
       expect(mockRedirect).toHaveBeenCalledWith(event, "/auth/login");
+    });
+
+    it("redirects to logoutRedirect when configured", async () => {
+      const handlers = makeHandlers();
+      const handler = defineAuthHandlers(handlers, { ...testConfig, logoutRedirect: "/signed-out" });
+      const event = makeEvent("/auth/logout");
+      await handler(event);
+      expect(mockRedirect).toHaveBeenCalledWith(event, "/signed-out");
     });
   });
 
