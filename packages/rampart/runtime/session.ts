@@ -1,8 +1,8 @@
 import { useSession } from "h3";
 import type { H3Event } from "h3";
-import type { RampartIdentity } from "../src/types";
+import type { AuthIdentity } from "../src/types";
 
-interface SessionData extends RampartIdentity {
+interface SessionData extends AuthIdentity {
   cachedAt?: number;
 }
 
@@ -28,7 +28,7 @@ export const getSession = async (event: H3Event): Promise<SessionData | null> =>
 };
 
 /** Write an identity to the sealed cookie session, with cache timestamp. */
-export const setSession = async (event: H3Event, identity: RampartIdentity): Promise<void> => {
+export const setSession = async (event: H3Event, identity: AuthIdentity): Promise<void> => {
   const session = await useSession<SessionData>(event, getSessionConfig());
   await session.update({ ...identity, cachedAt: Date.now() });
 };

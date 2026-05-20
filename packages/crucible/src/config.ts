@@ -1,5 +1,5 @@
-import type { CrucibleConfig } from "./types";
+import type { TelemetryConfig } from "./types";
 
-export type { CrucibleConfig };
+export type { TelemetryConfig };
 
-export const defineCrucible = (config: CrucibleConfig): CrucibleConfig => config;
+export const defineTelemetry = (config: TelemetryConfig): TelemetryConfig => config;

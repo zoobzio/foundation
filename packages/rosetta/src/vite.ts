@@ -13,13 +13,13 @@ const transformCode = (code: string): string =>
     return `$t("${hash}"`;
   });
 
-export interface RosettaPluginContext {
+export interface I18nPluginContext {
   sourceMap: SourceMap;
   fileMap: Record<string, FileEntry>;
   writeArtifacts?: () => void | Promise<void>;
 }
 
-export const rosettaVitePlugin = (ctx: RosettaPluginContext): Plugin => {
+export const i18nVitePlugin = (ctx: I18nPluginContext): Plugin => {
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
   const scheduleWrite = () => {

@@ -1,11 +1,11 @@
 import { defineNuxtPlugin, useHead } from "#app";
 import { computed } from "vue";
-import { useUntheme } from "./composables";
+import { useTheme } from "./composables";
 
 export default defineNuxtPlugin({
   name: "untheme",
   setup() {
-    const { mode, themeCSS } = useUntheme();
+    const { mode, themeCSS } = useTheme();
 
     // Reactive head — mode class + theme style injection
     useHead({

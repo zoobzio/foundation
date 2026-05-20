@@ -98,7 +98,7 @@ describe("iconic module", () => {
     expect(typeCalls).toHaveLength(1);
     const types = typeCalls[0][0];
     expect(types).toContainEqual(
-      expect.objectContaining({ name: "Iconic", type: true }),
+      expect.objectContaining({ name: "IconAliases", type: true }),
     );
     expect(types).toContainEqual(
       expect.objectContaining({ name: "IconAlias", type: true }),

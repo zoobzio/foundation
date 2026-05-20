@@ -7,7 +7,7 @@ import "../src/hooks";
 import { defaultLocale, locales } from "#build/rosetta.config.mjs";
 
 /** Reactive locale state. */
-export const useRosetta = () => {
+export const useI18n = () => {
   const locale = useState<string>("rosetta:locale", () => defaultLocale);
   const messages = useState<Record<string, string>>("rosetta:messages", () => ({}));
   const nuxtApp = useNuxtApp();

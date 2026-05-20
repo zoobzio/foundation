@@ -1,7 +1,7 @@
 import { defineEventHandler, getRequestPath, sendRedirect, createError } from "h3";
 import type { H3Event } from "h3";
 import { useNitroApp } from "nitropack/runtime";
-import type { RampartHandlers, RampartConfig } from "../src/types";
+import type { AuthHandlers, AuthConfig } from "../src/types";
 import { getSession, setSession, clearSession, isCacheFresh } from "./session";
 import "../src/hooks";
 
@@ -18,7 +18,7 @@ const INTERNAL_PREFIXES = ["/_nuxt/", "/__", "/api/_", "/api/lang/"];
  */
 export const ensureFreshToken = async (
   event: H3Event,
-  handlers: RampartHandlers,
+  handlers: AuthHandlers,
   threshold = 600000,
 ): Promise<boolean> => {
   if (!handlers.refresh) return true;
@@ -51,7 +51,7 @@ export const ensureFreshToken = async (
  * Single entry point for auth. Handles middleware, login, logout, and token refresh.
  * Rampart owns the session and context binding — consumer provides callbacks.
  */
-export const defineAuthHandlers = (handlers: RampartHandlers, config?: Partial<RampartConfig>) => {
+export const defineAuthHandlers = (handlers: AuthHandlers, config?: Partial<AuthConfig>) => {
   const basePath = config?.basePath || "/auth";
   const publicRoutes = config?.publicRoutes || [];
   const refreshThreshold = config?.refreshThreshold || 600000;

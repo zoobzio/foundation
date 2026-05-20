@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from "nuxt/config";
-import { defineUntheme } from "@zoobz-io/untheme";
+import { defineThemeConfig } from "@zoobz-io/untheme";
 import cyberdream from "@zoobz-io/untheme/themes/cyberdream";
 import oneDark from "@zoobz-io/untheme/themes/one-dark";
 import catppuccin from "@zoobz-io/untheme/themes/catppuccin";
@@ -43,7 +43,7 @@ export default defineNuxtConfig({
       "sv", "da", "nb", "fi",
     ],
   },
-  untheme: defineUntheme({
+  untheme: defineThemeConfig({
     defaultTheme: "cyberdream",
     themes: {
       cyberdream,

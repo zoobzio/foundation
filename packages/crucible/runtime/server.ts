@@ -1,23 +1,24 @@
 import { defineEventHandler, readBody, readRawBody, getRequestHeader } from "h3";
+import { createConsola } from "consola";
 import type { LogLevel, LogEntry, SpanEntry, MetricEntry, TelemetryEntry, OtlpConfig } from "../src/types";
 import { meetsLevel } from "../src/levels";
 import { isLogLevel, isLogEntry, isSpanEntry, isMetricEntry, isTelemetryEntry } from "../src/guards";
 import { sanitizeData, summarize } from "../src/sanitize";
 import { toOtlpLogs, toOtlpTraces, toOtlpMetrics } from "../src/otlp";
 
-export interface CrucibleHandler {
+export interface TelemetryHandler {
   write: (entry: TelemetryEntry) => void | Promise<void>;
 }
 
-export interface CrucibleHandlerOptions {
+export interface TelemetryHandlerOptions {
   minLevel?: LogLevel;
   otlp?: OtlpConfig;
 }
 
 let registeredWrite: ((entry: TelemetryEntry) => void | Promise<void>) | null = null;
 
-/** Returns the registered write function, or null if defineCrucibleHandler hasn't been called yet. */
-export const useCrucibleWriter = (): ((entry: TelemetryEntry) => void | Promise<void>) | null => registeredWrite;
+/** Returns the registered write function, or null if defineTelemetryHandler hasn't been called yet. */
+export const useTelemetryWriter = (): ((entry: TelemetryEntry) => void | Promise<void>) | null => registeredWrite;
 
 // --- OTLP batch export ---
 
@@ -77,34 +78,94 @@ const enqueueForOtlp = (entry: TelemetryEntry): void => {
   else if (isMetricEntry(entry)) otlpMetrics.push(entry);
 };
 
-// --- Console writer (dev mode) ---
+// --- Consola writer (dev mode) ---
 
-const LOG_METHOD: Record<string, "debug" | "info" | "warn" | "error"> = {
+const logger = createConsola({});
+
+// ANSI formatting
+const RESET = "\x1B[0m";
+const BOLD = "\x1B[1m";
+const DIM = "\x1B[2m";
+const GREEN = "\x1B[32m";
+const YELLOW = "\x1B[33m";
+const RED = "\x1B[31m";
+const CYAN = "\x1B[36m";
+const WHITE = "\x1B[37m";
+
+const colorDuration = (ms: number): string => {
+  const color = ms < 100 ? GREEN : ms < 500 ? YELLOW : RED;
+  return `${color}${ms}ms${RESET}`;
+};
+
+const colorStatus = (code: number): string => {
+  const color = code < 300 ? GREEN : code < 500 ? YELLOW : RED;
+  return `${BOLD}${color}${code}${RESET}`;
+};
+
+const traceTag = (traceId: string | undefined): string =>
+  traceId ? `${DIM}${traceId.slice(0, 8)}${RESET} ` : "";
+
+const sourceTag = (source: string | undefined): string =>
+  source ? ` ${DIM}${source}${RESET}` : "";
+
+const CONSOLA_METHOD = {
   debug: "debug",
   info: "info",
   warn: "warn",
   error: "error",
-  fatal: "error",
+  fatal: "fatal",
+} as const;
+
+const isRequestLog = (entry: LogEntry): boolean =>
+  entry.data !== undefined &&
+  "http.method" in entry.data &&
+  "http.status_code" in entry.data;
+
+const writeRequestLog = (entry: LogEntry): void => {
+  if (!entry.data) return;
+  const method = entry.data["http.method"];
+  const path = entry.data["http.path"];
+  const statusCode = entry.data["http.status_code"];
+  const durationMs = entry.data["http.duration_ms"];
+
+  if (typeof method !== "string" || typeof path !== "string" ||
+      typeof statusCode !== "number" || typeof durationMs !== "number") {
+    writeLog(entry);
+    return;
+  }
+
+  const trace = traceTag(entry.traceId);
+  const source = sourceTag(entry.source);
+  const msg = `${trace}${BOLD}${WHITE}${method}${RESET} ${CYAN}${path}${RESET} ${colorStatus(statusCode)} ${colorDuration(durationMs)}${source}`;
+
+  if (statusCode >= 500) logger.error(msg);
+  else if (statusCode >= 400) logger.warn(msg);
+  else logger.info(msg);
 };
 
 const writeLog = (entry: LogEntry): void => {
-  const method = LOG_METHOD[entry.level] ?? "info";
+  if (isRequestLog(entry)) return writeRequestLog(entry);
+  const method = CONSOLA_METHOD[entry.level];
+  const trace = traceTag(entry.traceId);
+  const source = sourceTag(entry.source);
   const data = entry.data ? summarize(entry.data) : undefined;
-  if (data) console[method](entry.message, data);
-  else console[method](entry.message);
+  if (data) logger[method](`${trace}${entry.message}${source}`, data);
+  else logger[method](`${trace}${entry.message}${source}`);
 };
 
 const writeSpan = (entry: SpanEntry): void => {
   const duration = entry.endTime ? `${entry.endTime - entry.startTime}ms` : "in-flight";
-  console.debug(`span:${entry.name}`, duration, entry.status);
+  const trace = traceTag(entry.traceId);
+  const source = sourceTag(entry.source);
+  logger.debug(`${trace}span:${entry.name}`, duration, `${entry.status}${source}`);
 };
 
 const writeMetric = (entry: MetricEntry): void => {
-  console.debug(`metric:${entry.name}`, `${entry.value}${entry.unit ?? ""}`);
+  logger.debug(`metric:${entry.name}`, `${entry.value}${entry.unit ?? ""}`);
 };
 
-/** Built-in console writer for dev mode. Formats all telemetry types to the console. */
-export const consoleWriter: CrucibleHandler = {
+/** Built-in consola writer for dev mode. Formats all telemetry types via Nuxt's consola logger. */
+export const consolaWriter: TelemetryHandler = {
   write: (entry) => {
     if (isLogEntry(entry)) writeLog(entry);
     else if (isSpanEntry(entry)) writeSpan(entry);
@@ -114,7 +175,7 @@ export const consoleWriter: CrucibleHandler = {
 
 // --- Handler ---
 
-export const defineCrucibleHandler = (handler: CrucibleHandler, options?: CrucibleHandlerOptions) => {
+export const defineTelemetryHandler = (handler: TelemetryHandler, options?: TelemetryHandlerOptions) => {
   const envLevel = process.env.LOG_LEVEL;
   const minimum: LogLevel = options?.minLevel ?? (isLogLevel(envLevel) ? envLevel : "debug");
 

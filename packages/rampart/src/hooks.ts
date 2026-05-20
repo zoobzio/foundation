@@ -1,4 +1,4 @@
-import type { RampartRole, RampartScope } from "./types";
+import type { AuthRole, AuthScope } from "./types";
 
 declare module "nitropack/types" {
   interface NitroRuntimeHooks {
@@ -11,6 +11,6 @@ declare module "nitropack/types" {
 
 declare module "#app" {
   interface RuntimeNuxtHooks {
-    "rampart:denied": (data: { roles?: RampartRole[]; scopes?: RampartScope[] }) => void;
+    "rampart:denied": (data: { roles?: AuthRole[]; scopes?: AuthScope[] }) => void;
   }
 }

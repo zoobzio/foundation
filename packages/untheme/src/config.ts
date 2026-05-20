@@ -29,7 +29,7 @@ export const isCustomColor = (value: unknown): value is CustomColor => {
     typeof v.dark === "number" && COLOR_SHADES.has(v.dark);
 };
 
-export const defineUntheme = <C extends string>(options: {
+export const defineThemeConfig = <C extends string>(options: {
   defaultTheme?: string;
   themes?: ThemeRegistry;
   colors?: Record<C, CustomColor>;

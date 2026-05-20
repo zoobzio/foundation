@@ -15,7 +15,7 @@ const factory = (props: Record<string, unknown> = {}, slots: Record<string, stri
   });
 
 beforeEach(() => {
-  useUntheme().mode.value = "dark";
+  useTheme().mode.value = "dark";
 });
 
 describe("AppColormode", () => {

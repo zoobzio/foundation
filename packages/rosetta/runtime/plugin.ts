@@ -1,10 +1,10 @@
 import { defineNuxtPlugin } from "#app";
-import { useRosetta, loadChunk } from "./composables";
+import { useI18n, loadChunk } from "./composables";
 
 export default defineNuxtPlugin({
   name: "rosetta",
   async setup(nuxtApp) {
-    const { locale, messages } = useRosetta();
+    const { locale, messages } = useI18n();
     const router = nuxtApp.$router as { currentRoute: { value: { path: string } } };
 
     await loadChunk(locale.value, router.currentRoute.value.path, messages);

@@ -38,7 +38,7 @@ export default defineNuxtModule<{
     });
 
     addImports([
-      { name: "Iconic", from: "@zoobz-io/iconic/types", type: true },
+      { name: "IconAliases", from: "@zoobz-io/iconic/types", type: true },
       { name: "IconAlias", from: "@zoobz-io/iconic/types", type: true },
     ]);
 

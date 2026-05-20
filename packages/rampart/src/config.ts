@@ -1,5 +1,5 @@
-import type { RampartConfig, RampartHandlers } from "./types";
+import type { AuthConfig, AuthHandlers } from "./types";
 
-export type { RampartConfig, RampartHandlers };
+export type { AuthConfig, AuthHandlers };
 
-export const defineRampart = (config: RampartConfig): RampartConfig => config;
+export const defineAuth = (config: AuthConfig): AuthConfig => config;

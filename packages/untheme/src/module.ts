@@ -14,14 +14,14 @@ import {
   createResolver,
 } from "@nuxt/kit";
 
-export interface UnthemeModuleOptions<C extends string = string> {
+export interface ThemeModuleOptions<C extends string = string> {
   defaultTheme?: string;
   themes?: ThemeRegistry;
   colors?: Record<C, CustomColor>;
   roles?: RoleTokens<C>;
 }
 
-export default defineNuxtModule<UnthemeModuleOptions>({
+export default defineNuxtModule<ThemeModuleOptions>({
   meta: {
     name: "untheme",
     configKey: "untheme",
@@ -79,7 +79,7 @@ export default defineNuxtModule<UnthemeModuleOptions>({
     addPlugin(resolver.resolve("../runtime/plugin"));
 
     addImports([
-      { name: "useUntheme", from: resolver.resolve("../runtime/composables") },
+      { name: "useTheme", from: resolver.resolve("../runtime/composables") },
     ]);
 
     const outputDir = join(nuxt.options.rootDir, ".untheme");

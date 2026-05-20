@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mockProvider } from "../src/providers";
-import { defineRosettaProvider } from "../src/config";
+import { defineI18nProvider } from "../src/config";
 import type { SourceMap } from "../src/types";
 
 const sourceMap: SourceMap = {
@@ -31,9 +31,9 @@ describe("mockProvider", () => {
   });
 });
 
-describe("defineRosettaProvider", () => {
+describe("defineI18nProvider", () => {
   it("returns the provider as-is", () => {
-    const custom = defineRosettaProvider({
+    const custom = defineI18nProvider({
       translate: (source, locale) => {
         const messages: Record<string, string> = {};
         for (const [hash, text] of Object.entries(source)) {
@@ -50,7 +50,7 @@ describe("defineRosettaProvider", () => {
   });
 
   it("supports async providers", async () => {
-    const custom = defineRosettaProvider({
+    const custom = defineI18nProvider({
       translate: async (source, locale) => {
         const messages: Record<string, string> = {};
         for (const [hash, text] of Object.entries(source)) {

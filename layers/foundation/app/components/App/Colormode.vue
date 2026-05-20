@@ -8,7 +8,7 @@ const { pt } = defineProps<AppColormodeProps>();
 const el = useTemplateRef("el");
 defineExpose({ el });
 
-const { mode, toggleMode } = useUntheme();
+const { mode, toggleMode } = useTheme();
 
 const icon = computed(() => mode.value === "dark" ? "dark" : "light");
 

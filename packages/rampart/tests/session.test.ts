@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { isCacheFresh } from "../runtime/session";
-import type { RampartUser } from "../src/types";
+import type { AuthUser } from "../src/types";
 
-const fakeUser: RampartUser = { id: "1" };
+const fakeUser: AuthUser = { id: "1" };
 
 describe("isCacheFresh", () => {
   it("returns false when ttl is 0 (caching disabled)", () => {

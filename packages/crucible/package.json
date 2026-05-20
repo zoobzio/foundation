@@ -33,6 +33,7 @@
   "devDependencies": {
     "@nuxt/kit": "catalog:",
     "@nuxt/schema": "catalog:",
+    "consola": "^3.4.2",
     "h3": "catalog:",
     "nitropack": "catalog:",
     "nuxt": "catalog:",

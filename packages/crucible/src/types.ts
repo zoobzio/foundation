@@ -86,7 +86,7 @@ export interface OtlpConfig {
 }
 
 /** Config for the crucible module. */
-export interface CrucibleConfig {
+export interface TelemetryConfig {
   /** Minimum log level to emit. Default: "debug" in dev, "info" in production. */
   level?: LogLevel;
   /** Batch client log transmission. Default: false in dev, true in production. */

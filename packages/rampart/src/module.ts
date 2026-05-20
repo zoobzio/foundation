@@ -9,11 +9,11 @@ import {
   useLogger,
 } from "@nuxt/kit";
 
-import type { RampartConfig } from "./types";
+import type { AuthConfig } from "./types";
 
 const logger = useLogger("rampart");
 
-export default defineNuxtModule<RampartConfig>({
+export default defineNuxtModule<AuthConfig>({
   meta: {
     name: "rampart",
     configKey: "rampart",
