@@ -8,16 +8,16 @@ export type PageMap = Record<string, string[]>;
 export type LocaleMessages = Record<string, string>;
 
 /** Translates a source map into locale messages for a given locale. */
-export interface RosettaProvider {
+export interface I18nProvider {
   translate: (sourceMap: SourceMap, locale: string) => LocaleMessages | Promise<LocaleMessages>;
 }
 
 /** Config for the rosetta module. */
-export interface RosettaConfig {
+export interface I18nConfig {
   /** Default locale code (e.g. "en") */
   defaultLocale: string;
   /** Available locale codes */
   locales: string[];
   /** Translation provider. Defaults to mock provider. */
-  provider?: RosettaProvider;
+  provider?: I18nProvider;
 }

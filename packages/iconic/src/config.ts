@@ -14,15 +14,15 @@ export interface IconEntry {
   viewBox: string;
 }
 
-export interface IconicResult {
+export interface IconSetResult {
   entries: Record<string, IconEntry>;
   symbols: string;
 }
 
-export function defineIconic<T extends IconifyJSON>(
+export function defineIconSet<T extends IconifyJSON>(
   iconSet: T,
   aliases: Record<string, keyof T["icons"] & string>,
-): IconicResult {
+): IconSetResult {
   const entries: Record<string, IconEntry> = {};
   const symbols: string[] = [];
 
@@ -41,7 +41,7 @@ export function defineIconic<T extends IconifyJSON>(
   return { entries, symbols: symbols.join("\n") };
 }
 
-export function mergeIconic(...results: IconicResult[]): {
+export function mergeIconSets(...results: IconSetResult[]): {
   entries: Record<string, IconEntry>;
   sprite: string;
 } {

@@ -12,9 +12,9 @@ vi.mock("h3", () => ({
   getRequestHeader: (...args: unknown[]) => mockGetHeader(...args),
 }));
 
-const { defineCrucibleHandler } = await import("../runtime/server");
+const { defineTelemetryHandler } = await import("../runtime/server");
 
-const handler = defineCrucibleHandler({ write: mockWrite });
+const handler = defineTelemetryHandler({ write: mockWrite });
 
 const makeEvent = () => ({ path: "/api/crucible", context: {} });
 
@@ -22,7 +22,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("defineCrucibleHandler", () => {
+describe("defineTelemetryHandler", () => {
   describe("log entries", () => {
     it("calls write for each valid log entry", async () => {
       mockGetHeader.mockReturnValue("application/json");
@@ -123,7 +123,7 @@ describe("defineCrucibleHandler", () => {
   describe("options", () => {
     it("filters log entries below minLevel but passes spans/metrics", async () => {
       const optWrite = vi.fn();
-      const optHandler = defineCrucibleHandler(
+      const optHandler = defineTelemetryHandler(
         { write: optWrite },
         { minLevel: "warn" },
       );
@@ -142,7 +142,7 @@ describe("defineCrucibleHandler", () => {
     });
 
     it("uses defaults when no options provided", async () => {
-      const noOptHandler = defineCrucibleHandler({ write: vi.fn() });
+      const noOptHandler = defineTelemetryHandler({ write: vi.fn() });
       mockGetHeader.mockReturnValue("application/json");
       mockReadBody.mockResolvedValue([]);
       const result = await noOptHandler(makeEvent());

@@ -21,7 +21,7 @@ const _unthemeThemes = computed(() => [
   { key: "nord", label: "Nord" },
   { key: "dracula", label: "Dracula" },
 ]);
-vi.stubGlobal("useUntheme", () => ({
+vi.stubGlobal("useTheme", () => ({
   mode: _unthemeMode,
   theme: _unthemeTheme,
   themes: _unthemeThemes,
@@ -38,7 +38,7 @@ vi.stubGlobal("useHead", vi.fn());
 const _rosettaLocale = ref("en");
 const _rosettaLocales = computed(() => ["en", "es", "fr"]);
 const _rosettaMessages = ref<Record<string, string>>({});
-vi.stubGlobal("useRosetta", () => ({
+vi.stubGlobal("useI18n", () => ({
   locale: _rosettaLocale,
   locales: _rosettaLocales,
   messages: _rosettaMessages,

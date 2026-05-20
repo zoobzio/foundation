@@ -1,21 +1,21 @@
 import { describe, it, expect } from "vitest";
 import { hashText } from "../src/hash";
-import { rosettaVitePlugin, type RosettaPluginContext } from "../src/vite";
+import { i18nVitePlugin, type I18nPluginContext } from "../src/vite";
 
-const makeCtx = (): RosettaPluginContext => ({
+const makeCtx = (): I18nPluginContext => ({
   sourceMap: {},
   fileMap: {},
 });
 
 const callTransform = (code: string, id: string) => {
   const ctx = makeCtx();
-  const plugin = rosettaVitePlugin(ctx);
+  const plugin = i18nVitePlugin(ctx);
   const transform = plugin.transform as (code: string, id: string) => { code: string; map: null } | undefined;
   const result = transform.call({} as never, code, id);
   return { result, ctx };
 };
 
-describe("rosettaVitePlugin", () => {
+describe("i18nVitePlugin", () => {
   it("skips files without $t calls and no imports", () => {
     const { result, ctx } = callTransform("const x = 1;", "/app/pages/index.vue");
     expect(result).toBeUndefined();

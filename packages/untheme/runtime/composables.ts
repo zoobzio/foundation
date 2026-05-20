@@ -28,7 +28,7 @@ const buildColorMap: Record<string, CustomColor> = Object.fromEntries(
 const buildRoleMap: Record<string, string> = buildRoles ?? {};
 
 
-export const useUntheme = () => {
+export const useTheme = () => {
   // App state — source of truth
   const theme = useState<string>("untheme:theme", () => buildTheme);
   const themeData = useState<Theme | null>(

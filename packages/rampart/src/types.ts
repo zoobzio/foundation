@@ -23,57 +23,57 @@ import type { H3Event } from "h3";
  * }
  */
 
-export interface RampartUser {
+export interface AuthUser {
   id: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface RampartRoles {}
+export interface AuthRoles {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface RampartScopes {}
+export interface AuthScopes {}
 
-export type RampartRole = [keyof RampartRoles] extends [never]
+export type AuthRole = [keyof AuthRoles] extends [never]
   ? string
-  : keyof RampartRoles;
+  : keyof AuthRoles;
 
-export type RampartScope = [keyof RampartScopes] extends [never]
+export type AuthScope = [keyof AuthScopes] extends [never]
   ? string
-  : keyof RampartScopes;
+  : keyof AuthScopes;
 
 /** Token data managed by rampart. */
-export interface RampartTokens {
+export interface AuthTokens {
   accessToken: string;
   expiresAt: number;
 }
 
 /** Stored in the sealed cookie session. */
-export interface RampartIdentity {
-  user: RampartUser;
-  tokens?: RampartTokens;
+export interface AuthIdentity {
+  user: AuthUser;
+  tokens?: AuthTokens;
 }
 
 /** Session helpers passed to the login callback. */
-export interface RampartSessionHelpers {
-  setSession: (identity: RampartIdentity) => Promise<void>;
+export interface AuthSessionHelpers {
+  setSession: (identity: AuthIdentity) => Promise<void>;
 }
 
 /** The minimum the consumer provides. */
-export interface RampartHandlers {
+export interface AuthHandlers {
   /** Enrich or transform the stored identity. Called with the session data on every protected request. */
-  me: (event: H3Event, session: RampartIdentity) => RampartIdentity | null | Promise<RampartIdentity | null>;
+  me: (event: H3Event, session: AuthIdentity) => AuthIdentity | null | Promise<AuthIdentity | null>;
   /** Start the login flow (e.g. redirect to OAuth provider). */
   login: (event: H3Event) => void | Promise<void>;
   /** Handle the OAuth callback. Authenticate, then call setSession to persist. */
-  callback: (event: H3Event, helpers: RampartSessionHelpers) => void | Promise<void>;
+  callback: (event: H3Event, helpers: AuthSessionHelpers) => void | Promise<void>;
   /** Provider-specific cleanup (revoke tokens, etc.). Rampart clears the session automatically. */
   logout: (event: H3Event) => void | Promise<void>;
   /** Optional: refresh the access token. Return fresh tokens or null to force re-login. */
-  refresh?: (event: H3Event) => RampartTokens | null | Promise<RampartTokens | null>;
+  refresh?: (event: H3Event) => AuthTokens | null | Promise<AuthTokens | null>;
 }
 
 /** Config for the rampart module. */
-export interface RampartConfig {
+export interface AuthConfig {
   /** Base path for auth routes (e.g. "/auth"). */
   basePath: string;
   /** Routes that don't require authentication. */

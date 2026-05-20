@@ -9,7 +9,7 @@ const el = useTemplateRef("el");
 defineExpose({ el });
 
 const open = ref(false);
-const { locale, locales, setLocale } = useRosetta();
+const { locale, locales, setLocale } = useI18n();
 
 const groups = computed<CommandGroup[]>(() => [
   {

@@ -12,12 +12,12 @@ import {
   createResolver,
 } from "@nuxt/kit";
 
-import type { RosettaConfig } from "./types";
-import { rosettaVitePlugin, type RosettaPluginContext } from "./vite";
+import type { I18nConfig } from "./types";
+import { i18nVitePlugin, type I18nPluginContext } from "./vite";
 import { buildPageMap } from "./extract";
 import { mockProvider } from "./providers";
 
-export default defineNuxtModule<RosettaConfig>({
+export default defineNuxtModule<I18nConfig>({
   meta: {
     name: "rosetta",
     configKey: "rosetta",
@@ -29,7 +29,7 @@ export default defineNuxtModule<RosettaConfig>({
     const locales = options.locales || [defaultLocale];
     const provider = options.provider || mockProvider;
 
-    const writeArtifacts = async (ctx: RosettaPluginContext) => {
+    const writeArtifacts = async (ctx: I18nPluginContext) => {
       const outputDir = join(nuxt.options.rootDir, ".rosetta");
       mkdirSync(outputDir, { recursive: true });
 
@@ -54,14 +54,14 @@ export default defineNuxtModule<RosettaConfig>({
       }
     };
 
-    const ctx: RosettaPluginContext = {
+    const ctx: I18nPluginContext = {
       sourceMap: {},
       fileMap: {},
       writeArtifacts: () => writeArtifacts(ctx),
     };
 
     // Register vite plugin — transforms source and writes artifacts on buildEnd
-    addVitePlugin(rosettaVitePlugin(ctx));
+    addVitePlugin(i18nVitePlugin(ctx));
 
     // Virtual module — runtime config
     addTemplate({
@@ -78,7 +78,7 @@ export default defineNuxtModule<RosettaConfig>({
 
     // Auto-import composable + $t
     addImports([
-      { name: "useRosetta", from: resolver.resolve("../runtime/composables") },
+      { name: "useI18n", from: resolver.resolve("../runtime/composables") },
       { name: "$t", from: resolver.resolve("../runtime/composables") },
     ]);
 

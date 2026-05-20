@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { RampartHandlers, RampartUser, RampartIdentity } from "../src/types";
+import type { AuthHandlers, AuthUser, AuthIdentity } from "../src/types";
 
 const testConfig = {
   basePath: "/auth",
@@ -39,13 +39,13 @@ vi.mock("h3", () => ({
 
 const { defineAuthHandlers, ensureFreshToken } = await import("../runtime/server");
 
-const fakeUser: RampartUser = { id: "user-1" };
-const fakeIdentity: RampartIdentity = {
+const fakeUser: AuthUser = { id: "user-1" };
+const fakeIdentity: AuthIdentity = {
   user: fakeUser,
   tokens: { accessToken: "tok-123", expiresAt: Date.now() + 3600000 },
 };
 
-const makeHandlers = (meResult: RampartIdentity | null = fakeIdentity): RampartHandlers => ({
+const makeHandlers = (meResult: AuthIdentity | null = fakeIdentity): AuthHandlers => ({
   me: vi.fn().mockResolvedValue(meResult),
   login: vi.fn(),
   callback: vi.fn(),
@@ -169,7 +169,7 @@ describe("defineAuthHandlers", () => {
 
   describe("token refresh", () => {
     it("calls refresh when token is near expiry", async () => {
-      const nearExpiry: RampartIdentity = {
+      const nearExpiry: AuthIdentity = {
         user: fakeUser,
         tokens: { accessToken: "old-tok", expiresAt: Date.now() + 300000 },
       };
@@ -193,7 +193,7 @@ describe("defineAuthHandlers", () => {
     });
 
     it("redirects to login when refresh fails", async () => {
-      const nearExpiry: RampartIdentity = {
+      const nearExpiry: AuthIdentity = {
         user: fakeUser,
         tokens: { accessToken: "old", expiresAt: Date.now() + 300000 },
       };
@@ -207,7 +207,7 @@ describe("defineAuthHandlers", () => {
     });
 
     it("works when identity has no tokens", async () => {
-      const noTokens: RampartIdentity = { user: fakeUser };
+      const noTokens: AuthIdentity = { user: fakeUser };
       mockGetSession.mockResolvedValue(noTokens);
       const handlers = makeHandlers(noTokens);
       const handler = defineAuthHandlers(handlers, testConfig);

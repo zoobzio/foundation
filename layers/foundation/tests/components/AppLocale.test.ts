@@ -15,7 +15,7 @@ const factory = (props: Record<string, unknown> = {}, slots: Record<string, stri
   });
 
 beforeEach(() => {
-  useRosetta().locale.value = "en";
+  useI18n().locale.value = "en";
 });
 
 describe("AppLocale", () => {

@@ -9,7 +9,7 @@ const el = useTemplateRef("el");
 defineExpose({ el });
 
 const open = ref(false);
-const { theme, setTheme, themes } = useUntheme();
+const { theme, setTheme, themes } = useTheme();
 
 const groups = computed<CommandGroup[]>(() => [
   {

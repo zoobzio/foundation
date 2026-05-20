@@ -8,9 +8,9 @@ import {
   createResolver,
 } from "@nuxt/kit";
 
-import type { CrucibleConfig } from "./types";
+import type { TelemetryConfig } from "./types";
 
-export default defineNuxtModule<CrucibleConfig>({
+export default defineNuxtModule<TelemetryConfig>({
   meta: {
     name: "crucible",
     configKey: "crucible",

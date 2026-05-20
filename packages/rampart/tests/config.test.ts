@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { defineRampart } from "../src/config";
+import { defineAuth } from "../src/config";
 
-describe("defineRampart", () => {
+describe("defineAuth", () => {
   it("returns the config as-is", () => {
-    const config = defineRampart({
+    const config = defineAuth({
       basePath: "/auth",
       publicRoutes: ["/"],
     });

@@ -6,7 +6,7 @@ import { ConfigProvider, TooltipProvider } from "reka-ui";
 const useIdFunction = () => useId();
 
 // Initialize theme from cookie + load data — blocks SSR so CSS is ready before first paint
-const { init } = useUntheme();
+const { init } = useTheme();
 const { error } = await useAsyncData("untheme::init", init);
 if (error.value) {
   log.error("Could not initialize theme", error.value.toJSON());
