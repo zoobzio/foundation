@@ -1,0 +1,1 @@
+body,html{background:var(--sys-surface)}::-moz-selection{background:var(--sys-secondary);color:var(--sys-on-secondary)}::selection{background:var(--sys-secondary);color:var(--sys-on-secondary)}

@@ -1,5 +1,5 @@
 {
-  "name": "foundation",
+  "name": "@zoobz-io/foundation",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -10,32 +10,60 @@
     "url": "https://zoobz.io"
   },
   "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "prepare": "nuxi prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "pnpm --parallel --filter @zoobz-io/iconic --filter @zoobz-io/untheme --filter @zoobz-io/rampart --filter @zoobz-io/rosetta --filter @zoobz-io/crucible --filter @zoobz-io/foundation typecheck",
-    "test": "vitest run",
+    "typecheck": "nuxi typecheck",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage --passWithNoTests"
   },
   "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
-  "devDependencies": {
-    "@internationalized/date": "catalog:",
-    "@nuxt/eslint-config": "catalog:",
-    "@types/figlet": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
-    "@vue/test-utils": "catalog:",
-    "eslint": "catalog:",
-    "happy-dom": "catalog:",
-    "ltrl-http": "catalog:",
-    "vitest": "catalog:",
-    "vue": "catalog:",
-    "zod": "catalog:"
-  },
   "dependencies": {
-    "figlet": "catalog:"
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-go": "^6.0.1",
+    "@codemirror/lang-html": "^6.4.11",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/lang-sql": "^6.10.0",
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/lang-yaml": "^6.1.3",
+    "@codemirror/language": "^6.12.3",
+    "@codemirror/search": "^6.7.0",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.41.1",
+    "@internationalized/date": "^3.7.0",
+    "@lezer/highlight": "^1.2.3",
+    "@vueuse/core": "^14.1.0",
+    "@vueuse/nuxt": "^14.1.0",
+    "chart.js": "^4.5.1",
+    "hast-util-to-html": "^9.0.5",
+    "ltrl-http": "^0.0.20",
+    "reka-ui": "^2.6.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "shiki": "^4.0.2",
+    "unified": "^11.0.5",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^1.4.0",
+    "@types/mdast": "^4.0.4",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitest/coverage-v8": "^4.1.5",
+    "@vue/test-utils": "^2.4.8",
+    "eslint": "^9.0.0",
+    "happy-dom": "^20.9.0",
+    "nuxt": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5",
+    "vue": "^3.5.24",
+    "vue-tsc": "^2.1.10"
   }
 }
