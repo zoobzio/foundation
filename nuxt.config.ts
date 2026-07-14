@@ -1,6 +1,8 @@
 import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
 
+import untheme from "./config/untheme";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-11-06",
 
@@ -9,7 +11,9 @@ export default defineNuxtConfig({
   imports: { autoImport: false },
   components: false,
 
-  modules: ["@vueuse/nuxt"],
+  modules: ["@vueuse/nuxt", "@untheme/nuxt"],
+
+  untheme,
 
   alias: {
     // Absolute path so the alias keeps resolving to the foundation package when this

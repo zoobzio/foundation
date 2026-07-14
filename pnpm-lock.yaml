@@ -53,6 +53,12 @@ importers:
       '@lezer/highlight':
         specifier: ^1.2.3
         version: 1.2.3
+      '@untheme/aurora':
+        specifier: ^0.1.0
+        version: 0.1.0
+      '@untheme/nuxt':
+        specifier: ^0.1.0
+        version: 0.1.0(magicast@0.5.3)(typescript@5.9.3)
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.3.0(vue@3.5.39(typescript@5.9.3))
@@ -83,6 +89,9 @@ importers:
       unified:
         specifier: ^11.0.5
         version: 11.0.5
+      untheme:
+        specifier: ^0.1.0
+        version: 0.1.0
       zod:
         specifier: ^3.23.0
         version: 3.25.76
@@ -1793,6 +1802,30 @@ packages:
     resolution: {integrity: sha512-nAB74NfSNKknqQ1RrYj6uz8FcXEomu/MATJZxh/x+BArzN2U3JbOYC0APYzUIGhVY3m5hRxA8VPNdPBoG8txlA==}
     cpu: [x64]
     os: [win32]
+
+  '@untheme/aurora@0.1.0':
+    resolution: {integrity: sha512-FGU+li0rnY7MZeaWcSiaJdL5nWAqkFXInZAAr76Hv3jTyGJO8BLTXMhPJOPPa/aLnMw4kRL80zYdc3WFiz1h1A==}
+
+  '@untheme/common@0.1.0':
+    resolution: {integrity: sha512-+YRSsmDZL3ZPDUNTBytT+zZxU+fg0z6m3kMkgzBCimb1I8UXIt1jSVaOE4RI12Tf/pMqU3kAWH9gqpHnxEbujQ==}
+
+  '@untheme/core@0.1.0':
+    resolution: {integrity: sha512-/AA7o2MT2aXQ22i7im+BVlvQqig8Y6RSaLqVY6xIG5GrsHyDM1rqTyKruc9ibz7cbnP4Ghareq8346ZkkcCwJA==}
+
+  '@untheme/css@0.1.0':
+    resolution: {integrity: sha512-kaTpIfv4FlIk2p3wENrZsDaYDwezbrKxdayUFJ5gKhGeIbpsD0fJpnSosNH5Q/G4IiPyduO9tte/9k8R8T0g0A==}
+
+  '@untheme/kit@0.1.0':
+    resolution: {integrity: sha512-KW3RFJqRvjKp3ZSBI1RJuhGDUwC9mMLtFRurkQBNiJWs7/WcHIYXH9uL+F4RRRCc5w1IjcQUfhGVEOKqwGvVJQ==}
+
+  '@untheme/nuxt@0.1.0':
+    resolution: {integrity: sha512-eHRKbOqB94Llp1uut3AZqW20BblIM72aMydpmNIoGyE0HHJfs3t0J/KrFOdJkAF+U+mO6GoOK+FMx3V6hK4xjQ==}
+
+  '@untheme/schema@0.1.0':
+    resolution: {integrity: sha512-UjpCgo33bftvCiH2GFohu2K/b+C2rQfMn2XfSPELMwZtkHdVKdNBXWxrmBKzzM+8m0a50AtkkyLEBE3PCUntPA==}
+
+  '@untheme/utils@0.1.0':
+    resolution: {integrity: sha512-0t5QO+oa4RkE1eXgJWLEia+eL2aOwuM+UdrfIdi6F40QHR1JRwLMeMMc9PqbinApUouNJA27GA2wbUHpejhvmg==}
 
   '@vercel/nft@1.10.2':
     resolution: {integrity: sha512-w+WyX5Ulmj4dtTZrxaulqrjaLZHSbnPzx75SJsTNYmotKsqn1JlLnDJa+lz5hn90HJofhl/2MAtw0mCrgM3qYw==}
@@ -4514,6 +4547,9 @@ packages:
       uploadthing:
         optional: true
 
+  untheme@0.1.0:
+    resolution: {integrity: sha512-/A39vmP9YeRrWyaBmm4xovXMM0cUTXVVijEPuHm9TgT/7/X5iq0jMQAf8h1ui37+W/j01udDDWj9GMKCpxUp+w==}
+
   untun@0.1.3:
     resolution: {integrity: sha512-4luGP9LMYszMRZwsvyUd9MrxgEGZdZuZgpVQHEEX0lCYFESasVRvZd0EYpCkOIbJKHMuv0LskpXc/8Un+MJzEQ==}
     hasBin: true
@@ -6597,6 +6633,48 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
+
+  '@untheme/aurora@0.1.0':
+    dependencies:
+      '@untheme/kit': 0.1.0
+      '@untheme/schema': 0.1.0
+
+  '@untheme/common@0.1.0': {}
+
+  '@untheme/core@0.1.0':
+    dependencies:
+      '@untheme/common': 0.1.0
+      '@untheme/schema': 0.1.0
+      '@untheme/utils': 0.1.0
+
+  '@untheme/css@0.1.0':
+    dependencies:
+      '@untheme/common': 0.1.0
+      '@untheme/schema': 0.1.0
+
+  '@untheme/kit@0.1.0':
+    dependencies:
+      '@untheme/core': 0.1.0
+      '@untheme/schema': 0.1.0
+      '@untheme/utils': 0.1.0
+
+  '@untheme/nuxt@0.1.0(magicast@0.5.3)(typescript@5.9.3)':
+    dependencies:
+      '@nuxt/kit': 4.4.8(magicast@0.5.3)
+      untheme: 0.1.0
+      vue: 3.5.39(typescript@5.9.3)
+    transitivePeerDependencies:
+      - magicast
+      - typescript
+
+  '@untheme/schema@0.1.0':
+    dependencies:
+      '@untheme/common': 0.1.0
+
+  '@untheme/utils@0.1.0':
+    dependencies:
+      '@untheme/common': 0.1.0
+      '@untheme/schema': 0.1.0
 
   '@vercel/nft@1.10.2(rollup@4.62.2)':
     dependencies:
@@ -9867,6 +9945,15 @@ snapshots:
     optionalDependencies:
       db0: 0.3.4
       ioredis: 5.11.1
+
+  untheme@0.1.0:
+    dependencies:
+      '@untheme/common': 0.1.0
+      '@untheme/core': 0.1.0
+      '@untheme/css': 0.1.0
+      '@untheme/kit': 0.1.0
+      '@untheme/schema': 0.1.0
+      '@untheme/utils': 0.1.0
 
   untun@0.1.3:
     dependencies:

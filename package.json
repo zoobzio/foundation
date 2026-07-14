@@ -40,6 +40,8 @@
     "@codemirror/view": "^6.41.1",
     "@internationalized/date": "^3.7.0",
     "@lezer/highlight": "^1.2.3",
+    "@untheme/aurora": "^0.1.0",
+    "@untheme/nuxt": "^0.1.0",
     "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "^14.1.0",
     "chart.js": "^4.5.1",
@@ -50,6 +52,7 @@
     "remark-parse": "^11.0.0",
     "shiki": "^4.0.2",
     "unified": "^11.0.5",
+    "untheme": "^0.1.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
