@@ -9,8 +9,8 @@ install: ## Install dependencies
 install-hooks: ## Install git pre-commit hook
 	git config core.hooksPath .githooks
 
-dev: ## Start example app dev server
-	pnpm --filter example dev
+dev: ## Start the Nuxt dev server
+	pnpm dev
 
 lint: ## Run ESLint
 	pnpm lint
@@ -18,7 +18,7 @@ lint: ## Run ESLint
 lint-fix: ## Run ESLint with auto-fix
 	pnpm lint:fix
 
-typecheck: ## Run type checking across all packages
+typecheck: ## Run type checking
 	pnpm typecheck
 
 test: ## Run all tests

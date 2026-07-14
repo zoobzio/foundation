@@ -1,95 +1,110 @@
-# Foundation
+# @zoobz-io/foundation
 
-A layered design system for Vue 3 + Nuxt. Foundation provides a composable architecture of elements, components, and widgets — from zero-behavior HTML wrappers up to fully stateful, generic data widgets.
+A design system for Vue 3 + Nuxt, delivered as a **single Nuxt layer**. Foundation spans the full range from behavior-free HTML element wrappers up to stateful, generic data widgets — consumed by extending one layer.
+
+## Usage
+
+Extend Foundation from your app's `nuxt.config`:
+
+```ts
+export default defineNuxtConfig({
+  extends: ["@zoobz-io/foundation"],
+});
+```
+
+> Pre-1.0 and currently `private` — not yet published to npm.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────┐
-│  foundry — app shell (workspace, layout)    │
-├─────────────────────────────────────────────┤
-│  forge — stateful widgets (table, form...)  │
-├─────────────────────────────────────────────┤
-│  alloy — stateless components (select...)   │
-├─────────────────────────────────────────────┤
-│  ore — behavior-free HTML elements          │
-└─────────────────────────────────────────────┘
-```
+Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsibility:
 
-Each layer extends the one below it. Consumers import from the highest layer they need.
+| Tier       | Directory             | What it is                                                                                                   |
+|------------|-----------------------|--------------------------------------------------------------------------------------------------------------|
+| Elements   | `components/common/`  | Behavior-free HTML wrappers + slot-through primitives, with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JS behavior. |
+| Components | `components/core/`    | Stateful/interactive components composing elements + [reka-ui](https://reka-ui.com) primitives, with full passthrough & slotthrough. |
+| Widgets    | `components/data/`    | Factory-driven, generic data widgets (table, chart, deck, form, preview).                                    |
+| System     | `components/system/`  | App-shell composition (workspace layout).                                                                    |
 
-### Ore
+### Data widgets
 
-Semantic HTML wrappers with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JavaScript behavior — if it needs JS, it belongs in alloy.
+Each widget pairs a **factory** (`createTable`, `createForm`, …) that returns a reactive interface with a **component** that renders it:
 
-### Alloy
-
-Composes ore elements and [reka-ui](https://reka-ui.com) primitives into stateless functional components. Full passthrough and slotthrough for consumer control. No owned state — if it needs `useState` or generics, it belongs in forge.
-
-### Forge
-
-Factory-driven, stateful widgets with generics. Each widget has a factory (`createTable`, `createForm`, ...) that returns a reactive interface. Components accept that interface as a prop.
-
-**Available widgets:**
 - `DataTable` — paginated, sortable, filterable data grid
 - `DataForm` — programmatic form over `T` with zod validation
 - `DataChart` — configurable chart visualizations
-- `DataPreview` — code/markdown content viewer
 - `DataDeck` — infinite-scroll card feeds
+- `DataPreview` — code / markdown content viewer
 
-### Foundry
+## Imports
 
-App shell layer providing workspace layouts and page-level composition.
+Auto-import is **disabled** — everything is imported explicitly. Foundation-owned modules use the `#foundation/*` alias, an absolute path to the layer's `app/` so it keeps resolving to Foundation even when the layer is extended by a consumer app:
 
-## Quick Start
+```ts
+import Button from "#foundation/components/common/Button.vue";
+import { createTable } from "#foundation/factories/data/table";
+import type { ButtonProps } from "#foundation/types/common/button";
+```
 
-```bash
-pnpm install
-make dev        # start example app
-make check      # lint + typecheck + test
+Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
+
+## Project structure
+
+```
+app/
+  components/
+    common/     — HTML element wrappers + slot-through primitives (57)
+    core/       — interactive components (23)
+    data/       — data widgets: table, chart, deck, form, preview (18)
+    system/     — app-shell composition (1)
+  composables/  — usePassthrough, useRecipe, useToasts, useHighlight, …
+  factories/    — data-widget + workspace factories
+  schemas/      — zod snapshot schemas
+  types/        — per-component prop/emit types
+  utils/        — pure helpers (dates, markdown, formatting, codemirror, …)
+  constants/    — shared constants
+  app.vue · error.vue · app.d.ts
+tests/          — vitest suite mirroring app/ (123 files)
+nuxt.config.ts  — layer config (auto-import off, #foundation alias)
 ```
 
 ## Development
 
 ```bash
-make help       # show all available commands
+pnpm install
+pnpm dev          # run the layer in a Nuxt dev server
+pnpm test         # run the vitest suite
+pnpm typecheck    # nuxi typecheck
+pnpm lint         # eslint (lint:fix to auto-fix)
 ```
+
+Or via `make` (`make help` lists all targets):
 
 | Command          | Description                          |
 |------------------|--------------------------------------|
 | `make install`   | Install dependencies                 |
-| `make dev`       | Start example app dev server         |
+| `make dev`       | Start the Nuxt dev server            |
 | `make lint`      | Run ESLint                           |
 | `make lint-fix`  | Run ESLint with auto-fix             |
-| `make typecheck` | Type check all packages              |
+| `make typecheck` | Type-check (`nuxi typecheck`)        |
 | `make test`      | Run all tests                        |
 | `make coverage`  | Run tests with coverage              |
 | `make check`     | Lint + typecheck + test              |
-| `make ci`        | Full CI simulation                   |
 | `make clean`     | Remove generated files               |
 
-## Project Structure
+## Testing
 
-```
-apps/
-  example/          — demo app showcasing all widgets
-layers/
-  ore/              — HTML element wrappers
-  alloy/            — stateless composed components
-  forge/            — stateful widget factories + components
-  foundry/          — app shell and layout
-packages/
-  iconic/           — icon alias system
-  untheme/          — design token engine
-  testing/          — shared test utilities
-```
+Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#foundation` / `#test` are aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs.ts` (`commonStubs` / `coreStubs` / `dataStubs`).
+
+## Companion modules (in progress)
+
+Theming, i18n, auth, telemetry, and icons are being extracted into standalone modules — `@zoobz-io/untheme`, `@zoobz-io/rosetta`, `@zoobz-io/rampart`, `@zoobz-io/crucible`, `@zoobz-io/iconic`. Until they land, the components that depend on them (auth / theme / locale controls, the icon sprite) are not wired up.
 
 ## Contributing
 
 - Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`
 - Tests required for all new code
-- `make check` must pass before opening a PR
-- Node 22.22.0, pnpm 9.10.0
+- `make check` (lint + typecheck + test) must pass before opening a PR
+- Node 22, pnpm 9.10.0
 
 ## License
 
