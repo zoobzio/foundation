@@ -11,8 +11,11 @@
   },
   "scripts": {
     "dev": "nuxi dev",
+    "dev:example": "nuxi dev example",
     "build": "nuxi build",
     "prepare": "nuxi prepare",
+    "prepare:example": "nuxi prepare example",
+    "typecheck:example": "nuxi typecheck example",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "nuxi typecheck",

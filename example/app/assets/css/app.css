@@ -1,0 +1,32 @@
+/* Base application shell for the example app, styled with aurora untheme tokens. */
+
+body {
+  margin: 0;
+  font: var(--type-body);
+  letter-spacing: var(--type-body-letter-spacing);
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+  min-height: 100dvh;
+}
+
+.app-main {
+  padding: var(--space-6) var(--space-7);
+  min-width: 0;
+}
+
+.page-title {
+  margin: 0 0 var(--space-4);
+  font: var(--type-headline);
+  letter-spacing: var(--type-headline-letter-spacing);
+}
+
+.page-lead {
+  margin: 0;
+  color: var(--on-surface-muted);
+  max-width: 60ch;
+}

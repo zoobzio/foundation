@@ -9,6 +9,7 @@ import { severityToVariant } from "#foundation/constants/system/error";
 import type { AppError } from "#foundation/types/z/error";
 import Toast from "#foundation/components/core/Toast.vue";
 import Toaster from "#foundation/components/core/Toaster.vue";
+
 const useIdFunction = () => useId();
 
 useHead({
@@ -62,15 +63,3 @@ const onError = (err: unknown) => {
     </TooltipProvider>
   </ConfigProvider>
 </template>
-
-<style>
-html,
-body {
-  background: var(--sys-surface);
-}
-
-::selection {
-  background: var(--sys-secondary);
-  color: var(--sys-on-secondary);
-}
-</style>
