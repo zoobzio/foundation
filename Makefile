@@ -1,4 +1,4 @@
-.PHONY: help install install-hooks dev lint lint-fix typecheck test test-watch coverage check ci clean
+.PHONY: help install install-hooks dev dev-example lint lint-fix typecheck test test-watch coverage check ci clean
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -11,6 +11,9 @@ install-hooks: ## Install git pre-commit hook
 
 dev: ## Start the Nuxt dev server
 	pnpm dev
+
+dev-example: ## Start the example app dev server
+	pnpm dev:example
 
 lint: ## Run ESLint
 	pnpm lint
