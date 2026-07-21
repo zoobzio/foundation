@@ -1,5 +1,5 @@
 import type { Ref } from "#imports";
-import type { AutocompleteItem } from "#foundation/types/core/autocomplete";
+import type { AutocompleteItem } from "#foundation/types/data/filter-autocomplete";
 import type { ShallowRef } from "vue";
 import type { DataTableColumn, Table } from "#foundation/types/data/table";
 import { unravelFilter } from "#foundation/utils/unravel";

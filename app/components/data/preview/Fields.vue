@@ -8,7 +8,7 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
 import Group from "#foundation/components/common/Group.vue";
 import Label from "#foundation/components/common/Label.vue";
-import Markdown from "#foundation/components/common/Markdown.vue";
+import Markdown from "#foundation/components/core/Markdown.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
 import Span from "#foundation/components/common/Span.vue";
 const { preview, pt } = defineProps<DataPreviewFieldsProps<T>>();

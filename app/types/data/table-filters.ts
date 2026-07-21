@@ -1,7 +1,7 @@
 import type { ChipProps } from "#foundation/types/common/chip";
 import type { GroupProps } from "#foundation/types/common/group";
 import type { IconProps } from "#foundation/types/common/icon";
-import type { AutocompletePassthrough } from "#foundation/types/core/autocomplete";
+import type { AutocompletePassthrough } from "#foundation/types/data/filter-autocomplete";
 import type { Passthrough } from "#foundation/types/core/passthrough";
 import type { Table } from "#foundation/types/data/table";
 import type { DataTableFilterHelpPassthrough } from "#foundation/types/data/table-filter-help";

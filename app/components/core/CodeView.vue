@@ -6,12 +6,12 @@ import { codeViewTheme } from "#foundation/utils/codemirror-theme";
 import { resolveLanguage } from "#foundation/utils/codemirror-lang";
 import { codeViewSearch, dispatchSearch, findNextMatch, findPrevMatch } from "#foundation/utils/codemirror-search";
 import type { CodeViewProps } from "#foundation/types/core/code-view";
-</script>
-
-<script setup lang="ts">
 import { onBeforeUnmount, useTemplateRef, watchEffect } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import Group from "#foundation/components/common/Group.vue";
+</script>
+
+<script setup lang="ts">
 const {
   content,
   language,

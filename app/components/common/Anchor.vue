@@ -1,10 +1,10 @@
 <script lang="ts">
 import type { AnchorProps } from "#foundation/types/common/anchor";
+import { useTemplateRef } from "#imports";
 </script>
 
 <script setup lang="ts">
-import { useTemplateRef } from "#imports";
-const { label, to, external, target, replace, prefetch, disabled, ariaCurrent, variant, size, color, radius, density, elevation } =
+const { label, to, external, target, replace, prefetch, disabled, ariaCurrent } =
   defineProps<AnchorProps>();
 
 const el = useTemplateRef("el");
@@ -22,12 +22,6 @@ defineExpose({ el });
     :aria-label="label"
     :aria-disabled="disabled"
     :aria-current="ariaCurrent || (disabled ? 'page' : undefined)"
-    :data-variant="variant"
-    :data-size="size"
-    :data-color="color"
-    :data-radius="radius"
-    :data-density="density"
-    :data-elevation="elevation"
     class="f-a"
   >
     <slot>

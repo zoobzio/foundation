@@ -12,7 +12,7 @@ import DatePicker from "#foundation/components/core/DatePicker.vue";
 import Group from "#foundation/components/common/Group.vue";
 import Input from "#foundation/components/common/Input.vue";
 import Label from "#foundation/components/common/Label.vue";
-import MultiSelect from "#foundation/components/common/MultiSelect.vue";
+import MultiSelect from "#foundation/components/core/MultiSelect.vue";
 import Radio from "#foundation/components/core/Radio.vue";
 import Select from "#foundation/components/core/Select.vue";
 import TagsInput from "#foundation/components/core/TagsInput.vue";

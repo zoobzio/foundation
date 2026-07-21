@@ -1,8 +1,5 @@
 <script lang="ts">
 import type { MultiSelectProps, MultiSelectEmits } from "#foundation/types/core/multi-select";
-</script>
-
-<script setup lang="ts">
 import { computed, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { MultiSelect } from "#foundation/utils/multi-select";
@@ -13,6 +10,9 @@ import Group from "#foundation/components/common/Group.vue";
 import Icon from "#foundation/components/common/Icon.vue";
 import Popover from "#foundation/components/core/Popover.vue";
 import Span from "#foundation/components/common/Span.vue";
+</script>
+
+<script setup lang="ts">
 const {
   modelValue,
   pt,

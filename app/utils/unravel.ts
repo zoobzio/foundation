@@ -1,5 +1,5 @@
 import type { IconAlias } from "#foundation/types/common/iconic";
-import type { AutocompleteItem } from "#foundation/types/core/autocomplete";
+import type { AutocompleteItem } from "#foundation/types/data/filter-autocomplete";
 import type { DataTableColumn, TableFilter } from "#foundation/types/data/table";
 
 export interface UnravelResult<T> {

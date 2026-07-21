@@ -1,8 +1,5 @@
 <script lang="ts">
 import type { HeroProps } from "#foundation/types/core/hero";
-</script>
-
-<script setup lang="ts">
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import Button from "#foundation/components/common/Button.vue";
@@ -11,6 +8,9 @@ import Group from "#foundation/components/common/Group.vue";
 import H1 from "#foundation/components/common/H1.vue";
 import P from "#foundation/components/common/P.vue";
 import Section from "#foundation/components/common/Section.vue";
+</script>
+
+<script setup lang="ts">
 const { tagline, taglineHighlight, description, action, pt } = defineProps<HeroProps>();
 
 const el = useTemplateRef("el");

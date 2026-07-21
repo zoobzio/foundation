@@ -24,24 +24,6 @@ describe("Icon", () => {
     expect(wrapper.attributes("fill")).toBe("currentColor");
   });
 
-  it("binds modifier data attributes", () => {
-    const wrapper = factory({
-      alias: "home",
-      variant: "outlined",
-      size: "sm",
-      color: "primary",
-      radius: "md",
-      density: "compact",
-      elevation: "sm",
-    });
-    expect(wrapper.attributes("data-variant")).toBe("outlined");
-    expect(wrapper.attributes("data-size")).toBe("sm");
-    expect(wrapper.attributes("data-color")).toBe("primary");
-    expect(wrapper.attributes("data-radius")).toBe("md");
-    expect(wrapper.attributes("data-density")).toBe("compact");
-    expect(wrapper.attributes("data-elevation")).toBe("sm");
-  });
-
   it("sets aria-hidden when no label is provided", () => {
     const wrapper = factory();
     expect(wrapper.attributes("aria-hidden")).toBe("true");

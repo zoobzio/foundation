@@ -1,17 +1,17 @@
 <script lang="ts">
 import type { H6Props } from "#foundation/types/common/h6";
+import { useTemplateRef } from "#imports";
 </script>
 
 <script setup lang="ts">
-import { useTemplateRef } from "#imports";
-const { variant, size, color, radius, density, elevation } = defineProps<H6Props>();
+const { label } = defineProps<H6Props>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 </script>
 
 <template>
-  <h6 ref="el" :data-variant="variant" :data-size="size" :data-color="color" :data-radius="radius" :data-density="density" :data-elevation="elevation" class="f-h6">
-    <slot />
+  <h6 ref="el" class="f-h6">
+    <slot>{{ label }}</slot>
   </h6>
 </template>

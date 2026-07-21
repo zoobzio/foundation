@@ -1,11 +1,11 @@
 <script lang="ts">
 import type { MarkdownPassthrough } from "#foundation/types/core/markdown";
-</script>
-
-<script setup lang="ts">
 import { useHighlight } from "#foundation/composables/highlight";
 import Code from "#foundation/components/common/Code.vue";
 import Pre from "#foundation/components/common/Pre.vue";
+</script>
+
+<script setup lang="ts">
 const { code, lang, pt } = defineProps<{
   code: string;
   lang?: string;

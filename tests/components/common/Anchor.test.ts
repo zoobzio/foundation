@@ -11,17 +11,6 @@ describe("Anchor", () => {
     expect(wrapper.find("a").classes()).toContain("f-a");
   });
 
-  it("binds modifier data attributes", () => {
-    const wrapper = factory({ variant: "outlined", size: "sm", color: "primary", radius: "md", density: "compact", elevation: "sm" });
-    const a = wrapper.find("a");
-    expect(a.attributes("data-variant")).toBe("outlined");
-    expect(a.attributes("data-size")).toBe("sm");
-    expect(a.attributes("data-color")).toBe("primary");
-    expect(a.attributes("data-radius")).toBe("md");
-    expect(a.attributes("data-density")).toBe("compact");
-    expect(a.attributes("data-elevation")).toBe("sm");
-  });
-
   it("binds aria-label from label prop", () => {
     const wrapper = factory({ label: "Home" });
     expect(wrapper.find("a").attributes("aria-label")).toBe("Home");

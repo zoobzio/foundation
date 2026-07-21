@@ -1,6 +1,6 @@
 import { computed, toValue } from "#imports";
 import type { AccordionEmits, AccordionProps } from "#foundation/types/core/accordion";
-import type { AutocompleteEmits, AutocompleteProps } from "#foundation/types/core/autocomplete";
+import type { AutocompleteEmits, AutocompleteProps } from "#foundation/types/data/filter-autocomplete";
 import type { AvatarEmits, AvatarProps } from "#foundation/types/core/avatar";
 import type { CalendarEmits, CalendarProps } from "#foundation/types/core/calendar";
 import type { CheckboxEmits, CheckboxProps } from "#foundation/types/core/checkbox";
@@ -11,9 +11,9 @@ import type { DatePickerEmits, DatePickerProps } from "#foundation/types/core/da
 import type { DateRangePickerEmits, DateRangePickerProps } from "#foundation/types/core/date-range-picker";
 import type { DialogEmits, DialogProps } from "#foundation/types/core/dialog";
 import type { FabEmits, FabProps } from "#foundation/types/core/fab";
-import type { FacetsEmits, FacetsProps } from "#foundation/types/core/facets";
+import type { FacetsEmits, FacetsProps } from "#foundation/types/data/filter-facets";
 import type { HeroEmits, HeroProps } from "#foundation/types/core/hero";
-import type { KeywordsEmits, KeywordsProps } from "#foundation/types/core/keywords";
+import type { KeywordsEmits, KeywordsProps } from "#foundation/types/data/filter-keywords";
 import type { ListboxEmits, ListboxProps } from "#foundation/types/core/listbox";
 import type { MarkdownEmits, MarkdownProps } from "#foundation/types/core/markdown";
 import type { MenuEmits, MenuProps } from "#foundation/types/core/menu";
