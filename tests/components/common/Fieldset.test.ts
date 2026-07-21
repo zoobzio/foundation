@@ -30,16 +30,6 @@ describe("Fieldset", () => {
     expect(wrapper.attributes("disabled")).toBeDefined();
   });
 
-  it("binds modifier data attributes", () => {
-    const wrapper = factory({ variant: "outlined", size: "sm", color: "primary", radius: "md", density: "compact", elevation: "sm" });
-    expect(wrapper.attributes("data-variant")).toBe("outlined");
-    expect(wrapper.attributes("data-size")).toBe("sm");
-    expect(wrapper.attributes("data-color")).toBe("primary");
-    expect(wrapper.attributes("data-radius")).toBe("md");
-    expect(wrapper.attributes("data-density")).toBe("compact");
-    expect(wrapper.attributes("data-elevation")).toBe("sm");
-  });
-
   it("renders default slot content", () => {
     const wrapper = factory({}, { default: "<p>Content</p>" });
     expect(wrapper.find("p").text()).toBe("Content");

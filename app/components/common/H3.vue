@@ -1,17 +1,17 @@
 <script lang="ts">
 import type { H3Props } from "#foundation/types/common/h3";
+import { useTemplateRef } from "#imports";
 </script>
 
 <script setup lang="ts">
-import { useTemplateRef } from "#imports";
-const { variant, size, color, radius, density, elevation } = defineProps<H3Props>();
+const { label } = defineProps<H3Props>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 </script>
 
 <template>
-  <h3 ref="el" :data-variant="variant" :data-size="size" :data-color="color" :data-radius="radius" :data-density="density" :data-elevation="elevation" class="f-h3">
-    <slot />
+  <h3 ref="el" class="f-h3">
+    <slot>{{ label }}</slot>
   </h3>
 </template>

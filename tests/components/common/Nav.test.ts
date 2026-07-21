@@ -12,16 +12,6 @@ describe("Nav", () => {
     expect(wrapper.classes()).toContain("f-nav");
   });
 
-  it("binds modifier data attributes", () => {
-    const wrapper = factory({ variant: "outlined", size: "sm", color: "primary", radius: "md", density: "compact", elevation: "sm" });
-    expect(wrapper.attributes("data-variant")).toBe("outlined");
-    expect(wrapper.attributes("data-size")).toBe("sm");
-    expect(wrapper.attributes("data-color")).toBe("primary");
-    expect(wrapper.attributes("data-radius")).toBe("md");
-    expect(wrapper.attributes("data-density")).toBe("compact");
-    expect(wrapper.attributes("data-elevation")).toBe("sm");
-  });
-
   it("binds aria-label from label prop", () => {
     const wrapper = factory({ label: "My Nav" });
     expect(wrapper.attributes("aria-label")).toBe("My Nav");

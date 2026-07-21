@@ -1,8 +1,5 @@
 <script lang="ts">
 import type { MarkdownPassthrough, MarkdownNode } from "#foundation/types/core/markdown";
-</script>
-
-<script setup lang="ts">
 import { computed } from "#imports";
 import Anchor from "#foundation/components/common/Anchor.vue";
 import Blockquote from "#foundation/components/common/Blockquote.vue";
@@ -18,7 +15,7 @@ import H6 from "#foundation/components/common/H6.vue";
 import Hr from "#foundation/components/common/Hr.vue";
 import Img from "#foundation/components/common/Img.vue";
 import Li from "#foundation/components/common/Li.vue";
-import MarkdownCode from "#foundation/components/common/MarkdownCode.vue";
+import MarkdownCode from "#foundation/components/core/MarkdownCode.vue";
 import Ol from "#foundation/components/common/Ol.vue";
 import P from "#foundation/components/common/P.vue";
 import Strong from "#foundation/components/common/Strong.vue";
@@ -28,6 +25,9 @@ import Td from "#foundation/components/common/Td.vue";
 import Thead from "#foundation/components/common/Thead.vue";
 import Tr from "#foundation/components/common/Tr.vue";
 import Ul from "#foundation/components/common/Ul.vue";
+</script>
+
+<script setup lang="ts">
 const { node, pt } = defineProps<{
   node: MarkdownNode;
   pt?: MarkdownPassthrough;

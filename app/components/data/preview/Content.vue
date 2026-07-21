@@ -6,7 +6,7 @@ import type { DataPreviewContentProps } from "#foundation/types/data/preview-con
 import { computed, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import Chip from "#foundation/components/common/Chip.vue";
-import CodeView from "#foundation/components/common/CodeView.vue";
+import CodeView from "#foundation/components/core/CodeView.vue";
 import Fab from "#foundation/components/core/Fab.vue";
 import Group from "#foundation/components/common/Group.vue";
 import Input from "#foundation/components/common/Input.vue";

@@ -12,7 +12,7 @@ import DataTableFilters from "#foundation/components/data/table/Filters.vue";
 import DataTableHead from "#foundation/components/data/table/Head.vue";
 import Fab from "#foundation/components/core/Fab.vue";
 import Group from "#foundation/components/common/Group.vue";
-import Pagination from "#foundation/components/common/Pagination.vue";
+import Pagination from "#foundation/components/core/Pagination.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
 import Table from "#foundation/components/common/Table.vue";
 const { table, pt } = defineProps<DataTableProps<T, K>>();

@@ -1,13 +1,13 @@
 <script lang="ts">
 import type { MarkdownProps } from "#foundation/types/core/markdown";
-</script>
-
-<script setup lang="ts">
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { parseMarkdown } from "#foundation/utils/markdown";
 import Article from "#foundation/components/common/Article.vue";
-import MarkdownNode from "#foundation/components/common/MarkdownNode.vue";
+import MarkdownNode from "#foundation/components/core/MarkdownNode.vue";
+</script>
+
+<script setup lang="ts">
 const { content, pt } = defineProps<MarkdownProps>();
 
 const el = useTemplateRef("el");

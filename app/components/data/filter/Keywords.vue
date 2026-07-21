@@ -1,8 +1,5 @@
 <script lang="ts">
-import type { KeywordsProps, KeywordsEmits } from "#foundation/types/core/keywords";
-</script>
-
-<script setup lang="ts">
+import type { KeywordsProps, KeywordsEmits } from "#foundation/types/data/filter-keywords";
 import { computed, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
@@ -14,6 +11,9 @@ import Group from "#foundation/components/common/Group.vue";
 import Popover from "#foundation/components/core/Popover.vue";
 import SegmentedControl from "#foundation/components/core/SegmentedControl.vue";
 import TagsInput from "#foundation/components/core/TagsInput.vue";
+</script>
+
+<script setup lang="ts">
 const { modelValue, pt } = defineProps<KeywordsProps>();
 
 const emit = defineEmits<KeywordsEmits>();

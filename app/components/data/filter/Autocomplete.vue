@@ -3,10 +3,7 @@ import type {
   AutocompleteItem,
   AutocompleteProps,
   AutocompleteEmits,
-} from "#foundation/types/core/autocomplete";
-</script>
-
-<script setup lang="ts">
+} from "#foundation/types/data/filter-autocomplete";
 import { computed, nextTick, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { AUTOCOMPLETE_BLUR_DELAY_MS } from "#foundation/constants/common/autocomplete";
@@ -18,6 +15,9 @@ import Icon from "#foundation/components/common/Icon.vue";
 import Input from "#foundation/components/common/Input.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
 import Span from "#foundation/components/common/Span.vue";
+</script>
+
+<script setup lang="ts">
 const {
   modelValue,
   suggestions,

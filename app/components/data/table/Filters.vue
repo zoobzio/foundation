@@ -10,10 +10,10 @@ import { computed, nextTick, ref, shallowRef, useMagicKeys, useTemplateRef, when
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useFilterUnravel } from "#foundation/composables/unravel";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import type { AutocompleteItem } from "#foundation/types/core/autocomplete";
+import type { AutocompleteItem } from "#foundation/types/data/filter-autocomplete";
 import { formatFilter } from "#foundation/utils/format-filter";
 import { passthrough } from "#foundation/utils/passthrough";
-import Autocomplete from "#foundation/components/common/Autocomplete.vue";
+import Autocomplete from "#foundation/components/data/filter/Autocomplete.vue";
 import Chip from "#foundation/components/common/Chip.vue";
 import DataTableFilterHelp from "#foundation/components/data/table/FilterHelp.vue";
 import Group from "#foundation/components/common/Group.vue";

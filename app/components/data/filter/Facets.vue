@@ -1,14 +1,14 @@
 <script lang="ts">
-import type { FacetsProps, FacetsEmits } from "#foundation/types/core/facets";
-</script>
-
-<script setup lang="ts">
+import type { FacetsProps, FacetsEmits } from "#foundation/types/data/filter-facets";
 import { computed, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import Command from "#foundation/components/core/Command.vue";
 import Fab from "#foundation/components/core/Fab.vue";
 import Popover from "#foundation/components/core/Popover.vue";
+</script>
+
+<script setup lang="ts">
 const { groups, selected, pt } = defineProps<FacetsProps>();
 
 const emit = defineEmits<FacetsEmits>();

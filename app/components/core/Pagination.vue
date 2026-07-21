@@ -1,8 +1,5 @@
 <script lang="ts">
 import type { PaginationProps, PaginationEmits } from "#foundation/types/core/pagination";
-</script>
-
-<script setup lang="ts">
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
@@ -13,6 +10,9 @@ import Fab from "#foundation/components/core/Fab.vue";
 import Group from "#foundation/components/common/Group.vue";
 import Select from "#foundation/components/core/Select.vue";
 import Span from "#foundation/components/common/Span.vue";
+</script>
+
+<script setup lang="ts">
 const { page, pageSize, pageCount, total, goToPage, pt } = defineProps<PaginationProps>();
 
 const emit = defineEmits<PaginationEmits>();

@@ -1,15 +1,15 @@
 <script lang="ts">
 import type { TextareaProps } from "#foundation/types/common/textarea";
+import { useTemplateRef } from "#imports";
 </script>
 
 <script setup lang="ts">
-import { useTemplateRef } from "#imports";
-const { label, ariaDescribedby, ariaInvalid, variant, size, color, radius, density, elevation } = defineProps<TextareaProps>();
+const { label, ariaDescribedby, ariaInvalid } = defineProps<TextareaProps>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 </script>
 
 <template>
-  <textarea ref="el" :aria-label="label" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" :placeholder="placeholder" :disabled="disabled" :required="required" :name="name" :rows="rows" :data-variant="variant" :data-size="size" :data-color="color" :data-radius="radius" :data-density="density" :data-elevation="elevation" class="f-textarea" />
+  <textarea ref="el" :aria-label="label" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" :placeholder="placeholder" :disabled="disabled" :required="required" :name="name" :rows="rows" class="f-textarea" />
 </template>
