@@ -9,7 +9,7 @@ import {
   COMMISSION_MATERIALS,
   COMMISSION_STATUSES,
 } from "#shared/commissions";
-import { useDb } from "./db";
+import { useDb } from "~~/server/utils/db";
 
 // Rows come out of node:sqlite as untyped records; parse them into the
 // shared Commission shape instead of casting.

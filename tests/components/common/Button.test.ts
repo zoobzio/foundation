@@ -13,8 +13,8 @@ describe("Button", () => {
     expect(wrapper.attributes("type")).toBe("button");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "Submit" });
+  it("binds aria-label from the aria prop", () => {
+    const wrapper = factory({ aria: { label: "Submit" } });
     expect(wrapper.attributes("aria-label")).toBe("Submit");
   });
 
@@ -38,18 +38,18 @@ describe("Button", () => {
     expect(wrapper.attributes("disabled")).toBeDefined();
   });
 
-  it("binds ariaPressed", () => {
-    const wrapper = factory({ ariaPressed: true });
+  it("binds aria-pressed via the aria prop", () => {
+    const wrapper = factory({ aria: { pressed: true } });
     expect(wrapper.attributes("aria-pressed")).toBe("true");
   });
 
-  it("binds ariaExpanded", () => {
-    const wrapper = factory({ ariaExpanded: true });
+  it("binds aria-expanded via the aria prop", () => {
+    const wrapper = factory({ aria: { expanded: true } });
     expect(wrapper.attributes("aria-expanded")).toBe("true");
   });
 
-  it("binds ariaHaspopup", () => {
-    const wrapper = factory({ ariaHaspopup: "menu" });
+  it("binds aria-haspopup via the aria prop", () => {
+    const wrapper = factory({ aria: { haspopup: "menu" } });
     expect(wrapper.attributes("aria-haspopup")).toBe("menu");
   });
 });

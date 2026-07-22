@@ -6,7 +6,7 @@ import {
   readValidatedBody,
 } from "#imports";
 import { commissionUpdateSchema } from "#shared/commissions";
-import { updateCommission } from "../../utils/commissions";
+import { updateCommission } from "~~/server/utils/commissions";
 
 const paramsSchema = z.object({ id: z.coerce.number().int().positive() });
 

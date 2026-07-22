@@ -1,0 +1,60 @@
+/**
+ * The design-system component registry, grouped by layer.
+ *
+ * Shared source of truth for the per-component generation modules (modifiers,
+ * component tokens, …). Each key is a layer listing that layer's components;
+ * new layers are added alongside `elements`, and consumers read the layer they
+ * target (e.g. `components.elements`). Declared `as const` so the literal names
+ * can drive each schema's key type.
+ */
+export default {
+  elements: [
+    "alert",
+    "anchor",
+    "article",
+    "aside",
+    "banner",
+    "blockquote",
+    "button",
+    "caption",
+    "card",
+    "chip",
+    "code",
+    "container",
+    "del",
+    "em",
+    "fieldset",
+    "footer",
+    "group",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "hr",
+    "icon",
+    "img",
+    "input",
+    "kbd",
+    "label",
+    "li",
+    "main",
+    "nav",
+    "ol",
+    "p",
+    "pre",
+    "section",
+    "span",
+    "strong",
+    "table",
+    "tbody",
+    "td",
+    "textarea",
+    "th",
+    "thead",
+    "tr",
+    "ul",
+  ],
+} as const;

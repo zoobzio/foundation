@@ -4,7 +4,7 @@ import {
   defineEventHandler,
   getValidatedRouterParams,
 } from "#imports";
-import { getCommission } from "../../utils/commissions";
+import { getCommission } from "~~/server/utils/commissions";
 
 const paramsSchema = z.object({ id: z.coerce.number().int().positive() });
 

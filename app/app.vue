@@ -6,7 +6,7 @@ import { ConfigProvider, TooltipProvider } from "reka-ui";
 import { useHead, useId } from "#imports";
 import { useToasts } from "#foundation/composables/toasts";
 import { severityToVariant } from "#foundation/constants/system/error";
-import type { AppError } from "#foundation/types/z/error";
+import type { AppError } from "#foundation/types/error";
 import Toast from "#foundation/components/core/Toast.vue";
 import Toaster from "#foundation/components/core/Toaster.vue";
 

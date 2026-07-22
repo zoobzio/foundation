@@ -1,17 +1,33 @@
 <script lang="ts">
 import type { ButtonProps } from "#foundation/types/common/button";
 import { useTemplateRef } from "#imports";
+import { useBindings } from "#foundation/composables/binding";
 </script>
 
 <script setup lang="ts">
-const { label, type = "button", disabled, ariaPressed, ariaExpanded, ariaHaspopup } = defineProps<ButtonProps>();
+const {
+  label,
+  type = "button",
+  disabled,
+  modifiers,
+  tokens,
+  aria,
+} = defineProps<ButtonProps>();
+
+const bindings = useBindings(modifiers, tokens, aria);
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 </script>
 
 <template>
-  <button ref="el" :type="type" :aria-label="label" :aria-pressed="ariaPressed" :aria-expanded="ariaExpanded" :aria-haspopup="ariaHaspopup" :disabled="disabled" class="f-button">
+  <button
+    ref="el"
+    :type="type"
+    :disabled="disabled"
+    class="f-button"
+    v-bind="bindings"
+  >
     <slot>{{ label }}</slot>
   </button>
 </template>

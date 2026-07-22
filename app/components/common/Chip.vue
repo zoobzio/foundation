@@ -5,14 +5,14 @@ import Icon from "#foundation/components/common/Icon.vue";
 </script>
 
 <script setup lang="ts">
-const { label, closable, disabled, ariaPressed, ariaSelected } = defineProps<ChipProps>();
+const { label, closable, disabled, ariaPressed } = defineProps<ChipProps>();
 
 const el = useTemplateRef("el");
 defineExpose({ el });
 </script>
 
 <template>
-  <button ref="el" type="button" :aria-label="label" :aria-pressed="ariaPressed" :aria-selected="ariaSelected" :disabled="disabled" :data-closable="closable || undefined" class="f-chip">
+  <button ref="el" type="button" :aria-label="label" :aria-pressed="ariaPressed" :disabled="disabled" :data-closable="closable || undefined" class="f-chip">
     <slot>{{ label }}</slot>
     <Icon v-if="closable" alias="close" class="f-chip-close" />
   </button>

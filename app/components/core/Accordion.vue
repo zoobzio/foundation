@@ -90,7 +90,7 @@ const ctx = computed(() => ({ items, type, collapsible, defaultValue }));
         >
           <slot name="header" v-bind="{ ...ctx, item: entry.item, open }">
             <AccordionTrigger
-              v-bind="{ ...triggerPT.props, 'aria-selected': open }"
+              v-bind="triggerPT.props"
               class="f-accordion-trigger"
               v-on="triggerPT.handlers"
             >
