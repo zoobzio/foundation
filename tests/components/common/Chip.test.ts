@@ -33,11 +33,6 @@ describe("Chip", () => {
     expect(wrapper.attributes("aria-pressed")).toBe("true");
   });
 
-  it("binds ariaSelected", () => {
-    const wrapper = factory({ ariaSelected: true });
-    expect(wrapper.attributes("aria-selected")).toBe("true");
-  });
-
   it("renders close Icon when closable is true", () => {
     const wrapper = factory({ closable: true });
     expect(wrapper.findComponent({ name: "Icon" }).exists()).toBe(true);

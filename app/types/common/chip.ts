@@ -3,5 +3,4 @@ export type ChipProps = {
   closable?: boolean;
   disabled?: boolean;
   ariaPressed?: boolean;
-  ariaSelected?: boolean;
 };

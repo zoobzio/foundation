@@ -1,11 +1,11 @@
-import { defineUnthemeConfig } from "untheme/config";
+import { defineUnthemeConfig } from "@untheme/nuxt/config";
 import { preset } from "@untheme/aurora";
 
 import abyss from "@untheme/aurora/themes/abyss";
 import dracula from "@untheme/aurora/themes/dracula";
 
 export default defineUnthemeConfig({
-  base: preset.define({ id: "foundation", name: "Foundation" }),
+  theme: preset.define({ id: "foundation", name: "Foundation" }),
   themes: { abyss, dracula },
   input: {
     text: "md",

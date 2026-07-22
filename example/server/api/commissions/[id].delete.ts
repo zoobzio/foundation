@@ -5,7 +5,7 @@ import {
   getValidatedRouterParams,
   setResponseStatus,
 } from "#imports";
-import { deleteCommission } from "../../utils/commissions";
+import { deleteCommission } from "~~/server/utils/commissions";
 
 const paramsSchema = z.object({ id: z.coerce.number().int().positive() });
 

@@ -11,8 +11,8 @@ defineExpose({ el });
 </script>
 
 <template>
-  <div ref="el" :aria-label="label" class="f-table-wrapper">
-    <table class="f-table">
+  <div class="f-table-wrapper">
+    <table ref="el" :aria-label="label" class="f-table">
       <slot />
     </table>
   </div>

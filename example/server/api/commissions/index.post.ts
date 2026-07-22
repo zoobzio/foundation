@@ -4,7 +4,7 @@ import {
   setResponseStatus,
 } from "#imports";
 import { commissionCreateSchema } from "#shared/commissions";
-import { createCommission } from "../../utils/commissions";
+import { createCommission } from "~~/server/utils/commissions";
 
 export default defineEventHandler(async (event) => {
   const input = await readValidatedBody(event, commissionCreateSchema.parse);

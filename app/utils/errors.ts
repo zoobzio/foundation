@@ -1,5 +1,5 @@
 import { createError } from "#imports";
-import type { AppError, AppErrorOptions, ErrorPayload, Severity } from "#foundation/types/z/error";
+import type { AppError, AppErrorOptions, ErrorPayload, Severity } from "#foundation/types/error";
 const make = (severity: Severity, options: AppErrorOptions, isFatal: boolean): AppError =>
   createError<ErrorPayload>({
     statusCode: options.code,

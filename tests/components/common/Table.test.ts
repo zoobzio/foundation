@@ -19,9 +19,11 @@ describe("Table", () => {
     expect(table.classes()).toContain("f-table");
   });
 
-  it("binds aria-label from label prop", () => {
+  it("binds aria-label from label prop onto the table element", () => {
     const wrapper = factory({ label: "My Table" });
-    expect(wrapper.attributes("aria-label")).toBe("My Table");
+    expect(wrapper.find("table").attributes("aria-label")).toBe("My Table");
+    // the presentational wrapper must not carry the name
+    expect(wrapper.attributes("aria-label")).toBeUndefined();
   });
 
   it("renders slot content inside the table", () => {

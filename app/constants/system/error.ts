@@ -1,5 +1,5 @@
 // system/error constants
-import type { Severity } from "#foundation/types/z/error";
+import type { Severity } from "#foundation/types/error";
 import type { ToastProps } from "#foundation/types/core/toast";
 
 // Fallback HTTP status code used when a NuxtError carries no statusCode.
