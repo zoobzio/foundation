@@ -1,10 +1,8 @@
 import { describe, it, expect } from "vitest";
-import {
-  useModifiers,
-  useTokens,
-  useAria,
-  useBindings,
-} from "#foundation/composables/binding";
+import { useModifiers } from "#foundation/composables/modifiers";
+import { useTokens } from "#foundation/composables/tokens";
+import { useAria } from "#foundation/composables/aria";
+import { useBindings } from "#foundation/composables/bindings";
 
 describe("useModifiers", () => {
   it("returns {} when no props are given", () => {
@@ -12,12 +10,12 @@ describe("useModifiers", () => {
   });
 
   it("prefixes each axis with data-", () => {
-    expect(useModifiers<"button">({ variant: "solid", tone: "primary" })).toEqual(
-      {
-        "data-variant": "solid",
-        "data-tone": "primary",
-      },
-    );
+    expect(
+      useModifiers<"button">({ variant: "solid", tone: "primary" }),
+    ).toEqual({
+      "data-variant": "solid",
+      "data-tone": "primary",
+    });
   });
 
   it("only emits the axes that are set", () => {
