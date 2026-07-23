@@ -1,4 +1,4 @@
-import { defineComponentTokens } from "#modules/dtcg/config";
+import { defineComponentTokens } from "#modules/tokens/config";
 
 /**
  * Dev-only component-token schema.

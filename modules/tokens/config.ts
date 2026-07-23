@@ -1,4 +1,4 @@
-import type { ComponentTokensInput } from "#modules/dtcg/types";
+import type { ComponentTokensInput } from "#modules/tokens/types";
 
 /**
  * Definition helper for the component-token schema.

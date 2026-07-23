@@ -1,8 +1,8 @@
-import type { ComponentTokensInput } from "#modules/dtcg/types";
+import type { ComponentTokensInput } from "#modules/tokens/types";
 
 import { addTypeTemplate, createResolver, defineNuxtModule } from "@nuxt/kit";
-import { generateComponentTokenTypes } from "#modules/dtcg/template";
-import devComponentTokens from "#stubs/dtcg";
+import { generateComponentTokenTypes } from "#modules/tokens/template";
+import devComponentTokens from "#stubs/tokens";
 
 /** Options accepted under the `dtcg` key in `nuxt.config`. */
 export type ModuleOptions = ComponentTokensInput;
@@ -28,7 +28,7 @@ export default defineNuxtModule<ModuleOptions>({
       : options;
 
     addTypeTemplate({
-      filename: "types/dtcg.d.ts",
+      filename: "types/tokens.d.ts",
       write: true,
       getContents: () => generateComponentTokenTypes(schema),
     });

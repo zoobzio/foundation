@@ -1,5 +1,5 @@
 import type { AppTheme } from "#imports";
-import type { ComponentTokens } from "#build/types/dtcg";
+import type { ComponentTokens } from "#build/types/tokens";
 import type { Binding } from "untheme";
 import type { Component } from "#foundation/types/component";
 
