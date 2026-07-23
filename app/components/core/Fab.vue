@@ -6,8 +6,8 @@ import type { FabProps } from "#foundation/types/core/fab";
 <script setup lang="ts">
 import { computed, defineNuxtLink, useAttrs, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
 import Tooltip from "#foundation/components/core/Tooltip.vue";
 defineOptions({ inheritAttrs: false });
 

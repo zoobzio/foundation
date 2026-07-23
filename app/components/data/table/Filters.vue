@@ -14,10 +14,10 @@ import type { AutocompleteItem } from "#foundation/types/data/filter-autocomplet
 import { formatFilter } from "#foundation/utils/format-filter";
 import { passthrough } from "#foundation/utils/passthrough";
 import Autocomplete from "#foundation/components/data/filter/Autocomplete.vue";
-import Chip from "#foundation/components/common/Chip.vue";
+import Chip from "#foundation/components/common/chip.vue";
 import DataTableFilterHelp from "#foundation/components/data/table/FilterHelp.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
 const { table, pt } = defineProps<DataTableFiltersProps<T, K>>();
 
 const {
@@ -545,12 +545,17 @@ whenever(combo, () => {
         :key="index"
         v-bind="
           passthrough(pt?.chip, {
-            props: { label: formatFilter(filter, columns), closable: true },
+            props: { label: formatFilter(filter, columns) },
             handlers: {},
           }).props
         "
         @click="removeFilter(index)"
-      />
+      >
+        <template #default="{ ctx }">
+          {{ ctx.label }}
+          <Icon alias="close" class="f-data-table-filters-chip-close" />
+        </template>
+      </Chip>
       <Group
         v-bind="inputWrapPT.props"
         class="f-data-table-filters-input-wrap"

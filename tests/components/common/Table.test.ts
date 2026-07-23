@@ -1,29 +1,20 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Table from "#foundation/components/common/Table.vue";
+import Table from "#foundation/components/common/table.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Table, { props, slots });
 
 describe("Table", () => {
-  it("renders a div element with f-table-wrapper class", () => {
+  it("renders a table element with f-table class", () => {
     const wrapper = factory();
-    expect(wrapper.element.tagName).toBe("DIV");
-    expect(wrapper.classes()).toContain("f-table-wrapper");
+    expect(wrapper.element.tagName).toBe("TABLE");
+    expect(wrapper.classes()).toContain("f-table");
   });
 
-  it("renders a nested table element with f-table class", () => {
-    const wrapper = factory();
-    const table = wrapper.find("table");
-    expect(table.exists()).toBe(true);
-    expect(table.classes()).toContain("f-table");
-  });
-
-  it("binds aria-label from label prop onto the table element", () => {
-    const wrapper = factory({ label: "My Table" });
-    expect(wrapper.find("table").attributes("aria-label")).toBe("My Table");
-    // the presentational wrapper must not carry the name
-    expect(wrapper.attributes("aria-label")).toBeUndefined();
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "My Table" } });
+    expect(wrapper.attributes("aria-label")).toBe("My Table");
   });
 
   it("renders slot content inside the table", () => {

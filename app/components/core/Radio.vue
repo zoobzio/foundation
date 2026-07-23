@@ -8,8 +8,8 @@ import type { RadioProps, RadioEmits } from "#foundation/types/core/radio";
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
-import Label from "#foundation/components/common/Label.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Label from "#foundation/components/common/label.vue";
+import Span from "#foundation/components/common/span.vue";
 const {
   modelValue,
   options,

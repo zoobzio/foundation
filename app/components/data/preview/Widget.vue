@@ -8,8 +8,8 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import DataPreviewContent from "#foundation/components/data/preview/Content.vue";
 import DataPreviewFields from "#foundation/components/data/preview/Fields.vue";
 import Fab from "#foundation/components/core/Fab.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Group from "#foundation/components/common/group.vue";
+import Span from "#foundation/components/common/span.vue";
 const { preview, pt } = defineProps<DataPreviewProps<T>>();
 
 useLazyAsyncData(`init-preview-${useId()}`, preview.init, { server: false });

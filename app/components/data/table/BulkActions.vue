@@ -6,10 +6,10 @@ import type { DataTableBulkActionsProps } from "#foundation/types/data/table-bul
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
-import Button from "#foundation/components/common/Button.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Button from "#foundation/components/common/button.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
+import Span from "#foundation/components/common/span.vue";
 const { table, pt } = defineProps<DataTableBulkActionsProps<T, K>>();
 
 const el = useTemplateRef("el");

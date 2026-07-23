@@ -17,9 +17,9 @@ import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
 import { MENU_SIDE_OFFSET } from "#foundation/constants/core/menu";
-import Caption from "#foundation/components/common/Caption.vue";
-import Icon from "#foundation/components/common/Icon.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Caption from "#foundation/components/common/caption.vue";
+import Icon from "#foundation/components/common/icon.vue";
+import Span from "#foundation/components/common/span.vue";
 const {
   open,
   groups,

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Chip from "#foundation/components/common/Chip.vue";
+import Chip from "#foundation/components/common/chip.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
-  mount(Chip, { props, slots, global: { stubs: { Icon: true } } });
+  mount(Chip, { props, slots });
 
 describe("Chip", () => {
   it("renders button with f-chip class and type='button'", () => {
@@ -13,8 +13,8 @@ describe("Chip", () => {
     expect(wrapper.attributes("type")).toBe("button");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "Tag" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "Tag" } });
     expect(wrapper.attributes("aria-label")).toBe("Tag");
   });
 
@@ -28,24 +28,9 @@ describe("Chip", () => {
     expect(wrapper.attributes("disabled")).toBeDefined();
   });
 
-  it("binds ariaPressed", () => {
-    const wrapper = factory({ ariaPressed: true });
+  it("binds aria-pressed from the aria channel", () => {
+    const wrapper = factory({ aria: { pressed: true } });
     expect(wrapper.attributes("aria-pressed")).toBe("true");
-  });
-
-  it("renders close Icon when closable is true", () => {
-    const wrapper = factory({ closable: true });
-    expect(wrapper.findComponent({ name: "Icon" }).exists()).toBe(true);
-  });
-
-  it("does not render close Icon when closable is false", () => {
-    const wrapper = factory();
-    expect(wrapper.findComponent({ name: "Icon" }).exists()).toBe(false);
-  });
-
-  it("sets data-closable attribute when closable is true", () => {
-    const wrapper = factory({ closable: true });
-    expect(wrapper.attributes("data-closable")).toBe("true");
   });
 
   it("renders custom slot content over label", () => {

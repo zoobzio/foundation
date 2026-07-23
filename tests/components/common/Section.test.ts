@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Section from "#foundation/components/common/Section.vue";
+import Section from "#foundation/components/common/section.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Section, { props, slots });
@@ -12,8 +12,8 @@ describe("Section", () => {
     expect(wrapper.classes()).toContain("f-section");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "My Section" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "My Section" } });
     expect(wrapper.attributes("aria-label")).toBe("My Section");
   });
 

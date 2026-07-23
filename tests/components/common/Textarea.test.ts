@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Textarea from "#foundation/components/common/Textarea.vue";
+import Textarea from "#foundation/components/common/textarea.vue";
 
 const factory = (props: Record<string, unknown> = {}) =>
   mount(Textarea, { props });
@@ -12,8 +12,8 @@ describe("Textarea", () => {
     expect(wrapper.classes()).toContain("f-textarea");
   });
 
-  it("sets aria-label from label prop", () => {
-    const wrapper = factory({ label: "Bio" });
+  it("sets aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "Bio" } });
     expect(wrapper.attributes("aria-label")).toBe("Bio");
   });
 
@@ -43,12 +43,12 @@ describe("Textarea", () => {
   });
 
   it("sets ariaDescribedby", () => {
-    const wrapper = factory({ ariaDescribedby: "help" });
+    const wrapper = factory({ aria: { describedby: "help" } });
     expect(wrapper.attributes("aria-describedby")).toBe("help");
   });
 
   it("sets ariaInvalid", () => {
-    const wrapper = factory({ ariaInvalid: true });
+    const wrapper = factory({ aria: { invalid: true } });
     expect(wrapper.attributes("aria-invalid")).toBe("true");
   });
 });

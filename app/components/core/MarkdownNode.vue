@@ -1,30 +1,30 @@
 <script lang="ts">
 import type { MarkdownPassthrough, MarkdownNode } from "#foundation/types/core/markdown";
 import { computed } from "#imports";
-import Anchor from "#foundation/components/common/Anchor.vue";
-import Blockquote from "#foundation/components/common/Blockquote.vue";
-import Code from "#foundation/components/common/Code.vue";
-import Del from "#foundation/components/common/Del.vue";
-import Em from "#foundation/components/common/Em.vue";
-import H1 from "#foundation/components/common/H1.vue";
-import H2 from "#foundation/components/common/H2.vue";
-import H3 from "#foundation/components/common/H3.vue";
-import H4 from "#foundation/components/common/H4.vue";
-import H5 from "#foundation/components/common/H5.vue";
-import H6 from "#foundation/components/common/H6.vue";
-import Hr from "#foundation/components/common/Hr.vue";
-import Img from "#foundation/components/common/Img.vue";
-import Li from "#foundation/components/common/Li.vue";
+import Anchor from "#foundation/components/common/anchor.vue";
+import Blockquote from "#foundation/components/common/blockquote.vue";
+import Code from "#foundation/components/common/code.vue";
+import Del from "#foundation/components/common/del.vue";
+import Em from "#foundation/components/common/em.vue";
+import H1 from "#foundation/components/common/h1.vue";
+import H2 from "#foundation/components/common/h2.vue";
+import H3 from "#foundation/components/common/h3.vue";
+import H4 from "#foundation/components/common/h4.vue";
+import H5 from "#foundation/components/common/h5.vue";
+import H6 from "#foundation/components/common/h6.vue";
+import Hr from "#foundation/components/common/hr.vue";
+import Img from "#foundation/components/common/img.vue";
+import Li from "#foundation/components/common/li.vue";
 import MarkdownCode from "#foundation/components/core/MarkdownCode.vue";
-import Ol from "#foundation/components/common/Ol.vue";
-import P from "#foundation/components/common/P.vue";
-import Strong from "#foundation/components/common/Strong.vue";
-import Table from "#foundation/components/common/Table.vue";
-import Tbody from "#foundation/components/common/Tbody.vue";
-import Td from "#foundation/components/common/Td.vue";
-import Thead from "#foundation/components/common/Thead.vue";
-import Tr from "#foundation/components/common/Tr.vue";
-import Ul from "#foundation/components/common/Ul.vue";
+import Ol from "#foundation/components/common/ol.vue";
+import P from "#foundation/components/common/p.vue";
+import Strong from "#foundation/components/common/strong.vue";
+import Table from "#foundation/components/common/table.vue";
+import Tbody from "#foundation/components/common/tbody.vue";
+import Td from "#foundation/components/common/td.vue";
+import Thead from "#foundation/components/common/thead.vue";
+import Tr from "#foundation/components/common/tr.vue";
+import Ul from "#foundation/components/common/ul.vue";
 </script>
 
 <script setup lang="ts">

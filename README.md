@@ -40,7 +40,7 @@ Each widget pairs a **factory** (`createTable`, `createForm`, …) that returns 
 Auto-import is **disabled** — everything is imported explicitly. Foundation-owned modules use the `#foundation/*` alias, an absolute path to the layer's `app/` so it keeps resolving to Foundation even when the layer is extended by a consumer app:
 
 ```ts
-import Button from "#foundation/components/common/Button.vue";
+import Button from "#foundation/components/common/button.vue";
 import { createTable } from "#foundation/factories/data/table";
 import type { ButtonProps } from "#foundation/types/common/button";
 ```

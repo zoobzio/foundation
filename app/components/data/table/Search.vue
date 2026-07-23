@@ -8,8 +8,8 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import { TABLE_SEARCH_DEBOUNCE } from "#foundation/constants/data/table";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import Fab from "#foundation/components/core/Fab.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Input from "#foundation/components/common/Input.vue";
+import Group from "#foundation/components/common/group.vue";
+import Input from "#foundation/components/common/input.vue";
 import Popover from "#foundation/components/core/Popover.vue";
 const { table, pt } = defineProps<DataTableSearchProps<T, K>>();
 

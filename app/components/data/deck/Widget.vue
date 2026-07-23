@@ -9,7 +9,7 @@ import type { IconAlias } from "#foundation/types/common/iconic";
 import DataDeckFeed from "#foundation/components/data/deck/Feed.vue";
 import DataDeckToolbar from "#foundation/components/data/deck/Toolbar.vue";
 import Fab from "#foundation/components/core/Fab.vue";
-import Group from "#foundation/components/common/Group.vue";
+import Group from "#foundation/components/common/group.vue";
 const { deck, pt } = defineProps<DataDeckProps<T>>();
 
 useLazyAsyncData(`init-deck-${useId()}`, deck.init, { server: false });

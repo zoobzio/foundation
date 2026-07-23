@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Img from "#foundation/components/common/Img.vue";
+import Img from "#foundation/components/common/img.vue";
 
 const factory = (props: Record<string, unknown> = {}) =>
   mount(Img, { props: { src: "test.png", ...props } });

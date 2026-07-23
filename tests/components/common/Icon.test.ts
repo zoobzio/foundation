@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Icon from "#foundation/components/common/Icon.vue";
+import Icon from "#foundation/components/common/icon.vue";
 
 const factory = (props: Record<string, unknown> = {}) =>
   mount(Icon, { props: { alias: "home", ...props } });

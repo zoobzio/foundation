@@ -5,7 +5,7 @@ import type { DataDeckFeedProps } from "#foundation/types/data/deck-feed";
 <script setup lang="ts" generic="T">
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import Group from "#foundation/components/common/Group.vue";
+import Group from "#foundation/components/common/group.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
 const { deck, pt } = defineProps<DataDeckFeedProps<T>>();
 

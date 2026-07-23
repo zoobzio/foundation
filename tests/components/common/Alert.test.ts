@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Alert from "#foundation/components/common/Alert.vue";
+import Alert from "#foundation/components/common/alert.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
-  mount(Alert, { props, slots, global: { stubs: { Icon: true } } });
+  mount(Alert, { props, slots });
 
 describe("Alert", () => {
   it("renders div with f-alert class and role='alert' by default", () => {
@@ -13,29 +13,14 @@ describe("Alert", () => {
     expect(wrapper.attributes("role")).toBe("alert");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "Error" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "Error" } });
     expect(wrapper.attributes("aria-label")).toBe("Error");
   });
 
   it("renders label as default slot text", () => {
     const wrapper = factory({ label: "Error" });
     expect(wrapper.text()).toBe("Error");
-  });
-
-  it("sets role attribute", () => {
-    const wrapper = factory({ role: "status" });
-    expect(wrapper.attributes("role")).toBe("status");
-  });
-
-  it("renders Icon when icon prop is provided", () => {
-    const wrapper = factory({ icon: "warning" });
-    expect(wrapper.findComponent({ name: "Icon" }).exists()).toBe(true);
-  });
-
-  it("does not render Icon without icon prop", () => {
-    const wrapper = factory();
-    expect(wrapper.findComponent({ name: "Icon" }).exists()).toBe(false);
   });
 
   it("renders custom slot content over label", () => {
