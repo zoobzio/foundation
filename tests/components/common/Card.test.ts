@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Card from "#foundation/components/common/Card.vue";
+import Card from "#foundation/components/common/card.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Card, { props, slots });
@@ -12,8 +12,8 @@ describe("Card", () => {
     expect(wrapper.classes()).toContain("f-card");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "My Card" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "My Card" } });
     expect(wrapper.attributes("aria-label")).toBe("My Card");
   });
 

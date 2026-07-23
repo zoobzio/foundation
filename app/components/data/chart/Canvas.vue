@@ -5,7 +5,7 @@ import type { DataChartCanvasProps } from "#foundation/types/data/chart-canvas";
 <script setup lang="ts" generic="T">
 import { onBeforeUnmount, useTemplateRef, watchEffect } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import Group from "#foundation/components/common/Group.vue";
+import Group from "#foundation/components/common/group.vue";
 const { chart, pt } = defineProps<DataChartCanvasProps<T>>();
 
 const el = useTemplateRef("el");

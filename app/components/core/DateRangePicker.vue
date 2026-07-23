@@ -28,9 +28,9 @@ import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
 import { DATE_RANGE_PICKER_NUMBER_OF_MONTHS, DATE_RANGE_PICKER_SIDE_OFFSET } from "#foundation/constants/core/date-range-picker";
-import Em from "#foundation/components/common/Em.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
+import Em from "#foundation/components/common/em.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
 const {
   modelValue,
   pt,

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Strong from "#foundation/components/common/Strong.vue";
+import Strong from "#foundation/components/common/strong.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Strong, { props, slots });

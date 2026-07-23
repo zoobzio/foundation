@@ -16,13 +16,13 @@ import { computed, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { Command } from "#foundation/utils/command";
 import { passthrough } from "#foundation/utils/passthrough";
-import Caption from "#foundation/components/common/Caption.vue";
+import Caption from "#foundation/components/common/caption.vue";
 import Checkbox from "#foundation/components/core/Checkbox.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
-import Kbd from "#foundation/components/common/Kbd.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
+import Kbd from "#foundation/components/common/kbd.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Span from "#foundation/components/common/span.vue";
 const {
   pt,
   groups,

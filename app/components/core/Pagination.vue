@@ -5,11 +5,11 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import { Pagination } from "#foundation/utils/pagination";
 import { PAGE_SIZE_OPTIONS } from "#foundation/constants/common/pagination";
-import Button from "#foundation/components/common/Button.vue";
+import Button from "#foundation/components/common/button.vue";
 import Fab from "#foundation/components/core/Fab.vue";
-import Group from "#foundation/components/common/Group.vue";
+import Group from "#foundation/components/common/group.vue";
 import Select from "#foundation/components/core/Select.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Span from "#foundation/components/common/span.vue";
 </script>
 
 <script setup lang="ts">

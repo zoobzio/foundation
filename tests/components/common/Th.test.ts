@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Th from "#foundation/components/common/Th.vue";
+import Th from "#foundation/components/common/th.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Th, { props, slots });

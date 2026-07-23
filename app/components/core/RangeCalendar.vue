@@ -22,8 +22,8 @@ import {
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
 const {
   modelValue,
   pt,

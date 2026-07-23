@@ -6,17 +6,17 @@ import type { DataFormFieldProps } from "#foundation/types/data/form-field";
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
-import Caption from "#foundation/components/common/Caption.vue";
+import Caption from "#foundation/components/common/caption.vue";
 import Checkbox from "#foundation/components/core/Checkbox.vue";
 import DatePicker from "#foundation/components/core/DatePicker.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Input from "#foundation/components/common/Input.vue";
-import Label from "#foundation/components/common/Label.vue";
+import Group from "#foundation/components/common/group.vue";
+import Input from "#foundation/components/common/input.vue";
+import Label from "#foundation/components/common/label.vue";
 import MultiSelect from "#foundation/components/core/MultiSelect.vue";
 import Radio from "#foundation/components/core/Radio.vue";
 import Select from "#foundation/components/core/Select.vue";
 import TagsInput from "#foundation/components/core/TagsInput.vue";
-import Textarea from "#foundation/components/common/Textarea.vue";
+import Textarea from "#foundation/components/common/textarea.vue";
 const { form, field, pt } = defineProps<DataFormFieldProps<T>>();
 
 const el = useTemplateRef("el");
@@ -71,7 +71,7 @@ const errorPT = usePassthrough(pt?.error, { props: {}, handlers: {} });
           placeholder: field.placeholder,
           disabled: field.disabled,
           required: field.required,
-          ariaInvalid: hasError,
+          aria: { invalid: hasError },
         },
         handlers: {},
       }).props"
@@ -89,7 +89,7 @@ const errorPT = usePassthrough(pt?.error, { props: {}, handlers: {} });
           placeholder: field.placeholder,
           disabled: field.disabled,
           required: field.required,
-          ariaInvalid: hasError,
+          aria: { invalid: hasError },
         },
         handlers: {},
       }).props"
@@ -110,7 +110,7 @@ const errorPT = usePassthrough(pt?.error, { props: {}, handlers: {} });
           disabled: field.disabled,
           required: field.required,
           rows: field.rows,
-          ariaInvalid: hasError,
+          aria: { invalid: hasError },
         },
         handlers: {},
       }).props"

@@ -3,7 +3,7 @@ import type { MarkdownProps } from "#foundation/types/core/markdown";
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { parseMarkdown } from "#foundation/utils/markdown";
-import Article from "#foundation/components/common/Article.vue";
+import Article from "#foundation/components/common/article.vue";
 import MarkdownNode from "#foundation/components/core/MarkdownNode.vue";
 </script>
 

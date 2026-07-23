@@ -4,12 +4,12 @@ import { computed, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { MultiSelect } from "#foundation/utils/multi-select";
 import { passthrough } from "#foundation/utils/passthrough";
-import Button from "#foundation/components/common/Button.vue";
+import Button from "#foundation/components/common/button.vue";
 import Checkbox from "#foundation/components/core/Checkbox.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
 import Popover from "#foundation/components/core/Popover.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Span from "#foundation/components/common/span.vue";
 </script>
 
 <script setup lang="ts">

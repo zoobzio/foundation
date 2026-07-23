@@ -4,9 +4,9 @@ import type { WorkspaceProps } from "#foundation/types/system/workspace";
 
 <script setup lang="ts">
 import { computed, useTemplateRef } from "#imports";
-import Footer from "#foundation/components/common/Footer.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Header from "#foundation/components/common/Header.vue";
+import Footer from "#foundation/components/common/footer.vue";
+import Group from "#foundation/components/common/group.vue";
+import Header from "#foundation/components/common/header.vue";
 const { workspace, pt } = defineProps<WorkspaceProps>();
 
 const el = useTemplateRef("el");

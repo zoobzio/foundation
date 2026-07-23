@@ -8,7 +8,7 @@ import { codeViewSearch, dispatchSearch, findNextMatch, findPrevMatch } from "#f
 import type { CodeViewProps } from "#foundation/types/core/code-view";
 import { onBeforeUnmount, useTemplateRef, watchEffect } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import Group from "#foundation/components/common/Group.vue";
+import Group from "#foundation/components/common/group.vue";
 </script>
 
 <script setup lang="ts">

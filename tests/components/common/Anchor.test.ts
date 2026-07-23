@@ -1,18 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Anchor from "#foundation/components/common/Anchor.vue";
+import Anchor from "#foundation/components/common/anchor.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Anchor, { props: { to: "/", ...props }, slots, global: { stubs: { NuxtLink: { template: '<a v-bind=""><slot /></a>' } } } });
 
 describe("Anchor", () => {
-  it("renders with f-a class", () => {
+  it("renders with f-anchor class", () => {
     const wrapper = factory();
-    expect(wrapper.find("a").classes()).toContain("f-a");
+    expect(wrapper.find("a").classes()).toContain("f-anchor");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "Home" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "Home" } });
     expect(wrapper.find("a").attributes("aria-label")).toBe("Home");
   });
 
@@ -41,13 +41,13 @@ describe("Anchor", () => {
     expect(wrapper.find("a").attributes("aria-disabled")).toBe("true");
   });
 
-  it("sets aria-current to 'page' when disabled and ariaCurrent explicitly undefined", () => {
-    const wrapper = factory({ disabled: true, ariaCurrent: undefined });
+  it("sets aria-current to 'page' when disabled", () => {
+    const wrapper = factory({ disabled: true });
     expect(wrapper.find("a").attributes("aria-current")).toBe("page");
   });
 
-  it("sets explicit ariaCurrent value when provided", () => {
-    const wrapper = factory({ ariaCurrent: "step" });
+  it("sets aria-current from the aria channel", () => {
+    const wrapper = factory({ aria: { current: "step" } });
     expect(wrapper.find("a").attributes("aria-current")).toBe("step");
   });
 

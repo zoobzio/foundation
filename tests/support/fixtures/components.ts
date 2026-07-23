@@ -20,7 +20,7 @@ import DateRangePicker from "#foundation/components/core/DateRangePicker.vue";
 import Dialog from "#foundation/components/core/Dialog.vue";
 import Fab from "#foundation/components/core/Fab.vue";
 import Facets from "#foundation/components/data/filter/Facets.vue";
-import Hero from "#foundation/components/common/Hero.vue";
+import Hero from "#foundation/components/core/Hero.vue";
 import Keywords from "#foundation/components/data/filter/Keywords.vue";
 import Listbox from "#foundation/components/core/Listbox.vue";
 import Menu from "#foundation/components/core/Menu.vue";

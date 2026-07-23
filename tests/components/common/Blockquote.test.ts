@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Blockquote from "#foundation/components/common/Blockquote.vue";
+import Blockquote from "#foundation/components/common/blockquote.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Blockquote, { props, slots });

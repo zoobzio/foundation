@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Input from "#foundation/components/common/Input.vue";
+import Input from "#foundation/components/common/input.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Input, { props, slots });
@@ -18,8 +18,8 @@ describe("Input", () => {
     expect(wrapper.attributes("type")).toBe("email");
   });
 
-  it("sets aria-label from label prop", () => {
-    const wrapper = factory({ label: "Email" });
+  it("sets aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "Email" } });
     expect(wrapper.attributes("aria-label")).toBe("Email");
   });
 
@@ -44,12 +44,12 @@ describe("Input", () => {
   });
 
   it("sets ariaDescribedby", () => {
-    const wrapper = factory({ ariaDescribedby: "help-text" });
+    const wrapper = factory({ aria: { describedby: "help-text" } });
     expect(wrapper.attributes("aria-describedby")).toBe("help-text");
   });
 
   it("sets ariaInvalid", () => {
-    const wrapper = factory({ ariaInvalid: true });
+    const wrapper = factory({ aria: { invalid: true } });
     expect(wrapper.attributes("aria-invalid")).toBe("true");
   });
 });

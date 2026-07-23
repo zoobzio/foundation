@@ -7,7 +7,7 @@ import type { ToastProps, ToastEmits } from "#foundation/types/core/toast";
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { TOAST_DURATION } from "#foundation/constants/core/toast";
-import Icon from "#foundation/components/common/Icon.vue";
+import Icon from "#foundation/components/common/icon.vue";
 const { title, description, variant = "info", duration = TOAST_DURATION, pt } = defineProps<ToastProps>();
 
 const emit = defineEmits<ToastEmits>();

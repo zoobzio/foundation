@@ -5,11 +5,11 @@ import type { DataFormProps } from "#foundation/types/data/form-widget";
 <script setup lang="ts" generic="T">
 import { computed, useId, useLazyAsyncData, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import Button from "#foundation/components/common/Button.vue";
+import Button from "#foundation/components/common/button.vue";
 import DataFormField from "#foundation/components/data/form/Field.vue";
-import Group from "#foundation/components/common/Group.vue";
+import Group from "#foundation/components/common/group.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Span from "#foundation/components/common/span.vue";
 const { form, pt } = defineProps<DataFormProps<T>>();
 
 useLazyAsyncData(`init-form-${useId()}`, form.init, { server: false });

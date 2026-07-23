@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { MarkdownPassthrough } from "#foundation/types/core/markdown";
 import { useHighlight } from "#foundation/composables/highlight";
-import Code from "#foundation/components/common/Code.vue";
-import Pre from "#foundation/components/common/Pre.vue";
+import Code from "#foundation/components/common/code.vue";
+import Pre from "#foundation/components/common/pre.vue";
 </script>
 
 <script setup lang="ts">

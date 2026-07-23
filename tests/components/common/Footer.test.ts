@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Footer from "#foundation/components/common/Footer.vue";
+import Footer from "#foundation/components/common/footer.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Footer, { props, slots });
@@ -12,8 +12,8 @@ describe("Footer", () => {
     expect(wrapper.classes()).toContain("f-footer");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "My Footer" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "My Footer" } });
     expect(wrapper.attributes("aria-label")).toBe("My Footer");
   });
 

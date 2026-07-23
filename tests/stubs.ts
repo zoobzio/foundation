@@ -18,6 +18,16 @@ export const createScopedStub = (name: string, slotProps: Record<string, unknown
     },
   });
 
+// Common components scope their default slot as { ctx }; expose attrs as ctx.
+export const createCtxStub = (name: string, tag = "div") =>
+  defineComponent({
+    name,
+    inheritAttrs: false,
+    setup(_, { attrs, slots }) {
+      return () => h(tag, { ...attrs }, slots.default?.({ ctx: attrs }));
+    },
+  });
+
 export const createAllSlotsStub = (name: string, tag = "div") =>
   defineComponent({
     name,
@@ -65,7 +75,7 @@ export const commonStubs = {
   Td: createStub("Td", "td"),
   Anchor: createStub("Anchor", "a"),
   Img: createStub("Img", "img"),
-  Chip: createStub("Chip", "button"),
+  Chip: createCtxStub("Chip", "button"),
   Article: createStub("Article", "article"),
   Strong: createStub("Strong", "strong"),
   Del: createStub("Del", "del"),

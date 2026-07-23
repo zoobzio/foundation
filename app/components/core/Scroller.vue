@@ -7,9 +7,9 @@ import type { ScrollerProps } from "#foundation/types/core/scroller";
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { SCROLLER_HIDE_DELAY } from "#foundation/constants/core/scroller";
-import Button from "#foundation/components/common/Button.vue";
-import Icon from "#foundation/components/common/Icon.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Button from "#foundation/components/common/button.vue";
+import Icon from "#foundation/components/common/icon.vue";
+import Span from "#foundation/components/common/span.vue";
 const {
   type = "hover",
   scrollHideDelay = SCROLLER_HIDE_DELAY,

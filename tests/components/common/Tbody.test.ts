@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Tbody from "#foundation/components/common/Tbody.vue";
+import Tbody from "#foundation/components/common/tbody.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Tbody, { props, slots });

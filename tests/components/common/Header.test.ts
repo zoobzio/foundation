@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Header from "#foundation/components/common/Header.vue";
+import Header from "#foundation/components/common/header.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
   mount(Header, { props, slots });
@@ -12,8 +12,8 @@ describe("Header", () => {
     expect(wrapper.classes()).toContain("f-header");
   });
 
-  it("binds aria-label from label prop", () => {
-    const wrapper = factory({ label: "My Header" });
+  it("binds aria-label from the aria channel", () => {
+    const wrapper = factory({ aria: { label: "My Header" } });
     expect(wrapper.attributes("aria-label")).toBe("My Header");
   });
 

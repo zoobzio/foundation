@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Fieldset from "#foundation/components/common/Fieldset.vue";
+import Fieldset from "#foundation/components/common/fieldset.vue";
 
 const factory = (props: Record<string, unknown> = {}, slots: Record<string, string> = {}) =>
   mount(Fieldset, { props, slots });

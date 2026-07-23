@@ -28,7 +28,7 @@ import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { passthrough } from "#foundation/utils/passthrough";
 import { DATE_PICKER_SIDE_OFFSET } from "#foundation/constants/core/date-picker";
-import Icon from "#foundation/components/common/Icon.vue";
+import Icon from "#foundation/components/common/icon.vue";
 const {
   modelValue,
   pt,

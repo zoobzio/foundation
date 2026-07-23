@@ -9,12 +9,12 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import { AUTOCOMPLETE_BLUR_DELAY_MS } from "#foundation/constants/common/autocomplete";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import { passthrough } from "#foundation/utils/passthrough";
-import Button from "#foundation/components/common/Button.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Icon from "#foundation/components/common/Icon.vue";
-import Input from "#foundation/components/common/Input.vue";
+import Button from "#foundation/components/common/button.vue";
+import Group from "#foundation/components/common/group.vue";
+import Icon from "#foundation/components/common/icon.vue";
+import Input from "#foundation/components/common/input.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Span from "#foundation/components/common/span.vue";
 </script>
 
 <script setup lang="ts">

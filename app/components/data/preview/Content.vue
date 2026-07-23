@@ -5,13 +5,13 @@ import type { DataPreviewContentProps } from "#foundation/types/data/preview-con
 <script setup lang="ts" generic="T">
 import { computed, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import Chip from "#foundation/components/common/Chip.vue";
+import Chip from "#foundation/components/common/chip.vue";
 import CodeView from "#foundation/components/core/CodeView.vue";
 import Fab from "#foundation/components/core/Fab.vue";
-import Group from "#foundation/components/common/Group.vue";
-import Input from "#foundation/components/common/Input.vue";
+import Group from "#foundation/components/common/group.vue";
+import Input from "#foundation/components/common/input.vue";
 import Scroller from "#foundation/components/core/Scroller.vue";
-import Span from "#foundation/components/common/Span.vue";
+import Span from "#foundation/components/common/span.vue";
 const { preview, pt } = defineProps<DataPreviewContentProps<T>>();
 
 const el = useTemplateRef("el");
