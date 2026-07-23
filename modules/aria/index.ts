@@ -1,5 +1,5 @@
 import { addTypeTemplate, defineNuxtModule } from "@nuxt/kit";
-import { generateA11yTypes } from "#modules/a11y/template";
+import { generateA11yTypes } from "#modules/aria/template";
 
 /**
  * Generates the ARIA role registry consumed by `AriaProps` from the WAI-ARIA
@@ -10,12 +10,12 @@ import { generateA11yTypes } from "#modules/a11y/template";
  */
 export default defineNuxtModule({
   meta: {
-    name: "a11y",
-    configKey: "a11y",
+    name: "aria",
+    configKey: "aria",
   },
   setup() {
     addTypeTemplate({
-      filename: "types/a11y.d.ts",
+      filename: "types/aria.d.ts",
       write: true,
       getContents: () => generateA11yTypes(),
     });

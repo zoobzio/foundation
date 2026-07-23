@@ -1,4 +1,5 @@
-import { roles, type ARIARoleDefinitionKey } from "aria-query";
+import type { ARIARoleDefinitionKey } from "aria-query";
+import { roles } from "aria-query";
 
 const INDENT = "  ";
 

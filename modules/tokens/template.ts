@@ -1,4 +1,4 @@
-import type { ComponentTokensInput } from "#modules/dtcg/types";
+import type { ComponentTokensInput } from "#modules/tokens/types";
 
 import components from "#config/components";
 import { keys } from "objectively";
