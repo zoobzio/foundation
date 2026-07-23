@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { ButtonProps } from "#foundation/types/common/button";
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/binding";
+import { useBindings } from "#foundation/composables/bindings";
 </script>
 
 <script setup lang="ts">
