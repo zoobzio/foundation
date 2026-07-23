@@ -1,6 +1,12 @@
 <script lang="ts">
-import type { ButtonProps } from "#foundation/types/common/button";
-import { useTemplateRef } from "#imports";
+import type {
+  ButtonBindings,
+  ButtonContext,
+  ButtonProps,
+  ButtonSlots,
+} from "#foundation/types/common/button";
+
+import { useTemplateRef, computed } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
 </script>
 
@@ -14,10 +20,26 @@ const {
   aria,
 } = defineProps<ButtonProps>();
 
-const bindings = useBindings(modifiers, tokens, aria);
+defineSlots<ButtonSlots>();
 
-const el = useTemplateRef("el");
-defineExpose({ el });
+const el = useTemplateRef<HTMLButtonElement>("el");
+
+const bindings = computed<ButtonBindings>(() =>
+  useBindings<"button">(modifiers, tokens, aria),
+);
+
+const ctx = computed<ButtonContext>(() => ({
+  label,
+  type,
+  disabled,
+  modifiers,
+  tokens,
+  aria,
+  bindings: bindings.value,
+  el: el.value,
+}));
+
+defineExpose({ ctx });
 </script>
 
 <template>
@@ -28,6 +50,6 @@ defineExpose({ el });
     class="f-button"
     v-bind="bindings"
   >
-    <slot>{{ label }}</slot>
+    <slot :ctx="ctx">{{ label }}</slot>
   </button>
 </template>

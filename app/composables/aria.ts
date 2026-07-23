@@ -1,4 +1,5 @@
-import type { AriaBindings, AriaProps, Role } from "#foundation/types/aria";
+import type { AriaBindings, AriaProps } from "#foundation/types/aria";
+import type { Component } from "#foundation/types/component";
 
 import { rekey } from "objectively";
 
@@ -14,7 +15,7 @@ import { rekey } from "objectively";
  * @param props - ARIA attributes without the `aria-` prefix.
  * @returns The `aria-*` bindings, ready to spread with `v-bind`.
  */
-export const useAria = <T extends Role>(
+export const useAria = <T extends Component>(
   props?: AriaProps<T>,
 ): AriaBindings<T> => {
   if (!props) {
