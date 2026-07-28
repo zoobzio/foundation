@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type CodeProps = {
   aria?: AriaProps<"code">;
 };
 
+export type CodeEmits = ComponentEvents["code"];
+
 export type CodeBindings = Bindings<"code">;
 
 export type CodeContext = CodeProps & {
@@ -19,5 +22,5 @@ export type CodeContext = CodeProps & {
 };
 
 export type CodeSlots = {
-  default(props: { ctx: CodeContext }): VNode[];
+  default(props: CodeContext): VNode[];
 };

@@ -7,12 +7,12 @@ import { computed, ref, useId, useLazyAsyncData, useTemplateRef } from "#imports
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import Button from "#foundation/components/common/button.vue";
-import Command from "#foundation/components/core/Command.vue";
+import Command from "#foundation/components/core/command.vue";
 import DataChartCanvas from "#foundation/components/data/chart/Canvas.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 import Icon from "#foundation/components/common/icon.vue";
-import Popover from "#foundation/components/core/Popover.vue";
+import Popover from "#foundation/components/core/popover.vue";
 const { chart, pt } = defineProps<DataChartProps<T>>();
 
 useLazyAsyncData(`init-chart-${useId()}`, chart.init, { server: false });

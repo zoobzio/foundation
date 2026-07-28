@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  CaptionBindings,
   CaptionContext,
   CaptionProps,
   CaptionSlots,
 } from "#foundation/types/common/caption";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<CaptionProps>();
 
-defineSlots<CaptionSlots>();
-
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const bindings = computed<CaptionBindings>(() =>
-  useBindings<"caption">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"caption">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<CaptionContext>(() => ({
+const ctx = useContext<CaptionContext>("caption", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<CaptionContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<CaptionSlots>();
 </script>
 
 <template>
   <div ref="el" class="f-caption" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </div>
 </template>

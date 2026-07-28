@@ -1,7 +1,7 @@
 import type { CaptionProps } from "#foundation/types/common/caption";
 import type { GroupProps } from "#foundation/types/common/group";
 import type { FabProps } from "#foundation/types/core/fab";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { PopoverEmits, PopoverProps } from "#foundation/types/core/popover";
 import type { Recipe } from "#foundation/types/core/recipe";
 import type { SegmentedControlEmits, SegmentedControlProps } from "#foundation/types/core/segmented-control";

@@ -8,7 +8,7 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import Button from "#foundation/components/common/button.vue";
 import DataFormField from "#foundation/components/data/form/Field.vue";
 import Group from "#foundation/components/common/group.vue";
-import Scroller from "#foundation/components/core/Scroller.vue";
+import Scroller from "#foundation/components/core/scroller.vue";
 import Span from "#foundation/components/common/span.vue";
 const { form, pt } = defineProps<DataFormProps<T>>();
 

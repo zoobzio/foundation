@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  UlBindings,
   UlContext,
   UlProps,
   UlSlots,
 } from "#foundation/types/common/ul";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { modifiers, tokens, aria } = defineProps<UlProps>();
 
-defineSlots<UlSlots>();
-
 const el = useTemplateRef<HTMLUListElement>("el");
 
-const bindings = computed<UlBindings>(() =>
-  useBindings<"ul">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"ul">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<UlContext>(() => ({
+const ctx = useContext<UlContext>("ul", () => ({
   modifiers,
   tokens,
   aria,
@@ -30,10 +31,11 @@ const ctx = computed<UlContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<UlSlots>();
 </script>
 
 <template>
   <ul ref="el" class="f-ul" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </ul>
 </template>

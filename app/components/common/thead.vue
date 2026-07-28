@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  TheadBindings,
   TheadContext,
   TheadProps,
   TheadSlots,
 } from "#foundation/types/common/thead";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { modifiers, tokens, aria } = defineProps<TheadProps>();
 
-defineSlots<TheadSlots>();
-
 const el = useTemplateRef<HTMLTableSectionElement>("el");
 
-const bindings = computed<TheadBindings>(() =>
-  useBindings<"thead">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"thead">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<TheadContext>(() => ({
+const ctx = useContext<TheadContext>("thead", () => ({
   modifiers,
   tokens,
   aria,
@@ -30,10 +31,11 @@ const ctx = computed<TheadContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<TheadSlots>();
 </script>
 
 <template>
   <thead ref="el" class="f-thead" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </thead>
 </template>

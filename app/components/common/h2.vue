@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  H2Bindings,
   H2Context,
   H2Props,
   H2Slots,
 } from "#foundation/types/common/h2";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<H2Props>();
 
-defineSlots<H2Slots>();
-
 const el = useTemplateRef<HTMLHeadingElement>("el");
 
-const bindings = computed<H2Bindings>(() =>
-  useBindings<"h2">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"h2">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<H2Context>(() => ({
+const ctx = useContext<H2Context>("h2", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<H2Context>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<H2Slots>();
 </script>
 
 <template>
   <h2 ref="el" class="f-h2" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </h2>
 </template>

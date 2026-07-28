@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type BannerProps = {
   aria?: AriaProps<"banner">;
 };
 
+export type BannerEmits = ComponentEvents["banner"];
+
 export type BannerBindings = Bindings<"banner">;
 
 export type BannerContext = BannerProps & {
@@ -19,5 +22,5 @@ export type BannerContext = BannerProps & {
 };
 
 export type BannerSlots = {
-  default(props: { ctx: BannerContext }): VNode[];
+  default(props: BannerContext): VNode[];
 };

@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -10,6 +11,8 @@ export type OlProps = {
   aria?: AriaProps<"ol">;
 };
 
+export type OlEmits = ComponentEvents["ol"];
+
 export type OlBindings = Bindings<"ol">;
 
 export type OlContext = OlProps & {
@@ -18,5 +21,5 @@ export type OlContext = OlProps & {
 };
 
 export type OlSlots = {
-  default(props: { ctx: OlContext }): VNode[];
+  default(props: OlContext): VNode[];
 };

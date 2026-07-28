@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type LabelProps = {
   aria?: AriaProps<"label">;
 };
 
+export type LabelEmits = ComponentEvents["label"];
+
 export type LabelBindings = Bindings<"label">;
 
 export type LabelContext = LabelProps & {
@@ -19,5 +22,5 @@ export type LabelContext = LabelProps & {
 };
 
 export type LabelSlots = {
-  default(props: { ctx: LabelContext }): VNode[];
+  default(props: LabelContext): VNode[];
 };

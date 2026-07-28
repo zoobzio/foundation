@@ -72,29 +72,47 @@ describe("useAria", () => {
 });
 
 describe("useBindings", () => {
-  it("merges modifiers, tokens, and aria into one flat object", () => {
-    expect(
-      useBindings<"button", "button">(
-        { variant: "solid" },
-        { "primary-500": "{primary-600}" },
-        { pressed: true },
-      ),
-    ).toEqual({
+  it("merges channels and forward into one computed", () => {
+    const bindings = useBindings<"button">(() => ({
+      modifiers: { variant: "solid" },
+      tokens: { "primary-500": "{primary-600}" },
+      aria: { pressed: true },
+      forward: {},
+    }));
+    expect(bindings.value).toEqual({
       "data-variant": "solid",
       style: "--primary-500: var(--primary-600)",
       "aria-pressed": true,
     });
   });
 
-  it("omits sources that are not provided", () => {
-    expect(
-      useBindings<"button", "button">(undefined, undefined, { label: "Go" }),
-    ).toEqual({
-      "aria-label": "Go",
-    });
+  it("includes forwarded props verbatim", () => {
+    const bindings = useBindings<"button", { type?: string }>(() => ({
+      modifiers: undefined,
+      tokens: undefined,
+      aria: undefined,
+      forward: { type: "submit" },
+    }));
+    expect(bindings.value).toEqual({ type: "submit" });
   });
 
-  it("returns {} when every source is absent", () => {
-    expect(useBindings()).toEqual({});
+  it("omits channels that are not provided", () => {
+    const bindings = useBindings<"button">(() => ({
+      aria: { label: "Go" },
+      forward: {},
+    }));
+    expect(bindings.value).toEqual({ "aria-label": "Go" });
+  });
+
+  it("tracks the source reactively", async () => {
+    const { ref } = await import("vue");
+    const pressed = ref(false);
+    const bindings = useBindings<"button">(() => ({
+      aria: { pressed: pressed.value },
+      forward: {},
+    }));
+    expect(bindings.value["aria-pressed"]).toBe(false);
+    pressed.value = true;
+    expect(bindings.value["aria-pressed"]).toBe(true);
   });
 });

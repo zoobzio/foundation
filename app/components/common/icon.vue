@@ -1,12 +1,12 @@
 <script lang="ts">
 import type {
-  IconBindings,
   IconContext,
   IconProps,
 } from "#foundation/types/common/icon";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
@@ -14,11 +14,14 @@ const { alias, label, modifiers, tokens, aria } = defineProps<IconProps>();
 
 const el = useTemplateRef<SVGSVGElement>("el");
 
-const bindings = computed<IconBindings>(() =>
-  useBindings<"icon">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"icon">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<IconContext>(() => ({
+const ctx = useContext<IconContext>("icon", () => ({
   alias,
   label,
   modifiers,

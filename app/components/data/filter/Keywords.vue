@@ -4,13 +4,13 @@ import { computed, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import { Keywords } from "#foundation/utils/keywords";
-import { MATCH_OPTIONS } from "#foundation/constants/common/keywords";
+import { MATCH_OPTIONS } from "#foundation/constants/keywords";
 import Caption from "#foundation/components/common/caption.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
-import Popover from "#foundation/components/core/Popover.vue";
-import SegmentedControl from "#foundation/components/core/SegmentedControl.vue";
-import TagsInput from "#foundation/components/core/TagsInput.vue";
+import Popover from "#foundation/components/core/popover.vue";
+import SegmentedControl from "#foundation/components/core/segmented-control.vue";
+import TagsInput from "#foundation/components/core/tags-input.vue";
 </script>
 
 <script setup lang="ts">

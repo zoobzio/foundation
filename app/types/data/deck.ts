@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataDeckSnapshot } from "#foundation/schemas/data/deck";
+import type { DataDeckSnapshot } from "#foundation/schemas/deck";
 import type { FacetGroup, MatchMode } from "#foundation/types/data/table";
 /**
  * Date field config — available sort fields for the deck.

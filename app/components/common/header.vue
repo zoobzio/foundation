@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  HeaderBindings,
   HeaderContext,
   HeaderProps,
   HeaderSlots,
 } from "#foundation/types/common/header";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<HeaderProps>();
 
-defineSlots<HeaderSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<HeaderBindings>(() =>
-  useBindings<"header">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"header">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<HeaderContext>(() => ({
+const ctx = useContext<HeaderContext>("header", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<HeaderContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<HeaderSlots>();
 </script>
 
 <template>
   <header ref="el" class="f-header" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </header>
 </template>

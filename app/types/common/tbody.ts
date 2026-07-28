@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -10,6 +11,8 @@ export type TbodyProps = {
   aria?: AriaProps<"tbody">;
 };
 
+export type TbodyEmits = ComponentEvents["tbody"];
+
 export type TbodyBindings = Bindings<"tbody">;
 
 export type TbodyContext = TbodyProps & {
@@ -18,5 +21,5 @@ export type TbodyContext = TbodyProps & {
 };
 
 export type TbodySlots = {
-  default(props: { ctx: TbodyContext }): VNode[];
+  default(props: TbodyContext): VNode[];
 };

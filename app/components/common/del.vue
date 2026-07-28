@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  DelBindings,
   DelContext,
   DelProps,
   DelSlots,
 } from "#foundation/types/common/del";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<DelProps>();
 
-defineSlots<DelSlots>();
-
 const el = useTemplateRef<HTMLModElement>("el");
 
-const bindings = computed<DelBindings>(() =>
-  useBindings<"del">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"del">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<DelContext>(() => ({
+const ctx = useContext<DelContext>("del", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<DelContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<DelSlots>();
 </script>
 
 <template>
   <del ref="el" class="f-del" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </del>
 </template>

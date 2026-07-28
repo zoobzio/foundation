@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataFormSnapshot } from "#foundation/schemas/data/form";
+import type { DataFormSnapshot } from "#foundation/schemas/form";
 import type { Option } from "#foundation/types/core/common";
 import type { ZodType } from "zod";
 
@@ -146,7 +146,11 @@ export interface Form<T> {
   readonly fields: DataFormField<T>[];
 
   // Actions
-  setValue: <K extends keyof T>(key: K, value: T[K]) => void;
+  // The data-form write path is dynamic (fields are configured at runtime and
+  // values arrive from the DOM as `unknown`); Zod validates on submit. A
+  // strict `<K>(key, value: T[K])` would force every field wrapper to cast at
+  // the DOM boundary, so the setter accepts `unknown`.
+  setValue: (key: keyof T, value: unknown) => void;
   touch: (key: keyof T) => void;
   validate: () => boolean;
   validateField: (key: keyof T) => void;

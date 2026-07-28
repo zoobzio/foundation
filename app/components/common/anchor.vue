@@ -1,14 +1,15 @@
 <script lang="ts">
 import type {
-  AnchorBindings,
   AnchorContext,
+  AnchorEmits,
   AnchorProps,
   AnchorSlots,
 } from "#foundation/types/common/anchor";
 import type { ComponentPublicInstance } from "vue";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
@@ -25,15 +26,18 @@ const {
   aria,
 } = defineProps<AnchorProps>();
 
-defineSlots<AnchorSlots>();
+const emit = defineEmits<AnchorEmits>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const bindings = computed<AnchorBindings>(() =>
-  useBindings<"anchor">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"anchor">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<AnchorContext>(() => ({
+const ctx = useContext<AnchorContext>("anchor", () => ({
   label,
   to,
   external,
@@ -49,6 +53,7 @@ const ctx = computed<AnchorContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<AnchorSlots>();
 </script>
 
 <template>
@@ -63,7 +68,8 @@ defineExpose({ ctx });
     :aria-current="disabled ? 'page' : undefined"
     class="f-anchor"
     v-bind="bindings"
+    @click="emit('click', $event)"
   >
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </NuxtLink>
 </template>

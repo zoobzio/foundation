@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataTableSnapshot } from "#foundation/schemas/data/table";
+import type { DataTableSnapshot } from "#foundation/schemas/table";
 import type { IconAlias } from "#foundation/types/common/iconic";
 /**
  * Column data type — drives rendering, filtering, and sorting behavior.

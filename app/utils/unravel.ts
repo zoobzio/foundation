@@ -1,6 +1,11 @@
 import type { IconAlias } from "#foundation/types/common/iconic";
 import type { AutocompleteItem } from "#foundation/types/data/filter-autocomplete";
-import type { DataTableColumn, TableFilter } from "#foundation/types/data/table";
+import type {
+  DataTableColumn,
+  TableFilter,
+} from "#foundation/types/data/table";
+
+import { date } from "#foundation/utils/format";
 
 export interface UnravelResult<T> {
   inputValue: string;
@@ -13,13 +18,6 @@ export interface UnravelResult<T> {
   /** For enum unravel: the namespaced facet key to remove from selectedFacets */
   removeFacetKey: string | null;
 }
-
-export const formatDate = (d: Date) => {
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(d.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-};
 
 /**
  * Given the last filter in the list and the column definitions,
@@ -43,7 +41,11 @@ export const unravelFilter = <T>(
       lockedOperator: null,
       lockedDate1: null,
       lockedSteps: [
-        { label: col.label, value: String(col.key), icon: "filter" as IconAlias },
+        {
+          label: col.label,
+          value: String(col.key),
+          icon: "filter" as IconAlias,
+        },
       ],
       removeIndex: -1,
       removeFacetKey: `${filter.field}:${lastVal}`,
@@ -55,14 +57,18 @@ export const unravelFilter = <T>(
     const col = columns.find((c) => String(c.key) === filter.field);
     if (!col) return null;
     const op = filter.operator === "before" ? "<" : ">";
-    const dateStr = formatDate(filter.value.value);
+    const dateStr = date(filter.value.value);
     return {
       inputValue: `${col.label}${op}${dateStr.slice(0, -1)}`,
       lockedField: col,
       lockedOperator: op,
       lockedDate1: null,
       lockedSteps: [
-        { label: col.label, value: String(col.key), icon: "calendar" as IconAlias },
+        {
+          label: col.label,
+          value: String(col.key),
+          icon: "calendar" as IconAlias,
+        },
         {
           label: op === ">" ? "After" : "Before",
           value: op,
@@ -78,15 +84,19 @@ export const unravelFilter = <T>(
   if (filter.value.type === "date_range") {
     const col = columns.find((c) => String(c.key) === filter.field);
     if (!col) return null;
-    const date1 = formatDate(filter.value.value[0]);
-    const date2 = formatDate(filter.value.value[1]);
+    const date1 = date(filter.value.value[0]);
+    const date2 = date(filter.value.value[1]);
     return {
       inputValue: `${col.label}><${date1},${date2.slice(0, -1)}`,
       lockedField: col,
       lockedOperator: "><",
       lockedDate1: date1,
       lockedSteps: [
-        { label: col.label, value: String(col.key), icon: "calendar" as IconAlias },
+        {
+          label: col.label,
+          value: String(col.key),
+          icon: "calendar" as IconAlias,
+        },
         { label: "Between", value: "><", hasChildren: true },
         { label: date1, value: date1, hasChildren: true },
       ],

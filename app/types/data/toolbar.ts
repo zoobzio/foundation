@@ -1,5 +1,5 @@
 import type { GroupProps } from "#foundation/types/common/group";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { Deck } from "#foundation/types/data/deck";
 
 export type DataDeckToolbarPassthrough = {

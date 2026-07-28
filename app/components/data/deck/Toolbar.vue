@@ -5,15 +5,15 @@ import type { DataDeckToolbarProps } from "#foundation/types/data/toolbar";
 <script setup lang="ts" generic="T">
 import { computed, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import { DECK_SEARCH_DEBOUNCE } from "#foundation/constants/data/deck";
+import { DECK_SEARCH_DEBOUNCE } from "#foundation/constants/deck";
 import Button from "#foundation/components/common/button.vue";
-import Command from "#foundation/components/core/Command.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Command from "#foundation/components/core/command.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Facets from "#foundation/components/data/filter/Facets.vue";
 import Group from "#foundation/components/common/group.vue";
 import Icon from "#foundation/components/common/icon.vue";
 import Input from "#foundation/components/common/input.vue";
-import Popover from "#foundation/components/core/Popover.vue";
+import Popover from "#foundation/components/core/popover.vue";
 const { deck, pt } = defineProps<DataDeckToolbarProps<T>>();
 
 const el = useTemplateRef("el");

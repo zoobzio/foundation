@@ -6,7 +6,7 @@ import type { TdProps } from "#foundation/types/common/td";
 import type { ThProps } from "#foundation/types/common/th";
 import type { TheadProps } from "#foundation/types/common/thead";
 import type { DialogEmits, DialogProps } from "#foundation/types/core/dialog";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { DataTableColumn } from "#foundation/types/data/table";
 
 export type DataTableFilterHelpPassthrough = {

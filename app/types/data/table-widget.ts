@@ -1,7 +1,7 @@
 import type { GroupProps } from "#foundation/types/common/group";
 import type { TableProps } from "#foundation/types/common/table";
 import type { PaginationEmits, PaginationProps } from "#foundation/types/core/pagination";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { ScrollerEmits, ScrollerProps } from "#foundation/types/core/scroller";
 import type { Table } from "#foundation/types/data/table";
 import type { DataTableFiltersPassthrough } from "#foundation/types/data/table-filters";

@@ -1,15 +1,17 @@
 <script lang="ts">
-import { ConfigProvider, TooltipProvider } from "reka-ui";
+import type { AppError } from "#foundation/types/error";
+
+import TooltipProvider from "#foundation/components/common/tooltip/provider.vue";
+import Toast from "#foundation/components/core/toast.vue";
+import Toaster from "#foundation/components/core/toaster.vue";
+
+import { ConfigProvider } from "reka-ui";
+import { useHead, useId } from "#imports";
+import { useNotifications } from "~/composables/notification";
+import { severityToVariant } from "#foundation/constants/error";
 </script>
 
 <script setup lang="ts">
-import { useHead, useId } from "#imports";
-import { useToasts } from "#foundation/composables/toasts";
-import { severityToVariant } from "#foundation/constants/system/error";
-import type { AppError } from "#foundation/types/error";
-import Toast from "#foundation/components/core/Toast.vue";
-import Toaster from "#foundation/components/core/Toaster.vue";
-
 const useIdFunction = () => useId();
 
 useHead({
@@ -18,21 +20,21 @@ useHead({
   },
 });
 
-const toasts = useToasts();
+const { notifications, push, remove } = useNotifications();
 
 const onError = (err: unknown) => {
   const payload =
     err instanceof Error && "data" in err ? (err as AppError).data : undefined;
 
   if (payload?.severity) {
-    toasts.push({
+    push({
       title: (err as AppError).message,
       variant: severityToVariant[payload.severity],
     });
     return;
   }
 
-  toasts.push({
+  push({
     title: err instanceof Error ? err.message : "An unexpected error occurred",
     variant: "error",
   });
@@ -51,12 +53,12 @@ const onError = (err: unknown) => {
       <Toaster>
         <template #toasts>
           <Toast
-            v-for="t in toasts.items.value"
-            :key="t.id"
-            :title="t.title"
-            :description="t.description"
-            :variant="t.variant"
-            @close="toasts.remove(t.id)"
+            v-for="notification in notifications"
+            :key="notification.id"
+            :title="notification.title"
+            :description="notification.description"
+            :pt="{ root: { modifiers: { variant: notification.variant } } }"
+            @close="remove(notification.id)"
           />
         </template>
       </Toaster>

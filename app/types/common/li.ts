@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type LiProps = {
   aria?: AriaProps<"li">;
 };
 
+export type LiEmits = ComponentEvents["li"];
+
 export type LiBindings = Bindings<"li">;
 
 export type LiContext = LiProps & {
@@ -19,5 +22,5 @@ export type LiContext = LiProps & {
 };
 
 export type LiSlots = {
-  default(props: { ctx: LiContext }): VNode[];
+  default(props: LiContext): VNode[];
 };

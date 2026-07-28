@@ -1,11 +1,14 @@
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
-export function passthrough<P, E = {}>(
-  userPT: Passthrough<P, E> | undefined,
-  localPT: Recipe<P, E>,
-): Recipe<P, E> {
-  return {
-    props: { ...localPT.props, ...userPT?.props },
-    handlers: { ...localPT.handlers, ...userPT?.handlers },
-  };
-}
+import type { Passthrough, PT } from "#foundation/types/passthrough";
+
+import { rekey } from "objectively";
+import { merge } from "#foundation/utils/merge";
+
+export const passthrough = <P, E = {}>(
+  userPT: PT<Passthrough<P, E>> | undefined,
+  localPT: Passthrough<P, E>,
+): Passthrough<P, E> => {
+  return rekey<Record<string, unknown>, Passthrough<P, E>>(
+    merge(userPT ?? {}, localPT),
+    (key, value) => [key, value],
+  );
+};

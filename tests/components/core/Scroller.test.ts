@@ -3,17 +3,20 @@ import { mount } from "@vue/test-utils";
 import { defineComponent, h, nextTick } from "vue";
 import { mountScroller } from "#test/support/fixtures/components";
 import { commonStubs, rekaStubs } from "#test/stubs";
-import Scroller from "#foundation/components/core/Scroller.vue";
+import Scroller from "#foundation/components/core/scroller.vue";
 
+// Core tests stub the tier below: the scroll-area wrappers are replaced by
+// their reka names and the common components (Button/Icon/Span) by name, so
+// assertions target the stubs' bound props/attrs.
 describe("Scroller", () => {
   describe("static", () => {
     const wrapper = mountScroller();
 
-    it("renders root with f-scroller-root class", () => {
-      expect(wrapper.find(".f-scroller-root").exists()).toBe(true);
+    it("renders the root wrapper part", () => {
+      expect(wrapper.findComponent({ name: "ScrollAreaRoot" }).exists()).toBe(true);
     });
 
-    it("shows vertical scrollbar by default", () => {
+    it("shows a single vertical scrollbar by default", () => {
       const scrollbars = wrapper.findAllComponents({ name: "ScrollAreaScrollbar" });
       expect(scrollbars).toHaveLength(1);
       expect(scrollbars[0].attributes("orientation")).toBe("vertical");
@@ -21,14 +24,14 @@ describe("Scroller", () => {
   });
 
   describe("conditional", () => {
-    it("shows horizontal scrollbar when orientation='horizontal'", () => {
+    it("shows a horizontal scrollbar when orientation='horizontal'", () => {
       const wrapper = mountScroller({ orientation: "horizontal" });
       const scrollbars = wrapper.findAllComponents({ name: "ScrollAreaScrollbar" });
       expect(scrollbars).toHaveLength(1);
       expect(scrollbars[0].attributes("orientation")).toBe("horizontal");
     });
 
-    it("shows both scrollbars and corner when orientation='both'", () => {
+    it("shows both scrollbars and the corner when orientation='both'", () => {
       const wrapper = mountScroller({ orientation: "both" });
       const scrollbars = wrapper.findAllComponents({ name: "ScrollAreaScrollbar" });
       expect(scrollbars).toHaveLength(2);
@@ -37,92 +40,92 @@ describe("Scroller", () => {
   });
 
   describe("scroll tracking", () => {
-    const createViewportStub = () => {
-      let scrollHandler: ((e: Event) => void) | null = null;
-      const viewportEl = document.createElement("div");
-      Object.defineProperty(viewportEl, "scrollTop", { value: 0, writable: true });
-      viewportEl.addEventListener = vi.fn((event: string, handler: EventListenerOrEventListenerObject) => {
-        if (event === "scroll") scrollHandler = handler as (e: Event) => void;
-      });
-      viewportEl.removeEventListener = vi.fn();
-      viewportEl.scrollTo = vi.fn();
-
-      const ScrollAreaViewportStub = defineComponent({
-        name: "ScrollAreaViewport",
-        inheritAttrs: false,
-        setup(_, { attrs, slots, expose }) {
-          expose({ viewportElement: viewportEl });
-          return () => h("div", { ...attrs }, slots.default?.());
-        },
-      });
-
-      return { viewportEl, ScrollAreaViewportStub, getScrollHandler: () => scrollHandler };
-    };
+    // The core reaches the viewport DOM through the wrapper instance's `$el`.
+    // A minimal stub renders a real div so its rendered element *is* that
+    // `$el`, letting the test drive real scroll events against it.
+    const ViewportStub = defineComponent({
+      name: "ScrollAreaViewport",
+      setup(_, { slots }) {
+        return () => h("div", {}, slots.default?.());
+      },
+    });
 
     const mountWithViewport = (props: Record<string, unknown> = {}) => {
-      const { viewportEl, ScrollAreaViewportStub, getScrollHandler } = createViewportStub();
       const wrapper = mount(Scroller, {
         props: { ...props },
         global: {
           stubs: {
             ...commonStubs,
             ...rekaStubs("ScrollAreaRoot", "ScrollAreaScrollbar", "ScrollAreaThumb", "ScrollAreaCorner"),
-            ScrollAreaViewport: ScrollAreaViewportStub,
+            ScrollAreaViewport: ViewportStub,
           },
         },
       });
-      return { wrapper, viewportEl, getScrollHandler };
+      const viewportEl = wrapper.findComponent({ name: "ScrollAreaViewport" }).element;
+      return { wrapper, viewportEl };
     };
 
-    it("attaches scroll listener on mount and tracks scrollY", async () => {
-      const { wrapper, viewportEl, getScrollHandler } = mountWithViewport();
-      const handler = getScrollHandler();
-      expect(handler).not.toBeNull();
+    it("tracks scroll position and reveals the back-to-top button", async () => {
+      const { wrapper, viewportEl } = mountWithViewport();
+      expect(wrapper.findComponent({ name: "Button" }).exists()).toBe(false);
 
-      Object.defineProperty(viewportEl, "scrollTop", { value: 150, writable: true });
-      handler?.(new Event("scroll"));
+      Object.defineProperty(viewportEl, "scrollTop", { value: 150, configurable: true });
+      viewportEl.dispatchEvent(new Event("scroll"));
       await nextTick();
 
-      expect(wrapper.find(".f-scroller-back-to-top").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "Button" }).exists()).toBe(true);
     });
 
-    it("back-to-top button calls scrollTo top", async () => {
-      const { wrapper, viewportEl, getScrollHandler } = mountWithViewport();
-      const handler = getScrollHandler();
+    it("back-to-top click scrolls the viewport to top", async () => {
+      const { wrapper, viewportEl } = mountWithViewport();
+      const scrollTo = vi.fn();
+      viewportEl.scrollTo = scrollTo;
 
-      Object.defineProperty(viewportEl, "scrollTop", { value: 100, writable: true });
-      handler?.(new Event("scroll"));
+      Object.defineProperty(viewportEl, "scrollTop", { value: 100, configurable: true });
+      viewportEl.dispatchEvent(new Event("scroll"));
       await nextTick();
 
-      const backToTop = wrapper.find(".f-scroller-back-to-top");
-      expect(backToTop.exists()).toBe(true);
-      await backToTop.trigger("click");
+      const button = wrapper.findComponent({ name: "Button" });
+      expect(button.exists()).toBe(true);
+      await button.trigger("click");
 
-      expect(viewportEl.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
     });
 
-    it("back-to-top renders Icon and label", async () => {
-      const { wrapper, viewportEl, getScrollHandler } = mountWithViewport();
-      const handler = getScrollHandler();
+    it("renders the icon and label inside back-to-top", async () => {
+      const { wrapper, viewportEl } = mountWithViewport();
 
-      Object.defineProperty(viewportEl, "scrollTop", { value: 50, writable: true });
-      handler?.(new Event("scroll"));
+      Object.defineProperty(viewportEl, "scrollTop", { value: 50, configurable: true });
+      viewportEl.dispatchEvent(new Event("scroll"));
       await nextTick();
 
-      const backToTop = wrapper.find(".f-scroller-back-to-top");
-      expect(backToTop.find(".f-scroller-back-to-top-label").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "Icon" }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "Span" }).exists()).toBe(true);
     });
 
     it("does not show back-to-top when not scrolled", () => {
       const { wrapper } = mountWithViewport();
-      expect(wrapper.find(".f-scroller-back-to-top").exists()).toBe(false);
+      expect(wrapper.findComponent({ name: "Button" }).exists()).toBe(false);
     });
   });
 
   describe("passthrough", () => {
-    it("pt.root merges onto root", () => {
-      const wrapper = mountScroller({ pt: { root: { props: { class: "custom" } } } });
-      expect(wrapper.find(".f-scroller-root").classes()).toContain("custom");
+    it("pt.root flat-merges onto the root wrapper", () => {
+      const wrapper = mountScroller({ pt: { root: { class: "custom" } } });
+      expect(wrapper.findComponent({ name: "ScrollAreaRoot" }).classes()).toContain("custom");
+    });
+  });
+
+  describe("slots", () => {
+    it("default slot renders inside the viewport part", () => {
+      const wrapper = mountScroller({}, { default: "<p class=\"body\">Body</p>" });
+      expect(wrapper.find("p.body").text()).toBe("Body");
+    });
+
+    it("backToTop slot overrides the default button", () => {
+      const wrapper = mountScroller({}, { backToTop: "<div class=\"custom-btt\"></div>" });
+      expect(wrapper.find(".custom-btt").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "Button" }).exists()).toBe(false);
     });
   });
 });

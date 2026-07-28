@@ -3,9 +3,9 @@ import type { FacetsProps, FacetsEmits } from "#foundation/types/data/filter-fac
 import { computed, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import Command from "#foundation/components/core/Command.vue";
-import Fab from "#foundation/components/core/Fab.vue";
-import Popover from "#foundation/components/core/Popover.vue";
+import Command from "#foundation/components/core/command.vue";
+import Fab from "#foundation/components/core/fab.vue";
+import Popover from "#foundation/components/core/popover.vue";
 </script>
 
 <script setup lang="ts">

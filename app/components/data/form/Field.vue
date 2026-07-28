@@ -1,22 +1,25 @@
 <script lang="ts">
 import type { DataFormFieldProps } from "#foundation/types/data/form-field";
-</script>
 
-<script setup lang="ts" generic="T">
-import { computed, useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { passthrough } from "#foundation/utils/passthrough";
 import Caption from "#foundation/components/common/caption.vue";
-import Checkbox from "#foundation/components/core/Checkbox.vue";
-import DatePicker from "#foundation/components/core/DatePicker.vue";
+import Checkbox from "#foundation/components/core/checkbox.vue";
+import DatePicker from "#foundation/components/core/date-picker.vue";
+import FormInput from "#foundation/components/data/form/fields/input.vue";
 import Group from "#foundation/components/common/group.vue";
 import Input from "#foundation/components/common/input.vue";
 import Label from "#foundation/components/common/label.vue";
-import MultiSelect from "#foundation/components/core/MultiSelect.vue";
-import Radio from "#foundation/components/core/Radio.vue";
-import Select from "#foundation/components/core/Select.vue";
-import TagsInput from "#foundation/components/core/TagsInput.vue";
+import MultiSelect from "#foundation/components/core/multi-select.vue";
+import Radio from "#foundation/components/core/radio.vue";
+import Select from "#foundation/components/core/select.vue";
+import TagsInput from "#foundation/components/core/tags-input.vue";
 import Textarea from "#foundation/components/common/textarea.vue";
+
+import { computed, useTemplateRef } from "#imports";
+import { usePassthrough } from "#foundation/composables/passthrough";
+import { passthrough } from "#foundation/utils/passthrough";
+</script>
+
+<script setup lang="ts" generic="T">
 const { form, field, pt } = defineProps<DataFormFieldProps<T>>();
 
 const el = useTemplateRef("el");
@@ -63,36 +66,32 @@ const errorPT = usePassthrough(pt?.error, { props: {}, handlers: {} });
     </Label>
 
     <!-- text / email / password -->
-    <Input
-      v-if="field.type === 'text' || field.type === 'email' || field.type === 'password'"
-      v-bind="passthrough(pt?.input, {
-        props: {
-          type: field.type,
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-          required: field.required,
-          aria: { invalid: hasError },
-        },
-        handlers: {},
-      }).props"
-      :value="value as string"
-      @input="onUpdate(($event.target as HTMLInputElement).value)"
-      @blur="onBlur"
+    <FormInput
+      v-if="
+        field.type === 'text' ||
+        field.type === 'email' ||
+        field.type === 'password'
+      "
+      :form="form"
+      :field="field"
+      :pt="pt?.input?.pt"
     />
 
     <!-- number -->
     <Input
       v-else-if="field.type === 'number'"
-      v-bind="passthrough(pt?.input, {
-        props: {
-          type: 'number',
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-          required: field.required,
-          aria: { invalid: hasError },
-        },
-        handlers: {},
-      }).props"
+      v-bind="
+        passthrough(pt?.input, {
+          props: {
+            type: 'number',
+            placeholder: field.placeholder,
+            disabled: field.disabled,
+            required: field.required,
+            aria: { invalid: hasError },
+          },
+          handlers: {},
+        }).props
+      "
       :value="value as string"
       :min="field.min"
       :max="field.max"
@@ -104,16 +103,18 @@ const errorPT = usePassthrough(pt?.error, { props: {}, handlers: {} });
     <!-- textarea -->
     <Textarea
       v-else-if="field.type === 'textarea'"
-      v-bind="passthrough(pt?.textarea, {
-        props: {
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-          required: field.required,
-          rows: field.rows,
-          aria: { invalid: hasError },
-        },
-        handlers: {},
-      }).props"
+      v-bind="
+        passthrough(pt?.textarea, {
+          props: {
+            placeholder: field.placeholder,
+            disabled: field.disabled,
+            required: field.required,
+            rows: field.rows,
+            aria: { invalid: hasError },
+          },
+          handlers: {},
+        }).props
+      "
       :value="value as string"
       @input="onUpdate(($event.target as HTMLTextAreaElement).value)"
       @blur="onBlur"
@@ -122,91 +123,121 @@ const errorPT = usePassthrough(pt?.error, { props: {}, handlers: {} });
     <!-- select -->
     <Select
       v-else-if="field.type === 'select'"
-      v-bind="passthrough(pt?.select, {
-        props: {
-          modelValue: value as string,
-          options: field.options,
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-          required: field.required,
-        },
-        handlers: {},
-      }).props"
-      @update:model-value="onUpdate($event); onBlur()"
+      v-bind="
+        passthrough(pt?.select, {
+          props: {
+            modelValue: value as string,
+            options: field.options,
+            placeholder: field.placeholder,
+            disabled: field.disabled,
+            required: field.required,
+          },
+          handlers: {},
+        }).props
+      "
+      @update:model-value="
+        onUpdate($event);
+        onBlur();
+      "
     />
 
     <!-- multi-select -->
     <MultiSelect
       v-else-if="field.type === 'multi-select'"
-      v-bind="passthrough(pt?.multiSelect, {
-        props: {
-          modelValue: (value as string[]) ?? [],
-          items: field.options,
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-        },
-        handlers: {},
-      }).props"
-      @update:model-value="onUpdate($event); onBlur()"
+      v-bind="
+        passthrough(pt?.multiSelect, {
+          props: {
+            modelValue: (value as string[]) ?? [],
+            items: field.options,
+            placeholder: field.placeholder,
+            disabled: field.disabled,
+          },
+          handlers: {},
+        }).props
+      "
+      @update:model-value="
+        onUpdate($event);
+        onBlur();
+      "
     />
 
     <!-- checkbox -->
     <Checkbox
       v-else-if="field.type === 'checkbox'"
-      v-bind="passthrough(pt?.checkbox, {
-        props: {
-          modelValue: (value as boolean) ?? false,
-          disabled: field.disabled,
-        },
-        handlers: {},
-      }).props"
-      @update:model-value="onUpdate($event); onBlur()"
+      v-bind="
+        passthrough(pt?.checkbox, {
+          props: {
+            modelValue: (value as boolean) ?? false,
+            disabled: field.disabled,
+          },
+          handlers: {},
+        }).props
+      "
+      @update:model-value="
+        onUpdate($event);
+        onBlur();
+      "
     />
 
     <!-- radio -->
     <Radio
       v-else-if="field.type === 'radio'"
-      v-bind="passthrough(pt?.radio, {
-        props: {
-          modelValue: value as string,
-          options: field.options,
-          disabled: field.disabled,
-          required: field.required,
-          orientation: field.orientation,
-        },
-        handlers: {},
-      }).props"
-      @update:model-value="onUpdate($event); onBlur()"
+      v-bind="
+        passthrough(pt?.radio, {
+          props: {
+            modelValue: value as string,
+            options: field.options,
+            disabled: field.disabled,
+            required: field.required,
+            orientation: field.orientation,
+          },
+          handlers: {},
+        }).props
+      "
+      @update:model-value="
+        onUpdate($event);
+        onBlur();
+      "
     />
 
     <!-- date -->
     <DatePicker
       v-else-if="field.type === 'date'"
-      v-bind="passthrough(pt?.datePicker, {
-        props: {
-          modelValue: value as undefined,
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-        },
-        handlers: {},
-      }).props"
-      @update:model-value="onUpdate($event); onBlur()"
+      v-bind="
+        passthrough(pt?.datePicker, {
+          props: {
+            modelValue: value as undefined,
+            placeholder: field.placeholder,
+            disabled: field.disabled,
+          },
+          handlers: {},
+        }).props
+      "
+      @update:model-value="
+        onUpdate($event);
+        onBlur();
+      "
     />
 
     <!-- tags-input -->
     <TagsInput
       v-else-if="field.type === 'tags-input'"
-      v-bind="passthrough(pt?.tagsInput, {
-        props: {
-          modelValue: (value as string[]) ?? [],
-          placeholder: field.placeholder,
-          disabled: field.disabled,
-          max: field.max,
-          delimiter: field.delimiter,
-        },
-        handlers: {},
-      }).props"
-      @update:model-value="onUpdate($event); onBlur()"
+      v-bind="
+        passthrough(pt?.tagsInput, {
+          props: {
+            modelValue: (value as string[]) ?? [],
+            placeholder: field.placeholder,
+            disabled: field.disabled,
+            max: field.max,
+            delimiter: field.delimiter,
+          },
+          handlers: {},
+        }).props
+      "
+      @update:model-value="
+        onUpdate($event);
+        onBlur();
+      "
     />
 
     <Caption

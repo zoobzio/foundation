@@ -1,5 +1,5 @@
 import type { GroupProps } from "#foundation/types/common/group";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { Chart } from "#foundation/types/data/chart";
 
 export type DataChartCanvasPassthrough = {

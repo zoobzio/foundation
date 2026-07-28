@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type ContainerProps = {
   aria?: AriaProps<"container">;
 };
 
+export type ContainerEmits = ComponentEvents["container"];
+
 export type ContainerBindings = Bindings<"container">;
 
 export type ContainerContext = ContainerProps & {
@@ -19,5 +22,5 @@ export type ContainerContext = ContainerProps & {
 };
 
 export type ContainerSlots = {
-  default(props: { ctx: ContainerContext }): VNode[];
+  default(props: ContainerContext): VNode[];
 };

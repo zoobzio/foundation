@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type H6Props = {
   aria?: AriaProps<"h6">;
 };
 
+export type H6Emits = ComponentEvents["h6"];
+
 export type H6Bindings = Bindings<"h6">;
 
 export type H6Context = H6Props & {
@@ -19,5 +22,5 @@ export type H6Context = H6Props & {
 };
 
 export type H6Slots = {
-  default(props: { ctx: H6Context }): VNode[];
+  default(props: H6Context): VNode[];
 };

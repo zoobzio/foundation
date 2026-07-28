@@ -5,9 +5,7 @@ import type { DataPreviewProps } from "#foundation/types/data/preview-widget";
 <script setup lang="ts" generic="T">
 import { computed, useId, useLazyAsyncData, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import DataPreviewContent from "#foundation/components/data/preview/Content.vue";
-import DataPreviewFields from "#foundation/components/data/preview/Fields.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 import Span from "#foundation/components/common/span.vue";
 const { preview, pt } = defineProps<DataPreviewProps<T>>();
@@ -104,18 +102,8 @@ const filename = computed(() => {
         class="f-data-preview-body"
         v-on="bodyPT.handlers"
       >
-        <DataPreviewFields
-          :preview="preview"
-          :pt="pt?.fields"
-        >
-          <template v-for="(_, name) in $slots" :key="name" #[name]="slotProps">
-            <slot :name="name" v-bind="slotProps" />
-          </template>
-        </DataPreviewFields>
-        <DataPreviewContent
-          :preview="preview"
-          :pt="pt?.content"
-        />
+        <!-- Content/field renderers removed; shell awaits new drivers. -->
+        <slot name="body" v-bind="ctx" />
       </Group>
     </template>
   </Group>

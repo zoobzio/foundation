@@ -5,12 +5,12 @@ import type { DataTableSearchProps } from "#foundation/types/data/table-search";
 <script setup lang="ts" generic="T, K = unknown">
 import { computed, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import { TABLE_SEARCH_DEBOUNCE } from "#foundation/constants/data/table";
+import { TABLE_SEARCH_DEBOUNCE } from "#foundation/constants/table";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import Fab from "#foundation/components/core/Fab.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 import Input from "#foundation/components/common/input.vue";
-import Popover from "#foundation/components/core/Popover.vue";
+import Popover from "#foundation/components/core/popover.vue";
 const { table, pt } = defineProps<DataTableSearchProps<T, K>>();
 
 const el = useTemplateRef("el");

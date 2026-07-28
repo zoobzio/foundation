@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataPreviewSnapshot } from "#foundation/schemas/data/preview";
+import type { DataPreviewSnapshot } from "#foundation/schemas/preview";
 // ---------------------------------------------------------------------------
 // Field type — drives rendering in the fields panel
 // ---------------------------------------------------------------------------

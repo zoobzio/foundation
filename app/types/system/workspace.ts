@@ -2,7 +2,7 @@ import type { ComputedRef, Ref } from "#imports";
 import type { FooterProps } from "#foundation/types/common/footer";
 import type { GroupProps } from "#foundation/types/common/group";
 import type { HeaderProps } from "#foundation/types/common/header";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { PageSlot } from "#foundation/types/system/page";
 /**
  * Workspace layout — a grid with header and footer.

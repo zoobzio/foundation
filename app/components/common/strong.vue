@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  StrongBindings,
   StrongContext,
   StrongProps,
   StrongSlots,
 } from "#foundation/types/common/strong";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<StrongProps>();
 
-defineSlots<StrongSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<StrongBindings>(() =>
-  useBindings<"strong">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"strong">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<StrongContext>(() => ({
+const ctx = useContext<StrongContext>("strong", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<StrongContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<StrongSlots>();
 </script>
 
 <template>
   <strong ref="el" class="f-strong" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </strong>
 </template>
