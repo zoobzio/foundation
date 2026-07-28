@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  TrBindings,
   TrContext,
   TrProps,
   TrSlots,
 } from "#foundation/types/common/tr";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { modifiers, tokens, aria } = defineProps<TrProps>();
 
-defineSlots<TrSlots>();
-
 const el = useTemplateRef<HTMLTableRowElement>("el");
 
-const bindings = computed<TrBindings>(() =>
-  useBindings<"tr">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"tr">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<TrContext>(() => ({
+const ctx = useContext<TrContext>("tr", () => ({
   modifiers,
   tokens,
   aria,
@@ -30,10 +31,11 @@ const ctx = computed<TrContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<TrSlots>();
 </script>
 
 <template>
   <tr ref="el" class="f-tr" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </tr>
 </template>

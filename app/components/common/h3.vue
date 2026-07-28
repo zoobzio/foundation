@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  H3Bindings,
   H3Context,
   H3Props,
   H3Slots,
 } from "#foundation/types/common/h3";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<H3Props>();
 
-defineSlots<H3Slots>();
-
 const el = useTemplateRef<HTMLHeadingElement>("el");
 
-const bindings = computed<H3Bindings>(() =>
-  useBindings<"h3">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"h3">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<H3Context>(() => ({
+const ctx = useContext<H3Context>("h3", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<H3Context>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<H3Slots>();
 </script>
 
 <template>
   <h3 ref="el" class="f-h3" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </h3>
 </template>

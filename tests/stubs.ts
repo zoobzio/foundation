@@ -98,11 +98,9 @@ export const commonStubs = {
       return () => h("div", { ...attrs }, slots.default?.());
     },
   }),
-  CodeView: createStub("CodeView"),
   Facets: createStub("Facets"),
   Hero: createStub("Hero"),
   Keywords: createStub("Keywords"),
-  Markdown: createStub("Markdown"),
   MultiSelect: createStub("MultiSelect"),
   Pagination: createStub("Pagination"),
 } as const;
@@ -147,8 +145,6 @@ export const dataStubs = {
   DataChartWidget: createStub("DataChartWidget"),
   DataChartCanvas: createStub("DataChartCanvas"),
   DataPreviewWidget: createStub("DataPreviewWidget"),
-  DataPreviewFields: createAllSlotsStub("DataPreviewFields"),
-  DataPreviewContent: createStub("DataPreviewContent"),
   DataDeckWidget: createStub("DataDeckWidget"),
   DataDeckToolbar: createStub("DataDeckToolbar"),
   DataDeckFeed: createAllSlotsStub("DataDeckFeed"),

@@ -10,10 +10,10 @@ import DataTableBulkActions from "#foundation/components/data/table/BulkActions.
 import DataTableColumns from "#foundation/components/data/table/Columns.vue";
 import DataTableFilters from "#foundation/components/data/table/Filters.vue";
 import DataTableHead from "#foundation/components/data/table/Head.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 import Pagination from "#foundation/components/core/Pagination.vue";
-import Scroller from "#foundation/components/core/Scroller.vue";
+import Scroller from "#foundation/components/core/scroller.vue";
 import Table from "#foundation/components/common/table.vue";
 const { table, pt } = defineProps<DataTableProps<T, K>>();
 

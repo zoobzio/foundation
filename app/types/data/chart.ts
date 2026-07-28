@@ -1,5 +1,5 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataChartSnapshot } from "#foundation/schemas/data/chart";
+import type { DataChartSnapshot } from "#foundation/schemas/chart";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import type { DateFilter, MatchMode } from "#foundation/types/data/table";
 import type { ChartType as CJSChartType, ChartOptions as CJSChartOptions } from "chart.js";

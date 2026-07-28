@@ -1,7 +1,7 @@
 import type components from "#config/components";
 
 /** A component that is allowed to have modifiers defined for it. */
-export type SupportedComponent = (typeof components.elements)[number];
+export type SupportedComponent = keyof typeof components.elements;
 
 /** A single modifier axis — the set of values a knob may take. */
 export type ModifierAxis = readonly string[];

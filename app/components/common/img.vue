@@ -1,12 +1,12 @@
 <script lang="ts">
 import type {
-  ImgBindings,
   ImgContext,
   ImgProps,
 } from "#foundation/types/common/img";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
@@ -14,11 +14,14 @@ const { src, alt, modifiers, tokens, aria } = defineProps<ImgProps>();
 
 const el = useTemplateRef<HTMLImageElement>("el");
 
-const bindings = computed<ImgBindings>(() =>
-  useBindings<"img">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"img">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<ImgContext>(() => ({
+const ctx = useContext<ImgContext>("img", () => ({
   src,
   alt,
   modifiers,
@@ -32,5 +35,5 @@ defineExpose({ ctx });
 </script>
 
 <template>
-  <img ref="el" :src="src" :alt="alt" class="f-img" v-bind="bindings" />
+  <img ref="el" :src="src" :alt="alt" class="f-img" v-bind="bindings" >
 </template>

@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type AsideProps = {
   aria?: AriaProps<"aside">;
 };
 
+export type AsideEmits = ComponentEvents["aside"];
+
 export type AsideBindings = Bindings<"aside">;
 
 export type AsideContext = AsideProps & {
@@ -19,5 +22,5 @@ export type AsideContext = AsideProps & {
 };
 
 export type AsideSlots = {
-  default(props: { ctx: AsideContext }): VNode[];
+  default(props: AsideContext): VNode[];
 };

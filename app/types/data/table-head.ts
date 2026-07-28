@@ -6,7 +6,7 @@ import type { ThProps } from "#foundation/types/common/th";
 import type { TheadProps } from "#foundation/types/common/thead";
 import type { TrProps } from "#foundation/types/common/tr";
 import type { CheckboxEmits, CheckboxProps } from "#foundation/types/core/checkbox";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { Table } from "#foundation/types/data/table";
 
 export type DataTableHeadPassthrough = {

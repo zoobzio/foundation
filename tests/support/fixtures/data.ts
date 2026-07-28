@@ -27,8 +27,6 @@ const FilterHelp = (await import("#foundation/components/data/table/FilterHelp.v
 const Filters = (await import("#foundation/components/data/table/Filters.vue")).default as DefineComponent;
 
 const PreviewWidget = (await import("#foundation/components/data/preview/Widget.vue")).default as DefineComponent;
-const PreviewFields = (await import("#foundation/components/data/preview/Fields.vue")).default as DefineComponent;
-const PreviewContent = (await import("#foundation/components/data/preview/Content.vue")).default as DefineComponent;
 
 const DeckWidget = (await import("#foundation/components/data/deck/Widget.vue")).default as DefineComponent;
 const DeckToolbar = (await import("#foundation/components/data/deck/Toolbar.vue")).default as DefineComponent;
@@ -104,17 +102,6 @@ export const mountPreviewWidget = (props: MountProps = {}, slots: MountSlots = {
     slots,
     global: { stubs, mocks },
   });
-
-const forgePreview = (component: DefineComponent, defaultProps: MountProps = {}) =>
-  (props: MountProps = {}, slots: MountSlots = {}) =>
-    shallowMount(component, {
-      props: { preview: createMockPreview(), ...defaultProps, ...props },
-      slots,
-      global: { stubs, mocks },
-    });
-
-export const mountPreviewFields = forgePreview(PreviewFields);
-export const mountPreviewContent = forgePreview(PreviewContent);
 
 // ---------------------------------------------------------------------------
 // Data Deck

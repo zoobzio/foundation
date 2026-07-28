@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  TdBindings,
   TdContext,
   TdProps,
   TdSlots,
 } from "#foundation/types/common/td";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<TdProps>();
 
-defineSlots<TdSlots>();
-
 const el = useTemplateRef<HTMLTableCellElement>("el");
 
-const bindings = computed<TdBindings>(() =>
-  useBindings<"td">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"td">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<TdContext>(() => ({
+const ctx = useContext<TdContext>("td", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<TdContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<TdSlots>();
 </script>
 
 <template>
   <td ref="el" class="f-td" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </td>
 </template>

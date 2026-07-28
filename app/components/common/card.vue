@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  CardBindings,
   CardContext,
   CardProps,
   CardSlots,
 } from "#foundation/types/common/card";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<CardProps>();
 
-defineSlots<CardSlots>();
-
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const bindings = computed<CardBindings>(() =>
-  useBindings<"card">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"card">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<CardContext>(() => ({
+const ctx = useContext<CardContext>("card", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<CardContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<CardSlots>();
 </script>
 
 <template>
   <div ref="el" class="f-card" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </div>
 </template>

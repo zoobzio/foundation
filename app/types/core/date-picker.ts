@@ -1,46 +1,134 @@
 import type { IconProps } from "#foundation/types/common/icon";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
+import type {
+  DatePickerRootProps,
+  DatePickerRootEmits,
+} from "#foundation/types/common/date-picker/root";
+import type {
+  DatePickerFieldProps,
+  DatePickerFieldSlotProps,
+  DatePickerSegment,
+} from "#foundation/types/common/date-picker/field";
+import type { DatePickerInputProps } from "#foundation/types/common/date-picker/input";
+import type {
+  DatePickerTriggerProps,
+  DatePickerTriggerEmits,
+} from "#foundation/types/common/date-picker/trigger";
+import type {
+  DatePickerContentProps,
+  DatePickerContentEmits,
+} from "#foundation/types/common/date-picker/content";
+import type {
+  DatePickerCalendarProps,
+  DatePickerCalendarSlotProps,
+} from "#foundation/types/common/date-picker/calendar";
+import type { DatePickerHeaderProps } from "#foundation/types/common/date-picker/header";
+import type { DatePickerHeadingProps } from "#foundation/types/common/date-picker/heading";
+import type {
+  DatePickerPrevProps,
+  DatePickerPrevEmits,
+} from "#foundation/types/common/date-picker/prev";
+import type {
+  DatePickerNextProps,
+  DatePickerNextEmits,
+} from "#foundation/types/common/date-picker/next";
+import type { DatePickerGridProps } from "#foundation/types/common/date-picker/grid";
+import type { DatePickerGridHeadProps } from "#foundation/types/common/date-picker/grid-head";
+import type { DatePickerGridBodyProps } from "#foundation/types/common/date-picker/grid-body";
+import type { DatePickerGridRowProps } from "#foundation/types/common/date-picker/grid-row";
+import type { DatePickerHeadCellProps } from "#foundation/types/common/date-picker/head-cell";
+import type { DatePickerCellProps } from "#foundation/types/common/date-picker/cell";
+import type {
+  DatePickerCellTriggerProps,
+  DatePickerCellTriggerEmits,
+} from "#foundation/types/common/date-picker/cell-trigger";
+import type { ComponentEvents } from "#foundation/types/events";
+import type {
+  Passthrough,
+  PassthroughIter,
+  PT,
+} from "#foundation/types/passthrough";
 import type { DateValue } from "@internationalized/date";
-import type { PrimitiveProps, DatePickerRootProps, DatePickerRootEmits, DatePickerInputProps, DatePickerTriggerProps, DatePickerContentProps, DatePickerHeaderProps, DatePickerHeadingProps, DatePickerGridProps, DatePickerGridHeadProps, DatePickerGridBodyProps, DatePickerGridRowProps, DatePickerHeadCellProps, DatePickerCellProps, DatePickerCellTriggerProps, DatePickerPrevProps, DatePickerNextProps } from "reka-ui";
+import type { ComponentPublicInstance, Ref, VNode } from "vue";
+
+// The share of the field's render-scope payload the core template forwards.
+export type DatePickerSegments = Pick<DatePickerFieldSlotProps, "segments">;
+
+// The share of the calendar's render-scope payload the core template
+// forwards into its slots.
+export type DatePickerView = Pick<
+  DatePickerCalendarSlotProps,
+  "weekDays" | "grid"
+>;
+
+// One month of the calendar's render-scope grid payload.
+export type DatePickerMonth = DatePickerView["grid"][number];
 
 export type DatePickerPassthrough = {
-  root?: Passthrough<DatePickerRootProps, DatePickerRootEmits>;
-  field?: Passthrough<PrimitiveProps>;
-  input?: Passthrough<DatePickerInputProps>;
-  trigger?: Passthrough<DatePickerTriggerProps>;
-  triggerIcon?: Passthrough<IconProps>;
-  content?: Passthrough<DatePickerContentProps>;
-  calendar?: Passthrough<PrimitiveProps>;
-  header?: Passthrough<DatePickerHeaderProps>;
-  prev?: Passthrough<DatePickerPrevProps>;
-  prevIcon?: Passthrough<IconProps>;
-  heading?: Passthrough<DatePickerHeadingProps>;
-  next?: Passthrough<DatePickerNextProps>;
-  nextIcon?: Passthrough<IconProps>;
-  grid?: Passthrough<DatePickerGridProps>;
-  gridHead?: Passthrough<DatePickerGridHeadProps>;
-  gridBody?: Passthrough<DatePickerGridBodyProps>;
-  gridRow?: Passthrough<DatePickerGridRowProps>;
-  headCell?: Passthrough<DatePickerHeadCellProps>;
-  cell?: Passthrough<DatePickerCellProps>;
-  cellTrigger?: Passthrough<DatePickerCellTriggerProps>;
+  root: Passthrough<DatePickerRootProps, DatePickerRootEmits>;
+  field: Passthrough<DatePickerFieldProps>;
+  input: PassthroughIter<DatePickerSegment, DatePickerInputProps>;
+  trigger: Passthrough<DatePickerTriggerProps, DatePickerTriggerEmits>;
+  triggerIcon: Passthrough<IconProps>;
+  content: Passthrough<DatePickerContentProps, DatePickerContentEmits>;
+  calendar: Passthrough<DatePickerCalendarProps>;
+  header: Passthrough<DatePickerHeaderProps>;
+  prev: Passthrough<DatePickerPrevProps, DatePickerPrevEmits>;
+  prevIcon: Passthrough<IconProps>;
+  heading: Passthrough<DatePickerHeadingProps>;
+  next: Passthrough<DatePickerNextProps, DatePickerNextEmits>;
+  nextIcon: Passthrough<IconProps>;
+  grid: Passthrough<DatePickerGridProps>;
+  gridHead: Passthrough<DatePickerGridHeadProps>;
+  gridBody: Passthrough<DatePickerGridBodyProps>;
+  gridRow: Passthrough<DatePickerGridRowProps>;
+  headCell: Passthrough<DatePickerHeadCellProps>;
+  cell: PassthroughIter<DateValue, DatePickerCellProps>;
+  cellTrigger: PassthroughIter<
+    { day: DateValue; month: DateValue },
+    DatePickerCellTriggerProps,
+    DatePickerCellTriggerEmits
+  >;
 };
 
+// `modelValue` is required: the picker uses the explicit model contract
+// (MIGRATION § explicit models) — presence on the vnode decides
+// controlled-ness, so consumers always provide it, `undefined` included.
 export type DatePickerProps = {
-  modelValue?: DateValue;
-  placeholder?: string;
-  minValue?: DateValue;
-  maxValue?: DateValue;
-  locale?: string;
+  modelValue: DateValue | undefined;
+  open?: boolean;
   disabled?: boolean;
-  granularity?: "day" | "hour" | "minute" | "second";
-  isDateDisabled?: (date: DateValue) => boolean;
-  pt?: DatePickerPassthrough;
+  pt?: PT<DatePickerPassthrough>;
 };
 
-export type DatePickerEmits = {
+export type DatePickerEmits = ComponentEvents["date-picker"] & {
   "update:modelValue": [value: DateValue | undefined];
+  "update:open": [value: boolean];
 };
 
-export type DatePickerRecipe = Recipe<DatePickerProps, DatePickerEmits>;
+export type DatePickerContext = {
+  disabled?: boolean;
+  modelValue: Ref<DateValue | undefined>;
+  open: Ref<boolean | undefined>;
+  el: ComponentPublicInstance | null;
+  settings: DatePickerPassthrough;
+};
+
+export type DatePickerSlots = {
+  field?: (props: DatePickerContext & DatePickerSegments) => VNode[];
+  input?: (props: DatePickerContext & { segment: DatePickerSegment }) => VNode[];
+  trigger?: (props: DatePickerContext) => VNode[];
+  triggerIcon?: (props: DatePickerContext) => VNode[];
+  content?: (props: DatePickerContext) => VNode[];
+  header?: (props: DatePickerContext & DatePickerView) => VNode[];
+  prev?: (props: DatePickerContext & DatePickerView) => VNode[];
+  prevIcon?: (props: DatePickerContext & DatePickerView) => VNode[];
+  heading?: (props: DatePickerContext & DatePickerView) => VNode[];
+  next?: (props: DatePickerContext & DatePickerView) => VNode[];
+  nextIcon?: (props: DatePickerContext & DatePickerView) => VNode[];
+  grid?: (props: DatePickerContext & DatePickerView & { month: DatePickerMonth }) => VNode[];
+  gridHead?: (props: DatePickerContext & DatePickerView & { month: DatePickerMonth }) => VNode[];
+  gridBody?: (props: DatePickerContext & DatePickerView & { month: DatePickerMonth }) => VNode[];
+  headCell?: (props: DatePickerContext & { day: string }) => VNode[];
+  cell?: (props: DatePickerContext & { month: DatePickerMonth; date: DateValue }) => VNode[];
+  cellTrigger?: (props: DatePickerContext & { month: DatePickerMonth; date: DateValue }) => VNode[];
+};

@@ -1,59 +1,108 @@
-import type { CaptionProps } from "#foundation/types/common/caption";
 import type { GroupProps } from "#foundation/types/common/group";
 import type { IconProps } from "#foundation/types/common/icon";
-import type { IconAlias } from "#foundation/types/common/iconic";
 import type { KbdProps } from "#foundation/types/common/kbd";
 import type { SpanProps } from "#foundation/types/common/span";
-import type { CheckboxEmits, CheckboxProps } from "#foundation/types/core/checkbox";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
+import type {
+  ListboxRootProps,
+  ListboxRootEmits,
+} from "#foundation/types/common/listbox/root";
+import type {
+  ListboxFilterProps,
+  ListboxFilterEmits,
+} from "#foundation/types/common/listbox/filter";
+import type { ListboxContentProps } from "#foundation/types/common/listbox/content";
+import type { ListboxGroupProps } from "#foundation/types/common/listbox/group";
+import type { ListboxGroupLabelProps } from "#foundation/types/common/listbox/group-label";
+import type {
+  ListboxItemProps,
+  ListboxItemEmits,
+} from "#foundation/types/common/listbox/item";
+import type {
+  CheckboxEmits,
+  CheckboxProps,
+} from "#foundation/types/core/checkbox";
 import type { ScrollerProps } from "#foundation/types/core/scroller";
-import type { ListboxRootProps, ListboxRootEmits, ListboxFilterProps, ListboxFilterEmits, ListboxContentProps, ListboxItemProps, ListboxItemEmits } from "reka-ui";
+import type { ComponentEvents } from "#foundation/types/events";
+import type {
+  Passthrough,
+  PassthroughIter,
+  PT,
+} from "#foundation/types/passthrough";
+import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { Option } from "#foundation/types/core/common";
 
-export type CommandItem = {
-  value: string;
-  label: string;
-  icon?: IconAlias;
+export type CommandOption = Option & {
   count?: number;
-  disabled?: boolean;
 };
 
-export type CommandGroup = {
+export type CommandGroup<T extends CommandOption> = {
   key: string;
-  label?: string;
-  items: CommandItem[];
+  label: string;
+  options: T[];
 };
 
-export type CommandPassthrough = {
-  root?: Passthrough<ListboxRootProps, ListboxRootEmits>;
-  inputWrapper?: Passthrough<GroupProps>;
-  filter?: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
-  content?: Passthrough<ListboxContentProps>;
-  viewport?: Passthrough<ScrollerProps>;
-  empty?: Passthrough<GroupProps>;
-  groupLabel?: Passthrough<CaptionProps>;
-  item?: Passthrough<ListboxItemProps, ListboxItemEmits>;
-  itemCheckbox?: Passthrough<CheckboxProps, CheckboxEmits>;
-  itemIcon?: Passthrough<IconProps>;
-  itemLabel?: Passthrough<SpanProps>;
-  itemCount?: Passthrough<KbdProps>;
+export type CommandPassthrough<T extends CommandOption = CommandOption> = {
+  root: Passthrough<ListboxRootProps, ListboxRootEmits>;
+  inputWrapper: Passthrough<GroupProps>;
+  filter: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
+  content: Passthrough<ListboxContentProps>;
+  viewport: Passthrough<ScrollerProps>;
+  empty: Passthrough<GroupProps>;
+  group: Passthrough<ListboxGroupProps>;
+  groupLabel: Passthrough<ListboxGroupLabelProps>;
+  item: PassthroughIter<T, ListboxItemProps, ListboxItemEmits>;
+  itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;
+  itemIcon: PassthroughIter<T, IconProps>;
+  itemLabel: Passthrough<SpanProps>;
+  itemCount: Passthrough<KbdProps>;
 };
 
-export type CommandProps = {
-  groups: CommandGroup[];
+export type CommandProps<T extends CommandOption> = {
+  groups: CommandGroup<T>[];
+  modelValue?: NoInfer<T[] | undefined>;
   placeholder?: string;
   disabled?: boolean;
   multiple?: boolean;
-  filtered?: boolean;
-  selected?: Set<string>;
-  searchTerm?: string;
-  pt?: CommandPassthrough;
+  search?: string;
+  pt?: PT<CommandPassthrough<T>>;
 };
 
-export type CommandEmits = {
-  select: [value: string];
-  "update:selected": [value: Set<string>];
-  "update:searchTerm": [value: string];
+export type CommandEmits<T extends CommandOption> =
+  ComponentEvents["command"] & {
+    "update:modelValue": [value: T[] | undefined];
+    "update:search": [value: string];
+  };
+
+export type CommandContext<T extends CommandOption> = {
+  groups: CommandGroup<T>[];
+  placeholder: string;
+  disabled?: boolean;
+  multiple: boolean;
+  search: Ref<string | undefined>;
+  modelValue: Ref<T[] | undefined>;
+  results: CommandGroup<T>[];
+  el: ComponentPublicInstance | null;
+  settings: CommandPassthrough<T>;
 };
 
-export type CommandRecipe = Recipe<CommandProps, CommandEmits>;
+export type OptionContext<T extends CommandOption> = CommandContext<T> & {
+  item: T;
+  selected: boolean;
+};
+
+export type CommandSlots<T extends CommandOption> = {
+  inputWrapper?: (props: CommandContext<T>) => VNode[];
+  inputIcon?: (props: CommandContext<T>) => VNode[];
+  filter?: (props: CommandContext<T>) => VNode[];
+  content?: (props: CommandContext<T>) => VNode[];
+  viewport?: (props: CommandContext<T>) => VNode[];
+  empty?: (props: CommandContext<T>) => VNode[];
+  groupLabel?: (
+    props: CommandContext<T> & { group: CommandGroup<T> },
+  ) => VNode[];
+  item?: (props: OptionContext<T>) => VNode[];
+  itemCheckbox?: (props: OptionContext<T>) => VNode[];
+  itemIcon?: (props: CommandContext<T> & { item: T }) => VNode[];
+  itemLabel?: (props: CommandContext<T> & { item: T }) => VNode[];
+  itemCount?: (props: CommandContext<T> & { item: T }) => VNode[];
+};

@@ -8,7 +8,9 @@ export default defineNuxtConfig({
 
   // Explicit imports only — no auto-import of components, composables, or Vue/Nuxt APIs.
   // Framework symbols are pulled from "#imports"; foundation-owned code from "#foundation/*".
-  imports: { autoImport: false },
+  // `scan: false` also skips registry-building over composables/ and utils/ — everything
+  // "#imports" provides comes from framework/module presets, not the dir scan.
+  imports: { autoImport: false, scan: false },
   components: false,
 
   modules: ["@vueuse/nuxt", "@untheme/nuxt"],

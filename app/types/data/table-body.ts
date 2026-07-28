@@ -7,7 +7,7 @@ import type { TrProps } from "#foundation/types/common/tr";
 import type { CheckboxEmits, CheckboxProps } from "#foundation/types/core/checkbox";
 import type { FabProps } from "#foundation/types/core/fab";
 import type { MenuEmits, MenuProps } from "#foundation/types/core/menu";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { Table } from "#foundation/types/data/table";
 
 export type DataTableBodyPassthrough = {

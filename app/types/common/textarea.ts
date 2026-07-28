@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 
@@ -13,6 +14,8 @@ export type TextareaProps = {
   tokens?: TokenProps<"textarea">;
   aria?: AriaProps<"textarea">;
 };
+
+export type TextareaEmits = ComponentEvents["textarea"];
 
 export type TextareaBindings = Bindings<"textarea">;
 

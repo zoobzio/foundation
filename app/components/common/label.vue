@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  LabelBindings,
   LabelContext,
   LabelProps,
   LabelSlots,
 } from "#foundation/types/common/label";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { for: htmlFor, modifiers, tokens, aria } = defineProps<LabelProps>();
 
-defineSlots<LabelSlots>();
-
 const el = useTemplateRef<HTMLLabelElement>("el");
 
-const bindings = computed<LabelBindings>(() =>
-  useBindings<"label">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"label">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<LabelContext>(() => ({
+const ctx = useContext<LabelContext>("label", () => ({
   for: htmlFor,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<LabelContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<LabelSlots>();
 </script>
 
 <template>
   <label ref="el" :for="htmlFor" class="f-label" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </label>
 </template>

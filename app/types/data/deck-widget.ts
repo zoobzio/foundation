@@ -1,6 +1,6 @@
 import type { GroupProps } from "#foundation/types/common/group";
 import type { FabProps } from "#foundation/types/core/fab";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { Deck } from "#foundation/types/data/deck";
 import type { DataDeckToolbarPassthrough } from "#foundation/types/data/toolbar";
 import type { DataDeckFeedPassthrough } from "#foundation/types/data/deck-feed";

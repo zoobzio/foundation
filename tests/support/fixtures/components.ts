@@ -9,38 +9,34 @@ import { fakeFacetGroups } from "#test/support/data/facets";
 import { fakeDateFields } from "#test/support/data/date-filters";
 
 import Autocomplete from "#foundation/components/data/filter/Autocomplete.vue";
-import Accordion from "#foundation/components/core/Accordion.vue";
-import Avatar from "#foundation/components/core/Avatar.vue";
-import Calendar from "#foundation/components/core/Calendar.vue";
-import Checkbox from "#foundation/components/core/Checkbox.vue";
-import Command from "#foundation/components/core/Command.vue";
-import DateFilters from "#foundation/components/core/DateFilters.vue";
-import DatePicker from "#foundation/components/core/DatePicker.vue";
-import DateRangePicker from "#foundation/components/core/DateRangePicker.vue";
-import Dialog from "#foundation/components/core/Dialog.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Accordion from "#foundation/components/core/accordion.vue";
+import Avatar from "#foundation/components/core/avatar.vue";
+import Calendar from "#foundation/components/core/calendar.vue";
+import Checkbox from "#foundation/components/core/checkbox.vue";
+import Command from "#foundation/components/core/command.vue";
+import DateFilters from "#foundation/components/core/date-filters.vue";
+import DatePicker from "#foundation/components/core/date-picker.vue";
+import DateRangePicker from "#foundation/components/core/date-range-picker.vue";
+import Dialog from "#foundation/components/core/dialog.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Facets from "#foundation/components/data/filter/Facets.vue";
-import Hero from "#foundation/components/core/Hero.vue";
+import Hero from "#foundation/components/core/hero.vue";
 import Keywords from "#foundation/components/data/filter/Keywords.vue";
-import Listbox from "#foundation/components/core/Listbox.vue";
-import Menu from "#foundation/components/core/Menu.vue";
-import MultiSelect from "#foundation/components/core/MultiSelect.vue";
-import Pagination from "#foundation/components/core/Pagination.vue";
-import Popover from "#foundation/components/core/Popover.vue";
-import Radio from "#foundation/components/core/Radio.vue";
-import RangeCalendar from "#foundation/components/core/RangeCalendar.vue";
-import Scroller from "#foundation/components/core/Scroller.vue";
-import SegmentedControl from "#foundation/components/core/SegmentedControl.vue";
-import Select from "#foundation/components/core/Select.vue";
-import Tabs from "#foundation/components/core/Tabs.vue";
-import TagsInput from "#foundation/components/core/TagsInput.vue";
-import Toast from "#foundation/components/core/Toast.vue";
-import Toaster from "#foundation/components/core/Toaster.vue";
-import Tooltip from "#foundation/components/core/Tooltip.vue";
-import Markdown from "#foundation/components/core/Markdown.vue";
-import MarkdownNode from "#foundation/components/core/MarkdownNode.vue";
-import MarkdownCode from "#foundation/components/core/MarkdownCode.vue";
-import CodeView from "#foundation/components/core/CodeView.vue";
+import Listbox from "#foundation/components/core/listbox.vue";
+import Menu from "#foundation/components/core/menu.vue";
+import MultiSelect from "#foundation/components/core/multi-select.vue";
+import Pagination from "#foundation/components/core/pagination.vue";
+import Popover from "#foundation/components/core/popover.vue";
+import Radio from "#foundation/components/core/radio.vue";
+import RangeCalendar from "#foundation/components/core/range-calendar.vue";
+import Scroller from "#foundation/components/core/scroller.vue";
+import SegmentedControl from "#foundation/components/core/segmented-control.vue";
+import Select from "#foundation/components/core/select.vue";
+import Tabs from "#foundation/components/core/tabs.vue";
+import TagsInput from "#foundation/components/core/tags-input.vue";
+import Toast from "#foundation/components/core/toast.vue";
+import Toaster from "#foundation/components/core/toaster.vue";
+import Tooltip from "#foundation/components/core/tooltip.vue";
 
 type MountProps = Record<string, unknown>;
 type MountSlots = Record<string, string | ((...args: unknown[]) => unknown)>;
@@ -177,7 +173,7 @@ export const mountFab = (props: MountProps = {}, slots: MountSlots = {}) =>
   mount(Fab, {
     props: { icon: "home", ...props },
     slots,
-    global: { stubs: { ...commonStubs, ...coreStubs, ...rekaStubs("Primitive") } },
+    global: { stubs: commonStubs },
   });
 
 export const mountFacets = composed(Facets, {
@@ -201,16 +197,17 @@ export const mountMenu = withReka(Menu, ["DropdownMenuRoot", "DropdownMenuTrigge
   groups: fakeMenuGroups,
 });
 
-export const mountMultiSelect = composed(MultiSelect, {
-  items: fakeOptions,
-});
+export const mountMultiSelect = withReka(
+  MultiSelect,
+  ["SelectRoot", "SelectTrigger", "SelectPortal", "SelectContent", "SelectItem", "SelectItemText", "Checkbox"],
+  { items: fakeOptions },
+);
 
 export const mountPagination = composed(Pagination, {
   page: 1,
-  pageSize: 25,
-  pageCount: 10,
+  size: 25,
+  count: 10,
   total: 250,
-  goToPage: noop,
 });
 
 export const mountPopover = withReka(Popover, ["PopoverRoot", "PopoverAnchor", "PopoverTrigger", "PopoverPortal", "PopoverContent", "PopoverArrow", "PopoverClose"]);
@@ -264,21 +261,3 @@ export const mountToaster = withReka(Toaster, ["ToastProvider", "ToastViewport"]
 export const mountTooltip = withReka(Tooltip, ["TooltipRoot", "TooltipTrigger", "TooltipPortal", "TooltipContent"], {
   content: "Tooltip text",
 });
-
-export const mountMarkdown = (props: MountProps = {}, slots: MountSlots = {}) =>
-  mount(Markdown, {
-    props: { content: "Hello **world**", ...props },
-    slots,
-    global: {
-      stubs: { ...commonStubs, MarkdownNode, MarkdownCode },
-    },
-  });
-
-export const mountCodeView = (props: MountProps = {}, slots: MountSlots = {}) =>
-  mount(CodeView, {
-    props: { content: '{"key": "value"}', ...props },
-    slots,
-    global: {
-      stubs: commonStubs,
-    },
-  });

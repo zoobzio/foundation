@@ -8,7 +8,7 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import { passthrough } from "#foundation/utils/passthrough";
 import Button from "#foundation/components/common/button.vue";
-import Checkbox from "#foundation/components/core/Checkbox.vue";
+import Checkbox from "#foundation/components/core/checkbox.vue";
 import Group from "#foundation/components/common/group.vue";
 import Icon from "#foundation/components/common/icon.vue";
 import Span from "#foundation/components/common/span.vue";

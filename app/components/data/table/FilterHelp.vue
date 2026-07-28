@@ -7,7 +7,7 @@ import type { DataTableFilterHelpProps } from "#foundation/types/data/table-filt
 import { computed, ref, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import Dialog from "#foundation/components/core/Dialog.vue";
+import Dialog from "#foundation/components/core/dialog.vue";
 import Icon from "#foundation/components/common/icon.vue";
 import Kbd from "#foundation/components/common/kbd.vue";
 import Table from "#foundation/components/common/table.vue";

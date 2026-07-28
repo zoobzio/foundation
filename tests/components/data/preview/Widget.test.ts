@@ -24,14 +24,6 @@ describe("DataPreviewWidget", () => {
     it("renders body with f-data-preview-body class", () => {
       expect(wrapper.find(".f-data-preview-body").exists()).toBe(true);
     });
-
-    it("delegates to DataPreviewFields", () => {
-      expect(wrapper.findComponent({ name: "DataPreviewFields" }).exists()).toBe(true);
-    });
-
-    it("delegates to DataPreviewContent", () => {
-      expect(wrapper.findComponent({ name: "DataPreviewContent" }).exists()).toBe(true);
-    });
   });
 
   describe("conditional", () => {

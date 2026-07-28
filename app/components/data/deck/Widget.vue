@@ -8,7 +8,7 @@ import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import DataDeckFeed from "#foundation/components/data/deck/Feed.vue";
 import DataDeckToolbar from "#foundation/components/data/deck/Toolbar.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 const { deck, pt } = defineProps<DataDeckProps<T>>();
 

@@ -4,7 +4,7 @@ import type { IconProps } from "#foundation/types/common/icon";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import type { InputProps } from "#foundation/types/common/input";
 import type { SpanProps } from "#foundation/types/common/span";
-import type { Passthrough } from "#foundation/types/core/passthrough";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { ScrollerEmits, ScrollerProps } from "#foundation/types/core/scroller";
 export interface AutocompleteItem {
   label: string;

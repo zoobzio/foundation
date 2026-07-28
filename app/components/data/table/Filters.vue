@@ -551,8 +551,8 @@ whenever(combo, () => {
         "
         @click="removeFilter(index)"
       >
-        <template #default="{ ctx }">
-          {{ ctx.label }}
+        <template #default="{ label }">
+          {{ label }}
           <Icon alias="close" class="f-data-table-filters-chip-close" />
         </template>
       </Chip>

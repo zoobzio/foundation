@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -10,6 +11,8 @@ export type TrProps = {
   aria?: AriaProps<"tr">;
 };
 
+export type TrEmits = ComponentEvents["tr"];
+
 export type TrBindings = Bindings<"tr">;
 
 export type TrContext = TrProps & {
@@ -18,5 +21,5 @@ export type TrContext = TrProps & {
 };
 
 export type TrSlots = {
-  default(props: { ctx: TrContext }): VNode[];
+  default(props: TrContext): VNode[];
 };

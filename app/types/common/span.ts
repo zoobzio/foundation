@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type SpanProps = {
   aria?: AriaProps<"span">;
 };
 
+export type SpanEmits = ComponentEvents["span"];
+
 export type SpanBindings = Bindings<"span">;
 
 export type SpanContext = SpanProps & {
@@ -19,5 +22,5 @@ export type SpanContext = SpanProps & {
 };
 
 export type SpanSlots = {
-  default(props: { ctx: SpanContext }): VNode[];
+  default(props: SpanContext): VNode[];
 };

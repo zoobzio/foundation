@@ -9,24 +9,30 @@ describe("generateModifierTypes", () => {
     expect(out).toContain("export interface ComponentModifiers {");
   });
 
-  it("emits every supported component as a key", () => {
+  it("emits every supported component as a quoted key", () => {
     const out = generateModifierTypes({});
-    for (const component of components.elements) {
-      expect(out).toContain(`  ${component}:`);
+    for (const component of Object.keys(components.elements)) {
+      expect(out).toContain(`  ${JSON.stringify(component)}:`);
     }
   });
 
   it("maps unsupplied components to never", () => {
     const out = generateModifierTypes({ button: { variant: ["solid"] } });
-    expect(out).toContain("  alert: never;");
-    expect(out).toContain("  tr: never;");
-    expect(out).not.toContain("  button: never;");
+    expect(out).toContain('  "alert": never;');
+    expect(out).toContain('  "tr": never;');
+    expect(out).not.toContain('  "button": never;');
+  });
+
+  it("quotes kebab-case component keys into valid syntax", () => {
+    const out = generateModifierTypes({});
+    expect(out).toContain('  "select-trigger": never;');
+    expect(out).not.toContain("\n  select-trigger:");
   });
 
   it("maps every component to never when the schema is empty", () => {
     const out = generateModifierTypes({});
-    for (const component of components.elements) {
-      expect(out).toContain(`  ${component}: never;`);
+    for (const component of Object.keys(components.elements)) {
+      expect(out).toContain(`  ${JSON.stringify(component)}: never;`);
     }
   });
 
@@ -40,7 +46,7 @@ describe("generateModifierTypes", () => {
     expect(out).toContain('    variant: readonly ["solid", "outline", "ghost"];');
     expect(out).toContain('    tone: readonly ["primary", "danger"];');
     expect(out).toMatch(
-      / {2}button: \{\n {4}variant: .+\n {4}tone: .+\n {2}\};/,
+      / {2}"button": \{\n {4}variant: .+\n {4}tone: .+\n {2}\};/,
     );
   });
 
@@ -51,7 +57,7 @@ describe("generateModifierTypes", () => {
 
   it("treats a component with no axes as never", () => {
     const out = generateModifierTypes({ button: {} });
-    expect(out).toContain("  button: never;");
+    expect(out).toContain('  "button": never;');
   });
 
   it("produces balanced braces", () => {

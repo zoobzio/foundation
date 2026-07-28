@@ -1,13 +1,14 @@
 <script lang="ts">
 import type {
-  ButtonBindings,
   ButtonContext,
+  ButtonEmits,
   ButtonProps,
   ButtonSlots,
 } from "#foundation/types/common/button";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
@@ -20,15 +21,18 @@ const {
   aria,
 } = defineProps<ButtonProps>();
 
-defineSlots<ButtonSlots>();
+const emit = defineEmits<ButtonEmits>();
 
 const el = useTemplateRef<HTMLButtonElement>("el");
 
-const bindings = computed<ButtonBindings>(() =>
-  useBindings<"button">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"button">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<ButtonContext>(() => ({
+const ctx = useContext<ButtonContext>("button", () => ({
   label,
   type,
   disabled,
@@ -40,6 +44,7 @@ const ctx = computed<ButtonContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<ButtonSlots>();
 </script>
 
 <template>
@@ -49,7 +54,8 @@ defineExpose({ ctx });
     :disabled="disabled"
     class="f-button"
     v-bind="bindings"
+    @click="emit('click', $event)"
   >
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </button>
 </template>

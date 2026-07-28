@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type PProps = {
   aria?: AriaProps<"p">;
 };
 
+export type PEmits = ComponentEvents["p"];
+
 export type PBindings = Bindings<"p">;
 
 export type PContext = PProps & {
@@ -19,5 +22,5 @@ export type PContext = PProps & {
 };
 
 export type PSlots = {
-  default(props: { ctx: PContext }): VNode[];
+  default(props: PContext): VNode[];
 };

@@ -1,28 +1,29 @@
 <script lang="ts">
 import type {
-  FieldsetBindings,
   FieldsetContext,
   FieldsetProps,
   FieldsetSlots,
 } from "#foundation/types/common/fieldset";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { legend, disabled, modifiers, tokens, aria } =
   defineProps<FieldsetProps>();
 
-defineSlots<FieldsetSlots>();
-
 const el = useTemplateRef<HTMLFieldSetElement>("el");
 
-const bindings = computed<FieldsetBindings>(() =>
-  useBindings<"fieldset">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"fieldset">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<FieldsetContext>(() => ({
+const ctx = useContext<FieldsetContext>("fieldset", () => ({
   legend,
   disabled,
   modifiers,
@@ -33,11 +34,12 @@ const ctx = computed<FieldsetContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<FieldsetSlots>();
 </script>
 
 <template>
   <fieldset ref="el" :disabled="disabled" class="f-fieldset" v-bind="bindings">
     <legend v-if="legend" class="f-fieldset-legend">{{ legend }}</legend>
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </fieldset>
 </template>

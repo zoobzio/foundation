@@ -1,58 +1,57 @@
 import { describe, it, expect } from "vitest";
-import { isRef } from "vue";
-import { usePassthrough, useItemPassthrough } from "#foundation/composables/passthrough";
+import { ref } from "vue";
+import { usePassthrough } from "#foundation/composables/passthrough";
 
+// Deep-merge semantics are covered by tests/utils/passthrough.test.ts; these
+// verify the composable surface: a reactive, manifest-shaped merge of the
+// user `pt` layer over the local recipes.
 describe("usePassthrough", () => {
-  it("returns a computed ref", () => {
-    const result = usePassthrough(undefined, { props: { value: "a" }, handlers: {} });
-    expect(isRef(result)).toBe(true);
-  });
-
-  it("computes merged passthrough from localPT when userPT is undefined", () => {
-    const result = usePassthrough(undefined, { props: { value: "a" }, handlers: {} });
-    expect(result.value.props).toEqual({ value: "a" });
-    expect(result.value.handlers).toEqual({});
-  });
-
-  it("computes merged passthrough with userPT overrides", () => {
-    const result = usePassthrough(
-      { props: { value: "b", class: "custom" } },
-      { props: { value: "a" }, handlers: {} },
-    );
-    expect(result.value.props).toEqual({ value: "b", class: "custom" });
-  });
-});
-
-describe("useItemPassthrough", () => {
-  it("returns a computed ref", () => {
-    const items = [{ id: 1 }, { id: 2 }];
-    const result = useItemPassthrough(items, undefined, (item) => ({
-      props: { value: item.id },
-      handlers: {},
+  it("returns the local recipes when pt is omitted", () => {
+    const settings = usePassthrough(() => ({
+      recipes: { root: { open: false }, trigger: {} },
     }));
-    expect(isRef(result)).toBe(true);
+    expect(settings.value).toEqual({ root: { open: false }, trigger: {} });
   });
 
-  it("maps items with merged passthrough", () => {
-    const items = [{ id: "a" }, { id: "b" }];
-    const result = useItemPassthrough(items, undefined, (item) => ({
-      props: { value: item.id },
-      handlers: {},
+  it("merges user overrides over the local recipes per key", () => {
+    const settings = usePassthrough(() => ({
+      pt: { root: { open: true, class: "custom" } },
+      recipes: { root: { open: false, disabled: true }, trigger: {} },
     }));
-    expect(result.value).toHaveLength(2);
-    expect(result.value[0].item).toEqual({ id: "a" });
-    expect(result.value[0].pt.props).toEqual({ value: "a" });
-    expect(result.value[1].item).toEqual({ id: "b" });
-    expect(result.value[1].pt.props).toEqual({ value: "b" });
+    expect(settings.value.root).toEqual({
+      open: true,
+      class: "custom",
+      disabled: true,
+    });
   });
 
-  it("applies userPT overrides to each item", () => {
-    const items = [{ id: "a" }];
-    const result = useItemPassthrough(
-      items,
-      { props: { class: "custom" } },
-      (item) => ({ props: { value: item.id }, handlers: {} }),
-    );
-    expect(result.value[0].pt.props).toEqual({ value: "a", class: "custom" });
+  it("replaces local handlers wholesale on user override", () => {
+    const local = () => "local";
+    const user = () => "user";
+    const settings = usePassthrough(() => ({
+      pt: { root: { "onUpdate:open": user } },
+      recipes: { root: { "onUpdate:open": local } },
+    }));
+    expect(settings.value.root["onUpdate:open"]).toBe(user);
+  });
+
+  it("replaces an iterated part callback wholesale on user override", () => {
+    const local = (obj: { value: string }) => ({ value: obj.value });
+    const user = (obj: { value: string }) => ({ value: obj.value, disabled: true });
+    const settings = usePassthrough(() => ({
+      pt: { item: user },
+      recipes: { item: local },
+    }));
+    expect(settings.value.item).toBe(user);
+  });
+
+  it("tracks the source reactively", () => {
+    const open = ref(false);
+    const settings = usePassthrough(() => ({
+      recipes: { root: { open: open.value } },
+    }));
+    expect(settings.value.root.open).toBe(false);
+    open.value = true;
+    expect(settings.value.root.open).toBe(true);
   });
 });

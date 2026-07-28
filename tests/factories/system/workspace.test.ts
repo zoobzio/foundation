@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { nextTick } from "vue";
-import { createWorkspace } from "#foundation/factories/system/workspace";
+import { createWorkspace } from "#foundation/factories/workspace";
 import type { WorkspaceFactoryConfig } from "#foundation/types/system/workspace";
 
 const config: WorkspaceFactoryConfig = {

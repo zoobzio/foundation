@@ -6,14 +6,14 @@ import type {
 } from "#foundation/types/data/filter-autocomplete";
 import { computed, nextTick, ref, useTemplateRef, watch } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
-import { AUTOCOMPLETE_BLUR_DELAY_MS } from "#foundation/constants/common/autocomplete";
+import { AUTOCOMPLETE_BLUR_DELAY_MS } from "#foundation/constants/autocomplete";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import { passthrough } from "#foundation/utils/passthrough";
 import Button from "#foundation/components/common/button.vue";
 import Group from "#foundation/components/common/group.vue";
 import Icon from "#foundation/components/common/icon.vue";
 import Input from "#foundation/components/common/input.vue";
-import Scroller from "#foundation/components/core/Scroller.vue";
+import Scroller from "#foundation/components/core/scroller.vue";
 import Span from "#foundation/components/common/span.vue";
 </script>
 

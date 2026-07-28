@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -12,6 +13,8 @@ export type ChipProps = {
   aria?: AriaProps<"chip">;
 };
 
+export type ChipEmits = ComponentEvents["chip"];
+
 export type ChipBindings = Bindings<"chip">;
 
 export type ChipContext = ChipProps & {
@@ -20,5 +23,5 @@ export type ChipContext = ChipProps & {
 };
 
 export type ChipSlots = {
-  default(props: { ctx: ChipContext }): VNode[];
+  default(props: ChipContext): VNode[];
 };

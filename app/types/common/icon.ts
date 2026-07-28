@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { IconAlias } from "#foundation/types/common/iconic";
@@ -11,6 +12,8 @@ export type IconProps = {
   tokens?: TokenProps<"icon">;
   aria?: AriaProps<"icon">;
 };
+
+export type IconEmits = ComponentEvents["icon"];
 
 export type IconBindings = Bindings<"icon">;
 

@@ -6,13 +6,13 @@ import type { DataTableBodyProps } from "#foundation/types/data/table-body";
 import { computed, useSlots, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import { formatCell } from "#foundation/utils/format-cell";
+import { cell } from "~/utils/format";
 import { passthrough } from "#foundation/utils/passthrough";
 import Anchor from "#foundation/components/common/anchor.vue";
-import Checkbox from "#foundation/components/core/Checkbox.vue";
-import Fab from "#foundation/components/core/Fab.vue";
+import Checkbox from "#foundation/components/core/checkbox.vue";
+import Fab from "#foundation/components/core/fab.vue";
 import Img from "#foundation/components/common/img.vue";
-import Menu from "#foundation/components/core/Menu.vue";
+import Menu from "#foundation/components/core/menu.vue";
 import Span from "#foundation/components/common/span.vue";
 import Tbody from "#foundation/components/common/tbody.vue";
 import Td from "#foundation/components/common/td.vue";
@@ -76,11 +76,7 @@ const actionsTriggerPT = usePassthrough(pt?.actionsTrigger, {
       v-if="!data.length"
       v-bind="passthrough(pt?.tr, { props: {}, handlers: {} }).props"
     >
-      <Td
-        v-bind="emptyPT.props"
-        :colspan="colSpan"
-        v-on="emptyPT.handlers"
-      >
+      <Td v-bind="emptyPT.props" :colspan="colSpan" v-on="emptyPT.handlers">
         <slot name="empty" v-bind="ctx">No data</slot>
       </Td>
     </Tr>
@@ -151,10 +147,9 @@ const actionsTriggerPT = usePassthrough(pt?.actionsTrigger, {
             <Span
               v-else
               v-bind="
-                passthrough(pt?.cellSpan, { props: {}, handlers: {} })
-                  .props
+                passthrough(pt?.cellSpan, { props: {}, handlers: {} }).props
               "
-              >{{ formatCell(row[col.key], col.type) }}</Span
+              >{{ cell(row[col.key], col.type) }}</Span
             >
           </slot>
         </Td>

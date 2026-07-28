@@ -15,4 +15,7 @@ export default defineModifiers({
     variant: ["solid", "outline", "ghost"],
     tone: ["primary", "danger"],
   },
+  "toast-root": {
+    variant: ["info", "success", "warning", "error"],
+  },
 });
