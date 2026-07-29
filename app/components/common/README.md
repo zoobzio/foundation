@@ -248,6 +248,7 @@ scoped with the spread `ctx` fields.
 | [Em](./em.vue)                 | `HTMLElement`             | `emphasis`      |  ●   |                                                |
 | [Fieldset](./fieldset.vue)     | `HTMLFieldSetElement`     | `group`         |  ●   | `<legend>` · `disabled`                        |
 | [Footer](./footer.vue)         | `HTMLElement`             | `contentinfo`   |  ●   |                                                |
+| [Form](./form.vue)             | `HTMLFormElement`         | `form`          |  ●   | `submit` · `reset` emits                       |
 | [Group](./group.vue)           | `HTMLDivElement`          | `group`         |  ●   |                                                |
 | [H1](./h1.vue)–[H6](./h6.vue)  | `HTMLHeadingElement`      | `heading`       |  ●   | levels 1–6                                     |
 | [Header](./header.vue)         | `HTMLElement`             | `banner`        |  ●   |                                                |

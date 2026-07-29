@@ -150,6 +150,7 @@ export default {
     em: { role: "emphasis", events: [], tokens: {} },
     fieldset: { role: "group", events: [], tokens: {} },
     footer: { role: "contentinfo", events: [], tokens: {} },
+    form: { role: "form", events: ["submit", "reset"], tokens: {} },
     group: { role: "group", events: [], tokens: {} },
     h1: { role: "heading", events: [], tokens: {} },
     h2: { role: "heading", events: [], tokens: {} },
