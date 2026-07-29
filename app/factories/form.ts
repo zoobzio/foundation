@@ -1,46 +1,49 @@
-import { computed, inject, useNuxtApp, useState } from "#imports";
-import { WIDGET_CONFIGS } from "#foundation/constants/table";
-import type { Form, DataFormConfig } from "#foundation/types/data/form";
-import { DataFormSnapshotSchema } from "#foundation/schemas/form";
-import type { DataFormSnapshot } from "#foundation/schemas/form";
+import type { Form, Config, Actions } from "#foundation/types/data/form";
+import type { FormSnapshot } from "#foundation/schemas/form";
 
-export const createForm = <T>(id: string, config: DataFormConfig<T>) => {
+import { accessForm } from "#foundation/stores/form";
+import { computed, useNuxtApp } from "#imports";
+import { useLogger } from "#foundation/composables/log";
+
+export const createForm = <T>(
+  id: string,
+  config: Config<T>,
+  actions: Actions<T>,
+) => {
+  const nuxt = useNuxtApp();
+  const log = useLogger(`form-${id}`);
+
+  const state = accessForm(id, config);
+  const { initialized, values, errors, touched, submitting, submitted } = state;
+
   return (): Form<T> => {
-    const configs = inject(WIDGET_CONFIGS, {});
-    const defaults = DataFormSnapshotSchema.parse(configs[id] ?? {});
-
-    // Initialization
-    const initialized = useState<boolean>(
-      `form-${id}-initialized`,
-      () => false,
-    );
-
-    // State
-    const values = useState<Partial<T>>(
-      `form-${id}-values`,
-      () => ({ ...config.defaults, ...defaults.values } as Partial<T>),
-    );
-    const errors = useState<Record<string, string>>(
-      `form-${id}-errors`,
-      () => ({}),
-    );
-    const touched = useState<Set<string>>(
-      `form-${id}-touched`,
-      () => new Set(defaults.touched),
-    );
-    const submitting = useState<boolean>(
-      `form-${id}-submitting`,
-      () => false,
-    );
-    const submitted = useState<boolean>(
-      `form-${id}-submitted`,
-      () => false,
-    );
-
-    // Validation
-    const runValidation = (): Record<string, string> => {
+    const valid = computed(() => {
       const result = config.schema.safeParse(values.value);
-      if (result.success) return {};
+      return result.success;
+    });
+
+    const initialize = async () => {
+      if (initialized.value) return true;
+      if (actions.init) {
+        log.debug("Form initializing", { id });
+        try {
+          await actions.init(state);
+        } catch (cause) {
+          log.error("Failed to initialize form", {
+            id,
+            config,
+            cause,
+          });
+          throw cause;
+        }
+      }
+      return (initialized.value = true);
+    };
+
+    const validate = (key?: keyof T): boolean => {
+      const result = config.schema.safeParse(values.value);
+      if (result.success) return true;
+
       const fieldErrors: Record<string, string> = {};
       for (const issue of result.error.issues) {
         const key = issue.path.join(".");
@@ -48,32 +51,22 @@ export const createForm = <T>(id: string, config: DataFormConfig<T>) => {
           fieldErrors[key] = issue.message;
         }
       }
-      return fieldErrors;
-    };
 
-    const valid = computed(() => {
-      const result = config.schema.safeParse(values.value);
-      return result.success;
-    });
+      if (key) {
+        const k = String(key);
+        const { [k]: _, ...rest } = errors.value;
+        errors.value = fieldErrors[k] ? { ...rest, [k]: fieldErrors[k] } : rest;
+        return errors.value[k] === undefined;
+      }
 
-    const validate = (): boolean => {
-      const fieldErrors = runValidation();
       errors.value = fieldErrors;
-      // Touch all fields on full validation
       const allKeys = config.fields.map((f) => String(f.key));
       touched.value = new Set(allKeys);
+      log.debug("Form validation failed", { id, errors: fieldErrors });
       return Object.keys(fieldErrors).length === 0;
     };
 
-    const validateField = (key: keyof T) => {
-      const fieldErrors = runValidation();
-      const k = String(key);
-      const { [k]: _, ...rest } = errors.value;
-      errors.value = fieldErrors[k] ? { ...rest, [k]: fieldErrors[k] } : rest;
-    };
-
-    // Actions
-    const setValue = (key: keyof T, value: unknown) => {
+    const set = (key: keyof T, value: unknown) => {
       values.value = { ...values.value, [key]: value };
     };
 
@@ -83,70 +76,79 @@ export const createForm = <T>(id: string, config: DataFormConfig<T>) => {
       touched.value = next;
     };
 
-    const submitForm = async () => {
+    const submit = async () => {
       if (!validate()) return;
       submitting.value = true;
+      log.debug("Form submitting", { id, values: values.value });
       try {
         const result = config.schema.parse(values.value);
-        await config.submit(result);
+        if (actions.submit) {
+          await actions.submit(state);
+        }
         submitted.value = true;
-        useNuxtApp().callHook("widget:form:submitted", {
+        log.debug("Form submitted", { id, data: result });
+        nuxt.callHook("widget:form:submitted", {
           id,
           data: result,
         });
+      } catch (cause) {
+        log.error("Form submission failed", { id, cause });
+        throw cause;
       } finally {
         submitting.value = false;
-        useNuxtApp().callHook("widget:form:snapshot", {
+        nuxt.callHook("widget:form:snapshot", {
           id,
-          snapshot: getSnapshot(),
+          snapshot: snap(),
         });
       }
     };
 
+    const update = (data: Partial<T>) => {
+      values.value = { ...values.value, ...data };
+      log.debug("Form updated", { id, values: values.value });
+    };
+
     const reset = () => {
-      values.value = { ...config.defaults } as Partial<T>;
+      log.debug("Form reset", { id });
+      values.value = { ...config.defaults };
       errors.value = {};
       touched.value = new Set();
       submitted.value = false;
     };
 
-    // Persistence
-    const getSnapshot = (): DataFormSnapshot => ({
-      values: values.value as Record<string, unknown>,
+    const snap = (): FormSnapshot => ({
+      values: values.value,
       touched: [...touched.value],
     });
 
-    const restoreSnapshot = (snapshot: DataFormSnapshot) => {
-      values.value = snapshot.values as Partial<T>;
+    const restore = (snapshot: FormSnapshot) => {
+      values.value = { ...config.defaults, ...snapshot.values };
       touched.value = new Set(snapshot.touched);
-    };
-
-    // Init
-    const init = async () => {
-      if (initialized.value) return true;
-      initialized.value = true;
-      return true;
+      log.debug("Form snapshot restored", { id, snapshot });
     };
 
     return {
+      // config
+      id,
+      config,
+      // state
+      initialized,
       values,
       errors,
       touched,
       submitting,
       submitted,
       valid,
-      title: config.title,
-      fields: config.fields,
-      setValue,
+      // actions
+      initialize,
+      set,
+      update,
       touch,
       validate,
-      validateField,
-      submit: submitForm,
+      submit,
       reset,
-      getSnapshot,
-      restoreSnapshot,
-      init,
-      initialized,
+      snap,
+      restore,
     };
   };
 };

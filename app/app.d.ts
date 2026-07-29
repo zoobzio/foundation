@@ -1,8 +1,8 @@
 import type { DataTableSnapshot } from "#foundation/schemas/table";
 import type { DataChartSnapshot } from "#foundation/schemas/chart";
 import type { DataPreviewSnapshot } from "#foundation/schemas/preview";
-import type { DataDeckSnapshot } from "#foundation/schemas/deck";
-import type { DataFormSnapshot } from "#foundation/schemas/form";
+import type { DeckSnapshot } from "#foundation/schemas/deck";
+import type { FormSnapshot } from "#foundation/schemas/form";
 import type { LogLine } from "#foundation/types/log";
 
 declare module "#app" {
@@ -24,11 +24,11 @@ declare module "#app" {
     }) => void;
     "widget:deck:snapshot": (event: {
       id: string;
-      snapshot: DataDeckSnapshot;
+      snapshot: DeckSnapshot;
     }) => void;
     "widget:form:snapshot": (event: {
       id: string;
-      snapshot: DataFormSnapshot;
+      snapshot: FormSnapshot;
     }) => void;
     "widget:form:submitted": (event: { id: string; data: unknown }) => void;
   }

@@ -1,28 +1,28 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataFormSnapshot } from "#foundation/schemas/form";
+import type { FormSnapshot } from "#foundation/schemas/form";
 import type { Option } from "#foundation/types/core/common";
 import type { ZodType } from "zod";
 
 /**
  * Colspan over a 12-column grid.
  */
-export type FormColspan = 2 | 3 | 4 | 6 | 8 | 9 | 10 | 12;
+export type Colspan = 2 | 3 | 4 | 6 | 8 | 9 | 10 | 12;
 
 /**
  * Shared base for all field variants.
  */
-export interface DataFormFieldBase<T> {
+export interface FieldBase<T> {
   key: keyof T;
   label: string;
   disabled?: boolean;
   required?: boolean;
-  colspan?: FormColspan;
+  colspan?: Colspan;
 }
 
 /**
  * Text-like inputs (text, email, password).
  */
-export interface DataFormTextField<T> extends DataFormFieldBase<T> {
+export interface TextField<T> extends FieldBase<T> {
   type: "text" | "email" | "password";
   placeholder?: string;
   maxLength?: number;
@@ -31,7 +31,7 @@ export interface DataFormTextField<T> extends DataFormFieldBase<T> {
 /**
  * Numeric input.
  */
-export interface DataFormNumberField<T> extends DataFormFieldBase<T> {
+export interface NumberField<T> extends FieldBase<T> {
   type: "number";
   placeholder?: string;
   min?: number;
@@ -42,7 +42,7 @@ export interface DataFormNumberField<T> extends DataFormFieldBase<T> {
 /**
  * Textarea input.
  */
-export interface DataFormTextareaField<T> extends DataFormFieldBase<T> {
+export interface TextareaField<T> extends FieldBase<T> {
   type: "textarea";
   placeholder?: string;
   rows?: number;
@@ -52,7 +52,7 @@ export interface DataFormTextareaField<T> extends DataFormFieldBase<T> {
 /**
  * Single select.
  */
-export interface DataFormSelectField<T> extends DataFormFieldBase<T> {
+export interface SelectField<T> extends FieldBase<T> {
   type: "select";
   placeholder?: string;
   options: Option[];
@@ -61,7 +61,7 @@ export interface DataFormSelectField<T> extends DataFormFieldBase<T> {
 /**
  * Multi select.
  */
-export interface DataFormMultiSelectField<T> extends DataFormFieldBase<T> {
+export interface MultiSelectField<T> extends FieldBase<T> {
   type: "multi-select";
   placeholder?: string;
   options: Option[];
@@ -70,14 +70,14 @@ export interface DataFormMultiSelectField<T> extends DataFormFieldBase<T> {
 /**
  * Checkbox (boolean).
  */
-export interface DataFormCheckboxField<T> extends DataFormFieldBase<T> {
+export interface CheckboxField<T> extends FieldBase<T> {
   type: "checkbox";
 }
 
 /**
  * Radio group.
  */
-export interface DataFormRadioField<T> extends DataFormFieldBase<T> {
+export interface RadioField<T> extends FieldBase<T> {
   type: "radio";
   options: Option[];
   orientation?: "horizontal" | "vertical";
@@ -86,7 +86,7 @@ export interface DataFormRadioField<T> extends DataFormFieldBase<T> {
 /**
  * Date picker.
  */
-export interface DataFormDateField<T> extends DataFormFieldBase<T> {
+export interface DateField<T> extends FieldBase<T> {
   type: "date";
   placeholder?: string;
   minDate?: Date;
@@ -96,7 +96,7 @@ export interface DataFormDateField<T> extends DataFormFieldBase<T> {
 /**
  * Tags input.
  */
-export interface DataFormTagsInputField<T> extends DataFormFieldBase<T> {
+export interface TagsInputField<T> extends FieldBase<T> {
   type: "tags-input";
   placeholder?: string;
   max?: number;
@@ -106,26 +106,39 @@ export interface DataFormTagsInputField<T> extends DataFormFieldBase<T> {
 /**
  * Discriminated union of all field types.
  */
-export type DataFormField<T> =
-  | DataFormTextField<T>
-  | DataFormNumberField<T>
-  | DataFormTextareaField<T>
-  | DataFormSelectField<T>
-  | DataFormMultiSelectField<T>
-  | DataFormCheckboxField<T>
-  | DataFormRadioField<T>
-  | DataFormDateField<T>
-  | DataFormTagsInputField<T>;
+export type Field<T> =
+  | TextField<T>
+  | NumberField<T>
+  | TextareaField<T>
+  | SelectField<T>
+  | MultiSelectField<T>
+  | CheckboxField<T>
+  | RadioField<T>
+  | DateField<T>
+  | TagsInputField<T>;
 
 /**
  * Config the consumer provides to the factory.
  */
-export interface DataFormConfig<T> {
+export interface Config<T> {
   title: string;
-  fields: DataFormField<T>[];
+  fields: Field<T>[];
   schema: ZodType<T>;
-  submit: (data: T) => Promise<void>;
   defaults?: Partial<T>;
+}
+
+export interface State<T> {
+  initialized: Ref<boolean>;
+  values: Ref<Partial<T>>;
+  errors: Ref<Record<string, string>>;
+  touched: Ref<Set<string>>;
+  submitting: Ref<boolean>;
+  submitted: Ref<boolean>;
+}
+
+export interface Actions<T> {
+  init?: (state: State<T>) => Promise<void>;
+  submit?: (state: State<T>) => Promise<void>;
 }
 
 /**
@@ -133,7 +146,10 @@ export interface DataFormConfig<T> {
  * Returned by the form factory. Components accept this as their prop.
  */
 export interface Form<T> {
-  // State
+  id: string;
+  config: Config<T>;
+
+  initialized: Ref<boolean>;
   values: Ref<Partial<T>>;
   errors: Ref<Record<string, string>>;
   touched: Ref<Set<string>>;
@@ -141,23 +157,13 @@ export interface Form<T> {
   submitted: Ref<boolean>;
   valid: ComputedRef<boolean>;
 
-  // Config
-  readonly title: string;
-  readonly fields: DataFormField<T>[];
-
-  // Actions
-  // The data-form write path is dynamic (fields are configured at runtime and
-  // values arrive from the DOM as `unknown`); Zod validates on submit. A
-  // strict `<K>(key, value: T[K])` would force every field wrapper to cast at
-  // the DOM boundary, so the setter accepts `unknown`.
-  setValue: (key: keyof T, value: unknown) => void;
+  initialize: () => Promise<boolean>;
+  set: (key: keyof T, value: unknown) => void;
+  update: (data: Partial<T>) => void;
   touch: (key: keyof T) => void;
-  validate: () => boolean;
-  validateField: (key: keyof T) => void;
+  validate: (key?: keyof T) => boolean;
   submit: () => Promise<void>;
   reset: () => void;
-  getSnapshot: () => DataFormSnapshot;
-  restoreSnapshot: (snapshot: DataFormSnapshot) => void;
-  init: () => Promise<boolean>;
-  initialized: Ref<boolean>;
+  snap: () => FormSnapshot;
+  restore: (snapshot: FormSnapshot) => void;
 }
