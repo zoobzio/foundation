@@ -192,8 +192,9 @@ defineSlots<CommandSlots<T>>();
                       <Kbd
                         v-if="item.count !== undefined"
                         v-bind="settings.itemCount"
-                        >{{ item.count }}</Kbd
                       >
+                        {{ item.count }}
+                      </Kbd>
                     </slot>
                   </ListboxItem>
                 </slot>

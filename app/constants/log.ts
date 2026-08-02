@@ -1,3 +1,5 @@
+export const LOG_ROOT_NAME = "app";
+
 export const LOG_LEVELS = {
   trace: 0,
   debug: 1,

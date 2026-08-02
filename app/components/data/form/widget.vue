@@ -1,10 +1,12 @@
 <script lang="ts">
 import type {
   FormWidgetContext,
+  FormWidgetEmits,
   FormWidgetPassthrough,
   FormWidgetProps,
   FormWidgetSlots,
 } from "#foundation/types/data/form/widget";
+import type { Events } from "#foundation/types/data/form";
 import type { ComponentPublicInstance } from "vue";
 
 import Button from "#foundation/components/common/button.vue";
@@ -15,6 +17,7 @@ import Scroller from "#foundation/components/core/scroller.vue";
 import Span from "#foundation/components/common/span.vue";
 
 import { useTemplateRef } from "#imports";
+import { useHooks } from "#foundation/composables/hook";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 import { useForwardSlots } from "#foundation/composables/slots";
@@ -24,6 +27,16 @@ import { FORM_FIELD_SLOTS } from "#foundation/constants/form";
 
 <script setup lang="ts" generic="T">
 const { form, pt } = defineProps<FormWidgetProps<T>>();
+
+const emit = defineEmits<FormWidgetEmits<T>>();
+
+useHooks<Events<T>>(form.id, {
+  "form:initialized": (event) => emit("initialized", event),
+  "form:submitted": (event) => emit("submitted", event),
+  "form:rejected": (event) => emit("rejected", event),
+  "form:restored": (event) => emit("restored", event),
+  "form:reset": (event) => emit("reset", event),
+});
 
 useLazyRequest(`init-form-${form.id}`, form.initialize);
 
