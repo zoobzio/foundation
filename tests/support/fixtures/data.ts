@@ -26,7 +26,7 @@ const Columns = (await import("#foundation/components/data/table/Columns.vue")).
 const FilterHelp = (await import("#foundation/components/data/table/FilterHelp.vue")).default as DefineComponent;
 const Filters = (await import("#foundation/components/data/table/Filters.vue")).default as DefineComponent;
 
-const PreviewWidget = (await import("#foundation/components/data/preview/Widget.vue")).default as DefineComponent;
+const PreviewWidget = (await import("#foundation/components/data/preview/widget.vue")).default as DefineComponent;
 
 const DeckWidget = (await import("#foundation/components/data/deck/Widget.vue")).default as DefineComponent;
 const DeckToolbar = (await import("#foundation/components/data/deck/Toolbar.vue")).default as DefineComponent;
