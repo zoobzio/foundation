@@ -7,7 +7,7 @@ import type {
   ScrollerEmits,
   ScrollerProps,
 } from "#foundation/types/core/scroller";
-import type { Form } from "#foundation/types/data/form";
+import type { Form, Events } from "#foundation/types/data/form";
 import type {
   FormFieldPassthrough,
   FormFieldSlots,
@@ -26,12 +26,20 @@ export type FormWidgetPassthrough = {
   reset: Passthrough<ButtonProps, ButtonEmits>;
 };
 
-export interface FormWidgetProps<T> {
+export type FormWidgetProps<T> = {
   form: Form<T>;
   pt?: PT<FormWidgetPassthrough> & {
     fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>>;
   };
-}
+};
+
+export type FormWidgetEmits<T> = {
+  initialized: Parameters<Events<T>["form:initialized"]>;
+  submitted: Parameters<Events<T>["form:submitted"]>;
+  rejected: Parameters<Events<T>["form:rejected"]>;
+  restored: Parameters<Events<T>["form:restored"]>;
+  reset: Parameters<Events<T>["form:reset"]>;
+};
 
 export type FormWidgetContext<T> = {
   form: Form<T>;

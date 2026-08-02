@@ -1,11 +1,11 @@
-import type { Config } from "#foundation/types/data/form";
+import type { Config, State } from "#foundation/types/data/form";
 
 import { useState } from "#imports";
 
-export const accessForm = <T>(id: string, config: Config<T>) => {
+export const accessForm = <T>(id: string, config: Config<T>): State<T> => {
   const initialized = useState<boolean>(`form-${id}-initialized`, () => false);
 
-  const values = useState<Partial<T>>(`form-${id}-values`, () => ({
+  const payload = useState<Partial<T>>(`form-${id}-payload`, () => ({
     ...config.defaults,
   }));
 
@@ -22,7 +22,7 @@ export const accessForm = <T>(id: string, config: Config<T>) => {
 
   return {
     initialized,
-    values,
+    payload,
     errors,
     touched,
     submitting,
