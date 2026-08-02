@@ -1,22 +1,16 @@
 // data/table constants
 
-import type { InjectionKey } from "vue";
+import type { IconAlias } from "#foundation/types/common/iconic";
+import type { SortDirection } from "#foundation/types/data/table";
 
-/**
- * Injection key for pre-fetched widget configs.
- * Pages provide this. Widgets inject and validate their own slice.
- */
-export const WIDGET_CONFIGS: InjectionKey<Record<string, unknown>> =
-  Symbol("WIDGET_CONFIGS");
-
-// Default page size — schemas/data/table.ts
 export const TABLE_DEFAULT_PAGE_SIZE = 25;
+export const TABLE_DEFAULT_SORT_DIRECTION: SortDirection = "asc";
 
-// Default filter match mode — schemas/data/table.ts
-export const TABLE_DEFAULT_MATCH_MODE = "all";
+export const TABLE_SORT_ASC_ICON: IconAlias = "chevron-up";
+export const TABLE_SORT_DESC_ICON: IconAlias = "chevron-down";
+export const TABLE_DRAG_ICON: IconAlias = "drag";
+export const TABLE_COLUMNS_ICON: IconAlias = "settings";
+export const TABLE_ACTIONS_ICON: IconAlias = "actions";
+export const TABLE_REFRESH_ICON: IconAlias = "refresh";
 
-// Default sort direction — schemas/data/table.ts
-export const TABLE_DEFAULT_SORT_DIRECTION = "asc";
-
-// Search input debounce (ms) — components/data/table/Search.vue
-export const TABLE_SEARCH_DEBOUNCE = 300;
+export const TABLE_COLUMNS_PLACEHOLDER = "Search columns...";

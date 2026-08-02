@@ -1,236 +1,66 @@
-import { computed, inject, useNuxtApp, useState, watch } from "#imports";
-import type { FacetGroup, MatchMode } from "#foundation/types/data/table";
-import { WIDGET_CONFIGS } from "#foundation/constants/table";
-import { DECK_PAGE_SIZE, DECK_POLL_INTERVAL, SORT_LABELS } from "#foundation/constants/deck";
-import { DataDeckSnapshotSchema } from "#foundation/schemas/deck";
-import type { DataDeckSnapshot } from "#foundation/schemas/deck";
-import type {
-  Deck,
-  DataDeckConfig,
-  DataDeckFetchParams,
-} from "#foundation/types/data/deck";
+import type { Deck, Config, Actions } from "#foundation/types/data/deck";
 
-function sortLabel(field: string): string {
-  // Check known labels, then capitalize the field name
-  return SORT_LABELS[field] ?? field.charAt(0).toUpperCase() + field.slice(1);
-}
+import { accessDeck } from "#foundation/stores/deck";
+import { computed, useNuxtApp } from "#imports";
+import { DeckService } from "#foundation/services/deck";
 
 export const createDeck = <T>(
   id: string,
-  config: DataDeckConfig<T>,
+  config: Config<T>,
+  actions: Actions<T>,
 ) => {
   return (): Deck<T> => {
-    const configs = inject(WIDGET_CONFIGS, {});
-    const raw = configs[id];
-    const defaults = DataDeckSnapshotSchema.parse(raw ?? {});
-
-    // Initialization
-    const initialized = useState<boolean>(
-      `deck-${id}-initialized`,
-      () => false,
-    );
-
-    // State
-    const items = useState<T[]>(`deck-${id}-items`, () => []);
-    const pending = useState<T[]>(`deck-${id}-pending`, () => []);
-    const loading = useState<boolean>(`deck-${id}-loading`, () => false);
-    const loadingMore = useState<boolean>(
-      `deck-${id}-loadingMore`,
-      () => false,
-    );
-    const hasMore = useState<boolean>(`deck-${id}-hasMore`, () => true);
-
-    // Sort — always newest first, consumer picks the date field
-    const firstDateField = String(config.dateFields[0]?.key ?? "created");
-    const sortField = useState<string>(
-      `deck-${id}-sortField`,
-      () => defaults.sortField || firstDateField,
-    );
-
-    // Filters
-    const query = useState<string>(`deck-${id}-query`, () => defaults.query);
-    const keywords = useState<string>(
-      `deck-${id}-keywords`,
-      () => defaults.keywords,
-    );
-    const match = useState<MatchMode>(
-      `deck-${id}-match`,
-      () => defaults.match,
-    );
-    const selectedFacets = useState<Set<string>>(
-      `deck-${id}-selectedFacets`,
-      () => new Set(defaults.selectedFacets),
-    );
-    const facetGroups = useState<FacetGroup[]>(
-      `deck-${id}-facetGroups`,
-      () => [],
-    );
-
-    // Facet changes trigger refetch
-    watch(selectedFacets, () => fetchData(), { deep: true });
-
-    // Polling
-    const pollInterval = config.pollInterval ?? DECK_POLL_INTERVAL;
-    const pageSize = config.pageSize ?? DECK_PAGE_SIZE;
-    let pollTimer: ReturnType<typeof setInterval> | null = null;
-
-    // Getters
-    const title = computed(() => {
-      const fieldConfig = config.dateFields.find(
-        (f) => String(f.key) === sortField.value,
-      );
-      const label = fieldConfig?.label ?? sortLabel(sortField.value);
-      return `Recently ${label} ${config.topic}`;
-    });
-
-    const pendingCount = computed(() => pending.value.length);
-
-    // Build fetch params
-    const baseParams = (): Omit<DataDeckFetchParams, "after" | "before"> => ({
-      limit: pageSize,
-      sortField: sortField.value,
-      query: query.value,
-      keywords: keywords.value,
-      match: match.value,
-      facets: selectedFacets.value,
-    });
-
-    // Initial fetch
-    const fetchData = async () => {
-      loading.value = true;
-      try {
-        const result = await config.fetch(baseParams());
-        items.value = result.data;
-        hasMore.value = result.hasMore;
-        pending.value = [];
-        if (result.facets) facetGroups.value = result.facets;
-      } finally {
-        loading.value = false;
-        useNuxtApp().callHook("widget:deck:snapshot", {
-          id,
-          snapshot: getSnapshot(),
-        });
-      }
-    };
-
-    // Load more — older items
-    const loadMore = async () => {
-      if (loadingMore.value || !hasMore.value || !items.value.length) return;
-      loadingMore.value = true;
-      try {
-        const oldest = items.value[items.value.length - 1]!;
-        const oldestDate = String(oldest[sortField.value as keyof T]);
-        const result = await config.fetch({
-          ...baseParams(),
-          before: oldestDate,
-        });
-        items.value = [...items.value, ...result.data];
-        hasMore.value = result.hasMore;
-        if (result.facets) facetGroups.value = result.facets;
-      } finally {
-        loadingMore.value = false;
-      }
-    };
-
-    // Poll — newer items
-    const poll = async () => {
-      if (!items.value.length) return;
-      const newest = items.value[0]!;
-      const newestDate = String(newest[sortField.value as keyof T]);
-      try {
-        const result = await config.fetch({
-          ...baseParams(),
-          after: newestDate,
-        });
-        if (result.data.length) {
-          pending.value = [...result.data, ...pending.value];
-        }
-        if (result.facets) facetGroups.value = result.facets;
-      } catch {
-        // Polling errors are silent — next interval will retry
-      }
-    };
-
-    // Show pending — prepend buffered items
-    const showPending = () => {
-      items.value = [...pending.value, ...items.value];
-      pending.value = [];
-    };
-
-    // Sort field
-    const setSortField = (field: string) => {
-      if (!config.dateFields.some((f) => String(f.key) === field)) return;
-      sortField.value = field;
-      fetchData();
-    };
-
-    // Polling controls
-    const startPolling = () => {
-      if (pollTimer) return;
-      pollTimer = setInterval(poll, pollInterval);
-    };
-
-    const stopPolling = () => {
-      if (pollTimer) {
-        clearInterval(pollTimer);
-        pollTimer = null;
-      }
-    };
-
-    // Persistence
-    const getSnapshot = (): DataDeckSnapshot => ({
-      sortField: sortField.value,
-      query: query.value,
-      keywords: keywords.value,
-      match: match.value,
-      selectedFacets: [...selectedFacets.value],
-    });
-
-    const restoreSnapshot = (snapshot: DataDeckSnapshot) => {
-      sortField.value = snapshot.sortField;
-      query.value = snapshot.query;
-      keywords.value = snapshot.keywords;
-      match.value = snapshot.match;
-      selectedFacets.value = new Set(snapshot.selectedFacets);
-      fetchData();
-    };
-
-    // Init — idempotent
-    const init = async () => {
-      if (initialized.value) return true;
-      initialized.value = true;
-      await fetchData();
-      return true;
-    };
-
+    const nuxt = useNuxtApp();
+    const state = accessDeck(id, config);
+    const service = new DeckService(nuxt, id, config, state, actions);
     return {
-      items,
-      pending,
-      loading,
-      loadingMore,
-      hasMore,
-      initialized,
-      query,
-      keywords,
-      match,
-      selectedFacets,
-      facetGroups,
-      sortField,
-      topic: config.topic,
-      rowKey: config.rowKey,
-      dateFields: config.dateFields,
-      pollInterval,
-      title,
-      pendingCount,
-      init,
-      fetch: fetchData,
-      loadMore,
-      showPending,
-      setSortField,
-      startPolling,
-      stopPolling,
-      getSnapshot,
-      restoreSnapshot,
+      id,
+      config,
+
+      items: computed(() => service.items),
+      pending: computed(() => service.pending),
+      loading: computed(() => service.loading),
+      loadingMore: computed(() => service.loadingMore),
+      hasMore: computed(() => service.hasMore),
+      initialized: computed(() => service.initialized),
+      facetGroups: computed(() => service.facetGroups),
+
+      // Filter state the toolbar edits — writable computeds routing through
+      // the service's mutators (each fetches on write).
+      query: computed({
+        get: () => service.query,
+        set: (v) => service.setQuery(v),
+      }),
+      keywords: computed({
+        get: () => service.keywords,
+        set: (v) => service.setKeywords(v),
+      }),
+      match: computed({
+        get: () => service.match,
+        set: (v) => service.setMatch(v),
+      }),
+      selectedFacets: computed({
+        get: () => service.selectedFacets,
+        set: (v) => service.setFacets(v),
+      }),
+      sortField: computed({
+        get: () => service.sortField,
+        set: (v) => service.setSortField(v),
+      }),
+
+      topic: service.topic,
+      rowKey: service.rowKey,
+      dateFields: service.dateFields,
+      pollInterval: service.pollInterval,
+
+      title: computed(() => service.title),
+      pendingCount: computed(() => service.pendingCount),
+
+      init: () => service.init(),
+      fetch: () => service.fetch(),
+      loadMore: () => service.loadMore(),
+      poll: () => service.poll(),
+      showPending: () => service.showPending(),
     };
   };
 };

@@ -1,8 +1,13 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataDeckSnapshot } from "#foundation/schemas/deck";
-import type { FacetGroup, MatchMode } from "#foundation/types/data/table";
+import type { FacetGroup } from "#foundation/types/core/facets";
+
 /**
- * Date field config — available sort fields for the deck.
+ * Match mode for combining query and keywords in a fetch.
+ */
+export type MatchMode = "all" | "any";
+
+/**
+ * Date field config — an available sort field for the deck.
  */
 export interface DateFieldConfig<T> {
   key: keyof T;
@@ -10,8 +15,8 @@ export interface DateFieldConfig<T> {
 }
 
 /**
- * Parameters passed to the deck fetch function.
- * Cursor-based: use `after` for polling, `before` for load-more, neither for initial.
+ * Parameters passed to the fetch action. Cursor-based: `after` for polling
+ * (newer), `before` for load-more (older), neither for the initial page.
  */
 export interface DataDeckFetchParams {
   limit: number;
@@ -24,9 +29,6 @@ export interface DataDeckFetchParams {
   facets: Set<string>;
 }
 
-/**
- * Result returned from the deck fetch function.
- */
 export interface DataDeckFetchResult<T> {
   data: T[];
   hasMore: boolean;
@@ -34,69 +36,122 @@ export interface DataDeckFetchResult<T> {
 }
 
 /**
- * Writable slice of deck state for snapshots.
+ * Config the consumer provides to the factory — pure data.
  */
-export interface DataDeckPayload {
-  sortField: string;
-  query: string;
-  keywords: string;
-  match: MatchMode;
-  selectedFacets: Set<string>;
-}
-
-/**
- * Config the consumer provides to the factory.
- */
-export interface DataDeckConfig<T> {
+export type Config<T> = {
   topic: string;
   rowKey: keyof T;
   dateFields: DateFieldConfig<T>[];
   pollInterval?: number;
   pageSize?: number;
-  fetch: (params: DataDeckFetchParams) => Promise<DataDeckFetchResult<T>>;
-}
+};
 
-/**
- * The reactive interface for a data deck.
- * Returned by the deck factory. Components accept this as their prop.
- */
-export interface Deck<T> {
-  // Reactive state
+export type State<T> = {
   items: Ref<T[]>;
   pending: Ref<T[]>;
   loading: Ref<boolean>;
   loadingMore: Ref<boolean>;
   hasMore: Ref<boolean>;
   initialized: Ref<boolean>;
-
-  // Filter state
   query: Ref<string>;
   keywords: Ref<string>;
   match: Ref<MatchMode>;
   selectedFacets: Ref<Set<string>>;
   facetGroups: Ref<FacetGroup[]>;
+  sortField: Ref<string>;
+};
 
-  // Sort
+/**
+ * The consumer-supplied fetch mechanism — the deck's single data source.
+ */
+export type Actions<T> = {
+  fetch: (
+    params: DataDeckFetchParams,
+    service: Service<T>,
+  ) => Promise<DataDeckFetchResult<T>>;
+};
+
+/**
+ * The imperative contract: unwrapped state + derived + the full method surface.
+ * `DeckService<T>` declares `implements` against this, and the fetch action
+ * receives it.
+ */
+export type Service<T> = {
+  readonly id: string;
+  readonly config: Config<T>;
+  readonly topic: string;
+  readonly rowKey: keyof T;
+  readonly dateFields: DateFieldConfig<T>[];
+  readonly pollInterval: number;
+  readonly pageSize: number;
+
+  readonly items: T[];
+  readonly pending: T[];
+  readonly loading: boolean;
+  readonly loadingMore: boolean;
+  readonly hasMore: boolean;
+  readonly initialized: boolean;
+  readonly query: string;
+  readonly keywords: string;
+  readonly match: MatchMode;
+  readonly selectedFacets: Set<string>;
+  readonly facetGroups: FacetGroup[];
+  readonly sortField: string;
+
+  readonly title: string;
+  readonly pendingCount: number;
+
+  init(): Promise<boolean>;
+  fetch(): Promise<void>;
+  loadMore(): Promise<void>;
+  poll(): Promise<void>;
+  showPending(): void;
+  setSortField(field: string): void;
+  setQuery(query: string): void;
+  setKeywords(keywords: string): void;
+  setMatch(match: MatchMode): void;
+  setFacets(facets: Set<string>): void;
+};
+
+export type Events = {
+  "deck:updated": (event: { id: string; count: number }) => void;
+  "deck:polled": (event: { id: string; count: number }) => void;
+};
+
+/**
+ * The reactive facade returned by the factory — the widget's prop. Filter state
+ * the toolbar edits is exposed as writable computeds routing through the
+ * service's mutators; everything else is read-only.
+ */
+export type Deck<T> = {
+  id: string;
+  config: Config<T>;
+
+  items: Ref<T[]>;
+  pending: Ref<T[]>;
+  loading: Ref<boolean>;
+  loadingMore: Ref<boolean>;
+  hasMore: Ref<boolean>;
+  initialized: Ref<boolean>;
+  facetGroups: Ref<FacetGroup[]>;
+
+  query: Ref<string>;
+  keywords: Ref<string>;
+  match: Ref<MatchMode>;
+  selectedFacets: Ref<Set<string>>;
   sortField: Ref<string>;
 
-  // Static config
   readonly topic: string;
   readonly rowKey: keyof T;
   readonly dateFields: DateFieldConfig<T>[];
   readonly pollInterval: number;
 
-  // Getters
   title: ComputedRef<string>;
   pendingCount: ComputedRef<number>;
 
-  // Actions
   init: () => Promise<boolean>;
   fetch: () => Promise<void>;
   loadMore: () => Promise<void>;
+  poll: () => Promise<void>;
   showPending: () => void;
-  setSortField: (field: string) => void;
-  startPolling: () => void;
-  stopPolling: () => void;
-  getSnapshot: () => DataDeckSnapshot;
-  restoreSnapshot: (snapshot: DataDeckSnapshot) => void;
-}
+};

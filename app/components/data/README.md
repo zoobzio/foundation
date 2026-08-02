@@ -299,5 +299,5 @@ kebab-case are migrated — renaming is the final step):
 
 ## Status
 
-Migrated: `form`, `autocomplete`, `chart`. Pending (PascalCase files, previous
-architecture): `deck`, `filter`, `preview`, `table`.
+Migrated: `form`, `autocomplete`, `chart`, `deck`, `preview`, `table` — the
+whole tier. (`filter` moved to core: `facets`, `keywords`.)

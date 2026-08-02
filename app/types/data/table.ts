@@ -1,9 +1,8 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataTableSnapshot } from "#foundation/schemas/table";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import type { FacetGroup, FacetItem } from "#foundation/types/core/facets";
+
 /**
- * Column data type — drives rendering, filtering, and sorting behavior.
+ * Column data type — drives cell rendering and sort behavior.
  */
 export type ColumnType =
   | "text"
@@ -17,9 +16,6 @@ export type ColumnType =
   | "image"
   | "action";
 
-/**
- * Data table column definition
- */
 export interface DataTableColumn<T> {
   key: keyof T;
   label: string;
@@ -30,55 +26,7 @@ export interface DataTableColumn<T> {
   enumValues?: string[];
 }
 
-/**
- * Sort direction for table columns
- */
 export type SortDirection = "asc" | "desc";
-
-/**
- * Match mode for combining query and keywords
- */
-export type MatchMode = "all" | "any";
-
-/**
- * Date filter operator types
- */
-export type DateFilterOperator = "before" | "after" | "between";
-
-/**
- * Date filter definition
- */
-export interface DateFilter {
-  field: string;
-  operator: DateFilterOperator;
-  value: Date;
-  endValue?: Date;
-}
-
-// Facet shapes are canonical in core; re-exported here for the machines that
-// consume them (table, deck).
-export type { FacetGroup, FacetItem };
-
-/**
- * Filter value — discriminated by shape.
- */
-export type FilterValue =
-  | { type: "text"; value: string }
-  | { type: "number"; value: number }
-  | { type: "number_range"; value: [number, number] }
-  | { type: "date"; value: Date }
-  | { type: "date_range"; value: [Date, Date] }
-  | { type: "enum"; value: string[] }
-  | { type: "boolean"; value: boolean };
-
-/**
- * A single filter condition.
- */
-export interface TableFilter {
-  field: string;
-  operator: string;
-  value: FilterValue;
-}
 
 /**
  * Row action — rendered per-row in an actions menu.
@@ -99,139 +47,155 @@ export interface BulkAction<K> {
 }
 
 /**
- * The writable slice of table state.
- */
-export interface DataTablePayload {
-  query: string;
-  keywords: string;
-  match: MatchMode;
-  page: number;
-  pageSize: number;
-  selectedFacets: Set<string>;
-  dateFilters: DateFilter[];
-}
-
-/**
- * Config the consumer provides to the factory.
- */
-export interface DataTableConfig<T, K = unknown> {
-  columns: DataTableColumn<T>[];
-  rowKey: keyof T;
-  fetch: (params: DataTableFetchParams) => Promise<DataTableFetchResult<T>>;
-  actions?: RowAction<T>[];
-  bulkActions?: BulkAction<K>[];
-  pinnedColumns?: (keyof T)[];
-  defaultColumnOrder?: (keyof T)[];
-}
-
-/**
- * Parameters passed to the fetch function
+ * Parameters passed to the fetch action. The table owns paging and sort only;
+ * the consumer's fetch action closes over its own filtering.
  */
 export interface DataTableFetchParams {
   page: number;
   pageSize: number;
   sortField: string | null;
   sortDirection: SortDirection;
-  query: string;
-  keywords: string;
-  match: MatchMode;
-  facets: Set<string>;
-  dateFilters: DateFilter[];
 }
 
-/**
- * Result returned from the fetch function
- */
 export interface DataTableFetchResult<T> {
   data: T[];
   total: number;
   pageCount: number;
-  facets?: FacetGroup[];
 }
 
 /**
- * The reactive interface for a data table.
- * Returned by the table factory. Components accept this as their prop.
+ * Config the consumer provides to the factory — pure data.
  */
-export interface Table<T, K = unknown> {
-  // Reactive state
+export type Config<T, K = unknown> = {
+  columns: DataTableColumn<T>[];
+  rowKey: keyof T;
+  actions?: RowAction<T>[];
+  bulkActions?: BulkAction<K>[];
+  pinnedColumns?: (keyof T)[];
+  defaultColumnOrder?: (keyof T)[];
+};
+
+export type State<T, K> = {
   data: Ref<T[]>;
   loading: Ref<boolean>;
+  initialized: Ref<boolean>;
+  page: Ref<number>;
+  pageSize: Ref<number>;
+  total: Ref<number>;
+  pageCount: Ref<number>;
+  sortField: Ref<string | null>;
+  sortDirection: Ref<SortDirection>;
+  selected: Ref<Set<K>>;
+  columnOrder: Ref<string[]>;
+};
 
-  // Static config
+/**
+ * The consumer-supplied fetch mechanism — the table's data source.
+ */
+export type Actions<T, K = unknown> = {
+  fetch: (
+    params: DataTableFetchParams,
+    service: Service<T, K>,
+  ) => Promise<DataTableFetchResult<T>>;
+};
+
+export type Service<T, K = unknown> = {
+  readonly id: string;
+  readonly config: Config<T, K>;
   readonly columns: DataTableColumn<T>[];
   readonly rowKey: keyof T;
   readonly actions: RowAction<T>[];
   readonly bulkActions: BulkAction<K>[];
   readonly pinnedColumns: (keyof T)[];
 
-  // Pagination
+  readonly data: T[];
+  readonly loading: boolean;
+  readonly initialized: boolean;
+  readonly page: number;
+  readonly pageSize: number;
+  readonly total: number;
+  readonly pageCount: number;
+  readonly sortField: string | null;
+  readonly sortDirection: SortDirection;
+  readonly selected: Set<K>;
+  readonly columnOrder: string[];
+
+  readonly visibleColumns: DataTableColumn<T>[];
+  readonly isAllSelected: boolean;
+  readonly isIndeterminate: boolean;
+  readonly selectAllState: boolean | "indeterminate";
+  readonly colSpan: number;
+
+  goToPage(page: number): void;
+  setPageSize(size: number): void;
+  sortBy(field: string): void;
+  sortFieldFor(col: DataTableColumn<T>): string;
+  isSorted(col: DataTableColumn<T>): boolean;
+  getSortIcon(): IconAlias;
+  keyOf(row: T): K;
+  toggleRow(key: K): void;
+  toggleAll(): void;
+  clearSelection(): void;
+  isRowSelected(row: T): boolean;
+  toggleColumn(key: keyof T): void;
+  reorderColumns(order: string[]): void;
+  resetColumns(): void;
+  isColumnPinned(key: keyof T): boolean;
+  isColumnVisible(key: keyof T): boolean;
+  init(): Promise<boolean>;
+  fetch(): Promise<void>;
+};
+
+export type Events = {
+  "table:updated": (event: { id: string; total: number }) => void;
+};
+
+export type Table<T, K = unknown> = {
+  id: string;
+  config: Config<T, K>;
+
+  data: Ref<T[]>;
+  loading: Ref<boolean>;
+  initialized: Ref<boolean>;
+
+  readonly columns: DataTableColumn<T>[];
+  readonly rowKey: keyof T;
+  readonly actions: RowAction<T>[];
+  readonly bulkActions: BulkAction<K>[];
+  readonly pinnedColumns: (keyof T)[];
+
   page: Ref<number>;
   pageSize: Ref<number>;
   pageCount: Ref<number>;
   total: Ref<number>;
-
-  // Sorting
   sortField: Ref<string | null>;
   sortDirection: Ref<SortDirection>;
 
-  // Search
-  query: Ref<string>;
-  keywords: Ref<string>;
-  match: Ref<MatchMode>;
-
-  // Facets
-  facetGroups: Ref<FacetGroup[]>;
-  selectedFacets: Ref<Set<string>>;
-
-  // Date filters
-  dateFilters: Ref<DateFilter[]>;
-
-  // Filters
-  filters: ComputedRef<TableFilter[]>;
-
-  // Selection
   selected: Ref<Set<K>>;
-  isAllSelected: Ref<boolean>;
-  isIndeterminate: Ref<boolean>;
+  keyOf: (row: T) => K;
+  isAllSelected: ComputedRef<boolean>;
+  isIndeterminate: ComputedRef<boolean>;
+  selectAllState: ComputedRef<boolean | "indeterminate">;
 
-  // Columns
   columnOrder: Ref<string[]>;
-  visibleColumns: Ref<DataTableColumn<T>[]>;
+  visibleColumns: ComputedRef<DataTableColumn<T>[]>;
+  colSpan: ComputedRef<number>;
 
-  // Getters
-  selectAllState: Ref<boolean | "indeterminate">;
-  colSpan: Ref<number>;
-  dateColumns: Ref<DataTableColumn<T>[]>;
-
-  // Actions
   goToPage: (page: number) => void;
+  setPageSize: (size: number) => void;
   sortBy: (field: string) => void;
-  clearFacets: () => void;
-  addDateFilter: (filter: DateFilter) => void;
-  removeDateFilter: (field: string) => void;
-  clearDateFilters: () => void;
-  toggleRow: (key: K) => void;
-  toggleAll: () => void;
-  clearSelection: () => void;
   sortFieldFor: (col: DataTableColumn<T>) => string;
   isSorted: (col: DataTableColumn<T>) => boolean;
   getSortIcon: () => IconAlias;
+  toggleRow: (key: K) => void;
+  toggleAll: () => void;
+  clearSelection: () => void;
   isRowSelected: (row: T) => boolean;
-  addFilter: (filter: TableFilter) => void;
-  removeFilter: (index: number) => void;
-  clearFilters: () => void;
   toggleColumn: (key: keyof T) => void;
   reorderColumns: (order: string[]) => void;
   resetColumns: () => void;
   isColumnPinned: (key: keyof T) => boolean;
   isColumnVisible: (key: keyof T) => boolean;
-  setPageSize: (size: number) => void;
-  update: (payload: Partial<DataTablePayload>) => void;
-  getSnapshot: () => DataTableSnapshot;
-  restoreSnapshot: (snapshot: DataTableSnapshot) => void;
   init: () => Promise<boolean>;
-  initialized: Ref<boolean>;
   fetch: () => Promise<void>;
-}
-
+};
