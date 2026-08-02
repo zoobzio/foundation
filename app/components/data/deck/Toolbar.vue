@@ -9,7 +9,7 @@ import { DECK_SEARCH_DEBOUNCE } from "#foundation/constants/deck";
 import Button from "#foundation/components/common/button.vue";
 import Command from "#foundation/components/core/command.vue";
 import Fab from "#foundation/components/core/fab.vue";
-import Facets from "#foundation/components/data/filter/Facets.vue";
+import Facets from "#foundation/components/core/facets.vue";
 import Group from "#foundation/components/common/group.vue";
 import Icon from "#foundation/components/common/icon.vue";
 import Input from "#foundation/components/common/input.vue";

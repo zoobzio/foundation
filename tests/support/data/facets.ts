@@ -1,4 +1,4 @@
-import type { FacetGroup } from "#foundation/types/data/filter-facets";
+import type { FacetGroup } from "#foundation/types/core/facets";
 
 export const fakeFacetGroups: FacetGroup[] = [
   {

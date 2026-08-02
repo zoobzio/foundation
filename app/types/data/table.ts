@@ -1,6 +1,7 @@
 import type { ComputedRef, Ref } from "#imports";
 import type { DataTableSnapshot } from "#foundation/schemas/table";
 import type { IconAlias } from "#foundation/types/common/iconic";
+import type { FacetGroup, FacetItem } from "#foundation/types/core/facets";
 /**
  * Column data type — drives rendering, filtering, and sorting behavior.
  */
@@ -54,23 +55,9 @@ export interface DateFilter {
   endValue?: Date;
 }
 
-/**
- * Facet item with count
- */
-export interface FacetItem {
-  value: string;
-  label: string;
-  count: number;
-}
-
-/**
- * Facet group
- */
-export interface FacetGroup {
-  key: string;
-  label: string;
-  items: FacetItem[];
-}
+// Facet shapes are canonical in core; re-exported here for the machines that
+// consume them (table, deck).
+export type { FacetGroup, FacetItem };
 
 /**
  * Filter value — discriminated by shape.
