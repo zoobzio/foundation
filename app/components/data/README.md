@@ -16,17 +16,17 @@ autocomplete shows a sync machine and data-driven (iterated) children.
 
 A feature `<name>` spans a fixed set of files:
 
-| Concern           | File                                              |
-| ----------------- | ------------------------------------------------- |
-| Domain contract   | `types/data/<name>.ts`                            |
-| Component types   | `types/data/<name>/widget.ts` (+ one per sub-component) |
-| State             | `stores/<name>.ts`                                |
-| Logic             | `services/<name>.ts`                              |
-| Wiring            | `factories/<name>.ts`                             |
-| Feature composables | `composables/<name>.ts`                         |
-| Components        | `components/data/<name>/widget.vue` (+ sub-components) |
-| Constants         | `constants/<name>.ts`                             |
-| Event registration | `app.d.ts`                                       |
+| Concern             | File                                                    |
+| ------------------- | ------------------------------------------------------- |
+| Domain contract     | `types/data/<name>.ts`                                  |
+| Component types     | `types/data/<name>/widget.ts` (+ one per sub-component) |
+| State               | `stores/<name>.ts`                                      |
+| Logic               | `services/<name>.ts`                                    |
+| Wiring              | `factories/<name>.ts`                                   |
+| Feature composables | `composables/<name>.ts`                                 |
+| Components          | `components/data/<name>/widget.vue` (+ sub-components)  |
+| Constants           | `constants/<name>.ts`                                   |
+| Event registration  | `app.d.ts`                                              |
 
 ## Domain contract (`types/data/<name>.ts`)
 
@@ -34,14 +34,14 @@ Type aliases, **unprefixed** — the module path is the namespace. A fixed
 progression, generic over the consumer's data (`Form<T>` over the payload,
 `Autocomplete<M>` over item metadata):
 
-| Type      | Meaning                                                                     |
-| --------- | --------------------------------------------------------------------------- |
-| `Config`  | consumer-declared description: static config + **synchronous** resolvers    |
-| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns |
+| Type      | Meaning                                                                            |
+| --------- | ---------------------------------------------------------------------------------- |
+| `Config`  | consumer-declared description: static config + **synchronous** resolvers           |
+| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns        |
 | `Service` | imperative contract: readonly **unwrapped** state + deriveds + full method surface |
-| `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`  |
-| `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`    |
-| `<Name>`  | the reactive facade returned by the factory; the widget's prop              |
+| `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`         |
+| `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`           |
+| `<Name>`  | the reactive facade returned by the factory; the widget's prop                     |
 
 Supporting types (`Field`, `Item`, `Query`, …) live in the same file;
 component type files import them rather than redefining them.
@@ -184,10 +184,10 @@ The repeated unit is its **own sub-component** with its own type file,
 composable, ctx, and forwarded slots — never inlined in the widget. Two
 mechanisms, chosen by what keys the children:
 
-| Children keyed by       | Mechanism | Shape |
-| ----------------------- | --------- | ----- |
-| static config (form fields, table columns) | keyed `pt` record | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
-| runtime data (autocomplete items, table rows) | `PassthroughIter` manifest entry | `item: PassthroughIter<Anchor<M>, XItemProps<M>>`, bound as `v-bind="settings.item(anchor)"` |
+| Children keyed by                             | Mechanism                        | Shape                                                                                                                    |
+| --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| static config (form fields, table columns)    | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
+| runtime data (autocomplete items, table rows) | `PassthroughIter` manifest entry | `item: PassthroughIter<Anchor<M>, XItemProps<M>>`, bound as `v-bind="settings.item(anchor)"`                             |
 
 For iterated children, define an **anchor type** — the child's render
 position (`{ item, index, panel }`) — and reuse it as the iter's datum, the
@@ -269,7 +269,7 @@ kebab-case are migrated — renaming is the final step):
    `Config` / `State` / `Service` / `Actions` / `Events` / facade. Decide the
    generic, the action surface, and the event set here, not in the component.
 2. **Store** — `accessX(id)` over `useState`, defaults only.
-3. **Service** — port *all* logic from the old component/factory into the
+3. **Service** — port _all_ logic from the old component/factory into the
    class; add log + emit discipline. Typecheck before moving on: the service
    compiles clean while the old component is still broken.
 4. **Factory** — collapse to wiring.
@@ -286,18 +286,18 @@ kebab-case are migrated — renaming is the final step):
 
 ## Source map
 
-| Concern             | File                                                                                    |
-| ------------------- | --------------------------------------------------------------------------------------- |
-| Passthrough system  | [core README](../core/README.md#the-passthrough-system) — identical merge semantics      |
-| Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts) |
-| Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                 |
-| Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)              |
-| Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                         |
-| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/autocomplete.ts`](../../services/autocomplete.ts) |
-| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`autocomplete/widget.vue`](./autocomplete/widget.vue) |
+| Concern             | File                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Passthrough system  | [core README](../core/README.md#the-passthrough-system) — identical merge semantics                          |
+| Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                  |
+| Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                     |
+| Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                  |
+| Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                                             |
+| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/autocomplete.ts`](../../services/autocomplete.ts)  |
+| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`autocomplete/widget.vue`](./autocomplete/widget.vue)              |
 | Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`autocomplete/item.vue`](./autocomplete/item.vue) (iterated) |
 
 ## Status
 
-Migrated: `form`, `autocomplete`. Pending (PascalCase files, previous
-architecture): `chart`, `deck`, `filter`, `preview`, `table`.
+Migrated: `form`, `autocomplete`, `chart`. Pending (PascalCase files, previous
+architecture): `deck`, `filter`, `preview`, `table`.
