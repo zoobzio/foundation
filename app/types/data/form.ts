@@ -8,10 +8,20 @@ import type { ZodObject, ZodRawShape, ZodTypeAny, UnknownKeysParam } from "zod";
 export type Colspan = 2 | 3 | 4 | 6 | 8 | 9 | 10 | 12;
 
 /**
- * Shared base for all field variants.
+ * Keys of `T` whose value accepts `V` — what ties a field variant to the
+ * payload properties its control can write. `V` is wrapped in a tuple so
+ * union values (`boolean`) don't distribute.
  */
-export type FieldBase<T> = {
-  key: keyof T;
+export type Keys<T, V> = {
+  [K in keyof T]-?: [V] extends [T[K]] ? K : never;
+}[keyof T];
+
+/**
+ * Shared base for all field variants. `V` is the value type the variant's
+ * control writes; `key` may only point at a payload property that accepts it.
+ */
+export type FieldBase<T, V> = {
+  key: Keys<T, V>;
   label: string;
   disabled?: boolean;
   required?: boolean;
@@ -21,7 +31,7 @@ export type FieldBase<T> = {
 /**
  * Text-like inputs (text, email, password).
  */
-export type TextField<T> = FieldBase<T> & {
+export type TextField<T> = FieldBase<T, string> & {
   type: "text" | "email" | "password";
   placeholder?: string;
   maxLength?: number;
@@ -30,7 +40,7 @@ export type TextField<T> = FieldBase<T> & {
 /**
  * Numeric input.
  */
-export type NumberField<T> = FieldBase<T> & {
+export type NumberField<T> = FieldBase<T, number> & {
   type: "number";
   placeholder?: string;
   min?: number;
@@ -41,7 +51,7 @@ export type NumberField<T> = FieldBase<T> & {
 /**
  * Textarea input.
  */
-export type TextareaField<T> = FieldBase<T> & {
+export type TextareaField<T> = FieldBase<T, string> & {
   type: "textarea";
   placeholder?: string;
   rows?: number;
@@ -51,7 +61,7 @@ export type TextareaField<T> = FieldBase<T> & {
 /**
  * Single select.
  */
-export type SelectField<T> = FieldBase<T> & {
+export type SelectField<T> = FieldBase<T, string> & {
   type: "select";
   placeholder?: string;
   options: Option[];
@@ -60,7 +70,7 @@ export type SelectField<T> = FieldBase<T> & {
 /**
  * Multi select.
  */
-export type MultiSelectField<T> = FieldBase<T> & {
+export type MultiSelectField<T> = FieldBase<T, string[]> & {
   type: "multi-select";
   placeholder?: string;
   options: Option[];
@@ -69,14 +79,14 @@ export type MultiSelectField<T> = FieldBase<T> & {
 /**
  * Checkbox (boolean).
  */
-export type CheckboxField<T> = FieldBase<T> & {
+export type CheckboxField<T> = FieldBase<T, boolean> & {
   type: "checkbox";
 };
 
 /**
  * Radio group.
  */
-export type RadioField<T> = FieldBase<T> & {
+export type RadioField<T> = FieldBase<T, string> & {
   type: "radio";
   options: Option[];
   orientation?: "horizontal" | "vertical";
@@ -85,7 +95,7 @@ export type RadioField<T> = FieldBase<T> & {
 /**
  * Date picker.
  */
-export type DateField<T> = FieldBase<T> & {
+export type DateField<T> = FieldBase<T, Date> & {
   type: "date";
   placeholder?: string;
   minDate?: Date;
@@ -95,7 +105,7 @@ export type DateField<T> = FieldBase<T> & {
 /**
  * Tags input.
  */
-export type TagsInputField<T> = FieldBase<T> & {
+export type TagsInputField<T> = FieldBase<T, string[]> & {
   type: "tags-input";
   placeholder?: string;
   max?: number;
@@ -155,7 +165,16 @@ export type Service<T> = {
   initialize(): Promise<boolean>;
   check(key: keyof T): boolean;
   validate(payload?: Partial<T>): boolean;
-  set<K extends keyof T>(key: K, value: T[K]): void;
+  /**
+   * The value-first overload serves code generic over `T` (the control
+   * recipes): the checker cannot prove `V` assignable to `T[Keys<T, V>]`
+   * for an unresolved `T`, but `Keys` guarantees it at every instantiation.
+   * At concrete `T` a mismatched pair fails both overloads.
+   */
+  set: {
+    <K extends keyof T>(key: K, value: T[K] | undefined): void;
+    <V>(key: Keys<T, V>, value: V | undefined): void;
+  };
   update(data: Partial<T>): void;
   restore(data: T): void;
   touch(key: keyof T): void;
@@ -202,7 +221,10 @@ export type Form<T> = {
   initialize: () => Promise<boolean>;
   check: (key: keyof T) => boolean;
   validate: (data?: Partial<T>) => boolean;
-  set: <K extends keyof T>(key: K, value: T[K]) => void;
+  set: {
+    <K extends keyof T>(key: K, value: T[K] | undefined): void;
+    <V>(key: Keys<T, V>, value: V | undefined): void;
+  };
   update: (data: Partial<T>) => void;
   restore: (data: T) => void;
   touch: (key: keyof T) => void;

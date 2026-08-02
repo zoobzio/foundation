@@ -1,5 +1,6 @@
 import type { Logger } from "#foundation/types/log";
 import type { Events as AutocompleteEvents } from "#foundation/types/data/autocomplete";
+import type { Events as ChartEvents } from "#foundation/types/data/chart";
 import type { Events as FormEvents } from "#foundation/types/data/form";
 
 declare module "#app" {
@@ -9,7 +10,8 @@ declare module "#app" {
   }
   interface RuntimeNuxtHooks
     extends FormEvents<unknown>,
-      AutocompleteEvents<unknown> {}
+      AutocompleteEvents<unknown>,
+      ChartEvents {}
 }
 
 export {};

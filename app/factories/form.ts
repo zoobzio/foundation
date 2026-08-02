@@ -1,4 +1,4 @@
-import type { Form, Config, Actions } from "#foundation/types/data/form";
+import type { Form, Config, Actions, Keys } from "#foundation/types/data/form";
 
 import { accessForm } from "#foundation/stores/form";
 import { computed, useNuxtApp } from "#imports";
@@ -13,6 +13,13 @@ export const createForm = <T>(
     const nuxt = useNuxtApp();
     const state = accessForm(id, config);
     const service = new FormService(nuxt, id, config, state, actions);
+
+    function set<K extends keyof T>(key: K, value: T[K] | undefined): void;
+    function set<V>(key: Keys<T, V>, value: V | undefined): void;
+    function set<K extends keyof T>(key: K, value: T[K] | undefined): void {
+      service.set(key, value);
+    }
+
     return {
       id,
       config,
@@ -31,7 +38,7 @@ export const createForm = <T>(
       initialize: () => service.initialize(),
       check: (key: keyof T) => service.check(key),
       validate: (data?: Partial<T>) => service.validate(data),
-      set: <K extends keyof T>(key: K, value: T[K]) => service.set(key, value),
+      set,
       update: (data: Partial<T>) => service.update(data),
       restore: (data: T) => service.restore(data),
       touch: (key: keyof T) => service.touch(key),

@@ -43,7 +43,7 @@ export const input = <T>(
   },
   onBlur: () => {
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -70,7 +70,7 @@ export const number = <T>(
   },
   onBlur: () => {
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -93,7 +93,7 @@ export const textarea = <T>(
   },
   onBlur: () => {
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -110,7 +110,7 @@ export const select = <T>(
   "onUpdate:modelValue": (option) => {
     form.set(field.key, option.value);
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -131,7 +131,7 @@ export const multiselect = <T>(
       (options ?? []).map((o) => o.value),
     );
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -145,7 +145,7 @@ export const checkbox = <T>(
   "onUpdate:modelValue": (v) => {
     form.set(field.key, v === true);
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -162,7 +162,7 @@ export const radio = <T>(
   "onUpdate:modelValue": (v) => {
     form.set(field.key, v);
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -176,7 +176,7 @@ export const date = <T>(
   "onUpdate:modelValue": (v) => {
     form.set(field.key, v ? serialize(v) : undefined);
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 
@@ -193,7 +193,7 @@ export const tags = <T>(
   "onUpdate:modelValue": (v) => {
     form.set(field.key, v);
     form.touch(field.key);
-    form.validate(field.key);
+    form.check(field.key);
   },
 });
 

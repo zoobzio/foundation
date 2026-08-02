@@ -22,7 +22,7 @@ import Textarea from "#foundation/components/common/textarea.vue";
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
-import { useFormField } from "#foundation/composables/field";
+import { useFormField } from "#foundation/composables/form";
 </script>
 
 <script setup lang="ts" generic="T">

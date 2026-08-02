@@ -4,6 +4,7 @@ import type {
   State,
   Actions,
   Service,
+  Keys,
 } from "#foundation/types/data/form";
 import type { Logger } from "#foundation/types/log";
 
@@ -106,11 +107,13 @@ export class FormService<T> implements Service<T> {
     return false;
   }
 
-  set<K extends keyof T>(key: K, value: T[K]): void {
+  set<K extends keyof T>(key: K, value: T[K] | undefined): void;
+  set<V>(key: Keys<T, V>, value: V | undefined): void;
+  set<K extends keyof T>(key: K, value: T[K] | undefined): void {
     const action = this.actions.middleware?.[key];
     this.state.payload.value = {
       ...this.payload,
-      [key]: action ? action(value) : value,
+      [key]: action && value !== undefined ? action(value) : value,
     };
   }
 
