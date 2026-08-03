@@ -6,13 +6,14 @@ real semantics (`useState` dedupes by key, the hook bus dispatches,
 async-data executes its handler). `#test/*` resolves to this directory.
 `setup.ts` clears shim state between tests automatically.
 
-Tests live here only, mirroring `app/` path-for-path: one `.test.ts` per
-source file that has logic (`app/services/table.ts` →
-`tests/services/table.test.ts`). Types, constants, and config files don't
-get test files — assertions about literals are theater.
+Tests live here only, under `tests/app/`, mirroring `app/` path-for-path:
+one `.test.ts` per source file that has logic (`app/services/table.ts` →
+`tests/app/services/table.test.ts`). Types, constants, and config files
+don't get test files — assertions about literals are theater.
 
 ## Layout
 
+- `app/` — the test files themselves, mirroring `app/` path-for-path.
 - `mocks/` — module shims (`imports.ts`) and per-feature contract mocks
   (`table.ts`, …) typed against the real contracts so tsc catches drift.
 - `stubs/` — component doubles: `factories.ts` plus per-tier maps. Stub keys
@@ -61,15 +62,15 @@ Replicate the matching file for the tier you're testing:
 
 | Tier | File |
 | --- | --- |
-| utils | `tests/utils/passthrough.test.ts` |
-| composables | `tests/composables/model.test.ts` |
-| stores | `tests/stores/table.test.ts` |
-| services | `tests/services/table.test.ts` |
-| factories | `tests/factories/table.test.ts` |
-| components/common (elements) | `tests/components/common/button.test.ts` |
-| components/common (reka wrappers) | `tests/components/common/select/root.test.ts` |
-| components/core | `tests/components/core/select.test.ts` |
-| components/data | `tests/components/data/table/widget.test.ts` |
+| utils | `tests/app/utils/passthrough.test.ts` |
+| composables | `tests/app/composables/model.test.ts` |
+| stores | `tests/app/stores/table.test.ts` |
+| services | `tests/app/services/table.test.ts` |
+| factories | `tests/app/factories/table.test.ts` |
+| components/common (elements) | `tests/app/components/common/button.test.ts` |
+| components/common (reka wrappers) | `tests/app/components/common/select/root.test.ts` |
+| components/core | `tests/app/components/core/select.test.ts` |
+| components/data | `tests/app/components/data/table/widget.test.ts` |
 
 ## Conventions
 

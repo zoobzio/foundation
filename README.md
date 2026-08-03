@@ -24,13 +24,14 @@ Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsib
 | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Elements   | `components/common/` | Behavior-free HTML wrappers + slot-through primitives, with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JS behavior. |
 | Components | `components/core/`   | Stateful/interactive components composing elements + [reka-ui](https://reka-ui.com) primitives, with full passthrough & slotthrough.                          |
-| Widgets    | `components/data/`   | Factory-driven, generic data widgets (table, chart, deck, form, preview).                                                                                     |
+| Widgets    | `components/data/`   | Factory-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                       |
 | System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                     |
 
 ### Data widgets
 
 Each widget pairs a **factory** (`createTable`, `createForm`, …) that returns a reactive interface with a **component** that renders it:
 
+- `DataAutocomplete` — stepped, suggestion-driven autocomplete input
 - `DataTable` — paginated, sortable, filterable data grid
 - `DataForm` — programmatic form over `T` with zod validation
 - `DataChart` — configurable chart visualizations
@@ -54,18 +55,20 @@ Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
 ```
 app/
   components/
-    common/     — HTML element wrappers + slot-through primitives (57)
-    core/       — interactive components (23)
-    data/       — data widgets: table, chart, deck, form, preview (18)
+    common/     — HTML element wrappers (48) + behavioral element families (19)
+    core/       — interactive components (28)
+    data/       — data widgets: autocomplete, table, chart, deck, form, preview
     system/     — app-shell composition (1)
-  composables/  — usePassthrough, useRecipe, useToasts, useHighlight, …
+  composables/  — useBindings, usePassthrough, useContext, useModel, useHooks, …
   factories/    — data-widget + workspace factories
-  schemas/      — zod snapshot schemas
+  services/     — feature logic classes (the unit under test)
+  stores/       — useState-backed feature state
+  plugins/      — log, tokens
   types/        — per-component prop/emit types
-  utils/        — pure helpers (dates, markdown, formatting, codemirror, …)
+  utils/        — pure helpers (dates, formatting, passthrough merge, …)
   constants/    — shared constants
   app.vue · error.vue · app.d.ts
-tests/          — vitest suite mirroring app/ (123 files)
+tests/          — vitest suite mirroring app/ (see tests/README.md)
 nuxt.config.ts  — layer config (auto-import off, #foundation alias)
 ```
 
@@ -95,7 +98,7 @@ Or via `make` (`make help` lists all targets):
 
 ## Testing
 
-Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#foundation` / `#test` are aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs.ts` (`commonStubs` / `coreStubs` / `dataStubs`).
+Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#foundation` / `#test` are aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`commonStubs` / `coreStubs` / per-feature data maps).
 
 ## Companion modules (in progress)
 
