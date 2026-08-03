@@ -1,5 +1,5 @@
 ---
-"@zoobzio/foundation": minor
+"@zoobzio/foundation": patch
 ---
 
 Initial public alpha. Foundation ships as a single Nuxt layer spanning
