@@ -16,8 +16,8 @@ import Input from "#foundation/components/common/input.vue";
 import Menu from "#foundation/components/core/menu.vue";
 import Popover from "#foundation/components/core/popover.vue";
 
-import { computed, ref, useTemplateRef, watch } from "#imports";
-import { useDeckToolbar } from "#foundation/composables/deck";
+import { ref, useTemplateRef, watch } from "#imports";
+import { useDeck } from "#foundation/composables/deck";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 import {
@@ -32,10 +32,17 @@ const { deck, pt } = defineProps<DeckToolbarProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { sortGroups, onSort, searchInput, onSearchInput, syncSearch, facetGroups } =
-  useDeckToolbar(deck);
-
-const { title, selectedFacets } = deck;
+const {
+  title,
+  selectedFacets,
+  hasQuery,
+  sortGroups,
+  onSort,
+  searchInput,
+  onSearchInput,
+  syncSearch,
+  facetOptions,
+} = useDeck(deck);
 
 const searchOpen = ref(false);
 watch(searchOpen, (open) => {
@@ -45,8 +52,6 @@ watch(searchOpen, (open) => {
 const onSearchKeydown = (event: KeyboardEvent) => {
   if (event.key === "Escape") searchOpen.value = false;
 };
-
-const hasQuery = computed(() => !!deck.query.value);
 
 const settings = usePassthrough<DeckToolbarPassthrough>(() => ({
   pt,
@@ -79,7 +84,7 @@ const settings = usePassthrough<DeckToolbarPassthrough>(() => ({
       onKeydown: onSearchKeydown,
     },
     facets: {
-      groups: facetGroups.value,
+      groups: facetOptions.value,
       selected: selectedFacets.value,
       "onUpdate:selected": (v) => {
         selectedFacets.value = v;

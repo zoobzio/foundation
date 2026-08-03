@@ -1,25 +1,40 @@
-import type { Form, Field } from "#foundation/types/data/form";
+import type { Service, Field } from "#foundation/types/data/form";
 
 import { computed } from "vue";
 
+import { useServiceRefs } from "#foundation/composables/refs";
 import { resolve } from "#foundation/utils/controls";
 
-export const useFormField = <T>(form: Form<T>, field: Field<T>) => {
-  const key = String(field.key);
+/**
+ * The view surface of the form feature, shared by every form component: the
+ * service's state as refs plus the per-field scope.
+ */
+export const useForm = <T>(form: Service<T>) => {
+  const serviceRefs = useServiceRefs(form);
 
-  const value = computed(() => form.payload.value[field.key]);
+  /**
+   * The per-field scope: the field's live value and error, and the resolved
+   * control (which core component renders it) with its recipes.
+   */
+  const useField = (field: Field<T>) => {
+    const key = String(field.key);
 
-  const error = computed(() =>
-    form.touched.value.has(key) ? form.errors.value[key] : undefined,
-  );
+    const value = computed(() => form.payload[field.key]);
 
-  const resolved = computed(() =>
-    resolve<T>(form, field, value.value, error.value),
-  );
+    const error = computed(() =>
+      form.touched.has(key) ? form.errors[key] : undefined,
+    );
 
-  const control = computed(() => resolved.value.control);
+    const resolved = computed(() =>
+      resolve<T>(form, field, value.value, error.value),
+    );
 
-  const recipes = computed(() => resolved.value.recipes);
+    const control = computed(() => resolved.value.control);
 
-  return { key, value, error, control, recipes };
+    const recipes = computed(() => resolved.value.recipes);
+
+    return { key, value, error, control, recipes };
+  };
+
+  return { ...serviceRefs, useField };
 };

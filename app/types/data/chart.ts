@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from "#imports";
+import type { Ref } from "#imports";
 import type { IconAlias } from "#foundation/types/common/iconic";
 import type {
   ChartType as CJSChartType,
@@ -258,40 +258,4 @@ export type Events = {
   }) => void;
   "chart:variant-changed": (event: { id: string; variant: string }) => void;
   "chart:renderer-changed": (event: { id: string; renderer: string }) => void;
-};
-
-// ---------------------------------------------------------------------------
-// The reactive facade returned by the factory — the widget's prop.
-// ---------------------------------------------------------------------------
-
-export type Chart<T> = {
-  id: string;
-  config: Config<T>;
-  readonly variants: DataChartVariant<T>[];
-
-  loading: Ref<boolean>;
-  initialized: Ref<boolean>;
-  variantData: Ref<VariantData | null>;
-  activeVariant: Ref<string>;
-  activeRenderer: Ref<string>;
-  activeField: Ref<keyof T | null>;
-  activeGroupBy: Ref<keyof T | null>;
-  activeX: Ref<keyof T | null>;
-  activeY: Ref<keyof T | null>;
-  activeBucket: Ref<BucketSize | null>;
-  activeRange: Ref<[Date, Date] | null>;
-
-  activeVariantConfig: ComputedRef<DataChartVariant<T>>;
-  title: ComputedRef<string>;
-
-  setVariant: (type: string) => void;
-  setRenderer: (type: string) => void;
-  setField: (field: string) => void;
-  setGroupBy: (field: string) => void;
-  setX: (field: string) => void;
-  setY: (field: string) => void;
-  setBucket: (bucket: string) => void;
-  setRange: (range: [Date, Date]) => void;
-  fetch: () => Promise<void>;
-  init: () => Promise<boolean>;
 };

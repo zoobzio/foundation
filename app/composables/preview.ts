@@ -1,14 +1,17 @@
-import type { Preview } from "#foundation/types/data/preview";
+import type { Service } from "#foundation/types/data/preview";
 
 import { computed } from "#imports";
+import { useServiceRefs } from "#foundation/composables/refs";
 import { PREVIEW_DEFAULT_FILENAME_BASE } from "#foundation/constants/preview";
 
 /**
- * The feature half of the preview widget: the file actions over the content
- * value (clipboard, download, external link) and the derived filename. All DOM
- * — clipboard, Blob, `document`, `window` — stops here, never the service.
+ * The view surface of the preview widget: the service's state as refs, the
+ * derived filename, and the file actions over the content value (clipboard,
+ * download, external link). All DOM — clipboard, Blob, `document`, `window` —
+ * stops here, never the service.
  */
-export const usePreview = <T>(preview: Preview<T>) => {
+export const usePreview = <T>(preview: Service<T>) => {
+  const refs = useServiceRefs(preview);
   const content = preview.content;
 
   const filename = computed(() => {
@@ -18,11 +21,11 @@ export const usePreview = <T>(preview: Preview<T>) => {
   });
 
   const copy = async () => {
-    await navigator.clipboard.writeText(preview.contentValue.value);
+    await navigator.clipboard.writeText(preview.contentValue);
   };
 
   const download = () => {
-    const blob = new Blob([preview.contentValue.value], { type: "text/plain" });
+    const blob = new Blob([preview.contentValue], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -41,5 +44,5 @@ export const usePreview = <T>(preview: Preview<T>) => {
     () => content.type === "code" && !!content.externalUrl,
   );
 
-  return { filename, hasExternal, copy, download, openExternal };
+  return { ...refs, filename, hasExternal, copy, download, openExternal };
 };

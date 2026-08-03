@@ -10,7 +10,7 @@ import type {
   CheckboxProps,
 } from "#foundation/types/core/checkbox";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { DataTableColumn, Table } from "#foundation/types/data/table";
+import type { DataTableColumn, Service } from "#foundation/types/data/table";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type TableHeadPassthrough = {
@@ -27,12 +27,12 @@ export type TableHeadPassthrough = {
 };
 
 export type TableHeadProps<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   pt?: PT<TableHeadPassthrough>;
 };
 
 export type TableHeadContext<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   el: ComponentPublicInstance | null;
   settings: TableHeadPassthrough;
 };

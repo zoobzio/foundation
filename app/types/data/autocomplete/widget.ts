@@ -10,7 +10,7 @@ import type {
   ScrollerEmits,
   ScrollerProps,
 } from "#foundation/types/core/scroller";
-import type { Autocomplete, Events } from "#foundation/types/data/autocomplete";
+import type { Service, Events } from "#foundation/types/data/autocomplete";
 import type {
   AutocompleteItemAnchor,
   AutocompleteItemProps,
@@ -40,7 +40,7 @@ export type AutocompleteWidgetPassthrough<M> = {
 };
 
 export type AutocompleteWidgetProps<M> = {
-  autocomplete: Autocomplete<M>;
+  service: Service<M>;
   pt?: PT<AutocompleteWidgetPassthrough<M>>;
 };
 
@@ -52,7 +52,7 @@ export type AutocompleteWidgetEmits<M> = {
 };
 
 export type AutocompleteWidgetContext<M> = {
-  autocomplete: Autocomplete<M>;
+  autocomplete: Service<M>;
   el: ComponentPublicInstance | null;
   settings: AutocompleteWidgetPassthrough<M>;
 };

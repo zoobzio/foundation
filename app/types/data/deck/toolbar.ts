@@ -7,7 +7,7 @@ import type { FacetsProps, FacetsEmits } from "#foundation/types/core/facets";
 import type { MenuProps, MenuEmits } from "#foundation/types/core/menu";
 import type { PopoverProps, PopoverEmits } from "#foundation/types/core/popover";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Deck } from "#foundation/types/data/deck";
+import type { Service } from "#foundation/types/data/deck";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
@@ -33,12 +33,12 @@ export type DeckToolbarPassthrough = {
 };
 
 export type DeckToolbarProps<T> = {
-  deck: Deck<T>;
+  deck: Service<T>;
   pt?: PT<DeckToolbarPassthrough>;
 };
 
 export type DeckToolbarContext<T> = {
-  deck: Deck<T>;
+  deck: Service<T>;
   el: ComponentPublicInstance | null;
   settings: DeckToolbarPassthrough;
 };

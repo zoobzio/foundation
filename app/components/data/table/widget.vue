@@ -20,6 +20,7 @@ import Scroller from "#foundation/components/core/scroller.vue";
 import Table from "#foundation/components/common/table.vue";
 
 import { computed, useTemplateRef } from "#imports";
+import { useTable } from "#foundation/composables/table";
 import { useHooks } from "#foundation/composables/hook";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
@@ -28,18 +29,17 @@ import { TABLE_REFRESH_ICON } from "#foundation/constants/table";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">
-const { table, pt } = defineProps<TableWidgetProps<T, K>>();
+const { service, pt } = defineProps<TableWidgetProps<T, K>>();
 
 const emit = defineEmits<TableWidgetEmits>();
 
-useHooks<Events>(table.id, {
+useHooks<Events>(service.id, {
   "table:updated": (event) => emit("updated", event),
 });
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { selected } = table;
-const hasSelection = computed(() => selected.value.size > 0);
+const { page, pageSize, pageCount, total, hasSelection } = useTable(service);
 
 const settings = usePassthrough<TableWidgetPassthrough>(() => ({
   pt,
@@ -48,20 +48,20 @@ const settings = usePassthrough<TableWidgetPassthrough>(() => ({
     toolbar: {},
     scroller: {},
     table: {},
-    refresh: { icon: TABLE_REFRESH_ICON, onClick: () => table.fetch() },
+    refresh: { icon: TABLE_REFRESH_ICON, onClick: () => service.fetch() },
     pagination: {
-      page: table.page.value,
-      size: table.pageSize.value,
-      count: table.pageCount.value,
-      total: table.total.value,
-      "onUpdate:page": (p) => table.goToPage(p),
-      "onUpdate:size": (s) => table.setPageSize(s),
+      page: page.value,
+      size: pageSize.value,
+      count: pageCount.value,
+      total: total.value,
+      "onUpdate:page": (p) => service.goToPage(p),
+      "onUpdate:size": (s) => service.setPageSize(s),
     },
   },
 }));
 
 const ctx = useContext<TableWidgetContext<T, K>>("data-table", () => ({
-  table,
+  table: service,
   el: el.value,
   settings: settings.value,
 }));
@@ -83,28 +83,28 @@ const cellSlots = computed(() =>
   ),
 );
 
-useLazyRequest(`init-table-${table.id}`, table.init);
+useLazyRequest(`init-table-${service.id}`, () => service.init());
 </script>
 
 <template>
   <Group ref="el" v-bind="settings.root" class="f-data-table">
     <slot name="toolbar" v-bind="ctx">
       <Group v-bind="settings.toolbar" class="f-data-table-toolbar">
-        <Columns :table="table" :pt="pt?.columns" />
+        <Columns :table="service" :pt="pt?.columns" />
         <Fab v-bind="settings.refresh" />
       </Group>
     </slot>
 
-    <BulkActions v-if="hasSelection" :table="table" :pt="pt?.bulkActions" />
+    <BulkActions v-if="hasSelection" :table="service" :pt="pt?.bulkActions" />
 
     <Scroller v-bind="settings.scroller">
       <Table v-bind="settings.table">
-        <Head :table="table" :pt="pt?.head">
+        <Head :table="service" :pt="pt?.head">
           <template #header="headerProps">
             <slot name="header" v-bind="headerProps" />
           </template>
         </Head>
-        <Body :table="table" :pt="pt?.body">
+        <Body :table="service" :pt="pt?.body">
           <template v-for="name in emptySlots" :key="name" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps" />
           </template>

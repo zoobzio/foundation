@@ -1,4 +1,4 @@
-import type { Deck } from "#foundation/types/data/deck";
+import type { Service } from "#foundation/types/data/deck";
 import type { FacetGroup } from "#foundation/types/core/facets";
 import type { MenuGroup, MenuItem } from "#foundation/types/core/menu";
 import type { ComponentPublicInstance, ShallowRef } from "vue";
@@ -11,71 +11,77 @@ import {
   ref,
   watch,
 } from "#imports";
+import { useServiceRefs } from "#foundation/composables/refs";
 import { DECK_SEARCH_DEBOUNCE } from "#foundation/constants/deck";
 
 /**
- * The feature half of the deck widget: owns the poll timer (client-only, torn
- * down on unmount) and the show-pending scroll-to-top. Timers and DOM stop
- * here — the service exposes a pure `poll()`/`showPending()`.
+ * The view surface of the deck feature, shared by every deck component: the
+ * service's state as refs, the sort menu descriptors, the debounced search,
+ * and the namespaced facet options. Pass the widget's `el` to run the poll
+ * timer (client-only, torn down on unmount) and the show-pending
+ * scroll-to-top; children skip it. Timers and DOM stop here — the service
+ * exposes a pure `poll()`/`showPending()`.
  */
 export const useDeck = <T>(
-  deck: Deck<T>,
-  el: Readonly<ShallowRef<ComponentPublicInstance | null>>,
+  deck: Service<T>,
+  el?: Readonly<ShallowRef<ComponentPublicInstance | null>>,
 ) => {
-  let timer: ReturnType<typeof setInterval> | null = null;
+  const serviceRefs = useServiceRefs(deck);
 
-  onMounted(() => {
-    timer = setInterval(() => deck.poll(), deck.pollInterval);
-  });
+  // Shared deriveds
+  const hasPending = computed(() => deck.pendingCount > 0);
+  const hasQuery = computed(() => !!deck.query);
 
-  onBeforeUnmount(() => {
-    if (timer) {
-      clearInterval(timer);
-      timer = null;
-    }
-  });
+  // Poll timer + pending scroll — widget-level, keyed on `el`.
+  if (el) {
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    onMounted(() => {
+      timer = setInterval(() => deck.poll(), deck.pollInterval);
+    });
+
+    onBeforeUnmount(() => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    });
+  }
 
   const showPending = () => {
     deck.showPending();
     nextTick(() => {
-      const viewport = el.value?.$el?.querySelector(".f-scroll-area-viewport");
+      const viewport = el?.value?.$el?.querySelector(".f-scroll-area-viewport");
       if (viewport instanceof HTMLElement) {
         viewport.scrollTo({ top: 0, behavior: "smooth" });
       }
     });
   };
 
-  return { showPending };
-};
-
-/**
- * The feature half of the deck toolbar: the sort menu descriptors, the
- * debounced search that commits to the machine's query, and the facet groups
- * namespaced (`field:value`) for the Facets control.
- */
-export const useDeckToolbar = <T>(deck: Deck<T>) => {
+  // Sort menu descriptors
   const sortGroups = computed<MenuGroup[]>(() => [
     {
       key: "sort",
       items: deck.dateFields.map((f) => ({
         label: f.label,
-        disabled: String(f.key) === deck.sortField.value,
+        disabled: String(f.key) === deck.sortField,
       })),
     },
   ]);
 
   const onSort = (item: MenuItem) => {
     const field = deck.dateFields.find((f) => f.label === item.label);
-    if (field) deck.sortField.value = String(field.key);
+    if (field) deck.sortField = String(field.key);
   };
 
+  // Debounced search committing to the machine's query
   const searchInput = ref("");
   let debounce: ReturnType<typeof setTimeout> | null = null;
 
   watch(searchInput, (val) => {
     if (debounce) clearTimeout(debounce);
     debounce = setTimeout(() => {
-      deck.query.value = val;
+      deck.query = val;
     }, DECK_SEARCH_DEBOUNCE);
   });
 
@@ -91,22 +97,27 @@ export const useDeckToolbar = <T>(deck: Deck<T>) => {
 
   // Re-seed the input from the committed query when the search popover opens.
   const syncSearch = () => {
-    searchInput.value = deck.query.value;
+    searchInput.value = deck.query;
   };
 
-  const facetGroups = computed<FacetGroup[]>(() =>
-    deck.facetGroups.value.map((g) => ({
+  // Facet groups namespaced (`field:value`) for the Facets control.
+  const facetOptions = computed<FacetGroup[]>(() =>
+    deck.facetGroups.map((g) => ({
       ...g,
       items: g.items.map((i) => ({ ...i, value: `${g.key}:${i.value}` })),
     })),
   );
 
   return {
+    ...serviceRefs,
+    hasPending,
+    hasQuery,
+    showPending,
     sortGroups,
     onSort,
     searchInput,
     onSearchInput,
     syncSearch,
-    facetGroups,
+    facetOptions,
   };
 };

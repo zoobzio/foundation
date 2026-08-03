@@ -17,8 +17,8 @@ import Tbody from "#foundation/components/common/tbody.vue";
 import Td from "#foundation/components/common/td.vue";
 import Tr from "#foundation/components/common/tr.vue";
 
-import { computed, useSlots, useTemplateRef } from "#imports";
-import { useTableBody } from "#foundation/composables/table";
+import { useSlots, useTemplateRef } from "#imports";
+import { useTable } from "#foundation/composables/table";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 import { cell } from "#foundation/utils/format";
@@ -31,12 +31,15 @@ const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const slots = useSlots();
 
-const { data, visibleColumns, actions, bulkActions, colSpan } = table;
-
-const isSelectable = computed(() => bulkActions.length > 0);
-const hasActions = computed(() => actions.length > 0);
-
-const { actionGroups, onActionSelect } = useTableBody(table);
+const {
+  data,
+  visibleColumns,
+  colSpan,
+  isSelectable,
+  hasActions,
+  actionGroups,
+  onActionSelect,
+} = useTable(table);
 
 const settings = usePassthrough<TableBodyPassthrough>(() => ({
   pt,

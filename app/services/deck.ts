@@ -69,20 +69,35 @@ export class DeckService<T> implements Service<T> {
   get query(): string {
     return this.state.query.value;
   }
+  set query(query: string) {
+    this.setQuery(query);
+  }
   get keywords(): string {
     return this.state.keywords.value;
+  }
+  set keywords(keywords: string) {
+    this.setKeywords(keywords);
   }
   get match(): MatchMode {
     return this.state.match.value;
   }
+  set match(match: MatchMode) {
+    this.setMatch(match);
+  }
   get selectedFacets(): Set<string> {
     return this.state.selectedFacets.value;
+  }
+  set selectedFacets(facets: Set<string>) {
+    this.setFacets(facets);
   }
   get facetGroups() {
     return this.state.facetGroups.value;
   }
   get sortField(): string {
     return this.state.sortField.value;
+  }
+  set sortField(field: string) {
+    this.setSortField(field);
   }
 
   get title(): string {

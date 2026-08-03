@@ -4,7 +4,7 @@ import type {
   ScrollerProps,
 } from "#foundation/types/core/scroller";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Deck } from "#foundation/types/data/deck";
+import type { Service } from "#foundation/types/data/deck";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type DeckFeedPassthrough = {
@@ -14,12 +14,12 @@ export type DeckFeedPassthrough = {
 };
 
 export type DeckFeedProps<T> = {
-  deck: Deck<T>;
+  deck: Service<T>;
   pt?: PT<DeckFeedPassthrough>;
 };
 
 export type DeckFeedContext<T> = {
-  deck: Deck<T>;
+  deck: Service<T>;
   el: ComponentPublicInstance | null;
   settings: DeckFeedPassthrough;
 };
@@ -27,7 +27,7 @@ export type DeckFeedContext<T> = {
 export type DeckFeedCardContext<T> = {
   item: T;
   index: number;
-  deck: Deck<T>;
+  deck: Service<T>;
 };
 
 export type DeckFeedSlots<T> = {

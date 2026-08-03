@@ -1,4 +1,4 @@
-import type { Table } from "#foundation/types/data/table";
+import type { Service } from "#foundation/types/data/table";
 import type {
   CommandGroup,
   CommandOption,
@@ -6,13 +6,24 @@ import type {
 import type { MenuGroup, MenuItem } from "#foundation/types/core/menu";
 
 import { computed, ref } from "#imports";
+import { useServiceRefs } from "#foundation/composables/refs";
 
 /**
- * The feature half of the table head: column-header drag reordering. Owns the
- * drag state and native `DragEvent` handlers, and commits new orders through
- * the machine.
+ * The view surface of the table feature, shared by every table component:
+ * the service's state as refs, the shared deriveds, column-header drag
+ * reordering, the column manager's Command bridge, and the per-row action
+ * menu dispatch. Each component destructures its slice.
  */
-export const useTableHead = <T, K>(table: Table<T, K>) => {
+export const useTable = <T, K>(table: Service<T, K>) => {
+  const serviceRefs = useServiceRefs(table);
+
+  // Shared deriveds
+  const hasSelection = computed(() => table.selected.size > 0);
+  const isSelectable = computed(() => table.bulkActions.length > 0);
+  const hasActions = computed(() => table.actions.length > 0);
+
+  // Column-header drag reordering — owns the drag state and native
+  // `DragEvent` handlers, commits new orders through the machine.
   const draggableKey = ref<string | null>(null);
   const dragKey = ref<string | null>(null);
   const dropKey = ref<string | null>(null);
@@ -39,7 +50,7 @@ export const useTableHead = <T, K>(table: Table<T, K>) => {
 
   const dropDirection = computed(() => {
     if (!dragKey.value || !dropKey.value) return null;
-    const order = table.columnOrder.value;
+    const order = table.columnOrder;
     const fromIdx = order.indexOf(dragKey.value);
     const toIdx = order.indexOf(dropKey.value);
     if (fromIdx === -1 || toIdx === -1) return null;
@@ -54,7 +65,7 @@ export const useTableHead = <T, K>(table: Table<T, K>) => {
     event.preventDefault();
     if (!dragKey.value || dragKey.value === key) return;
 
-    const order = [...table.columnOrder.value];
+    const order = [...table.columnOrder];
     const fromIdx = order.indexOf(dragKey.value);
     const toIdx = order.indexOf(key);
     if (fromIdx === -1 || toIdx === -1) return;
@@ -70,33 +81,15 @@ export const useTableHead = <T, K>(table: Table<T, K>) => {
     draggableKey.value = null;
   };
 
-  return {
-    draggableKey,
-    dragKey,
-    dropKey,
-    dropDirection,
-    onDragHandleEnter,
-    onDragHandleLeave,
-    onHeaderDragStart,
-    onHeaderDragOver,
-    onHeaderDragLeave,
-    onHeaderDrop,
-    onHeaderDragEnd,
-  };
-};
-
-/**
- * The feature half of the column manager: bridges `columnOrder` and the
- * Command's option model, inserting toggled-on columns at their definition
- * position rather than the end.
- */
-export const useTableColumns = <T, K>(table: Table<T, K>) => {
+  // Column manager — bridges `columnOrder` and the Command's option model,
+  // inserting toggled-on columns at their definition position rather than
+  // the end.
   const allKeys = table.columns.map((c) => String(c.key));
 
-  const selected = computed<Set<string>>({
-    get: () => new Set(table.columnOrder.value),
+  const visibleKeys = computed<Set<string>>({
+    get: () => new Set(table.columnOrder),
     set: (val) => {
-      const current = table.columnOrder.value.filter((k) => val.has(k));
+      const current = table.columnOrder.filter((k) => val.has(k));
       const added = [...val].filter((k) => !current.includes(k));
       if (!added.length) {
         table.reorderColumns(current);
@@ -119,7 +112,7 @@ export const useTableColumns = <T, K>(table: Table<T, K>) => {
     },
   });
 
-  const groups = computed<CommandGroup<CommandOption>[]>(() => [
+  const columnGroups = computed<CommandGroup<CommandOption>[]>(() => [
     {
       key: "columns",
       label: "Columns",
@@ -131,24 +124,17 @@ export const useTableColumns = <T, K>(table: Table<T, K>) => {
     },
   ]);
 
-  const selectedOptions = computed<CommandOption[]>(() =>
-    groups.value
+  const selectedColumnOptions = computed<CommandOption[]>(() =>
+    columnGroups.value
       .flatMap((g) => g.options)
-      .filter((o) => selected.value.has(o.value)),
+      .filter((o) => visibleKeys.value.has(o.value)),
   );
 
-  const onUpdate = (v: CommandOption[] | undefined) => {
-    selected.value = new Set((v ?? []).map((o) => o.value));
+  const onColumnsUpdate = (v: CommandOption[] | undefined) => {
+    visibleKeys.value = new Set((v ?? []).map((o) => o.value));
   };
 
-  return { groups, selectedOptions, onUpdate };
-};
-
-/**
- * The feature half of the table body: the per-row action menu descriptors and
- * the label→action dispatch.
- */
-export const useTableBody = <T, K>(table: Table<T, K>) => {
+  // Per-row action menu — descriptors and the label→action dispatch.
   const actionGroups = computed<MenuGroup[]>(() => [
     {
       key: "actions",
@@ -162,5 +148,26 @@ export const useTableBody = <T, K>(table: Table<T, K>) => {
     actionMap.get(item.label)?.action(row);
   };
 
-  return { actionGroups, onActionSelect };
+  return {
+    ...serviceRefs,
+    hasSelection,
+    isSelectable,
+    hasActions,
+    draggableKey,
+    dragKey,
+    dropKey,
+    dropDirection,
+    onDragHandleEnter,
+    onDragHandleLeave,
+    onHeaderDragStart,
+    onHeaderDragOver,
+    onHeaderDragLeave,
+    onHeaderDrop,
+    onHeaderDragEnd,
+    columnGroups,
+    selectedColumnOptions,
+    onColumnsUpdate,
+    actionGroups,
+    onActionSelect,
+  };
 };

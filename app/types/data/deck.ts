@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from "#imports";
+import type { Ref } from "#imports";
 import type { FacetGroup } from "#foundation/types/core/facets";
 
 /**
@@ -91,12 +91,13 @@ export type Service<T> = {
   readonly loadingMore: boolean;
   readonly hasMore: boolean;
   readonly initialized: boolean;
-  readonly query: string;
-  readonly keywords: string;
-  readonly match: MatchMode;
-  readonly selectedFacets: Set<string>;
+  // Writable accessor pairs — sets route through the matching mutator.
+  query: string;
+  keywords: string;
+  match: MatchMode;
+  selectedFacets: Set<string>;
   readonly facetGroups: FacetGroup[];
-  readonly sortField: string;
+  sortField: string;
 
   readonly title: string;
   readonly pendingCount: number;
@@ -116,42 +117,4 @@ export type Service<T> = {
 export type Events = {
   "deck:updated": (event: { id: string; count: number }) => void;
   "deck:polled": (event: { id: string; count: number }) => void;
-};
-
-/**
- * The reactive facade returned by the factory — the widget's prop. Filter state
- * the toolbar edits is exposed as writable computeds routing through the
- * service's mutators; everything else is read-only.
- */
-export type Deck<T> = {
-  id: string;
-  config: Config<T>;
-
-  items: Ref<T[]>;
-  pending: Ref<T[]>;
-  loading: Ref<boolean>;
-  loadingMore: Ref<boolean>;
-  hasMore: Ref<boolean>;
-  initialized: Ref<boolean>;
-  facetGroups: Ref<FacetGroup[]>;
-
-  query: Ref<string>;
-  keywords: Ref<string>;
-  match: Ref<MatchMode>;
-  selectedFacets: Ref<Set<string>>;
-  sortField: Ref<string>;
-
-  readonly topic: string;
-  readonly rowKey: keyof T;
-  readonly dateFields: DateFieldConfig<T>[];
-  readonly pollInterval: number;
-
-  title: ComputedRef<string>;
-  pendingCount: ComputedRef<number>;
-
-  init: () => Promise<boolean>;
-  fetch: () => Promise<void>;
-  loadMore: () => Promise<void>;
-  poll: () => Promise<void>;
-  showPending: () => void;
 };

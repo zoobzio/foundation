@@ -16,8 +16,8 @@ import Th from "#foundation/components/common/th.vue";
 import Thead from "#foundation/components/common/thead.vue";
 import Tr from "#foundation/components/common/tr.vue";
 
-import { computed, useTemplateRef } from "#imports";
-import { useTableHead } from "#foundation/composables/table";
+import { useTemplateRef } from "#imports";
+import { useTable } from "#foundation/composables/table";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 import { TABLE_DRAG_ICON } from "#foundation/constants/table";
@@ -30,20 +30,9 @@ const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const {
   visibleColumns,
-  actions,
-  bulkActions,
   selectAllState,
-  sortBy,
-  sortFieldFor,
-  isSorted,
-  getSortIcon,
-  toggleAll,
-} = table;
-
-const isSelectable = computed(() => bulkActions.length > 0);
-const hasActions = computed(() => actions.length > 0);
-
-const {
+  isSelectable,
+  hasActions,
   draggableKey,
   dragKey,
   dropKey,
@@ -55,7 +44,7 @@ const {
   onHeaderDragLeave,
   onHeaderDrop,
   onHeaderDragEnd,
-} = useTableHead(table);
+} = useTable(table);
 
 const settings = usePassthrough<TableHeadPassthrough>(() => ({
   pt,
@@ -70,7 +59,7 @@ const settings = usePassthrough<TableHeadPassthrough>(() => ({
     dragIcon: { alias: TABLE_DRAG_ICON },
     selectAllCheckbox: {
       modelValue: selectAllState.value,
-      "onUpdate:modelValue": () => toggleAll(),
+      "onUpdate:modelValue": () => table.toggleAll(),
     },
   },
 }));
@@ -98,7 +87,7 @@ defineSlots<TableHeadSlots<T, K>>();
         :draggable="draggableKey === String(col.key)"
         :class="{
           'f-data-table-sortable': col.sortable,
-          'f-data-table-sorted': isSorted(col),
+          'f-data-table-sorted': table.isSorted(col),
           'f-data-table-dragging': dragKey === String(col.key),
           'f-data-table-drop-left':
             dropKey === String(col.key) && dropDirection === 'left',
@@ -117,13 +106,13 @@ defineSlots<TableHeadSlots<T, K>>();
               v-if="col.sortable"
               v-bind="settings.sortButton"
               class="f-data-table-header-btn"
-              @click="sortBy(sortFieldFor(col))"
+              @click="table.sortBy(table.sortFieldFor(col))"
             >
               {{ col.label }}
               <Icon
-                v-if="isSorted(col)"
+                v-if="table.isSorted(col)"
                 v-bind="settings.sortIcon"
-                :alias="getSortIcon()"
+                :alias="table.getSortIcon()"
                 class="f-data-table-sort-icon"
               />
             </Button>

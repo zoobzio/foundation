@@ -11,7 +11,7 @@ import type {
 import type { FabProps } from "#foundation/types/core/fab";
 import type { MenuEmits, MenuProps } from "#foundation/types/core/menu";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { DataTableColumn, Table } from "#foundation/types/data/table";
+import type { DataTableColumn, Service } from "#foundation/types/data/table";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type TableBodyPassthrough = {
@@ -29,12 +29,12 @@ export type TableBodyPassthrough = {
 };
 
 export type TableBodyProps<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   pt?: PT<TableBodyPassthrough>;
 };
 
 export type TableBodyContext<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   el: ComponentPublicInstance | null;
   settings: TableBodyPassthrough;
 };

@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from "#imports";
+import type { Ref } from "#imports";
 import type { IconAlias } from "#foundation/types/common/iconic";
 
 /**
@@ -148,54 +148,4 @@ export type Service<T, K = unknown> = {
 
 export type Events = {
   "table:updated": (event: { id: string; total: number }) => void;
-};
-
-export type Table<T, K = unknown> = {
-  id: string;
-  config: Config<T, K>;
-
-  data: Ref<T[]>;
-  loading: Ref<boolean>;
-  initialized: Ref<boolean>;
-
-  readonly columns: DataTableColumn<T>[];
-  readonly rowKey: keyof T;
-  readonly actions: RowAction<T>[];
-  readonly bulkActions: BulkAction<K>[];
-  readonly pinnedColumns: (keyof T)[];
-
-  page: Ref<number>;
-  pageSize: Ref<number>;
-  pageCount: Ref<number>;
-  total: Ref<number>;
-  sortField: Ref<string | null>;
-  sortDirection: Ref<SortDirection>;
-
-  selected: Ref<Set<K>>;
-  keyOf: (row: T) => K;
-  isAllSelected: ComputedRef<boolean>;
-  isIndeterminate: ComputedRef<boolean>;
-  selectAllState: ComputedRef<boolean | "indeterminate">;
-
-  columnOrder: Ref<string[]>;
-  visibleColumns: ComputedRef<DataTableColumn<T>[]>;
-  colSpan: ComputedRef<number>;
-
-  goToPage: (page: number) => void;
-  setPageSize: (size: number) => void;
-  sortBy: (field: string) => void;
-  sortFieldFor: (col: DataTableColumn<T>) => string;
-  isSorted: (col: DataTableColumn<T>) => boolean;
-  getSortIcon: () => IconAlias;
-  toggleRow: (key: K) => void;
-  toggleAll: () => void;
-  clearSelection: () => void;
-  isRowSelected: (row: T) => boolean;
-  toggleColumn: (key: keyof T) => void;
-  reorderColumns: (order: string[]) => void;
-  resetColumns: () => void;
-  isColumnPinned: (key: keyof T) => boolean;
-  isColumnVisible: (key: keyof T) => boolean;
-  init: () => Promise<boolean>;
-  fetch: () => Promise<void>;
 };

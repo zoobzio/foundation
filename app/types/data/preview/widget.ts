@@ -2,7 +2,7 @@ import type { GroupProps } from "#foundation/types/common/group";
 import type { SpanProps } from "#foundation/types/common/span";
 import type { FabProps, FabEmits } from "#foundation/types/core/fab";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Preview, Events } from "#foundation/types/data/preview";
+import type { Service, Events } from "#foundation/types/data/preview";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type PreviewWidgetPassthrough = {
@@ -17,7 +17,7 @@ export type PreviewWidgetPassthrough = {
 };
 
 export type PreviewWidgetProps<T> = {
-  preview: Preview<T>;
+  service: Service<T>;
   pt?: PT<PreviewWidgetPassthrough>;
 };
 
@@ -26,7 +26,7 @@ export type PreviewWidgetEmits = {
 };
 
 export type PreviewWidgetContext<T> = {
-  preview: Preview<T>;
+  preview: Service<T>;
   el: ComponentPublicInstance | null;
   settings: PreviewWidgetPassthrough;
 };

@@ -17,6 +17,7 @@ import Scroller from "#foundation/components/core/scroller.vue";
 import Span from "#foundation/components/common/span.vue";
 
 import { useTemplateRef } from "#imports";
+import { useForm } from "#foundation/composables/form";
 import { useHooks } from "#foundation/composables/hook";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
@@ -26,11 +27,11 @@ import { FORM_FIELD_SLOTS } from "#foundation/constants/form";
 </script>
 
 <script setup lang="ts" generic="T">
-const { form, pt } = defineProps<FormWidgetProps<T>>();
+const { service, pt } = defineProps<FormWidgetProps<T>>();
 
 const emit = defineEmits<FormWidgetEmits<T>>();
 
-useHooks<Events<T>>(form.id, {
+useHooks<Events<T>>(service.id, {
   "form:initialized": (event) => emit("initialized", event),
   "form:submitted": (event) => emit("submitted", event),
   "form:rejected": (event) => emit("rejected", event),
@@ -38,13 +39,13 @@ useHooks<Events<T>>(form.id, {
   "form:reset": (event) => emit("reset", event),
 });
 
-const { submitting } = form;
+const { submitting } = useForm(service);
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const onSubmit = (e: Event) => {
   e.preventDefault();
-  form.submit();
+  service.submit();
 };
 
 const settings = usePassthrough<FormWidgetPassthrough>(() => ({
@@ -66,13 +67,13 @@ const settings = usePassthrough<FormWidgetPassthrough>(() => ({
     },
     reset: {
       type: "button",
-      onClick: () => form.reset(),
+      onClick: () => service.reset(),
     },
   },
 }));
 
 const ctx = useContext<FormWidgetContext<T>>("data-form", () => ({
-  form,
+  form: service,
   el: el.value,
   settings: settings.value,
 }));
@@ -82,7 +83,7 @@ defineExpose({ ctx });
 const slots = defineSlots<FormWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, FORM_FIELD_SLOTS);
 
-useLazyRequest(`init-form-${form.id}`, form.initialize);
+useLazyRequest(`init-form-${service.id}`, () => service.initialize());
 </script>
 
 <template>
@@ -90,7 +91,7 @@ useLazyRequest(`init-form-${form.id}`, form.initialize);
     <slot name="toolbar" v-bind="ctx">
       <Group v-bind="settings.toolbar" class="f-data-form-toolbar">
         <Span v-bind="settings.title" class="f-data-form-title">
-          {{ form.config.title }}
+          {{ service.config.title }}
         </Span>
       </Group>
     </slot>
@@ -99,9 +100,9 @@ useLazyRequest(`init-form-${form.id}`, form.initialize);
         <Form v-bind="settings.inner" class="f-data-form-inner">
           <Group v-bind="settings.grid" class="f-data-form-grid">
             <Field
-              v-for="field in form.config.fields"
+              v-for="field in service.config.fields"
               :key="String(field.key)"
-              :form="form"
+              :form="service"
               :field="field"
               :pt="pt?.fields?.[field.key]"
             >

@@ -27,8 +27,16 @@ export class AutocompleteService<M> implements Service<M> {
     return this.state.input.value;
   }
 
+  set input(value: string) {
+    this.set(value);
+  }
+
   get steps(): Item<M>[] {
     return this.state.steps.value;
+  }
+
+  set steps(steps: Item<M>[]) {
+    this.update(steps);
   }
 
   get focused(): boolean {

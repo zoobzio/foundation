@@ -3,7 +3,7 @@ import type { GroupProps } from "#foundation/types/common/group";
 import type { LabelProps } from "#foundation/types/common/label";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
 import type { Control, Controls } from "#foundation/types/data/controls";
-import type { Field, Form } from "#foundation/types/data/form";
+import type { Field, Service } from "#foundation/types/data/form";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type FormFieldPassthrough = {
@@ -13,13 +13,13 @@ export type FormFieldPassthrough = {
 } & Controls;
 
 export interface FormFieldProps<T> {
-  form: Form<T>;
+  form: Service<T>;
   field: Field<T>;
   pt?: PT<FormFieldPassthrough>;
 }
 
 export type FormFieldContext<T> = {
-  form: Form<T>;
+  form: Service<T>;
   field: Field<T>;
   value: T[keyof T] | undefined;
   error: string | undefined;

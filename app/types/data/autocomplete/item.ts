@@ -2,7 +2,7 @@ import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
 import type { IconProps } from "#foundation/types/common/icon";
 import type { SpanProps } from "#foundation/types/common/span";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Autocomplete, Item } from "#foundation/types/data/autocomplete";
+import type { Service, Item } from "#foundation/types/data/autocomplete";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
@@ -28,12 +28,12 @@ export type AutocompleteItemAnchor<M> = {
 };
 
 export type AutocompleteItemProps<M> = AutocompleteItemAnchor<M> & {
-  autocomplete: Autocomplete<M>;
+  autocomplete: Service<M>;
   pt?: PT<AutocompleteItemPassthrough>;
 };
 
 export type AutocompleteItemContext<M> = AutocompleteItemAnchor<M> & {
-  autocomplete: Autocomplete<M>;
+  autocomplete: Service<M>;
   locked: boolean;
   highlighted: boolean;
   el: ComponentPublicInstance | null;

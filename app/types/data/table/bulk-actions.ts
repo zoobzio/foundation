@@ -3,7 +3,7 @@ import type { GroupProps } from "#foundation/types/common/group";
 import type { IconProps } from "#foundation/types/common/icon";
 import type { SpanProps } from "#foundation/types/common/span";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Table } from "#foundation/types/data/table";
+import type { Service } from "#foundation/types/data/table";
 import type { ComponentPublicInstance } from "vue";
 
 export type TableBulkActionsPassthrough = {
@@ -16,12 +16,12 @@ export type TableBulkActionsPassthrough = {
 };
 
 export type TableBulkActionsProps<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   pt?: PT<TableBulkActionsPassthrough>;
 };
 
 export type TableBulkActionsContext<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   el: ComponentPublicInstance | null;
   settings: TableBulkActionsPassthrough;
 };

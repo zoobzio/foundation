@@ -4,7 +4,7 @@ import type { IconAlias } from "#foundation/types/common/iconic";
 import type { FabProps, FabEmits } from "#foundation/types/core/fab";
 import type { MenuProps, MenuEmits } from "#foundation/types/core/menu";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Chart } from "#foundation/types/data/chart";
+import type { Service } from "#foundation/types/data/chart";
 import type { ComponentPublicInstance } from "vue";
 
 /**
@@ -55,12 +55,12 @@ export type ChartControlPassthrough = {
 };
 
 export type ChartControlProps<T> = ChartControlAnchor & {
-  chart: Chart<T>;
+  chart: Service<T>;
   pt?: PT<ChartControlPassthrough>;
 };
 
 export type ChartControlContext<T> = ChartControlAnchor & {
-  chart: Chart<T>;
+  chart: Service<T>;
   el: ComponentPublicInstance | null;
   settings: ChartControlPassthrough;
 };

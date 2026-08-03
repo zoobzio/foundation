@@ -34,6 +34,10 @@ export class FormService<T> implements Service<T> {
     return this.state.payload.value;
   }
 
+  set payload(data: Partial<T>) {
+    this.update(data);
+  }
+
   get errors(): Record<string, string> {
     return this.state.errors.value;
   }

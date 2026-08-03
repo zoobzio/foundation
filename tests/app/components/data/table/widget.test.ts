@@ -25,14 +25,14 @@ const TableWidget: FunctionalComponent<
   TableWidgetEmits
 > = Widget;
 
-const mountWidget = (table = createMockTable()) => {
+const mountWidget = (mock = createMockTable()) => {
   const updated: { id: string; total: number }[] = [];
   const wrapper = mount(
     defineComponent({
       setup() {
         return () =>
           h(TableWidget, {
-            table,
+            service: mock.service,
             onUpdated: (event: { id: string; total: number }) =>
               updated.push(event),
           });
@@ -40,14 +40,14 @@ const mountWidget = (table = createMockTable()) => {
     }),
     { global: { stubs: tableStubs } },
   );
-  return { table, wrapper, updated };
+  return { ...mock, wrapper, updated };
 };
 
 describe("data table widget", () => {
   it("kicks off table init through the lazy request", async () => {
-    const { table } = mountWidget();
+    const { service } = mountWidget();
     await flushPromises();
-    expect(table.init).toHaveBeenCalledOnce();
+    expect(service.init).toHaveBeenCalledOnce();
   });
 
   it("renders toolbar and stubbed feature parts inside the frame", () => {
@@ -59,31 +59,31 @@ describe("data table widget", () => {
   });
 
   it("shows bulk actions only while rows are selected", async () => {
-    const { table, wrapper } = mountWidget();
+    const { state, wrapper } = mountWidget();
     expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(false);
-    table.selected.value = new Set([1]);
+    state.selected.value = new Set([1]);
     await flushPromises();
     expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(true);
   });
 
   it("refresh control triggers a table fetch", async () => {
-    const { table, wrapper } = mountWidget();
+    const { service, wrapper } = mountWidget();
     const refresh = wrapper
       .get('use[href="/icons.svg#refresh"]')
       .element.closest("button");
     if (!refresh) throw new Error("refresh fab has no button root");
     refresh.click();
-    expect(table.fetch).toHaveBeenCalledOnce();
+    expect(service.fetch).toHaveBeenCalledOnce();
   });
 
   it("pagination interaction routes through table.goToPage", async () => {
-    const { table, wrapper } = mountWidget();
+    const { service, wrapper } = mountWidget();
     const next = wrapper
       .get('use[href="/icons.svg#chevron-right"]')
       .element.closest("button");
     if (!next) throw new Error("next-page fab has no button root");
     next.click();
-    expect(table.goToPage).toHaveBeenCalledWith(2);
+    expect(service.goToPage).toHaveBeenCalledWith(2);
   });
 
   it("re-emits table:updated hooks for its own table only", async () => {

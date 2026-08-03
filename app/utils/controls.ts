@@ -13,7 +13,7 @@ import type {
   TagsInputField,
   TextField,
   TextareaField,
-  Form,
+  Service,
 } from "#foundation/types/data/form";
 
 import { serialize, deserialize } from "#foundation/utils/date";
@@ -25,7 +25,7 @@ import { serialize, deserialize } from "#foundation/utils/date";
  */
 
 export const input = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: TextField<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,
@@ -48,7 +48,7 @@ export const input = <T>(
 });
 
 export const number = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: NumberField<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,
@@ -75,7 +75,7 @@ export const number = <T>(
 });
 
 export const textarea = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: TextareaField<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,
@@ -98,7 +98,7 @@ export const textarea = <T>(
 });
 
 export const select = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: SelectField<T>,
   value: T[keyof T] | undefined,
 ): Controls["select"] => ({
@@ -115,7 +115,7 @@ export const select = <T>(
 });
 
 export const multiselect = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: MultiSelectField<T>,
   value: T[keyof T] | undefined,
 ): Controls["multiSelect"] => ({
@@ -136,7 +136,7 @@ export const multiselect = <T>(
 });
 
 export const checkbox = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: CheckboxField<T>,
   value: T[keyof T] | undefined,
 ): Controls["checkbox"] => ({
@@ -150,7 +150,7 @@ export const checkbox = <T>(
 });
 
 export const radio = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: RadioField<T>,
   value: T[keyof T] | undefined,
 ): Controls["radio"] => ({
@@ -167,7 +167,7 @@ export const radio = <T>(
 });
 
 export const date = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: DateField<T>,
   value: T[keyof T] | undefined,
 ): Controls["datePicker"] => ({
@@ -181,7 +181,7 @@ export const date = <T>(
 });
 
 export const tags = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: TagsInputField<T>,
   value: T[keyof T] | undefined,
 ): Controls["tagsInput"] => ({
@@ -214,7 +214,7 @@ const blank = (): Controls => ({
  * every entry and `settings` stays the source of truth.
  */
 export const resolve = <T>(
-  form: Form<T>,
+  form: Service<T>,
   field: Field<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,

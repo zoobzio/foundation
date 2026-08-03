@@ -1,28 +1,34 @@
-import type { Autocomplete } from "#foundation/types/data/autocomplete";
+import type { Service } from "#foundation/types/data/autocomplete";
 import type {
   AutocompleteItemAnchor,
   AutocompleteItemPassthrough,
 } from "#foundation/types/data/autocomplete/item";
-import type { ComponentPublicInstance, MaybeRefOrGetter, ShallowRef } from "vue";
+import type {
+  ComponentPublicInstance,
+  MaybeRefOrGetter,
+  ShallowRef,
+} from "vue";
 
 import { computed, nextTick, toValue, watch } from "#imports";
+import { useServiceRefs } from "#foundation/composables/refs";
 
 import { AUTOCOMPLETE_BLUR_DELAY_MS } from "#foundation/constants/autocomplete";
 
 /**
- * The feature half of the autocomplete widget: binds the machine to the
- * input's native surface (keyboard navigation, input/focus/blur) and keeps
- * the highlighted item in view. Returns the recipes the widget spreads into
- * its passthrough manifest.
+ * The view surface of the autocomplete feature, shared by every autocomplete
+ * component: the service's state as refs, the input's native surface
+ * (keyboard navigation, input/focus/blur), the input recipe, and the per-item
+ * scope. Pass the widget's `el` to keep the highlighted item scrolled into
+ * view; items skip it.
  */
 export const useAutocomplete = <M>(
-  autocomplete: Autocomplete<M>,
-  el: Readonly<ShallowRef<ComponentPublicInstance | null>>,
+  autocomplete: Service<M>,
+  el?: Readonly<ShallowRef<ComponentPublicInstance | null>>,
 ) => {
-  const { input, dropdown, highlight, highlighted } = autocomplete;
+  const serviceRefs = useServiceRefs(autocomplete);
 
   const onKeydown = (event: KeyboardEvent) => {
-    if (dropdown.value) {
+    if (autocomplete.dropdown) {
       if (event.key === "ArrowDown") {
         event.preventDefault();
         autocomplete.next();
@@ -35,17 +41,17 @@ export const useAutocomplete = <M>(
       }
       if (event.key === "Enter") {
         event.preventDefault();
-        const item = highlighted.value;
+        const item = autocomplete.highlighted;
         if (item && !item.disabled) {
           autocomplete.select(item);
         } else {
-          autocomplete.submit(input.value);
+          autocomplete.submit(autocomplete.input);
         }
         return;
       }
     } else if (event.key === "Enter") {
       event.preventDefault();
-      autocomplete.submit(input.value);
+      autocomplete.submit(autocomplete.input);
       return;
     }
 
@@ -67,21 +73,26 @@ export const useAutocomplete = <M>(
   };
 
   // Keep the highlighted item visible as keyboard navigation moves it.
-  watch(highlight, () => {
-    nextTick(() => {
-      const root = el.value?.$el;
-      if (root instanceof HTMLElement) {
-        root
-          .querySelector(".f-data-autocomplete-item--highlighted")
-          ?.scrollIntoView({ block: "nearest" });
-      }
-    });
-  });
+  if (el) {
+    watch(
+      () => autocomplete.highlight,
+      () => {
+        nextTick(() => {
+          const root = el.value?.$el;
+          if (root instanceof HTMLElement) {
+            root
+              .querySelector(".f-data-autocomplete-item--highlighted")
+              ?.scrollIntoView({ block: "nearest" });
+          }
+        });
+      },
+    );
+  }
 
   const recipes = computed(() => ({
     input: {
       placeholder: autocomplete.config.placeholder,
-      value: input.value,
+      value: autocomplete.input,
       onInput,
       onKeydown,
       onFocus,
@@ -89,41 +100,34 @@ export const useAutocomplete = <M>(
     },
   }));
 
-  return { recipes };
-};
+  /**
+   * The per-item scope: derives the item's panel standing
+   * (locked/highlighted) from the machine and maps clicks to unwind/select.
+   * Takes a reactive source for the item's render position, which changes as
+   * panels shift.
+   */
+  const useItem = (source: MaybeRefOrGetter<AutocompleteItemAnchor<M>>) => {
+    const locked = computed(
+      () => toValue(source).panel < autocomplete.panels.length - 1,
+    );
 
-/**
- * The feature half of an autocomplete item: derives its panel standing
- * (locked/highlighted) from the machine and maps clicks to unwind/select.
- * Takes a reactive source for the item's render position, which changes as
- * panels shift. Returns the recipes the item spreads into its passthrough
- * manifest.
- */
-export const useAutocompleteItem = <M>(
-  autocomplete: Autocomplete<M>,
-  source: MaybeRefOrGetter<AutocompleteItemAnchor<M>>,
-) => {
-  const { panels, highlight } = autocomplete;
+    const highlighted = computed(
+      () =>
+        !locked.value && toValue(source).index === autocomplete.highlight,
+    );
 
-  const locked = computed(
-    () => toValue(source).panel < panels.value.length - 1,
-  );
+    const onClick = () => {
+      const { item, panel } = toValue(source);
+      if (locked.value) {
+        autocomplete.unwind(panel);
+        return;
+      }
+      if (!item.disabled) autocomplete.select(item);
+    };
 
-  const highlighted = computed(
-    () => !locked.value && toValue(source).index === highlight.value,
-  );
-
-  const onClick = () => {
-    const { item, panel } = toValue(source);
-    if (locked.value) {
-      autocomplete.unwind(panel);
-      return;
-    }
-    if (!item.disabled) autocomplete.select(item);
-  };
-
-  const recipes = computed<Pick<AutocompleteItemPassthrough, "root" | "arrow">>(
-    () => ({
+    const itemRecipes = computed<
+      Pick<AutocompleteItemPassthrough, "root" | "arrow">
+    >(() => ({
       root: {
         type: "button",
         disabled: toValue(source).item.disabled,
@@ -132,8 +136,10 @@ export const useAutocompleteItem = <M>(
       arrow: {
         alias: "chevron-right",
       },
-    }),
-  );
+    }));
 
-  return { locked, highlighted, recipes };
+    return { locked, highlighted, recipes: itemRecipes };
+  };
+
+  return { ...serviceRefs, recipes, useItem };
 };

@@ -14,7 +14,7 @@ import Toolbar from "#foundation/components/data/deck/toolbar.vue";
 import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 
-import { computed, useTemplateRef } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useDeck } from "#foundation/composables/deck";
 import { useHooks } from "#foundation/composables/hook";
 import { usePassthrough } from "#foundation/composables/passthrough";
@@ -25,21 +25,18 @@ import { DECK_FEED_SLOTS, DECK_PENDING_ICON } from "#foundation/constants/deck";
 </script>
 
 <script setup lang="ts" generic="T">
-const { deck, pt } = defineProps<DeckWidgetProps<T>>();
+const { service, pt } = defineProps<DeckWidgetProps<T>>();
 
 const emit = defineEmits<DeckWidgetEmits>();
 
-useHooks<Events>(deck.id, {
+useHooks<Events>(service.id, {
   "deck:updated": (event) => emit("updated", event),
   "deck:polled": (event) => emit("polled", event),
 });
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { showPending } = useDeck(deck, el);
-
-const { pendingCount } = deck;
-const hasPending = computed(() => pendingCount.value > 0);
+const { pendingCount, hasPending, showPending } = useDeck(service, el);
 
 const settings = usePassthrough<DeckWidgetPassthrough>(() => ({
   pt,
@@ -55,7 +52,7 @@ const settings = usePassthrough<DeckWidgetPassthrough>(() => ({
 }));
 
 const ctx = useContext<DeckWidgetContext<T>>("data-deck", () => ({
-  deck,
+  deck: service,
   el: el.value,
   settings: settings.value,
 }));
@@ -65,13 +62,13 @@ defineExpose({ ctx });
 const slots = defineSlots<DeckWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, DECK_FEED_SLOTS);
 
-useLazyRequest(`init-deck-${deck.id}`, deck.init);
+useLazyRequest(`init-deck-${service.id}`, () => service.init());
 </script>
 
 <template>
   <Group ref="el" v-bind="settings.root" class="f-data-deck">
     <slot name="toolbar" v-bind="ctx">
-      <Toolbar :deck="deck" :pt="pt?.toolbar" />
+      <Toolbar :deck="service" :pt="pt?.toolbar" />
     </slot>
 
     <Group v-bind="settings.body" class="f-data-deck-body">
@@ -83,7 +80,7 @@ useLazyRequest(`init-deck-${deck.id}`, deck.init);
         />
       </slot>
 
-      <Feed :deck="deck" :pt="pt?.feed">
+      <Feed :deck="service" :pt="pt?.feed">
         <template #card="cardProps">
           <slot name="card" v-bind="cardProps" />
         </template>

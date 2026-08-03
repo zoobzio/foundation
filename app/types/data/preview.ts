@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from "#imports";
+import type { Ref } from "#imports";
 
 // ---------------------------------------------------------------------------
 // Fields — the consumer declares these like table columns
@@ -71,22 +71,4 @@ export type Service<T> = {
 
 export type Events = {
   "preview:loaded": (event: { id: string }) => void;
-};
-
-export type Preview<T> = {
-  id: string;
-  config: Config<T>;
-
-  loading: Ref<boolean>;
-  initialized: Ref<boolean>;
-  data: Ref<T | null>;
-
-  readonly fields: PreviewField<T>[];
-  readonly content: ContentVariant<T>;
-
-  contentValue: ComputedRef<string>;
-  fieldValue: (key: keyof T) => unknown;
-
-  init: () => Promise<boolean>;
-  fetch: () => Promise<void>;
 };

@@ -12,6 +12,7 @@ import Icon from "#foundation/components/common/icon.vue";
 import Span from "#foundation/components/common/span.vue";
 
 import { useTemplateRef } from "#imports";
+import { useTable } from "#foundation/composables/table";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 </script>
@@ -21,7 +22,7 @@ const { table, pt } = defineProps<TableBulkActionsProps<T, K>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { bulkActions, selected } = table;
+const { bulkActions, selected } = useTable(table);
 
 const settings = usePassthrough<TableBulkActionsPassthrough>(() => ({
   pt,

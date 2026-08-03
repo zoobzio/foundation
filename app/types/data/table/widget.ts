@@ -10,7 +10,7 @@ import type {
   ScrollerProps,
 } from "#foundation/types/core/scroller";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Table, Events } from "#foundation/types/data/table";
+import type { Service, Events } from "#foundation/types/data/table";
 import type {
   TableHeadPassthrough,
   TableHeadSlots,
@@ -33,7 +33,7 @@ export type TableWidgetPassthrough = {
 };
 
 export type TableWidgetProps<T, K = unknown> = {
-  table: Table<T, K>;
+  service: Service<T, K>;
   pt?: PT<TableWidgetPassthrough> & {
     head?: PT<TableHeadPassthrough>;
     body?: PT<TableBodyPassthrough>;
@@ -47,7 +47,7 @@ export type TableWidgetEmits = {
 };
 
 export type TableWidgetContext<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   el: ComponentPublicInstance | null;
   settings: TableWidgetPassthrough;
 };
