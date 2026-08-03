@@ -260,29 +260,28 @@ same payloads.
 - Store keys are `` `<name>-${id}-<key>` ``; ctx names are
   `data-<name>` / `data-<name>-<part>`.
 
-## Migration checklist
+## Adding a feature
 
-For a legacy component in this tier (PascalCase files are pending;
-kebab-case are migrated — renaming is the final step):
+Build order for a new feature in this tier:
 
-1. **Domain contract** — write `types/data/<name>.ts` from scratch:
+1. **Domain contract** — write `types/data/<name>.ts` first:
    `Config` / `State` / `Service` / `Actions` / `Events` / facade. Decide the
    generic, the action surface, and the event set here, not in the component.
 2. **Store** — `accessX(id)` over `useState`, defaults only.
-3. **Service** — port _all_ logic from the old component/factory into the
-   class; add log + emit discipline. Typecheck before moving on: the service
-   compiles clean while the old component is still broken.
-4. **Factory** — collapse to wiring.
+3. **Service** — _all_ feature logic lives in the class; log + emit
+   discipline. Typecheck before moving on: the service compiles clean before
+   any component exists.
+4. **Factory** — pure wiring.
 5. **Register events** in `app.d.ts`.
 6. **Component types** — `types/data/<name>/widget.ts` (+ per sub-component),
    prefixed, emits derived from `Events`.
 7. **Sub-components** for repeated units; anchor type; keyed-`pt` or iter
    entry.
 8. **Feature composables** — everything in the widget script that isn't
-   wiring moves here.
+   wiring goes here.
 9. **Widgets** — the skeleton above; `f-data-*` classes; slots forwarded.
-10. **Verify** — `npx nuxt typecheck` (new files clean; legacy noise is
-    tracked separately) and `npx eslint` on every touched path.
+10. **Verify** — `npx nuxt typecheck` and `npx eslint` on every touched
+    path.
 
 ## Source map
 
@@ -296,8 +295,3 @@ kebab-case are migrated — renaming is the final step):
 | Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/autocomplete.ts`](../../services/autocomplete.ts)  |
 | Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`autocomplete/widget.vue`](./autocomplete/widget.vue)              |
 | Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`autocomplete/item.vue`](./autocomplete/item.vue) (iterated) |
-
-## Status
-
-Migrated: `form`, `autocomplete`, `chart`, `deck`, `preview`, `table` — the
-whole tier. (`filter` moved to core: `facets`, `keywords`.)

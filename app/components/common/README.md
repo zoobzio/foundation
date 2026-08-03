@@ -224,7 +224,7 @@ Conventions on top of the native ones:
 
 ## Manifest
 
-47 native components plus the behavioral families below. Each renders
+48 native components plus the behavioral families below. Each renders
 `class="f-<name>"`, exposes `ctx`, and (unless void) accepts a default slot
 scoped with the spread `ctx` fields.
 
@@ -352,9 +352,26 @@ Legend: **Slot** ● = `ctx`-spread default slot · ○ = void (no slot).
 | [RangeCalendar/*](./range-calendar)       | `range-calendar-*` | —          | element    | 12 parts mirroring the Calendar family; root model is `DateRange` (explicit, required) |
 | [DatePicker/*](./date-picker)             | `date-picker-*`    | —          | element    | 17 parts: root (models: `modelValue` explicit/required + `open`) · field/input segments · trigger/content popover · calendar clone of the Calendar family |
 | [DateRangePicker/*](./date-range-picker)  | `date-range-picker-*` | —       | element    | 17 parts mirroring the DatePicker family; root model is `DateRange` (explicit, required) · field payload splits `segments.start`/`segments.end` |
+| [Accordion/Root](./accordion/root.vue)    | `accordion-root`   | `generic`  | element    | model: `modelValue`           |
+| [Accordion/Item](./accordion/item.vue)    | `accordion-item`   | `generic`  | element    |                               |
+| [Accordion/Header](./accordion/header.vue) | `accordion-header` | `heading` | element    |                               |
+| [Accordion/Trigger](./accordion/trigger.vue) | `accordion-trigger` | `button` | element  |                               |
+| [Accordion/Content](./accordion/content.vue) | `accordion-content` | `region` | element  |                               |
+| [Avatar/Root](./avatar/root.vue)          | `avatar-root`      | `img`      | element    |                               |
+| [Avatar/Image](./avatar/image.vue)        | `avatar-image`     | `img`      | element    |                               |
+| [Avatar/Fallback](./avatar/fallback.vue)  | `avatar-fallback`  | `generic`  | element    |                               |
+| [ScrollArea/Root](./scroll-area/root.vue) | `scroll-area-root` | `generic`  | element    |                               |
+| [ScrollArea/Viewport](./scroll-area/viewport.vue) | `scroll-area-viewport` | `generic` | element |                        |
+| [ScrollArea/Scrollbar](./scroll-area/scrollbar.vue) | `scroll-area-scrollbar` | `scrollbar` | element |                    |
+| [ScrollArea/Thumb](./scroll-area/thumb.vue) | `scroll-area-thumb` | `generic` | element  |                               |
+| [ScrollArea/Corner](./scroll-area/corner.vue) | `scroll-area-corner` | `generic` | element |                             |
+| [Tabs/Root](./tabs/root.vue)              | `tabs-root`        | `generic`  | element    | model: `modelValue`           |
+| [Tabs/List](./tabs/list.vue)              | `tabs-list`        | `tablist`  | element    |                               |
+| [Tabs/Trigger](./tabs/trigger.vue)        | `tabs-trigger`     | `tab`      | element    |                               |
+| [Tabs/Content](./tabs/content.vue)        | `tabs-content`     | `tabpanel` | element    |                               |
 
 All behavioral elements accept a `ctx`-spread default slot; further families
-land here as core migrations wrap the parts they compose.
+land here as core components need primitives the platform doesn't ship.
 
 ## Source map
 

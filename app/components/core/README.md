@@ -210,11 +210,3 @@ reads `ref.ctx` live, no `.value`) and the ctx-spread slots.
 | Model fallback             | [`composables/model.ts`](../../composables/model.ts) (`useModel`)                                      |
 | Shared item types          | [`types/core/common.ts`](../../types/core/common.ts) (`Option` · `Link` · …)                           |
 | Reference component        | [`select.vue`](./select.vue) · [`types/core/select.ts`](../../types/core/select.ts)                    |
-
-## Status
-
-Migration progress is tracked by filename case: **kebab-case files
-(`select.vue`, `checkbox.vue`, …) are migrated** to this standard;
-PascalCase files still use the previous per-part `usePassthrough` shape and
-are pending. Renaming the file (and updating its imports) is the final step
-of each migration.
