@@ -1,4 +1,4 @@
-# @zoobz-io/foundation
+# @zoobzio/foundation
 
 A design system for Vue 3 + Nuxt, delivered as a **single Nuxt layer**. Foundation spans the full range from behavior-free HTML element wrappers up to stateful, generic data widgets — consumed by extending one layer.
 
@@ -18,12 +18,12 @@ export default defineNuxtConfig({
 
 Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsibility:
 
-| Tier       | Directory             | What it is                                                                                                   |
-|------------|-----------------------|--------------------------------------------------------------------------------------------------------------|
-| Elements   | `components/common/`  | Behavior-free HTML wrappers + slot-through primitives, with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JS behavior. |
-| Components | `components/core/`    | Stateful/interactive components composing elements + [reka-ui](https://reka-ui.com) primitives, with full passthrough & slotthrough. |
-| Widgets    | `components/data/`    | Factory-driven, generic data widgets (table, chart, deck, form, preview).                                    |
-| System     | `components/system/`  | App-shell composition (workspace layout).                                                                    |
+| Tier       | Directory            | What it is                                                                                                                                                    |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Elements   | `components/common/` | Behavior-free HTML wrappers + slot-through primitives, with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JS behavior. |
+| Components | `components/core/`   | Stateful/interactive components composing elements + [reka-ui](https://reka-ui.com) primitives, with full passthrough & slotthrough.                          |
+| Widgets    | `components/data/`   | Factory-driven, generic data widgets (table, chart, deck, form, preview).                                                                                     |
+| System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                     |
 
 ### Data widgets
 
@@ -79,17 +79,17 @@ pnpm lint         # eslint (lint:fix to auto-fix)
 
 Or via `make` (`make help` lists all targets):
 
-| Command          | Description                          |
-|------------------|--------------------------------------|
-| `make install`   | Install dependencies                 |
-| `make dev`       | Start the Nuxt dev server            |
-| `make lint`      | Run ESLint                           |
-| `make lint-fix`  | Run ESLint with auto-fix             |
-| `make typecheck` | Type-check (`nuxi typecheck`)        |
-| `make test`      | Run all tests                        |
-| `make coverage`  | Run tests with coverage              |
-| `make check`     | Lint + typecheck + test              |
-| `make clean`     | Remove generated files               |
+| Command          | Description                   |
+| ---------------- | ----------------------------- |
+| `make install`   | Install dependencies          |
+| `make dev`       | Start the Nuxt dev server     |
+| `make lint`      | Run ESLint                    |
+| `make lint-fix`  | Run ESLint with auto-fix      |
+| `make typecheck` | Type-check (`nuxi typecheck`) |
+| `make test`      | Run all tests                 |
+| `make coverage`  | Run tests with coverage       |
+| `make check`     | Lint + typecheck + test       |
+| `make clean`     | Remove generated files        |
 
 ## Testing
 
