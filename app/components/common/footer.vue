@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  FooterBindings,
   FooterContext,
   FooterProps,
   FooterSlots,
 } from "#foundation/types/common/footer";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<FooterProps>();
 
-defineSlots<FooterSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<FooterBindings>(() =>
-  useBindings<"footer">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"footer">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<FooterContext>(() => ({
+const ctx = useContext<FooterContext>("footer", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<FooterContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<FooterSlots>();
 </script>
 
 <template>
   <footer ref="el" class="f-footer" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </footer>
 </template>

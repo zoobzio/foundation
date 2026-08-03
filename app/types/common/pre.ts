@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type PreProps = {
   aria?: AriaProps<"pre">;
 };
 
+export type PreEmits = ComponentEvents["pre"];
+
 export type PreBindings = Bindings<"pre">;
 
 export type PreContext = PreProps & {
@@ -19,5 +22,5 @@ export type PreContext = PreProps & {
 };
 
 export type PreSlots = {
-  default(props: { ctx: PreContext }): VNode[];
+  default(props: PreContext): VNode[];
 };

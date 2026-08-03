@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  BannerBindings,
   BannerContext,
   BannerProps,
   BannerSlots,
 } from "#foundation/types/common/banner";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<BannerProps>();
 
-defineSlots<BannerSlots>();
-
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const bindings = computed<BannerBindings>(() =>
-  useBindings<"banner">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"banner">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<BannerContext>(() => ({
+const ctx = useContext<BannerContext>("banner", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<BannerContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<BannerSlots>();
 </script>
 
 <template>
   <div ref="el" role="banner" class="f-banner" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </div>
 </template>

@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -12,6 +13,8 @@ export type FieldsetProps = {
   aria?: AriaProps<"fieldset">;
 };
 
+export type FieldsetEmits = ComponentEvents["fieldset"];
+
 export type FieldsetBindings = Bindings<"fieldset">;
 
 export type FieldsetContext = FieldsetProps & {
@@ -20,5 +23,5 @@ export type FieldsetContext = FieldsetProps & {
 };
 
 export type FieldsetSlots = {
-  default(props: { ctx: FieldsetContext }): VNode[];
+  default(props: FieldsetContext): VNode[];
 };

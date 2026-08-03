@@ -1,14 +1,10 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { DataPreviewSnapshot } from "#foundation/schemas/data/preview";
+
 // ---------------------------------------------------------------------------
-// Field type — drives rendering in the fields panel
+// Fields — the consumer declares these like table columns
 // ---------------------------------------------------------------------------
 
 export type PreviewFieldType = "text" | "markdown";
-
-// ---------------------------------------------------------------------------
-// Field definition — consumer provides these like table columns
-// ---------------------------------------------------------------------------
 
 export interface PreviewField<T> {
   key: keyof T;
@@ -35,36 +31,62 @@ export interface CodeContentVariant<T> {
 export type ContentVariant<T> = CodeContentVariant<T>;
 
 // ---------------------------------------------------------------------------
-// Config the consumer provides to the factory
+// Config the consumer provides to the factory — pure data.
 // ---------------------------------------------------------------------------
 
-export interface DataPreviewConfig<T> {
+export type Config<T> = {
   fields: PreviewField<T>[];
   content: ContentVariant<T>;
-  fetch: () => Promise<T>;
-}
+};
 
-// ---------------------------------------------------------------------------
-// Reactive state interface — returned by the factory
-// ---------------------------------------------------------------------------
+export type State<T> = {
+  initialized: Ref<boolean>;
+  loading: Ref<boolean>;
+  data: Ref<T | null>;
+};
 
-export interface Preview<T> {
-  // Reactive state
+/**
+ * The consumer-supplied fetch mechanism — the record the preview displays.
+ */
+export type Actions<T> = {
+  fetch: (service: Service<T>) => Promise<T>;
+};
+
+export type Service<T> = {
+  readonly id: string;
+  readonly config: Config<T>;
+  readonly fields: PreviewField<T>[];
+  readonly content: ContentVariant<T>;
+
+  readonly initialized: boolean;
+  readonly loading: boolean;
+  readonly data: T | null;
+
+  readonly contentValue: string;
+  fieldValue(key: keyof T): unknown;
+
+  init(): Promise<boolean>;
+  fetch(): Promise<void>;
+};
+
+export type Events = {
+  "preview:loaded": (event: { id: string }) => void;
+};
+
+export type Preview<T> = {
+  id: string;
+  config: Config<T>;
+
   loading: Ref<boolean>;
   initialized: Ref<boolean>;
   data: Ref<T | null>;
 
-  // Static config
   readonly fields: PreviewField<T>[];
   readonly content: ContentVariant<T>;
 
-  // Getters
   contentValue: ComputedRef<string>;
   fieldValue: (key: keyof T) => unknown;
 
-  // Actions
-  fetch: () => Promise<void>;
   init: () => Promise<boolean>;
-  getSnapshot: () => DataPreviewSnapshot;
-  restoreSnapshot: (snapshot: DataPreviewSnapshot) => void;
-}
+  fetch: () => Promise<void>;
+};

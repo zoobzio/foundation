@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  MainBindings,
   MainContext,
   MainProps,
   MainSlots,
 } from "#foundation/types/common/main";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<MainProps>();
 
-defineSlots<MainSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<MainBindings>(() =>
-  useBindings<"main">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"main">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<MainContext>(() => ({
+const ctx = useContext<MainContext>("main", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<MainContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<MainSlots>();
 </script>
 
 <template>
   <main ref="el" class="f-main" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </main>
 </template>

@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { ComponentPublicInstance, VNode } from "vue";
@@ -17,6 +18,8 @@ export type AnchorProps = {
   aria?: AriaProps<"anchor">;
 };
 
+export type AnchorEmits = ComponentEvents["anchor"];
+
 export type AnchorBindings = Bindings<"anchor">;
 
 export type AnchorContext = AnchorProps & {
@@ -25,5 +28,5 @@ export type AnchorContext = AnchorProps & {
 };
 
 export type AnchorSlots = {
-  default(props: { ctx: AnchorContext }): VNode[];
+  default(props: AnchorContext): VNode[];
 };

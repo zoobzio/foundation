@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type H2Props = {
   aria?: AriaProps<"h2">;
 };
 
+export type H2Emits = ComponentEvents["h2"];
+
 export type H2Bindings = Bindings<"h2">;
 
 export type H2Context = H2Props & {
@@ -19,5 +22,5 @@ export type H2Context = H2Props & {
 };
 
 export type H2Slots = {
-  default(props: { ctx: H2Context }): VNode[];
+  default(props: H2Context): VNode[];
 };

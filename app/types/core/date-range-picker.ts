@@ -1,54 +1,145 @@
 import type { EmProps } from "#foundation/types/common/em";
-import type { GroupProps } from "#foundation/types/common/group";
 import type { IconProps } from "#foundation/types/common/icon";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
+import type {
+  DateRangePickerRootProps,
+  DateRangePickerRootEmits,
+} from "#foundation/types/common/date-range-picker/root";
+import type {
+  DateRangePickerFieldProps,
+  DateRangePickerFieldSlotProps,
+  DateRangePickerSegment,
+} from "#foundation/types/common/date-range-picker/field";
+import type { DateRangePickerInputProps } from "#foundation/types/common/date-range-picker/input";
+import type {
+  DateRangePickerTriggerProps,
+  DateRangePickerTriggerEmits,
+} from "#foundation/types/common/date-range-picker/trigger";
+import type {
+  DateRangePickerContentProps,
+  DateRangePickerContentEmits,
+} from "#foundation/types/common/date-range-picker/content";
+import type {
+  DateRangePickerCalendarProps,
+  DateRangePickerCalendarSlotProps,
+} from "#foundation/types/common/date-range-picker/calendar";
+import type { DateRangePickerHeaderProps } from "#foundation/types/common/date-range-picker/header";
+import type { DateRangePickerHeadingProps } from "#foundation/types/common/date-range-picker/heading";
+import type {
+  DateRangePickerPrevProps,
+  DateRangePickerPrevEmits,
+} from "#foundation/types/common/date-range-picker/prev";
+import type {
+  DateRangePickerNextProps,
+  DateRangePickerNextEmits,
+} from "#foundation/types/common/date-range-picker/next";
+import type { DateRangePickerGridProps } from "#foundation/types/common/date-range-picker/grid";
+import type { DateRangePickerGridHeadProps } from "#foundation/types/common/date-range-picker/grid-head";
+import type { DateRangePickerGridBodyProps } from "#foundation/types/common/date-range-picker/grid-body";
+import type { DateRangePickerGridRowProps } from "#foundation/types/common/date-range-picker/grid-row";
+import type { DateRangePickerHeadCellProps } from "#foundation/types/common/date-range-picker/head-cell";
+import type { DateRangePickerCellProps } from "#foundation/types/common/date-range-picker/cell";
+import type {
+  DateRangePickerCellTriggerProps,
+  DateRangePickerCellTriggerEmits,
+} from "#foundation/types/common/date-range-picker/cell-trigger";
+import type { ComponentEvents } from "#foundation/types/events";
+import type {
+  Passthrough,
+  PassthroughIter,
+  PT,
+} from "#foundation/types/passthrough";
 import type { DateValue } from "@internationalized/date";
-import type { PrimitiveProps, DateRangePickerRootProps, DateRangePickerRootEmits, DateRangePickerInputProps, DateRangePickerTriggerProps, DateRangePickerContentProps, DateRangePickerHeaderProps, DateRangePickerHeadingProps, DateRangePickerGridProps, DateRangePickerGridHeadProps, DateRangePickerGridBodyProps, DateRangePickerGridRowProps, DateRangePickerHeadCellProps, DateRangePickerCellProps, DateRangePickerCellTriggerProps, DateRangePickerPrevProps, DateRangePickerNextProps } from "reka-ui";
+import type { DateRange } from "reka-ui";
+import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
-export interface DateRange {
-  start: DateValue;
-  end: DateValue;
-}
+// The share of the field's render-scope payload the core template forwards.
+export type DateRangePickerSegments = Pick<
+  DateRangePickerFieldSlotProps,
+  "segments"
+>;
+
+// One input part of the field: a segment plus the side of the range it edits.
+export type DateRangePickerInputItem = {
+  segment: DateRangePickerSegment;
+  type: "start" | "end";
+};
+
+// The share of the calendar's render-scope payload the core template
+// forwards into its slots.
+export type DateRangePickerView = Pick<
+  DateRangePickerCalendarSlotProps,
+  "weekDays" | "grid"
+>;
+
+// One month of the calendar's render-scope grid payload.
+export type DateRangePickerMonth = DateRangePickerView["grid"][number];
 
 export type DateRangePickerPassthrough = {
-  root?: Passthrough<DateRangePickerRootProps, DateRangePickerRootEmits>;
-  field?: Passthrough<PrimitiveProps>;
-  input?: Passthrough<DateRangePickerInputProps>;
-  separator?: Passthrough<EmProps>;
-  trigger?: Passthrough<DateRangePickerTriggerProps>;
-  triggerIcon?: Passthrough<IconProps>;
-  content?: Passthrough<DateRangePickerContentProps>;
-  calendar?: Passthrough<PrimitiveProps>;
-  header?: Passthrough<DateRangePickerHeaderProps>;
-  prev?: Passthrough<DateRangePickerPrevProps>;
-  prevIcon?: Passthrough<IconProps>;
-  heading?: Passthrough<DateRangePickerHeadingProps>;
-  next?: Passthrough<DateRangePickerNextProps>;
-  nextIcon?: Passthrough<IconProps>;
-  grids?: Passthrough<GroupProps>;
-  grid?: Passthrough<DateRangePickerGridProps>;
-  gridHead?: Passthrough<DateRangePickerGridHeadProps>;
-  gridBody?: Passthrough<DateRangePickerGridBodyProps>;
-  gridRow?: Passthrough<DateRangePickerGridRowProps>;
-  headCell?: Passthrough<DateRangePickerHeadCellProps>;
-  cell?: Passthrough<DateRangePickerCellProps>;
-  cellTrigger?: Passthrough<DateRangePickerCellTriggerProps>;
+  root: Passthrough<DateRangePickerRootProps, DateRangePickerRootEmits>;
+  field: Passthrough<DateRangePickerFieldProps>;
+  input: PassthroughIter<DateRangePickerInputItem, DateRangePickerInputProps>;
+  separator: Passthrough<EmProps>;
+  trigger: Passthrough<DateRangePickerTriggerProps, DateRangePickerTriggerEmits>;
+  triggerIcon: Passthrough<IconProps>;
+  content: Passthrough<DateRangePickerContentProps, DateRangePickerContentEmits>;
+  calendar: Passthrough<DateRangePickerCalendarProps>;
+  header: Passthrough<DateRangePickerHeaderProps>;
+  prev: Passthrough<DateRangePickerPrevProps, DateRangePickerPrevEmits>;
+  prevIcon: Passthrough<IconProps>;
+  heading: Passthrough<DateRangePickerHeadingProps>;
+  next: Passthrough<DateRangePickerNextProps, DateRangePickerNextEmits>;
+  nextIcon: Passthrough<IconProps>;
+  grid: Passthrough<DateRangePickerGridProps>;
+  gridHead: Passthrough<DateRangePickerGridHeadProps>;
+  gridBody: Passthrough<DateRangePickerGridBodyProps>;
+  gridRow: Passthrough<DateRangePickerGridRowProps>;
+  headCell: Passthrough<DateRangePickerHeadCellProps>;
+  cell: PassthroughIter<DateValue, DateRangePickerCellProps>;
+  cellTrigger: PassthroughIter<
+    { day: DateValue; month: DateValue },
+    DateRangePickerCellTriggerProps,
+    DateRangePickerCellTriggerEmits
+  >;
 };
 
+// `modelValue` is required: the picker uses the explicit model contract
+// (MIGRATION § explicit models) — presence on the vnode decides
+// controlled-ness, so consumers always provide it, `undefined` included.
 export type DateRangePickerProps = {
-  modelValue?: DateRange;
-  placeholder?: { start: string; end: string };
-  minValue?: DateValue;
-  maxValue?: DateValue;
-  locale?: string;
-  disabled?: boolean;
-  numberOfMonths?: number;
-  pt?: DateRangePickerPassthrough;
+  modelValue: DateRange | undefined;
+  open?: boolean;
+  pt?: PT<DateRangePickerPassthrough>;
 };
 
-export type DateRangePickerEmits = {
-  "update:modelValue": [value: DateRange];
+export type DateRangePickerEmits = ComponentEvents["date-range-picker"] & {
+  "update:modelValue": [value: DateRange | undefined];
+  "update:open": [value: boolean];
 };
 
-export type DateRangePickerRecipe = Recipe<DateRangePickerProps, DateRangePickerEmits>;
+export type DateRangePickerContext = {
+  modelValue: Ref<DateRange | undefined>;
+  open: Ref<boolean | undefined>;
+  el: ComponentPublicInstance | null;
+  settings: DateRangePickerPassthrough;
+};
+
+export type DateRangePickerSlots = {
+  field?: (props: DateRangePickerContext & DateRangePickerSegments) => VNode[];
+  input?: (props: DateRangePickerContext & DateRangePickerInputItem) => VNode[];
+  separator?: (props: DateRangePickerContext) => VNode[];
+  trigger?: (props: DateRangePickerContext) => VNode[];
+  triggerIcon?: (props: DateRangePickerContext) => VNode[];
+  content?: (props: DateRangePickerContext) => VNode[];
+  header?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  prev?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  prevIcon?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  heading?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  next?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  nextIcon?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  grid?: (props: DateRangePickerContext & DateRangePickerView & { month: DateRangePickerMonth }) => VNode[];
+  gridHead?: (props: DateRangePickerContext & DateRangePickerView & { month: DateRangePickerMonth }) => VNode[];
+  gridBody?: (props: DateRangePickerContext & DateRangePickerView & { month: DateRangePickerMonth }) => VNode[];
+  headCell?: (props: DateRangePickerContext & { day: string }) => VNode[];
+  cell?: (props: DateRangePickerContext & { month: DateRangePickerMonth; date: DateValue }) => VNode[];
+  cellTrigger?: (props: DateRangePickerContext & { month: DateRangePickerMonth; date: DateValue }) => VNode[];
+};

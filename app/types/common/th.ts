@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type ThProps = {
   aria?: AriaProps<"th">;
 };
 
+export type ThEmits = ComponentEvents["th"];
+
 export type ThBindings = Bindings<"th">;
 
 export type ThContext = ThProps & {
@@ -19,5 +22,5 @@ export type ThContext = ThProps & {
 };
 
 export type ThSlots = {
-  default(props: { ctx: ThContext }): VNode[];
+  default(props: ThContext): VNode[];
 };

@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  ThBindings,
   ThContext,
   ThProps,
   ThSlots,
 } from "#foundation/types/common/th";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { scope, modifiers, tokens, aria } = defineProps<ThProps>();
 
-defineSlots<ThSlots>();
-
 const el = useTemplateRef<HTMLTableCellElement>("el");
 
-const bindings = computed<ThBindings>(() =>
-  useBindings<"th">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"th">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<ThContext>(() => ({
+const ctx = useContext<ThContext>("th", () => ({
   scope,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<ThContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<ThSlots>();
 </script>
 
 <template>
   <th ref="el" :scope="scope" class="f-th" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </th>
 </template>

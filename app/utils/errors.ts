@@ -1,24 +1,29 @@
+import type {
+  AppError,
+  ErrorData,
+  ErrorOptions,
+} from "#foundation/types/error";
+import type { HTTPCode } from "ltrl-http";
+
 import { createError } from "#imports";
-import type { AppError, AppErrorOptions, ErrorPayload, Severity } from "#foundation/types/error";
-const make = (severity: Severity, options: AppErrorOptions, isFatal: boolean): AppError =>
-  createError<ErrorPayload>({
-    statusCode: options.code,
-    message: options.message,
-    fatal: isFatal,
+import { useHTTPCode } from "ltrl-http";
+
+export const useError = (
+  code: HTTPCode,
+  message: string,
+  options: ErrorOptions = {},
+): AppError => {
+  const status = useHTTPCode(code);
+  const { cause, fatal, notification } = options;
+  return createError<ErrorData>({
+    statusCode: code,
+    statusText: status.label,
+    message,
+    cause,
+    fatal,
     data: {
-      severity,
-      detail: options.data,
+      submitted: new Date().toISOString(),
+      notification,
     },
   });
-
-export const fatal = (options: AppErrorOptions): AppError =>
-  make("fatal", options, true);
-
-export const error = (options: AppErrorOptions): AppError =>
-  make("error", options, false);
-
-export const warning = (options: AppErrorOptions): AppError =>
-  make("warning", options, false);
-
-export const info = (options: AppErrorOptions): AppError =>
-  make("info", options, false);
+};

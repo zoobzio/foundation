@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type FooterProps = {
   aria?: AriaProps<"footer">;
 };
 
+export type FooterEmits = ComponentEvents["footer"];
+
 export type FooterBindings = Bindings<"footer">;
 
 export type FooterContext = FooterProps & {
@@ -19,5 +22,5 @@ export type FooterContext = FooterProps & {
 };
 
 export type FooterSlots = {
-  default(props: { ctx: FooterContext }): VNode[];
+  default(props: FooterContext): VNode[];
 };

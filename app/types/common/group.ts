@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type GroupProps = {
   aria?: AriaProps<"group">;
 };
 
+export type GroupEmits = ComponentEvents["group"];
+
 export type GroupBindings = Bindings<"group">;
 
 export type GroupContext = GroupProps & {
@@ -19,5 +22,5 @@ export type GroupContext = GroupProps & {
 };
 
 export type GroupSlots = {
-  default(props: { ctx: GroupContext }): VNode[];
+  default(props: GroupContext): VNode[];
 };

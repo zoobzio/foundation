@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  ArticleBindings,
   ArticleContext,
   ArticleProps,
   ArticleSlots,
 } from "#foundation/types/common/article";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<ArticleProps>();
 
-defineSlots<ArticleSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<ArticleBindings>(() =>
-  useBindings<"article">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"article">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<ArticleContext>(() => ({
+const ctx = useContext<ArticleContext>("article", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<ArticleContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<ArticleSlots>();
 </script>
 
 <template>
   <article ref="el" class="f-article" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </article>
 </template>

@@ -16,13 +16,15 @@ export default defineConfig({
       // Nuxt virtual modules — shimmed for the no-Nuxt vitest environment.
       "#imports": r("./tests/mocks/imports.ts"),
       "#app": r("./tests/mocks/imports.ts"),
-      // Test-only support (data, helpers, stubs, fixtures).
+      "#components": r("./tests/mocks/imports.ts"),
+      // Test-only support (mocks, stubs, data, mount factories).
       "#test": r("./tests"),
     },
   },
   test: {
     environment: "happy-dom",
-    include: ["tests/**/*.test.ts", "app/**/*.test.ts"],
+    include: ["tests/**/*.test.ts"],
+    setupFiles: ["tests/setup.ts"],
     coverage: {
       include: ["app/**/*.{ts,vue}"],
       reportsDirectory: ".coverage",

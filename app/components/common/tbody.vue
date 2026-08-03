@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  TbodyBindings,
   TbodyContext,
   TbodyProps,
   TbodySlots,
 } from "#foundation/types/common/tbody";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { modifiers, tokens, aria } = defineProps<TbodyProps>();
 
-defineSlots<TbodySlots>();
-
 const el = useTemplateRef<HTMLTableSectionElement>("el");
 
-const bindings = computed<TbodyBindings>(() =>
-  useBindings<"tbody">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"tbody">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<TbodyContext>(() => ({
+const ctx = useContext<TbodyContext>("tbody", () => ({
   modifiers,
   tokens,
   aria,
@@ -30,10 +31,11 @@ const ctx = computed<TbodyContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<TbodySlots>();
 </script>
 
 <template>
   <tbody ref="el" class="f-tbody" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </tbody>
 </template>

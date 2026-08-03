@@ -1,0 +1,35 @@
+import { createStub, createAllSlotsStub } from "#test/stubs/factories";
+
+// One entry per components/core component, keyed by conventional import
+// binding name. Components whose named slots must all mount (overlays,
+// toolbars) use the all-slots stub so slotted content stays reachable.
+export const coreStubs = {
+  Accordion: createStub("Accordion"),
+  Avatar: createStub("Avatar"),
+  Calendar: createStub("Calendar"),
+  Checkbox: createStub("Checkbox"),
+  Command: createStub("Command"),
+  DateFilters: createStub("DateFilters"),
+  DatePicker: createStub("DatePicker"),
+  DateRangePicker: createStub("DateRangePicker"),
+  Dialog: createAllSlotsStub("Dialog"),
+  Fab: createStub("Fab"),
+  Facets: createStub("Facets"),
+  Hero: createStub("Hero"),
+  Keywords: createStub("Keywords"),
+  Listbox: createStub("Listbox"),
+  Menu: createStub("Menu"),
+  MultiSelect: createStub("MultiSelect"),
+  Pagination: createStub("Pagination"),
+  Popover: createAllSlotsStub("Popover"),
+  Radio: createStub("Radio"),
+  RangeCalendar: createStub("RangeCalendar"),
+  Scroller: createAllSlotsStub("Scroller"),
+  SegmentedControl: createStub("SegmentedControl"),
+  Select: createStub("Select"),
+  Tabs: createStub("Tabs"),
+  TagsInput: createAllSlotsStub("TagsInput"),
+  Toast: createStub("Toast"),
+  Toaster: createStub("Toaster"),
+  Tooltip: createStub("Tooltip"),
+} as const;

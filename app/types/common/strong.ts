@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type StrongProps = {
   aria?: AriaProps<"strong">;
 };
 
+export type StrongEmits = ComponentEvents["strong"];
+
 export type StrongBindings = Bindings<"strong">;
 
 export type StrongContext = StrongProps & {
@@ -19,5 +22,5 @@ export type StrongContext = StrongProps & {
 };
 
 export type StrongSlots = {
-  default(props: { ctx: StrongContext }): VNode[];
+  default(props: StrongContext): VNode[];
 };

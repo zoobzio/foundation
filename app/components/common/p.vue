@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  PBindings,
   PContext,
   PProps,
   PSlots,
 } from "#foundation/types/common/p";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<PProps>();
 
-defineSlots<PSlots>();
-
 const el = useTemplateRef<HTMLParagraphElement>("el");
 
-const bindings = computed<PBindings>(() =>
-  useBindings<"p">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"p">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<PContext>(() => ({
+const ctx = useContext<PContext>("p", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<PContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<PSlots>();
 </script>
 
 <template>
   <p ref="el" class="f-p" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </p>
 </template>

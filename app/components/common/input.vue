@@ -1,12 +1,13 @@
 <script lang="ts">
 import type {
-  InputBindings,
   InputContext,
+  InputEmits,
   InputProps,
 } from "#foundation/types/common/input";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
@@ -21,13 +22,18 @@ const {
   aria,
 } = defineProps<InputProps>();
 
+const emit = defineEmits<InputEmits>();
+
 const el = useTemplateRef<HTMLInputElement>("el");
 
-const bindings = computed<InputBindings>(() =>
-  useBindings<"input">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"input">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<InputContext>(() => ({
+const ctx = useContext<InputContext>("input", () => ({
   type,
   placeholder,
   disabled,
@@ -53,5 +59,9 @@ defineExpose({ ctx });
     :name="name"
     class="f-input"
     v-bind="bindings"
-  />
+    @input="emit('input', $event)"
+    @change="emit('change', $event)"
+    @focus="emit('focus', $event)"
+    @blur="emit('blur', $event)"
+  >
 </template>

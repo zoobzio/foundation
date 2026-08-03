@@ -1,24 +1,28 @@
-import { computed, toValue, type MaybeRefOrGetter } from "#imports";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
+import type {
+  Passthrough,
+  PassthroughSource,
+} from "#foundation/types/passthrough";
+import type { ComputedRef, MaybeRefOrGetter } from "vue";
+
+import { computed, toValue } from "#imports";
 import { passthrough } from "#foundation/utils/passthrough";
 
-export function usePassthrough<P, E = {}>(
-  userPT: MaybeRefOrGetter<Passthrough<P, E> | undefined>,
-  localPT: MaybeRefOrGetter<Recipe<P, E>>,
-) {
-  return computed(() => passthrough(toValue(userPT), toValue(localPT)));
-}
-
-export function useItemPassthrough<T, P, E = {}>(
-  items: MaybeRefOrGetter<T[]>,
-  userPT: MaybeRefOrGetter<Passthrough<P, E> | undefined>,
-  localPT: (item: T) => Recipe<P, E>,
-) {
-  return computed(() =>
-    toValue(items).map((item) => ({
-      item,
-      pt: passthrough(toValue(userPT), localPT(item)),
-    })),
-  );
-}
+/**
+ * Resolves a component's part manifest into its reactive `settings`.
+ *
+ * A real composable: takes a single reactive source — the consumer's deep
+ * partial `pt` layer plus the component's local `recipes` (which must satisfy
+ * the full manifest) — and returns the computed the template binds part by
+ * part. The user layer wins per key; `pt` may be omitted entirely.
+ *
+ * @param source - Reactive source of the `pt` layer and local recipes.
+ * @returns The resolved part manifest, one entry per part.
+ */
+export const usePassthrough = <P, E = {}>(
+  source: NoInfer<MaybeRefOrGetter<PassthroughSource<P, E>>>,
+): ComputedRef<Passthrough<P, E>> => {
+  return computed(() => {
+    const { pt, recipes } = toValue(source);
+    return passthrough<P, E>(pt, recipes);
+  });
+};
