@@ -34,8 +34,6 @@ useHooks<Events>(chart.id, {
   "chart:renderer-changed": (event) => emit("renderer-changed", event),
 });
 
-useLazyRequest(`init-chart-${chart.id}`, chart.init);
-
 const { loading, variantData } = chart;
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
@@ -71,6 +69,8 @@ const ctx = useContext<ChartWidgetContext<T>>("data-chart", () => ({
 defineExpose({ ctx });
 
 defineSlots<ChartWidgetSlots<T>>();
+
+useLazyRequest(`init-chart-${chart.id}`, chart.init);
 </script>
 
 <template>

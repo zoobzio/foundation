@@ -29,8 +29,6 @@ useHooks<Events>(workspace.id, {
   "workspace:initialized": (event) => emit("initialized", event),
 });
 
-await useRequest(`init-workspace-${workspace.id}`, workspace.init);
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { layout, gridStyle, slotStyle } = workspace;
@@ -54,6 +52,8 @@ const ctx = useContext<WorkspaceStructureContext>("system-workspace", () => ({
 
 defineExpose({ ctx });
 defineSlots<WorkspaceStructureSlots>();
+
+await useRequest(`init-workspace-${workspace.id}`, workspace.init);
 </script>
 
 <template>
