@@ -9,6 +9,7 @@ import type {
   PT,
 } from "#foundation/types/passthrough";
 import type { SelectEmits, SelectProps } from "#foundation/types/core/select";
+import type { Option } from "#foundation/types/core/common";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type PaginationPassthrough = {
@@ -21,7 +22,7 @@ export type PaginationPassthrough = {
   last: Passthrough<FabProps, FabEmits>;
   options: Passthrough<GroupProps>;
   option: PassthroughIter<number | "...", ButtonProps, ButtonEmits>;
-  size: Passthrough<SelectProps, SelectEmits>;
+  size: Passthrough<SelectProps<Option>, SelectEmits<Option>>;
 };
 
 export type PaginationProps = {

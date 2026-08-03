@@ -1,5 +1,6 @@
-import { accessNotifications } from "#foundation/stores/notification";
 import type { Notification } from "#foundation/types/notification";
+
+import { accessNotifications } from "#foundation/stores/notification";
 
 export const useNotifications = () => {
   const { notifications } = accessNotifications();
@@ -8,7 +9,7 @@ export const useNotifications = () => {
     notifications.value.push({ ...notification, id: crypto.randomUUID() });
   };
 
-  const capture = (err: unknown) => {};
+  const capture = (_err: unknown) => {};
 
   const remove = (id: Notification["id"]) => {
     notifications.value = notifications.value.filter((t) => t.id !== id);

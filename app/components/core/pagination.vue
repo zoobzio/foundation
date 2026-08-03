@@ -14,7 +14,7 @@ import Span from "#foundation/components/common/span.vue";
 import Fab from "#foundation/components/core/fab.vue";
 import Select from "#foundation/components/core/select.vue";
 
-import { useTemplateRef } from "#imports";
+import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useModel } from "#foundation/composables/model";
 import { useContext } from "#foundation/composables/context";
@@ -37,10 +37,25 @@ const $size = useModel(
   (v) => emit("update:size", v),
 );
 
+// useModel widens to `number | undefined`; page/size are required props, so
+// coerce to concrete `Ref<number>` for usePaginate and the ctx.
+const currentPage = computed<number>({
+  get: () => $page.value ?? 1,
+  set: (v) => {
+    $page.value = v;
+  },
+});
+const currentSize = computed<number>({
+  get: () => $size.value ?? size,
+  set: (v) => {
+    $size.value = v;
+  },
+});
+
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { hasPrev, hasNext, options, first, prev, next, last, goToPage } =
-  usePaginate($page, () => count);
+  usePaginate(currentPage, () => count);
 
 const settings = usePassthrough<PaginationPassthrough>(() => ({
   pt,
@@ -61,18 +76,20 @@ const settings = usePassthrough<PaginationPassthrough>(() => ({
       },
     }),
     size: {
-      modelValue: String($size.value),
+      modelValue: PAGE_SIZE_OPTIONS.find(
+        (o) => o.value === String(currentSize.value),
+      ),
       options: PAGE_SIZE_OPTIONS,
       "onUpdate:modelValue": (v) => {
-        $size.value = Number(v);
+        currentSize.value = Number(v.value);
       },
     },
   },
 }));
 
 const ctx = useContext<PaginationContext>("pagination", () => ({
-  page: $page,
-  size: $size,
+  page: currentPage,
+  size: currentSize,
   count,
   total,
   hasPrev: hasPrev.value,

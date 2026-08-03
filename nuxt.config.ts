@@ -17,6 +17,20 @@ export default defineNuxtConfig({
 
   untheme,
 
+  typescript: {
+    tsConfig: {
+      // The generated tsconfig only includes app code — pull tests/ in so the
+      // support layer (contract mocks especially) is typechecked, and teach TS
+      // the #test alias (vitest resolves it via vitest.config).
+      include: ["../tests/**/*"],
+      compilerOptions: {
+        paths: {
+          "#test/*": ["../tests/*"],
+        },
+      },
+    },
+  },
+
   alias: {
     // Absolute paths so the aliases keep resolving to the foundation package when this
     // layer is extended by a consumer app (a shared "@"/"~" would resolve to the consumer).
