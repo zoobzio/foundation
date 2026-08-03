@@ -1,9 +1,12 @@
 {
   "name": "@zoobzio/foundation",
-  "private": true,
   "type": "module",
   "license": "MIT",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoobzio/foundation.git"
+  },
   "imports": {
     "#config/*": "./config/*",
     "#modules/*": "./modules/*",
@@ -14,6 +17,13 @@
     "email": "alex@zoobz.io",
     "url": "https://zoobz.io"
   },
+  "files": [
+    "app",
+    "config",
+    "modules",
+    "stubs",
+    "nuxt.config.ts"
+  ],
   "scripts": {
     "dev": "nuxi dev",
     "dev:example": "nuxi dev example",
@@ -26,11 +36,16 @@
     "typecheck": "nuxi typecheck",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage --passWithNoTests"
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "changeset": "changeset",
+    "ci:version": "changeset version",
+    "ci:release": "changeset publish"
   },
   "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "tag": "alpha"
   },
   "dependencies": {
     "@internationalized/date": "^3.7.0",
@@ -48,6 +63,8 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.0",
     "@nuxt/eslint-config": "^1.4.0",
     "@types/aria-query": "^5.0.4",
     "@vitejs/plugin-vue": "^6.0.6",
