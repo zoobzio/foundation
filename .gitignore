@@ -1,6 +1,7 @@
 node_modules
 dist
 .nuxt
+.output
 .env
 .data
 node-compile-cache
