@@ -1,90 +1,90 @@
-import { describe, it, expect } from "vitest";
-import { ref } from "vue";
+// Gold standard: composables. Pure reactive paths run through withSetup (a
+// real setup() scope, no template); the `explicit` path inspects the mounting
+// vnode, so it earns a harness component and one mount per detection path.
+import { describe, expect, it, vi } from "vitest";
+import { defineComponent, h } from "vue";
+import { mount } from "@vue/test-utils";
 import { useModel } from "#foundation/composables/model";
+import { withSetup } from "#test/mount/composable";
 
 describe("useModel", () => {
-  it("reads undefined when no prop and no default", () => {
-    const prop = ref<string | undefined>(undefined);
-    const model = useModel(
-      () => prop.value,
-      () => {},
+  it("reads the prop while provided, falls back to the default", () => {
+    const { result: $model } = withSetup(() =>
+      useModel<string>(() => "controlled", vi.fn(), { default: "fallback" }),
     );
-    expect(model.value).toBeUndefined();
+    expect($model.value).toBe("controlled");
   });
 
-  it("reads the default when no prop is provided", () => {
-    const prop = ref<boolean | undefined>(undefined);
-    const model = useModel(
-      () => prop.value,
-      () => {},
-      { default: false },
+  it("serves the internal default when the prop is absent", () => {
+    const { result: $model } = withSetup(() =>
+      useModel<string>(() => undefined, vi.fn(), { default: "fallback" }),
     );
-    expect(model.value).toBe(false);
+    expect($model.value).toBe("fallback");
   });
 
-  it("prefers the prop over the default", () => {
-    const prop = ref<boolean | undefined>(true);
-    const model = useModel(
-      () => prop.value,
-      () => {},
-      { default: false },
+  it("set updates internal state and emits", () => {
+    const emit = vi.fn();
+    const { result: $model } = withSetup(() =>
+      useModel<string>(() => undefined, emit, { default: "a" }),
     );
-    expect(model.value).toBe(true);
+    $model.value = "b";
+    expect(emit).toHaveBeenCalledWith("b");
+    expect($model.value).toBe("b");
   });
 
-  it("tracks prop changes reactively", () => {
-    const prop = ref<string | undefined>(undefined);
-    const model = useModel(
-      () => prop.value,
-      () => {},
+  it("prop wins over a previously set internal value", () => {
+    const { result: $model } = withSetup(() =>
+      useModel<string>(() => "prop", vi.fn()),
     );
-    expect(model.value).toBeUndefined();
-    prop.value = "controlled";
-    expect(model.value).toBe("controlled");
+    $model.value = "internal";
+    expect($model.value).toBe("prop");
+  });
+});
+
+describe("useModel explicit", () => {
+  // The explicit option switches controlled/uncontrolled on whether the parent
+  // actually passed the prop — observable only through a real mount. The
+  // harness renders the model value and toggles it on click so tests stay in
+  // the DOM.
+  const Harness = defineComponent({
+    props: {
+      openValue: { type: Boolean, default: undefined },
+    },
+    emits: ["update:openValue"],
+    setup(props, { emit }) {
+      const $open = useModel<boolean>(
+        () => props.openValue,
+        (v) => emit("update:openValue", v),
+        { default: false, explicit: "openValue" },
+      );
+      return () =>
+        h(
+          "button",
+          { onClick: () => ($open.value = !$open.value) },
+          String($open.value),
+        );
+    },
   });
 
-  it("treats null as not provided", () => {
-    const prop = ref<string | null | undefined>(null);
-    const model = useModel(
-      () => prop.value,
-      () => {},
-      { default: "fallback" },
-    );
-    expect(model.value).toBe("fallback");
+  it("uncontrolled when the prop is not passed — internal state drives", async () => {
+    const wrapper = mount(Harness);
+    expect(wrapper.text()).toBe("false");
+    await wrapper.trigger("click");
+    expect(wrapper.text()).toBe("true");
+    expect(wrapper.emitted("update:openValue")).toEqual([[true]]);
   });
 
-  it("writes update internal state and emit while uncontrolled", () => {
-    const prop = ref<string | undefined>(undefined);
-    const emitted: string[] = [];
-    const model = useModel(
-      () => prop.value,
-      (v) => emitted.push(v),
-    );
-    model.value = "chosen";
-    expect(emitted).toEqual(["chosen"]);
-    expect(model.value).toBe("chosen");
+  it("controlled when the prop is passed — reads the prop even after set", async () => {
+    const wrapper = mount(Harness, { props: { openValue: false } });
+    await wrapper.trigger("click");
+    // Parent never updated the prop, so the model still reports it.
+    expect(wrapper.text()).toBe("false");
+    expect(wrapper.emitted("update:openValue")).toEqual([[true]]);
   });
 
-  it("writes emit but reads stay pinned to the prop while controlled", () => {
-    const prop = ref<string | undefined>("pinned");
-    const emitted: string[] = [];
-    const model = useModel(
-      () => prop.value,
-      (v) => emitted.push(v),
-    );
-    model.value = "attempted";
-    expect(emitted).toEqual(["attempted"]);
-    expect(model.value).toBe("pinned");
-  });
-
-  it("keeps the last written value when the prop is withdrawn", () => {
-    const prop = ref<string | undefined>("controlled");
-    const model = useModel(
-      () => prop.value,
-      () => {},
-    );
-    model.value = "written";
-    prop.value = undefined;
-    expect(model.value).toBe("written");
+  it("detects kebab-case prop spelling as provided", async () => {
+    const wrapper = mount(Harness, { attrs: { "open-value": false } });
+    await wrapper.trigger("click");
+    expect(wrapper.text()).toBe("false");
   });
 });

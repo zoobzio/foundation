@@ -8,7 +8,6 @@ import Toaster from "#foundation/components/core/toaster.vue";
 import { ConfigProvider } from "reka-ui";
 import { useHead, useId } from "#imports";
 import { useNotifications } from "~/composables/notification";
-import { severityToVariant } from "#foundation/constants/error";
 </script>
 
 <script setup lang="ts">
@@ -26,11 +25,8 @@ const onError = (err: unknown) => {
   const payload =
     err instanceof Error && "data" in err ? (err as AppError).data : undefined;
 
-  if (payload?.severity) {
-    push({
-      title: (err as AppError).message,
-      variant: severityToVariant[payload.severity],
-    });
+  if (payload?.notification) {
+    push(payload.notification);
     return;
   }
 

@@ -1,71 +1,54 @@
-import { describe, it, expect } from "vitest";
+// Gold standard: reka wrappers. The wrapper's own logic is model wiring and
+// prop forwarding into the reka primitive — observable only through reka's
+// rendered state, so the harness slots a real reka trigger under the root and
+// reads its data-state/attrs. Full selection round-trips belong to the core
+// components that compose these parts (tests/components/core/select.test.ts).
+import { describe, expect, it } from "vitest";
+import { h } from "vue";
 import { mount } from "@vue/test-utils";
-import { nextTick } from "vue";
-import { rekaStubs } from "#test/stubs";
-import Root from "#foundation/components/common/select/root.vue";
+import { SelectTrigger } from "reka-ui";
+import SelectRoot from "#foundation/components/common/select/root.vue";
+import type { SelectRootProps } from "#foundation/types/common/select/root";
 
-const factory = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
-  mount(Root, { props, slots, global: { stubs: rekaStubs("SelectRoot") } });
-
-describe("common/select/Root", () => {
-  it("renders with f-select-root class", () => {
-    const wrapper = factory();
-    expect(wrapper.classes()).toContain("f-select-root");
+const mountRoot = (props: SelectRootProps = {}) =>
+  mount(SelectRoot, {
+    props,
+    slots: { default: () => h(SelectTrigger, () => "trigger") },
   });
 
-  it("binds open=false by default (useModel fallback)", () => {
-    const wrapper = factory();
-    expect(wrapper.attributes("open")).toBe("false");
+describe("select root", () => {
+  it("provides reka context to slotted primitives", () => {
+    const trigger = mountRoot().get("button");
+    expect(trigger.attributes("role")).toBe("combobox");
+    expect(trigger.attributes("data-state")).toBe("closed");
   });
 
-  it("forwards reka props through the rest spread", () => {
-    const wrapper = factory({ disabled: true, name: "fruit" });
-    expect(wrapper.attributes("disabled")).toBe("true");
-    expect(wrapper.attributes("name")).toBe("fruit");
-  });
-
-  it("binds controlled model props down", () => {
-    const wrapper = factory({ modelValue: "apple", open: true });
-    expect(wrapper.attributes("modelvalue")).toBe("apple");
-    expect(wrapper.attributes("open")).toBe("true");
-  });
-
-  it("re-emits update:open and tracks it while uncontrolled", async () => {
-    const wrapper = factory();
-    wrapper.findComponent({ name: "SelectRoot" }).vm.$emit("update:open", true);
-    await nextTick();
+  it("uncontrolled open: trigger interaction flips state and re-emits", async () => {
+    const wrapper = mountRoot();
+    const trigger = wrapper.get("button");
+    await trigger.trigger("pointerdown", { button: 0, ctrlKey: false });
     expect(wrapper.emitted("update:open")).toEqual([[true]]);
-    expect(wrapper.attributes("open")).toBe("true");
+    expect(trigger.attributes("data-state")).toBe("open");
   });
 
-  it("re-emits update:modelValue in reka vocabulary", async () => {
-    const wrapper = factory();
-    wrapper
-      .findComponent({ name: "SelectRoot" })
-      .vm.$emit("update:modelValue", "banana");
-    await nextTick();
-    expect(wrapper.emitted("update:modelValue")).toEqual([["banana"]]);
-    expect(wrapper.attributes("modelvalue")).toBe("banana");
+  it("controlled open: renders the prop's state", () => {
+    const trigger = mountRoot({ open: true }).get("button");
+    expect(trigger.attributes("data-state")).toBe("open");
+    expect(trigger.attributes("aria-expanded")).toBe("true");
   });
 
-  it("stays pinned to the open prop while controlled", async () => {
-    const wrapper = factory({ open: false });
-    wrapper.findComponent({ name: "SelectRoot" }).vm.$emit("update:open", true);
-    await nextTick();
-    expect(wrapper.emitted("update:open")).toEqual([[true]]);
-    expect(wrapper.attributes("open")).toBe("false");
+  it("model presence clears reka's placeholder state", () => {
+    expect(
+      mountRoot().get("button").attributes("data-placeholder"),
+    ).toBeDefined();
+    expect(
+      mountRoot({ modelValue: "apple" }).get("button").attributes("data-placeholder"),
+    ).toBeUndefined();
   });
 
-  it("exposes writable model refs on ctx", async () => {
-    const wrapper = factory();
-    wrapper.vm.ctx.open.value = true;
-    await nextTick();
-    expect(wrapper.emitted("update:open")).toEqual([[true]]);
-    expect(wrapper.attributes("open")).toBe("true");
-  });
-
-  it("renders default slot content", () => {
-    const wrapper = factory({}, { default: "<b>options</b>" });
-    expect(wrapper.find("b").exists()).toBe(true);
+  it("forwards rest props into the reka root", () => {
+    const trigger = mountRoot({ disabled: true }).get("button");
+    expect(trigger.attributes("data-disabled")).toBeDefined();
+    expect(trigger.attributes("disabled")).toBeDefined();
   });
 });
