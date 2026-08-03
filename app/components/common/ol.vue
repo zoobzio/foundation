@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  OlBindings,
   OlContext,
   OlProps,
   OlSlots,
 } from "#foundation/types/common/ol";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { modifiers, tokens, aria } = defineProps<OlProps>();
 
-defineSlots<OlSlots>();
-
 const el = useTemplateRef<HTMLOListElement>("el");
 
-const bindings = computed<OlBindings>(() =>
-  useBindings<"ol">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"ol">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<OlContext>(() => ({
+const ctx = useContext<OlContext>("ol", () => ({
   modifiers,
   tokens,
   aria,
@@ -30,10 +31,11 @@ const ctx = computed<OlContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<OlSlots>();
 </script>
 
 <template>
   <ol ref="el" class="f-ol" v-bind="bindings">
-    <slot :ctx="ctx" />
+    <slot v-bind="ctx" />
   </ol>
 </template>

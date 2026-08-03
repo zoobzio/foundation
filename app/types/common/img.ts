@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 
@@ -10,6 +11,8 @@ export type ImgProps = {
   tokens?: TokenProps<"img">;
   aria?: AriaProps<"img">;
 };
+
+export type ImgEmits = ComponentEvents["img"];
 
 export type ImgBindings = Bindings<"img">;
 

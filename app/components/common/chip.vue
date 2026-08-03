@@ -1,27 +1,31 @@
 <script lang="ts">
 import type {
-  ChipBindings,
   ChipContext,
+  ChipEmits,
   ChipProps,
   ChipSlots,
 } from "#foundation/types/common/chip";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, disabled, modifiers, tokens, aria } = defineProps<ChipProps>();
 
-defineSlots<ChipSlots>();
+const emit = defineEmits<ChipEmits>();
 
 const el = useTemplateRef<HTMLButtonElement>("el");
 
-const bindings = computed<ChipBindings>(() =>
-  useBindings<"chip">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"chip">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<ChipContext>(() => ({
+const ctx = useContext<ChipContext>("chip", () => ({
   label,
   disabled,
   modifiers,
@@ -32,6 +36,7 @@ const ctx = computed<ChipContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<ChipSlots>();
 </script>
 
 <template>
@@ -41,7 +46,8 @@ defineExpose({ ctx });
     :disabled="disabled"
     class="f-chip"
     v-bind="bindings"
+    @click="emit('click', $event)"
   >
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </button>
 </template>

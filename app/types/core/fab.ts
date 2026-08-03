@@ -1,31 +1,39 @@
-import type { ButtonProps } from "#foundation/types/common/button";
+import type { ButtonEmits, ButtonProps } from "#foundation/types/common/button";
 import type { GroupProps } from "#foundation/types/common/group";
 import type { IconProps } from "#foundation/types/common/icon";
 import type { IconAlias } from "#foundation/types/common/iconic";
-import type { Link } from "#foundation/types/core/common";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
-import type { TooltipProps } from "#foundation/types/core/tooltip";
-import type { PrimitiveProps } from "reka-ui";
+import type { ComponentEvents } from "#foundation/types/events";
+import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { ComponentPublicInstance, VNode } from "vue";
 
 export type FabPassthrough = {
-  root?: Passthrough<PrimitiveProps & Partial<Link & ButtonProps>>;
-  tooltip?: Passthrough<TooltipProps>;
-  icon?: Passthrough<IconProps>;
-  badge?: Passthrough<GroupProps>;
+  root: Passthrough<ButtonProps, ButtonEmits>;
+  icon: Passthrough<IconProps>;
+  badge: Passthrough<GroupProps>;
 };
 
 export type FabProps = {
   icon?: IconAlias;
   label?: string;
   type?: "button" | "submit" | "reset";
-  link?: Link;
   disabled?: boolean;
-
   badge?: number | string;
-  pt?: FabPassthrough;
+  pt?: PT<FabPassthrough>;
 };
 
-export type FabEmits = {};
+export type FabEmits = ComponentEvents["fab"];
 
-export type FabRecipe = Recipe<FabProps, FabEmits>;
+export type FabContext = {
+  icon?: IconAlias;
+  label?: string;
+  type: "button" | "submit" | "reset";
+  disabled?: boolean;
+  badge?: number | string;
+  el: ComponentPublicInstance | null;
+  settings: FabPassthrough;
+};
+
+export type FabSlots = {
+  icon?: (props: FabContext) => VNode[];
+  badge?: (props: FabContext) => VNode[];
+};

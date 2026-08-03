@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  NavBindings,
   NavContext,
   NavProps,
   NavSlots,
 } from "#foundation/types/common/nav";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<NavProps>();
 
-defineSlots<NavSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<NavBindings>(() =>
-  useBindings<"nav">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"nav">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<NavContext>(() => ({
+const ctx = useContext<NavContext>("nav", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<NavContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<NavSlots>();
 </script>
 
 <template>
   <nav ref="el" class="f-nav" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </nav>
 </template>

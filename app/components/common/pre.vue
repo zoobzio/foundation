@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  PreBindings,
   PreContext,
   PreProps,
   PreSlots,
 } from "#foundation/types/common/pre";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<PreProps>();
 
-defineSlots<PreSlots>();
-
 const el = useTemplateRef<HTMLPreElement>("el");
 
-const bindings = computed<PreBindings>(() =>
-  useBindings<"pre">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"pre">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<PreContext>(() => ({
+const ctx = useContext<PreContext>("pre", () => ({
   label,
   modifiers,
   tokens,
@@ -31,8 +32,9 @@ const ctx = computed<PreContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<PreSlots>();
 </script>
 
 <template>
-  <pre ref="el" class="f-pre" v-bind="bindings"><slot :ctx="ctx">{{ label }}</slot></pre>
+  <pre ref="el" class="f-pre" v-bind="bindings"><slot v-bind="ctx">{{ label }}</slot></pre>
 </template>

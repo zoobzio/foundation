@@ -14,11 +14,11 @@ const INDENT = "  ";
  * configure map to `never`.
  */
 export const generateModifierTypes = (schema: ModifiersInput): string => {
-  const elements = components.elements.map((component) => {
+  const elements = keys(components.elements).map((component) => {
     const axes = schema[component];
 
     if (!axes || keys(axes).length === 0) {
-      return `${INDENT}${component}: never;`;
+      return `${INDENT}${JSON.stringify(component)}: never;`;
     }
 
     const body = entries(axes)
@@ -28,7 +28,7 @@ export const generateModifierTypes = (schema: ModifiersInput): string => {
       })
       .join("\n");
 
-    return `${INDENT}${component}: {\n${body}\n${INDENT}};`;
+    return `${INDENT}${JSON.stringify(component)}: {\n${body}\n${INDENT}};`;
   });
 
   return [

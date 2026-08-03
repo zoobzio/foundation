@@ -1,57 +1,74 @@
 import type { ComputedRef, Ref } from "#imports";
-import type { FooterProps } from "#foundation/types/common/footer";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { HeaderProps } from "#foundation/types/common/header";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { PageSlot } from "#foundation/types/system/page";
+
 /**
- * Workspace layout — a grid with header and footer.
+ * A slot definition within a workspace layout.
  */
-export interface WorkspaceLayout {
+export interface Slot {
+  id: string;
+  position: [column: number, row: number];
+  span: [columns: number, rows: number];
+}
+
+/**
+ * Workspace layout — a grid of slots.
+ */
+export interface Layout {
   columns: number;
   rows: number;
-  slots: PageSlot[];
+  slots: Slot[];
 }
 
 /**
- * Factory config for createWorkspace.
+ * Config the consumer provides to the factory — pure data.
  */
-export interface WorkspaceFactoryConfig {
-  layout: WorkspaceLayout;
-}
+export type Config = {
+  layout: Layout;
+};
 
-/**
- * The reactive interface for a workspace.
- * Returned by the factory. Components accept this.
- */
-export interface Workspace {
-  // Reactive state
+export type State = {
   initialized: Ref<boolean>;
   loading: Ref<boolean>;
-
-  // Layout
-  layout: Ref<WorkspaceLayout>;
-  gridStyle: ComputedRef<Record<string, string>>;
-
-  // Actions
-  slotStyle: (slot: PageSlot) => Record<string, string>;
-  init: () => Promise<boolean>;
-}
-
-/**
- * Workspace component passthrough.
- */
-export type WorkspacePassthrough = {
-  root?: Passthrough<GroupProps>;
-  header?: Passthrough<HeaderProps>;
-  grid?: Passthrough<GroupProps>;
-  footer?: Passthrough<FooterProps>;
+  layout: Ref<Layout>;
 };
 
 /**
- * Workspace component props.
+ * Optional consumer side effects hooked into the workspace lifecycle.
  */
-export type WorkspaceProps = {
-  workspace: Workspace;
-  pt?: WorkspacePassthrough;
+export type Actions = {
+  init?: (service: Service) => Promise<void>;
+};
+
+export type Service = {
+  readonly id: string;
+  readonly config: Config;
+
+  readonly initialized: boolean;
+  readonly loading: boolean;
+  readonly layout: Layout;
+
+  readonly gridStyle: Record<string, string>;
+  slotStyle(slot: Slot): Record<string, string>;
+
+  init(): Promise<boolean>;
+};
+
+export type Events = {
+  "workspace:initialized": (event: { id: string }) => void;
+};
+
+/**
+ * The reactive facade returned by the factory. The widget's prop.
+ */
+export type Workspace = {
+  id: string;
+  config: Config;
+
+  initialized: Ref<boolean>;
+  loading: Ref<boolean>;
+  layout: Ref<Layout>;
+
+  gridStyle: ComputedRef<Record<string, string>>;
+  slotStyle: (slot: Slot) => Record<string, string>;
+
+  init: () => Promise<boolean>;
 };

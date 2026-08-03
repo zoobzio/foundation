@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -13,6 +14,8 @@ export type ButtonProps = {
   aria?: AriaProps<"button">;
 };
 
+export type ButtonEmits = ComponentEvents["button"];
+
 export type ButtonBindings = Bindings<"button">;
 
 export type ButtonContext = ButtonProps & {
@@ -21,5 +24,5 @@ export type ButtonContext = ButtonProps & {
 };
 
 export type ButtonSlots = {
-  default(props: { ctx: ButtonContext }): VNode[];
+  default(props: ButtonContext): VNode[];
 };

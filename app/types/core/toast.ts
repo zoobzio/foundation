@@ -1,26 +1,51 @@
 import type { IconProps } from "#foundation/types/common/icon";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
-import type { ToastRootProps, ToastRootEmits, ToastTitleProps, ToastDescriptionProps, ToastCloseProps } from "reka-ui";
+import type {
+  ToastRootProps,
+  ToastRootEmits,
+} from "#foundation/types/common/toast/root";
+import type { ToastTitleProps } from "#foundation/types/common/toast/title";
+import type { ToastDescriptionProps } from "#foundation/types/common/toast/description";
+import type {
+  ToastCloseProps,
+  ToastCloseEmits,
+} from "#foundation/types/common/toast/close";
+import type { ComponentEvents } from "#foundation/types/events";
+import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type ToastPassthrough = {
-  root?: Passthrough<ToastRootProps, ToastRootEmits>;
-  title?: Passthrough<ToastTitleProps>;
-  description?: Passthrough<ToastDescriptionProps>;
-  close?: Passthrough<ToastCloseProps>;
-  closeIcon?: Passthrough<IconProps>;
+  root: Passthrough<ToastRootProps, ToastRootEmits>;
+  title: Passthrough<ToastTitleProps>;
+  description: Passthrough<ToastDescriptionProps>;
+  close: Passthrough<ToastCloseProps, ToastCloseEmits>;
+  closeIcon: Passthrough<IconProps>;
 };
 
 export type ToastProps = {
   title?: string;
   description?: string;
-  variant?: "info" | "success" | "warning" | "error";
+  open?: boolean;
   duration?: number;
-  pt?: ToastPassthrough;
+  pt?: PT<ToastPassthrough>;
 };
 
-export type ToastEmits = {
+export type ToastEmits = ComponentEvents["toast"] & {
+  "update:open": [value: boolean];
   close: [];
 };
 
-export type ToastRecipe = Recipe<ToastProps, ToastEmits>;
+export type ToastContext = {
+  title?: string;
+  description?: string;
+  duration?: number;
+  open: Ref<boolean | undefined>;
+  el: ComponentPublicInstance | null;
+  settings: ToastPassthrough;
+};
+
+export type ToastSlots = {
+  title?: (props: ToastContext) => VNode[];
+  description?: (props: ToastContext) => VNode[];
+  close?: (props: ToastContext) => VNode[];
+  closeIcon?: (props: ToastContext) => VNode[];
+};

@@ -1,13 +1,17 @@
+import type {
+  CheckboxRootProps,
+  CheckboxRootEmits,
+} from "#foundation/types/common/checkbox/root";
 import type { GroupProps } from "#foundation/types/common/group";
 import type { IconProps } from "#foundation/types/common/icon";
-import type { Passthrough } from "#foundation/types/core/passthrough";
-import type { Recipe } from "#foundation/types/core/recipe";
-import type { CheckboxRootProps, CheckboxRootEmits } from "reka-ui";
+import type { ComponentEvents } from "#foundation/types/events";
+import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type CheckboxPassthrough = {
-  root?: Passthrough<CheckboxRootProps, CheckboxRootEmits>;
-  indicator?: Passthrough<GroupProps>;
-  icon?: Passthrough<IconProps>;
+  root: Passthrough<CheckboxRootProps, CheckboxRootEmits>;
+  indicator: Passthrough<GroupProps>;
+  icon: Passthrough<IconProps>;
 };
 
 export type CheckboxProps = {
@@ -16,11 +20,24 @@ export type CheckboxProps = {
   name?: string;
   value?: string;
   required?: boolean;
-  pt?: CheckboxPassthrough;
+  pt?: PT<CheckboxPassthrough>;
 };
 
-export type CheckboxEmits = {
+export type CheckboxEmits = ComponentEvents["checkbox"] & {
   "update:modelValue": [value: boolean | "indeterminate"];
 };
 
-export type CheckboxRecipe = Recipe<CheckboxProps, CheckboxEmits>;
+export type CheckboxContext = {
+  disabled?: boolean;
+  name?: string;
+  value?: string;
+  required?: boolean;
+  modelValue: Ref<boolean | "indeterminate" | undefined>;
+  el: ComponentPublicInstance | null;
+  settings: CheckboxPassthrough;
+};
+
+export type CheckboxSlots = {
+  indicator?: (props: CheckboxContext) => VNode[];
+  icon?: (props: CheckboxContext) => VNode[];
+};

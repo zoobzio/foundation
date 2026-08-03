@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type NavProps = {
   aria?: AriaProps<"nav">;
 };
 
+export type NavEmits = ComponentEvents["nav"];
+
 export type NavBindings = Bindings<"nav">;
 
 export type NavContext = NavProps & {
@@ -19,5 +22,5 @@ export type NavContext = NavProps & {
 };
 
 export type NavSlots = {
-  default(props: { ctx: NavContext }): VNode[];
+  default(props: NavContext): VNode[];
 };

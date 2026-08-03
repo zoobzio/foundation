@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  KbdBindings,
   KbdContext,
   KbdProps,
   KbdSlots,
 } from "#foundation/types/common/kbd";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<KbdProps>();
 
-defineSlots<KbdSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<KbdBindings>(() =>
-  useBindings<"kbd">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"kbd">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<KbdContext>(() => ({
+const ctx = useContext<KbdContext>("kbd", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<KbdContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<KbdSlots>();
 </script>
 
 <template>
   <kbd ref="el" class="f-kbd" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </kbd>
 </template>

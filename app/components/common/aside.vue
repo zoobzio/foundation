@@ -1,27 +1,28 @@
 <script lang="ts">
 import type {
-  AsideBindings,
   AsideContext,
   AsideProps,
   AsideSlots,
 } from "#foundation/types/common/aside";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
 const { label, modifiers, tokens, aria } = defineProps<AsideProps>();
 
-defineSlots<AsideSlots>();
-
 const el = useTemplateRef<HTMLElement>("el");
 
-const bindings = computed<AsideBindings>(() =>
-  useBindings<"aside">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"aside">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<AsideContext>(() => ({
+const ctx = useContext<AsideContext>("aside", () => ({
   label,
   modifiers,
   tokens,
@@ -31,10 +32,11 @@ const ctx = computed<AsideContext>(() => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<AsideSlots>();
 </script>
 
 <template>
   <aside ref="el" class="f-aside" v-bind="bindings">
-    <slot :ctx="ctx">{{ label }}</slot>
+    <slot v-bind="ctx">{{ label }}</slot>
   </aside>
 </template>

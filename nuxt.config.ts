@@ -8,12 +8,28 @@ export default defineNuxtConfig({
 
   // Explicit imports only — no auto-import of components, composables, or Vue/Nuxt APIs.
   // Framework symbols are pulled from "#imports"; foundation-owned code from "#foundation/*".
-  imports: { autoImport: false },
+  // `scan: false` also skips registry-building over composables/ and utils/ — everything
+  // "#imports" provides comes from framework/module presets, not the dir scan.
+  imports: { autoImport: false, scan: false },
   components: false,
 
   modules: ["@vueuse/nuxt", "@untheme/nuxt"],
 
   untheme,
+
+  typescript: {
+    tsConfig: {
+      // The generated tsconfig only includes app code — pull tests/ in so the
+      // support layer (contract mocks especially) is typechecked, and teach TS
+      // the #test alias (vitest resolves it via vitest.config).
+      include: ["../tests/**/*"],
+      compilerOptions: {
+        paths: {
+          "#test/*": ["../tests/*"],
+        },
+      },
+    },
+  },
 
   alias: {
     // Absolute paths so the aliases keep resolving to the foundation package when this

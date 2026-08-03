@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type AlertProps = {
   aria?: AriaProps<"alert">;
 };
 
+export type AlertEmits = ComponentEvents["alert"];
+
 export type AlertBindings = Bindings<"alert">;
 
 export type AlertContext = AlertProps & {
@@ -19,5 +22,5 @@ export type AlertContext = AlertProps & {
 };
 
 export type AlertSlots = {
-  default(props: { ctx: AlertContext }): VNode[];
+  default(props: AlertContext): VNode[];
 };

@@ -1,12 +1,13 @@
 <script lang="ts">
 import type {
-  TextareaBindings,
   TextareaContext,
+  TextareaEmits,
   TextareaProps,
 } from "#foundation/types/common/textarea";
 
-import { useTemplateRef, computed } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useBindings } from "#foundation/composables/bindings";
+import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts">
@@ -21,13 +22,18 @@ const {
   aria,
 } = defineProps<TextareaProps>();
 
+const emit = defineEmits<TextareaEmits>();
+
 const el = useTemplateRef<HTMLTextAreaElement>("el");
 
-const bindings = computed<TextareaBindings>(() =>
-  useBindings<"textarea">(modifiers, tokens, aria),
-);
+const bindings = useBindings<"textarea">(() => ({
+  modifiers,
+  tokens,
+  aria,
+  forward: {},
+}));
 
-const ctx = computed<TextareaContext>(() => ({
+const ctx = useContext<TextareaContext>("textarea", () => ({
   placeholder,
   disabled,
   required,
@@ -53,5 +59,9 @@ defineExpose({ ctx });
     :rows="rows"
     class="f-textarea"
     v-bind="bindings"
+    @input="emit('input', $event)"
+    @change="emit('change', $event)"
+    @focus="emit('focus', $event)"
+    @blur="emit('blur', $event)"
   />
 </template>

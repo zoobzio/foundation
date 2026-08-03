@@ -1,5 +1,6 @@
 import type { AriaProps } from "#foundation/types/aria";
 import type { Bindings } from "#foundation/types/bindings";
+import type { ComponentEvents } from "#foundation/types/events";
 import type { ModifierProps } from "#foundation/types/modifiers";
 import type { TokenProps } from "#foundation/types/tokens";
 import type { VNode } from "vue";
@@ -11,6 +12,8 @@ export type CaptionProps = {
   aria?: AriaProps<"caption">;
 };
 
+export type CaptionEmits = ComponentEvents["caption"];
+
 export type CaptionBindings = Bindings<"caption">;
 
 export type CaptionContext = CaptionProps & {
@@ -19,5 +22,5 @@ export type CaptionContext = CaptionProps & {
 };
 
 export type CaptionSlots = {
-  default(props: { ctx: CaptionContext }): VNode[];
+  default(props: CaptionContext): VNode[];
 };
