@@ -35,8 +35,6 @@ useHooks<Events>(preview.id, {
   "preview:loaded": (event) => emit("loaded", event),
 });
 
-useLazyRequest(`init-preview-${preview.id}`, preview.init);
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { loading, data } = preview;
@@ -65,6 +63,8 @@ const ctx = useContext<PreviewWidgetContext<T>>("data-preview", () => ({
 
 defineExpose({ ctx });
 defineSlots<PreviewWidgetSlots<T>>();
+
+useLazyRequest(`init-preview-${preview.id}`, preview.init);
 </script>
 
 <template>

@@ -38,8 +38,6 @@ useHooks<Events<T>>(form.id, {
   "form:reset": (event) => emit("reset", event),
 });
 
-useLazyRequest(`init-form-${form.id}`, form.initialize);
-
 const { submitting } = form;
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
@@ -83,6 +81,8 @@ defineExpose({ ctx });
 
 const slots = defineSlots<FormWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, FORM_FIELD_SLOTS);
+
+useLazyRequest(`init-form-${form.id}`, form.initialize);
 </script>
 
 <template>

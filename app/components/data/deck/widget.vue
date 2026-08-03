@@ -34,8 +34,6 @@ useHooks<Events>(deck.id, {
   "deck:polled": (event) => emit("polled", event),
 });
 
-useLazyRequest(`init-deck-${deck.id}`, deck.init);
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { showPending } = useDeck(deck, el);
@@ -66,6 +64,8 @@ defineExpose({ ctx });
 
 const slots = defineSlots<DeckWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, DECK_FEED_SLOTS);
+
+useLazyRequest(`init-deck-${deck.id}`, deck.init);
 </script>
 
 <template>

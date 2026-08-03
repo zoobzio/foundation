@@ -36,8 +36,6 @@ useHooks<Events>(table.id, {
   "table:updated": (event) => emit("updated", event),
 });
 
-useLazyRequest(`init-table-${table.id}`, table.init);
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { selected } = table;
@@ -84,6 +82,8 @@ const cellSlots = computed(() =>
       n === "cell" || n.startsWith("cell:"),
   ),
 );
+
+useLazyRequest(`init-table-${table.id}`, table.init);
 </script>
 
 <template>
