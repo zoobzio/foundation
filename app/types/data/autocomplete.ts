@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from "#imports";
+import type { Ref } from "#imports";
 import type { Option } from "#foundation/types/core/common";
 
 /**
@@ -49,8 +49,10 @@ export type Service<M> = {
   readonly id: string;
   readonly config: Config<M>;
 
-  readonly input: string;
-  readonly steps: Item<M>[];
+  // Writable accessor pairs — sets route through the matching mutator.
+  input: string;
+  steps: Item<M>[];
+
   readonly focused: boolean;
   readonly highlight: number;
 
@@ -95,37 +97,4 @@ export type Events<M> = {
   "autocomplete:selected": (event: { id: string; item: Item<M> }) => void;
   "autocomplete:submitted": (event: { id: string; value: string }) => void;
   "autocomplete:unwound": (event: { id: string; index: number }) => void;
-};
-
-/**
- * The reactive interface for a data autocomplete.
- * Returned by the autocomplete factory. Components accept this as their prop.
- */
-export type Autocomplete<M> = {
-  id: string;
-  config: Config<M>;
-
-  input: Ref<string>;
-  steps: Ref<Item<M>[]>;
-  focused: Ref<boolean>;
-  highlight: Ref<number>;
-
-  suggestions: ComputedRef<Item<M>[]>;
-  panels: ComputedRef<Item<M>[][]>;
-  hint: ComputedRef<string>;
-  empty: ComputedRef<boolean>;
-  dropdown: ComputedRef<boolean>;
-  highlighted: ComputedRef<Item<M> | undefined>;
-
-  set: (value: string) => void;
-  update: (steps: Item<M>[]) => void;
-  reset: () => void;
-  focus: () => void;
-  blur: () => void;
-  next: () => void;
-  prev: () => void;
-  select: (item: Item<M>) => void;
-  submit: (value: string) => void;
-  unwind: (index: number) => void;
-  keydown: (event: KeyboardEvent) => void;
 };

@@ -9,7 +9,7 @@ import type { ComponentPublicInstance } from "vue";
 import Group from "#foundation/components/common/group.vue";
 
 import { useTemplateRef } from "#imports";
-import { useChartCanvas } from "#foundation/composables/chart";
+import { useChart } from "#foundation/composables/chart";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 </script>
@@ -20,7 +20,8 @@ const { chart, pt } = defineProps<ChartCanvasProps<T>>();
 const el = useTemplateRef<ComponentPublicInstance>("el");
 const canvas = useTemplateRef<HTMLCanvasElement>("canvas");
 
-useChartCanvas(chart, canvas);
+const { useCanvas } = useChart(chart);
+useCanvas(canvas);
 
 const settings = usePassthrough<ChartCanvasPassthrough>(() => ({
   pt,

@@ -1,4 +1,4 @@
-import type { ComputedRef, Ref } from "#imports";
+import type { Ref } from "#imports";
 import type { Option } from "#foundation/types/core/common";
 import type { ZodObject, ZodRawShape, ZodTypeAny, UnknownKeysParam } from "zod";
 
@@ -155,7 +155,8 @@ export type Service<T> = {
   readonly config: Config<T>;
 
   readonly initialized: boolean;
-  readonly payload: Partial<T>;
+  // Writable accessor pair — sets route through `update`.
+  payload: Partial<T>;
   readonly errors: Record<string, string>;
   readonly touched: Set<string>;
   readonly submitting: boolean;
@@ -200,34 +201,4 @@ export type Events<T> = {
   }) => void;
   "form:restored": (event: { id: string; data: T }) => void;
   "form:reset": (event: { id: string; data: Partial<T> }) => void;
-};
-
-/**
- * The reactive interface for a data form.
- * Returned by the form factory. Components accept this as their prop.
- */
-export type Form<T> = {
-  id: string;
-  config: Config<T>;
-
-  initialized: Ref<boolean>;
-  payload: Ref<Partial<T>>;
-  errors: Ref<Record<string, string>>;
-  touched: Ref<Set<string>>;
-  submitting: Ref<boolean>;
-  submitted: Ref<boolean>;
-  valid: ComputedRef<boolean>;
-
-  initialize: () => Promise<boolean>;
-  check: (key: keyof T) => boolean;
-  validate: (data?: Partial<T>) => boolean;
-  set: {
-    <K extends keyof T>(key: K, value: T[K] | undefined): void;
-    <V>(key: Keys<T, V>, value: V | undefined): void;
-  };
-  update: (data: Partial<T>) => void;
-  restore: (data: T) => void;
-  touch: (key: keyof T) => void;
-  submit: () => Promise<void>;
-  reset: () => void;
 };

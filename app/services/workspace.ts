@@ -7,18 +7,19 @@ import type {
   Slot,
   State,
 } from "#foundation/types/system/workspace";
+import type { Widgets } from "#foundation/types/widget";
 import type { Logger } from "#foundation/types/log";
 
-export class WorkspaceService implements Service {
+export class WorkspaceService<R extends Widgets> implements Service<R> {
   private readonly log: Logger;
   private readonly emit: NuxtApp["callHook"];
 
   constructor(
     nuxt: NuxtApp,
     public readonly id: string,
-    public readonly config: Config,
-    private readonly state: State,
-    private readonly actions: Actions,
+    public readonly config: Config<R>,
+    private readonly state: State<R>,
+    private readonly actions: Actions<R>,
   ) {
     this.log = nuxt.$logger(this.id);
     this.emit = nuxt.callHook;
@@ -32,7 +33,7 @@ export class WorkspaceService implements Service {
     return this.state.loading.value;
   }
 
-  get layout(): Layout {
+  get layout(): Layout<R> {
     return this.state.layout.value;
   }
 
@@ -44,7 +45,7 @@ export class WorkspaceService implements Service {
     };
   }
 
-  slotStyle(slot: Slot): Record<string, string> {
+  slotStyle(slot: Slot<R>): Record<string, string> {
     return {
       "grid-column": `${slot.position[0] + 1} / span ${slot.span[0]}`,
       "grid-row": `${slot.position[1] + 1} / span ${slot.span[1]}`,

@@ -1,7 +1,7 @@
 import type { GroupProps } from "#foundation/types/common/group";
 import type { FabProps, FabEmits } from "#foundation/types/core/fab";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Deck, Events } from "#foundation/types/data/deck";
+import type { Service, Events } from "#foundation/types/data/deck";
 import type {
   DeckFeedPassthrough,
   DeckFeedSlots,
@@ -16,7 +16,7 @@ export type DeckWidgetPassthrough = {
 };
 
 export type DeckWidgetProps<T> = {
-  deck: Deck<T>;
+  service: Service<T>;
   pt?: PT<DeckWidgetPassthrough> & {
     toolbar?: PT<DeckToolbarPassthrough>;
     feed?: PT<DeckFeedPassthrough>;
@@ -29,7 +29,7 @@ export type DeckWidgetEmits = {
 };
 
 export type DeckWidgetContext<T> = {
-  deck: Deck<T>;
+  deck: Service<T>;
   el: ComponentPublicInstance | null;
   settings: DeckWidgetPassthrough;
 };

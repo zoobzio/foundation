@@ -27,19 +27,18 @@ import {
 </script>
 
 <script setup lang="ts" generic="T">
-const { preview, pt } = defineProps<PreviewWidgetProps<T>>();
+const { service, pt } = defineProps<PreviewWidgetProps<T>>();
 
 const emit = defineEmits<PreviewWidgetEmits>();
 
-useHooks<Events>(preview.id, {
+useHooks<Events>(service.id, {
   "preview:loaded": (event) => emit("loaded", event),
 });
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { loading, data } = preview;
-const { filename, hasExternal, copy, download, openExternal } =
-  usePreview(preview);
+const { loading, data, filename, hasExternal, copy, download, openExternal } =
+  usePreview(service);
 
 const settings = usePassthrough<PreviewWidgetPassthrough>(() => ({
   pt,
@@ -56,7 +55,7 @@ const settings = usePassthrough<PreviewWidgetPassthrough>(() => ({
 }));
 
 const ctx = useContext<PreviewWidgetContext<T>>("data-preview", () => ({
-  preview,
+  preview: service,
   el: el.value,
   settings: settings.value,
 }));
@@ -64,7 +63,7 @@ const ctx = useContext<PreviewWidgetContext<T>>("data-preview", () => ({
 defineExpose({ ctx });
 defineSlots<PreviewWidgetSlots<T>>();
 
-useLazyRequest(`init-preview-${preview.id}`, preview.init);
+useLazyRequest(`init-preview-${service.id}`, () => service.init());
 </script>
 
 <template>

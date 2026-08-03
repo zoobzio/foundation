@@ -14,7 +14,7 @@ import Control from "#foundation/components/data/chart/control.vue";
 import Fab from "#foundation/components/core/fab.vue";
 import Group from "#foundation/components/common/group.vue";
 
-import { computed, useTemplateRef } from "#imports";
+import { useTemplateRef } from "#imports";
 import { useChart } from "#foundation/composables/chart";
 import { useHooks } from "#foundation/composables/hook";
 import { usePassthrough } from "#foundation/composables/passthrough";
@@ -24,29 +24,20 @@ import { CHART_REFRESH_ICON } from "#foundation/constants/chart";
 </script>
 
 <script setup lang="ts" generic="T">
-const { chart, pt } = defineProps<ChartWidgetProps<T>>();
+const { service, pt } = defineProps<ChartWidgetProps<T>>();
 
 const emit = defineEmits<ChartWidgetEmits>();
 
-useHooks<Events>(chart.id, {
+useHooks<Events>(service.id, {
   "chart:updated": (event) => emit("updated", event),
   "chart:variant-changed": (event) => emit("variant-changed", event),
   "chart:renderer-changed": (event) => emit("renderer-changed", event),
 });
 
-const { loading, variantData } = chart;
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { controls } = useChart(chart);
-
-const titleControls = computed(() =>
-  controls.value.filter((c) => c.align === "start"),
-);
-
-const actionControls = computed(() =>
-  controls.value.filter((c) => c.align === "end"),
-);
+const { loading, variantData, titleControls, actionControls } =
+  useChart(service);
 
 const settings = usePassthrough<ChartWidgetPassthrough<T>>(() => ({
   pt,
@@ -55,13 +46,13 @@ const settings = usePassthrough<ChartWidgetPassthrough<T>>(() => ({
     toolbar: {},
     title: {},
     actions: {},
-    control: (anchor) => ({ chart, ...anchor }),
-    refresh: { icon: CHART_REFRESH_ICON, onClick: () => chart.fetch() },
+    control: (anchor) => ({ chart: service, ...anchor }),
+    refresh: { icon: CHART_REFRESH_ICON, onClick: () => service.fetch() },
   },
 }));
 
 const ctx = useContext<ChartWidgetContext<T>>("data-chart", () => ({
-  chart,
+  chart: service,
   el: el.value,
   settings: settings.value,
 }));
@@ -70,7 +61,7 @@ defineExpose({ ctx });
 
 defineSlots<ChartWidgetSlots<T>>();
 
-useLazyRequest(`init-chart-${chart.id}`, chart.init);
+useLazyRequest(`init-chart-${service.id}`, () => service.init());
 </script>
 
 <template>
@@ -97,6 +88,6 @@ useLazyRequest(`init-chart-${chart.id}`, chart.init);
 
     <slot v-if="loading" name="loading" v-bind="ctx" />
     <slot v-else-if="!variantData" name="empty" v-bind="ctx" />
-    <Canvas v-else :chart="chart" :pt="pt?.canvas" />
+    <Canvas v-else :chart="service" :pt="pt?.canvas" />
   </Group>
 </template>

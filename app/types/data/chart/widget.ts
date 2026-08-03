@@ -5,7 +5,7 @@ import type {
   PassthroughIter,
   PT,
 } from "#foundation/types/passthrough";
-import type { Chart, Events } from "#foundation/types/data/chart";
+import type { Service, Events } from "#foundation/types/data/chart";
 import type { ChartCanvasPassthrough } from "#foundation/types/data/chart/canvas";
 import type {
   ChartControlAnchor,
@@ -23,7 +23,7 @@ export type ChartWidgetPassthrough<T> = {
 };
 
 export type ChartWidgetProps<T> = {
-  chart: Chart<T>;
+  service: Service<T>;
   pt?: PT<ChartWidgetPassthrough<T>> & {
     canvas?: PT<ChartCanvasPassthrough>;
   };
@@ -36,7 +36,7 @@ export type ChartWidgetEmits = {
 };
 
 export type ChartWidgetContext<T> = {
-  chart: Chart<T>;
+  chart: Service<T>;
   el: ComponentPublicInstance | null;
   settings: ChartWidgetPassthrough<T>;
 };

@@ -1,49 +1,55 @@
 import { computed, ref } from "vue";
 import { vi } from "vitest";
-import type { Table } from "#foundation/types/data/table";
-import {
-  TABLE_SORT_ASC_ICON,
-} from "#foundation/constants/table";
+import type { Service } from "#foundation/types/data/table";
+import { TABLE_SORT_ASC_ICON } from "#foundation/constants/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 
 /**
  * Contract mock for mounting data-table widgets: a concrete
- * Table<FakeRow, number> with live refs and vi.fn() commands. Typed against
- * the real contract so tsc flags drift when the Table type changes. Override
- * refs/fns per test; state logic depth belongs to the service tests, not here.
+ * Service<FakeRow, number> shaped like the real class — plain-value getters
+ * over backing refs, vi.fn() commands. Typed against the real contract so tsc
+ * flags drift when the Service type changes. `state` exposes the backing refs
+ * for tests to drive; state logic depth belongs to the service tests, not
+ * here.
  */
 export const createMockTable = (
-  overrides: Partial<Table<FakeRow, number>> = {},
-): Table<FakeRow, number> => {
-  const data = ref<FakeRow[]>(fakeRows);
-  const selected = ref<Set<number>>(new Set());
-  const columnOrder = ref(fakeColumns.map((c) => String(c.key)));
+  overrides: Partial<Service<FakeRow, number>> = {},
+) => {
+  const state = {
+    data: ref<FakeRow[]>(fakeRows),
+    loading: ref(false),
+    initialized: ref(true),
+    page: ref(1),
+    pageSize: ref(25),
+    pageCount: ref(4),
+    total: ref(100),
+    sortField: ref<string | null>(null),
+    sortDirection: ref<"asc" | "desc">("asc"),
+    selected: ref<Set<number>>(new Set()),
+    columnOrder: ref(fakeColumns.map((c) => String(c.key))),
+  };
 
   const visibleColumns = computed(() =>
-    columnOrder.value.flatMap((key) =>
+    state.columnOrder.value.flatMap((key) =>
       fakeColumns.filter((c) => String(c.key) === key),
     ),
   );
   const isAllSelected = computed(
     () =>
-      data.value.length > 0 &&
-      data.value.every((row) => selected.value.has(row.id)),
+      state.data.value.length > 0 &&
+      state.data.value.every((row) => state.selected.value.has(row.id)),
   );
   const isIndeterminate = computed(
-    () => selected.value.size > 0 && !isAllSelected.value,
+    () => state.selected.value.size > 0 && !isAllSelected.value,
   );
   const selectAllState = computed<boolean | "indeterminate">(() =>
     isIndeterminate.value ? "indeterminate" : isAllSelected.value,
   );
 
-  return {
+  const service: Service<FakeRow, number> = {
     id: "mock-table",
     config: { columns: fakeColumns, rowKey: "id" },
-
-    data,
-    loading: ref(false),
-    initialized: ref(true),
 
     columns: fakeColumns,
     rowKey: "id",
@@ -51,22 +57,55 @@ export const createMockTable = (
     bulkActions: [],
     pinnedColumns: [],
 
-    page: ref(1),
-    pageSize: ref(25),
-    pageCount: ref(4),
-    total: ref(100),
-    sortField: ref<string | null>(null),
-    sortDirection: ref("asc"),
+    get data() {
+      return state.data.value;
+    },
+    get loading() {
+      return state.loading.value;
+    },
+    get initialized() {
+      return state.initialized.value;
+    },
+    get page() {
+      return state.page.value;
+    },
+    get pageSize() {
+      return state.pageSize.value;
+    },
+    get pageCount() {
+      return state.pageCount.value;
+    },
+    get total() {
+      return state.total.value;
+    },
+    get sortField() {
+      return state.sortField.value;
+    },
+    get sortDirection() {
+      return state.sortDirection.value;
+    },
+    get selected() {
+      return state.selected.value;
+    },
+    get columnOrder() {
+      return state.columnOrder.value;
+    },
 
-    selected,
-    keyOf: (row) => row.id,
-    isAllSelected,
-    isIndeterminate,
-    selectAllState,
-
-    columnOrder,
-    visibleColumns,
-    colSpan: computed(() => visibleColumns.value.length),
+    get visibleColumns() {
+      return visibleColumns.value;
+    },
+    get isAllSelected() {
+      return isAllSelected.value;
+    },
+    get isIndeterminate() {
+      return isIndeterminate.value;
+    },
+    get selectAllState() {
+      return selectAllState.value;
+    },
+    get colSpan() {
+      return visibleColumns.value.length;
+    },
 
     goToPage: vi.fn(),
     setPageSize: vi.fn(),
@@ -74,10 +113,11 @@ export const createMockTable = (
     sortFieldFor: (col) => col.sortKey ?? String(col.key),
     isSorted: () => false,
     getSortIcon: () => TABLE_SORT_ASC_ICON,
+    keyOf: (row) => row.id,
     toggleRow: vi.fn(),
     toggleAll: vi.fn(),
     clearSelection: vi.fn(),
-    isRowSelected: (row) => selected.value.has(row.id),
+    isRowSelected: (row) => state.selected.value.has(row.id),
     toggleColumn: vi.fn(),
     reorderColumns: vi.fn(),
     resetColumns: vi.fn(),
@@ -88,4 +128,6 @@ export const createMockTable = (
 
     ...overrides,
   };
+
+  return { service, state };
 };

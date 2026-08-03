@@ -26,22 +26,23 @@ import { AUTOCOMPLETE_ITEM_SLOTS } from "#foundation/constants/autocomplete";
 </script>
 
 <script setup lang="ts" generic="M">
-const { autocomplete, pt } = defineProps<AutocompleteWidgetProps<M>>();
+const { service, pt } = defineProps<AutocompleteWidgetProps<M>>();
 
 const emit = defineEmits<AutocompleteWidgetEmits<M>>();
 
-useHooks<Events<M>>(autocomplete.id, {
+useHooks<Events<M>>(service.id, {
   "autocomplete:updated": (event) => emit("updated", event),
   "autocomplete:selected": (event) => emit("selected", event),
   "autocomplete:submitted": (event) => emit("submitted", event),
   "autocomplete:unwound": (event) => emit("unwound", event),
 });
 
-const { input, hint, panels, dropdown, empty } = autocomplete;
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { recipes } = useAutocomplete(autocomplete, el);
+const { input, hint, panels, dropdown, empty, recipes } = useAutocomplete(
+  service,
+  el,
+);
 
 const settings = usePassthrough<AutocompleteWidgetPassthrough<M>>(() => ({
   pt,
@@ -54,7 +55,7 @@ const settings = usePassthrough<AutocompleteWidgetPassthrough<M>>(() => ({
     panel: {},
     scroller: {},
     item: (anchor) => ({
-      autocomplete,
+      autocomplete: service,
       ...anchor,
     }),
     empty: {},
@@ -63,7 +64,7 @@ const settings = usePassthrough<AutocompleteWidgetPassthrough<M>>(() => ({
 }));
 
 const ctx = useContext<AutocompleteWidgetContext<M>>("data-autocomplete", () => ({
-  autocomplete,
+  autocomplete: service,
   el: el.value,
   settings: settings.value,
 }));

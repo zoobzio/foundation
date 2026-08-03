@@ -5,35 +5,37 @@ import type {
   WorkspaceStructurePassthrough,
   WorkspaceStructureProps,
   WorkspaceStructureSlots,
-} from "~/types/system/workspace/structure";
+} from "#foundation/types/system/workspace/structure";
 import type { Events } from "#foundation/types/system/workspace";
+import type { Widgets } from "#foundation/types/widget";
 import type { ComponentPublicInstance } from "vue";
 
 import Footer from "#foundation/components/common/footer.vue";
 import Group from "#foundation/components/common/group.vue";
 import Header from "#foundation/components/common/header.vue";
 
-import { useTemplateRef } from "#imports";
+import { toValue, useTemplateRef } from "#imports";
+import { useWorkspace } from "#foundation/composables/workspace";
 import { useHooks } from "#foundation/composables/hook";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
 import { useRequest } from "#foundation/composables/request";
 </script>
 
-<script setup lang="ts">
-const { workspace, pt } = defineProps<WorkspaceStructureProps>();
+<script setup lang="ts" generic="R extends Widgets">
+const { service, pt } = defineProps<WorkspaceStructureProps<R>>();
 
 const emit = defineEmits<WorkspaceStructureEmits>();
 
-useHooks<Events>(workspace.id, {
+useHooks<Events>(service.id, {
   "workspace:initialized": (event) => emit("initialized", event),
 });
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { layout, gridStyle, slotStyle } = workspace;
+const { gridStyle, cells } = useWorkspace(service);
 
-const settings = usePassthrough<WorkspaceStructurePassthrough>(() => ({
+const settings = usePassthrough<WorkspaceStructurePassthrough<R>>(() => ({
   pt,
   recipes: {
     root: {},
@@ -44,16 +46,19 @@ const settings = usePassthrough<WorkspaceStructurePassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<WorkspaceStructureContext>("system-workspace", () => ({
-  workspace,
-  el: el.value,
-  settings: settings.value,
-}));
+const ctx = useContext<WorkspaceStructureContext<R>>(
+  "system-workspace",
+  () => ({
+    workspace: service,
+    el: el.value,
+    settings: settings.value,
+  }),
+);
 
 defineExpose({ ctx });
-defineSlots<WorkspaceStructureSlots>();
+defineSlots<WorkspaceStructureSlots<R>>();
 
-await useRequest(`init-workspace-${workspace.id}`, workspace.init);
+await useRequest(`init-workspace-${service.id}`, () => service.init());
 </script>
 
 <template>
@@ -68,13 +73,26 @@ await useRequest(`init-workspace-${workspace.id}`, workspace.init);
       :style="gridStyle"
     >
       <Group
-        v-for="s in layout.slots"
-        :key="s.id"
-        v-bind="settings.slot(s)"
+        v-for="c in cells"
+        :key="c.slot.id"
+        v-bind="settings.slot(c.slot)"
         class="f-system-workspace-slot"
-        :style="slotStyle(s)"
+        :style="service.slotStyle(c.slot)"
       >
-        <slot :name="`slot:${s.id}`" v-bind="{ ...ctx, slot: s }" />
+        <slot :name="`slot:${c.slot.id}`" v-bind="{ ...ctx, slot: c.slot }">
+          <template v-if="c.widget">
+            <slot
+              :name="`widget:${c.key}`"
+              v-bind="{ ...ctx, slot: c.slot, service: c.widget.service }"
+            >
+              <component
+                :is="c.widget.component"
+                :service="c.widget.service"
+                :pt="toValue(c.widget.settings)"
+              />
+            </slot>
+          </template>
+        </slot>
       </Group>
     </Group>
 

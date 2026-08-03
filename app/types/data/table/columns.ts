@@ -6,7 +6,7 @@ import type {
 import type { FabProps } from "#foundation/types/core/fab";
 import type { PopoverEmits, PopoverProps } from "#foundation/types/core/popover";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Table } from "#foundation/types/data/table";
+import type { Service } from "#foundation/types/data/table";
 import type { ComponentPublicInstance } from "vue";
 
 export type TableColumnsPassthrough = {
@@ -16,12 +16,12 @@ export type TableColumnsPassthrough = {
 };
 
 export type TableColumnsProps<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   pt?: PT<TableColumnsPassthrough>;
 };
 
 export type TableColumnsContext<T, K = unknown> = {
-  table: Table<T, K>;
+  table: Service<T, K>;
   el: ComponentPublicInstance | null;
   settings: TableColumnsPassthrough;
 };

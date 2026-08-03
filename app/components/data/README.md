@@ -1,12 +1,15 @@
 # Data components
 
 Stateful features one tier above [core](../core/README.md). Each data feature
-is split into a **headless machine** — store, service, factory — and the
-**presentational components** that render it. The machine is created by the
-consumer through a factory and handed to the widget as a single prop; the
-widget reads its refs, calls its methods, and owns no feature state of its
-own. Everything presentational conforms to the same passthrough / context /
-slots system as core.
+is split into a **headless machine** — store, service — and the
+**presentational components** that render it. The factory yields the canonical
+**widget** (`types/widget.ts`): the service (a plain, Vue-free class over
+ref-backed state), the component that renders it under the uniform `service`
+prop, and the consumer's reactive settings for its passthrough tree.
+Components build their reactivity through the feature composable
+(`useServiceRefs` under the hood) and own no feature state of their own.
+Everything presentational conforms to the same passthrough / context / slots
+system as core.
 
 [`form`](./form/) and [`autocomplete`](./autocomplete/) are the reference
 implementations: form shows async actions and config-keyed children,
@@ -34,24 +37,25 @@ Type aliases, **unprefixed** — the module path is the namespace. A fixed
 progression, generic over the consumer's data (`Form<T>` over the payload,
 `Autocomplete<M>` over item metadata):
 
-| Type      | Meaning                                                                            |
-| --------- | ---------------------------------------------------------------------------------- |
-| `Config`  | consumer-declared description: static config + **synchronous** resolvers           |
-| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns        |
-| `Service` | imperative contract: readonly **unwrapped** state + deriveds + full method surface |
-| `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`         |
-| `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`           |
-| `<Name>`  | the reactive facade returned by the factory; the widget's prop                     |
+| Type      | Meaning                                                                             |
+| --------- | ----------------------------------------------------------------------------------- |
+| `Config`  | consumer-declared description: static config + **synchronous** resolvers            |
+| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns         |
+| `Service` | the machine contract: **unwrapped** state + deriveds + full method surface — the widget's `service` prop; actions receive it too |
+| `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`          |
+| `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`            |
 
 Supporting types (`Field`, `Item`, `Query`, …) live in the same file;
 component type files import them rather than redefining them.
 
-- **Actions receive the plain `Service`**, never the facade — consumer logic
-  drives the machine imperatively, without refs.
 - **Every event payload carries `id`** (`ScopedEvent`), so `useHooks` can
   filter by instance.
-- The facade mirrors the service reactively: state as `Ref`s, deriveds as
-  `ComputedRef`s, methods bound through.
+- **The `readonly` discipline is load-bearing.** `useServiceRefs` mirrors a
+  service's state surface by its modifiers: `readonly` members become
+  `ComputedRef`s, non-readonly members must be **get/set accessor pairs**
+  whose setter routes through the matching mutator (autocomplete's `input`,
+  form's `payload`, deck's filter fields) and become `WritableComputedRef`s.
+  Methods are excluded — call them on the machine.
 
 ## Store (`stores/<name>.ts`)
 
@@ -105,48 +109,51 @@ export class AutocompleteService<M> implements Service<M> {
 ## Factory (`factories/<name>.ts`)
 
 Pure wiring — resolve the app, access the store, construct the service,
-return the facade. No logic:
+return the widget triple. No logic:
 
 ```ts
-export const createAutocomplete = <M>(id, config, actions = {}) => {
-  return (): Autocomplete<M> => {
+import component from "#foundation/components/data/autocomplete/widget.vue";
+
+export const createAutocomplete = <M>(
+  id: string,
+  config: Config<M>,
+  actions: Actions<M> = {},
+  settings?: WidgetSettings<AutocompleteWidgetProps<M>>,
+) => {
+  return (): Widget<AutocompleteWidgetProps<M>> => {
     const nuxt = useNuxtApp();
     const state = accessAutocomplete<M>(id);
     const service = new AutocompleteService(nuxt, id, config, state, actions);
-    return {
-      id,
-      config,
-      input: computed({ get: () => service.input, set: (v) => service.set(v) }),
-      focused: computed(() => service.focused),
-      suggestions: computed(() => service.suggestions),
-      // … every State key, every derived, every method bound through
-      set: (value) => service.set(value),
-    };
+    return { service, component, settings };
   };
 };
 ```
 
-State the consumer or widget writes gets a **writable computed** routing
-through the service's mutator (form's `payload`, autocomplete's `input` /
-`steps`); everything else is a read-only computed.
+`Widget<Props>` is generic over the component's props type, which carries
+both the machine (`Props["service"]`) and the settings tree
+(`NonNullable<Props["pt"]>`). The return annotation is the enforcement
+point: a component whose `service` prop doesn't accept the constructed
+service fails to compile here. `settings` is a `MaybeRefOrGetter` passed
+through raw — structural components resolve it with `toValue` at the bind
+site.
 
 ## Widget (`components/data/<name>/widget.vue`)
 
 Script skeleton, in order:
 
 ```ts
-const { autocomplete, pt } = defineProps<AutocompleteWidgetProps<M>>();   // generic="M"
+const { service, pt } = defineProps<AutocompleteWidgetProps<M>>();   // generic="M"
 const emit = defineEmits<AutocompleteWidgetEmits<M>>();
 
-useHooks<Events<M>>(autocomplete.id, {                    // hook → emit, 1:1
+useHooks<Events<M>>(service.id, {                         // hook → emit, 1:1
   "autocomplete:updated": (event) => emit("updated", event),
   /* … every event … */
 });
 
-const { input, hint, panels, dropdown } = autocomplete;   // what the template reads
-
 const el = useTemplateRef<ComponentPublicInstance>("el");
-const { recipes } = useAutocomplete(autocomplete, el);    // feature composable
+
+// One feature composable per feature — refs + deriveds + recipes in one call
+const { input, hint, panels, dropdown, recipes } = useAutocomplete(service, el);
 
 const settings = usePassthrough<AutocompleteWidgetPassthrough<M>>(() => ({
   pt,
@@ -154,13 +161,23 @@ const settings = usePassthrough<AutocompleteWidgetPassthrough<M>>(() => ({
 }));
 
 const ctx = useContext<AutocompleteWidgetContext<M>>("data-autocomplete", () => ({
-  autocomplete, el: el.value, settings: settings.value,
+  autocomplete: service, el: el.value, settings: settings.value,
 }));
 
 defineExpose({ ctx });
 const slots = defineSlots<AutocompleteWidgetSlots<M>>();
 const forwarded = useForwardSlots(slots, AUTOCOMPLETE_ITEM_SLOTS);
 ```
+
+Two hard rules the collapse introduced:
+
+- **Never destructure a machine.** `const { loading } = service` snapshots a
+  plain value dead. State comes from the feature composable's refs; methods
+  are called on the machine (`service.fetch()`), whose property reads stay
+  live in any tracked context.
+- **Never pass a machine method bare.** Class methods bind `this` at the
+  call: `useLazyRequest(key, service.init)` detaches and throws. Always
+  close over the machine — `() => service.init()`.
 
 Component type files are **prefixed** (`AutocompleteWidgetProps`,
 `AutocompleteItemContext`, …) and follow core's progression —
@@ -201,21 +218,31 @@ The widget relays the child's slot names from a constant
 
 ## Feature composables (`composables/<name>.ts`)
 
-The feature half of each component, extracted for testability:
+**One composable per feature** — `use<Name>(machine, el?)` — called by the
+widget and every sub-component, each destructuring its slice. It is the
+feature's whole view surface:
 
-- `use<Name>(machine, el)` — widget level. Owns native-surface handlers
-  (keyboard, input, focus/blur with its delay), DOM watchers
-  (scroll-into-view), and returns the `recipes` computed the widget spreads
-  into its manifest.
-- `use<Name><Part>(machine, source)` — child level. Takes the machine plus a
-  `MaybeRefOrGetter` anchor source (`() => ({ item, index, panel })` — child
-  props are reactive per-render, so pass a getter, not values) and returns
-  deriveds for the ctx plus the child's feature recipes. Annotate the recipes
-  computed (`computed<Pick<XItemPassthrough, "root" | "arrow">>`) so literal
-  props don't widen.
+- **The refs view**: opens with
+  [`useServiceRefs`](../../composables/refs.ts)`(machine)` and spreads it
+  into the return — the generic facade (storeToRefs style) that mirrors the
+  service's state surface as computeds, writable where the class declares a
+  setter.
+- **Shared deriveds** (`hasSelection`, `isSelectable`, …) — never inline
+  these in components; two components deriving the same thing is the smell.
+- **Native-surface handlers and DOM** (keyboard, input, focus/blur delays,
+  scroll-into-view, timers), gated on the optional `el` when widget-only.
+  DOM, timers, and browser APIs stop at this layer — they never reach the
+  service.
+- **Anchored scopes** for repeated/positioned children, returned as
+  closures: `useItem(source)`, `useField(field)`, `useControl(source)`,
+  `useCanvas(canvasEl)`. Each takes a `MaybeRefOrGetter` anchor (child props
+  are reactive per-render, so pass a getter, not values) and returns the
+  child's deriveds plus its feature recipes. Annotate the recipes computed
+  (`computed<Pick<XItemPassthrough, "root" | "arrow">>`) so literal props
+  don't widen.
 
-DOM, timers, and browser APIs stop at this layer — they never reach the
-service.
+Derived names must not shadow service keys — the spread is silent
+(`facetOptions`, not a second `facetGroups`).
 
 ## Events
 
@@ -265,8 +292,9 @@ same payloads.
 Build order for a new feature in this tier:
 
 1. **Domain contract** — write `types/data/<name>.ts` first:
-   `Config` / `State` / `Service` / `Actions` / `Events` / facade. Decide the
-   generic, the action surface, and the event set here, not in the component.
+   `Config` / `State` / `Service` / `Actions` / `Events`. Decide the generic,
+   the action surface, the event set, and which members are writable accessor
+   pairs here, not in the component.
 2. **Store** — `accessX(id)` over `useState`, defaults only.
 3. **Service** — _all_ feature logic lives in the class; log + emit
    discipline. Typecheck before moving on: the service compiles clean before
@@ -288,6 +316,8 @@ Build order for a new feature in this tier:
 | Concern             | File                                                                                                         |
 | ------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Passthrough system  | [core README](../core/README.md#the-passthrough-system) — identical merge semantics                          |
+| Widget contract     | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `WidgetSettings` · `AnyWidget` · `Widgets`)           |
+| Refs view           | [`composables/refs.ts`](../../composables/refs.ts) (`useServiceRefs`) · [`types/refs.ts`](../../types/refs.ts) |
 | Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                  |
 | Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                     |
 | Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                  |

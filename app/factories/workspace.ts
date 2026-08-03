@@ -1,35 +1,28 @@
-import type {
-  Actions,
-  Config,
-  Slot,
-  Workspace,
-} from "#foundation/types/system/workspace";
+import type { Actions, Config } from "#foundation/types/system/workspace";
+import type { WorkspaceStructureProps } from "#foundation/types/system/workspace/structure";
+import type { Widget, Widgets, WidgetSettings } from "#foundation/types/widget";
+
+import component from "#foundation/components/system/workspace/structure.vue";
 
 import { accessWorkspace } from "#foundation/stores/workspace";
-import { computed, useNuxtApp } from "#imports";
+import { useNuxtApp } from "#imports";
 import { WorkspaceService } from "#foundation/services/workspace";
 
-export const createWorkspace = (
+export const createWorkspace = <R extends Widgets>(
   id: string,
-  config: Config,
-  actions: Actions = {},
+  config: Config<R>,
+  actions: Actions<R> = {},
+  settings?: WidgetSettings<WorkspaceStructureProps<R>>,
 ) => {
-  return (): Workspace => {
+  return (): Widget<WorkspaceStructureProps<R>> => {
     const nuxt = useNuxtApp();
     const state = accessWorkspace(id, config);
     const service = new WorkspaceService(nuxt, id, config, state, actions);
+
     return {
-      id,
-      config,
-
-      initialized: computed(() => service.initialized),
-      loading: computed(() => service.loading),
-      layout: computed(() => service.layout),
-
-      gridStyle: computed(() => service.gridStyle),
-      slotStyle: (slot: Slot) => service.slotStyle(slot),
-
-      init: () => service.init(),
+      service,
+      component,
+      settings,
     };
   };
 };

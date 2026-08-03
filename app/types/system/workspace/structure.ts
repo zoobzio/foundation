@@ -8,47 +8,54 @@ import type {
 } from "#foundation/types/passthrough";
 import type {
   Slot,
-  Workspace,
+  Service,
   Events,
 } from "#foundation/types/system/workspace";
+import type { Widgets } from "#foundation/types/widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
-export type WorkspaceStructurePassthrough = {
+export type WorkspaceStructurePassthrough<R extends Widgets> = {
   root: Passthrough<GroupProps>;
   header: Passthrough<HeaderProps>;
   grid: Passthrough<GroupProps>;
-  slot: PassthroughIter<Slot, GroupProps>;
+  slot: PassthroughIter<Slot<R>, GroupProps>;
   footer: Passthrough<FooterProps>;
 };
 
-export type WorkspaceStructureProps = {
-  workspace: Workspace;
-  pt?: PT<WorkspaceStructurePassthrough>;
+export type WorkspaceStructureProps<R extends Widgets> = {
+  service: Service<R>;
+  pt?: PT<WorkspaceStructurePassthrough<R>>;
 };
 
 export type WorkspaceStructureEmits = {
   initialized: Parameters<Events["workspace:initialized"]>;
 };
 
-export type WorkspaceStructureContext = {
-  workspace: Workspace;
+export type WorkspaceStructureContext<R extends Widgets> = {
+  workspace: Service<R>;
   el: ComponentPublicInstance | null;
-  settings: WorkspaceStructurePassthrough;
+  settings: WorkspaceStructurePassthrough<R>;
 };
 
-export type WorkspaceSlotContext = WorkspaceStructureContext & {
-  slot: Slot;
-};
+export type WorkspaceSlotContext<R extends Widgets> =
+  WorkspaceStructureContext<R> & {
+    slot: Slot<R>;
+  };
 
 /**
- * Layout slots are addressed by id through the template-literal slot:
- * `slot:<id>` renders into the grid cell the layout assigns that id.
+ * Layout regions are addressed two ways: `slot:<id>` overrides a grid cell
+ * wholesale, `widget:<key>` overrides how a registry widget renders and
+ * receives its typed service.
  */
-export type WorkspaceStructureSlots = {
-  header?: (props: WorkspaceStructureContext) => VNode[];
-  footer?: (props: WorkspaceStructureContext) => VNode[];
+export type WorkspaceStructureSlots<R extends Widgets> = {
+  header?: (props: WorkspaceStructureContext<R>) => VNode[];
+  footer?: (props: WorkspaceStructureContext<R>) => VNode[];
 } & {
   [name: `slot:${string}`]:
-    | ((props: WorkspaceSlotContext) => VNode[])
+    | ((props: WorkspaceSlotContext<R>) => VNode[])
     | undefined;
+} & {
+  [K in keyof R as `widget:${K & string}`]?: (
+    props: WorkspaceSlotContext<R> & { service: ReturnType<R[K]>["service"] },
+  ) => VNode[];
 };
