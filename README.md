@@ -8,11 +8,13 @@ Extend Foundation from your app's `nuxt.config`:
 
 ```ts
 export default defineNuxtConfig({
-  extends: ["@zoobz-io/foundation"],
+  extends: ["@zoobzio/foundation"],
 });
 ```
 
-> Pre-1.0 and currently `private` — not yet published to npm.
+> Pre-1.0 — published to npm as an early alpha under the `alpha` dist-tag, so
+> install it explicitly: `pnpm add @zoobzio/foundation@alpha`. A `0.x` release is
+> the running alpha; expect breaking changes between minors until 1.0.
 
 ## Architecture
 
@@ -104,7 +106,21 @@ Theming, i18n, auth, telemetry, and icons are being extracted into standalone mo
 - Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`
 - Tests required for all new code
 - `make check` (lint + typecheck + test) must pass before opening a PR
+- Add a changeset (`pnpm changeset`) in any PR that should ship a release
 - Node 22, pnpm 9.10.0
+
+## Releasing
+
+Versioning runs on [changesets](https://github.com/changesets/changesets). Each
+PR that changes published behavior carries a changeset (`pnpm changeset`, then
+commit the generated file); pre-1.0, `minor` = feature, `patch` = fix.
+
+Releases are cut manually via the **Release** workflow (Actions tab → Run
+workflow, or `gh workflow run Release`). It applies every pending changeset —
+bumping the version, rewriting `CHANGELOG.md`, committing the bump, publishing to
+npm, and pushing the tag. Publishing uses npm **OIDC trusted publishing** (no
+`NPM_TOKEN`; provenance is attested), so the package must have a trusted
+publisher configured on npmjs pointing at this repo's `Release` workflow.
 
 ## License
 
