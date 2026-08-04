@@ -1,4 +1,4 @@
-import type { Config, Actions } from "#foundation/types/data/preview";
+import type { Config, Actions, Events } from "#foundation/types/data/preview";
 import type { PreviewWidgetProps } from "#foundation/types/data/preview/widget";
 import type { Widget, WidgetSettings } from "#foundation/types/widget";
 
@@ -14,7 +14,7 @@ export const createPreview = <T>(
   actions: Actions<T>,
   settings?: WidgetSettings<PreviewWidgetProps<T>>,
 ) => {
-  return (): Widget<PreviewWidgetProps<T>> => {
+  return (): Widget<PreviewWidgetProps<T>, Events> => {
     const nuxt = useNuxtApp();
     const state = accessPreview<T>(id);
     const service = new PreviewService(nuxt, id, config, state, actions);

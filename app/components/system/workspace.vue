@@ -1,12 +1,11 @@
 <script lang="ts">
 import type {
-  WorkspaceStructureContext,
-  WorkspaceStructureEmits,
-  WorkspaceStructurePassthrough,
-  WorkspaceStructureProps,
-  WorkspaceStructureSlots,
-} from "#foundation/types/system/workspace/structure";
-import type { Events } from "#foundation/types/system/workspace";
+  Slot,
+  WorkspaceContext,
+  WorkspacePassthrough,
+  WorkspaceProps,
+  WorkspaceSlots,
+} from "#foundation/types/system/workspace";
 import type { Widgets } from "#foundation/types/widget";
 import type { ComponentPublicInstance } from "vue";
 
@@ -14,28 +13,44 @@ import Footer from "#foundation/components/common/footer.vue";
 import Group from "#foundation/components/common/group.vue";
 import Header from "#foundation/components/common/header.vue";
 
-import { toValue, useTemplateRef } from "#imports";
-import { useWorkspace } from "#foundation/composables/workspace";
-import { useHooks } from "#foundation/composables/hook";
+import { computed, toValue, useTemplateRef } from "#imports";
+import { useWidgets, useWiring } from "#foundation/composables/widgets";
 import { usePassthrough } from "#foundation/composables/passthrough";
 import { useContext } from "#foundation/composables/context";
-import { useRequest } from "#foundation/composables/request";
 </script>
 
 <script setup lang="ts" generic="R extends Widgets">
-const { service, pt } = defineProps<WorkspaceStructureProps<R>>();
-
-const emit = defineEmits<WorkspaceStructureEmits>();
-
-useHooks<Events>(service.id, {
-  "workspace:initialized": (event) => emit("initialized", event),
-});
+const { spec, pt } = defineProps<WorkspaceProps<R>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { gridStyle, cells } = useWorkspace(service);
+const widgets = useWidgets(spec.widgets);
+useWiring(spec.wire, widgets);
 
-const settings = usePassthrough<WorkspaceStructurePassthrough<R>>(() => ({
+// Each grid cell paired with its resolved widget, if the layout assigns one.
+const cells = computed(() =>
+  spec.layout.slots.map((slot) => {
+    const key = slot.widget === undefined ? undefined : String(slot.widget);
+    return {
+      slot,
+      key,
+      widget: key === undefined ? undefined : widgets[key],
+    };
+  }),
+);
+
+const gridStyle = computed((): Record<string, string> => ({
+  display: "grid",
+  "grid-template-columns": `repeat(${spec.layout.columns}, 1fr)`,
+  "grid-template-rows": `repeat(${spec.layout.rows}, 1fr)`,
+}));
+
+const slotStyle = (slot: Slot<R>): Record<string, string> => ({
+  "grid-column": `${slot.position[0] + 1} / span ${slot.span[0]}`,
+  "grid-row": `${slot.position[1] + 1} / span ${slot.span[1]}`,
+});
+
+const settings = usePassthrough<WorkspacePassthrough<R>>(() => ({
   pt,
   recipes: {
     root: {},
@@ -46,19 +61,14 @@ const settings = usePassthrough<WorkspaceStructurePassthrough<R>>(() => ({
   },
 }));
 
-const ctx = useContext<WorkspaceStructureContext<R>>(
-  "system-workspace",
-  () => ({
-    workspace: service,
-    el: el.value,
-    settings: settings.value,
-  }),
-);
+const ctx = useContext<WorkspaceContext<R>>("system-workspace", () => ({
+  spec,
+  el: el.value,
+  settings: settings.value,
+}));
 
 defineExpose({ ctx });
-defineSlots<WorkspaceStructureSlots<R>>();
-
-await useRequest(`init-workspace-${service.id}`, () => service.init());
+defineSlots<WorkspaceSlots<R>>();
 </script>
 
 <template>
@@ -77,7 +87,7 @@ await useRequest(`init-workspace-${service.id}`, () => service.init());
         :key="c.slot.id"
         v-bind="settings.slot(c.slot)"
         class="f-system-workspace-slot"
-        :style="service.slotStyle(c.slot)"
+        :style="slotStyle(c.slot)"
       >
         <slot :name="`slot:${c.slot.id}`" v-bind="{ ...ctx, slot: c.slot }">
           <template v-if="c.widget">
