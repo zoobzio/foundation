@@ -1,4 +1,4 @@
-import type { Config, Actions } from "#foundation/types/data/form";
+import type { Config, Actions, Events } from "#foundation/types/data/form";
 import type { FormWidgetProps } from "#foundation/types/data/form/widget";
 import type { Widget, WidgetSettings } from "#foundation/types/widget";
 
@@ -14,7 +14,7 @@ export const createForm = <T>(
   actions: Actions<T>,
   settings?: WidgetSettings<FormWidgetProps<T>>,
 ) => {
-  return (): Widget<FormWidgetProps<T>> => {
+  return (): Widget<FormWidgetProps<T>, Events<T>> => {
     const nuxt = useNuxtApp();
     const state = accessForm(id, config);
     const service = new FormService(nuxt, id, config, state, actions);

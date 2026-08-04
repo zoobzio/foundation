@@ -1,4 +1,4 @@
-import type { Config, Actions } from "#foundation/types/data/table";
+import type { Config, Actions, Events } from "#foundation/types/data/table";
 import type { TableWidgetProps } from "#foundation/types/data/table/widget";
 import type { Widget, WidgetSettings } from "#foundation/types/widget";
 
@@ -14,7 +14,7 @@ export const createTable = <T, K = unknown>(
   actions: Actions<T, K>,
   settings?: WidgetSettings<TableWidgetProps<T, K>>,
 ) => {
-  return (): Widget<TableWidgetProps<T, K>> => {
+  return (): Widget<TableWidgetProps<T, K>, Events> => {
     const nuxt = useNuxtApp();
     const state = accessTable(id, config);
     const service = new TableService(nuxt, id, config, state, actions);

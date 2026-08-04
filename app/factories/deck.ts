@@ -1,4 +1,4 @@
-import type { Config, Actions } from "#foundation/types/data/deck";
+import type { Config, Actions, Events } from "#foundation/types/data/deck";
 import type { DeckWidgetProps } from "#foundation/types/data/deck/widget";
 import type { Widget, WidgetSettings } from "#foundation/types/widget";
 
@@ -14,7 +14,7 @@ export const createDeck = <T>(
   actions: Actions<T>,
   settings?: WidgetSettings<DeckWidgetProps<T>>,
 ) => {
-  return (): Widget<DeckWidgetProps<T>> => {
+  return (): Widget<DeckWidgetProps<T>, Events> => {
     const nuxt = useNuxtApp();
     const state = accessDeck(id, config);
     const service = new DeckService(nuxt, id, config, state, actions);

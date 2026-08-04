@@ -1,5 +1,14 @@
-import type { Ref } from "#imports";
+import type { FooterProps } from "#foundation/types/common/footer";
+import type { GroupProps } from "#foundation/types/common/group";
+import type { HeaderProps } from "#foundation/types/common/header";
+import type {
+  Passthrough,
+  PassthroughIter,
+  PT,
+} from "#foundation/types/passthrough";
+import type { Wiring } from "#foundation/types/spec";
 import type { Widgets } from "#foundation/types/widget";
+import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
  * A slot definition within a workspace layout. `widget` assigns a registry
@@ -14,7 +23,7 @@ export interface Slot<R extends Widgets = Widgets> {
 
 /**
  * Workspace layout — a grid of slots. Plain data; `widget` keys reference
- * the registry so the layout stays serializable.
+ * the spec's registry so the layout stays serializable.
  */
 export interface Layout<R extends Widgets = Widgets> {
   columns: number;
@@ -23,41 +32,53 @@ export interface Layout<R extends Widgets = Widgets> {
 }
 
 /**
- * Config the consumer provides to the factory: the widget registry and the
- * layout that places it.
+ * The complete page description a workspace renders: what exists
+ * (`widgets`), where it goes (`layout`), how it talks to itself (`wire`).
+ * Built at module scope with `defineWorkspace` — pure data, no runtime.
  */
-export type Config<R extends Widgets> = {
-  layout: Layout<R>;
+export type WorkspaceSpec<R extends Widgets> = {
   widgets: R;
+  layout: Layout<R>;
+  wire?: Wiring<R>;
 };
 
-export type State<R extends Widgets> = {
-  initialized: Ref<boolean>;
-  loading: Ref<boolean>;
-  layout: Ref<Layout<R>>;
+export type WorkspacePassthrough<R extends Widgets> = {
+  root: Passthrough<GroupProps>;
+  header: Passthrough<HeaderProps>;
+  grid: Passthrough<GroupProps>;
+  slot: PassthroughIter<Slot<R>, GroupProps>;
+  footer: Passthrough<FooterProps>;
+};
+
+export type WorkspaceProps<R extends Widgets> = {
+  spec: WorkspaceSpec<R>;
+  pt?: PT<WorkspacePassthrough<R>>;
+};
+
+export type WorkspaceContext<R extends Widgets> = {
+  spec: WorkspaceSpec<R>;
+  el: ComponentPublicInstance | null;
+  settings: WorkspacePassthrough<R>;
+};
+
+export type WorkspaceSlotContext<R extends Widgets> = WorkspaceContext<R> & {
+  slot: Slot<R>;
 };
 
 /**
- * Optional consumer side effects hooked into the workspace lifecycle.
+ * Layout regions are addressed two ways: `slot:<id>` overrides a grid cell
+ * wholesale, `widget:<key>` overrides how a registry widget renders and
+ * receives its typed service.
  */
-export type Actions<R extends Widgets> = {
-  init?: (service: Service<R>) => Promise<void>;
-};
-
-export type Service<R extends Widgets> = {
-  readonly id: string;
-  readonly config: Config<R>;
-
-  readonly initialized: boolean;
-  readonly loading: boolean;
-  readonly layout: Layout<R>;
-
-  readonly gridStyle: Record<string, string>;
-  slotStyle(slot: Slot<R>): Record<string, string>;
-
-  init(): Promise<boolean>;
-};
-
-export type Events = {
-  "workspace:initialized": (event: { id: string }) => void;
+export type WorkspaceSlots<R extends Widgets> = {
+  header?: (props: WorkspaceContext<R>) => VNode[];
+  footer?: (props: WorkspaceContext<R>) => VNode[];
+} & {
+  [name: `slot:${string}`]:
+    | ((props: WorkspaceSlotContext<R>) => VNode[])
+    | undefined;
+} & {
+  [K in keyof R as `widget:${K & string}`]?: (
+    props: WorkspaceSlotContext<R> & { service: ReturnType<R[K]>["service"] },
+  ) => VNode[];
 };
