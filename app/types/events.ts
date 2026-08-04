@@ -16,4 +16,4 @@
  * (`@click="emit('click', $event)"`). The compiler checks that direction — an
  * `emit` call for an event the config does not list is an error.
  */
-export type { ComponentEvents } from "#build/types/events";
+export type { ComponentEvents } from "#build/types/contracts";

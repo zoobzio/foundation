@@ -1,4 +1,4 @@
-import type { ModifiersInput } from "#modules/modifiers/types";
+import type { ModifiersInput } from "#modules/contracts/types";
 
 /**
  * Definition helper for the modifier schema.
