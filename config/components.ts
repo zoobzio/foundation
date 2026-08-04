@@ -1,4 +1,4 @@
-import type { RoleAria } from "#build/types/aria";
+import type { RoleAria } from "#build/types/contracts";
 import type { Token } from "#foundation/types/tokens";
 
 interface ComponentConfig {
@@ -14,13 +14,15 @@ interface ComponentConfig {
     string,
     { events: readonly (keyof GlobalEventHandlersEventMap)[] }
   >;
+  widgets?: never;
+  structures?: never;
 }
 
 /**
  * The design-system component registry, grouped by layer.
  *
- * Shared source of truth for the per-component generation modules (modifiers,
- * component tokens, events, aria). Each key is a layer mapping that layer's
+ * Shared source of truth for the `contracts` generation module (aria, events,
+ * modifiers) and the component-token plugin. Each key is a layer mapping that layer's
  * components to their structured config; new layers are added alongside
  * `elements`, and consumers read the layer they target (e.g.
  * `components.elements`). Declared `as const satisfies` so the literal names
@@ -104,7 +106,11 @@ export default {
     container: { role: "generic", events: [], tokens: {} },
     "date-picker-calendar": { role: "group", events: [], tokens: {} },
     "date-picker-cell": { role: "cell", events: [], tokens: {} },
-    "date-picker-cell-trigger": { role: "button", events: ["click"], tokens: {} },
+    "date-picker-cell-trigger": {
+      role: "button",
+      events: ["click"],
+      tokens: {},
+    },
     "date-picker-content": { role: "dialog", events: [], tokens: {} },
     "date-picker-field": { role: "group", events: [], tokens: {} },
     "date-picker-grid": { role: "grid", events: [], tokens: {} },
@@ -121,21 +127,33 @@ export default {
     "date-picker-trigger": { role: "button", events: ["click"], tokens: {} },
     "date-range-picker-calendar": { role: "group", events: [], tokens: {} },
     "date-range-picker-cell": { role: "cell", events: [], tokens: {} },
-    "date-range-picker-cell-trigger": { role: "button", events: ["click"], tokens: {} },
+    "date-range-picker-cell-trigger": {
+      role: "button",
+      events: ["click"],
+      tokens: {},
+    },
     "date-range-picker-content": { role: "dialog", events: [], tokens: {} },
     "date-range-picker-field": { role: "group", events: [], tokens: {} },
     "date-range-picker-grid": { role: "grid", events: [], tokens: {} },
     "date-range-picker-grid-body": { role: "rowgroup", events: [], tokens: {} },
     "date-range-picker-grid-head": { role: "rowgroup", events: [], tokens: {} },
     "date-range-picker-grid-row": { role: "row", events: [], tokens: {} },
-    "date-range-picker-head-cell": { role: "columnheader", events: [], tokens: {} },
+    "date-range-picker-head-cell": {
+      role: "columnheader",
+      events: [],
+      tokens: {},
+    },
     "date-range-picker-header": { role: "generic", events: [], tokens: {} },
     "date-range-picker-heading": { role: "generic", events: [], tokens: {} },
     "date-range-picker-input": { role: "spinbutton", events: [], tokens: {} },
     "date-range-picker-next": { role: "button", events: ["click"], tokens: {} },
     "date-range-picker-prev": { role: "button", events: ["click"], tokens: {} },
     "date-range-picker-root": { role: "group", events: [], tokens: {} },
-    "date-range-picker-trigger": { role: "button", events: ["click"], tokens: {} },
+    "date-range-picker-trigger": {
+      role: "button",
+      events: ["click"],
+      tokens: {},
+    },
     del: { role: "deletion", events: [], tokens: {} },
     "dialog-content": { role: "dialog", events: [], tokens: {} },
     "dialog-description": { role: "paragraph", events: [], tokens: {} },
@@ -162,7 +180,11 @@ export default {
     hr: { role: "separator", events: [], tokens: {} },
     icon: { role: "img", events: [], tokens: {} },
     img: { role: "img", events: [], tokens: {} },
-    input: { role: "textbox", events: ["input", "change", "focus", "blur"], tokens: {} },
+    input: {
+      role: "textbox",
+      events: ["input", "change", "focus", "blur"],
+      tokens: {},
+    },
     kbd: { role: "generic", events: [], tokens: {} },
     label: { role: "generic", events: [], tokens: {} },
     li: { role: "listitem", events: [], tokens: {} },
@@ -185,12 +207,20 @@ export default {
     "radio-group-item": { role: "radio", events: ["click"], tokens: {} },
     "radio-group-root": { role: "radiogroup", events: [], tokens: {} },
     "range-calendar-cell": { role: "cell", events: [], tokens: {} },
-    "range-calendar-cell-trigger": { role: "button", events: ["click"], tokens: {} },
+    "range-calendar-cell-trigger": {
+      role: "button",
+      events: ["click"],
+      tokens: {},
+    },
     "range-calendar-grid": { role: "grid", events: [], tokens: {} },
     "range-calendar-grid-body": { role: "rowgroup", events: [], tokens: {} },
     "range-calendar-grid-head": { role: "rowgroup", events: [], tokens: {} },
     "range-calendar-grid-row": { role: "row", events: [], tokens: {} },
-    "range-calendar-head-cell": { role: "columnheader", events: [], tokens: {} },
+    "range-calendar-head-cell": {
+      role: "columnheader",
+      events: [],
+      tokens: {},
+    },
     "range-calendar-header": { role: "generic", events: [], tokens: {} },
     "range-calendar-heading": { role: "generic", events: [], tokens: {} },
     "range-calendar-next": { role: "button", events: ["click"], tokens: {} },
@@ -220,7 +250,11 @@ export default {
     "tags-input-root": { role: "group", events: [], tokens: {} },
     tbody: { role: "rowgroup", events: [], tokens: {} },
     td: { role: "cell", events: [], tokens: {} },
-    textarea: { role: "textbox", events: ["input", "change", "focus", "blur"], tokens: {} },
+    textarea: {
+      role: "textbox",
+      events: ["input", "change", "focus", "blur"],
+      tokens: {},
+    },
     th: { role: "columnheader", events: [], tokens: {} },
     thead: { role: "rowgroup", events: [], tokens: {} },
     "toast-close": { role: "button", events: ["click"], tokens: {} },

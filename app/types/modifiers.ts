@@ -1,5 +1,5 @@
 import type { Element } from "#foundation/types/component";
-import type { ComponentModifiers } from "#build/types/modifiers";
+import type { ComponentModifiers } from "#build/types/contracts";
 
 export type Modifiers<T extends Element> = ComponentModifiers[T];
 
