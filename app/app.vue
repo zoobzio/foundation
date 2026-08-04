@@ -7,7 +7,7 @@ import Toaster from "#foundation/components/core/toaster.vue";
 
 import { ConfigProvider } from "reka-ui";
 import { useHead, useId } from "#imports";
-import { useNotifications } from "~/composables/notification";
+import { useNotifications } from "#foundation/composables/notification";
 </script>
 
 <script setup lang="ts">
