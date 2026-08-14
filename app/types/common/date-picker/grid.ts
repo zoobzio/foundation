@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type DatePickerGridProps = RekaDatePickerGridProps & {
   aria?: AriaProps<"date-picker-grid">;
 };
 
-export type DatePickerGridEmits = ComponentEvents["date-picker-grid"];
+export type DatePickerGridEmits = {};
 
 export type DatePickerGridBindings = Bindings<"date-picker-grid", DatePickerGridForward>;
 

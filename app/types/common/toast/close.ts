@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { Reshape } from "../../reshape";
 import type { TokenProps } from "../../tokens";
@@ -17,7 +17,7 @@ export type ToastCloseProps = RekaToastCloseProps & {
   aria?: AriaProps<"toast-close">;
 };
 
-export type ToastCloseEmits = ComponentEvents["toast-close"];
+export type ToastCloseEmits = EventEmits<"click">;
 
 export type ToastCloseBindings = Bindings<"toast-close", ToastCloseForward>;
 

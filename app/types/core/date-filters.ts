@@ -8,7 +8,6 @@ import type {
   CommandEmits,
 } from "./command";
 import type { FabProps } from "./fab";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { PopoverProps, PopoverEmits } from "./popover";
 import type {
@@ -53,7 +52,7 @@ export type DateFiltersProps = {
   pt?: PT<DateFiltersPassthrough>;
 };
 
-export type DateFiltersEmits = ComponentEvents["date-filters"];
+export type DateFiltersEmits = {};
 
 export type DateFiltersContext = {
   fields: DateFieldConfig[];

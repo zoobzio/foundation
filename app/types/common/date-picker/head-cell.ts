@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type DatePickerHeadCellProps = RekaDatePickerHeadCellProps & {
   aria?: AriaProps<"date-picker-head-cell">;
 };
 
-export type DatePickerHeadCellEmits = ComponentEvents["date-picker-head-cell"];
+export type DatePickerHeadCellEmits = {};
 
 export type DatePickerHeadCellBindings = Bindings<"date-picker-head-cell", DatePickerHeadCellForward>;
 

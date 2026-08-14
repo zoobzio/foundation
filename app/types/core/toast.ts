@@ -9,7 +9,6 @@ import type {
   ToastCloseProps,
   ToastCloseEmits,
 } from "../common/toast/close";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -29,7 +28,7 @@ export type ToastProps = {
   pt?: PT<ToastPassthrough>;
 };
 
-export type ToastEmits = ComponentEvents["toast"] & {
+export type ToastEmits = {
   "update:open": [value: boolean];
   close: [];
 };

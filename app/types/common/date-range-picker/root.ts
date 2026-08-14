@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -33,7 +32,7 @@ export type DateRangePickerRootProps = RekaDateRangePickerRootProps & {
 export type DateRangePickerRootEmits = {
   "update:modelValue": [value: DateRange | undefined];
   "update:open": [value: boolean];
-} & ComponentEvents["date-range-picker-root"];
+} & {};
 
 export type DateRangePickerRootBindings = Bindings<
   "date-range-picker-root",

@@ -2,7 +2,7 @@ import type { ButtonEmits, ButtonProps } from "../common/button";
 import type { GroupProps } from "../common/group";
 import type { IconProps } from "../common/icon";
 import type { IconAlias } from "../common/iconic";
-import type { ComponentEvents } from "../events";
+import type { EventEmits } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -21,7 +21,7 @@ export type FabProps = {
   pt?: PT<FabPassthrough>;
 };
 
-export type FabEmits = ComponentEvents["fab"];
+export type FabEmits = EventEmits<"click">;
 
 export type FabContext = {
   icon?: IconAlias;

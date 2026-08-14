@@ -8,8 +8,6 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      // Source aliases (must mirror nuxt.config).
-      "#stubs": r("./stubs"),
       // Nuxt virtual modules — shimmed for the no-Nuxt vitest environment.
       "#imports": r("./tests/mocks/imports.ts"),
       "#app": r("./tests/mocks/imports.ts"),

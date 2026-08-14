@@ -9,7 +9,6 @@ import type { AccordionHeaderProps } from "../common/accordion/header";
 import type { AccordionTriggerProps } from "../common/accordion/trigger";
 import type { AccordionContentProps } from "../common/accordion/content";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -37,7 +36,7 @@ export type AccordionProps = {
   pt?: PT<AccordionPassthrough>;
 };
 
-export type AccordionEmits = ComponentEvents["accordion"] & {
+export type AccordionEmits = {
   "update:modelValue": [value: string | string[] | undefined];
 };
 

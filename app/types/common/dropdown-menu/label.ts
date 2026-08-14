@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -17,7 +16,7 @@ export type DropdownMenuLabelProps = RekaDropdownMenuLabelProps & {
   aria?: AriaProps<"dropdown-menu-label">;
 };
 
-export type DropdownMenuLabelEmits = ComponentEvents["dropdown-menu-label"];
+export type DropdownMenuLabelEmits = {};
 
 export type DropdownMenuLabelBindings = Bindings<"dropdown-menu-label", DropdownMenuLabelForward>;
 

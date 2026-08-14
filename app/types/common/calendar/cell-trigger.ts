@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -19,7 +19,7 @@ export type CalendarCellTriggerProps = RekaCalendarCellTriggerProps & {
   aria?: AriaProps<"calendar-cell-trigger">;
 };
 
-export type CalendarCellTriggerEmits = ComponentEvents["calendar-cell-trigger"];
+export type CalendarCellTriggerEmits = EventEmits<"click">;
 
 export type CalendarCellTriggerBindings = Bindings<
   "calendar-cell-trigger",

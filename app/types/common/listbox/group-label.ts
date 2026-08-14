@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type ListboxGroupLabelProps = RekaListboxGroupLabelProps & {
   aria?: AriaProps<"listbox-group-label">;
 };
 
-export type ListboxGroupLabelEmits = ComponentEvents["listbox-group-label"];
+export type ListboxGroupLabelEmits = {};
 
 export type ListboxGroupLabelBindings = Bindings<
   "listbox-group-label",

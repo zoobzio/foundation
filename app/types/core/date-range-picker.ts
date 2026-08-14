@@ -42,7 +42,6 @@ import type {
   DateRangePickerCellTriggerProps,
   DateRangePickerCellTriggerEmits,
 } from "../common/date-range-picker/cell-trigger";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -111,7 +110,7 @@ export type DateRangePickerProps = {
   pt?: PT<DateRangePickerPassthrough>;
 };
 
-export type DateRangePickerEmits = ComponentEvents["date-range-picker"] & {
+export type DateRangePickerEmits = {
   "update:modelValue": [value: DateRange | undefined];
   "update:open": [value: boolean];
 };

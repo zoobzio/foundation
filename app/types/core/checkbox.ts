@@ -4,7 +4,6 @@ import type {
 } from "../common/checkbox/root";
 import type { GroupProps } from "../common/group";
 import type { IconProps } from "../common/icon";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -23,7 +22,7 @@ export type CheckboxProps = {
   pt?: PT<CheckboxPassthrough>;
 };
 
-export type CheckboxEmits = ComponentEvents["checkbox"] & {
+export type CheckboxEmits = {
   "update:modelValue": [value: boolean | "indeterminate"];
 };
 

@@ -1,4 +1,3 @@
-import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
 
 import untheme from "./config/untheme";
@@ -29,14 +28,5 @@ export default defineNuxtConfig({
         },
       },
     },
-  },
-
-  alias: {
-    // Absolute path so the alias keeps resolving to the foundation package when this
-    // layer is extended by a consumer app (a shared "@"/"~" would resolve to the consumer).
-    // Runtime resolution (jiti module-load, Vite, vitest) comes from the matching
-    // `imports` map in package.json; this entry generates the tsconfig `paths` so
-    // TypeScript resolves it too.
-    "#stubs": fileURLToPath(new URL("./stubs", import.meta.url)),
   },
 });

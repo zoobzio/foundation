@@ -12,7 +12,6 @@ import type {
 import type { SelectItemProps } from "../common/select/item";
 import type { SelectItemTextProps } from "../common/select/item-text";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -41,7 +40,7 @@ export type SelectProps<T extends Option> = {
   pt?: PT<SelectPassthrough>;
 };
 
-export type SelectEmits<T extends Option> = ComponentEvents["select"] & {
+export type SelectEmits<T extends Option> = {
   "update:modelValue": [value: T];
   "update:open": [value: boolean];
 };

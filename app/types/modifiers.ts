@@ -1,7 +1,17 @@
 import type { Element } from "./component";
-import type { ComponentModifiers } from "#build/types/contracts";
+import type modifiers from "../../config/modifiers";
 
-export type Modifiers<T extends Element> = ComponentModifiers[T];
+/**
+ * The variant-axis registry, derived directly from the `config/modifiers`
+ * schema: components with a schema entry expose their axes as
+ * `axis: readonly [...values]` tuples; components without one resolve to
+ * `never`, so their `ModifierProps` surface is empty.
+ */
+export type ComponentModifiers = typeof modifiers;
+
+export type Modifiers<T extends Element> = T extends keyof ComponentModifiers
+  ? ComponentModifiers[T]
+  : never;
 
 export type ModifierAxes<T extends Element> = keyof Modifiers<T>;
 

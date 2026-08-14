@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -19,7 +19,7 @@ export type DatePickerPrevProps = RekaDatePickerPrevProps & {
   aria?: AriaProps<"date-picker-prev">;
 };
 
-export type DatePickerPrevEmits = ComponentEvents["date-picker-prev"];
+export type DatePickerPrevEmits = EventEmits<"click">;
 
 export type DatePickerPrevBindings = Bindings<"date-picker-prev", DatePickerPrevForward>;
 

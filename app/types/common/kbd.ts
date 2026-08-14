@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -12,7 +11,7 @@ export type KbdProps = {
   aria?: AriaProps<"kbd">;
 };
 
-export type KbdEmits = ComponentEvents["kbd"];
+export type KbdEmits = {};
 
 export type KbdBindings = Bindings<"kbd">;
 

@@ -8,7 +8,6 @@ import type { LiProps } from "../common/li";
 import type { NavProps } from "../common/nav";
 import type { SpanProps } from "../common/span";
 import type { UlProps } from "../common/ul";
-import type { ComponentEvents } from "../events";
 import type { Link } from "./common";
 import type {
   Passthrough,
@@ -56,7 +55,7 @@ export type DirectoryProps<T extends DirectoryItem> = {
 };
 
 export type DirectoryEmits<T extends DirectoryItem> =
-  ComponentEvents["directory"] & {
+  {
     select: [item: T];
   };
 

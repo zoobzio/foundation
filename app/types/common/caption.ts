@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -12,7 +11,7 @@ export type CaptionProps = {
   aria?: AriaProps<"caption">;
 };
 
-export type CaptionEmits = ComponentEvents["caption"];
+export type CaptionEmits = {};
 
 export type CaptionBindings = Bindings<"caption">;
 

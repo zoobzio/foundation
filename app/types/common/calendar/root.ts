@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -30,7 +29,7 @@ export type CalendarRootProps = RekaCalendarRootProps & {
 // emit useModel needs.
 export type CalendarRootEmits = {
   "update:modelValue": [date: DateValue | undefined];
-} & ComponentEvents["calendar-root"];
+} & {};
 
 export type CalendarRootBindings = Bindings<"calendar-root", CalendarRootForward>;
 

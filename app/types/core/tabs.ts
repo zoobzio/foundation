@@ -7,7 +7,6 @@ import type { TabsListProps } from "../common/tabs/list";
 import type { TabsTriggerProps } from "../common/tabs/trigger";
 import type { TabsContentProps } from "../common/tabs/content";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -29,7 +28,7 @@ export type TabsProps = {
   pt?: PT<TabsPassthrough>;
 };
 
-export type TabsEmits = ComponentEvents["tabs"] & {
+export type TabsEmits = {
   "update:modelValue": [value: string];
 };
 

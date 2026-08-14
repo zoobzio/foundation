@@ -41,7 +41,6 @@ import type {
   DatePickerCellTriggerProps,
   DatePickerCellTriggerEmits,
 } from "../common/date-picker/cell-trigger";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -100,7 +99,7 @@ export type DatePickerProps = {
   pt?: PT<DatePickerPassthrough>;
 };
 
-export type DatePickerEmits = ComponentEvents["date-picker"] & {
+export type DatePickerEmits = {
   "update:modelValue": [value: DateValue | undefined];
   "update:open": [value: boolean];
 };

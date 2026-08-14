@@ -11,13 +11,12 @@ export type Component = Element | Compound;
 
 /**
  * The full prop surface a component of type `C` contributes to its call site:
- * the aria, token, and modifier halves the `contracts` module and the direct
- * mapped types produce, intersected.
+ * the aria, token, and modifier halves, intersected.
  *
- * Props only — native-event emits are deliberately excluded. `ComponentEvents`
- * must be indexed with a literal for `@vue/compiler-sfc` to fold the emit keys
- * (see `types/events.ts`), so emits stay per-component on `defineEmits` and
- * cannot pass through this generic.
+ * Props only — native-event emits are deliberately excluded. `EventEmits`
+ * must be instantiated with literal event names for `@vue/compiler-sfc` to
+ * fold the emit keys (see `types/events.ts`), so emits stay per-component on
+ * `defineEmits` and cannot pass through this generic.
  */
 export type ComponentProps<C extends Element> = AriaProps<C> &
   TokenProps<C> &

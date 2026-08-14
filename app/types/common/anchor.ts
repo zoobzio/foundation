@@ -1,6 +1,6 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
+import type { EventEmits } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { ComponentPublicInstance, VNode } from "vue";
@@ -18,7 +18,7 @@ export type AnchorProps = {
   aria?: AriaProps<"anchor">;
 };
 
-export type AnchorEmits = ComponentEvents["anchor"];
+export type AnchorEmits = EventEmits<"click">;
 
 export type AnchorBindings = Bindings<"anchor">;
 

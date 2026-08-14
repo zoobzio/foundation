@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -18,7 +17,7 @@ export type TabsRootProps = RekaTabsRootProps & {
   aria?: AriaProps<"tabs-root">;
 };
 
-export type TabsRootEmits = RekaTabsRootEmits & ComponentEvents["tabs-root"];
+export type TabsRootEmits = RekaTabsRootEmits & {};
 
 export type TabsRootBindings = Bindings<"tabs-root", TabsRootForward>;
 

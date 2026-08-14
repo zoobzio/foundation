@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -19,7 +18,7 @@ export type ToggleGroupRootProps = RekaToggleGroupRootProps & {
   aria?: AriaProps<"toggle-group-root">;
 };
 
-export type ToggleGroupRootEmits = RekaToggleGroupRootEmits & ComponentEvents["toggle-group-root"];
+export type ToggleGroupRootEmits = RekaToggleGroupRootEmits & {};
 
 export type ToggleGroupRootBindings = Bindings<"toggle-group-root", ToggleGroupRootForward>;
 

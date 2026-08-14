@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -12,7 +11,7 @@ export type DelProps = {
   aria?: AriaProps<"del">;
 };
 
-export type DelEmits = ComponentEvents["del"];
+export type DelEmits = {};
 
 export type DelBindings = Bindings<"del">;
 

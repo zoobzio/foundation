@@ -10,7 +10,6 @@ import type {
   TagsInputItemDeleteEmits,
 } from "../common/tags-input/item-delete";
 import type { TagsInputInputProps } from "../common/tags-input/input";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -36,7 +35,7 @@ export type TagsInputProps = {
   pt?: PT<TagsInputPassthrough>;
 };
 
-export type TagsInputEmits = ComponentEvents["tags-input"] & {
+export type TagsInputEmits = {
   "update:modelValue": [value: string[]];
 };
 

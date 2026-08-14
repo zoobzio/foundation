@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { SlotProps } from "../../slots";
@@ -15,7 +14,7 @@ export type DateRangePickerCalendarProps = {
   aria?: AriaProps<"date-range-picker-calendar">;
 };
 
-export type DateRangePickerCalendarEmits = ComponentEvents["date-range-picker-calendar"];
+export type DateRangePickerCalendarEmits = {};
 
 export type DateRangePickerCalendarBindings = Bindings<"date-range-picker-calendar">;
 

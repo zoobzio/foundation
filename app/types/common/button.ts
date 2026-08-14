@@ -1,6 +1,6 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
+import type { EventEmits } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -14,7 +14,7 @@ export type ButtonProps = {
   aria?: AriaProps<"button">;
 };
 
-export type ButtonEmits = ComponentEvents["button"];
+export type ButtonEmits = EventEmits<"click">;
 
 export type ButtonBindings = Bindings<"button">;
 

@@ -1,4 +1,4 @@
-.PHONY: help install install-hooks dev dev-example lint lint-fix typecheck test test-watch coverage check ci clean
+.PHONY: help install install-hooks dev dev-example generate lint lint-fix typecheck test test-watch coverage check ci clean
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -14,6 +14,9 @@ dev: ## Start the Nuxt dev server
 
 dev-example: ## Start the example app dev server
 	pnpm dev:example
+
+generate: ## Regenerate spec-derived type files (app/types/aria-spec.ts)
+	node scripts/aria.ts
 
 lint: ## Run ESLint
 	pnpm lint

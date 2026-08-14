@@ -7,7 +7,6 @@ import type {
   TooltipContentProps,
   TooltipContentEmits,
 } from "../common/tooltip/content";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -27,7 +26,7 @@ export type TooltipProps = {
   pt?: PT<TooltipPassthrough>;
 };
 
-export type TooltipEmits = ComponentEvents["tooltip"] & {
+export type TooltipEmits = {
   "update:open": [value: boolean];
 };
 

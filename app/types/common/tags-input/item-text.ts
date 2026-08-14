@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type TagsInputItemTextProps = RekaTagsInputItemTextProps & {
   aria?: AriaProps<"tags-input-item-text">;
 };
 
-export type TagsInputItemTextEmits = ComponentEvents["tags-input-item-text"];
+export type TagsInputItemTextEmits = {};
 
 export type TagsInputItemTextBindings = Bindings<"tags-input-item-text", TagsInputItemTextForward>;
 

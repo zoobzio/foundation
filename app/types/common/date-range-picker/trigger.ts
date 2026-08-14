@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +15,7 @@ export type DateRangePickerTriggerProps = RekaDateRangePickerTriggerProps & {
   aria?: AriaProps<"date-range-picker-trigger">;
 };
 
-export type DateRangePickerTriggerEmits = ComponentEvents["date-range-picker-trigger"];
+export type DateRangePickerTriggerEmits = EventEmits<"click">;
 
 export type DateRangePickerTriggerBindings = Bindings<
   "date-range-picker-trigger",

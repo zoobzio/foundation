@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type TabsListProps = RekaTabsListProps & {
   aria?: AriaProps<"tabs-list">;
 };
 
-export type TabsListEmits = ComponentEvents["tabs-list"];
+export type TabsListEmits = {};
 
 export type TabsListBindings = Bindings<"tabs-list", TabsListForward>;
 

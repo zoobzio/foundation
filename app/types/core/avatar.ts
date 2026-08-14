@@ -4,7 +4,6 @@ import type {
   AvatarImageEmits,
 } from "../common/avatar/image";
 import type { AvatarFallbackProps } from "../common/avatar/fallback";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -21,7 +20,7 @@ export type AvatarProps = {
   pt?: PT<AvatarPassthrough>;
 };
 
-export type AvatarEmits = ComponentEvents["avatar"];
+export type AvatarEmits = {};
 
 export type AvatarContext = {
   src: string;

@@ -5,7 +5,6 @@ import type { H1Props } from "../common/h1";
 import type { PProps } from "../common/p";
 import type { SectionProps } from "../common/section";
 import type { Link } from "./common";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -27,7 +26,7 @@ export type HeroProps = {
   pt?: PT<HeroPassthrough>;
 };
 
-export type HeroEmits = ComponentEvents["hero"];
+export type HeroEmits = {};
 
 export type HeroContext = {
   tagline: string;

@@ -22,7 +22,6 @@ import type {
   CheckboxProps,
 } from "./checkbox";
 import type { ScrollerProps } from "./scroller";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -68,7 +67,7 @@ export type CommandProps<T extends CommandOption> = {
 };
 
 export type CommandEmits<T extends CommandOption> =
-  ComponentEvents["command"] & {
+  {
     "update:modelValue": [value: T[] | undefined];
     "update:search": [value: string];
   };
