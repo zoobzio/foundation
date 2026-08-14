@@ -35,7 +35,7 @@ export type WidgetSettings<Props extends WidgetProps> = MaybeRefOrGetter<
  *
  * `E` is the feature's domain event map at the factory's concrete generics —
  * the global hook registry erases them to `unknown`, so this phantom is where
- * spec wiring recovers typed payloads. Never set at runtime.
+ * definition wiring recovers typed payloads. Never set at runtime.
  */
 export type Widget<Props extends WidgetProps, E = {}> = {
   service: Props["service"];

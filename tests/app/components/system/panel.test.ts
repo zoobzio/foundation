@@ -1,4 +1,4 @@
-// A fixture spec drives the panel — assigned regions render their widget
+// A fixture definition drives the panel — assigned regions render their widget
 // through the erased `<component :is>` path with service and resolved
 // settings; regions with neither widget nor slot are omitted from the DOM;
 // the region/`widget:` override cascade is the behavior under test.
@@ -7,7 +7,7 @@ import { defineComponent, h } from "vue";
 import type { FunctionalComponent, PropType } from "vue";
 import { mount } from "@vue/test-utils";
 import Structure from "#foundation/components/system/panel.vue";
-import { definePanel } from "#foundation/specs/panel";
+import { definePanel } from "#foundation/definitions/panel";
 import type { PanelProps } from "#foundation/types/system/panel";
 import type { AnyWidget } from "#foundation/types/widget";
 
@@ -30,7 +30,7 @@ const FixtureWidget = defineComponent({
   },
 });
 
-const makeSpec = () =>
+const makeDefinition = () =>
   definePanel({
     widgets: {
       alpha: (): AnyWidget => ({
@@ -49,17 +49,17 @@ const makeSpec = () =>
     },
   });
 
-type Spec = ReturnType<typeof makeSpec>;
+type Definition = ReturnType<typeof makeDefinition>;
 
 // Generic SFCs don't instantiate through mount()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates R for the harness.
-const Panel: FunctionalComponent<PanelProps<Spec["widgets"]>> = Structure;
+const Panel: FunctionalComponent<PanelProps<Definition["widgets"]>> = Structure;
 
 const mountPanel = (slots: Record<string, () => ReturnType<typeof h>> = {}) => {
   return mount(
     defineComponent({
       setup() {
-        return () => h(Panel, { spec: makeSpec() }, slots);
+        return () => h(Panel, { definition: makeDefinition() }, slots);
       },
     }),
   );

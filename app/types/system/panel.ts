@@ -1,6 +1,6 @@
 import type { GroupProps } from "#foundation/types/common/group";
 import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Wiring } from "#foundation/types/spec";
+import type { Wiring } from "#foundation/types/definition";
 import type { Widgets } from "#foundation/types/widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -24,7 +24,7 @@ export type Regions<R extends Widgets = Widgets> = {
  * region each fills (`regions`), how it talks to itself (`wire`). Built at
  * module scope with `definePanel` — pure data, no runtime.
  */
-export type PanelSpec<R extends Widgets> = {
+export type PanelDefinition<R extends Widgets> = {
   widgets: R;
   regions: Regions<R>;
   wire?: Wiring<R>;
@@ -38,12 +38,12 @@ export type PanelPassthrough = {
 };
 
 export type PanelProps<R extends Widgets> = {
-  spec: PanelSpec<R>;
+  definition: PanelDefinition<R>;
   pt?: PT<PanelPassthrough>;
 };
 
 export type PanelContext<R extends Widgets> = {
-  spec: PanelSpec<R>;
+  definition: PanelDefinition<R>;
   el: ComponentPublicInstance | null;
   settings: PanelPassthrough;
 };

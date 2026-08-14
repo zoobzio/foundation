@@ -1,4 +1,4 @@
-// Gold standard: structures. A fixture spec drives the workspace — assigned
+// Gold standard: structures. A fixture definition drives the workspace — assigned
 // cells render their widget through the erased `<component :is>` path with
 // service and resolved settings; unassigned cells stay slot-only; the
 // `slot:`/`widget:` override cascade and the grid math are the behavior
@@ -8,7 +8,7 @@ import { defineComponent, h } from "vue";
 import type { FunctionalComponent, PropType } from "vue";
 import { mount } from "@vue/test-utils";
 import Structure from "#foundation/components/system/workspace.vue";
-import { defineWorkspace } from "#foundation/specs/workspace";
+import { defineWorkspace } from "#foundation/definitions/workspace";
 import type { WorkspaceProps } from "#foundation/types/system/workspace";
 import type { AnyWidget } from "#foundation/types/widget";
 
@@ -31,7 +31,7 @@ const FixtureWidget = defineComponent({
   },
 });
 
-const makeSpec = () =>
+const makeDefinition = () =>
   defineWorkspace({
     widgets: {
       alpha: (): AnyWidget => ({
@@ -55,11 +55,11 @@ const makeSpec = () =>
     },
   });
 
-type Spec = ReturnType<typeof makeSpec>;
+type Definition = ReturnType<typeof makeDefinition>;
 
 // Generic SFCs don't instantiate through mount()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates R for the harness.
-const Workspace: FunctionalComponent<WorkspaceProps<Spec["widgets"]>> =
+const Workspace: FunctionalComponent<WorkspaceProps<Definition["widgets"]>> =
   Structure;
 
 const mountWorkspace = (
@@ -68,7 +68,7 @@ const mountWorkspace = (
   return mount(
     defineComponent({
       setup() {
-        return () => h(Workspace, { spec: makeSpec() }, slots);
+        return () => h(Workspace, { definition: makeDefinition() }, slots);
       },
     }),
   );
@@ -95,7 +95,7 @@ describe("system workspace", () => {
     expect(cells[2]?.text()).toBe("");
   });
 
-  it("lays out the grid from the spec", () => {
+  it("lays out the grid from the definition", () => {
     const wrapper = mountWorkspace();
     const grid = wrapper.get(".f-system-workspace-grid");
     expect(grid.attributes("style")).toContain(

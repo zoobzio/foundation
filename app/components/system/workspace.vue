@@ -20,16 +20,16 @@ import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts" generic="R extends Widgets">
-const { spec, pt } = defineProps<WorkspaceProps<R>>();
+const { definition, pt } = defineProps<WorkspaceProps<R>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const widgets = useWidgets(spec.widgets);
-useWiring(spec.wire, widgets);
+const widgets = useWidgets(definition.widgets);
+useWiring(definition.wire, widgets);
 
 // Each grid cell paired with its resolved widget, if the layout assigns one.
 const cells = computed(() =>
-  spec.layout.slots.map((slot) => {
+  definition.layout.slots.map((slot) => {
     const key = slot.widget === undefined ? undefined : String(slot.widget);
     return {
       slot,
@@ -41,8 +41,8 @@ const cells = computed(() =>
 
 const gridStyle = computed((): Record<string, string> => ({
   display: "grid",
-  "grid-template-columns": `repeat(${spec.layout.columns}, 1fr)`,
-  "grid-template-rows": `repeat(${spec.layout.rows}, 1fr)`,
+  "grid-template-columns": `repeat(${definition.layout.columns}, 1fr)`,
+  "grid-template-rows": `repeat(${definition.layout.rows}, 1fr)`,
 }));
 
 const slotStyle = (slot: Slot<R>): Record<string, string> => ({
@@ -62,7 +62,7 @@ const settings = usePassthrough<WorkspacePassthrough<R>>(() => ({
 }));
 
 const ctx = useContext<WorkspaceContext<R>>("system-workspace", () => ({
-  spec,
+  definition,
   el: el.value,
   settings: settings.value,
 }));

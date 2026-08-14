@@ -1,14 +1,14 @@
+import type { Definition } from "#foundation/types/definition";
 import type { ScopedEvent } from "#foundation/types/hook";
-import type { Passthrough } from "#foundation/types/passthrough";
 import type { Ref } from "#imports";
 
 /**
- * Authors an adapter contract from a component's Props/Emits pair —
- * `Contract<DirectoryProps<T>, DirectoryEmits<T>>` — mapping each emit to
- * its optional `on*` listener prop, the encoding `EmitName` recovers.
- * Structurally the `Passthrough` transform; aliased for the semantics.
+ * An adapter contract IS a definition — a component's Props/Emits pair in
+ * `v-bind` form (`Definition<DirectoryProps<T>, DirectoryEmits<T>>`), the
+ * encoding `EmitName` recovers. Re-exported under the adapter's vocabulary:
+ * the contract is the definition the adapter enforces against a component.
  */
-export type Contract<Props, Emits = {}> = Passthrough<Props, Emits>;
+export type Contract<Props, Emits = {}> = Definition<Props, Emits>;
 
 /**
  * The component being adapted: anything accepting props `P`. Both encodings
@@ -90,7 +90,7 @@ export type Service<P> = {
 };
 
 /**
- * The typed events phantom at the factory's concrete contract — spec wiring
+ * The typed events phantom at the factory's concrete contract — definition wiring
  * recovers the `Emitted` union from it. Empty when the contract declares no
  * emits, so an unbridged adapter offers no wire surface. `patch`/`reset`
  * deliberately emit nothing: prop control is coordination plumbing, and a

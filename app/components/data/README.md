@@ -25,6 +25,7 @@ A feature `<name>` spans a fixed set of files:
 | Component types     | `types/data/<name>/widget.ts` (+ one per sub-component) |
 | State               | `stores/<name>.ts`                                      |
 | Logic               | `services/<name>.ts`                                    |
+| Definition          | `definitions/<name>.ts`                                 |
 | Wiring              | `factories/<name>.ts`                                   |
 | Feature composables | `composables/<name>.ts`                                 |
 | Components          | `components/data/<name>/widget.vue` (+ sub-components)  |
@@ -106,25 +107,40 @@ export class AutocompleteService<M> implements Service<M> {
   what actions forward. Presentational timing (blur delays, scrolling) is
   widget/composable territory.
 
-## Factory (`factories/<name>.ts`)
+## Definition + factory (`definitions/<name>.ts` · `factories/<name>.ts`)
 
-Pure wiring — resolve the app, access the store, construct the service,
-return the widget triple. No logic:
+Authoring is split into two verbs. `define<Name>` is a typed constructor
+over the feature's static description — config, actions, settings — pure
+data plus consumer callbacks, definable at module scope, reusable across
+instances:
+
+```ts
+export type AutocompleteDefinition<M> = {
+  config: Config<M>;
+  actions?: Actions<M>;
+  settings?: WidgetSettings<AutocompleteWidgetProps<M>>;
+};
+
+export const defineAutocomplete = <M>(
+  definition: AutocompleteDefinition<M>,
+): AutocompleteDefinition<M> => definition;
+```
+
+The factory instances a definition — `id` is the only thing it adds (shared
+state, hook scoping, wiring identity all key on it). Pure wiring, no logic:
 
 ```ts
 import component from "#foundation/components/data/autocomplete/widget.vue";
 
 export const createAutocomplete = <M>(
   id: string,
-  config: Config<M>,
-  actions: Actions<M> = {},
-  settings?: WidgetSettings<AutocompleteWidgetProps<M>>,
+  definition: AutocompleteDefinition<M>,
 ) => {
   return (): Widget<AutocompleteWidgetProps<M>> => {
     const nuxt = useNuxtApp();
     const state = accessAutocomplete<M>(id);
-    const service = new AutocompleteService(nuxt, id, config, state, actions);
-    return { service, component, settings };
+    const service = new AutocompleteService(nuxt, id, definition.config, state, definition.actions ?? {});
+    return { service, component, settings: definition.settings };
   };
 };
 ```
@@ -296,18 +312,27 @@ identically to a real feature. It follows this tier's anatomy (store,
 service, factory, widget, registered event) with deliberate deviations.
 
 ```ts
-type NavContract = Contract<DirectoryProps<NavEntry>, DirectoryEmits<NavEntry>>;
+// the composite definition — the same v-bindable object a template uses
+const nav = defineDirectory({ groups: NAV_GROUPS, onSelect: (item) => {} });
 
-const useNav = createAdapter<NavContract>(
-  "nav",
-  { component: Directory, emits: { select: true } },
-  () => ({ groups: gated.value }),
-);
+// the lift — component, exhaustive emit acknowledgment, definition as settings
+const adapter = defineAdapter({
+  component: Directory,
+  emits: { select: true },
+  settings: nav,
+});
+
+const useNav = createAdapter("sidebar-nav", adapter);
 ```
 
-- **The contract is the authored surface.** Pass it explicitly — composed
-  from a component's own types via `Contract<Props, Emits>` — and everything
-  verifies against it: the component must implement it (checked at
+One named const per entity — definitions are declared, then composed by
+reference; `define*` calls never nest inside `create*` calls.
+
+- **The contract is a definition.** `Contract<Props, Emits>` is the same
+  transform as `Definition<Props, Emits>` — a component's props plus emit
+  listeners in `v-bind` form — so a composite's `<Name>Definition` is a valid
+  contract and valid `settings` with zero glue. `defineAdapter<Contract>` is
+  where it's enforced: everything verifies against it: the component must implement it (checked at
   `component:`), `settings`/`patch` check against exactly its props, its
   `on*` listener props define the emit vocabulary, and wire payloads carry
   its exact argument tuples. Omitting the generic infers the contract from
@@ -320,8 +345,8 @@ const useNav = createAdapter<NavContract>(
   `emits: {}`. Contract emit ⇔ bridged emit: local-only means leaving the
   listener off the contract.
 - **`pt` is the wrapped component's own props, not a part manifest.**
-  `settings` is the reactive base — mandatory when the contract has required
-  props — and the service's `patch`/`reset` override layer merges over it
+  `settings` is the reactive base — the definition requires it when the
+  contract has required props — and the service's `patch`/`reset` override layer merges over it
   **flat, per key**. `patch` is the entry point spec wiring uses to drive an
   adapted component imperatively (`services.nav.patch({ … })`); it emits no
   domain event — prop control is coordination plumbing, and an event there
@@ -337,7 +362,8 @@ const useNav = createAdapter<NavContract>(
   calls and wire handlers, that is a feature asking to be built.
 - Ids use the standard instancing model (`adapter-${id}-props`): the same id
   anywhere in the app shares the override layer. Name adapter ids as
-  deliberately as feature ids.
+  deliberately as feature ids — the definition is the reusable half, the id
+  is the instancing decision.
 
 ## Adding a feature
 
@@ -351,16 +377,18 @@ Build order for a new feature in this tier:
 3. **Service** — _all_ feature logic lives in the class; log + emit
    discipline. Typecheck before moving on: the service compiles clean before
    any component exists.
-4. **Factory** — pure wiring.
-5. **Register events** in `app.d.ts`.
-6. **Component types** — `types/data/<name>/widget.ts` (+ per sub-component),
+4. **Definition** — `definitions/<name>.ts`: the `<Name>Definition` bundle
+   and its `define<Name>` constructor.
+5. **Factory** — pure wiring over the definition.
+6. **Register events** in `app.d.ts`.
+7. **Component types** — `types/data/<name>/widget.ts` (+ per sub-component),
    prefixed, emits derived from `Events`.
-7. **Sub-components** for repeated units; anchor type; keyed-`pt` or iter
+8. **Sub-components** for repeated units; anchor type; keyed-`pt` or iter
    entry.
-8. **Feature composables** — everything in the widget script that isn't
+9. **Feature composables** — everything in the widget script that isn't
    wiring goes here.
-9. **Widgets** — the skeleton above; `f-data-*` classes; slots forwarded.
-10. **Verify** — `npx nuxt typecheck` and `npx eslint` on every touched
+10. **Widgets** — the skeleton above; `f-data-*` classes; slots forwarded.
+11. **Verify** — `npx nuxt typecheck` and `npx eslint` on every touched
     path.
 
 ## Source map
@@ -377,4 +405,4 @@ Build order for a new feature in this tier:
 | Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/autocomplete.ts`](../../services/autocomplete.ts)  |
 | Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`autocomplete/widget.vue`](./autocomplete/widget.vue)              |
 | Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`autocomplete/item.vue`](./autocomplete/item.vue) (iterated) |
-| Adapter             | [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |
+| Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |
