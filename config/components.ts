@@ -279,6 +279,7 @@ export default {
     "date-picker": { events: [] },
     "date-range-picker": { events: [] },
     dialog: { events: [] },
+    directory: { events: [] },
     fab: { events: ["click"] },
     facets: { events: [] },
     hero: { events: [] },
