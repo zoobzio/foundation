@@ -1,26 +1,26 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { TableProps } from "#foundation/types/common/table";
-import type { FabProps, FabEmits } from "#foundation/types/core/fab";
+import type { GroupProps } from "../../common/group";
+import type { TableProps } from "../../common/table";
+import type { FabProps, FabEmits } from "../../core/fab";
 import type {
   PaginationEmits,
   PaginationProps,
-} from "#foundation/types/core/pagination";
+} from "../../core/pagination";
 import type {
   ScrollerEmits,
   ScrollerProps,
-} from "#foundation/types/core/scroller";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service, Events } from "#foundation/types/data/table";
+} from "../../core/scroller";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service, Events } from "../table";
 import type {
   TableHeadPassthrough,
   TableHeadSlots,
-} from "#foundation/types/data/table/head";
+} from "./head";
 import type {
   TableBodyPassthrough,
   TableBodySlots,
-} from "#foundation/types/data/table/body";
-import type { TableColumnsPassthrough } from "#foundation/types/data/table/columns";
-import type { TableBulkActionsPassthrough } from "#foundation/types/data/table/bulk-actions";
+} from "./body";
+import type { TableColumnsPassthrough } from "./columns";
+import type { TableBulkActionsPassthrough } from "./bulk-actions";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type TableWidgetPassthrough = {

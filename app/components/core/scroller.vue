@@ -4,23 +4,23 @@ import type {
   ScrollerPassthrough,
   ScrollerContext,
   ScrollerSlots,
-} from "#foundation/types/core/scroller";
+} from "../../types/core/scroller";
 import type { ComponentPublicInstance } from "vue";
 
-import ScrollAreaRoot from "#foundation/components/common/scroll-area/root.vue";
-import ScrollAreaViewport from "#foundation/components/common/scroll-area/viewport.vue";
-import ScrollAreaScrollbar from "#foundation/components/common/scroll-area/scrollbar.vue";
-import ScrollAreaThumb from "#foundation/components/common/scroll-area/thumb.vue";
-import ScrollAreaCorner from "#foundation/components/common/scroll-area/corner.vue";
-import Button from "#foundation/components/common/button.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Span from "#foundation/components/common/span.vue";
+import ScrollAreaRoot from "../common/scroll-area/root.vue";
+import ScrollAreaViewport from "../common/scroll-area/viewport.vue";
+import ScrollAreaScrollbar from "../common/scroll-area/scrollbar.vue";
+import ScrollAreaThumb from "../common/scroll-area/thumb.vue";
+import ScrollAreaCorner from "../common/scroll-area/corner.vue";
+import Button from "../common/button.vue";
+import Icon from "../common/icon.vue";
+import Span from "../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useScroller } from "#foundation/composables/scroller";
-import { SCROLLER_HIDE_DELAY } from "#foundation/constants/scroller";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
+import { useScroller } from "../../composables/scroller";
+import { SCROLLER_HIDE_DELAY } from "../../constants/scroller";
 </script>
 
 <script setup lang="ts">

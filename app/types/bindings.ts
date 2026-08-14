@@ -1,10 +1,10 @@
-import type { Element } from "#foundation/types/component";
-import type { AriaBindings, AriaProps } from "#foundation/types/aria";
+import type { Element } from "./component";
+import type { AriaBindings, AriaProps } from "./aria";
 import type {
   ModifierBindings,
   ModifierProps,
-} from "#foundation/types/modifiers";
-import type { TokenBindings, TokenProps } from "#foundation/types/tokens";
+} from "./modifiers";
+import type { TokenBindings, TokenProps } from "./tokens";
 
 export type BindingProps<C extends Element> = ModifierProps<C> &
   TokenProps<C> &

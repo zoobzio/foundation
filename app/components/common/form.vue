@@ -4,11 +4,11 @@ import type {
   FormEmits,
   FormProps,
   FormSlots,
-} from "#foundation/types/common/form";
+} from "../../types/common/form";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../composables/bindings";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

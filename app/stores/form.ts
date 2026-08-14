@@ -1,4 +1,4 @@
-import type { Config, State } from "#foundation/types/data/form";
+import type { Config, State } from "../types/data/form";
 
 import { useState } from "#imports";
 

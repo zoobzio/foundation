@@ -1,5 +1,5 @@
-import type { ListboxEmits, ListboxProps } from "#foundation/types/core/listbox";
-import type { Definition } from "#foundation/types/definition";
+import type { ListboxEmits, ListboxProps } from "../types/core/listbox";
+import type { Definition } from "../types/definition";
 
 /**
  * A listbox instance as data: props plus emit listeners — the object a

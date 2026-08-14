@@ -5,25 +5,25 @@ import type {
   FormWidgetPassthrough,
   FormWidgetProps,
   FormWidgetSlots,
-} from "#foundation/types/data/form/widget";
-import type { Events } from "#foundation/types/data/form";
+} from "../../../types/data/form/widget";
+import type { Events } from "../../../types/data/form";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Field from "#foundation/components/data/form/field.vue";
-import Form from "#foundation/components/common/form.vue";
-import Group from "#foundation/components/common/group.vue";
-import Scroller from "#foundation/components/core/scroller.vue";
-import Span from "#foundation/components/common/span.vue";
+import Button from "../../common/button.vue";
+import Field from "./field.vue";
+import Form from "../../common/form.vue";
+import Group from "../../common/group.vue";
+import Scroller from "../../core/scroller.vue";
+import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { useForm } from "#foundation/composables/form";
-import { useHooks } from "#foundation/composables/hook";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useForwardSlots } from "#foundation/composables/slots";
-import { useLazyRequest } from "#foundation/composables/request";
-import { FORM_FIELD_SLOTS } from "#foundation/constants/form";
+import { useForm } from "../../../composables/form";
+import { useHooks } from "../../../composables/hook";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useForwardSlots } from "../../../composables/slots";
+import { useLazyRequest } from "../../../composables/request";
+import { FORM_FIELD_SLOTS } from "../../../constants/form";
 </script>
 
 <script setup lang="ts" generic="T">

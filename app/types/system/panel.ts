@@ -1,7 +1,7 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Wiring } from "#foundation/types/definition";
-import type { Widgets } from "#foundation/types/widget";
+import type { GroupProps } from "../common/group";
+import type { Passthrough, PT } from "../passthrough";
+import type { Wiring } from "../definition";
+import type { Widgets } from "../widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**

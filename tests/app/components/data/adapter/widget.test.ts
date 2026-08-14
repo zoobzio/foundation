@@ -7,10 +7,10 @@ import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
-import Widget from "#foundation/components/data/adapter/widget.vue";
-import { createAdapter } from "#foundation/factories/adapter";
-import type { AdapterWidgetProps } from "#foundation/types/data/adapter/widget";
-import type { Service } from "#foundation/types/data/adapter";
+import Widget from "../../../../../app/components/data/adapter/widget.vue";
+import { createAdapter } from "../../../../../app/factories/adapter";
+import type { AdapterWidgetProps } from "../../../../../app/types/data/adapter/widget";
+import type { Service } from "../../../../../app/types/data/adapter";
 
 const FixtureLogo = defineComponent({
   name: "FixtureLogo",

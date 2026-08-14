@@ -5,38 +5,38 @@ import type {
   DateRangePickerPassthrough,
   DateRangePickerContext,
   DateRangePickerSlots,
-} from "#foundation/types/core/date-range-picker";
+} from "../../types/core/date-range-picker";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 
-import DateRangePickerRoot from "#foundation/components/common/date-range-picker/root.vue";
-import DateRangePickerField from "#foundation/components/common/date-range-picker/field.vue";
-import DateRangePickerInput from "#foundation/components/common/date-range-picker/input.vue";
-import DateRangePickerTrigger from "#foundation/components/common/date-range-picker/trigger.vue";
-import DateRangePickerContent from "#foundation/components/common/date-range-picker/content.vue";
-import DateRangePickerCalendar from "#foundation/components/common/date-range-picker/calendar.vue";
-import DateRangePickerHeader from "#foundation/components/common/date-range-picker/header.vue";
-import DateRangePickerHeading from "#foundation/components/common/date-range-picker/heading.vue";
-import DateRangePickerPrev from "#foundation/components/common/date-range-picker/prev.vue";
-import DateRangePickerNext from "#foundation/components/common/date-range-picker/next.vue";
-import DateRangePickerGrid from "#foundation/components/common/date-range-picker/grid.vue";
-import DateRangePickerGridHead from "#foundation/components/common/date-range-picker/grid-head.vue";
-import DateRangePickerGridBody from "#foundation/components/common/date-range-picker/grid-body.vue";
-import DateRangePickerGridRow from "#foundation/components/common/date-range-picker/grid-row.vue";
-import DateRangePickerHeadCell from "#foundation/components/common/date-range-picker/head-cell.vue";
-import DateRangePickerCell from "#foundation/components/common/date-range-picker/cell.vue";
-import DateRangePickerCellTrigger from "#foundation/components/common/date-range-picker/cell-trigger.vue";
-import Em from "#foundation/components/common/em.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import DateRangePickerRoot from "../common/date-range-picker/root.vue";
+import DateRangePickerField from "../common/date-range-picker/field.vue";
+import DateRangePickerInput from "../common/date-range-picker/input.vue";
+import DateRangePickerTrigger from "../common/date-range-picker/trigger.vue";
+import DateRangePickerContent from "../common/date-range-picker/content.vue";
+import DateRangePickerCalendar from "../common/date-range-picker/calendar.vue";
+import DateRangePickerHeader from "../common/date-range-picker/header.vue";
+import DateRangePickerHeading from "../common/date-range-picker/heading.vue";
+import DateRangePickerPrev from "../common/date-range-picker/prev.vue";
+import DateRangePickerNext from "../common/date-range-picker/next.vue";
+import DateRangePickerGrid from "../common/date-range-picker/grid.vue";
+import DateRangePickerGridHead from "../common/date-range-picker/grid-head.vue";
+import DateRangePickerGridBody from "../common/date-range-picker/grid-body.vue";
+import DateRangePickerGridRow from "../common/date-range-picker/grid-row.vue";
+import DateRangePickerHeadCell from "../common/date-range-picker/head-cell.vue";
+import DateRangePickerCell from "../common/date-range-picker/cell.vue";
+import DateRangePickerCellTrigger from "../common/date-range-picker/cell-trigger.vue";
+import Em from "../common/em.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 import {
   DATE_RANGE_PICKER_NUMBER_OF_MONTHS,
   DATE_RANGE_PICKER_SIDE_OFFSET,
-} from "#foundation/constants/date-range-picker";
+} from "../../constants/date-range-picker";
 </script>
 
 <script setup lang="ts">

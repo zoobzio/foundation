@@ -2,7 +2,7 @@ import type {
   AppError,
   ErrorData,
   ErrorOptions,
-} from "#foundation/types/error";
+} from "../types/error";
 import type { HTTPCode } from "ltrl-http";
 
 import { createError } from "#imports";

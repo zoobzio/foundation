@@ -1,5 +1,5 @@
-import type { RadioEmits, RadioProps } from "#foundation/types/core/radio";
-import type { Definition } from "#foundation/types/definition";
+import type { RadioEmits, RadioProps } from "../types/core/radio";
+import type { Definition } from "../types/definition";
 
 /**
  * A radio instance as data: props plus emit listeners — the object a

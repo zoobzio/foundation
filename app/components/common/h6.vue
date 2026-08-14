@@ -3,11 +3,11 @@ import type {
   H6Context,
   H6Props,
   H6Slots,
-} from "#foundation/types/common/h6";
+} from "../../types/common/h6";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../composables/bindings";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

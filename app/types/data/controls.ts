@@ -1,28 +1,28 @@
-import type { InputProps, InputEmits } from "#foundation/types/common/input";
+import type { InputProps, InputEmits } from "../common/input";
 import type {
   TextareaProps,
   TextareaEmits,
-} from "#foundation/types/common/textarea";
+} from "../common/textarea";
 import type {
   CheckboxProps,
   CheckboxEmits,
-} from "#foundation/types/core/checkbox";
+} from "../core/checkbox";
 import type {
   DatePickerProps,
   DatePickerEmits,
-} from "#foundation/types/core/date-picker";
+} from "../core/date-picker";
 import type {
   MultiSelectProps,
   MultiSelectEmits,
-} from "#foundation/types/core/multi-select";
-import type { RadioProps, RadioEmits } from "#foundation/types/core/radio";
-import type { SelectProps, SelectEmits } from "#foundation/types/core/select";
+} from "../core/multi-select";
+import type { RadioProps, RadioEmits } from "../core/radio";
+import type { SelectProps, SelectEmits } from "../core/select";
 import type {
   TagsInputProps,
   TagsInputEmits,
-} from "#foundation/types/core/tags-input";
-import type { Option } from "#foundation/types/core/common";
-import type { Passthrough } from "#foundation/types/passthrough";
+} from "../core/tags-input";
+import type { Option } from "../core/common";
+import type { Passthrough } from "../passthrough";
 
 /**
  * One passthrough entry per control the form widget can render.

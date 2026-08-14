@@ -1,5 +1,5 @@
-import type { PopoverEmits, PopoverProps } from "#foundation/types/core/popover";
-import type { Definition } from "#foundation/types/definition";
+import type { PopoverEmits, PopoverProps } from "../types/core/popover";
+import type { Definition } from "../types/definition";
 
 /**
  * A popover instance as data: props plus emit listeners — the object a

@@ -1,8 +1,8 @@
-import type { AriaProps } from "#foundation/types/aria";
-import type { Bindings } from "#foundation/types/bindings";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { ModifierProps } from "#foundation/types/modifiers";
-import type { TokenProps } from "#foundation/types/tokens";
+import type { AriaProps } from "../aria";
+import type { Bindings } from "../bindings";
+import type { ComponentEvents } from "../events";
+import type { ModifierProps } from "../modifiers";
+import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
 
 export type AlertProps = {

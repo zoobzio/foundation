@@ -5,23 +5,23 @@ import type {
   DeckWidgetPassthrough,
   DeckWidgetProps,
   DeckWidgetSlots,
-} from "#foundation/types/data/deck/widget";
-import type { Events } from "#foundation/types/data/deck";
+} from "../../../types/data/deck/widget";
+import type { Events } from "../../../types/data/deck";
 import type { ComponentPublicInstance } from "vue";
 
-import Feed from "#foundation/components/data/deck/feed.vue";
-import Toolbar from "#foundation/components/data/deck/toolbar.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
+import Feed from "./feed.vue";
+import Toolbar from "./toolbar.vue";
+import Fab from "../../core/fab.vue";
+import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
-import { useDeck } from "#foundation/composables/deck";
-import { useHooks } from "#foundation/composables/hook";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useForwardSlots } from "#foundation/composables/slots";
-import { useLazyRequest } from "#foundation/composables/request";
-import { DECK_FEED_SLOTS, DECK_PENDING_ICON } from "#foundation/constants/deck";
+import { useDeck } from "../../../composables/deck";
+import { useHooks } from "../../../composables/hook";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useForwardSlots } from "../../../composables/slots";
+import { useLazyRequest } from "../../../composables/request";
+import { DECK_FEED_SLOTS, DECK_PENDING_ICON } from "../../../constants/deck";
 </script>
 
 <script setup lang="ts" generic="T">

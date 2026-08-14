@@ -1,5 +1,5 @@
-import type { FacetsEmits, FacetsProps } from "#foundation/types/core/facets";
-import type { Definition } from "#foundation/types/definition";
+import type { FacetsEmits, FacetsProps } from "../types/core/facets";
+import type { Definition } from "../types/definition";
 
 /**
  * A facets instance as data: props plus emit listeners — the object a

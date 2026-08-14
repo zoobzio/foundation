@@ -1,13 +1,13 @@
-import type { AdapterDefinition } from "#foundation/definitions/adapter";
-import type { Events } from "#foundation/types/data/adapter";
-import type { AdapterWidgetProps } from "#foundation/types/data/adapter/widget";
-import type { Widget } from "#foundation/types/widget";
+import type { AdapterDefinition } from "../definitions/adapter";
+import type { Events } from "../types/data/adapter";
+import type { AdapterWidgetProps } from "../types/data/adapter/widget";
+import type { Widget } from "../types/widget";
 
-import component from "#foundation/components/data/adapter/widget.vue";
+import component from "../components/data/adapter/widget.vue";
 
 import { useNuxtApp } from "#imports";
-import { accessAdapter } from "#foundation/stores/adapter";
-import { AdapterService } from "#foundation/services/adapter";
+import { accessAdapter } from "../stores/adapter";
+import { AdapterService } from "../services/adapter";
 
 /**
  * Instances an adaptation: `id` is the only thing the factory adds — the

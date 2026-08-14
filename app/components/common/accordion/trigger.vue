@@ -5,14 +5,14 @@ import type {
   AccordionTriggerForward,
   AccordionTriggerProps,
   AccordionTriggerSlots,
-} from "#foundation/types/common/accordion/trigger";
+} from "../../../types/common/accordion/trigger";
 import type { ComponentPublicInstance } from "vue";
 
 import { AccordionTrigger, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

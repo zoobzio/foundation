@@ -1,5 +1,5 @@
-import type { TagsInputEmits, TagsInputProps } from "#foundation/types/core/tags-input";
-import type { Definition } from "#foundation/types/definition";
+import type { TagsInputEmits, TagsInputProps } from "../types/core/tags-input";
+import type { Definition } from "../types/definition";
 
 /**
  * A tags-input instance as data: props plus emit listeners — the object a

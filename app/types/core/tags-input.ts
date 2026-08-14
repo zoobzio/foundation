@@ -1,21 +1,21 @@
-import type { IconProps } from "#foundation/types/common/icon";
+import type { IconProps } from "../common/icon";
 import type {
   TagsInputRootProps,
   TagsInputRootEmits,
-} from "#foundation/types/common/tags-input/root";
-import type { TagsInputItemProps } from "#foundation/types/common/tags-input/item";
-import type { TagsInputItemTextProps } from "#foundation/types/common/tags-input/item-text";
+} from "../common/tags-input/root";
+import type { TagsInputItemProps } from "../common/tags-input/item";
+import type { TagsInputItemTextProps } from "../common/tags-input/item-text";
 import type {
   TagsInputItemDeleteProps,
   TagsInputItemDeleteEmits,
-} from "#foundation/types/common/tags-input/item-delete";
-import type { TagsInputInputProps } from "#foundation/types/common/tags-input/input";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/tags-input/item-delete";
+import type { TagsInputInputProps } from "../common/tags-input/input";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type TagsInputPassthrough = {

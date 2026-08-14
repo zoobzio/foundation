@@ -1,5 +1,5 @@
-import type { TooltipEmits, TooltipProps } from "#foundation/types/core/tooltip";
-import type { Definition } from "#foundation/types/definition";
+import type { TooltipEmits, TooltipProps } from "../types/core/tooltip";
+import type { Definition } from "../types/definition";
 
 /**
  * A tooltip instance as data: props plus emit listeners — the object a

@@ -1,35 +1,35 @@
-import type { IconProps } from "#foundation/types/common/icon";
+import type { IconProps } from "../common/icon";
 import type {
   CalendarRootProps,
   CalendarRootEmits,
   CalendarRootSlotProps,
-} from "#foundation/types/common/calendar/root";
-import type { CalendarHeaderProps } from "#foundation/types/common/calendar/header";
-import type { CalendarHeadingProps } from "#foundation/types/common/calendar/heading";
+} from "../common/calendar/root";
+import type { CalendarHeaderProps } from "../common/calendar/header";
+import type { CalendarHeadingProps } from "../common/calendar/heading";
 import type {
   CalendarPrevProps,
   CalendarPrevEmits,
-} from "#foundation/types/common/calendar/prev";
+} from "../common/calendar/prev";
 import type {
   CalendarNextProps,
   CalendarNextEmits,
-} from "#foundation/types/common/calendar/next";
-import type { CalendarGridProps } from "#foundation/types/common/calendar/grid";
-import type { CalendarGridHeadProps } from "#foundation/types/common/calendar/grid-head";
-import type { CalendarGridBodyProps } from "#foundation/types/common/calendar/grid-body";
-import type { CalendarGridRowProps } from "#foundation/types/common/calendar/grid-row";
-import type { CalendarHeadCellProps } from "#foundation/types/common/calendar/head-cell";
-import type { CalendarCellProps } from "#foundation/types/common/calendar/cell";
+} from "../common/calendar/next";
+import type { CalendarGridProps } from "../common/calendar/grid";
+import type { CalendarGridHeadProps } from "../common/calendar/grid-head";
+import type { CalendarGridBodyProps } from "../common/calendar/grid-body";
+import type { CalendarGridRowProps } from "../common/calendar/grid-row";
+import type { CalendarHeadCellProps } from "../common/calendar/head-cell";
+import type { CalendarCellProps } from "../common/calendar/cell";
 import type {
   CalendarCellTriggerProps,
   CalendarCellTriggerEmits,
-} from "#foundation/types/common/calendar/cell-trigger";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/calendar/cell-trigger";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 

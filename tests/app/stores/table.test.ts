@@ -2,8 +2,8 @@
 // — the contract under test is keyed shared state, defaults, and config-driven
 // initialization, not the ref plumbing.
 import { describe, expect, it } from "vitest";
-import { accessTable } from "#foundation/stores/table";
-import { TABLE_DEFAULT_PAGE_SIZE } from "#foundation/constants/table";
+import { accessTable } from "../../../app/stores/table";
+import { TABLE_DEFAULT_PAGE_SIZE } from "../../../app/constants/table";
 import { fakeColumns } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 

@@ -1,5 +1,5 @@
-import type { TabsEmits, TabsProps } from "#foundation/types/core/tabs";
-import type { Definition } from "#foundation/types/definition";
+import type { TabsEmits, TabsProps } from "../types/core/tabs";
+import type { Definition } from "../types/definition";
 
 /**
  * A tabs instance as data: props plus emit listeners — the object a

@@ -1,7 +1,7 @@
-import type { Logger, LogLevel } from "#foundation/types/log";
+import type { Logger, LogLevel } from "../types/log";
 
-import { accessLogs } from "#foundation/stores/log";
-import { LOG_LEVELS, LOG_ROOT_NAME } from "#foundation/constants/log";
+import { accessLogs } from "../stores/log";
+import { LOG_LEVELS, LOG_ROOT_NAME } from "../constants/log";
 
 export const useLogger = (name: string = LOG_ROOT_NAME): Logger => {
   const { level, backlog } = accessLogs();

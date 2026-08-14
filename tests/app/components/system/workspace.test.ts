@@ -7,10 +7,10 @@ import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent, PropType } from "vue";
 import { mount } from "@vue/test-utils";
-import Structure from "#foundation/components/system/workspace.vue";
-import { defineWorkspace } from "#foundation/definitions/workspace";
-import type { WorkspaceProps } from "#foundation/types/system/workspace";
-import type { AnyWidget } from "#foundation/types/widget";
+import Structure from "../../../../app/components/system/workspace.vue";
+import { defineWorkspace } from "../../../../app/definitions/workspace";
+import type { WorkspaceProps } from "../../../../app/types/system/workspace";
+import type { AnyWidget } from "../../../../app/types/widget";
 
 const FixtureWidget = defineComponent({
   name: "FixtureWidget",

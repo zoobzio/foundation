@@ -6,10 +6,10 @@ import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent, PropType } from "vue";
 import { mount } from "@vue/test-utils";
-import Structure from "#foundation/components/system/panel.vue";
-import { definePanel } from "#foundation/definitions/panel";
-import type { PanelProps } from "#foundation/types/system/panel";
-import type { AnyWidget } from "#foundation/types/widget";
+import Structure from "../../../../app/components/system/panel.vue";
+import { definePanel } from "../../../../app/definitions/panel";
+import type { PanelProps } from "../../../../app/types/system/panel";
+import type { AnyWidget } from "../../../../app/types/widget";
 
 const FixtureWidget = defineComponent({
   name: "FixtureWidget",

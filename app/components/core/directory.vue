@@ -6,22 +6,22 @@ import type {
   DirectoryPassthrough,
   DirectoryProps,
   DirectorySlots,
-} from "#foundation/types/core/directory";
+} from "../../types/core/directory";
 import type { ComponentPublicInstance } from "vue";
 
-import Anchor from "#foundation/components/common/anchor.vue";
-import Button from "#foundation/components/common/button.vue";
-import Caption from "#foundation/components/common/caption.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Li from "#foundation/components/common/li.vue";
-import Nav from "#foundation/components/common/nav.vue";
-import Span from "#foundation/components/common/span.vue";
-import Ul from "#foundation/components/common/ul.vue";
+import Anchor from "../common/anchor.vue";
+import Button from "../common/button.vue";
+import Caption from "../common/caption.vue";
+import Group from "../common/group.vue";
+import Icon from "../common/icon.vue";
+import Li from "../common/li.vue";
+import Nav from "../common/nav.vue";
+import Span from "../common/span.vue";
+import Ul from "../common/ul.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts" generic="T extends DirectoryItem">

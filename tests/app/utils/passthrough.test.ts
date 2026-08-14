@@ -2,7 +2,7 @@
 // assert every logic path (here: merge precedence, deep merge, array
 // replacement, function recipes riding through).
 import { describe, expect, it } from "vitest";
-import { passthrough } from "#foundation/utils/passthrough";
+import { passthrough } from "../../../app/utils/passthrough";
 
 interface Parts {
   root: { size?: number; open?: boolean; nested?: { a?: number; b?: number } };

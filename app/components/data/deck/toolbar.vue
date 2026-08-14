@@ -4,27 +4,27 @@ import type {
   DeckToolbarPassthrough,
   DeckToolbarProps,
   DeckToolbarSlots,
-} from "#foundation/types/data/deck/toolbar";
+} from "../../../types/data/deck/toolbar";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Facets from "#foundation/components/core/facets.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Input from "#foundation/components/common/input.vue";
-import Menu from "#foundation/components/core/menu.vue";
-import Popover from "#foundation/components/core/popover.vue";
+import Button from "../../common/button.vue";
+import Facets from "../../core/facets.vue";
+import Fab from "../../core/fab.vue";
+import Group from "../../common/group.vue";
+import Icon from "../../common/icon.vue";
+import Input from "../../common/input.vue";
+import Menu from "../../core/menu.vue";
+import Popover from "../../core/popover.vue";
 
 import { ref, useTemplateRef, watch } from "#imports";
-import { useDeck } from "#foundation/composables/deck";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { useDeck } from "../../../composables/deck";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
 import {
   DECK_REFRESH_ICON,
   DECK_SEARCH_ICON,
   DECK_SORT_CHEVRON,
-} from "#foundation/constants/deck";
+} from "../../../constants/deck";
 </script>
 
 <script setup lang="ts" generic="T">

@@ -1,16 +1,16 @@
-import type { IconProps } from "#foundation/types/common/icon";
+import type { IconProps } from "../common/icon";
 import type {
   ToastRootProps,
   ToastRootEmits,
-} from "#foundation/types/common/toast/root";
-import type { ToastTitleProps } from "#foundation/types/common/toast/title";
-import type { ToastDescriptionProps } from "#foundation/types/common/toast/description";
+} from "../common/toast/root";
+import type { ToastTitleProps } from "../common/toast/title";
+import type { ToastDescriptionProps } from "../common/toast/description";
 import type {
   ToastCloseProps,
   ToastCloseEmits,
-} from "#foundation/types/common/toast/close";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "../common/toast/close";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type ToastPassthrough = {

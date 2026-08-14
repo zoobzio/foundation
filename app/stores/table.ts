@@ -1,10 +1,10 @@
-import type { Config, SortDirection, State } from "#foundation/types/data/table";
+import type { Config, SortDirection, State } from "../types/data/table";
 
 import { useState } from "#imports";
 import {
   TABLE_DEFAULT_PAGE_SIZE,
   TABLE_DEFAULT_SORT_DIRECTION,
-} from "#foundation/constants/table";
+} from "../constants/table";
 
 export const accessTable = <T, K>(
   id: string,

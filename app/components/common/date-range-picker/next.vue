@@ -5,14 +5,14 @@ import type {
   DateRangePickerNextForward,
   DateRangePickerNextProps,
   DateRangePickerNextSlots,
-} from "#foundation/types/common/date-range-picker/next";
+} from "../../../types/common/date-range-picker/next";
 import type { ComponentPublicInstance } from "vue";
 
 import { DateRangePickerNext, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

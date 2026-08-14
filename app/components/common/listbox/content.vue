@@ -4,14 +4,14 @@ import type {
   ListboxContentForward,
   ListboxContentProps,
   ListboxContentSlots,
-} from "#foundation/types/common/listbox/content";
+} from "../../../types/common/listbox/content";
 import type { ComponentPublicInstance } from "vue";
 
 import { ListboxContent, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

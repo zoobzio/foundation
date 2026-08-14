@@ -1,4 +1,4 @@
-import type { State } from "#foundation/types/data/preview";
+import type { State } from "../types/data/preview";
 
 import { useState } from "#imports";
 

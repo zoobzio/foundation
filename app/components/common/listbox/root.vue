@@ -5,14 +5,14 @@ import type {
   ListboxRootProps,
   ListboxRootSlots,
   ListboxValue,
-} from "#foundation/types/common/listbox/root";
+} from "../../../types/common/listbox/root";
 import type { ComponentPublicInstance } from "vue";
 
 import { ListboxRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

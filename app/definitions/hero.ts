@@ -1,5 +1,5 @@
-import type { HeroEmits, HeroProps } from "#foundation/types/core/hero";
-import type { Definition } from "#foundation/types/definition";
+import type { HeroEmits, HeroProps } from "../types/core/hero";
+import type { Definition } from "../types/definition";
 
 /**
  * A hero instance as data: props plus emit listeners — the object a

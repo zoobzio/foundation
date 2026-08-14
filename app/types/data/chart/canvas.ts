@@ -1,6 +1,6 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service } from "#foundation/types/data/chart";
+import type { GroupProps } from "../../common/group";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service } from "../chart";
 import type { ComponentPublicInstance } from "vue";
 
 export type ChartCanvasPassthrough = {

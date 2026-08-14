@@ -1,5 +1,5 @@
 import type { Ref } from "#imports";
-import type { IconAlias } from "#foundation/types/common/iconic";
+import type { IconAlias } from "../common/iconic";
 import type {
   ChartType as CJSChartType,
   ChartOptions as CJSChartOptions,

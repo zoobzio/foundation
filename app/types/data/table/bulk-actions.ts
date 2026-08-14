@@ -1,9 +1,9 @@
-import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service } from "#foundation/types/data/table";
+import type { ButtonProps, ButtonEmits } from "../../common/button";
+import type { GroupProps } from "../../common/group";
+import type { IconProps } from "../../common/icon";
+import type { SpanProps } from "../../common/span";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service } from "../table";
 import type { ComponentPublicInstance } from "vue";
 
 export type TableBulkActionsPassthrough = {

@@ -1,4 +1,4 @@
-import components from "#config/components";
+import components from "../../config/components";
 
 const INDENT = "  ";
 

@@ -4,14 +4,14 @@ import type {
   DatePickerGridBodyForward,
   DatePickerGridBodyProps,
   DatePickerGridBodySlots,
-} from "#foundation/types/common/date-picker/grid-body";
+} from "../../../types/common/date-picker/grid-body";
 import type { ComponentPublicInstance } from "vue";
 
 import { DatePickerGridBody, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

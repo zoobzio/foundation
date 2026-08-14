@@ -1,13 +1,13 @@
-import type { Events } from "#foundation/types/data/form";
-import type { FormWidgetProps } from "#foundation/types/data/form/widget";
-import type { FormDefinition } from "#foundation/definitions/form";
-import type { Widget } from "#foundation/types/widget";
+import type { Events } from "../types/data/form";
+import type { FormWidgetProps } from "../types/data/form/widget";
+import type { FormDefinition } from "../definitions/form";
+import type { Widget } from "../types/widget";
 
-import component from "#foundation/components/data/form/widget.vue";
+import component from "../components/data/form/widget.vue";
 
-import { accessForm } from "#foundation/stores/form";
+import { accessForm } from "../stores/form";
 import { useNuxtApp } from "#imports";
-import { FormService } from "#foundation/services/form";
+import { FormService } from "../services/form";
 
 /**
  * Instances a definition: `id` is the only thing the factory adds — shared

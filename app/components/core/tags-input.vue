@@ -5,20 +5,20 @@ import type {
   TagsInputPassthrough,
   TagsInputContext,
   TagsInputSlots,
-} from "#foundation/types/core/tags-input";
+} from "../../types/core/tags-input";
 import type { ComponentPublicInstance } from "vue";
 
-import TagsInputRoot from "#foundation/components/common/tags-input/root.vue";
-import TagsInputItem from "#foundation/components/common/tags-input/item.vue";
-import TagsInputItemText from "#foundation/components/common/tags-input/item-text.vue";
-import TagsInputItemDelete from "#foundation/components/common/tags-input/item-delete.vue";
-import TagsInputInput from "#foundation/components/common/tags-input/input.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import TagsInputRoot from "../common/tags-input/root.vue";
+import TagsInputItem from "../common/tags-input/item.vue";
+import TagsInputItemText from "../common/tags-input/item-text.vue";
+import TagsInputItemDelete from "../common/tags-input/item-delete.vue";
+import TagsInputInput from "../common/tags-input/input.vue";
+import Icon from "../common/icon.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

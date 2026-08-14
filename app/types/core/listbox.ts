@@ -1,19 +1,19 @@
 import type {
   ListboxRootProps,
   ListboxRootEmits,
-} from "#foundation/types/common/listbox/root";
-import type { ListboxContentProps } from "#foundation/types/common/listbox/content";
+} from "../common/listbox/root";
+import type { ListboxContentProps } from "../common/listbox/content";
 import type {
   ListboxItemProps,
   ListboxItemEmits,
-} from "#foundation/types/common/listbox/item";
-import type { Option } from "#foundation/types/core/common";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/listbox/item";
+import type { Option } from "./common";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type ListboxPassthrough = {

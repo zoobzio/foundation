@@ -1,5 +1,5 @@
-import type { SegmentedControlEmits, SegmentedControlProps } from "#foundation/types/core/segmented-control";
-import type { Definition } from "#foundation/types/definition";
+import type { SegmentedControlEmits, SegmentedControlProps } from "../types/core/segmented-control";
+import type { Definition } from "../types/definition";
 
 /**
  * A segmented-control instance as data: props plus emit listeners — the object a

@@ -4,14 +4,14 @@ import type {
   ToastViewportForward,
   ToastViewportProps,
   ToastViewportSlots,
-} from "#foundation/types/common/toast/viewport";
+} from "../../../types/common/toast/viewport";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToastViewport, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

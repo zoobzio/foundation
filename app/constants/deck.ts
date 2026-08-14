@@ -1,6 +1,6 @@
 // data/deck constants
 
-import type { MatchMode } from "#foundation/types/data/deck";
+import type { MatchMode } from "../types/data/deck";
 
 // Feed slots that share the feed ctx — relayed conditionally so the feed's
 // own defaults survive. The per-item `card` slot is relayed explicitly.

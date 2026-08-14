@@ -5,18 +5,18 @@ import type {
   WorkspacePassthrough,
   WorkspaceProps,
   WorkspaceSlots,
-} from "#foundation/types/system/workspace";
-import type { Widgets } from "#foundation/types/widget";
+} from "../../types/system/workspace";
+import type { Widgets } from "../../types/widget";
 import type { ComponentPublicInstance } from "vue";
 
-import Footer from "#foundation/components/common/footer.vue";
-import Group from "#foundation/components/common/group.vue";
-import Header from "#foundation/components/common/header.vue";
+import Footer from "../common/footer.vue";
+import Group from "../common/group.vue";
+import Header from "../common/header.vue";
 
 import { computed, toValue, useTemplateRef } from "#imports";
-import { useWidgets, useWiring } from "#foundation/composables/widgets";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { useWidgets, useWiring } from "../../composables/widgets";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts" generic="R extends Widgets">

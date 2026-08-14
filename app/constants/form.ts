@@ -1,4 +1,4 @@
-import type { FormFieldSlots } from "#foundation/types/data/form/field";
+import type { FormFieldSlots } from "../types/data/form/field";
 
 /**
  * The field-level slot names the form widget relays to each field.

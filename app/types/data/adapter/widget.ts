@@ -1,4 +1,4 @@
-import type { Service } from "#foundation/types/data/adapter";
+import type { Service } from "../adapter";
 
 /**
  * One deviation from the data-tier norm: `pt` is the wrapped component's own

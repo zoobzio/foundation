@@ -1,16 +1,16 @@
 import type {
   DialogRootProps,
   DialogRootEmits,
-} from "#foundation/types/common/dialog/root";
-import type { DialogOverlayProps } from "#foundation/types/common/dialog/overlay";
+} from "../common/dialog/root";
+import type { DialogOverlayProps } from "../common/dialog/overlay";
 import type {
   DialogContentProps,
   DialogContentEmits,
-} from "#foundation/types/common/dialog/content";
-import type { DialogTitleProps } from "#foundation/types/common/dialog/title";
-import type { DialogDescriptionProps } from "#foundation/types/common/dialog/description";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "../common/dialog/content";
+import type { DialogTitleProps } from "../common/dialog/title";
+import type { DialogDescriptionProps } from "../common/dialog/description";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type DialogPassthrough = {

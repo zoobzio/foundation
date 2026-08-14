@@ -3,8 +3,8 @@
 // shared keyed state, not re-tested service logic (that depth lives in
 // tests/services/table.test.ts).
 import { describe, expect, it, vi } from "vitest";
-import { createTable } from "#foundation/factories/table";
-import type { DataTableFetchResult } from "#foundation/types/data/table";
+import { createTable } from "../../../app/factories/table";
+import type { DataTableFetchResult } from "../../../app/types/data/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 

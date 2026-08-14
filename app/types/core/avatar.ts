@@ -1,11 +1,11 @@
-import type { AvatarRootProps } from "#foundation/types/common/avatar/root";
+import type { AvatarRootProps } from "../common/avatar/root";
 import type {
   AvatarImageProps,
   AvatarImageEmits,
-} from "#foundation/types/common/avatar/image";
-import type { AvatarFallbackProps } from "#foundation/types/common/avatar/fallback";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "../common/avatar/image";
+import type { AvatarFallbackProps } from "../common/avatar/fallback";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type AvatarPassthrough = {

@@ -1,5 +1,5 @@
 import type { Ref } from "#imports";
-import type { Option } from "#foundation/types/core/common";
+import type { Option } from "../core/common";
 
 /**
  * A single suggestion in the active panel, or a locked step in the breadcrumb.

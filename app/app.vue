@@ -1,13 +1,13 @@
 <script lang="ts">
-import type { AppError } from "#foundation/types/error";
+import type { AppError } from "./types/error";
 
-import TooltipProvider from "#foundation/components/common/tooltip/provider.vue";
-import Toast from "#foundation/components/core/toast.vue";
-import Toaster from "#foundation/components/core/toaster.vue";
+import TooltipProvider from "./components/common/tooltip/provider.vue";
+import Toast from "./components/core/toast.vue";
+import Toaster from "./components/core/toaster.vue";
 
 import { ConfigProvider } from "reka-ui";
 import { useHead, useId } from "#imports";
-import { useNotifications } from "#foundation/composables/notification";
+import { useNotifications } from "./composables/notification";
 </script>
 
 <script setup lang="ts">

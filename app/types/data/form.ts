@@ -1,5 +1,5 @@
 import type { Ref } from "#imports";
-import type { Option } from "#foundation/types/core/common";
+import type { Option } from "../core/common";
 import type { ZodObject, ZodRawShape, ZodTypeAny, UnknownKeysParam } from "zod";
 
 /**

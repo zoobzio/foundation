@@ -3,21 +3,21 @@ import type {
   TableColumnsContext,
   TableColumnsPassthrough,
   TableColumnsProps,
-} from "#foundation/types/data/table/columns";
+} from "../../../types/data/table/columns";
 import type { ComponentPublicInstance } from "vue";
 
-import Command from "#foundation/components/core/command.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Popover from "#foundation/components/core/popover.vue";
+import Command from "../../core/command.vue";
+import Fab from "../../core/fab.vue";
+import Popover from "../../core/popover.vue";
 
 import { ref, useTemplateRef } from "#imports";
-import { useTable } from "#foundation/composables/table";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { useTable } from "../../../composables/table";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
 import {
   TABLE_COLUMNS_ICON,
   TABLE_COLUMNS_PLACEHOLDER,
-} from "#foundation/constants/table";
+} from "../../../constants/table";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">

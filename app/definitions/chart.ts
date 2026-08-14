@@ -1,6 +1,6 @@
-import type { Actions, Config } from "#foundation/types/data/chart";
-import type { ChartWidgetProps } from "#foundation/types/data/chart/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Actions, Config } from "../types/data/chart";
+import type { ChartWidgetProps } from "../types/data/chart/widget";
+import type { WidgetSettings } from "../types/widget";
 
 /**
  * The static description `createChart` instances: everything about the

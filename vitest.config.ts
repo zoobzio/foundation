@@ -9,9 +9,6 @@ export default defineConfig({
   resolve: {
     alias: {
       // Source aliases (must mirror nuxt.config).
-      "#foundation": r("./app"),
-      "#config": r("./config"),
-      "#modules": r("./modules"),
       "#stubs": r("./stubs"),
       // Nuxt virtual modules — shimmed for the no-Nuxt vitest environment.
       "#imports": r("./tests/mocks/imports.ts"),

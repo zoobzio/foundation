@@ -1,6 +1,6 @@
-import type { SelectEmits, SelectProps } from "#foundation/types/core/select";
-import type { Option } from "#foundation/types/core/common";
-import type { Definition } from "#foundation/types/definition";
+import type { SelectEmits, SelectProps } from "../types/core/select";
+import type { Option } from "../types/core/common";
+import type { Definition } from "../types/definition";
 
 /**
  * A select instance as data: props plus emit listeners — the object a

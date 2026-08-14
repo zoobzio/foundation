@@ -1,20 +1,20 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
+import type { GroupProps } from "../common/group";
+import type { IconProps } from "../common/icon";
 import type {
   AccordionRootProps,
   AccordionRootEmits,
-} from "#foundation/types/common/accordion/root";
-import type { AccordionItemProps } from "#foundation/types/common/accordion/item";
-import type { AccordionHeaderProps } from "#foundation/types/common/accordion/header";
-import type { AccordionTriggerProps } from "#foundation/types/common/accordion/trigger";
-import type { AccordionContentProps } from "#foundation/types/common/accordion/content";
-import type { Option } from "#foundation/types/core/common";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/accordion/root";
+import type { AccordionItemProps } from "../common/accordion/item";
+import type { AccordionHeaderProps } from "../common/accordion/header";
+import type { AccordionTriggerProps } from "../common/accordion/trigger";
+import type { AccordionContentProps } from "../common/accordion/content";
+import type { Option } from "./common";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type AccordionPassthrough = {

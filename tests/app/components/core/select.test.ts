@@ -5,10 +5,10 @@
 // wrappers underneath have their own suites for their own logic.
 import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
-import Select from "#foundation/components/core/select.vue";
+import Select from "../../../../app/components/core/select.vue";
 import { fakeOptions } from "#test/data/options";
-import type { SelectProps } from "#foundation/types/core/select";
-import type { Option } from "#foundation/types/core/common";
+import type { SelectProps } from "../../../../app/types/core/select";
+import type { Option } from "../../../../app/types/core/common";
 
 const mounted: { unmount: () => void }[] = [];
 

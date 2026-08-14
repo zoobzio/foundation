@@ -4,14 +4,14 @@ import type {
   TabsListForward,
   TabsListProps,
   TabsListSlots,
-} from "#foundation/types/common/tabs/list";
+} from "../../../types/common/tabs/list";
 import type { ComponentPublicInstance } from "vue";
 
 import { TabsList, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

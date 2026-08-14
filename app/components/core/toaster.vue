@@ -4,15 +4,15 @@ import type {
   ToasterPassthrough,
   ToasterContext,
   ToasterSlots,
-} from "#foundation/types/core/toaster";
+} from "../../types/core/toaster";
 import type { ComponentPublicInstance } from "vue";
 
-import ToastProvider from "#foundation/components/common/toast/provider.vue";
-import ToastViewport from "#foundation/components/common/toast/viewport.vue";
+import ToastProvider from "../common/toast/provider.vue";
+import ToastViewport from "../common/toast/viewport.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

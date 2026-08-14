@@ -4,14 +4,14 @@ import type {
   DateRangePickerHeaderForward,
   DateRangePickerHeaderProps,
   DateRangePickerHeaderSlots,
-} from "#foundation/types/common/date-range-picker/header";
+} from "../../../types/common/date-range-picker/header";
 import type { ComponentPublicInstance } from "vue";
 
 import { DateRangePickerHeader, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

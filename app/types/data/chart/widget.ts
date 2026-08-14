@@ -1,16 +1,16 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { FabProps, FabEmits } from "#foundation/types/core/fab";
+import type { GroupProps } from "../../common/group";
+import type { FabProps, FabEmits } from "../../core/fab";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
-import type { Service, Events } from "#foundation/types/data/chart";
-import type { ChartCanvasPassthrough } from "#foundation/types/data/chart/canvas";
+} from "../../passthrough";
+import type { Service, Events } from "../chart";
+import type { ChartCanvasPassthrough } from "./canvas";
 import type {
   ChartControlAnchor,
   ChartControlProps,
-} from "#foundation/types/data/chart/control";
+} from "./control";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type ChartWidgetPassthrough<T> = {

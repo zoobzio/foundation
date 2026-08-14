@@ -1,17 +1,17 @@
-import type { CaptionProps } from "#foundation/types/common/caption";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { FabProps } from "#foundation/types/core/fab";
-import type { PopoverProps, PopoverEmits } from "#foundation/types/core/popover";
+import type { CaptionProps } from "../common/caption";
+import type { GroupProps } from "../common/group";
+import type { FabProps } from "./fab";
+import type { PopoverProps, PopoverEmits } from "./popover";
 import type {
   SegmentedControlProps,
   SegmentedControlEmits,
-} from "#foundation/types/core/segmented-control";
+} from "./segmented-control";
 import type {
   TagsInputProps,
   TagsInputEmits,
-} from "#foundation/types/core/tags-input";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "./tags-input";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type KeywordsMatchMode = "and" | "or";

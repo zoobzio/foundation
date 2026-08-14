@@ -1,6 +1,6 @@
-import type { ModifiersInput } from "#modules/contracts/types";
+import type { ModifiersInput } from "./types";
 
-import components from "#config/components";
+import components from "../../config/components";
 import { keys, entries } from "objectively";
 
 const INDENT = "  ";

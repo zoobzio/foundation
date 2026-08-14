@@ -1,5 +1,5 @@
-import type { PanelDefinition } from "#foundation/types/system/panel";
-import type { Widgets } from "#foundation/types/widget";
+import type { PanelDefinition } from "../types/system/panel";
+import type { Widgets } from "../types/widget";
 
 export type { PanelDefinition };
 

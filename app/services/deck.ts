@@ -6,14 +6,14 @@ import type {
   MatchMode,
   Service,
   State,
-} from "#foundation/types/data/deck";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/deck";
+import type { Logger } from "../types/log";
 
 import {
   DECK_PAGE_SIZE,
   DECK_POLL_INTERVAL,
   SORT_LABELS,
-} from "#foundation/constants/deck";
+} from "../constants/deck";
 
 const sortLabel = (field: string): string =>
   SORT_LABELS[field] ?? field.charAt(0).toUpperCase() + field.slice(1);

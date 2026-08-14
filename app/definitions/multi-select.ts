@@ -1,6 +1,6 @@
-import type { MultiSelectEmits, MultiSelectProps } from "#foundation/types/core/multi-select";
-import type { Option } from "#foundation/types/core/common";
-import type { Definition } from "#foundation/types/definition";
+import type { MultiSelectEmits, MultiSelectProps } from "../types/core/multi-select";
+import type { Option } from "../types/core/common";
+import type { Definition } from "../types/definition";
 
 /**
  * A multi-select instance as data: props plus emit listeners — the object a

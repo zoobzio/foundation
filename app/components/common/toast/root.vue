@@ -4,15 +4,15 @@ import type {
   ToastRootForward,
   ToastRootProps,
   ToastRootSlots,
-} from "#foundation/types/common/toast/root";
+} from "../../../types/common/toast/root";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToastRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

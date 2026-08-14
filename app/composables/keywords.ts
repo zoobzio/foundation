@@ -1,8 +1,8 @@
-import type { KeywordsMatchMode } from "#foundation/types/core/keywords";
+import type { KeywordsMatchMode } from "../types/core/keywords";
 import type { Ref } from "vue";
 
 import { computed, ref, watch } from "#imports";
-import { parse, build } from "#foundation/utils/keywords";
+import { parse, build } from "../utils/keywords";
 
 /**
  * The feature half of the keywords editor: bridges the serialized keyword

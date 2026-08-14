@@ -1,8 +1,8 @@
-import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service, Item } from "#foundation/types/data/autocomplete";
+import type { ButtonProps, ButtonEmits } from "../../common/button";
+import type { IconProps } from "../../common/icon";
+import type { SpanProps } from "../../common/span";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service, Item } from "../autocomplete";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**

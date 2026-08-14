@@ -1,4 +1,4 @@
-import type { MenuGroup } from "#foundation/types/core/menu";
+import type { MenuGroup } from "../../app/types/core/menu";
 
 export const fakeMenuGroups: MenuGroup[] = [
   {

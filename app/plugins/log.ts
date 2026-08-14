@@ -1,5 +1,5 @@
-import { useLogger } from "#foundation/composables/log";
-import { LOG_ROOT_NAME } from "#foundation/constants/log";
+import { useLogger } from "../composables/log";
+import { LOG_ROOT_NAME } from "../constants/log";
 import { defineNuxtPlugin } from "#imports";
 
 /**

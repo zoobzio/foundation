@@ -1,7 +1,7 @@
 // data/table constants
 
-import type { IconAlias } from "#foundation/types/common/iconic";
-import type { SortDirection } from "#foundation/types/data/table";
+import type { IconAlias } from "../types/common/iconic";
+import type { SortDirection } from "../types/data/table";
 
 export const TABLE_DEFAULT_PAGE_SIZE = 25;
 export const TABLE_DEFAULT_SORT_DIRECTION: SortDirection = "asc";

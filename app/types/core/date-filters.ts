@@ -1,20 +1,20 @@
-import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { CalendarProps, CalendarEmits } from "#foundation/types/core/calendar";
+import type { ButtonProps, ButtonEmits } from "../common/button";
+import type { GroupProps } from "../common/group";
+import type { IconProps } from "../common/icon";
+import type { CalendarProps, CalendarEmits } from "./calendar";
 import type {
   CommandOption,
   CommandProps,
   CommandEmits,
-} from "#foundation/types/core/command";
-import type { FabProps } from "#foundation/types/core/fab";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { PopoverProps, PopoverEmits } from "#foundation/types/core/popover";
+} from "./command";
+import type { FabProps } from "./fab";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
+import type { PopoverProps, PopoverEmits } from "./popover";
 import type {
   RangeCalendarProps,
   RangeCalendarEmits,
-} from "#foundation/types/core/range-calendar";
+} from "./range-calendar";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type DateFilterOperator = "before" | "after" | "between";

@@ -1,5 +1,5 @@
-import type { CheckboxEmits, CheckboxProps } from "#foundation/types/core/checkbox";
-import type { Definition } from "#foundation/types/definition";
+import type { CheckboxEmits, CheckboxProps } from "../types/core/checkbox";
+import type { Definition } from "../types/definition";
 
 /**
  * A checkbox instance as data: props plus emit listeners — the object a

@@ -4,12 +4,12 @@ import type {
   AnchorEmits,
   AnchorProps,
   AnchorSlots,
-} from "#foundation/types/common/anchor";
+} from "../../types/common/anchor";
 import type { ComponentPublicInstance } from "vue";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../composables/bindings";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

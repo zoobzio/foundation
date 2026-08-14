@@ -1,13 +1,13 @@
-import type { Events } from "#foundation/types/data/autocomplete";
-import type { AutocompleteWidgetProps } from "#foundation/types/data/autocomplete/widget";
-import type { AutocompleteDefinition } from "#foundation/definitions/autocomplete";
-import type { Widget } from "#foundation/types/widget";
+import type { Events } from "../types/data/autocomplete";
+import type { AutocompleteWidgetProps } from "../types/data/autocomplete/widget";
+import type { AutocompleteDefinition } from "../definitions/autocomplete";
+import type { Widget } from "../types/widget";
 
-import component from "#foundation/components/data/autocomplete/widget.vue";
+import component from "../components/data/autocomplete/widget.vue";
 
-import { accessAutocomplete } from "#foundation/stores/autocomplete";
+import { accessAutocomplete } from "../stores/autocomplete";
 import { useNuxtApp } from "#imports";
-import { AutocompleteService } from "#foundation/services/autocomplete";
+import { AutocompleteService } from "../services/autocomplete";
 
 /**
  * Instances a definition: `id` is the only thing the factory adds — shared

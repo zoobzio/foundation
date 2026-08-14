@@ -1,17 +1,17 @@
-import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
-import type { FormProps, FormEmits } from "#foundation/types/common/form";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { ButtonProps, ButtonEmits } from "../../common/button";
+import type { FormProps, FormEmits } from "../../common/form";
+import type { GroupProps } from "../../common/group";
+import type { SpanProps } from "../../common/span";
+import type { Passthrough, PT } from "../../passthrough";
 import type {
   ScrollerEmits,
   ScrollerProps,
-} from "#foundation/types/core/scroller";
-import type { Service, Events } from "#foundation/types/data/form";
+} from "../../core/scroller";
+import type { Service, Events } from "../form";
 import type {
   FormFieldPassthrough,
   FormFieldSlots,
-} from "#foundation/types/data/form/field";
+} from "./field";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type FormWidgetPassthrough = {

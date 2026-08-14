@@ -3,11 +3,11 @@ import type {
   H2Context,
   H2Props,
   H2Slots,
-} from "#foundation/types/common/h2";
+} from "../../types/common/h2";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../composables/bindings";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

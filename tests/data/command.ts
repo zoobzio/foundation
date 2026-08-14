@@ -1,4 +1,4 @@
-import type { CommandGroup, CommandOption } from "#foundation/types/core/command";
+import type { CommandGroup, CommandOption } from "../../app/types/core/command";
 
 export const fakeCommandGroups: CommandGroup<CommandOption>[] = [
   {

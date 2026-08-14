@@ -5,8 +5,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { useNuxtApp } from "#imports";
-import { AdapterService } from "#foundation/services/adapter";
-import type { State } from "#foundation/types/data/adapter";
+import { AdapterService } from "../../../app/services/adapter";
+import type { State } from "../../../app/types/data/adapter";
 
 const FixtureLogo = defineComponent({
   name: "FixtureLogo",

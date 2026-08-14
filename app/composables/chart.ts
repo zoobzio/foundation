@@ -1,14 +1,14 @@
-import type { Service, RendererConfig } from "#foundation/types/data/chart";
+import type { Service, RendererConfig } from "../types/data/chart";
 import type {
   ChartControlAnchor,
   ChartControlOption,
   ChartControlPassthrough,
-} from "#foundation/types/data/chart/control";
-import type { MenuGroup, MenuItem } from "#foundation/types/core/menu";
+} from "../types/data/chart/control";
+import type { MenuGroup, MenuItem } from "../types/core/menu";
 import type { MaybeRefOrGetter, ShallowRef } from "vue";
 
 import { computed, toValue, watchEffect } from "#imports";
-import { useServiceRefs } from "#foundation/composables/refs";
+import { useServiceRefs } from "./refs";
 import {
   CHART_BUCKET_ICON,
   CHART_FIELD_ICON,
@@ -18,13 +18,13 @@ import {
   RENDERER_FALLBACK_ICON,
   RENDERER_ICONS,
   VARIANT_LABELS,
-} from "#foundation/constants/chart";
+} from "../constants/chart";
 import {
   renderBreakdown,
   renderComparison,
   renderDistribution,
   renderSeries,
-} from "#foundation/utils/chart";
+} from "../utils/chart";
 
 /**
  * The view surface of the chart feature, shared by every chart component:

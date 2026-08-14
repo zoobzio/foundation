@@ -5,28 +5,28 @@ import type {
   RangeCalendarPassthrough,
   RangeCalendarContext,
   RangeCalendarSlots,
-} from "#foundation/types/core/range-calendar";
+} from "../../types/core/range-calendar";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 
-import RangeCalendarRoot from "#foundation/components/common/range-calendar/root.vue";
-import RangeCalendarHeader from "#foundation/components/common/range-calendar/header.vue";
-import RangeCalendarHeading from "#foundation/components/common/range-calendar/heading.vue";
-import RangeCalendarPrev from "#foundation/components/common/range-calendar/prev.vue";
-import RangeCalendarNext from "#foundation/components/common/range-calendar/next.vue";
-import RangeCalendarGrid from "#foundation/components/common/range-calendar/grid.vue";
-import RangeCalendarGridHead from "#foundation/components/common/range-calendar/grid-head.vue";
-import RangeCalendarGridBody from "#foundation/components/common/range-calendar/grid-body.vue";
-import RangeCalendarGridRow from "#foundation/components/common/range-calendar/grid-row.vue";
-import RangeCalendarHeadCell from "#foundation/components/common/range-calendar/head-cell.vue";
-import RangeCalendarCell from "#foundation/components/common/range-calendar/cell.vue";
-import RangeCalendarCellTrigger from "#foundation/components/common/range-calendar/cell-trigger.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import RangeCalendarRoot from "../common/range-calendar/root.vue";
+import RangeCalendarHeader from "../common/range-calendar/header.vue";
+import RangeCalendarHeading from "../common/range-calendar/heading.vue";
+import RangeCalendarPrev from "../common/range-calendar/prev.vue";
+import RangeCalendarNext from "../common/range-calendar/next.vue";
+import RangeCalendarGrid from "../common/range-calendar/grid.vue";
+import RangeCalendarGridHead from "../common/range-calendar/grid-head.vue";
+import RangeCalendarGridBody from "../common/range-calendar/grid-body.vue";
+import RangeCalendarGridRow from "../common/range-calendar/grid-row.vue";
+import RangeCalendarHeadCell from "../common/range-calendar/head-cell.vue";
+import RangeCalendarCell from "../common/range-calendar/cell.vue";
+import RangeCalendarCellTrigger from "../common/range-calendar/cell-trigger.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

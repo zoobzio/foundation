@@ -1,10 +1,10 @@
-import type { AppError } from "#foundation/types/error";
-import type { RequestOptions } from "#foundation/types/request";
+import type { AppError } from "../types/error";
+import type { RequestOptions } from "../types/request";
 import type { MaybeRefOrGetter } from "vue";
 
 import { useAsyncData, useLazyAsyncData, toValue, watch } from "#imports";
-import { useLogger } from "#foundation/composables/log";
-import { useError } from "#foundation/utils/errors";
+import { useLogger } from "./log";
+import { useError } from "../utils/errors";
 import { status } from "ltrl-http";
 
 const make = (

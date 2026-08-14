@@ -5,7 +5,7 @@ import { clearError, computed } from "#imports";
 import {
   ERROR_DEFAULT_STATUS_CODE,
   ERROR_NOT_FOUND_STATUS_CODE,
-} from "#foundation/constants/error";
+} from "./constants/error";
 </script>
 
 <script setup lang="ts">

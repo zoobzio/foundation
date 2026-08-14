@@ -1,9 +1,9 @@
-import type { CaptionProps } from "#foundation/types/common/caption";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { LabelProps } from "#foundation/types/common/label";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Control, Controls } from "#foundation/types/data/controls";
-import type { Field, Service } from "#foundation/types/data/form";
+import type { CaptionProps } from "../../common/caption";
+import type { GroupProps } from "../../common/group";
+import type { LabelProps } from "../../common/label";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Control, Controls } from "../controls";
+import type { Field, Service } from "../form";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type FormFieldPassthrough = {

@@ -1,6 +1,6 @@
-import type { Actions, Config } from "#foundation/types/data/preview";
-import type { PreviewWidgetProps } from "#foundation/types/data/preview/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Actions, Config } from "../types/data/preview";
+import type { PreviewWidgetProps } from "../types/data/preview/widget";
+import type { WidgetSettings } from "../types/widget";
 
 /**
  * The static description `createPreview` instances: everything about the

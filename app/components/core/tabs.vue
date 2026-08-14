@@ -5,19 +5,19 @@ import type {
   TabsPassthrough,
   TabsContext,
   TabsSlots,
-} from "#foundation/types/core/tabs";
+} from "../../types/core/tabs";
 import type { ComponentPublicInstance } from "vue";
 
-import TabsRoot from "#foundation/components/common/tabs/root.vue";
-import TabsList from "#foundation/components/common/tabs/list.vue";
-import TabsTrigger from "#foundation/components/common/tabs/trigger.vue";
-import TabsContent from "#foundation/components/common/tabs/content.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import TabsRoot from "../common/tabs/root.vue";
+import TabsList from "../common/tabs/list.vue";
+import TabsTrigger from "../common/tabs/trigger.vue";
+import TabsContent from "../common/tabs/content.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

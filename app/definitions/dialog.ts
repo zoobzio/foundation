@@ -1,5 +1,5 @@
-import type { DialogEmits, DialogProps } from "#foundation/types/core/dialog";
-import type { Definition } from "#foundation/types/definition";
+import type { DialogEmits, DialogProps } from "../types/core/dialog";
+import type { Definition } from "../types/definition";
 
 /**
  * A dialog instance as data: props plus emit listeners — the object a

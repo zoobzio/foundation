@@ -5,16 +5,16 @@ import type {
   FabPassthrough,
   FabContext,
   FabSlots,
-} from "#foundation/types/core/fab";
+} from "../../types/core/fab";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import Button from "../common/button.vue";
+import Group from "../common/group.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

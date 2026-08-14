@@ -4,17 +4,17 @@ import type {
   AutocompleteItemPassthrough,
   AutocompleteItemProps,
   AutocompleteItemSlots,
-} from "#foundation/types/data/autocomplete/item";
+} from "../../../types/data/autocomplete/item";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Span from "#foundation/components/common/span.vue";
+import Button from "../../common/button.vue";
+import Icon from "../../common/icon.vue";
+import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { useAutocomplete } from "#foundation/composables/autocomplete";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { useAutocomplete } from "../../../composables/autocomplete";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts" generic="M">

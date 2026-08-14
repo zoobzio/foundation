@@ -5,19 +5,19 @@ import type {
   RadioPassthrough,
   RadioContext,
   RadioSlots,
-} from "#foundation/types/core/radio";
+} from "../../types/core/radio";
 import type { ComponentPublicInstance } from "vue";
 
-import RadioGroupRoot from "#foundation/components/common/radio-group/root.vue";
-import RadioGroupItem from "#foundation/components/common/radio-group/item.vue";
-import RadioGroupIndicator from "#foundation/components/common/radio-group/indicator.vue";
-import Label from "#foundation/components/common/label.vue";
-import Span from "#foundation/components/common/span.vue";
+import RadioGroupRoot from "../common/radio-group/root.vue";
+import RadioGroupItem from "../common/radio-group/item.vue";
+import RadioGroupIndicator from "../common/radio-group/indicator.vue";
+import Label from "../common/label.vue";
+import Span from "../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

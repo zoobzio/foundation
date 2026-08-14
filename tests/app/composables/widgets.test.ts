@@ -5,9 +5,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#imports";
-import { useWidgets, useWiring } from "#foundation/composables/widgets";
+import { useWidgets, useWiring } from "../../../app/composables/widgets";
 import { withSetup } from "#test/mount/composable";
-import type { AnyWidget } from "#foundation/types/widget";
+import type { AnyWidget } from "../../../app/types/widget";
 
 const FixtureView = defineComponent({
   name: "FixtureView",

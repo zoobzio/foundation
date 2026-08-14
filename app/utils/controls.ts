@@ -1,7 +1,7 @@
 import type {
   Controls,
   ResolvedControl,
-} from "#foundation/types/data/controls";
+} from "../types/data/controls";
 import type {
   CheckboxField,
   DateField,
@@ -14,9 +14,9 @@ import type {
   TextField,
   TextareaField,
   Service,
-} from "#foundation/types/data/form";
+} from "../types/data/form";
 
-import { serialize, deserialize } from "#foundation/utils/date";
+import { serialize, deserialize } from "./date";
 
 /**
  * The natural-language mapping between the form's field config and each

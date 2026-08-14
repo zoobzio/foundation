@@ -1,4 +1,4 @@
-import type { State } from "#foundation/types/data/adapter";
+import type { State } from "../types/data/adapter";
 
 import { useState } from "#imports";
 

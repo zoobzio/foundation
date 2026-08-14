@@ -1,4 +1,4 @@
-import type { FacetGroup } from "#foundation/types/core/facets";
+import type { FacetGroup } from "../../app/types/core/facets";
 
 export const fakeFacetGroups: FacetGroup[] = [
   {

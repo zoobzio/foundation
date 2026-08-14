@@ -1,4 +1,4 @@
-import type { ServiceRefs } from "#foundation/types/refs";
+import type { ServiceRefs } from "../types/refs";
 
 import { computed } from "#imports";
 import { entries, rekey } from "objectively";

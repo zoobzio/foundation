@@ -1,21 +1,21 @@
-import type { LabelProps } from "#foundation/types/common/label";
+import type { LabelProps } from "../common/label";
 import type {
   RadioGroupRootProps,
   RadioGroupRootEmits,
-} from "#foundation/types/common/radio-group/root";
+} from "../common/radio-group/root";
 import type {
   RadioGroupItemProps,
   RadioGroupItemEmits,
-} from "#foundation/types/common/radio-group/item";
-import type { RadioGroupIndicatorProps } from "#foundation/types/common/radio-group/indicator";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { Option } from "#foundation/types/core/common";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/radio-group/item";
+import type { RadioGroupIndicatorProps } from "../common/radio-group/indicator";
+import type { SpanProps } from "../common/span";
+import type { Option } from "./common";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type RadioPassthrough = {

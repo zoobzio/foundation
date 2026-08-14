@@ -5,24 +5,24 @@ import type {
   AutocompleteWidgetPassthrough,
   AutocompleteWidgetProps,
   AutocompleteWidgetSlots,
-} from "#foundation/types/data/autocomplete/widget";
-import type { Events } from "#foundation/types/data/autocomplete";
+} from "../../../types/data/autocomplete/widget";
+import type { Events } from "../../../types/data/autocomplete";
 import type { ComponentPublicInstance } from "vue";
 
-import Group from "#foundation/components/common/group.vue";
-import Input from "#foundation/components/common/input.vue";
-import Item from "#foundation/components/data/autocomplete/item.vue";
-import Scroller from "#foundation/components/core/scroller.vue";
-import Span from "#foundation/components/common/span.vue";
+import Group from "../../common/group.vue";
+import Input from "../../common/input.vue";
+import Item from "./item.vue";
+import Scroller from "../../core/scroller.vue";
+import Span from "../../common/span.vue";
 
 import { ClientOnly } from "#components";
 import { useTemplateRef } from "#imports";
-import { useAutocomplete } from "#foundation/composables/autocomplete";
-import { useHooks } from "#foundation/composables/hook";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useForwardSlots } from "#foundation/composables/slots";
-import { AUTOCOMPLETE_ITEM_SLOTS } from "#foundation/constants/autocomplete";
+import { useAutocomplete } from "../../../composables/autocomplete";
+import { useHooks } from "../../../composables/hook";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useForwardSlots } from "../../../composables/slots";
+import { AUTOCOMPLETE_ITEM_SLOTS } from "../../../constants/autocomplete";
 </script>
 
 <script setup lang="ts" generic="M">

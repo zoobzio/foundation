@@ -4,14 +4,14 @@ import type {
   DropdownMenuContentForward,
   DropdownMenuContentProps,
   DropdownMenuContentSlots,
-} from "#foundation/types/common/dropdown-menu/content";
+} from "../../../types/common/dropdown-menu/content";
 import type { ComponentPublicInstance } from "vue";
 
 import { DropdownMenuContent, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

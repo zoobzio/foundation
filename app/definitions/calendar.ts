@@ -1,5 +1,5 @@
-import type { CalendarEmits, CalendarProps } from "#foundation/types/core/calendar";
-import type { Definition } from "#foundation/types/definition";
+import type { CalendarEmits, CalendarProps } from "../types/core/calendar";
+import type { Definition } from "../types/definition";
 
 /**
  * A calendar instance as data: props plus emit listeners — the object a

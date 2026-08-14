@@ -1,9 +1,9 @@
-import type { ModifiersInput } from "#modules/contracts/types";
+import type { ModifiersInput } from "./types";
 
 import { addTypeTemplate, createResolver, defineNuxtModule } from "@nuxt/kit";
-import { generateAriaTypes } from "#modules/contracts/aria";
-import { generateEventsTypes } from "#modules/contracts/events";
-import { generateModifierTypes } from "#modules/contracts/modifiers";
+import { generateAriaTypes } from "./aria";
+import { generateEventsTypes } from "./events";
+import { generateModifierTypes } from "./modifiers";
 import devModifiers from "#stubs/modifiers";
 
 /** Options accepted under the `modifiers` key in `nuxt.config`. */

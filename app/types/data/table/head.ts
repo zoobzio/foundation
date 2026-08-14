@@ -1,16 +1,16 @@
-import type { ButtonProps } from "#foundation/types/common/button";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { ThProps } from "#foundation/types/common/th";
-import type { TheadProps } from "#foundation/types/common/thead";
-import type { TrProps } from "#foundation/types/common/tr";
+import type { ButtonProps } from "../../common/button";
+import type { GroupProps } from "../../common/group";
+import type { IconProps } from "../../common/icon";
+import type { SpanProps } from "../../common/span";
+import type { ThProps } from "../../common/th";
+import type { TheadProps } from "../../common/thead";
+import type { TrProps } from "../../common/tr";
 import type {
   CheckboxEmits,
   CheckboxProps,
-} from "#foundation/types/core/checkbox";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { DataTableColumn, Service } from "#foundation/types/data/table";
+} from "../../core/checkbox";
+import type { Passthrough, PT } from "../../passthrough";
+import type { DataTableColumn, Service } from "../table";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type TableHeadPassthrough = {

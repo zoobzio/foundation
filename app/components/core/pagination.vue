@@ -5,21 +5,21 @@ import type {
   PaginationPassthrough,
   PaginationContext,
   PaginationSlots,
-} from "#foundation/types/core/pagination";
+} from "../../types/core/pagination";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Group from "#foundation/components/common/group.vue";
-import Span from "#foundation/components/common/span.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Select from "#foundation/components/core/select.vue";
+import Button from "../common/button.vue";
+import Group from "../common/group.vue";
+import Span from "../common/span.vue";
+import Fab from "./fab.vue";
+import Select from "./select.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { PAGE_SIZE_OPTIONS } from "#foundation/constants/pagination";
-import { usePaginate } from "#foundation/composables/paginate";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { PAGE_SIZE_OPTIONS } from "../../constants/pagination";
+import { usePaginate } from "../../composables/paginate";
 </script>
 
 <script setup lang="ts">

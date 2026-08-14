@@ -4,11 +4,11 @@ import type {
   ChipEmits,
   ChipProps,
   ChipSlots,
-} from "#foundation/types/common/chip";
+} from "../../types/common/chip";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../composables/bindings";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

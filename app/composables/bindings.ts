@@ -1,11 +1,11 @@
-import type { AriaBindings, AriaProps } from "#foundation/types/aria";
-import type { Bindings, BindingsSource } from "#foundation/types/bindings";
+import type { AriaBindings, AriaProps } from "../types/aria";
+import type { Bindings, BindingsSource } from "../types/bindings";
 import type {
   ModifierBindings,
   ModifierProps,
-} from "#foundation/types/modifiers";
-import type { TokenBindings, TokenProps } from "#foundation/types/tokens";
-import type { Element } from "#foundation/types/component";
+} from "../types/modifiers";
+import type { TokenBindings, TokenProps } from "../types/tokens";
+import type { Element } from "../types/component";
 import type { ComputedRef, MaybeRefOrGetter } from "vue";
 
 import { computed, toValue, useUntheme, useUnthemeRenderer } from "#imports";

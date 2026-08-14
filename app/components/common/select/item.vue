@@ -5,14 +5,14 @@ import type {
   SelectItemForward,
   SelectItemProps,
   SelectItemSlots,
-} from "#foundation/types/common/select/item";
+} from "../../../types/common/select/item";
 import type { ComponentPublicInstance } from "vue";
 
 import { SelectItem, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

@@ -4,19 +4,19 @@ import type {
   HeroPassthrough,
   HeroContext,
   HeroSlots,
-} from "#foundation/types/core/hero";
+} from "../../types/core/hero";
 import type { ComponentPublicInstance } from "vue";
 
-import Section from "#foundation/components/common/section.vue";
-import Group from "#foundation/components/common/group.vue";
-import H1 from "#foundation/components/common/h1.vue";
-import Em from "#foundation/components/common/em.vue";
-import P from "#foundation/components/common/p.vue";
-import Button from "#foundation/components/common/button.vue";
+import Section from "../common/section.vue";
+import Group from "../common/group.vue";
+import H1 from "../common/h1.vue";
+import Em from "../common/em.vue";
+import P from "../common/p.vue";
+import Button from "../common/button.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

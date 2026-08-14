@@ -1,7 +1,7 @@
-import type { AriaProps } from "#foundation/types/aria";
-import type { ModifierProps } from "#foundation/types/modifiers";
-import type { TokenProps } from "#foundation/types/tokens";
-import type components from "#config/components";
+import type { AriaProps } from "./aria";
+import type { ModifierProps } from "./modifiers";
+import type { TokenProps } from "./tokens";
+import type components from "../../config/components";
 
 export type Element = keyof typeof components.elements;
 

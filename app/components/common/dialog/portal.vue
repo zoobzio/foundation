@@ -3,11 +3,11 @@ import type {
   DialogPortalContext,
   DialogPortalProps,
   DialogPortalSlots,
-} from "#foundation/types/common/dialog/portal";
+} from "../../../types/common/dialog/portal";
 
 import { DialogPortal, useForwardProps } from "reka-ui";
 
-import { useContext } from "#foundation/composables/context";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

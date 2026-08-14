@@ -5,21 +5,21 @@ import type {
   AccordionPassthrough,
   AccordionContext,
   AccordionSlots,
-} from "#foundation/types/core/accordion";
+} from "../../types/core/accordion";
 import type { ComponentPublicInstance } from "vue";
 
-import AccordionRoot from "#foundation/components/common/accordion/root.vue";
-import AccordionItem from "#foundation/components/common/accordion/item.vue";
-import AccordionHeader from "#foundation/components/common/accordion/header.vue";
-import AccordionTrigger from "#foundation/components/common/accordion/trigger.vue";
-import AccordionContent from "#foundation/components/common/accordion/content.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import AccordionRoot from "../common/accordion/root.vue";
+import AccordionItem from "../common/accordion/item.vue";
+import AccordionHeader from "../common/accordion/header.vue";
+import AccordionTrigger from "../common/accordion/trigger.vue";
+import AccordionContent from "../common/accordion/content.vue";
+import Group from "../common/group.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

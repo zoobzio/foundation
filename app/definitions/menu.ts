@@ -1,5 +1,5 @@
-import type { MenuEmits, MenuProps } from "#foundation/types/core/menu";
-import type { Definition } from "#foundation/types/definition";
+import type { MenuEmits, MenuProps } from "../types/core/menu";
+import type { Definition } from "../types/definition";
 
 /**
  * A menu instance as data: props plus emit listeners — the object a

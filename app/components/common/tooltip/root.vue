@@ -4,14 +4,14 @@ import type {
   TooltipRootEmits,
   TooltipRootProps,
   TooltipRootSlots,
-} from "#foundation/types/common/tooltip/root";
+} from "../../../types/common/tooltip/root";
 import type { ComponentPublicInstance } from "vue";
 
 import { TooltipRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

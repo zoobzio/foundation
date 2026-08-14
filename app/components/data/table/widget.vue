@@ -5,27 +5,27 @@ import type {
   TableWidgetPassthrough,
   TableWidgetProps,
   TableWidgetSlots,
-} from "#foundation/types/data/table/widget";
-import type { Events } from "#foundation/types/data/table";
+} from "../../../types/data/table/widget";
+import type { Events } from "../../../types/data/table";
 import type { ComponentPublicInstance } from "vue";
 
-import Body from "#foundation/components/data/table/body.vue";
-import BulkActions from "#foundation/components/data/table/bulk-actions.vue";
-import Columns from "#foundation/components/data/table/columns.vue";
-import Head from "#foundation/components/data/table/head.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
-import Pagination from "#foundation/components/core/pagination.vue";
-import Scroller from "#foundation/components/core/scroller.vue";
-import Table from "#foundation/components/common/table.vue";
+import Body from "./body.vue";
+import BulkActions from "./bulk-actions.vue";
+import Columns from "./columns.vue";
+import Head from "./head.vue";
+import Fab from "../../core/fab.vue";
+import Group from "../../common/group.vue";
+import Pagination from "../../core/pagination.vue";
+import Scroller from "../../core/scroller.vue";
+import Table from "../../common/table.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { useTable } from "#foundation/composables/table";
-import { useHooks } from "#foundation/composables/hook";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useLazyRequest } from "#foundation/composables/request";
-import { TABLE_REFRESH_ICON } from "#foundation/constants/table";
+import { useTable } from "../../../composables/table";
+import { useHooks } from "../../../composables/hook";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useLazyRequest } from "../../../composables/request";
+import { TABLE_REFRESH_ICON } from "../../../constants/table";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">

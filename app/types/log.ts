@@ -1,4 +1,4 @@
-import type { LOG_LEVELS } from "#foundation/constants/log";
+import type { LOG_LEVELS } from "../constants/log";
 import type { Ref } from "vue";
 
 export type LogLevel = keyof typeof LOG_LEVELS;

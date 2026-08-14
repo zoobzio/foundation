@@ -1,5 +1,5 @@
-import type { DateFiltersEmits, DateFiltersProps } from "#foundation/types/core/date-filters";
-import type { Definition } from "#foundation/types/definition";
+import type { DateFiltersEmits, DateFiltersProps } from "../types/core/date-filters";
+import type { Definition } from "../types/definition";
 
 /**
  * A date-filters instance as data: props plus emit listeners — the object a

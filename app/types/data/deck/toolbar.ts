@@ -1,13 +1,13 @@
-import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { InputProps, InputEmits } from "#foundation/types/common/input";
-import type { FabProps, FabEmits } from "#foundation/types/core/fab";
-import type { FacetsProps, FacetsEmits } from "#foundation/types/core/facets";
-import type { MenuProps, MenuEmits } from "#foundation/types/core/menu";
-import type { PopoverProps, PopoverEmits } from "#foundation/types/core/popover";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service } from "#foundation/types/data/deck";
+import type { ButtonProps, ButtonEmits } from "../../common/button";
+import type { GroupProps } from "../../common/group";
+import type { IconProps } from "../../common/icon";
+import type { InputProps, InputEmits } from "../../common/input";
+import type { FabProps, FabEmits } from "../../core/fab";
+import type { FacetsProps, FacetsEmits } from "../../core/facets";
+import type { MenuProps, MenuEmits } from "../../core/menu";
+import type { PopoverProps, PopoverEmits } from "../../core/popover";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service } from "../deck";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**

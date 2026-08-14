@@ -1,52 +1,52 @@
-import type { IconProps } from "#foundation/types/common/icon";
+import type { IconProps } from "../common/icon";
 import type {
   DatePickerRootProps,
   DatePickerRootEmits,
-} from "#foundation/types/common/date-picker/root";
+} from "../common/date-picker/root";
 import type {
   DatePickerFieldProps,
   DatePickerFieldSlotProps,
   DatePickerSegment,
-} from "#foundation/types/common/date-picker/field";
-import type { DatePickerInputProps } from "#foundation/types/common/date-picker/input";
+} from "../common/date-picker/field";
+import type { DatePickerInputProps } from "../common/date-picker/input";
 import type {
   DatePickerTriggerProps,
   DatePickerTriggerEmits,
-} from "#foundation/types/common/date-picker/trigger";
+} from "../common/date-picker/trigger";
 import type {
   DatePickerContentProps,
   DatePickerContentEmits,
-} from "#foundation/types/common/date-picker/content";
+} from "../common/date-picker/content";
 import type {
   DatePickerCalendarProps,
   DatePickerCalendarSlotProps,
-} from "#foundation/types/common/date-picker/calendar";
-import type { DatePickerHeaderProps } from "#foundation/types/common/date-picker/header";
-import type { DatePickerHeadingProps } from "#foundation/types/common/date-picker/heading";
+} from "../common/date-picker/calendar";
+import type { DatePickerHeaderProps } from "../common/date-picker/header";
+import type { DatePickerHeadingProps } from "../common/date-picker/heading";
 import type {
   DatePickerPrevProps,
   DatePickerPrevEmits,
-} from "#foundation/types/common/date-picker/prev";
+} from "../common/date-picker/prev";
 import type {
   DatePickerNextProps,
   DatePickerNextEmits,
-} from "#foundation/types/common/date-picker/next";
-import type { DatePickerGridProps } from "#foundation/types/common/date-picker/grid";
-import type { DatePickerGridHeadProps } from "#foundation/types/common/date-picker/grid-head";
-import type { DatePickerGridBodyProps } from "#foundation/types/common/date-picker/grid-body";
-import type { DatePickerGridRowProps } from "#foundation/types/common/date-picker/grid-row";
-import type { DatePickerHeadCellProps } from "#foundation/types/common/date-picker/head-cell";
-import type { DatePickerCellProps } from "#foundation/types/common/date-picker/cell";
+} from "../common/date-picker/next";
+import type { DatePickerGridProps } from "../common/date-picker/grid";
+import type { DatePickerGridHeadProps } from "../common/date-picker/grid-head";
+import type { DatePickerGridBodyProps } from "../common/date-picker/grid-body";
+import type { DatePickerGridRowProps } from "../common/date-picker/grid-row";
+import type { DatePickerHeadCellProps } from "../common/date-picker/head-cell";
+import type { DatePickerCellProps } from "../common/date-picker/cell";
 import type {
   DatePickerCellTriggerProps,
   DatePickerCellTriggerEmits,
-} from "#foundation/types/common/date-picker/cell-trigger";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/date-picker/cell-trigger";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 

@@ -1,13 +1,13 @@
-import type { Events } from "#foundation/types/data/chart";
-import type { ChartWidgetProps } from "#foundation/types/data/chart/widget";
-import type { ChartDefinition } from "#foundation/definitions/chart";
-import type { Widget } from "#foundation/types/widget";
+import type { Events } from "../types/data/chart";
+import type { ChartWidgetProps } from "../types/data/chart/widget";
+import type { ChartDefinition } from "../definitions/chart";
+import type { Widget } from "../types/widget";
 
-import component from "#foundation/components/data/chart/widget.vue";
+import component from "../components/data/chart/widget.vue";
 
-import { accessChart } from "#foundation/stores/chart";
+import { accessChart } from "../stores/chart";
 import { useNuxtApp } from "#imports";
-import { ChartService } from "#foundation/services/chart";
+import { ChartService } from "../services/chart";
 
 /**
  * Instances a definition: `id` is the only thing the factory adds — shared

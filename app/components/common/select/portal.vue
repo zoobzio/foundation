@@ -3,11 +3,11 @@ import type {
   SelectPortalContext,
   SelectPortalProps,
   SelectPortalSlots,
-} from "#foundation/types/common/select/portal";
+} from "../../../types/common/select/portal";
 
 import { SelectPortal, useForwardProps } from "reka-ui";
 
-import { useContext } from "#foundation/composables/context";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

@@ -5,19 +5,19 @@ import type {
   ToastPassthrough,
   ToastContext,
   ToastSlots,
-} from "#foundation/types/core/toast";
+} from "../../types/core/toast";
 import type { ComponentPublicInstance } from "vue";
 
-import ToastRoot from "#foundation/components/common/toast/root.vue";
-import ToastTitle from "#foundation/components/common/toast/title.vue";
-import ToastDescription from "#foundation/components/common/toast/description.vue";
-import ToastClose from "#foundation/components/common/toast/close.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import ToastRoot from "../common/toast/root.vue";
+import ToastTitle from "../common/toast/title.vue";
+import ToastDescription from "../common/toast/description.vue";
+import ToastClose from "../common/toast/close.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

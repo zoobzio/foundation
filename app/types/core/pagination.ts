@@ -1,15 +1,15 @@
-import type { ButtonEmits, ButtonProps } from "#foundation/types/common/button";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { FabEmits, FabProps } from "#foundation/types/core/fab";
-import type { ComponentEvents } from "#foundation/types/events";
+import type { ButtonEmits, ButtonProps } from "../common/button";
+import type { GroupProps } from "../common/group";
+import type { SpanProps } from "../common/span";
+import type { FabEmits, FabProps } from "./fab";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
-import type { SelectEmits, SelectProps } from "#foundation/types/core/select";
-import type { Option } from "#foundation/types/core/common";
+} from "../passthrough";
+import type { SelectEmits, SelectProps } from "./select";
+import type { Option } from "./common";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type PaginationPassthrough = {

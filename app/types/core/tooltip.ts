@@ -1,14 +1,14 @@
 import type {
   TooltipRootProps,
   TooltipRootEmits,
-} from "#foundation/types/common/tooltip/root";
-import type { TooltipTriggerProps } from "#foundation/types/common/tooltip/trigger";
+} from "../common/tooltip/root";
+import type { TooltipTriggerProps } from "../common/tooltip/trigger";
 import type {
   TooltipContentProps,
   TooltipContentEmits,
-} from "#foundation/types/common/tooltip/content";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "../common/tooltip/content";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type TooltipPassthrough = {

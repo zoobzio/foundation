@@ -9,8 +9,6 @@
     "url": "git+https://github.com/zoobzio/foundation.git"
   },
   "imports": {
-    "#config/*": "./config/*",
-    "#modules/*": "./modules/*",
     "#stubs/*": "./stubs/*"
   },
   "author": {

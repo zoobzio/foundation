@@ -1,5 +1,5 @@
-import type { AccordionEmits, AccordionProps } from "#foundation/types/core/accordion";
-import type { Definition } from "#foundation/types/definition";
+import type { AccordionEmits, AccordionProps } from "../types/core/accordion";
+import type { Definition } from "../types/definition";
 
 /**
  * A accordion instance as data: props plus emit listeners — the object a

@@ -1,4 +1,4 @@
-import type { LogLevel, LogLine } from "#foundation/types/log";
+import type { LogLevel, LogLine } from "../types/log";
 
 import { useState } from "#imports";
 

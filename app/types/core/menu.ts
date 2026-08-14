@@ -1,29 +1,29 @@
-import type { CaptionProps } from "#foundation/types/common/caption";
+import type { CaptionProps } from "../common/caption";
 import type {
   DropdownMenuRootProps,
   DropdownMenuRootEmits,
-} from "#foundation/types/common/dropdown-menu/root";
-import type { DropdownMenuTriggerProps } from "#foundation/types/common/dropdown-menu/trigger";
+} from "../common/dropdown-menu/root";
+import type { DropdownMenuTriggerProps } from "../common/dropdown-menu/trigger";
 import type {
   DropdownMenuContentProps,
   DropdownMenuContentEmits,
-} from "#foundation/types/common/dropdown-menu/content";
-import type { DropdownMenuGroupProps } from "#foundation/types/common/dropdown-menu/group";
-import type { DropdownMenuLabelProps } from "#foundation/types/common/dropdown-menu/label";
+} from "../common/dropdown-menu/content";
+import type { DropdownMenuGroupProps } from "../common/dropdown-menu/group";
+import type { DropdownMenuLabelProps } from "../common/dropdown-menu/label";
 import type {
   DropdownMenuItemProps,
   DropdownMenuItemEmits,
-} from "#foundation/types/common/dropdown-menu/item";
-import type { DropdownMenuSeparatorProps } from "#foundation/types/common/dropdown-menu/separator";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { IconAlias } from "#foundation/types/common/iconic";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/dropdown-menu/item";
+import type { DropdownMenuSeparatorProps } from "../common/dropdown-menu/separator";
+import type { IconProps } from "../common/icon";
+import type { IconAlias } from "../common/iconic";
+import type { SpanProps } from "../common/span";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type MenuItem = {

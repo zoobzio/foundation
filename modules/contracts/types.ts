@@ -1,4 +1,4 @@
-import type components from "#config/components";
+import type components from "../../config/components";
 
 /** A component that is allowed to have modifiers defined for it. */
 export type SupportedComponent = keyof typeof components.elements;

@@ -1,4 +1,4 @@
-import type { ModifierAxesOptions } from "#foundation/types/modifiers";
+import type { ModifierAxesOptions } from "./modifiers";
 
 export interface Notification {
   id: `${string}${string}-${string}-${string}-${string}`;

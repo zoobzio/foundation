@@ -5,18 +5,18 @@ import type {
   SegmentedControlPassthrough,
   SegmentedControlContext,
   SegmentedControlSlots,
-} from "#foundation/types/core/segmented-control";
+} from "../../types/core/segmented-control";
 import type { ComponentPublicInstance } from "vue";
 
-import ToggleGroupRoot from "#foundation/components/common/toggle-group/root.vue";
-import ToggleGroupItem from "#foundation/components/common/toggle-group/item.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Span from "#foundation/components/common/span.vue";
+import ToggleGroupRoot from "../common/toggle-group/root.vue";
+import ToggleGroupItem from "../common/toggle-group/item.vue";
+import Icon from "../common/icon.vue";
+import Span from "../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

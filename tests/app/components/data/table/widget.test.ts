@@ -9,11 +9,11 @@ import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import { useNuxtApp } from "#imports";
-import Widget from "#foundation/components/data/table/widget.vue";
+import Widget from "../../../../../app/components/data/table/widget.vue";
 import type {
   TableWidgetEmits,
   TableWidgetProps,
-} from "#foundation/types/data/table/widget";
+} from "../../../../../app/types/data/table/widget";
 import { createMockTable } from "#test/mocks/table";
 import { tableStubs } from "#test/stubs/data";
 import type { FakeRow } from "#test/data/table";

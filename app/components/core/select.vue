@@ -5,25 +5,25 @@ import type {
   SelectPassthrough,
   SelectContext,
   SelectSlots,
-} from "#foundation/types/core/select";
-import type { Option } from "#foundation/types/core/common";
+} from "../../types/core/select";
+import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
-import SelectRoot from "#foundation/components/common/select/root.vue";
-import SelectTrigger from "#foundation/components/common/select/trigger.vue";
-import SelectPortal from "#foundation/components/common/select/portal.vue";
-import SelectContent from "#foundation/components/common/select/content.vue";
-import SelectItem from "#foundation/components/common/select/item.vue";
-import SelectItemText from "#foundation/components/common/select/item-text.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Span from "#foundation/components/common/span.vue";
+import SelectRoot from "../common/select/root.vue";
+import SelectTrigger from "../common/select/trigger.vue";
+import SelectPortal from "../common/select/portal.vue";
+import SelectContent from "../common/select/content.vue";
+import SelectItem from "../common/select/item.vue";
+import SelectItemText from "../common/select/item-text.vue";
+import Icon from "../common/icon.vue";
+import Span from "../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { SELECT_SIDE_OFFSET } from "#foundation/constants/select";
-import { useSelection } from "#foundation/composables/selection";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { SELECT_SIDE_OFFSET } from "../../constants/select";
+import { useSelection } from "../../composables/selection";
 </script>
 
 <script setup lang="ts" generic="T extends Option">

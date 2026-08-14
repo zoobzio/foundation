@@ -1,5 +1,5 @@
-import type { DateRangePickerEmits, DateRangePickerProps } from "#foundation/types/core/date-range-picker";
-import type { Definition } from "#foundation/types/definition";
+import type { DateRangePickerEmits, DateRangePickerProps } from "../types/core/date-range-picker";
+import type { Definition } from "../types/definition";
 
 /**
  * A date-range-picker instance as data: props plus emit listeners — the object a

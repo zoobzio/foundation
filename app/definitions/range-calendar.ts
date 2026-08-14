@@ -1,5 +1,5 @@
-import type { RangeCalendarEmits, RangeCalendarProps } from "#foundation/types/core/range-calendar";
-import type { Definition } from "#foundation/types/definition";
+import type { RangeCalendarEmits, RangeCalendarProps } from "../types/core/range-calendar";
+import type { Definition } from "../types/definition";
 
 /**
  * A range-calendar instance as data: props plus emit listeners — the object a

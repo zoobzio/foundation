@@ -1,5 +1,5 @@
 import type { NuxtError } from "#app";
-import type { Notification } from "#foundation/types/notification";
+import type { Notification } from "./notification";
 
 export type ErrorData = {
   submitted: string;

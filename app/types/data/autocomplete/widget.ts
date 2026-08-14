@@ -1,21 +1,21 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { InputProps, InputEmits } from "#foundation/types/common/input";
-import type { SpanProps } from "#foundation/types/common/span";
+import type { GroupProps } from "../../common/group";
+import type { InputProps, InputEmits } from "../../common/input";
+import type { SpanProps } from "../../common/span";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../../passthrough";
 import type {
   ScrollerEmits,
   ScrollerProps,
-} from "#foundation/types/core/scroller";
-import type { Service, Events } from "#foundation/types/data/autocomplete";
+} from "../../core/scroller";
+import type { Service, Events } from "../autocomplete";
 import type {
   AutocompleteItemAnchor,
   AutocompleteItemProps,
   AutocompleteItemSlots,
-} from "#foundation/types/data/autocomplete/item";
+} from "./item";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
