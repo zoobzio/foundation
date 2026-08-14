@@ -1,5 +1,8 @@
 {
   "name": "@zoobz-io/foundation-example",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@zoobzio/foundation": "workspace:*"
+  }
 }
