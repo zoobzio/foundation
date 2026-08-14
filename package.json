@@ -1,6 +1,7 @@
 {
   "name": "@zoobzio/foundation",
   "type": "module",
+  "main": "./nuxt.config.ts",
   "license": "MIT",
   "version": "0.0.4",
   "repository": {
