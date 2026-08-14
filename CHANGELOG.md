@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 0.0.8
+
+### Patch Changes
+
+- [`82fbee5`](https://github.com/zoobzio/foundation/commit/82fbee5c9e3add0bd9aeb79818ac385427a9e4a3) Thanks [@zoobzio](https://github.com/zoobzio)! - Add package subpath exports for all `app/` resources — composables, utils, types, constants, definitions, factories, services, stores, plugins, and components (both extensionless and `.vue`-suffixed) — so consumers with auto-imports disabled can import everything explicitly via `@zoobzio/foundation/*`. Exclude the package from Vite dep optimization to keep subpath imports deduped with the layer's own modules in dev.
+
 ## 0.0.7
 
 ### Patch Changes
