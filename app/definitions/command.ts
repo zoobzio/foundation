@@ -1,5 +1,5 @@
-import type { CommandEmits, CommandOption, CommandProps } from "#foundation/types/core/command";
-import type { Definition } from "#foundation/types/definition";
+import type { CommandEmits, CommandOption, CommandProps } from "../types/core/command";
+import type { Definition } from "../types/definition";
 
 /**
  * A command instance as data: props plus emit listeners — the object a

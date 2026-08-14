@@ -1,5 +1,5 @@
-import type { KeywordsEmits, KeywordsProps } from "#foundation/types/core/keywords";
-import type { Definition } from "#foundation/types/definition";
+import type { KeywordsEmits, KeywordsProps } from "../types/core/keywords";
+import type { Definition } from "../types/definition";
 
 /**
  * A keywords instance as data: props plus emit listeners — the object a

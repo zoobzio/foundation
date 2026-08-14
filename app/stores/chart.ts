@@ -3,10 +3,10 @@ import type {
   Config,
   State,
   VariantData,
-} from "#foundation/types/data/chart";
+} from "../types/data/chart";
 
 import { useState } from "#imports";
-import { buildVariants, resolveChartDefaults } from "#foundation/utils/chart";
+import { buildVariants, resolveChartDefaults } from "../utils/chart";
 
 export const accessChart = <T>(id: string, config: Config<T>): State<T> => {
   const defaults = resolveChartDefaults(buildVariants(config));

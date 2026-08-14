@@ -4,14 +4,14 @@ import type {
   RangeCalendarHeadingForward,
   RangeCalendarHeadingProps,
   RangeCalendarHeadingSlots,
-} from "#foundation/types/common/range-calendar/heading";
+} from "../../../types/common/range-calendar/heading";
 import type { ComponentPublicInstance } from "vue";
 
 import { RangeCalendarHeading, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

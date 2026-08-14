@@ -3,14 +3,14 @@ import type {
   TagsInputInputContext,
   TagsInputInputForward,
   TagsInputInputProps,
-} from "#foundation/types/common/tags-input/input";
+} from "../../../types/common/tags-input/input";
 import type { ComponentPublicInstance } from "vue";
 
 import { TagsInputInput, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

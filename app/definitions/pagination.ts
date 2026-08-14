@@ -1,5 +1,5 @@
-import type { PaginationEmits, PaginationProps } from "#foundation/types/core/pagination";
-import type { Definition } from "#foundation/types/definition";
+import type { PaginationEmits, PaginationProps } from "../types/core/pagination";
+import type { Definition } from "../types/definition";
 
 /**
  * A pagination instance as data: props plus emit listeners — the object a

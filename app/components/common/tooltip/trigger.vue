@@ -5,14 +5,14 @@ import type {
   TooltipTriggerForward,
   TooltipTriggerProps,
   TooltipTriggerSlots,
-} from "#foundation/types/common/tooltip/trigger";
+} from "../../../types/common/tooltip/trigger";
 import type { ComponentPublicInstance } from "vue";
 
 import { TooltipTrigger, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

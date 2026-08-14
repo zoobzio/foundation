@@ -1,9 +1,9 @@
-import type { Service, Field } from "#foundation/types/data/form";
+import type { Service, Field } from "../types/data/form";
 
 import { computed } from "vue";
 
-import { useServiceRefs } from "#foundation/composables/refs";
-import { resolve } from "#foundation/utils/controls";
+import { useServiceRefs } from "./refs";
+import { resolve } from "../utils/controls";
 
 /**
  * The view surface of the form feature, shared by every form component: the

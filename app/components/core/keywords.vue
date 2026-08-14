@@ -5,27 +5,27 @@ import type {
   KeywordsPassthrough,
   KeywordsProps,
   KeywordsSlots,
-} from "#foundation/types/core/keywords";
+} from "../../types/core/keywords";
 import type { ComponentPublicInstance } from "vue";
 
-import Caption from "#foundation/components/common/caption.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
-import Popover from "#foundation/components/core/popover.vue";
-import SegmentedControl from "#foundation/components/core/segmented-control.vue";
-import TagsInput from "#foundation/components/core/tags-input.vue";
+import Caption from "../common/caption.vue";
+import Fab from "./fab.vue";
+import Group from "../common/group.vue";
+import Popover from "./popover.vue";
+import SegmentedControl from "./segmented-control.vue";
+import TagsInput from "./tags-input.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { useKeywords } from "#foundation/composables/keywords";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { useKeywords } from "../../composables/keywords";
 import {
   KEYWORDS_EXCLUDE_PLACEHOLDER,
   KEYWORDS_INCLUDE_PLACEHOLDER,
   KEYWORDS_TRIGGER_ICON,
   MATCH_OPTIONS,
-} from "#foundation/constants/keywords";
+} from "../../constants/keywords";
 </script>
 
 <script setup lang="ts">

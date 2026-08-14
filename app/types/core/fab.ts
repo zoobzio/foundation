@@ -1,9 +1,9 @@
-import type { ButtonEmits, ButtonProps } from "#foundation/types/common/button";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { IconAlias } from "#foundation/types/common/iconic";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { ButtonEmits, ButtonProps } from "../common/button";
+import type { GroupProps } from "../common/group";
+import type { IconProps } from "../common/icon";
+import type { IconAlias } from "../common/iconic";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type FabPassthrough = {

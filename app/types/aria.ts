@@ -4,8 +4,8 @@ import type {
   ProhibitedAria,
   RoleAria,
 } from "#build/types/contracts";
-import type { Element } from "#foundation/types/component";
-import type components from "#config/components";
+import type { Element } from "./component";
+import type components from "../../config/components";
 
 type AllAria = {
   [K in keyof AriaAttributes as K extends `aria-${infer Name}`

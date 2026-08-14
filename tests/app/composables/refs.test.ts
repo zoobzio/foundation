@@ -4,7 +4,7 @@
 // methods (excluded from the view).
 import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
-import { useServiceRefs } from "#foundation/composables/refs";
+import { useServiceRefs } from "../../../app/composables/refs";
 
 const makeService = () => {
   const onSet = vi.fn();

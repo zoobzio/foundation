@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { h } from "vue";
 import { mount } from "@vue/test-utils";
-import Button from "#foundation/components/common/button.vue";
+import Button from "../../../../app/components/common/button.vue";
 import { runElementSuite } from "#test/suites/element";
 
 runElementSuite("button", {

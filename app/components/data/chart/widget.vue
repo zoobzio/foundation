@@ -5,22 +5,22 @@ import type {
   ChartWidgetPassthrough,
   ChartWidgetProps,
   ChartWidgetSlots,
-} from "#foundation/types/data/chart/widget";
-import type { Events } from "#foundation/types/data/chart";
+} from "../../../types/data/chart/widget";
+import type { Events } from "../../../types/data/chart";
 import type { ComponentPublicInstance } from "vue";
 
-import Canvas from "#foundation/components/data/chart/canvas.vue";
-import Control from "#foundation/components/data/chart/control.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
+import Canvas from "./canvas.vue";
+import Control from "./control.vue";
+import Fab from "../../core/fab.vue";
+import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
-import { useChart } from "#foundation/composables/chart";
-import { useHooks } from "#foundation/composables/hook";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useLazyRequest } from "#foundation/composables/request";
-import { CHART_REFRESH_ICON } from "#foundation/constants/chart";
+import { useChart } from "../../../composables/chart";
+import { useHooks } from "../../../composables/hook";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useLazyRequest } from "../../../composables/request";
+import { CHART_REFRESH_ICON } from "../../../constants/chart";
 </script>
 
 <script setup lang="ts" generic="T">

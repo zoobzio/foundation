@@ -4,25 +4,25 @@ import type {
   FormFieldPassthrough,
   FormFieldProps,
   FormFieldSlots,
-} from "#foundation/types/data/form/field";
+} from "../../../types/data/form/field";
 import type { ComponentPublicInstance } from "vue";
 
-import Caption from "#foundation/components/common/caption.vue";
-import Checkbox from "#foundation/components/core/checkbox.vue";
-import DatePicker from "#foundation/components/core/date-picker.vue";
-import Group from "#foundation/components/common/group.vue";
-import Input from "#foundation/components/common/input.vue";
-import Label from "#foundation/components/common/label.vue";
-import MultiSelect from "#foundation/components/core/multi-select.vue";
-import Radio from "#foundation/components/core/radio.vue";
-import Select from "#foundation/components/core/select.vue";
-import TagsInput from "#foundation/components/core/tags-input.vue";
-import Textarea from "#foundation/components/common/textarea.vue";
+import Caption from "../../common/caption.vue";
+import Checkbox from "../../core/checkbox.vue";
+import DatePicker from "../../core/date-picker.vue";
+import Group from "../../common/group.vue";
+import Input from "../../common/input.vue";
+import Label from "../../common/label.vue";
+import MultiSelect from "../../core/multi-select.vue";
+import Radio from "../../core/radio.vue";
+import Select from "../../core/select.vue";
+import TagsInput from "../../core/tags-input.vue";
+import Textarea from "../../common/textarea.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useForm } from "#foundation/composables/form";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useForm } from "../../../composables/form";
 </script>
 
 <script setup lang="ts" generic="T">

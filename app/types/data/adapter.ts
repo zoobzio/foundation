@@ -1,5 +1,5 @@
-import type { Definition } from "#foundation/types/definition";
-import type { ScopedEvent } from "#foundation/types/hook";
+import type { Definition } from "../definition";
+import type { ScopedEvent } from "../hook";
 import type { Ref } from "#imports";
 
 /**

@@ -1,11 +1,11 @@
 import type {
   CheckboxRootProps,
   CheckboxRootEmits,
-} from "#foundation/types/common/checkbox/root";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "../common/checkbox/root";
+import type { GroupProps } from "../common/group";
+import type { IconProps } from "../common/icon";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type CheckboxPassthrough = {

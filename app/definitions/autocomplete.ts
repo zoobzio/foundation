@@ -1,6 +1,6 @@
-import type { Actions, Config } from "#foundation/types/data/autocomplete";
-import type { AutocompleteWidgetProps } from "#foundation/types/data/autocomplete/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Actions, Config } from "../types/data/autocomplete";
+import type { AutocompleteWidgetProps } from "../types/data/autocomplete/widget";
+import type { WidgetSettings } from "../types/widget";
 
 /**
  * The static description `createAutocomplete` instances: everything about the

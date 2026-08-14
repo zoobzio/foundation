@@ -1,5 +1,5 @@
-import type { WorkspaceDefinition } from "#foundation/types/system/workspace";
-import type { Widgets } from "#foundation/types/widget";
+import type { WorkspaceDefinition } from "../types/system/workspace";
+import type { Widgets } from "../types/widget";
 
 export type { WorkspaceDefinition };
 

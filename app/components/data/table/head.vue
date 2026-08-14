@@ -4,23 +4,23 @@ import type {
   TableHeadPassthrough,
   TableHeadProps,
   TableHeadSlots,
-} from "#foundation/types/data/table/head";
+} from "../../../types/data/table/head";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Checkbox from "#foundation/components/core/checkbox.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Span from "#foundation/components/common/span.vue";
-import Th from "#foundation/components/common/th.vue";
-import Thead from "#foundation/components/common/thead.vue";
-import Tr from "#foundation/components/common/tr.vue";
+import Button from "../../common/button.vue";
+import Checkbox from "../../core/checkbox.vue";
+import Group from "../../common/group.vue";
+import Icon from "../../common/icon.vue";
+import Span from "../../common/span.vue";
+import Th from "../../common/th.vue";
+import Thead from "../../common/thead.vue";
+import Tr from "../../common/tr.vue";
 
 import { useTemplateRef } from "#imports";
-import { useTable } from "#foundation/composables/table";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { TABLE_DRAG_ICON } from "#foundation/constants/table";
+import { useTable } from "../../../composables/table";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { TABLE_DRAG_ICON } from "../../../constants/table";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">

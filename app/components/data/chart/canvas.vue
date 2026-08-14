@@ -3,15 +3,15 @@ import type {
   ChartCanvasContext,
   ChartCanvasPassthrough,
   ChartCanvasProps,
-} from "#foundation/types/data/chart/canvas";
+} from "../../../types/data/chart/canvas";
 import type { ComponentPublicInstance } from "vue";
 
-import Group from "#foundation/components/common/group.vue";
+import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
-import { useChart } from "#foundation/composables/chart";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { useChart } from "../../../composables/chart";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts" generic="T">

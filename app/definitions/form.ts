@@ -1,6 +1,6 @@
-import type { Actions, Config } from "#foundation/types/data/form";
-import type { FormWidgetProps } from "#foundation/types/data/form/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Actions, Config } from "../types/data/form";
+import type { FormWidgetProps } from "../types/data/form/widget";
+import type { WidgetSettings } from "../types/widget";
 
 /**
  * The static description `createForm` instances: everything about the

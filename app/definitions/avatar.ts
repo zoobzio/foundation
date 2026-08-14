@@ -1,5 +1,5 @@
-import type { AvatarEmits, AvatarProps } from "#foundation/types/core/avatar";
-import type { Definition } from "#foundation/types/definition";
+import type { AvatarEmits, AvatarProps } from "../types/core/avatar";
+import type { Definition } from "../types/definition";
 
 /**
  * A avatar instance as data: props plus emit listeners — the object a

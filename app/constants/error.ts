@@ -1,5 +1,5 @@
 // system/error constants
-import type { ModifierAxesOptions } from "#foundation/types/modifiers";
+import type { ModifierAxesOptions } from "../types/modifiers";
 
 // Fallback HTTP status code used when a NuxtError carries no statusCode.
 export const ERROR_DEFAULT_STATUS_CODE = 500;

@@ -6,13 +6,13 @@ import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
-import Core from "#foundation/components/core/directory.vue";
+import Core from "../../../../app/components/core/directory.vue";
 import { fakeDirectoryGroups } from "#test/data/directory";
 import type { FakeEntry } from "#test/data/directory";
 import type {
   DirectoryEmits,
   DirectoryProps,
-} from "#foundation/types/core/directory";
+} from "../../../../app/types/core/directory";
 
 // Generic SFCs don't instantiate through mount()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates T for the harness.

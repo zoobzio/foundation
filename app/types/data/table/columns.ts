@@ -2,11 +2,11 @@ import type {
   CommandEmits,
   CommandOption,
   CommandProps,
-} from "#foundation/types/core/command";
-import type { FabProps } from "#foundation/types/core/fab";
-import type { PopoverEmits, PopoverProps } from "#foundation/types/core/popover";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service } from "#foundation/types/data/table";
+} from "../../core/command";
+import type { FabProps } from "../../core/fab";
+import type { PopoverEmits, PopoverProps } from "../../core/popover";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service } from "../table";
 import type { ComponentPublicInstance } from "vue";
 
 export type TableColumnsPassthrough = {

@@ -1,17 +1,17 @@
-import type { IconProps } from "#foundation/types/common/icon";
-import type { SpanProps } from "#foundation/types/common/span";
+import type { IconProps } from "../common/icon";
+import type { SpanProps } from "../common/span";
 import type {
   ToggleGroupRootProps,
   ToggleGroupRootEmits,
-} from "#foundation/types/common/toggle-group/root";
-import type { ToggleGroupItemProps } from "#foundation/types/common/toggle-group/item";
-import type { Option } from "#foundation/types/core/common";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/toggle-group/root";
+import type { ToggleGroupItemProps } from "../common/toggle-group/item";
+import type { Option } from "./common";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type SegmentedControlPassthrough = {

@@ -1,7 +1,7 @@
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { Passthrough, PT } from "../types/passthrough";
 
 import { rekey } from "objectively";
-import { merge } from "#foundation/utils/merge";
+import { merge } from "./merge";
 
 export const passthrough = <P, E = {}>(
   userPT: PT<Passthrough<P, E>> | undefined,

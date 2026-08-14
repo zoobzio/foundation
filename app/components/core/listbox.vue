@@ -5,17 +5,17 @@ import type {
   ListboxPassthrough,
   ListboxContext,
   ListboxSlots,
-} from "#foundation/types/core/listbox";
+} from "../../types/core/listbox";
 import type { ComponentPublicInstance } from "vue";
 
-import ListboxRoot from "#foundation/components/common/listbox/root.vue";
-import ListboxContent from "#foundation/components/common/listbox/content.vue";
-import ListboxItem from "#foundation/components/common/listbox/item.vue";
+import ListboxRoot from "../common/listbox/root.vue";
+import ListboxContent from "../common/listbox/content.vue";
+import ListboxItem from "../common/listbox/item.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

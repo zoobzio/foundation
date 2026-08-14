@@ -1,5 +1,5 @@
-import type { ScrollerEmits, ScrollerProps } from "#foundation/types/core/scroller";
-import type { Definition } from "#foundation/types/definition";
+import type { ScrollerEmits, ScrollerProps } from "../types/core/scroller";
+import type { Definition } from "../types/definition";
 
 /**
  * A scroller instance as data: props plus emit listeners — the object a

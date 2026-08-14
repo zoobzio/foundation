@@ -1,5 +1,5 @@
-import type { DatePickerEmits, DatePickerProps } from "#foundation/types/core/date-picker";
-import type { Definition } from "#foundation/types/definition";
+import type { DatePickerEmits, DatePickerProps } from "../types/core/date-picker";
+import type { Definition } from "../types/definition";
 
 /**
  * A date-picker instance as data: props plus emit listeners — the object a

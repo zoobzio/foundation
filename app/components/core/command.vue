@@ -6,28 +6,28 @@ import type {
   CommandContext,
   CommandSlots,
   CommandOption,
-} from "#foundation/types/core/command";
+} from "../../types/core/command";
 import type { ComponentPublicInstance } from "vue";
 
-import ListboxRoot from "#foundation/components/common/listbox/root.vue";
-import ListboxFilter from "#foundation/components/common/listbox/filter.vue";
-import ListboxContent from "#foundation/components/common/listbox/content.vue";
-import ListboxGroup from "#foundation/components/common/listbox/group.vue";
-import ListboxGroupLabel from "#foundation/components/common/listbox/group-label.vue";
-import ListboxItem from "#foundation/components/common/listbox/item.vue";
-import Checkbox from "#foundation/components/core/checkbox.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Kbd from "#foundation/components/common/kbd.vue";
-import Scroller from "#foundation/components/core/scroller.vue";
-import Span from "#foundation/components/common/span.vue";
+import ListboxRoot from "../common/listbox/root.vue";
+import ListboxFilter from "../common/listbox/filter.vue";
+import ListboxContent from "../common/listbox/content.vue";
+import ListboxGroup from "../common/listbox/group.vue";
+import ListboxGroupLabel from "../common/listbox/group-label.vue";
+import ListboxItem from "../common/listbox/item.vue";
+import Checkbox from "./checkbox.vue";
+import Group from "../common/group.vue";
+import Icon from "../common/icon.vue";
+import Kbd from "../common/kbd.vue";
+import Scroller from "./scroller.vue";
+import Span from "../common/span.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { useSelection } from "#foundation/composables/selection";
-import { useSearch } from "#foundation/composables/search";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { useSelection } from "../../composables/selection";
+import { useSearch } from "../../composables/search";
 </script>
 
 <script setup lang="ts" generic="T extends CommandOption">

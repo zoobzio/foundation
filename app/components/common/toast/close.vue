@@ -5,14 +5,14 @@ import type {
   ToastCloseForward,
   ToastCloseProps,
   ToastCloseSlots,
-} from "#foundation/types/common/toast/close";
+} from "../../../types/common/toast/close";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToastClose, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

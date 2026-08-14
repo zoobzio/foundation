@@ -1,8 +1,8 @@
-import type { Service } from "#foundation/types/data/preview";
+import type { Service } from "../types/data/preview";
 
 import { computed } from "#imports";
-import { useServiceRefs } from "#foundation/composables/refs";
-import { PREVIEW_DEFAULT_FILENAME_BASE } from "#foundation/constants/preview";
+import { useServiceRefs } from "./refs";
+import { PREVIEW_DEFAULT_FILENAME_BASE } from "../constants/preview";
 
 /**
  * The view surface of the preview widget: the service's state as refs, the

@@ -5,34 +5,34 @@ import type {
   DatePickerPassthrough,
   DatePickerContext,
   DatePickerSlots,
-} from "#foundation/types/core/date-picker";
+} from "../../types/core/date-picker";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
-import DatePickerRoot from "#foundation/components/common/date-picker/root.vue";
-import DatePickerField from "#foundation/components/common/date-picker/field.vue";
-import DatePickerInput from "#foundation/components/common/date-picker/input.vue";
-import DatePickerTrigger from "#foundation/components/common/date-picker/trigger.vue";
-import DatePickerContent from "#foundation/components/common/date-picker/content.vue";
-import DatePickerCalendar from "#foundation/components/common/date-picker/calendar.vue";
-import DatePickerHeader from "#foundation/components/common/date-picker/header.vue";
-import DatePickerHeading from "#foundation/components/common/date-picker/heading.vue";
-import DatePickerPrev from "#foundation/components/common/date-picker/prev.vue";
-import DatePickerNext from "#foundation/components/common/date-picker/next.vue";
-import DatePickerGrid from "#foundation/components/common/date-picker/grid.vue";
-import DatePickerGridHead from "#foundation/components/common/date-picker/grid-head.vue";
-import DatePickerGridBody from "#foundation/components/common/date-picker/grid-body.vue";
-import DatePickerGridRow from "#foundation/components/common/date-picker/grid-row.vue";
-import DatePickerHeadCell from "#foundation/components/common/date-picker/head-cell.vue";
-import DatePickerCell from "#foundation/components/common/date-picker/cell.vue";
-import DatePickerCellTrigger from "#foundation/components/common/date-picker/cell-trigger.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import DatePickerRoot from "../common/date-picker/root.vue";
+import DatePickerField from "../common/date-picker/field.vue";
+import DatePickerInput from "../common/date-picker/input.vue";
+import DatePickerTrigger from "../common/date-picker/trigger.vue";
+import DatePickerContent from "../common/date-picker/content.vue";
+import DatePickerCalendar from "../common/date-picker/calendar.vue";
+import DatePickerHeader from "../common/date-picker/header.vue";
+import DatePickerHeading from "../common/date-picker/heading.vue";
+import DatePickerPrev from "../common/date-picker/prev.vue";
+import DatePickerNext from "../common/date-picker/next.vue";
+import DatePickerGrid from "../common/date-picker/grid.vue";
+import DatePickerGridHead from "../common/date-picker/grid-head.vue";
+import DatePickerGridBody from "../common/date-picker/grid-body.vue";
+import DatePickerGridRow from "../common/date-picker/grid-row.vue";
+import DatePickerHeadCell from "../common/date-picker/head-cell.vue";
+import DatePickerCell from "../common/date-picker/cell.vue";
+import DatePickerCellTrigger from "../common/date-picker/cell-trigger.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { DATE_PICKER_SIDE_OFFSET } from "#foundation/constants/date-picker";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { DATE_PICKER_SIDE_OFFSET } from "../../constants/date-picker";
 </script>
 
 <script setup lang="ts">

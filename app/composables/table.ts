@@ -1,12 +1,12 @@
-import type { Service } from "#foundation/types/data/table";
+import type { Service } from "../types/data/table";
 import type {
   CommandGroup,
   CommandOption,
-} from "#foundation/types/core/command";
-import type { MenuGroup, MenuItem } from "#foundation/types/core/menu";
+} from "../types/core/command";
+import type { MenuGroup, MenuItem } from "../types/core/menu";
 
 import { computed, ref } from "#imports";
-import { useServiceRefs } from "#foundation/composables/refs";
+import { useServiceRefs } from "./refs";
 
 /**
  * The view surface of the table feature, shared by every table component:

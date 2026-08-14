@@ -4,14 +4,14 @@ import type {
   DialogTitleForward,
   DialogTitleProps,
   DialogTitleSlots,
-} from "#foundation/types/common/dialog/title";
+} from "../../../types/common/dialog/title";
 import type { ComponentPublicInstance } from "vue";
 
 import { DialogTitle, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

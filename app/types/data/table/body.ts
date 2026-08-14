@@ -1,17 +1,17 @@
-import type { AnchorProps } from "#foundation/types/common/anchor";
-import type { ImgProps } from "#foundation/types/common/img";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { TbodyProps } from "#foundation/types/common/tbody";
-import type { TdProps } from "#foundation/types/common/td";
-import type { TrProps } from "#foundation/types/common/tr";
+import type { AnchorProps } from "../../common/anchor";
+import type { ImgProps } from "../../common/img";
+import type { SpanProps } from "../../common/span";
+import type { TbodyProps } from "../../common/tbody";
+import type { TdProps } from "../../common/td";
+import type { TrProps } from "../../common/tr";
 import type {
   CheckboxEmits,
   CheckboxProps,
-} from "#foundation/types/core/checkbox";
-import type { FabProps } from "#foundation/types/core/fab";
-import type { MenuEmits, MenuProps } from "#foundation/types/core/menu";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { DataTableColumn, Service } from "#foundation/types/data/table";
+} from "../../core/checkbox";
+import type { FabProps } from "../../core/fab";
+import type { MenuEmits, MenuProps } from "../../core/menu";
+import type { Passthrough, PT } from "../../passthrough";
+import type { DataTableColumn, Service } from "../table";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type TableBodyPassthrough = {

@@ -1,35 +1,35 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { KbdProps } from "#foundation/types/common/kbd";
-import type { SpanProps } from "#foundation/types/common/span";
+import type { GroupProps } from "../common/group";
+import type { IconProps } from "../common/icon";
+import type { KbdProps } from "../common/kbd";
+import type { SpanProps } from "../common/span";
 import type {
   ListboxRootProps,
   ListboxRootEmits,
-} from "#foundation/types/common/listbox/root";
+} from "../common/listbox/root";
 import type {
   ListboxFilterProps,
   ListboxFilterEmits,
-} from "#foundation/types/common/listbox/filter";
-import type { ListboxContentProps } from "#foundation/types/common/listbox/content";
-import type { ListboxGroupProps } from "#foundation/types/common/listbox/group";
-import type { ListboxGroupLabelProps } from "#foundation/types/common/listbox/group-label";
+} from "../common/listbox/filter";
+import type { ListboxContentProps } from "../common/listbox/content";
+import type { ListboxGroupProps } from "../common/listbox/group";
+import type { ListboxGroupLabelProps } from "../common/listbox/group-label";
 import type {
   ListboxItemProps,
   ListboxItemEmits,
-} from "#foundation/types/common/listbox/item";
+} from "../common/listbox/item";
 import type {
   CheckboxEmits,
   CheckboxProps,
-} from "#foundation/types/core/checkbox";
-import type { ScrollerProps } from "#foundation/types/core/scroller";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "./checkbox";
+import type { ScrollerProps } from "./scroller";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
-import type { Option } from "#foundation/types/core/common";
+import type { Option } from "./common";
 
 export type CommandOption = Option & {
   count?: number;

@@ -4,14 +4,14 @@ import type {
   AvatarImageForward,
   AvatarImageProps,
   AvatarImageSlots,
-} from "#foundation/types/common/avatar/image";
+} from "../../../types/common/avatar/image";
 import type { ComponentPublicInstance } from "vue";
 
 import { AvatarImage, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

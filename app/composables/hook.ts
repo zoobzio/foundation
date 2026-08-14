@@ -1,4 +1,4 @@
-import type { HookListeners, ScopedEvent } from "#foundation/types/hook";
+import type { HookListeners, ScopedEvent } from "../types/hook";
 
 import { onScopeDispose, useNuxtApp } from "#imports";
 import { entries } from "objectively";

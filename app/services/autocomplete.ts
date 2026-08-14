@@ -5,8 +5,8 @@ import type {
   Actions,
   Service,
   Item,
-} from "#foundation/types/data/autocomplete";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/autocomplete";
+import type { Logger } from "../types/log";
 
 export class AutocompleteService<M> implements Service<M> {
   private readonly log: Logger;

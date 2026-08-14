@@ -5,14 +5,14 @@
 import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useNuxtApp } from "#imports";
-import { TableService } from "#foundation/services/table";
+import { TableService } from "../../../app/services/table";
 import type {
   Actions,
   Config,
   DataTableFetchResult,
   SortDirection,
   State,
-} from "#foundation/types/data/table";
+} from "../../../app/types/data/table";
 import { fakeColumns, fakeRows, fakeActions, fakeBulkActions } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 

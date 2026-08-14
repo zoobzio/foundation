@@ -3,19 +3,19 @@ import type {
   ChartControlContext,
   ChartControlPassthrough,
   ChartControlProps,
-} from "#foundation/types/data/chart/control";
+} from "../../../types/data/chart/control";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Menu from "#foundation/components/core/menu.vue";
+import Button from "../../common/button.vue";
+import Fab from "../../core/fab.vue";
+import Icon from "../../common/icon.vue";
+import Menu from "../../core/menu.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { useChart } from "#foundation/composables/chart";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { CHART_CONTROL_CHEVRON } from "#foundation/constants/chart";
+import { useChart } from "../../../composables/chart";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { CHART_CONTROL_CHEVRON } from "../../../constants/chart";
 </script>
 
 <script setup lang="ts" generic="T">

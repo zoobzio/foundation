@@ -4,16 +4,16 @@ import type {
   AvatarPassthrough,
   AvatarContext,
   AvatarSlots,
-} from "#foundation/types/core/avatar";
+} from "../../types/core/avatar";
 import type { ComponentPublicInstance } from "vue";
 
-import AvatarRoot from "#foundation/components/common/avatar/root.vue";
-import AvatarImage from "#foundation/components/common/avatar/image.vue";
-import AvatarFallback from "#foundation/components/common/avatar/fallback.vue";
+import AvatarRoot from "../common/avatar/root.vue";
+import AvatarImage from "../common/avatar/image.vue";
+import AvatarFallback from "../common/avatar/fallback.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

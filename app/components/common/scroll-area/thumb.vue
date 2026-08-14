@@ -4,14 +4,14 @@ import type {
   ScrollAreaThumbForward,
   ScrollAreaThumbProps,
   ScrollAreaThumbSlots,
-} from "#foundation/types/common/scroll-area/thumb";
+} from "../../../types/common/scroll-area/thumb";
 import type { ComponentPublicInstance } from "vue";
 
 import { ScrollAreaThumb, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

@@ -5,28 +5,28 @@ import type {
   CalendarPassthrough,
   CalendarContext,
   CalendarSlots,
-} from "#foundation/types/core/calendar";
+} from "../../types/core/calendar";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
-import CalendarRoot from "#foundation/components/common/calendar/root.vue";
-import CalendarHeader from "#foundation/components/common/calendar/header.vue";
-import CalendarHeading from "#foundation/components/common/calendar/heading.vue";
-import CalendarPrev from "#foundation/components/common/calendar/prev.vue";
-import CalendarNext from "#foundation/components/common/calendar/next.vue";
-import CalendarGrid from "#foundation/components/common/calendar/grid.vue";
-import CalendarGridHead from "#foundation/components/common/calendar/grid-head.vue";
-import CalendarGridBody from "#foundation/components/common/calendar/grid-body.vue";
-import CalendarGridRow from "#foundation/components/common/calendar/grid-row.vue";
-import CalendarHeadCell from "#foundation/components/common/calendar/head-cell.vue";
-import CalendarCell from "#foundation/components/common/calendar/cell.vue";
-import CalendarCellTrigger from "#foundation/components/common/calendar/cell-trigger.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import CalendarRoot from "../common/calendar/root.vue";
+import CalendarHeader from "../common/calendar/header.vue";
+import CalendarHeading from "../common/calendar/heading.vue";
+import CalendarPrev from "../common/calendar/prev.vue";
+import CalendarNext from "../common/calendar/next.vue";
+import CalendarGrid from "../common/calendar/grid.vue";
+import CalendarGridHead from "../common/calendar/grid-head.vue";
+import CalendarGridBody from "../common/calendar/grid-body.vue";
+import CalendarGridRow from "../common/calendar/grid-row.vue";
+import CalendarHeadCell from "../common/calendar/head-cell.vue";
+import CalendarCell from "../common/calendar/cell.vue";
+import CalendarCellTrigger from "../common/calendar/cell-trigger.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

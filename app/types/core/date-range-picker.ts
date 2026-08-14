@@ -1,53 +1,53 @@
-import type { EmProps } from "#foundation/types/common/em";
-import type { IconProps } from "#foundation/types/common/icon";
+import type { EmProps } from "../common/em";
+import type { IconProps } from "../common/icon";
 import type {
   DateRangePickerRootProps,
   DateRangePickerRootEmits,
-} from "#foundation/types/common/date-range-picker/root";
+} from "../common/date-range-picker/root";
 import type {
   DateRangePickerFieldProps,
   DateRangePickerFieldSlotProps,
   DateRangePickerSegment,
-} from "#foundation/types/common/date-range-picker/field";
-import type { DateRangePickerInputProps } from "#foundation/types/common/date-range-picker/input";
+} from "../common/date-range-picker/field";
+import type { DateRangePickerInputProps } from "../common/date-range-picker/input";
 import type {
   DateRangePickerTriggerProps,
   DateRangePickerTriggerEmits,
-} from "#foundation/types/common/date-range-picker/trigger";
+} from "../common/date-range-picker/trigger";
 import type {
   DateRangePickerContentProps,
   DateRangePickerContentEmits,
-} from "#foundation/types/common/date-range-picker/content";
+} from "../common/date-range-picker/content";
 import type {
   DateRangePickerCalendarProps,
   DateRangePickerCalendarSlotProps,
-} from "#foundation/types/common/date-range-picker/calendar";
-import type { DateRangePickerHeaderProps } from "#foundation/types/common/date-range-picker/header";
-import type { DateRangePickerHeadingProps } from "#foundation/types/common/date-range-picker/heading";
+} from "../common/date-range-picker/calendar";
+import type { DateRangePickerHeaderProps } from "../common/date-range-picker/header";
+import type { DateRangePickerHeadingProps } from "../common/date-range-picker/heading";
 import type {
   DateRangePickerPrevProps,
   DateRangePickerPrevEmits,
-} from "#foundation/types/common/date-range-picker/prev";
+} from "../common/date-range-picker/prev";
 import type {
   DateRangePickerNextProps,
   DateRangePickerNextEmits,
-} from "#foundation/types/common/date-range-picker/next";
-import type { DateRangePickerGridProps } from "#foundation/types/common/date-range-picker/grid";
-import type { DateRangePickerGridHeadProps } from "#foundation/types/common/date-range-picker/grid-head";
-import type { DateRangePickerGridBodyProps } from "#foundation/types/common/date-range-picker/grid-body";
-import type { DateRangePickerGridRowProps } from "#foundation/types/common/date-range-picker/grid-row";
-import type { DateRangePickerHeadCellProps } from "#foundation/types/common/date-range-picker/head-cell";
-import type { DateRangePickerCellProps } from "#foundation/types/common/date-range-picker/cell";
+} from "../common/date-range-picker/next";
+import type { DateRangePickerGridProps } from "../common/date-range-picker/grid";
+import type { DateRangePickerGridHeadProps } from "../common/date-range-picker/grid-head";
+import type { DateRangePickerGridBodyProps } from "../common/date-range-picker/grid-body";
+import type { DateRangePickerGridRowProps } from "../common/date-range-picker/grid-row";
+import type { DateRangePickerHeadCellProps } from "../common/date-range-picker/head-cell";
+import type { DateRangePickerCellProps } from "../common/date-range-picker/cell";
 import type {
   DateRangePickerCellTriggerProps,
   DateRangePickerCellTriggerEmits,
-} from "#foundation/types/common/date-range-picker/cell-trigger";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/date-range-picker/cell-trigger";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";

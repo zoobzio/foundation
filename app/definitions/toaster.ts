@@ -1,5 +1,5 @@
-import type { ToasterEmits, ToasterProps } from "#foundation/types/core/toaster";
-import type { Definition } from "#foundation/types/definition";
+import type { ToasterEmits, ToasterProps } from "../types/core/toaster";
+import type { Definition } from "../types/definition";
 
 /**
  * A toaster instance as data: props plus emit listeners — the object a

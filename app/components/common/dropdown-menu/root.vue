@@ -4,14 +4,14 @@ import type {
   DropdownMenuRootEmits,
   DropdownMenuRootProps,
   DropdownMenuRootSlots,
-} from "#foundation/types/common/dropdown-menu/root";
+} from "../../../types/common/dropdown-menu/root";
 import type { ComponentPublicInstance } from "vue";
 
 import { DropdownMenuRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

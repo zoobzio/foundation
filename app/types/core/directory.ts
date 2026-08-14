@@ -1,20 +1,20 @@
-import type { AnchorEmits, AnchorProps } from "#foundation/types/common/anchor";
-import type { ButtonEmits, ButtonProps } from "#foundation/types/common/button";
-import type { CaptionProps } from "#foundation/types/common/caption";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { IconAlias } from "#foundation/types/common/iconic";
-import type { LiProps } from "#foundation/types/common/li";
-import type { NavProps } from "#foundation/types/common/nav";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { UlProps } from "#foundation/types/common/ul";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Link } from "#foundation/types/core/common";
+import type { AnchorEmits, AnchorProps } from "../common/anchor";
+import type { ButtonEmits, ButtonProps } from "../common/button";
+import type { CaptionProps } from "../common/caption";
+import type { GroupProps } from "../common/group";
+import type { IconProps } from "../common/icon";
+import type { IconAlias } from "../common/iconic";
+import type { LiProps } from "../common/li";
+import type { NavProps } from "../common/nav";
+import type { SpanProps } from "../common/span";
+import type { UlProps } from "../common/ul";
+import type { ComponentEvents } from "../events";
+import type { Link } from "./common";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**

@@ -5,15 +5,15 @@ import type {
   ToggleGroupRootForward,
   ToggleGroupRootProps,
   ToggleGroupRootSlots,
-} from "#foundation/types/common/toggle-group/root";
+} from "../../../types/common/toggle-group/root";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToggleGroupRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

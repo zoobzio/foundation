@@ -4,10 +4,10 @@
 // bridge logic get their depth in tests/services/adapter.test.ts.
 import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
-import { createAdapter } from "#foundation/factories/adapter";
-import { defineAdapter } from "#foundation/definitions/adapter";
-import { defineDirectory } from "#foundation/definitions/directory";
-import Directory from "#foundation/components/core/directory.vue";
+import { createAdapter } from "../../../app/factories/adapter";
+import { defineAdapter } from "../../../app/definitions/adapter";
+import { defineDirectory } from "../../../app/definitions/directory";
+import Directory from "../../../app/components/core/directory.vue";
 
 const FixtureLogo = defineComponent({
   name: "FixtureLogo",

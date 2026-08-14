@@ -1,13 +1,13 @@
-import type { Events } from "#foundation/types/data/table";
-import type { TableWidgetProps } from "#foundation/types/data/table/widget";
-import type { TableDefinition } from "#foundation/definitions/table";
-import type { Widget } from "#foundation/types/widget";
+import type { Events } from "../types/data/table";
+import type { TableWidgetProps } from "../types/data/table/widget";
+import type { TableDefinition } from "../definitions/table";
+import type { Widget } from "../types/widget";
 
-import component from "#foundation/components/data/table/widget.vue";
+import component from "../components/data/table/widget.vue";
 
-import { accessTable } from "#foundation/stores/table";
+import { accessTable } from "../stores/table";
 import { useNuxtApp } from "#imports";
-import { TableService } from "#foundation/services/table";
+import { TableService } from "../services/table";
 
 /**
  * Instances a definition: `id` is the only thing the factory adds — shared

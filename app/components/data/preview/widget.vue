@@ -5,25 +5,25 @@ import type {
   PreviewWidgetPassthrough,
   PreviewWidgetProps,
   PreviewWidgetSlots,
-} from "#foundation/types/data/preview/widget";
-import type { Events } from "#foundation/types/data/preview";
+} from "../../../types/data/preview/widget";
+import type { Events } from "../../../types/data/preview";
 import type { ComponentPublicInstance } from "vue";
 
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
-import Span from "#foundation/components/common/span.vue";
+import Fab from "../../core/fab.vue";
+import Group from "../../common/group.vue";
+import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePreview } from "#foundation/composables/preview";
-import { useHooks } from "#foundation/composables/hook";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { useLazyRequest } from "#foundation/composables/request";
+import { usePreview } from "../../../composables/preview";
+import { useHooks } from "../../../composables/hook";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { useLazyRequest } from "../../../composables/request";
 import {
   PREVIEW_COPY_ICON,
   PREVIEW_DOWNLOAD_ICON,
   PREVIEW_EXTERNAL_ICON,
-} from "#foundation/constants/preview";
+} from "../../../constants/preview";
 </script>
 
 <script setup lang="ts" generic="T">

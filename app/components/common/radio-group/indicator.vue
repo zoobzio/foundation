@@ -4,14 +4,14 @@ import type {
   RadioGroupIndicatorForward,
   RadioGroupIndicatorProps,
   RadioGroupIndicatorSlots,
-} from "#foundation/types/common/radio-group/indicator";
+} from "../../../types/common/radio-group/indicator";
 import type { ComponentPublicInstance } from "vue";
 
 import { RadioGroupIndicator, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

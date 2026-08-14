@@ -1,6 +1,6 @@
-import type { Config } from "#foundation/types/data/adapter";
-import type { AdapterWidgetProps } from "#foundation/types/data/adapter/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Config } from "../types/data/adapter";
+import type { AdapterWidgetProps } from "../types/data/adapter/widget";
+import type { WidgetSettings } from "../types/widget";
 
 type RequiredKeys<P> = {
   [K in keyof P]-?: {} extends Pick<P, K> ? never : K;

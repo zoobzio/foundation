@@ -10,14 +10,14 @@ import type {
   DistributionVariant,
   SeriesData,
   SeriesVariant,
-} from "#foundation/types/data/chart";
+} from "../types/data/chart";
 import type { ChartOptions as CJSChartOptions } from "chart.js";
 
 import {
   BASE_OPTIONS,
   CHART_FALLBACK_COLOR,
   PALETTE,
-} from "#foundation/constants/chart";
+} from "../constants/chart";
 import {
   Chart as ChartJS,
   LineController,

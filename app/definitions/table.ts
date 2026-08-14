@@ -1,6 +1,6 @@
-import type { Actions, Config } from "#foundation/types/data/table";
-import type { TableWidgetProps } from "#foundation/types/data/table/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Actions, Config } from "../types/data/table";
+import type { TableWidgetProps } from "../types/data/table/widget";
+import type { WidgetSettings } from "../types/widget";
 
 /**
  * The static description `createTable` instances: everything about the

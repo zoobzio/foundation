@@ -1,4 +1,4 @@
-import type { Option } from "#foundation/types/core/common";
+import type { Option } from "../types/core/common";
 import type { MaybeRefOrGetter, Ref } from "vue";
 
 import { computed, toValue } from "vue";

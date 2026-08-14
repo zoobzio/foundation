@@ -1,18 +1,18 @@
-import type { IconProps } from "#foundation/types/common/icon";
+import type { IconProps } from "../common/icon";
 import type {
   TabsRootProps,
   TabsRootEmits,
-} from "#foundation/types/common/tabs/root";
-import type { TabsListProps } from "#foundation/types/common/tabs/list";
-import type { TabsTriggerProps } from "#foundation/types/common/tabs/trigger";
-import type { TabsContentProps } from "#foundation/types/common/tabs/content";
-import type { Option } from "#foundation/types/core/common";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/tabs/root";
+import type { TabsListProps } from "../common/tabs/list";
+import type { TabsTriggerProps } from "../common/tabs/trigger";
+import type { TabsContentProps } from "../common/tabs/content";
+import type { Option } from "./common";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type TabsPassthrough = {

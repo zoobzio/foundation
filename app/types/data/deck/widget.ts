@@ -1,12 +1,12 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { FabProps, FabEmits } from "#foundation/types/core/fab";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service, Events } from "#foundation/types/data/deck";
+import type { GroupProps } from "../../common/group";
+import type { FabProps, FabEmits } from "../../core/fab";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service, Events } from "../deck";
 import type {
   DeckFeedPassthrough,
   DeckFeedSlots,
-} from "#foundation/types/data/deck/feed";
-import type { DeckToolbarPassthrough } from "#foundation/types/data/deck/toolbar";
+} from "./feed";
+import type { DeckToolbarPassthrough } from "./toolbar";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type DeckWidgetPassthrough = {

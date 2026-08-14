@@ -7,8 +7,8 @@ import { describe, expect, it } from "vitest";
 import { h } from "vue";
 import { mount } from "@vue/test-utils";
 import { SelectTrigger } from "reka-ui";
-import SelectRoot from "#foundation/components/common/select/root.vue";
-import type { SelectRootProps } from "#foundation/types/common/select/root";
+import SelectRoot from "../../../../../app/components/common/select/root.vue";
+import type { SelectRootProps } from "../../../../../app/types/common/select/root";
 
 const mountRoot = (props: SelectRootProps = {}) =>
   mount(SelectRoot, {

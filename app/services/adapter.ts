@@ -5,8 +5,8 @@ import type {
   Service,
   State,
   Wrapped,
-} from "#foundation/types/data/adapter";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/adapter";
+import type { Logger } from "../types/log";
 
 import { keys } from "objectively";
 

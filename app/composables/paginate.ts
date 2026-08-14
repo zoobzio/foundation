@@ -1,7 +1,7 @@
 import type { MaybeRefOrGetter, Ref } from "vue";
 
 import { computed, toValue } from "vue";
-import { paginate } from "#foundation/utils/paginate";
+import { paginate } from "../utils/paginate";
 
 export const usePaginate = (
   page: Ref<number>,

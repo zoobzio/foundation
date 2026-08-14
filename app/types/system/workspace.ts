@@ -1,13 +1,13 @@
-import type { FooterProps } from "#foundation/types/common/footer";
-import type { GroupProps } from "#foundation/types/common/group";
-import type { HeaderProps } from "#foundation/types/common/header";
+import type { FooterProps } from "../common/footer";
+import type { GroupProps } from "../common/group";
+import type { HeaderProps } from "../common/header";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
-import type { Wiring } from "#foundation/types/definition";
-import type { Widgets } from "#foundation/types/widget";
+} from "../passthrough";
+import type { Wiring } from "../definition";
+import type { Widgets } from "../widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**

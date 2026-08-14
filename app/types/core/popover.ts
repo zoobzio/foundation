@@ -1,20 +1,20 @@
 import type {
   PopoverRootProps,
   PopoverRootEmits,
-} from "#foundation/types/common/popover/root";
+} from "../common/popover/root";
 import type {
   PopoverAnchorProps,
   ReferenceElement,
-} from "#foundation/types/common/popover/anchor";
-import type { PopoverTriggerProps } from "#foundation/types/common/popover/trigger";
+} from "../common/popover/anchor";
+import type { PopoverTriggerProps } from "../common/popover/trigger";
 import type {
   PopoverContentProps,
   PopoverContentEmits,
-} from "#foundation/types/common/popover/content";
-import type { PopoverArrowProps } from "#foundation/types/common/popover/arrow";
-import type { PopoverCloseProps } from "#foundation/types/common/popover/close";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "../common/popover/content";
+import type { PopoverArrowProps } from "../common/popover/arrow";
+import type { PopoverCloseProps } from "../common/popover/close";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type PopoverPassthrough = {

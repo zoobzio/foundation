@@ -4,14 +4,14 @@ import type {
   PopoverContentForward,
   PopoverContentProps,
   PopoverContentSlots,
-} from "#foundation/types/common/popover/content";
+} from "../../../types/common/popover/content";
 import type { ComponentPublicInstance } from "vue";
 
 import { PopoverContent, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

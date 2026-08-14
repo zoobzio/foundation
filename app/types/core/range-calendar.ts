@@ -1,35 +1,35 @@
-import type { IconProps } from "#foundation/types/common/icon";
+import type { IconProps } from "../common/icon";
 import type {
   RangeCalendarRootProps,
   RangeCalendarRootEmits,
   RangeCalendarRootSlotProps,
-} from "#foundation/types/common/range-calendar/root";
-import type { RangeCalendarHeaderProps } from "#foundation/types/common/range-calendar/header";
-import type { RangeCalendarHeadingProps } from "#foundation/types/common/range-calendar/heading";
+} from "../common/range-calendar/root";
+import type { RangeCalendarHeaderProps } from "../common/range-calendar/header";
+import type { RangeCalendarHeadingProps } from "../common/range-calendar/heading";
 import type {
   RangeCalendarPrevProps,
   RangeCalendarPrevEmits,
-} from "#foundation/types/common/range-calendar/prev";
+} from "../common/range-calendar/prev";
 import type {
   RangeCalendarNextProps,
   RangeCalendarNextEmits,
-} from "#foundation/types/common/range-calendar/next";
-import type { RangeCalendarGridProps } from "#foundation/types/common/range-calendar/grid";
-import type { RangeCalendarGridHeadProps } from "#foundation/types/common/range-calendar/grid-head";
-import type { RangeCalendarGridBodyProps } from "#foundation/types/common/range-calendar/grid-body";
-import type { RangeCalendarGridRowProps } from "#foundation/types/common/range-calendar/grid-row";
-import type { RangeCalendarHeadCellProps } from "#foundation/types/common/range-calendar/head-cell";
-import type { RangeCalendarCellProps } from "#foundation/types/common/range-calendar/cell";
+} from "../common/range-calendar/next";
+import type { RangeCalendarGridProps } from "../common/range-calendar/grid";
+import type { RangeCalendarGridHeadProps } from "../common/range-calendar/grid-head";
+import type { RangeCalendarGridBodyProps } from "../common/range-calendar/grid-body";
+import type { RangeCalendarGridRowProps } from "../common/range-calendar/grid-row";
+import type { RangeCalendarHeadCellProps } from "../common/range-calendar/head-cell";
+import type { RangeCalendarCellProps } from "../common/range-calendar/cell";
 import type {
   RangeCalendarCellTriggerProps,
   RangeCalendarCellTriggerEmits,
-} from "#foundation/types/common/range-calendar/cell-trigger";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/range-calendar/cell-trigger";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";

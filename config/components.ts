@@ -1,5 +1,5 @@
 import type { RoleAria } from "#build/types/contracts";
-import type { Token } from "#foundation/types/tokens";
+import type { Token } from "../app/types/tokens";
 
 interface ComponentConfig {
   elements: Record<

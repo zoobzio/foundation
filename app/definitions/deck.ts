@@ -1,6 +1,6 @@
-import type { Actions, Config } from "#foundation/types/data/deck";
-import type { DeckWidgetProps } from "#foundation/types/data/deck/widget";
-import type { WidgetSettings } from "#foundation/types/widget";
+import type { Actions, Config } from "../types/data/deck";
+import type { DeckWidgetProps } from "../types/data/deck/widget";
+import type { WidgetSettings } from "../types/widget";
 
 /**
  * The static description `createDeck` instances: everything about the

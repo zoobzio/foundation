@@ -6,11 +6,11 @@ import type {
   DataChartVariant,
   Service,
   State,
-} from "#foundation/types/data/chart";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/chart";
+import type { Logger } from "../types/log";
 
-import { buildVariants, aggregateBreakdown } from "#foundation/utils/chart";
-import { VARIANT_LABELS } from "#foundation/constants/chart";
+import { buildVariants, aggregateBreakdown } from "../utils/chart";
+import { VARIANT_LABELS } from "../constants/chart";
 
 export class ChartService<T> implements Service<T> {
   private readonly log: Logger;

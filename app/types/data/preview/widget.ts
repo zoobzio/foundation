@@ -1,8 +1,8 @@
-import type { GroupProps } from "#foundation/types/common/group";
-import type { SpanProps } from "#foundation/types/common/span";
-import type { FabProps, FabEmits } from "#foundation/types/core/fab";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service, Events } from "#foundation/types/data/preview";
+import type { GroupProps } from "../../common/group";
+import type { SpanProps } from "../../common/span";
+import type { FabProps, FabEmits } from "../../core/fab";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service, Events } from "../preview";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type PreviewWidgetPassthrough = {

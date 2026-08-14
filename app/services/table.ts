@@ -5,14 +5,14 @@ import type {
   DataTableColumn,
   Service,
   State,
-} from "#foundation/types/data/table";
-import type { IconAlias } from "#foundation/types/common/iconic";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/table";
+import type { IconAlias } from "../types/common/iconic";
+import type { Logger } from "../types/log";
 
 import {
   TABLE_SORT_ASC_ICON,
   TABLE_SORT_DESC_ICON,
-} from "#foundation/constants/table";
+} from "../constants/table";
 
 export class TableService<T, K = unknown> implements Service<T, K> {
   private readonly log: Logger;

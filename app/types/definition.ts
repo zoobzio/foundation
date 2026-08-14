@@ -1,6 +1,6 @@
-import type { ScopedEvent } from "#foundation/types/hook";
-import type { Passthrough } from "#foundation/types/passthrough";
-import type { Widgets } from "#foundation/types/widget";
+import type { ScopedEvent } from "./hook";
+import type { Passthrough } from "./passthrough";
+import type { Widgets } from "./widget";
 
 /**
  * A component instance as data: props plus emit listeners in `on*` form —

@@ -1,6 +1,6 @@
-import type { Token } from "#foundation/types/tokens";
+import type { Token } from "../types/tokens";
 
-import components from "#config/components";
+import components from "../../config/components";
 import { defineNuxtPlugin, useHead } from "#imports";
 import { property } from "untheme/css";
 

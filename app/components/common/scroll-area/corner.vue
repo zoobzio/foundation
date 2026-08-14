@@ -4,14 +4,14 @@ import type {
   ScrollAreaCornerForward,
   ScrollAreaCornerProps,
   ScrollAreaCornerSlots,
-} from "#foundation/types/common/scroll-area/corner";
+} from "../../../types/common/scroll-area/corner";
 import type { ComponentPublicInstance } from "vue";
 
 import { ScrollAreaCorner, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

@@ -1,4 +1,4 @@
-import { defineModifiers } from "#modules/contracts/config";
+import { defineModifiers } from "../modules/contracts/config";
 
 /**
  * Dev-only modifier schema.

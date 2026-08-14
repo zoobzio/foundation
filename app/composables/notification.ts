@@ -1,6 +1,6 @@
-import type { Notification } from "#foundation/types/notification";
+import type { Notification } from "../types/notification";
 
-import { accessNotifications } from "#foundation/stores/notification";
+import { accessNotifications } from "../stores/notification";
 
 export const useNotifications = () => {
   const { notifications } = accessNotifications();

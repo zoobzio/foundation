@@ -1,10 +1,10 @@
-import type { ButtonProps, ButtonEmits } from "#foundation/types/common/button";
-import type { IconProps } from "#foundation/types/common/icon";
-import type { IconAlias } from "#foundation/types/common/iconic";
-import type { FabProps, FabEmits } from "#foundation/types/core/fab";
-import type { MenuProps, MenuEmits } from "#foundation/types/core/menu";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service } from "#foundation/types/data/chart";
+import type { ButtonProps, ButtonEmits } from "../../common/button";
+import type { IconProps } from "../../common/icon";
+import type { IconAlias } from "../../common/iconic";
+import type { FabProps, FabEmits } from "../../core/fab";
+import type { MenuProps, MenuEmits } from "../../core/menu";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service } from "../chart";
 import type { ComponentPublicInstance } from "vue";
 
 /**

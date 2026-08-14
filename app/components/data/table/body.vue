@@ -4,24 +4,24 @@ import type {
   TableBodyPassthrough,
   TableBodyProps,
   TableBodySlots,
-} from "#foundation/types/data/table/body";
+} from "../../../types/data/table/body";
 import type { ComponentPublicInstance } from "vue";
 
-import Anchor from "#foundation/components/common/anchor.vue";
-import Checkbox from "#foundation/components/core/checkbox.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Img from "#foundation/components/common/img.vue";
-import Menu from "#foundation/components/core/menu.vue";
-import Span from "#foundation/components/common/span.vue";
-import Tbody from "#foundation/components/common/tbody.vue";
-import Td from "#foundation/components/common/td.vue";
-import Tr from "#foundation/components/common/tr.vue";
+import Anchor from "../../common/anchor.vue";
+import Checkbox from "../../core/checkbox.vue";
+import Fab from "../../core/fab.vue";
+import Img from "../../common/img.vue";
+import Menu from "../../core/menu.vue";
+import Span from "../../common/span.vue";
+import Tbody from "../../common/tbody.vue";
+import Td from "../../common/td.vue";
+import Tr from "../../common/tr.vue";
 
 import { useSlots, useTemplateRef } from "#imports";
-import { useTable } from "#foundation/composables/table";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { cell } from "#foundation/utils/format";
+import { useTable } from "../../../composables/table";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
+import { cell } from "../../../utils/format";
 </script>
 
 <script setup lang="ts" generic="T, K = unknown">

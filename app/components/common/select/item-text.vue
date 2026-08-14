@@ -4,14 +4,14 @@ import type {
   SelectItemTextForward,
   SelectItemTextProps,
   SelectItemTextSlots,
-} from "#foundation/types/common/select/item-text";
+} from "../../../types/common/select/item-text";
 import type { ComponentPublicInstance } from "vue";
 
 import { SelectItemText, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

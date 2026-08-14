@@ -5,7 +5,7 @@ import type {
   RangeCalendarRootForward,
   RangeCalendarRootProps,
   RangeCalendarRootSlots,
-} from "#foundation/types/common/range-calendar/root";
+} from "../../../types/common/range-calendar/root";
 import type { ComponentPublicInstance } from "vue";
 
 import type { DateRange } from "reka-ui";
@@ -13,9 +13,9 @@ import type { DateRange } from "reka-ui";
 import { RangeCalendarRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

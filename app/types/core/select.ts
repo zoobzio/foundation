@@ -1,23 +1,23 @@
-import type { IconProps } from "#foundation/types/common/icon";
-import type { SpanProps } from "#foundation/types/common/span";
+import type { IconProps } from "../common/icon";
+import type { SpanProps } from "../common/span";
 import type {
   SelectRootProps,
   SelectRootEmits,
-} from "#foundation/types/common/select/root";
-import type { SelectTriggerProps } from "#foundation/types/common/select/trigger";
+} from "../common/select/root";
+import type { SelectTriggerProps } from "../common/select/trigger";
 import type {
   SelectContentProps,
   SelectContentEmits,
-} from "#foundation/types/common/select/content";
-import type { SelectItemProps } from "#foundation/types/common/select/item";
-import type { SelectItemTextProps } from "#foundation/types/common/select/item-text";
-import type { Option } from "#foundation/types/core/common";
-import type { ComponentEvents } from "#foundation/types/events";
+} from "../common/select/content";
+import type { SelectItemProps } from "../common/select/item";
+import type { SelectItemTextProps } from "../common/select/item-text";
+import type { Option } from "./common";
+import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
-} from "#foundation/types/passthrough";
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type SelectPassthrough = {

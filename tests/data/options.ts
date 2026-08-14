@@ -1,4 +1,4 @@
-import type { Option } from "#foundation/types/core/common";
+import type { Option } from "../../app/types/core/common";
 
 export const fakeOptions: Option[] = [
   { value: "apple", label: "Apple" },

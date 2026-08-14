@@ -5,17 +5,17 @@ import type {
   CheckboxPassthrough,
   CheckboxContext,
   CheckboxSlots,
-} from "#foundation/types/core/checkbox";
+} from "../../types/core/checkbox";
 import type { ComponentPublicInstance } from "vue";
 
-import CheckboxRoot from "#foundation/components/common/checkbox/root.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
+import CheckboxRoot from "../common/checkbox/root.vue";
+import Group from "../common/group.vue";
+import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

@@ -5,25 +5,25 @@ import type {
   FacetsPassthrough,
   FacetsProps,
   FacetsSlots,
-} from "#foundation/types/core/facets";
+} from "../../types/core/facets";
 import type {
   CommandGroup,
   CommandOption,
-} from "#foundation/types/core/command";
+} from "../../types/core/command";
 import type { ComponentPublicInstance } from "vue";
 
-import Command from "#foundation/components/core/command.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Popover from "#foundation/components/core/popover.vue";
+import Command from "./command.vue";
+import Fab from "./fab.vue";
+import Popover from "./popover.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 import {
   FACETS_PLACEHOLDER,
   FACETS_TRIGGER_ICON,
-} from "#foundation/constants/facets";
+} from "../../constants/facets";
 </script>
 
 <script setup lang="ts">

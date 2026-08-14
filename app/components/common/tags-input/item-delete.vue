@@ -5,14 +5,14 @@ import type {
   TagsInputItemDeleteForward,
   TagsInputItemDeleteProps,
   TagsInputItemDeleteSlots,
-} from "#foundation/types/common/tags-input/item-delete";
+} from "../../../types/common/tags-input/item-delete";
 import type { ComponentPublicInstance } from "vue";
 
 import { TagsInputItemDelete, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

@@ -1,4 +1,4 @@
-import type { Item, State } from "#foundation/types/data/autocomplete";
+import type { Item, State } from "../types/data/autocomplete";
 
 import { useState } from "#imports";
 

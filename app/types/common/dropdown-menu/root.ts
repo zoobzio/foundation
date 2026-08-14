@@ -1,4 +1,4 @@
-import type { Reshape } from "#foundation/types/reshape";
+import type { Reshape } from "../../reshape";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
   DropdownMenuRootEmits as RekaDropdownMenuRootEmits,

@@ -5,26 +5,26 @@ import type {
   MenuPassthrough,
   MenuContext,
   MenuSlots,
-} from "#foundation/types/core/menu";
+} from "../../types/core/menu";
 import type { ComponentPublicInstance } from "vue";
 
-import DropdownMenuRoot from "#foundation/components/common/dropdown-menu/root.vue";
-import DropdownMenuTrigger from "#foundation/components/common/dropdown-menu/trigger.vue";
-import DropdownMenuPortal from "#foundation/components/common/dropdown-menu/portal.vue";
-import DropdownMenuContent from "#foundation/components/common/dropdown-menu/content.vue";
-import DropdownMenuGroup from "#foundation/components/common/dropdown-menu/group.vue";
-import DropdownMenuLabel from "#foundation/components/common/dropdown-menu/label.vue";
-import DropdownMenuItem from "#foundation/components/common/dropdown-menu/item.vue";
-import DropdownMenuSeparator from "#foundation/components/common/dropdown-menu/separator.vue";
-import Caption from "#foundation/components/common/caption.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Span from "#foundation/components/common/span.vue";
+import DropdownMenuRoot from "../common/dropdown-menu/root.vue";
+import DropdownMenuTrigger from "../common/dropdown-menu/trigger.vue";
+import DropdownMenuPortal from "../common/dropdown-menu/portal.vue";
+import DropdownMenuContent from "../common/dropdown-menu/content.vue";
+import DropdownMenuGroup from "../common/dropdown-menu/group.vue";
+import DropdownMenuLabel from "../common/dropdown-menu/label.vue";
+import DropdownMenuItem from "../common/dropdown-menu/item.vue";
+import DropdownMenuSeparator from "../common/dropdown-menu/separator.vue";
+import Caption from "../common/caption.vue";
+import Icon from "../common/icon.vue";
+import Span from "../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { MENU_SIDE_OFFSET } from "#foundation/constants/menu";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { MENU_SIDE_OFFSET } from "../../constants/menu";
 </script>
 
 <script setup lang="ts">

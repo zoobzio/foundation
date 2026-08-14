@@ -1,4 +1,4 @@
-import type { IconAlias } from "#foundation/types/common/iconic";
+import type { IconAlias } from "../common/iconic";
 /**
  * Base type for selectable items (tabs, listbox, select, accordion)
  */

@@ -2,11 +2,11 @@ import type {
   CommandOption,
   CommandProps,
   CommandEmits,
-} from "#foundation/types/core/command";
-import type { FabProps } from "#foundation/types/core/fab";
-import type { PopoverProps, PopoverEmits } from "#foundation/types/core/popover";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+} from "./command";
+import type { FabProps } from "./fab";
+import type { PopoverProps, PopoverEmits } from "./popover";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 /**

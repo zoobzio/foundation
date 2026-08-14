@@ -5,11 +5,11 @@ import type {
   Actions,
   Service,
   Keys,
-} from "#foundation/types/data/form";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/form";
+import type { Logger } from "../types/log";
 
 import { keys } from "objectively";
-import { check, flatten } from "#foundation/utils/schema";
+import { check, flatten } from "../utils/schema";
 
 export class FormService<T> implements Service<T> {
   private readonly log: Logger;

@@ -5,20 +5,20 @@ import type {
   DialogPassthrough,
   DialogContext,
   DialogSlots,
-} from "#foundation/types/core/dialog";
+} from "../../types/core/dialog";
 import type { ComponentPublicInstance } from "vue";
 
-import DialogRoot from "#foundation/components/common/dialog/root.vue";
-import DialogPortal from "#foundation/components/common/dialog/portal.vue";
-import DialogOverlay from "#foundation/components/common/dialog/overlay.vue";
-import DialogContent from "#foundation/components/common/dialog/content.vue";
-import DialogTitle from "#foundation/components/common/dialog/title.vue";
-import DialogDescription from "#foundation/components/common/dialog/description.vue";
+import DialogRoot from "../common/dialog/root.vue";
+import DialogPortal from "../common/dialog/portal.vue";
+import DialogOverlay from "../common/dialog/overlay.vue";
+import DialogContent from "../common/dialog/content.vue";
+import DialogTitle from "../common/dialog/title.vue";
+import DialogDescription from "../common/dialog/description.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">

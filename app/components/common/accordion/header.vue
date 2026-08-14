@@ -4,14 +4,14 @@ import type {
   AccordionHeaderForward,
   AccordionHeaderProps,
   AccordionHeaderSlots,
-} from "#foundation/types/common/accordion/header";
+} from "../../../types/common/accordion/header";
 import type { ComponentPublicInstance } from "vue";
 
 import { AccordionHeader, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

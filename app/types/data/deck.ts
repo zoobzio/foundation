@@ -1,5 +1,5 @@
 import type { Ref } from "#imports";
-import type { FacetGroup } from "#foundation/types/core/facets";
+import type { FacetGroup } from "../core/facets";
 
 /**
  * Match mode for combining query and keywords in a fetch.

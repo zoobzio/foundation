@@ -3,11 +3,11 @@ import type {
   ToastProviderContext,
   ToastProviderProps,
   ToastProviderSlots,
-} from "#foundation/types/common/toast/provider";
+} from "../../../types/common/toast/provider";
 
 import { ToastProvider, useForwardProps } from "reka-ui";
 
-import { useContext } from "#foundation/composables/context";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

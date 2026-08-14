@@ -4,14 +4,14 @@ import type {
   CalendarGridRowForward,
   CalendarGridRowProps,
   CalendarGridRowSlots,
-} from "#foundation/types/common/calendar/grid-row";
+} from "../../../types/common/calendar/grid-row";
 import type { ComponentPublicInstance } from "vue";
 
 import { CalendarGridRow, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

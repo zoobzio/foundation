@@ -5,19 +5,19 @@ import type {
   TooltipPassthrough,
   TooltipContext,
   TooltipSlots,
-} from "#foundation/types/core/tooltip";
+} from "../../types/core/tooltip";
 import type { ComponentPublicInstance } from "vue";
 
-import TooltipRoot from "#foundation/components/common/tooltip/root.vue";
-import TooltipTrigger from "#foundation/components/common/tooltip/trigger.vue";
-import TooltipPortal from "#foundation/components/common/tooltip/portal.vue";
-import TooltipContent from "#foundation/components/common/tooltip/content.vue";
+import TooltipRoot from "../common/tooltip/root.vue";
+import TooltipTrigger from "../common/tooltip/trigger.vue";
+import TooltipPortal from "../common/tooltip/portal.vue";
+import TooltipContent from "../common/tooltip/content.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { TOOLTIP_SIDE_OFFSET } from "#foundation/constants/tooltip";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { TOOLTIP_SIDE_OFFSET } from "../../constants/tooltip";
 </script>
 
 <script setup lang="ts">

@@ -5,14 +5,14 @@ import type {
   DatePickerCellTriggerForward,
   DatePickerCellTriggerProps,
   DatePickerCellTriggerSlots,
-} from "#foundation/types/common/date-picker/cell-trigger";
+} from "../../../types/common/date-picker/cell-trigger";
 import type { ComponentPublicInstance } from "vue";
 
 import { DatePickerCellTrigger, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

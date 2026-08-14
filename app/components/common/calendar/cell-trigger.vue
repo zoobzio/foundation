@@ -5,14 +5,14 @@ import type {
   CalendarCellTriggerForward,
   CalendarCellTriggerProps,
   CalendarCellTriggerSlots,
-} from "#foundation/types/common/calendar/cell-trigger";
+} from "../../../types/common/calendar/cell-trigger";
 import type { ComponentPublicInstance } from "vue";
 
 import { CalendarCellTrigger, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

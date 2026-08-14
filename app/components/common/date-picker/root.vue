@@ -5,16 +5,16 @@ import type {
   DatePickerRootForward,
   DatePickerRootProps,
   DatePickerRootSlots,
-} from "#foundation/types/common/date-picker/root";
+} from "../../../types/common/date-picker/root";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
 import { DatePickerRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

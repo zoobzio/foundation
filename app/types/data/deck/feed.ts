@@ -1,10 +1,10 @@
-import type { GroupProps } from "#foundation/types/common/group";
+import type { GroupProps } from "../../common/group";
 import type {
   ScrollerEmits,
   ScrollerProps,
-} from "#foundation/types/core/scroller";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
-import type { Service } from "#foundation/types/data/deck";
+} from "../../core/scroller";
+import type { Passthrough, PT } from "../../passthrough";
+import type { Service } from "../deck";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type DeckFeedPassthrough = {

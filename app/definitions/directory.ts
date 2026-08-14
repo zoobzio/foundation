@@ -1,5 +1,5 @@
-import type { DirectoryEmits, DirectoryItem, DirectoryProps } from "#foundation/types/core/directory";
-import type { Definition } from "#foundation/types/definition";
+import type { DirectoryEmits, DirectoryItem, DirectoryProps } from "../types/core/directory";
+import type { Definition } from "../types/definition";
 
 /**
  * A directory instance as data: props plus emit listeners — the object a

@@ -1,7 +1,7 @@
-import type { ToastProviderProps } from "#foundation/types/common/toast/provider";
-import type { ToastViewportProps } from "#foundation/types/common/toast/viewport";
-import type { ComponentEvents } from "#foundation/types/events";
-import type { Passthrough, PT } from "#foundation/types/passthrough";
+import type { ToastProviderProps } from "../common/toast/provider";
+import type { ToastViewportProps } from "../common/toast/viewport";
+import type { ComponentEvents } from "../events";
+import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 export type ToasterPassthrough = {

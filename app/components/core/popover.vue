@@ -5,22 +5,22 @@ import type {
   PopoverPassthrough,
   PopoverContext,
   PopoverSlots,
-} from "#foundation/types/core/popover";
+} from "../../types/core/popover";
 import type { ComponentPublicInstance } from "vue";
 
-import PopoverRoot from "#foundation/components/common/popover/root.vue";
-import PopoverAnchor from "#foundation/components/common/popover/anchor.vue";
-import PopoverTrigger from "#foundation/components/common/popover/trigger.vue";
-import PopoverPortal from "#foundation/components/common/popover/portal.vue";
-import PopoverContent from "#foundation/components/common/popover/content.vue";
-import PopoverArrow from "#foundation/components/common/popover/arrow.vue";
-import PopoverClose from "#foundation/components/common/popover/close.vue";
+import PopoverRoot from "../common/popover/root.vue";
+import PopoverAnchor from "../common/popover/anchor.vue";
+import PopoverTrigger from "../common/popover/trigger.vue";
+import PopoverPortal from "../common/popover/portal.vue";
+import PopoverContent from "../common/popover/content.vue";
+import PopoverArrow from "../common/popover/arrow.vue";
+import PopoverClose from "../common/popover/close.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
-import { POPOVER_SIDE_OFFSET } from "#foundation/constants/popover";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
+import { useContext } from "../../composables/context";
+import { POPOVER_SIDE_OFFSET } from "../../constants/popover";
 </script>
 
 <script setup lang="ts">

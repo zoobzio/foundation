@@ -4,14 +4,14 @@ import type {
   DialogRootEmits,
   DialogRootProps,
   DialogRootSlots,
-} from "#foundation/types/common/dialog/root";
+} from "../../../types/common/dialog/root";
 import type { ComponentPublicInstance } from "vue";
 
 import { DialogRoot, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useModel } from "#foundation/composables/model";
-import { useContext } from "#foundation/composables/context";
+import { useModel } from "../../../composables/model";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

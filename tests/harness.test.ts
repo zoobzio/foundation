@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
 import { useState } from "#imports";
-import Select from "#foundation/components/core/select.vue";
+import Select from "../app/components/core/select.vue";
 import { commonStubs } from "#test/stubs/common";
 import { fakeOptions } from "#test/data/options";
 

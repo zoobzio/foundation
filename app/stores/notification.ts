@@ -1,4 +1,4 @@
-import type { Notification } from "#foundation/types/notification";
+import type { Notification } from "../types/notification";
 
 import { useState } from "#imports";
 

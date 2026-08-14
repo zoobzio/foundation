@@ -1,4 +1,4 @@
-import type { ColumnType } from "#foundation/types/data/table";
+import type { ColumnType } from "../types/data/table";
 
 export const date = (d: Date) => {
   const y = d.getUTCFullYear();

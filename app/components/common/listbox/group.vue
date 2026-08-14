@@ -4,14 +4,14 @@ import type {
   ListboxGroupForward,
   ListboxGroupProps,
   ListboxGroupSlots,
-} from "#foundation/types/common/listbox/group";
+} from "../../../types/common/listbox/group";
 import type { ComponentPublicInstance } from "vue";
 
 import { ListboxGroup, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

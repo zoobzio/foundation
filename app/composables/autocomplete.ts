@@ -1,8 +1,8 @@
-import type { Service } from "#foundation/types/data/autocomplete";
+import type { Service } from "../types/data/autocomplete";
 import type {
   AutocompleteItemAnchor,
   AutocompleteItemPassthrough,
-} from "#foundation/types/data/autocomplete/item";
+} from "../types/data/autocomplete/item";
 import type {
   ComponentPublicInstance,
   MaybeRefOrGetter,
@@ -10,9 +10,9 @@ import type {
 } from "vue";
 
 import { computed, nextTick, toValue, watch } from "#imports";
-import { useServiceRefs } from "#foundation/composables/refs";
+import { useServiceRefs } from "./refs";
 
-import { AUTOCOMPLETE_BLUR_DELAY_MS } from "#foundation/constants/autocomplete";
+import { AUTOCOMPLETE_BLUR_DELAY_MS } from "../constants/autocomplete";
 
 /**
  * The view surface of the autocomplete feature, shared by every autocomplete

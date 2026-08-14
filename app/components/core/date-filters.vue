@@ -6,26 +6,26 @@ import type {
   DateFiltersSlots,
   DateFilter,
   DateFilterOperator,
-} from "#foundation/types/core/date-filters";
-import type { CommandOption } from "#foundation/types/core/command";
+} from "../../types/core/date-filters";
+import type { CommandOption } from "../../types/core/command";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "#foundation/components/common/button.vue";
-import Calendar from "#foundation/components/core/calendar.vue";
-import Command from "#foundation/components/core/command.vue";
-import Fab from "#foundation/components/core/fab.vue";
-import Group from "#foundation/components/common/group.vue";
-import Icon from "#foundation/components/common/icon.vue";
-import Popover from "#foundation/components/core/popover.vue";
-import RangeCalendar from "#foundation/components/core/range-calendar.vue";
+import Button from "../common/button.vue";
+import Calendar from "./calendar.vue";
+import Command from "./command.vue";
+import Fab from "./fab.vue";
+import Group from "../common/group.vue";
+import Icon from "../common/icon.vue";
+import Popover from "./popover.vue";
+import RangeCalendar from "./range-calendar.vue";
 
 import { computed, nextTick, ref, useTemplateRef, watch } from "#imports";
 import { today, getLocalTimeZone } from "@internationalized/date";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
-import { serialize, deserialize, format } from "#foundation/utils/date";
+import { usePassthrough } from "../../composables/passthrough";
+import { useContext } from "../../composables/context";
+import { serialize, deserialize, format } from "../../utils/date";
 </script>
 
 <script setup lang="ts">

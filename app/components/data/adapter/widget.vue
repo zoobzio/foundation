@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { AdapterWidgetProps } from "#foundation/types/data/adapter/widget";
-import type { AnyWidget } from "#foundation/types/widget";
+import type { AdapterWidgetProps } from "../../../types/data/adapter/widget";
+import type { AnyWidget } from "../../../types/widget";
 
 import { computed } from "#imports";
 </script>

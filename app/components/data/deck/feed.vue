@@ -4,16 +4,16 @@ import type {
   DeckFeedPassthrough,
   DeckFeedProps,
   DeckFeedSlots,
-} from "#foundation/types/data/deck/feed";
+} from "../../../types/data/deck/feed";
 import type { ComponentPublicInstance } from "vue";
 
-import Group from "#foundation/components/common/group.vue";
-import Scroller from "#foundation/components/core/scroller.vue";
+import Group from "../../common/group.vue";
+import Scroller from "../../core/scroller.vue";
 
 import { useTemplateRef } from "#imports";
-import { useDeck } from "#foundation/composables/deck";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useContext } from "#foundation/composables/context";
+import { useDeck } from "../../../composables/deck";
+import { usePassthrough } from "../../../composables/passthrough";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts" generic="T">

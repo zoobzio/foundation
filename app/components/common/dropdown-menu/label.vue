@@ -4,14 +4,14 @@ import type {
   DropdownMenuLabelForward,
   DropdownMenuLabelProps,
   DropdownMenuLabelSlots,
-} from "#foundation/types/common/dropdown-menu/label";
+} from "../../../types/common/dropdown-menu/label";
 import type { ComponentPublicInstance } from "vue";
 
 import { DropdownMenuLabel, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

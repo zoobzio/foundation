@@ -1,6 +1,6 @@
-import type { Service } from "#foundation/types/data/deck";
-import type { FacetGroup } from "#foundation/types/core/facets";
-import type { MenuGroup, MenuItem } from "#foundation/types/core/menu";
+import type { Service } from "../types/data/deck";
+import type { FacetGroup } from "../types/core/facets";
+import type { MenuGroup, MenuItem } from "../types/core/menu";
 import type { ComponentPublicInstance, ShallowRef } from "vue";
 
 import {
@@ -11,8 +11,8 @@ import {
   ref,
   watch,
 } from "#imports";
-import { useServiceRefs } from "#foundation/composables/refs";
-import { DECK_SEARCH_DEBOUNCE } from "#foundation/constants/deck";
+import { useServiceRefs } from "./refs";
+import { DECK_SEARCH_DEBOUNCE } from "../constants/deck";
 
 /**
  * The view surface of the deck feature, shared by every deck component: the

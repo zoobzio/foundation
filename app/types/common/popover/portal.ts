@@ -1,4 +1,4 @@
-import type { Reshape } from "#foundation/types/reshape";
+import type { Reshape } from "../../reshape";
 import type { VNode } from "vue";
 import type { PopoverPortalProps as RekaPopoverPortalProps } from "reka-ui";
 

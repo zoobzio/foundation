@@ -1,11 +1,11 @@
 import type {
   Passthrough,
   PassthroughSource,
-} from "#foundation/types/passthrough";
+} from "../types/passthrough";
 import type { ComputedRef, MaybeRefOrGetter } from "vue";
 
 import { computed, toValue } from "#imports";
-import { passthrough } from "#foundation/utils/passthrough";
+import { passthrough } from "../utils/passthrough";
 
 /**
  * Resolves a component's part manifest into its reactive `settings`.

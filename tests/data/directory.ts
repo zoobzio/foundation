@@ -1,7 +1,7 @@
 import type {
   DirectoryGroup,
   DirectoryItem,
-} from "#foundation/types/core/directory";
+} from "../../app/types/core/directory";
 
 // Extends the base item so tests can assert consumer fields survive the
 // select emit round-trip.

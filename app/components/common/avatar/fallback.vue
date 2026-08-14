@@ -4,14 +4,14 @@ import type {
   AvatarFallbackForward,
   AvatarFallbackProps,
   AvatarFallbackSlots,
-} from "#foundation/types/common/avatar/fallback";
+} from "../../../types/common/avatar/fallback";
 import type { ComponentPublicInstance } from "vue";
 
 import { AvatarFallback, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

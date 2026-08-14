@@ -6,8 +6,8 @@ import type {
   PreviewField,
   Service,
   State,
-} from "#foundation/types/data/preview";
-import type { Logger } from "#foundation/types/log";
+} from "../types/data/preview";
+import type { Logger } from "../types/log";
 
 export class PreviewService<T> implements Service<T> {
   private readonly log: Logger;

@@ -1,8 +1,8 @@
-import type { Config, MatchMode, State } from "#foundation/types/data/deck";
-import type { FacetGroup } from "#foundation/types/core/facets";
+import type { Config, MatchMode, State } from "../types/data/deck";
+import type { FacetGroup } from "../types/core/facets";
 
 import { useState } from "#imports";
-import { DECK_DEFAULT_MATCH_MODE } from "#foundation/constants/deck";
+import { DECK_DEFAULT_MATCH_MODE } from "../constants/deck";
 
 export const accessDeck = <T>(id: string, config: Config<T>): State<T> => {
   // Sort defaults to the first declared date field.

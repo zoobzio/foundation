@@ -1,13 +1,13 @@
-import type { Events } from "#foundation/types/data/deck";
-import type { DeckWidgetProps } from "#foundation/types/data/deck/widget";
-import type { DeckDefinition } from "#foundation/definitions/deck";
-import type { Widget } from "#foundation/types/widget";
+import type { Events } from "../types/data/deck";
+import type { DeckWidgetProps } from "../types/data/deck/widget";
+import type { DeckDefinition } from "../definitions/deck";
+import type { Widget } from "../types/widget";
 
-import component from "#foundation/components/data/deck/widget.vue";
+import component from "../components/data/deck/widget.vue";
 
-import { accessDeck } from "#foundation/stores/deck";
+import { accessDeck } from "../stores/deck";
 import { useNuxtApp } from "#imports";
-import { DeckService } from "#foundation/services/deck";
+import { DeckService } from "../services/deck";
 
 /**
  * Instances a definition: `id` is the only thing the factory adds — shared

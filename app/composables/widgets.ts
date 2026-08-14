@@ -1,9 +1,9 @@
-import type { AnyWiring } from "#foundation/types/definition";
-import type { ScopedEvent } from "#foundation/types/hook";
-import type { AnyWidget, Widgets } from "#foundation/types/widget";
+import type { AnyWiring } from "../types/definition";
+import type { ScopedEvent } from "../types/hook";
+import type { AnyWidget, Widgets } from "../types/widget";
 
 import { entries } from "objectively";
-import { useHooks } from "#foundation/composables/hook";
+import { useHooks } from "./hook";
 
 /**
  * Resolves a definition's widget registry once, in setup, where factories may run.

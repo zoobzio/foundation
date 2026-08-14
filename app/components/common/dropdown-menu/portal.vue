@@ -3,11 +3,11 @@ import type {
   DropdownMenuPortalContext,
   DropdownMenuPortalProps,
   DropdownMenuPortalSlots,
-} from "#foundation/types/common/dropdown-menu/portal";
+} from "../../../types/common/dropdown-menu/portal";
 
 import { DropdownMenuPortal, useForwardProps } from "reka-ui";
 
-import { useContext } from "#foundation/composables/context";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

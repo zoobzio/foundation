@@ -5,14 +5,14 @@ import type {
   DatePickerPrevForward,
   DatePickerPrevProps,
   DatePickerPrevSlots,
-} from "#foundation/types/common/date-picker/prev";
+} from "../../../types/common/date-picker/prev";
 import type { ComponentPublicInstance } from "vue";
 
 import { DatePickerPrev, useForwardProps } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
-import { useBindings } from "#foundation/composables/bindings";
-import { useContext } from "#foundation/composables/context";
+import { useBindings } from "../../../composables/bindings";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

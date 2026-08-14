@@ -3,11 +3,11 @@ import type {
   TooltipPortalContext,
   TooltipPortalProps,
   TooltipPortalSlots,
-} from "#foundation/types/common/tooltip/portal";
+} from "../../../types/common/tooltip/portal";
 
 import { TooltipPortal, useForwardProps } from "reka-ui";
 
-import { useContext } from "#foundation/composables/context";
+import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts">

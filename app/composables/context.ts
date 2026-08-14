@@ -1,4 +1,4 @@
-import type { Context } from "#foundation/types/context";
+import type { Context } from "../types/context";
 import type { ComputedRef, MaybeRefOrGetter } from "vue";
 
 import { computed, toValue } from "#imports";

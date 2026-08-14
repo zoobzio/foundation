@@ -1,7 +1,7 @@
 import type { AppTheme } from "#imports";
 import type { Binding } from "untheme";
-import type { Element } from "#foundation/types/component";
-import type components from "#config/components";
+import type { Element } from "./component";
+import type components from "../../config/components";
 
 export type Token = keyof AppTheme["tokens"];
 
