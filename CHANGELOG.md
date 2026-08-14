@@ -1,5 +1,18 @@
 # @zoobzio/foundation
 
+## 0.0.7
+
+### Patch Changes
+
+- [`1af51d4`](https://github.com/zoobzio/foundation/commit/1af51d4a67be6c56c5e8d8a2e40f4e7549da4f12) Thanks [@zoobzio](https://github.com/zoobzio)! - Dissolve the `contracts` build-time module; no generated `#build` types remain in the layer.
+
+  - Aria: `GlobalAria` / `RoleAria` / `ProhibitedAria` are committed source in `app/types/aria-spec.ts`, regenerated from `aria-query` via `make generate` (`scripts/aria.ts`).
+  - Modifiers: the schema is author-owned in `config/modifiers.ts`; `ComponentModifiers` derives type-level from it. The `modifiers` nuxt.config key, dev stub, and `defineModifiers` are removed.
+  - Events: components declare their own emits contracts via `EventEmits<...>` in their type files (`app/types/events.ts`); the `ComponentEvents` registry and the `events` lists in `config/components.ts` are removed.
+  - `modules/` and `stubs/` are deleted, along with the `#stubs` alias.
+
+- [`ea176bc`](https://github.com/zoobzio/foundation/commit/ea176bc1112de1b16de16bfed696468930874150) Thanks [@zoobzio](https://github.com/zoobzio)! - Replace the `#foundation`, `#config`, and `#modules` import aliases with relative paths so the layer resolves correctly when extended by a consumer app. The aliases are removed from `nuxt.config.ts`, `vitest.config.ts`, and the package.json `imports` map; `#stubs` and `#test` remain for internal consumers.
+
 ## 0.0.6
 
 ### Patch Changes
