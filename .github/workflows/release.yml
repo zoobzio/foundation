@@ -31,13 +31,19 @@ jobs:
         uses: pnpm/action-setup@v4
 
       # registry-url wires npm at the registry so the OIDC token exchange has a
-      # target. Node from .nvmrc clears the >=22.14 floor OIDC requires.
+      # target.
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
+
+      # OIDC trusted publishing requires npm >= 11.5.1; Node 22 bundles npm
+      # 10.x, which silently skips the token exchange and hits the registry
+      # unauthenticated (the E404-on-PUT failure mode).
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
