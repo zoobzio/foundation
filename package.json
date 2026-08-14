@@ -2,6 +2,21 @@
   "name": "@zoobzio/foundation",
   "type": "module",
   "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./components/*": "./app/components/*.vue",
+    "./components/*.vue": "./app/components/*.vue",
+    "./composables/*": "./app/composables/*.ts",
+    "./constants/*": "./app/constants/*.ts",
+    "./definitions/*": "./app/definitions/*.ts",
+    "./factories/*": "./app/factories/*.ts",
+    "./plugins/*": "./app/plugins/*.ts",
+    "./services/*": "./app/services/*.ts",
+    "./stores/*": "./app/stores/*.ts",
+    "./types/*": "./app/types/*.ts",
+    "./utils/*": "./app/utils/*.ts",
+    "./package.json": "./package.json"
+  },
   "license": "MIT",
   "version": "0.0.7",
   "repository": {

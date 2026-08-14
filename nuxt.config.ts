@@ -16,6 +16,13 @@ export default defineNuxtConfig({
 
   untheme,
 
+  vite: {
+    // Package subpath imports (`@zoobzio/foundation/*`) resolve to raw .ts/.vue
+    // sources; keep them out of the dep optimizer so dev serves them through the
+    // normal transform pipeline, deduped with the layer's own relative imports.
+    optimizeDeps: { exclude: ["@zoobzio/foundation"] },
+  },
+
   typescript: {
     tsConfig: {
       // The generated tsconfig only includes app code — pull tests/ in so the
