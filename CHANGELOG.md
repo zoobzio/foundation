@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 0.0.6
+
+### Patch Changes
+
+- [`1556e2d`](https://github.com/zoobzio/foundation/commit/1556e2db6ae24c58144403d511029e1b759dc015) Thanks [@zoobzio](https://github.com/zoobzio)! - Move `aria-query` and `@types/aria-query` from devDependencies to dependencies. The contracts module imports `aria-query` at build time, so consumers extending the layer failed `nuxi prepare` with "Cannot find module 'aria-query'".
+
 ## 0.0.5
 
 ### Patch Changes
