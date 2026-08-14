@@ -2,7 +2,6 @@ import type { ButtonEmits, ButtonProps } from "../common/button";
 import type { GroupProps } from "../common/group";
 import type { SpanProps } from "../common/span";
 import type { FabEmits, FabProps } from "./fab";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -33,7 +32,7 @@ export type PaginationProps = {
   pt?: PT<PaginationPassthrough>;
 };
 
-export type PaginationEmits = ComponentEvents["pagination"] & {
+export type PaginationEmits = {
   "update:page": [value: number];
   "update:size": [value: number];
 };

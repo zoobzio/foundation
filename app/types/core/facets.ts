@@ -5,7 +5,6 @@ import type {
 } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverProps, PopoverEmits } from "./popover";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -39,7 +38,7 @@ export type FacetsProps = {
   pt?: PT<FacetsPassthrough>;
 };
 
-export type FacetsEmits = ComponentEvents["facets"] & {
+export type FacetsEmits = {
   "update:selected": [value: Set<string>];
   "update:open": [value: boolean];
 };

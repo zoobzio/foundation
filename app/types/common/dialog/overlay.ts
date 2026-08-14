@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { Reshape } from "../../reshape";
 import type { TokenProps } from "../../tokens";
@@ -17,7 +16,7 @@ export type DialogOverlayProps = RekaDialogOverlayProps & {
   aria?: AriaProps<"dialog-overlay">;
 };
 
-export type DialogOverlayEmits = ComponentEvents["dialog-overlay"];
+export type DialogOverlayEmits = {};
 
 export type DialogOverlayBindings = Bindings<"dialog-overlay", DialogOverlayForward>;
 

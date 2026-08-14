@@ -8,7 +8,6 @@ import type {
   ListboxItemEmits,
 } from "../common/listbox/item";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -30,7 +29,7 @@ export type ListboxProps = {
   pt?: PT<ListboxPassthrough>;
 };
 
-export type ListboxEmits = ComponentEvents["listbox"] & {
+export type ListboxEmits = {
   "update:modelValue": [value: string | string[]];
 };
 

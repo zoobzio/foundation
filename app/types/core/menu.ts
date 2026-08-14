@@ -18,7 +18,6 @@ import type { DropdownMenuSeparatorProps } from "../common/dropdown-menu/separat
 import type { IconProps } from "../common/icon";
 import type { IconAlias } from "../common/iconic";
 import type { SpanProps } from "../common/span";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -61,7 +60,7 @@ export type MenuProps = {
   pt?: PT<MenuPassthrough>;
 };
 
-export type MenuEmits = ComponentEvents["menu"] & {
+export type MenuEmits = {
   select: [item: MenuItem];
   "update:open": [value: boolean];
 };

@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { Reshape } from "../../reshape";
 import type { TokenProps } from "../../tokens";
@@ -18,7 +17,7 @@ export type DialogContentProps = RekaDialogContentProps & {
   aria?: AriaProps<"dialog-content">;
 };
 
-export type DialogContentEmits = RekaDialogContentEmits & ComponentEvents["dialog-content"];
+export type DialogContentEmits = RekaDialogContentEmits & {};
 
 export type DialogContentBindings = Bindings<"dialog-content", DialogContentForward>;
 

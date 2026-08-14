@@ -6,7 +6,6 @@ import type {
 } from "../common/toggle-group/root";
 import type { ToggleGroupItemProps } from "../common/toggle-group/item";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -29,7 +28,7 @@ export type SegmentedControlProps = {
   pt?: PT<SegmentedControlPassthrough>;
 };
 
-export type SegmentedControlEmits = ComponentEvents["segmented-control"] & {
+export type SegmentedControlEmits = {
   "update:modelValue": [value: string];
 };
 

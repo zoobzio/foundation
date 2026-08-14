@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -17,7 +16,7 @@ export type ScrollAreaCornerProps = RekaScrollAreaCornerProps & {
   aria?: AriaProps<"scroll-area-corner">;
 };
 
-export type ScrollAreaCornerEmits = ComponentEvents["scroll-area-corner"];
+export type ScrollAreaCornerEmits = {};
 
 export type ScrollAreaCornerBindings = Bindings<"scroll-area-corner", ScrollAreaCornerForward>;
 

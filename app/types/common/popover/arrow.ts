@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type PopoverArrowProps = RekaPopoverArrowProps & {
   aria?: AriaProps<"popover-arrow">;
 };
 
-export type PopoverArrowEmits = ComponentEvents["popover-arrow"];
+export type PopoverArrowEmits = {};
 
 export type PopoverArrowBindings = Bindings<"popover-arrow", PopoverArrowForward>;
 

@@ -13,7 +13,6 @@ import type {
 } from "../common/popover/content";
 import type { PopoverArrowProps } from "../common/popover/arrow";
 import type { PopoverCloseProps } from "../common/popover/close";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -39,7 +38,7 @@ export type PopoverProps = {
   pt?: PT<PopoverPassthrough>;
 };
 
-export type PopoverEmits = ComponentEvents["popover"] & {
+export type PopoverEmits = {
   "update:open": [value: boolean];
 };
 

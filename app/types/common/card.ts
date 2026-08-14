@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -12,7 +11,7 @@ export type CardProps = {
   aria?: AriaProps<"card">;
 };
 
-export type CardEmits = ComponentEvents["card"];
+export type CardEmits = {};
 
 export type CardBindings = Bindings<"card">;
 

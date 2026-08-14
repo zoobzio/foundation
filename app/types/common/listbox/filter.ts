@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -24,7 +23,7 @@ export type ListboxFilterProps = RekaListboxFilterProps &
     aria?: AriaProps<"listbox-filter">;
   };
 
-export type ListboxFilterEmits = RekaListboxFilterEmits & ComponentEvents["listbox-filter"];
+export type ListboxFilterEmits = RekaListboxFilterEmits & {};
 
 export type ListboxFilterBindings = Bindings<"listbox-filter", ListboxFilterForward>;
 

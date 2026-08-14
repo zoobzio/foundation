@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type CalendarGridBodyProps = RekaCalendarGridBodyProps & {
   aria?: AriaProps<"calendar-grid-body">;
 };
 
-export type CalendarGridBodyEmits = ComponentEvents["calendar-grid-body"];
+export type CalendarGridBodyEmits = {};
 
 export type CalendarGridBodyBindings = Bindings<"calendar-grid-body", CalendarGridBodyForward>;
 

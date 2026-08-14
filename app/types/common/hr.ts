@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 
@@ -10,7 +9,7 @@ export type HrProps = {
   aria?: AriaProps<"hr">;
 };
 
-export type HrEmits = ComponentEvents["hr"];
+export type HrEmits = {};
 
 export type HrBindings = Bindings<"hr">;
 

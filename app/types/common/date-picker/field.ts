@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { SlotProps } from "../../slots";
@@ -15,7 +14,7 @@ export type DatePickerFieldProps = {
   aria?: AriaProps<"date-picker-field">;
 };
 
-export type DatePickerFieldEmits = ComponentEvents["date-picker-field"];
+export type DatePickerFieldEmits = {};
 
 export type DatePickerFieldBindings = Bindings<"date-picker-field">;
 

@@ -16,7 +16,6 @@ import type {
   CheckboxProps,
 } from "./checkbox";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -45,7 +44,7 @@ export type MultiSelectProps<T extends Option> = {
 };
 
 export type MultiSelectEmits<T extends Option> =
-  ComponentEvents["multi-select"] & {
+  {
     "update:modelValue": [value: T[] | undefined];
     "update:open": [value: boolean];
   };

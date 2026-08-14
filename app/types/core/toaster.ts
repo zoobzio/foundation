@@ -1,6 +1,5 @@
 import type { ToastProviderProps } from "../common/toast/provider";
 import type { ToastViewportProps } from "../common/toast/viewport";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -13,7 +12,7 @@ export type ToasterProps = {
   pt?: PT<ToasterPassthrough>;
 };
 
-export type ToasterEmits = ComponentEvents["toaster"];
+export type ToasterEmits = {};
 
 export type ToasterContext = {
   el: ComponentPublicInstance | null;

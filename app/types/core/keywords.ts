@@ -10,7 +10,6 @@ import type {
   TagsInputProps,
   TagsInputEmits,
 } from "./tags-input";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -37,7 +36,7 @@ export type KeywordsProps = {
   pt?: PT<KeywordsPassthrough>;
 };
 
-export type KeywordsEmits = ComponentEvents["keywords"] & {
+export type KeywordsEmits = {
   "update:modelValue": [value: string];
   "update:open": [value: boolean];
 };

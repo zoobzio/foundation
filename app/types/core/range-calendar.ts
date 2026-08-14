@@ -24,7 +24,6 @@ import type {
   RangeCalendarCellTriggerProps,
   RangeCalendarCellTriggerEmits,
 } from "../common/range-calendar/cell-trigger";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -71,7 +70,7 @@ export type RangeCalendarProps = {
   pt?: PT<RangeCalendarPassthrough>;
 };
 
-export type RangeCalendarEmits = ComponentEvents["calendar"] & {
+export type RangeCalendarEmits = {
   "update:modelValue": [value: DateRange | undefined];
 };
 

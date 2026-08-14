@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -17,7 +16,7 @@ export type AvatarRootProps = RekaAvatarRootProps & {
   aria?: AriaProps<"avatar-root">;
 };
 
-export type AvatarRootEmits = ComponentEvents["avatar-root"];
+export type AvatarRootEmits = {};
 
 export type AvatarRootBindings = Bindings<"avatar-root", AvatarRootForward>;
 

@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type RangeCalendarHeaderProps = RekaRangeCalendarHeaderProps & {
   aria?: AriaProps<"range-calendar-header">;
 };
 
-export type RangeCalendarHeaderEmits = ComponentEvents["range-calendar-header"];
+export type RangeCalendarHeaderEmits = {};
 
 export type RangeCalendarHeaderBindings = Bindings<"range-calendar-header", RangeCalendarHeaderForward>;
 

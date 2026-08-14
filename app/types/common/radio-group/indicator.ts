@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type RadioGroupIndicatorProps = RekaRadioGroupIndicatorProps & {
   aria?: AriaProps<"radio-group-indicator">;
 };
 
-export type RadioGroupIndicatorEmits = ComponentEvents["radio-group-indicator"];
+export type RadioGroupIndicatorEmits = {};
 
 export type RadioGroupIndicatorBindings = Bindings<"radio-group-indicator", RadioGroupIndicatorForward>;
 

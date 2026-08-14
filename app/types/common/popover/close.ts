@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +15,7 @@ export type PopoverCloseProps = RekaPopoverCloseProps & {
   aria?: AriaProps<"popover-close">;
 };
 
-export type PopoverCloseEmits = ComponentEvents["popover-close"];
+export type PopoverCloseEmits = EventEmits<"click">;
 
 export type PopoverCloseBindings = Bindings<"popover-close", PopoverCloseForward>;
 

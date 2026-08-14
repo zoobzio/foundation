@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -31,7 +30,7 @@ export type RangeCalendarRootProps = RekaRangeCalendarRootProps & {
 // useModel needs — widened to include `undefined` for the explicit contract.
 export type RangeCalendarRootEmits = {
   "update:modelValue": [value: DateRange | undefined];
-} & ComponentEvents["range-calendar-root"];
+} & {};
 
 export type RangeCalendarRootBindings = Bindings<"range-calendar-root", RangeCalendarRootForward>;
 

@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -17,7 +16,7 @@ export type DropdownMenuSeparatorProps = RekaDropdownMenuSeparatorProps & {
   aria?: AriaProps<"dropdown-menu-separator">;
 };
 
-export type DropdownMenuSeparatorEmits = ComponentEvents["dropdown-menu-separator"];
+export type DropdownMenuSeparatorEmits = {};
 
 export type DropdownMenuSeparatorBindings = Bindings<"dropdown-menu-separator", DropdownMenuSeparatorForward>;
 

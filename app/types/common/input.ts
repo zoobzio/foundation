@@ -1,6 +1,6 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
+import type { EventEmits } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 
@@ -15,7 +15,7 @@ export type InputProps = {
   aria?: AriaProps<"input">;
 };
 
-export type InputEmits = ComponentEvents["input"];
+export type InputEmits = EventEmits<"input" | "change" | "focus" | "blur">;
 
 export type InputBindings = Bindings<"input">;
 

@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -19,7 +18,7 @@ export type RadioGroupRootProps = RekaRadioGroupRootProps & {
   aria?: AriaProps<"radio-group-root">;
 };
 
-export type RadioGroupRootEmits = RekaRadioGroupRootEmits & ComponentEvents["radio-group-root"];
+export type RadioGroupRootEmits = RekaRadioGroupRootEmits & {};
 
 export type RadioGroupRootBindings = Bindings<"radio-group-root", RadioGroupRootForward>;
 

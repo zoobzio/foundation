@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -13,7 +12,7 @@ export type FieldsetProps = {
   aria?: AriaProps<"fieldset">;
 };
 
-export type FieldsetEmits = ComponentEvents["fieldset"];
+export type FieldsetEmits = {};
 
 export type FieldsetBindings = Bindings<"fieldset">;
 

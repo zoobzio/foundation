@@ -8,9 +8,6 @@
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git"
   },
-  "imports": {
-    "#stubs/*": "./stubs/*"
-  },
   "author": {
     "name": "Alex Thorwaldson",
     "email": "alex@zoobz.io",

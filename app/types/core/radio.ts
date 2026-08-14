@@ -10,7 +10,6 @@ import type {
 import type { RadioGroupIndicatorProps } from "../common/radio-group/indicator";
 import type { SpanProps } from "../common/span";
 import type { Option } from "./common";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -36,7 +35,7 @@ export type RadioProps = {
   pt?: PT<RadioPassthrough>;
 };
 
-export type RadioEmits = ComponentEvents["radio"] & {
+export type RadioEmits = {
   "update:modelValue": [value: string];
 };
 

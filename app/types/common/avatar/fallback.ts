@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -17,7 +16,7 @@ export type AvatarFallbackProps = RekaAvatarFallbackProps & {
   aria?: AriaProps<"avatar-fallback">;
 };
 
-export type AvatarFallbackEmits = ComponentEvents["avatar-fallback"];
+export type AvatarFallbackEmits = {};
 
 export type AvatarFallbackBindings = Bindings<"avatar-fallback", AvatarFallbackForward>;
 

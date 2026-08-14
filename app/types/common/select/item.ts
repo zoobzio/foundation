@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +15,7 @@ export type SelectItemProps = RekaSelectItemProps & {
   aria?: AriaProps<"select-item">;
 };
 
-export type SelectItemEmits = ComponentEvents["select-item"];
+export type SelectItemEmits = EventEmits<"click">;
 
 export type SelectItemBindings = Bindings<"select-item", SelectItemForward>;
 

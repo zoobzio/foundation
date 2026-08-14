@@ -4,7 +4,6 @@ import type { ScrollAreaScrollbarProps } from "../common/scroll-area/scrollbar";
 import type { ScrollAreaThumbProps } from "../common/scroll-area/thumb";
 import type { ScrollAreaCornerProps } from "../common/scroll-area/corner";
 import type { ButtonEmits, ButtonProps } from "../common/button";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -29,7 +28,7 @@ export type ScrollerProps = {
   pt?: PT<ScrollerPassthrough>;
 };
 
-export type ScrollerEmits = ComponentEvents["scroller"];
+export type ScrollerEmits = {};
 
 export type ScrollerContext = {
   type: ScrollerType;

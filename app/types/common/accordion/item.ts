@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -15,7 +14,7 @@ export type AccordionItemProps = RekaAccordionItemProps & {
   aria?: AriaProps<"accordion-item">;
 };
 
-export type AccordionItemEmits = ComponentEvents["accordion-item"];
+export type AccordionItemEmits = {};
 
 export type AccordionItemBindings = Bindings<
   "accordion-item",

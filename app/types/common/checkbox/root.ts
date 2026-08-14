@@ -1,6 +1,6 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
+import type { EventEmits } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -18,7 +18,7 @@ export type CheckboxRootProps = RekaCheckboxRootProps & {
   aria?: AriaProps<"checkbox-root">;
 };
 
-export type CheckboxRootEmits = RekaCheckboxRootEmits & ComponentEvents["checkbox-root"];
+export type CheckboxRootEmits = RekaCheckboxRootEmits & EventEmits<"click">;
 
 export type CheckboxRootBindings = Bindings<
   "checkbox-root",

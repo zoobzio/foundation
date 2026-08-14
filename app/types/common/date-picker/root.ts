@@ -1,6 +1,5 @@
 import type { AriaProps } from "../../aria";
 import type { Bindings } from "../../bindings";
-import type { ComponentEvents } from "../../events";
 import type { ModifierProps } from "../../modifiers";
 import type { TokenProps } from "../../tokens";
 import type { Reshape } from "../../reshape";
@@ -30,7 +29,7 @@ export type DatePickerRootProps = RekaDatePickerRootProps & {
 export type DatePickerRootEmits = {
   "update:modelValue": [date: DateValue | undefined];
   "update:open": [value: boolean];
-} & ComponentEvents["date-picker-root"];
+} & {};
 
 export type DatePickerRootBindings = Bindings<
   "date-picker-root",

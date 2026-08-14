@@ -24,7 +24,6 @@ import type {
   CalendarCellTriggerProps,
   CalendarCellTriggerEmits,
 } from "../common/calendar/cell-trigger";
-import type { ComponentEvents } from "../events";
 import type {
   Passthrough,
   PassthroughIter,
@@ -70,7 +69,7 @@ export type CalendarProps = {
   pt?: PT<CalendarPassthrough>;
 };
 
-export type CalendarEmits = ComponentEvents["calendar"] & {
+export type CalendarEmits = {
   "update:modelValue": [value: DateValue | undefined];
 };
 

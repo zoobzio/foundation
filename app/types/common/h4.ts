@@ -1,6 +1,5 @@
 import type { AriaProps } from "../aria";
 import type { Bindings } from "../bindings";
-import type { ComponentEvents } from "../events";
 import type { ModifierProps } from "../modifiers";
 import type { TokenProps } from "../tokens";
 import type { VNode } from "vue";
@@ -12,7 +11,7 @@ export type H4Props = {
   aria?: AriaProps<"h4">;
 };
 
-export type H4Emits = ComponentEvents["h4"];
+export type H4Emits = {};
 
 export type H4Bindings = Bindings<"h4">;
 

@@ -9,7 +9,6 @@ import type {
 } from "../common/dialog/content";
 import type { DialogTitleProps } from "../common/dialog/title";
 import type { DialogDescriptionProps } from "../common/dialog/description";
-import type { ComponentEvents } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -28,7 +27,7 @@ export type DialogProps = {
   pt?: PT<DialogPassthrough>;
 };
 
-export type DialogEmits = ComponentEvents["dialog"] & {
+export type DialogEmits = {
   "update:open": [value: boolean];
 };
 
