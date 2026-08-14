@@ -2,8 +2,8 @@
 
 Page-level **structures** one tier above [data](../data/README.md). A
 structure is an arrangement strategy over widgets — the workspace arranges a
-grid of slots; future structures arrange differently (columns with side
-scroll, …) — and a page implements exactly one. Structures are *not*
+grid of slots, the panel arranges three fixed regions (header / content /
+footer) — and a page implements exactly one. Structures are *not*
 widgets: a widget is an entity a factory creates; a structure is a component
 a page uses, on [core](../core/README.md)'s component contract
 (props / pt / ctx / slots), with **no machine** — no store, no service, no
@@ -67,6 +67,12 @@ regions:
 - `#slot:<id>` overrides a grid cell wholesale; `#widget:<key>` overrides
   how a registry widget renders and receives its **typed** service.
 
+The panel's spec swaps the arrangement vocabulary: `regions: { header?,
+content?, footer? }` maps fixed region names to registry keys — no
+arrangement math at all; layout is userland styling. Regions with neither a
+widget nor slotted content are omitted from the DOM, and region overrides
+use plain named slots (`#header`) rather than `slot:<id>`.
+
 ## Widget consumption (`composables/widgets.ts`)
 
 The repeated pattern every structure shares, built once:
@@ -84,6 +90,11 @@ The repeated pattern every structure shares, built once:
 
 A new structure is its arrangement types + a component calling these two —
 nothing else.
+
+Content without a widget of its own rides the
+[adapter](../data/README.md#the-adapter): `createAdapter` lifts any plain
+component (a logo, a core composite) into the widget contract, so a registry
+entry, a spec slot, and wire coordination all work identically.
 
 ## Wiring semantics
 
@@ -143,3 +154,4 @@ Two deliberate semantics:
 | Consumption         | [`composables/widgets.ts`](../../composables/widgets.ts) (`useWidgets` · `useWiring`)                    |
 | Hook backbone       | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)              |
 | Reference structure | [`workspace.vue`](./workspace.vue) · [`types/system/workspace.ts`](../../types/system/workspace.ts) · [`specs/workspace.ts`](../../specs/workspace.ts) |
+| Region structure    | [`panel.vue`](./panel.vue) · [`types/system/panel.ts`](../../types/system/panel.ts) · [`specs/panel.ts`](../../specs/panel.ts) |

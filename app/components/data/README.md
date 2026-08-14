@@ -287,6 +287,58 @@ same payloads.
 - Store keys are `` `<name>-${id}-<key>` ``; ctx names are
   `data-<name>` / `data-<name>-<part>`.
 
+## The adapter
+
+The escape hatch at the widget boundary: `createAdapter` lifts a plain
+component — a logo, a core composite like directory — into the widget
+contract, so a registry entry, a structure slot, and spec wiring all work
+identically to a real feature. It follows this tier's anatomy (store,
+service, factory, widget, registered event) with deliberate deviations.
+
+```ts
+type NavContract = Contract<DirectoryProps<NavEntry>, DirectoryEmits<NavEntry>>;
+
+const useNav = createAdapter<NavContract>(
+  "nav",
+  { component: Directory, emits: { select: true } },
+  () => ({ groups: gated.value }),
+);
+```
+
+- **The contract is the authored surface.** Pass it explicitly — composed
+  from a component's own types via `Contract<Props, Emits>` — and everything
+  verifies against it: the component must implement it (checked at
+  `component:`), `settings`/`patch` check against exactly its props, its
+  `on*` listener props define the emit vocabulary, and wire payloads carry
+  its exact argument tuples. Omitting the generic infers the contract from
+  the component's `$props` — legal, but noisier types. Contract requiredness
+  mirrors the component's: a prop the component defaults cannot be required
+  by the contract.
+- **`emits` is exhaustive.** `{ [K in EmitName<P>]: true }` — every contract
+  listener prop must be acknowledged, so the typed wire surface and the
+  runtime bridge cannot drift; a contract with no listeners states
+  `emits: {}`. Contract emit ⇔ bridged emit: local-only means leaving the
+  listener off the contract.
+- **`pt` is the wrapped component's own props, not a part manifest.**
+  `settings` is the reactive base — mandatory when the contract has required
+  props — and the service's `patch`/`reset` override layer merges over it
+  **flat, per key**. `patch` is the entry point spec wiring uses to drive an
+  adapted component imperatively (`services.nav.patch({ … })`); it emits no
+  domain event — prop control is coordination plumbing, and an event there
+  invites wire feedback loops.
+- **One registered event.** Every contract emit dispatches `adapter:emitted`
+  (`{ id, emit, args }`, id-scoped). Wire handlers narrow on `event.emit`
+  with typing recovered from the widget events phantom, not the registry.
+- **No slots cross the widget boundary.** Override at the structure
+  (`widget:<key>`), or wrap the component in a local SFC that fills its own
+  slots and adapt that.
+- **Anything stateful deserves a real feature.** The adapter's machine is
+  identity plus props; when page behavior starts accumulating in `patch`
+  calls and wire handlers, that is a feature asking to be built.
+- Ids use the standard instancing model (`adapter-${id}-props`): the same id
+  anywhere in the app shares the override layer. Name adapter ids as
+  deliberately as feature ids.
+
 ## Adding a feature
 
 Build order for a new feature in this tier:
@@ -325,3 +377,4 @@ Build order for a new feature in this tier:
 | Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/autocomplete.ts`](../../services/autocomplete.ts)  |
 | Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`autocomplete/widget.vue`](./autocomplete/widget.vue)              |
 | Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`autocomplete/item.vue`](./autocomplete/item.vue) (iterated) |
+| Adapter             | [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |
