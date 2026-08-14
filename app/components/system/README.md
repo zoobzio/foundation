@@ -14,22 +14,22 @@ factory, no events of its own.
 | Prefix     | Home              | Nature                                                        |
 | ---------- | ----------------- | ------------------------------------------------------------- |
 | `create*`  | `factories/`      | runtime widget construction — returns a setup-time composable |
-| `define*`  | `specs/`          | pure module-scope identity fn — a type checkpoint, no runtime |
-| structures | `components/system/` | components consuming a spec — where specs become pages     |
+| `define*`  | `definitions/`    | pure module-scope identity fn — a type checkpoint, no runtime |
+| structures | `components/system/` | components consuming a definition — where definitions become pages |
 
 `define*` follows the `defineNuxtConfig` idiom: it runs anywhere, does
-nothing, and exists so the spec's types are enforced **at the definition
+nothing, and exists so the definition's types are enforced **at the definition
 site** — a bad layout key or wire event errors on the line it is written,
 not at mount.
 
-## Specs
+## Definitions
 
-A spec is the complete description of a page's furniture: what exists
+A definition is the complete description of a page's furniture: what exists
 (`widgets`), where it goes (`layout`), how it talks to itself (`wire`).
-Consumers keep them in their own `specs/` files — plain data, no Vue:
+Consumers keep them in their own `definitions/` files — plain data, no Vue:
 
 ```ts
-// specs/crm.ts
+// definitions/crm.ts
 export const crmWorkspace = defineWorkspace({
   widgets: {
     "contact-table": useContactTable,
@@ -53,11 +53,11 @@ export const crmWorkspace = defineWorkspace({
 });
 ```
 
-The page mounts the structure with the spec and optionally overrides
+The page mounts the structure with the definition and optionally overrides
 regions:
 
 ```vue
-<Workspace :spec="crmWorkspace" :pt="{ … }">
+<Workspace :definition="crmWorkspace" :pt="{ … }">
   <template #widget:contact-form="{ service }">…</template>
 </Workspace>
 ```
@@ -67,7 +67,7 @@ regions:
 - `#slot:<id>` overrides a grid cell wholesale; `#widget:<key>` overrides
   how a registry widget renders and receives its **typed** service.
 
-The panel's spec swaps the arrangement vocabulary: `regions: { header?,
+The panel's definition swaps the arrangement vocabulary: `regions: { header?,
 content?, footer? }` maps fixed region names to registry keys — no
 arrangement math at all; layout is userland styling. Regions with neither a
 widget nor slotted content are omitted from the DOM, and region overrides
@@ -82,7 +82,7 @@ The repeated pattern every structure shares, built once:
   the template binds: `<component :is="w.component" :service="w.service"
   :pt="toValue(w.settings)" />`. The render path is unchecked by design —
   correlation was proven at each factory's return annotation.
-- `useWiring(spec.wire, widgets)` — registers each wire handler through the
+- `useWiring(definition.wire, widgets)` — registers each wire handler through the
   hooks backbone via [`useHooks`](../../composables/hook.ts), scoped to the
   resolved machine's id, torn down with the component scope. Handlers
   receive `(event, services)` where `services` is every resolved machine
@@ -94,7 +94,7 @@ nothing else.
 Content without a widget of its own rides the
 [adapter](../data/README.md#the-adapter): `createAdapter` lifts any plain
 component (a logo, a core composite) into the widget contract, so a registry
-entry, a spec slot, and wire coordination all work identically.
+entry, a structure slot, and wire coordination all work identically.
 
 ## Wiring semantics
 
@@ -102,7 +102,7 @@ Typing flows through the widget entity, not the global hook registry: the
 registry erases feature generics (`FormEvents<unknown>` in `app.d.ts`), so
 `Widget<Props, E>` carries an `events?: E` **phantom** that each factory
 annotates at its concrete generics. `Wiring<R>`
-([`types/spec.ts`](../../types/spec.ts)) recovers per-key payloads from it
+([`types/definition.ts`](../../types/definition.ts)) recovers per-key payloads from it
 and types the services record as `ServicesOf<R>`.
 
 Two deliberate semantics:
@@ -126,32 +126,32 @@ Two deliberate semantics:
 - Structures follow core's component contract: parts manifest via
   `usePassthrough`, `useContext` (`system-<name>`), typed `defineSlots`,
   `f-system-<name>-*` classes.
-- Specs are data. A spec field must be definable at module scope with no
-  Vue context; handlers close over nothing.
+- Definitions are data. A definition field must be definable at module
+  scope with no Vue context; handlers close over nothing.
 - One structure per page.
 
 ## Adding a structure
 
 1. **Types** — `types/system/<name>.ts`: the arrangement vocabulary
-   (workspace's `Slot` / `Layout`), the `<Name>Spec<R>` (arrangement +
+   (workspace's `Slot` / `Layout`), the `<Name>Definition<R>` (arrangement +
    `widgets: R` + `wire?: Wiring<R>`), and the component contract
    (props / passthrough / ctx / slots, with the `widget:<key>` mapped slot
    type for typed overrides).
-2. **Spec module** — `specs/<name>.ts`: `define<Name>`, the identity
-   checkpoint.
+2. **Definition module** — `definitions/<name>.ts`: `define<Name>`, the
+   identity checkpoint.
 3. **Component** — `components/system/<name>.vue`: `generic="R extends
    Widgets"`, `useWidgets` + `useWiring`, arrangement math inline, the
    consumption cell (`slot:` fallback → `widget:` fallback →
    `<component :is>`).
-4. **Verify** — typecheck, eslint, and a mount test over a fixture spec.
+4. **Verify** — typecheck, eslint, and a mount test over a fixture definition.
 
 ## Source map
 
 | Concern             | File                                                                                                    |
 | ------------------- | ------------------------------------------------------------------------------------------------------- |
 | Widget contract     | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `AnyWidget` · `Widgets`)                          |
-| Spec/wiring types   | [`types/spec.ts`](../../types/spec.ts) (`Wiring` · `ServicesOf` · `EventsOf` · `WireHandler`)            |
+| Definition/wiring types | [`types/definition.ts`](../../types/definition.ts) (`Wiring` · `ServicesOf` · `EventsOf` · `WireHandler`) |
 | Consumption         | [`composables/widgets.ts`](../../composables/widgets.ts) (`useWidgets` · `useWiring`)                    |
 | Hook backbone       | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)              |
-| Reference structure | [`workspace.vue`](./workspace.vue) · [`types/system/workspace.ts`](../../types/system/workspace.ts) · [`specs/workspace.ts`](../../specs/workspace.ts) |
-| Region structure    | [`panel.vue`](./panel.vue) · [`types/system/panel.ts`](../../types/system/panel.ts) · [`specs/panel.ts`](../../specs/panel.ts) |
+| Reference structure | [`workspace.vue`](./workspace.vue) · [`types/system/workspace.ts`](../../types/system/workspace.ts) · [`definitions/workspace.ts`](../../definitions/workspace.ts) |
+| Region structure    | [`panel.vue`](./panel.vue) · [`types/system/panel.ts`](../../types/system/panel.ts) · [`definitions/panel.ts`](../../definitions/panel.ts) |

@@ -1,5 +1,16 @@
 import type { ScopedEvent } from "#foundation/types/hook";
+import type { Passthrough } from "#foundation/types/passthrough";
 import type { Widgets } from "#foundation/types/widget";
+
+/**
+ * A component instance as data: props plus emit listeners in `on*` form —
+ * the object a template `v-bind`s, and the shape an adapter captures as its
+ * settings. `define*` is the stable authoring verb across layers; only the
+ * definition's shape changes with the layer (composites bind props, data
+ * features bundle config/actions/settings, structures arrange registries,
+ * adapters capture components).
+ */
+export type Definition<Props, Emits = {}> = Passthrough<Props, Emits>;
 
 /**
  * The resolved machines of a registry, keyed like the registry — what wire
@@ -27,10 +38,10 @@ type WireEvent<
     : never;
 
 /**
- * Spec-level coordination: per registry key, a handler per domain event.
- * Handlers receive the typed payload and the full services record. Runtime
- * rides the hooks backbone (id-scoped per resolved machine), so wiring also
- * fires when a machine is driven from elsewhere on the page.
+ * Definition-level coordination: per registry key, a handler per domain
+ * event. Handlers receive the typed payload and the full services record.
+ * Runtime rides the hooks backbone (id-scoped per resolved machine), so
+ * wiring also fires when a machine is driven from elsewhere on the page.
  */
 export type Wiring<R extends Widgets> = {
   [K in keyof R]?: {
@@ -43,10 +54,10 @@ export type Wiring<R extends Widgets> = {
 
 /**
  * The erased handler the wiring runner invokes. Method syntax on purpose —
- * bivariant, hook.ts precedent — so concretely-typed spec handlers assign in
- * and the runner can call them with the erased event/services. Sound by
- * construction: handlers are id-filtered to the machine whose generics they
- * were typed against.
+ * bivariant, hook.ts precedent — so concretely-typed definition handlers
+ * assign in and the runner can call them with the erased event/services.
+ * Sound by construction: handlers are id-filtered to the machine whose
+ * generics they were typed against.
  */
 export type WireHandler = {
   fn(event: ScopedEvent, services: Record<string, unknown>): void;

@@ -6,7 +6,7 @@ import type {
   PassthroughIter,
   PT,
 } from "#foundation/types/passthrough";
-import type { Wiring } from "#foundation/types/spec";
+import type { Wiring } from "#foundation/types/definition";
 import type { Widgets } from "#foundation/types/widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -23,7 +23,7 @@ export interface Slot<R extends Widgets = Widgets> {
 
 /**
  * Workspace layout — a grid of slots. Plain data; `widget` keys reference
- * the spec's registry so the layout stays serializable.
+ * the definition's registry so the layout stays serializable.
  */
 export interface Layout<R extends Widgets = Widgets> {
   columns: number;
@@ -36,7 +36,7 @@ export interface Layout<R extends Widgets = Widgets> {
  * (`widgets`), where it goes (`layout`), how it talks to itself (`wire`).
  * Built at module scope with `defineWorkspace` — pure data, no runtime.
  */
-export type WorkspaceSpec<R extends Widgets> = {
+export type WorkspaceDefinition<R extends Widgets> = {
   widgets: R;
   layout: Layout<R>;
   wire?: Wiring<R>;
@@ -51,12 +51,12 @@ export type WorkspacePassthrough<R extends Widgets> = {
 };
 
 export type WorkspaceProps<R extends Widgets> = {
-  spec: WorkspaceSpec<R>;
+  definition: WorkspaceDefinition<R>;
   pt?: PT<WorkspacePassthrough<R>>;
 };
 
 export type WorkspaceContext<R extends Widgets> = {
-  spec: WorkspaceSpec<R>;
+  definition: WorkspaceDefinition<R>;
   el: ComponentPublicInstance | null;
   settings: WorkspacePassthrough<R>;
 };

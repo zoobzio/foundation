@@ -186,6 +186,27 @@ reads `ref.ctx` live, no `.value`) and the ctx-spread slots.
   coerced at the boundary (`String(v)`) so `XEmits` stays the public
   contract.
 
+## Definitions
+
+Every composite ships a `define<Name>` constructor in
+`definitions/<name>.ts`: `<Name>Definition` is
+`Definition<XProps, XEmits>` ([`types/definition.ts`](../../types/definition.ts))
+— the component's props plus emit listeners in `on*` form, a static
+declaration a template `v-bind`s:
+
+```ts
+const picker = defineSelect({ options, "onUpdate:modelValue": (v) => {} });
+```
+
+```vue
+<Select v-bind="picker" />
+```
+
+Definitions are pure data at module scope (the identity function is the type
+checkpoint), declared as named consts and composed by reference. The same
+object is what an [adapter](../data/README.md#the-adapter) captures as
+`settings` when a composite becomes page furniture.
+
 ## Conventions
 
 - **State the generic explicitly** — `usePassthrough<XPassthrough>(…)`; the

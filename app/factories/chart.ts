@@ -1,6 +1,7 @@
-import type { Config, Actions, Events } from "#foundation/types/data/chart";
+import type { Events } from "#foundation/types/data/chart";
 import type { ChartWidgetProps } from "#foundation/types/data/chart/widget";
-import type { Widget, WidgetSettings } from "#foundation/types/widget";
+import type { ChartDefinition } from "#foundation/definitions/chart";
+import type { Widget } from "#foundation/types/widget";
 
 import component from "#foundation/components/data/chart/widget.vue";
 
@@ -8,21 +9,22 @@ import { accessChart } from "#foundation/stores/chart";
 import { useNuxtApp } from "#imports";
 import { ChartService } from "#foundation/services/chart";
 
+/**
+ * Instances a definition: `id` is the only thing the factory adds — shared
+ * state, hook scoping, wiring identity all key on it.
+ */
 export const createChart = <T>(
   id: string,
-  config: Config<T>,
-  actions: Actions<T> = {},
-  settings?: WidgetSettings<ChartWidgetProps<T>>,
+  definition: ChartDefinition<T>,
 ) => {
   return (): Widget<ChartWidgetProps<T>, Events> => {
     const nuxt = useNuxtApp();
-    const state = accessChart(id, config);
-    const service = new ChartService(nuxt, id, config, state, actions);
-
+    const state = accessChart(id, definition.config);
+    const service = new ChartService(nuxt, id, definition.config, state, definition.actions ?? {});
     return {
       service,
       component,
-      settings,
+      settings: definition.settings,
     };
   };
 };

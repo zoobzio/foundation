@@ -1,4 +1,4 @@
-import type { AnyWiring } from "#foundation/types/spec";
+import type { AnyWiring } from "#foundation/types/definition";
 import type { ScopedEvent } from "#foundation/types/hook";
 import type { AnyWidget, Widgets } from "#foundation/types/widget";
 
@@ -6,7 +6,7 @@ import { entries } from "objectively";
 import { useHooks } from "#foundation/composables/hook";
 
 /**
- * Resolves a spec's widget registry once, in setup, where factories may run.
+ * Resolves a definition's widget registry once, in setup, where factories may run.
  * Structures render through the erased view — correlation was proven per
  * factory.
  */
@@ -21,7 +21,7 @@ export const useWidgets = <R extends Widgets>(
 };
 
 /**
- * Registers a spec's wiring over the resolved registry: each handler
+ * Registers a definition's wiring over the resolved registry: each handler
  * subscribes to its machine's domain event through the hooks backbone,
  * id-scoped, torn down with the scope. Handlers receive the full services
  * record so an event in one widget can drive actions in another.

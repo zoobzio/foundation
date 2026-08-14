@@ -1,17 +1,13 @@
 // The factory composes store + service through the shim's Nuxt seams — the
 // tests assert the triple, the keyed-state instancing model, and the
-// contract-typed authoring path; override and bridge logic get their depth
-// in tests/services/adapter.test.ts.
+// definition constructors (`defineAdapter`, `defineDirectory`); override and
+// bridge logic get their depth in tests/services/adapter.test.ts.
 import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import { createAdapter } from "#foundation/factories/adapter";
+import { defineAdapter } from "#foundation/definitions/adapter";
+import { defineDirectory } from "#foundation/definitions/directory";
 import Directory from "#foundation/components/core/directory.vue";
-import type { Contract } from "#foundation/types/data/adapter";
-import type {
-  DirectoryEmits,
-  DirectoryItem,
-  DirectoryProps,
-} from "#foundation/types/core/directory";
 
 const FixtureLogo = defineComponent({
   name: "FixtureLogo",
@@ -22,7 +18,8 @@ const FixtureLogo = defineComponent({
 });
 
 // A component with a required prop, for the contract-typed path: the
-// contract mirrors the requiredness, which makes `settings` mandatory.
+// contract mirrors the requiredness, which makes `settings` mandatory in
+// the definition.
 const FixtureBadge = defineComponent({
   name: "FixtureBadge",
   props: { label: { type: String, required: true } },
@@ -42,13 +39,15 @@ type BadgeContract = {
   onActivate?: (label: string) => void;
 };
 
+const logoDefinition = defineAdapter({
+  component: FixtureLogo,
+  emits: {},
+  settings: { src: "/logo.svg" },
+});
+
 describe("createAdapter", () => {
   it("yields the widget triple carrying the wrapped component", () => {
-    const widget = createAdapter(
-      "logo",
-      { component: FixtureLogo, emits: {} },
-      { src: "/logo.svg" },
-    )();
+    const widget = createAdapter("logo", logoDefinition)();
     expect(widget.service.id).toBe("logo");
     expect(widget.service.component).toBe(FixtureLogo);
     expect(widget.component).toBeDefined();
@@ -57,58 +56,52 @@ describe("createAdapter", () => {
 
   it("settings stay optional and raw for all-optional contracts", () => {
     const settings = () => ({ src: "/logo.svg" });
-    const make = (s?: typeof settings) =>
-      createAdapter("logo", { component: FixtureLogo, emits: {} }, s)();
-    expect(make().settings).toBeUndefined();
-    expect(make(settings).settings).toBe(settings);
+    const bare = defineAdapter({ component: FixtureLogo, emits: {} });
+    const reactive = defineAdapter({
+      component: FixtureLogo,
+      emits: {},
+      settings,
+    });
+    expect(createAdapter("logo", bare)().settings).toBeUndefined();
+    expect(createAdapter("logo", reactive)().settings).toBe(settings);
   });
 
-  it("contract-typed adapters verify component, emits, and settings", () => {
-    const widget = createAdapter<BadgeContract>(
-      "badge",
-      { component: FixtureBadge, emits: { activate: true } },
-      { label: "beta" },
-    )();
+  it("contract-typed definitions verify component, emits, and settings", () => {
+    const badge = defineAdapter<BadgeContract>({
+      component: FixtureBadge,
+      emits: { activate: true },
+      settings: { label: "beta" },
+    });
+    const widget = createAdapter("badge", badge)();
     expect(widget.service.component).toBe(FixtureBadge);
     expect(widget.service.emits).toEqual(["activate"]);
     expect(widget.settings).toEqual({ label: "beta" });
   });
 
-  it("Contract composes a component's Props/Emits into an adapter surface", () => {
-    type NavContract = Contract<
-      DirectoryProps<DirectoryItem>,
-      DirectoryEmits<DirectoryItem>
-    >;
-    const widget = createAdapter<NavContract>(
-      "nav",
-      { component: Directory, emits: { select: true } },
-      { groups: [] },
-    )();
+  it("a composite definition slots into the adapter as settings", () => {
+    const nav = defineDirectory({ groups: [] });
+    const adapter = defineAdapter({
+      component: Directory,
+      emits: { select: true },
+      settings: nav,
+    });
+    const widget = createAdapter("nav", adapter)();
     expect(widget.service.component).toBe(Directory);
     expect(widget.service.emits).toEqual(["select"]);
-    expect(widget.settings).toEqual({ groups: [] });
+    expect(widget.settings).toBe(nav);
   });
 
   it("same id shares the override layer across instances", () => {
-    const useLogo = createAdapter("logo", {
-      component: FixtureLogo,
-      emits: {},
-    });
+    const useLogo = createAdapter("logo", logoDefinition);
     const a = useLogo().service;
     const b = useLogo().service;
     a.patch({ src: "/patched.svg" });
     expect(b.props).toEqual({ src: "/patched.svg" });
   });
 
-  it("different ids stay independent", () => {
-    const a = createAdapter("one", {
-      component: FixtureLogo,
-      emits: {},
-    })().service;
-    const b = createAdapter("two", {
-      component: FixtureLogo,
-      emits: {},
-    })().service;
+  it("different ids stay independent — one definition, many instances", () => {
+    const a = createAdapter("one", logoDefinition)().service;
+    const b = createAdapter("two", logoDefinition)().service;
     a.patch({ src: "/patched.svg" });
     expect(b.props).toEqual({});
   });

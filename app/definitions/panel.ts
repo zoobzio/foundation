@@ -1,7 +1,7 @@
-import type { PanelSpec } from "#foundation/types/system/panel";
+import type { PanelDefinition } from "#foundation/types/system/panel";
 import type { Widgets } from "#foundation/types/widget";
 
-export type { PanelSpec };
+export type { PanelDefinition };
 
 /**
  * Declares a panel at module scope — pure data, no runtime, no Vue. The
@@ -10,5 +10,5 @@ export type { PanelSpec };
  * they are written.
  */
 export const definePanel = <R extends Widgets>(
-  spec: PanelSpec<R>,
-): PanelSpec<R> => spec;
+  definition: PanelDefinition<R>,
+): PanelDefinition<R> => definition;

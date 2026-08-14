@@ -18,17 +18,17 @@ import { useContext } from "#foundation/composables/context";
 </script>
 
 <script setup lang="ts" generic="R extends Widgets">
-const { spec, pt } = defineProps<PanelProps<R>>();
+const { definition, pt } = defineProps<PanelProps<R>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const widgets = useWidgets(spec.widgets);
-useWiring(spec.wire, widgets);
+const widgets = useWidgets(definition.widgets);
+useWiring(definition.wire, widgets);
 
-// Each fixed region paired with its resolved widget, if the spec assigns one.
+// Each fixed region paired with its resolved widget, if the definition assigns one.
 const regions = computed(() =>
   PANEL_REGIONS.map((region) => {
-    const assigned = spec.regions[region];
+    const assigned = definition.regions[region];
     const key = assigned === undefined ? undefined : String(assigned);
     return {
       region,
@@ -49,7 +49,7 @@ const settings = usePassthrough<PanelPassthrough>(() => ({
 }));
 
 const ctx = useContext<PanelContext<R>>("system-panel", () => ({
-  spec,
+  definition,
   el: el.value,
   settings: settings.value,
 }));
