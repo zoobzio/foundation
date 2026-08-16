@@ -1,5 +1,14 @@
 # @zoobzio/foundation-mcp
 
+## 0.0.15
+
+### Patch Changes
+
+- [`88ad11a`](https://github.com/zoobzio/foundation/commit/88ad11a51befa4b5ca3750c6c821ca0edc5b5290) Thanks [@zoobzio](https://github.com/zoobzio)! - Republish with a resolved peer dependency: 0.0.14 shipped with the raw `workspace:*` protocol in `peerDependencies`, making the package uninstallable outside the monorepo.
+
+- Updated dependencies []:
+  - @zoobzio/foundation@0.0.15
+
 ## 0.1.0
 
 ### Minor Changes
