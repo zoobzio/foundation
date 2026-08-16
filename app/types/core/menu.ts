@@ -1,3 +1,4 @@
+import type { ButtonEmits, ButtonProps } from "../common/button";
 import type { CaptionProps } from "../common/caption";
 import type {
   DropdownMenuRootProps,
@@ -40,6 +41,7 @@ export type MenuGroup = {
 export type MenuPassthrough = {
   root: Passthrough<DropdownMenuRootProps, DropdownMenuRootEmits>;
   trigger: Passthrough<DropdownMenuTriggerProps>;
+  triggerButton: Passthrough<ButtonProps, ButtonEmits>;
   content: Passthrough<DropdownMenuContentProps, DropdownMenuContentEmits>;
   group: Passthrough<DropdownMenuGroupProps>;
   label: Passthrough<DropdownMenuLabelProps>;
@@ -52,6 +54,7 @@ export type MenuPassthrough = {
 
 export type MenuProps = {
   open?: boolean;
+  label?: string;
   groups: MenuGroup[];
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";
@@ -66,6 +69,7 @@ export type MenuEmits = {
 };
 
 export type MenuContext = {
+  label?: string;
   groups: MenuGroup[];
   side: "top" | "right" | "bottom" | "left";
   align: "start" | "center" | "end";
