@@ -50,7 +50,7 @@
     "test:coverage": "vitest run --coverage --passWithNoTests",
     "changeset": "changeset",
     "ci:version": "changeset version",
-    "ci:release": "changeset publish"
+    "ci:release": "pnpm -r publish --no-git-checks && changeset tag"
   },
   "packageManager": "pnpm@10.27.0",
   "publishConfig": {

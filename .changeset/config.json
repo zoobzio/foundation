@@ -5,6 +5,7 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
+  "fixed": [["@zoobzio/foundation", "@zoobzio/foundation-mcp"]],
   "linked": [],
   "ignore": []
 }

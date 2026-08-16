@@ -39,12 +39,6 @@ jobs:
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
 
-      # OIDC trusted publishing requires npm >= 11.5.1; Node 22 bundles npm
-      # 10.x, which silently skips the token exchange and hits the registry
-      # unauthenticated (the E404-on-PUT failure mode).
-      - name: Update npm
-        run: npm install -g npm@latest
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
@@ -72,13 +66,17 @@ jobs:
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
-      # Publish if the current version isn't yet on npm. Tokenless OIDC — no
-      # NPM_TOKEN. Provenance is emitted under trusted publishing.
+      # Publish every workspace package whose current version isn't yet on
+      # npm, via `pnpm -r publish` — pnpm rewrites `workspace:*` ranges to the
+      # real version at pack time, which `changeset publish` (npm under the
+      # hood) does not. Tokenless OIDC — no NPM_TOKEN; pnpm handles the
+      # trusted-publishing exchange itself. Provenance is emitted under
+      # trusted publishing. `changeset tag` then tags the released versions.
       - name: Publish
         run: pnpm ci:release
         env:
           NPM_CONFIG_PROVENANCE: "true"
 
-      # Push the tag changeset publish created for the released version.
+      # Push the tags created for the released versions.
       - name: Push tags
         run: git push --tags
