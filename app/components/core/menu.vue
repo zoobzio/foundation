@@ -16,6 +16,7 @@ import DropdownMenuGroup from "../common/dropdown-menu/group.vue";
 import DropdownMenuLabel from "../common/dropdown-menu/label.vue";
 import DropdownMenuItem from "../common/dropdown-menu/item.vue";
 import DropdownMenuSeparator from "../common/dropdown-menu/separator.vue";
+import Button from "../common/button.vue";
 import Caption from "../common/caption.vue";
 import Icon from "../common/icon.vue";
 import Span from "../common/span.vue";
@@ -30,6 +31,7 @@ import { MENU_SIDE_OFFSET } from "../../constants/menu";
 <script setup lang="ts">
 const {
   open = undefined,
+  label,
   groups,
   side = "bottom",
   align = "center",
@@ -58,6 +60,7 @@ const settings = usePassthrough<MenuPassthrough>(() => ({
       },
     },
     trigger: { asChild: true },
+    triggerButton: { label },
     content: { side, align, sideOffset, alignOffset },
     group: {},
     label: { asChild: true },
@@ -77,6 +80,7 @@ const settings = usePassthrough<MenuPassthrough>(() => ({
 }));
 
 const ctx = useContext<MenuContext>("menu", () => ({
+  label,
   groups,
   side,
   align,
@@ -95,7 +99,9 @@ defineSlots<MenuSlots>();
   <DropdownMenuRoot ref="el" v-bind="settings.root">
     <slot name="trigger" v-bind="ctx">
       <DropdownMenuTrigger v-bind="settings.trigger">
-        <slot v-bind="ctx" />
+        <slot v-bind="ctx">
+          <Button v-bind="settings.triggerButton" />
+        </slot>
       </DropdownMenuTrigger>
     </slot>
     <DropdownMenuPortal>

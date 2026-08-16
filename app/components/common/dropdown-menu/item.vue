@@ -50,6 +50,7 @@ defineSlots<DropdownMenuItemSlots>();
     class="f-dropdown-menu-item"
     v-bind="bindings"
     @click="emit('click', $event)"
+    @select="emit('select', $event)"
   >
     <slot v-bind="ctx" />
   </DropdownMenuItem>
