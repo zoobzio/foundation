@@ -1,7 +1,7 @@
 {
   "name": "@zoobzio/foundation-mcp",
   "type": "module",
-  "version": "0.0.14",
+  "version": "0.1.0",
   "description": "MCP server exposing component lookups and usage help for @zoobzio/foundation",
   "license": "MIT",
   "repository": {
