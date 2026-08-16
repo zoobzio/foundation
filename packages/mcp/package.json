@@ -1,0 +1,41 @@
+{
+  "name": "@zoobzio/foundation-mcp",
+  "type": "module",
+  "version": "0.0.14",
+  "description": "MCP server exposing component lookups and usage help for @zoobzio/foundation",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoobzio/foundation.git",
+    "directory": "packages/mcp"
+  },
+  "bin": {
+    "foundation-mcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "catalog.json"
+  ],
+  "scripts": {
+    "generate": "node scripts/generate.ts",
+    "build": "pnpm generate && tsc -p tsconfig.json",
+    "typecheck": "pnpm generate && tsc -p tsconfig.json --noEmit",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "zod": "^3.24.1"
+  },
+  "peerDependencies": {
+    "@zoobzio/foundation": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@zoobzio/foundation": "workspace:*",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  }
+}
