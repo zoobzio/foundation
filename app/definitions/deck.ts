@@ -3,7 +3,7 @@ import type { DeckWidgetProps } from "../types/data/deck/widget";
 import type { WidgetSettings } from "../types/widget";
 
 /**
- * The static description `createDeck` instances: everything about the
+ * The static description `useDeck` instances: everything about the
  * feature except its id. Reusable — one definition, many ids, many machines.
  */
 export type DeckDefinition<T> = {

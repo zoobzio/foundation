@@ -6,68 +6,77 @@ import type {
   PassthroughIter,
   PT,
 } from "../passthrough";
-import type { Wiring } from "../definition";
+import type { ServicesOf } from "../definition";
 import type { Widgets } from "../widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
- * A slot definition within a workspace layout. `widget` assigns a registry
- * key to the cell; unassigned slots render through the Vue slot only.
+ * A grid cell: placement plus, in definitions, the widget configuration
+ * that fills it. The slot's record key is its id — the registry key its
+ * widget is instanced under, and the address `slot:`/`widget:` overrides
+ * use.
  */
-export interface Slot<R extends Widgets = Widgets> {
-  id: string;
-  widget?: keyof R;
+export type Slot = {
   position: [column: number, row: number];
   span: [columns: number, rows: number];
-}
-
-/**
- * Workspace layout — a grid of slots. Plain data; `widget` keys reference
- * the definition's registry so the layout stays serializable.
- */
-export interface Layout<R extends Widgets = Widgets> {
-  columns: number;
-  rows: number;
-  slots: Slot<R>[];
-}
-
-/**
- * The complete page description a workspace renders: what exists
- * (`widgets`), where it goes (`layout`), how it talks to itself (`wire`).
- * Built at module scope with `defineWorkspace` — pure data, no runtime.
- */
-export type WorkspaceDefinition<R extends Widgets> = {
-  widgets: R;
-  layout: Layout<R>;
-  wire?: Wiring<R>;
+  widget?: unknown;
 };
 
-export type WorkspacePassthrough<R extends Widgets> = {
+/**
+ * The workspace's static configuration: grid geometry and slots keyed by
+ * id, each carrying its placement and, optionally, the widget definition
+ * that fills it. A slot's widget fit is checked where the user maps it to
+ * its feature composable, on the `use*` line that instances it. Pure data,
+ * storable in a constant via `defineWorkspace`; interactivity attaches at
+ * `useWorkspace`. Slots without a widget render through their Vue slot
+ * only.
+ */
+export type WorkspaceDefinition = {
+  columns: number;
+  rows: number;
+  slots: Record<string, Slot>;
+};
+
+/**
+ * The live workspace — what `useWorkspace` returns and the component
+ * renders: the layout it lays out, the id-keyed registry at full type, and
+ * the typed services record for imperative page access. Fully typed end to
+ * end; the component widens `widgets` to the erased record on its render
+ * path.
+ */
+export type Workspace<R extends Widgets> = {
+  layout: WorkspaceDefinition;
+  widgets: R;
+  services: ServicesOf<R>;
+};
+
+export type WorkspacePassthrough = {
   root: Passthrough<GroupProps>;
   header: Passthrough<HeaderProps>;
   grid: Passthrough<GroupProps>;
-  slot: PassthroughIter<Slot<R>, GroupProps>;
+  slot: PassthroughIter<Slot & { id: string }, GroupProps>;
   footer: Passthrough<FooterProps>;
 };
 
 export type WorkspaceProps<R extends Widgets> = {
-  definition: WorkspaceDefinition<R>;
-  pt?: PT<WorkspacePassthrough<R>>;
+  workspace: Workspace<R>;
+  pt?: PT<WorkspacePassthrough>;
 };
 
 export type WorkspaceContext<R extends Widgets> = {
-  definition: WorkspaceDefinition<R>;
+  workspace: Workspace<R>;
   el: ComponentPublicInstance | null;
-  settings: WorkspacePassthrough<R>;
+  settings: WorkspacePassthrough;
 };
 
 export type WorkspaceSlotContext<R extends Widgets> = WorkspaceContext<R> & {
-  slot: Slot<R>;
+  id: string;
+  slot: Slot;
 };
 
 /**
- * Layout regions are addressed two ways: `slot:<id>` overrides a grid cell
- * wholesale, `widget:<key>` overrides how a registry widget renders and
+ * Grid cells are addressed two ways: `slot:<id>` overrides a cell
+ * wholesale, `widget:<id>` overrides how the cell's widget renders and
  * receives its typed service.
  */
 export type WorkspaceSlots<R extends Widgets> = {
@@ -79,6 +88,6 @@ export type WorkspaceSlots<R extends Widgets> = {
     | undefined;
 } & {
   [K in keyof R as `widget:${K & string}`]?: (
-    props: WorkspaceSlotContext<R> & { service: ReturnType<R[K]>["service"] },
+    props: WorkspaceSlotContext<R> & { service: R[K]["service"] },
   ) => VNode[];
 };

@@ -10,21 +10,20 @@ import { useNuxtApp } from "#imports";
 import { AutocompleteService } from "../services/autocomplete";
 
 /**
- * Instances a definition: `id` is the only thing the factory adds — shared
- * state, hook scoping, wiring identity all key on it.
+ * Instances a definition in the calling scope — call in setup: `id` is the
+ * only thing the composable adds; shared state, hook scoping, wiring
+ * identity all key on it.
  */
-export const createAutocomplete = <M>(
+export const useAutocomplete = <M>(
   id: string,
   definition: AutocompleteDefinition<M>,
-) => {
-  return (): Widget<AutocompleteWidgetProps<M>, Events<M>> => {
-    const nuxt = useNuxtApp();
-    const state = accessAutocomplete<M>(id);
-    const service = new AutocompleteService(nuxt, id, definition.config, state, definition.actions ?? {});
-    return {
-      service,
-      component,
-      settings: definition.settings,
-    };
+): Widget<AutocompleteWidgetProps<M>, Events<M>> => {
+  const nuxt = useNuxtApp();
+  const state = accessAutocomplete<M>(id);
+  const service = new AutocompleteService(nuxt, id, definition.config, state, definition.actions ?? {});
+  return {
+    service,
+    component,
+    settings: definition.settings,
   };
 };

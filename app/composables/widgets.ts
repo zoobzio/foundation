@@ -1,24 +1,9 @@
 import type { AnyWiring } from "../types/definition";
 import type { ScopedEvent } from "../types/hook";
-import type { AnyWidget, Widgets } from "../types/widget";
+import type { AnyWidget } from "../types/widget";
 
 import { entries } from "objectively";
 import { useHooks } from "./hook";
-
-/**
- * Resolves a definition's widget registry once, in setup, where factories may run.
- * Structures render through the erased view — correlation was proven per
- * factory.
- */
-export const useWidgets = <R extends Widgets>(
-  registry: R,
-): Record<string, AnyWidget> => {
-  const widgets: Record<string, AnyWidget> = {};
-  for (const [key, make] of entries(registry)) {
-    widgets[String(key)] = make();
-  }
-  return widgets;
-};
 
 /**
  * Registers a definition's wiring over the resolved registry: each handler

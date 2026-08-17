@@ -17,15 +17,15 @@ export type Definition<Props, Emits = {}> = Passthrough<Props, Emits>;
  * handlers receive to drive sibling widgets imperatively.
  */
 export type ServicesOf<R extends Widgets> = {
-  [K in keyof R]: ReturnType<R[K]>["service"];
+  [K in keyof R]: R[K]["service"];
 };
 
 /**
  * A registry entry's domain event map, recovered from the widget's events
- * phantom at the factory's concrete generics.
+ * phantom at the composable's concrete generics.
  */
 export type EventsOf<R extends Widgets, K extends keyof R> = NonNullable<
-  ReturnType<R[K]>["events"]
+  R[K]["events"]
 >;
 
 type WireEvent<

@@ -3,7 +3,7 @@ import type { FormWidgetProps } from "../types/data/form/widget";
 import type { WidgetSettings } from "../types/widget";
 
 /**
- * The static description `createForm` instances: everything about the
+ * The static description `useForm` instances: everything about the
  * feature except its id. Reusable — one definition, many ids, many machines.
  */
 export type FormDefinition<T> = {

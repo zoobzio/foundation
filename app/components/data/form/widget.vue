@@ -17,7 +17,7 @@ import Scroller from "../../core/scroller.vue";
 import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { useForm } from "../../../composables/form";
+import { useFormView } from "../../../composables/form";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
@@ -39,7 +39,7 @@ useHooks<Events<T>>(service.id, {
   "form:reset": (event) => emit("reset", event),
 });
 
-const { submitting } = useForm(service);
+const { submitting } = useFormView(service);
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 

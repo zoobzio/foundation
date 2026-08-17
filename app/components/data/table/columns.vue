@@ -11,7 +11,7 @@ import Fab from "../../core/fab.vue";
 import Popover from "../../core/popover.vue";
 
 import { ref, useTemplateRef } from "#imports";
-import { useTable } from "../../../composables/table";
+import { useTableView } from "../../../composables/table";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import {
@@ -27,7 +27,7 @@ const el = useTemplateRef<ComponentPublicInstance>("el");
 const open = ref(false);
 
 const { columnGroups, selectedColumnOptions, onColumnsUpdate } =
-  useTable(table);
+  useTableView(table);
 
 const settings = usePassthrough<TableColumnsPassthrough>(() => ({
   pt,

@@ -14,7 +14,7 @@ import Group from "../../common/group.vue";
 import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePreview } from "../../../composables/preview";
+import { usePreviewView } from "../../../composables/preview";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
@@ -38,7 +38,7 @@ useHooks<Events>(service.id, {
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { loading, data, filename, hasExternal, copy, download, openExternal } =
-  usePreview(service);
+  usePreviewView(service);
 
 const settings = usePassthrough<PreviewWidgetPassthrough>(() => ({
   pt,

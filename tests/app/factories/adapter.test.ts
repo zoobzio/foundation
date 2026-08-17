@@ -1,10 +1,10 @@
-// The factory composes store + service through the shim's Nuxt seams — the
+// The composable composes store + service through the shim's Nuxt seams — the
 // tests assert the triple, the keyed-state instancing model, and the
 // definition constructors (`defineAdapter`, `defineDirectory`); override and
 // bridge logic get their depth in tests/services/adapter.test.ts.
 import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
-import { createAdapter } from "../../../app/factories/adapter";
+import { useAdapter } from "../../../app/factories/adapter";
 import { defineAdapter } from "../../../app/definitions/adapter";
 import { defineDirectory } from "../../../app/definitions/directory";
 import Directory from "../../../app/components/core/directory.vue";
@@ -45,9 +45,9 @@ const logoDefinition = defineAdapter({
   settings: { src: "/logo.svg" },
 });
 
-describe("createAdapter", () => {
+describe("useAdapter", () => {
   it("yields the widget triple carrying the wrapped component", () => {
-    const widget = createAdapter("logo", logoDefinition)();
+    const widget = useAdapter("logo", logoDefinition);
     expect(widget.service.id).toBe("logo");
     expect(widget.service.component).toBe(FixtureLogo);
     expect(widget.component).toBeDefined();
@@ -62,8 +62,8 @@ describe("createAdapter", () => {
       emits: {},
       settings,
     });
-    expect(createAdapter("logo", bare)().settings).toBeUndefined();
-    expect(createAdapter("logo", reactive)().settings).toBe(settings);
+    expect(useAdapter("logo", bare).settings).toBeUndefined();
+    expect(useAdapter("logo", reactive).settings).toBe(settings);
   });
 
   it("contract-typed definitions verify component, emits, and settings", () => {
@@ -72,7 +72,7 @@ describe("createAdapter", () => {
       emits: { activate: true },
       settings: { label: "beta" },
     });
-    const widget = createAdapter("badge", badge)();
+    const widget = useAdapter("badge", badge);
     expect(widget.service.component).toBe(FixtureBadge);
     expect(widget.service.emits).toEqual(["activate"]);
     expect(widget.settings).toEqual({ label: "beta" });
@@ -85,23 +85,22 @@ describe("createAdapter", () => {
       emits: { select: true },
       settings: nav,
     });
-    const widget = createAdapter("nav", adapter)();
+    const widget = useAdapter("nav", adapter);
     expect(widget.service.component).toBe(Directory);
     expect(widget.service.emits).toEqual(["select"]);
     expect(widget.settings).toBe(nav);
   });
 
   it("same id shares the override layer across instances", () => {
-    const useLogo = createAdapter("logo", logoDefinition);
-    const a = useLogo().service;
-    const b = useLogo().service;
+    const a = useAdapter("logo", logoDefinition).service;
+    const b = useAdapter("logo", logoDefinition).service;
     a.patch({ src: "/patched.svg" });
     expect(b.props).toEqual({ src: "/patched.svg" });
   });
 
   it("different ids stay independent — one definition, many instances", () => {
-    const a = createAdapter("one", logoDefinition)().service;
-    const b = createAdapter("two", logoDefinition)().service;
+    const a = useAdapter("one", logoDefinition).service;
+    const b = useAdapter("two", logoDefinition).service;
     a.patch({ src: "/patched.svg" });
     expect(b.props).toEqual({});
   });

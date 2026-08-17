@@ -22,7 +22,7 @@ import { DECK_SEARCH_DEBOUNCE } from "../constants/deck";
  * scroll-to-top; children skip it. Timers and DOM stop here — the service
  * exposes a pure `poll()`/`showPending()`.
  */
-export const useDeck = <T>(
+export const useDeckView = <T>(
   deck: Service<T>,
   el?: Readonly<ShallowRef<ComponentPublicInstance | null>>,
 ) => {

@@ -17,7 +17,7 @@ import Span from "../../common/span.vue";
 
 import { ClientOnly } from "#components";
 import { useTemplateRef } from "#imports";
-import { useAutocomplete } from "../../../composables/autocomplete";
+import { useAutocompleteView } from "../../../composables/autocomplete";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
@@ -39,7 +39,7 @@ useHooks<Events<M>>(service.id, {
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { input, hint, panels, dropdown, empty, recipes } = useAutocomplete(
+const { input, hint, panels, dropdown, empty, recipes } = useAutocompleteView(
   service,
   el,
 );

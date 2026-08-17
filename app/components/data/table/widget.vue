@@ -20,7 +20,7 @@ import Scroller from "../../core/scroller.vue";
 import Table from "../../common/table.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { useTable } from "../../../composables/table";
+import { useTableView } from "../../../composables/table";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
@@ -39,7 +39,7 @@ useHooks<Events>(service.id, {
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { page, pageSize, pageCount, total, hasSelection } = useTable(service);
+const { page, pageSize, pageCount, total, hasSelection } = useTableView(service);
 
 const settings = usePassthrough<TableWidgetPassthrough>(() => ({
   pt,

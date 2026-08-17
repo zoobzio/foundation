@@ -1,14 +1,13 @@
 import type { WorkspaceDefinition } from "../types/system/workspace";
-import type { Widgets } from "../types/widget";
-
-export type { WorkspaceDefinition };
 
 /**
- * Declares a workspace at module scope — pure data, no runtime, no Vue.
- * The identity function is the type checkpoint: `R` infers from `widgets`,
- * `layout` keys and `wire` handlers check against it on the lines they are
- * written.
+ * Declares a workspace at module scope — pure data, no runtime, no Vue:
+ * grid geometry and id-keyed slots, each optionally carrying the widget
+ * definition that fills it. The identity function is the type checkpoint:
+ * `D` infers whole, so slot ids and each slot's widget definition survive
+ * at full type for the `use*` lines that instance them. Interactivity
+ * attaches at `useWorkspace`.
  */
-export const defineWorkspace = <R extends Widgets>(
-  definition: WorkspaceDefinition<R>,
-): WorkspaceDefinition<R> => definition;
+export const defineWorkspace = <D extends WorkspaceDefinition>(
+  definition: D,
+): D => definition;

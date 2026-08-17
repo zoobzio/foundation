@@ -10,21 +10,20 @@ import { useNuxtApp } from "#imports";
 import { ChartService } from "../services/chart";
 
 /**
- * Instances a definition: `id` is the only thing the factory adds — shared
- * state, hook scoping, wiring identity all key on it.
+ * Instances a definition in the calling scope — call in setup: `id` is the
+ * only thing the composable adds; shared state, hook scoping, wiring
+ * identity all key on it.
  */
-export const createChart = <T>(
+export const useChart = <T>(
   id: string,
   definition: ChartDefinition<T>,
-) => {
-  return (): Widget<ChartWidgetProps<T>, Events> => {
-    const nuxt = useNuxtApp();
-    const state = accessChart(id, definition.config);
-    const service = new ChartService(nuxt, id, definition.config, state, definition.actions ?? {});
-    return {
-      service,
-      component,
-      settings: definition.settings,
-    };
+): Widget<ChartWidgetProps<T>, Events> => {
+  const nuxt = useNuxtApp();
+  const state = accessChart(id, definition.config);
+  const service = new ChartService(nuxt, id, definition.config, state, definition.actions ?? {});
+  return {
+    service,
+    component,
+    settings: definition.settings,
   };
 };

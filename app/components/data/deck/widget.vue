@@ -15,7 +15,7 @@ import Fab from "../../core/fab.vue";
 import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
-import { useDeck } from "../../../composables/deck";
+import { useDeckView } from "../../../composables/deck";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
@@ -36,7 +36,7 @@ useHooks<Events>(service.id, {
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { pendingCount, hasPending, showPending } = useDeck(service, el);
+const { pendingCount, hasPending, showPending } = useDeckView(service, el);
 
 const settings = usePassthrough<DeckWidgetPassthrough>(() => ({
   pt,

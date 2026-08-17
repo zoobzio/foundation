@@ -1,7 +1,7 @@
 import type { GroupProps } from "../common/group";
 import type { Passthrough, PT } from "../passthrough";
-import type { Wiring } from "../definition";
-import type { Widgets } from "../widget";
+import type { ServicesOf } from "../definition";
+import type { AnyWidget, Widgets } from "../widget";
 import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
@@ -12,22 +12,32 @@ import type { ComponentPublicInstance, VNode } from "vue";
 export type Region = "header" | "content" | "footer";
 
 /**
- * Region → registry key assignment. Unassigned regions render through their
- * Vue slot only; a region with neither is omitted from the DOM.
+ * The panel's static configuration shape: widget definitions keyed by the
+ * region they fill. `definePanel` guards the key vocabulary only — a value's
+ * fit is checked where the user maps it to its feature composable, on the
+ * `use*` line that instances it. Pure data, storable in a constant.
  */
-export type Regions<R extends Widgets = Widgets> = {
-  [K in Region]?: keyof R;
-};
+export type PanelDefinition = Partial<Record<Region, unknown>>;
 
 /**
- * The complete description a panel renders: what exists (`widgets`), which
- * region each fills (`regions`), how it talks to itself (`wire`). Built at
- * module scope with `definePanel` — pure data, no runtime.
+ * The panel's live registry shape: instanced widgets keyed by the region
+ * they fill — the region name is the registry key, so wiring and `widget:`
+ * slots address widgets by region. Always intersected with `Widgets` in
+ * constraints: `Regions` pins the key vocabulary, `Widgets` keeps the
+ * registry machinery satisfied. Unfilled regions render through their Vue
+ * slot only; a region with neither is omitted from the DOM.
  */
-export type PanelDefinition<R extends Widgets> = {
+export type Regions = Partial<Record<Region, AnyWidget>>;
+
+/**
+ * The live panel — what `usePanel` returns and the component renders: the
+ * region-keyed registry at full type, and the typed services record for
+ * imperative page access. Fully typed end to end; the component widens
+ * `widgets` to the erased record on its render path.
+ */
+export type Panel<R extends Widgets & Regions> = {
   widgets: R;
-  regions: Regions<R>;
-  wire?: Wiring<R>;
+  services: ServicesOf<R>;
 };
 
 export type PanelPassthrough = {
@@ -37,30 +47,31 @@ export type PanelPassthrough = {
   footer: Passthrough<GroupProps>;
 };
 
-export type PanelProps<R extends Widgets> = {
-  definition: PanelDefinition<R>;
+export type PanelProps<R extends Widgets & Regions> = {
+  panel: Panel<R>;
   pt?: PT<PanelPassthrough>;
 };
 
-export type PanelContext<R extends Widgets> = {
-  definition: PanelDefinition<R>;
+export type PanelContext<R extends Widgets & Regions> = {
+  panel: Panel<R>;
   el: ComponentPublicInstance | null;
   settings: PanelPassthrough;
 };
 
-export type PanelRegionContext<R extends Widgets> = PanelContext<R> & {
-  region: Region;
-};
+export type PanelRegionContext<R extends Widgets & Regions> =
+  PanelContext<R> & {
+    region: Region;
+  };
 
 /**
  * Regions are addressed two ways: the region's own named slot overrides it
- * wholesale, `widget:<key>` overrides how a registry widget renders and
- * receives its typed service.
+ * wholesale, `widget:<region>` overrides how the region's widget renders
+ * and receives its typed service.
  */
-export type PanelSlots<R extends Widgets> = {
+export type PanelSlots<R extends Widgets & Regions> = {
   [K in Region]?: (props: PanelRegionContext<R>) => VNode[];
 } & {
   [K in keyof R as `widget:${K & string}`]?: (
-    props: PanelRegionContext<R> & { service: ReturnType<R[K]>["service"] },
+    props: PanelRegionContext<R> & { service: R[K]["service"] },
   ) => VNode[];
 };

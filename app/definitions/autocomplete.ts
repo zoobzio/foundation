@@ -3,7 +3,7 @@ import type { AutocompleteWidgetProps } from "../types/data/autocomplete/widget"
 import type { WidgetSettings } from "../types/widget";
 
 /**
- * The static description `createAutocomplete` instances: everything about the
+ * The static description `useAutocomplete` instances: everything about the
  * feature except its id. Reusable — one definition, many ids, many machines.
  */
 export type AutocompleteDefinition<M> = {

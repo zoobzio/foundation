@@ -21,7 +21,7 @@ import { AUTOCOMPLETE_BLUR_DELAY_MS } from "../constants/autocomplete";
  * scope. Pass the widget's `el` to keep the highlighted item scrolled into
  * view; items skip it.
  */
-export const useAutocomplete = <M>(
+export const useAutocompleteView = <M>(
   autocomplete: Service<M>,
   el?: Readonly<ShallowRef<ComponentPublicInstance | null>>,
 ) => {

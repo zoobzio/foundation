@@ -22,7 +22,7 @@ import Textarea from "../../common/textarea.vue";
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import { useForm } from "../../../composables/form";
+import { useFormView } from "../../../composables/form";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -30,7 +30,7 @@ const { form, field, pt } = defineProps<FormFieldProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { useField } = useForm(form);
+const { useField } = useFormView(form);
 const { value, error, control, recipes } = useField(field);
 
 const settings = usePassthrough<FormFieldPassthrough>(() => ({
