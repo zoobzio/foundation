@@ -28,8 +28,8 @@ import { useLazyRequest } from "../../../composables/request";
 import { TABLE_REFRESH_ICON } from "../../../constants/table";
 </script>
 
-<script setup lang="ts" generic="T, K = unknown">
-const { service, pt } = defineProps<TableWidgetProps<T, K>>();
+<script setup lang="ts" generic="T">
+const { service, pt } = defineProps<TableWidgetProps<T>>();
 
 const emit = defineEmits<TableWidgetEmits>();
 
@@ -60,7 +60,7 @@ const settings = usePassthrough<TableWidgetPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TableWidgetContext<T, K>>("data-table", () => ({
+const ctx = useContext<TableWidgetContext<T>>("data-table", () => ({
   table: service,
   el: el.value,
   settings: settings.value,
@@ -68,7 +68,7 @@ const ctx = useContext<TableWidgetContext<T, K>>("data-table", () => ({
 
 defineExpose({ ctx });
 
-const slots = defineSlots<TableWidgetSlots<T, K>>();
+const slots = defineSlots<TableWidgetSlots<T>>();
 
 // Body-owned slots relay to the body, filtered so the body keeps its own
 // defaults for any the consumer didn't supply. `empty` (body ctx) and the cell

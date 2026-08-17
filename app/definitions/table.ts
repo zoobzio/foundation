@@ -1,23 +1,16 @@
-import type { Actions, Config } from "../types/data/table";
+import type { Config } from "../types/data/table";
 import type { TableWidgetProps } from "../types/data/table/widget";
-import type { WidgetSettings } from "../types/widget";
+import type { Stamp } from "../types/definition";
 
 /**
- * The static description `useTable` instances: everything about the
- * feature except its id. Reusable — one definition, many ids, many machines.
+ * The static description of a table — one flat serializable record: the
+ * domain config plus the passthrough base. Everything functional — fetch,
+ * action handlers, reactive pt — attaches at `useTable`. Declared through an
+ * entity's `defineTable`, which checks every field against the entity type
+ * on the line it is written and captures the action-record keys for the
+ * wiring to key against.
  */
-export type TableDefinition<T, K = unknown> = {
-  config: Config<T, K>;
-  actions: Actions<T, K>;
-  settings?: WidgetSettings<TableWidgetProps<T, K>>;
-};
-
-/**
- * Declares a table at module scope — pure data plus consumer callbacks,
- * no runtime, no Vue. The identity function is the type checkpoint: the
- * generics infer from `config`, and every field errors on the line it is
- * written.
- */
-export const defineTable = <T, K = unknown>(
-  definition: TableDefinition<T, K>,
-): TableDefinition<T, K> => definition;
+export type TableDefinition<T> = Config<T> &
+  Stamp<T> & {
+    pt?: TableWidgetProps<T>["pt"];
+  };

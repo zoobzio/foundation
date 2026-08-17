@@ -15,13 +15,13 @@ export type TableBulkActionsPassthrough = {
   clear: Passthrough<ButtonProps, ButtonEmits>;
 };
 
-export type TableBulkActionsProps<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableBulkActionsProps<T> = {
+  table: Service<T>;
   pt?: PT<TableBulkActionsPassthrough>;
 };
 
-export type TableBulkActionsContext<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableBulkActionsContext<T> = {
+  table: Service<T>;
   el: ComponentPublicInstance | null;
   settings: TableBulkActionsPassthrough;
 };

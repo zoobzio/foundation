@@ -14,7 +14,7 @@ import { useServiceRefs } from "./refs";
  * reordering, the column manager's Command bridge, and the per-row action
  * menu dispatch. Each component destructures its slice.
  */
-export const useTableView = <T, K>(table: Service<T, K>) => {
+export const useTableView = <T>(table: Service<T>) => {
   const serviceRefs = useServiceRefs(table);
 
   // Shared deriveds

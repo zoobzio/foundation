@@ -21,7 +21,7 @@ import type { FakeRow } from "#test/data/table";
 // Generic SFCs don't instantiate through mount()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates T/K for the harness.
 const TableWidget: FunctionalComponent<
-  TableWidgetProps<FakeRow, number>,
+  TableWidgetProps<FakeRow>,
   TableWidgetEmits
 > = Widget;
 
@@ -61,7 +61,7 @@ describe("data table widget", () => {
   it("shows bulk actions only while rows are selected", async () => {
     const { state, wrapper } = mountWidget();
     expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(false);
-    state.selected.value = new Set([1]);
+    state.selected.value = new Set(["1"]);
     await flushPromises();
     expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(true);
   });

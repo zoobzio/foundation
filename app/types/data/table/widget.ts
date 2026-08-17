@@ -32,8 +32,8 @@ export type TableWidgetPassthrough = {
   pagination: Passthrough<PaginationProps, PaginationEmits>;
 };
 
-export type TableWidgetProps<T, K = unknown> = {
-  service: Service<T, K>;
+export type TableWidgetProps<T> = {
+  service: Service<T>;
   pt?: PT<TableWidgetPassthrough> & {
     head?: PT<TableHeadPassthrough>;
     body?: PT<TableBodyPassthrough>;
@@ -46,14 +46,14 @@ export type TableWidgetEmits = {
   updated: Parameters<Events["table:updated"]>;
 };
 
-export type TableWidgetContext<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableWidgetContext<T> = {
+  table: Service<T>;
   el: ComponentPublicInstance | null;
   settings: TableWidgetPassthrough;
 };
 
-export type TableWidgetSlots<T, K = unknown> = TableHeadSlots<T, K> &
-  TableBodySlots<T, K> & {
-    toolbar?: (props: TableWidgetContext<T, K>) => VNode[];
-    pagination?: (props: TableWidgetContext<T, K>) => VNode[];
+export type TableWidgetSlots<T> = TableHeadSlots<T> &
+  TableBodySlots<T> & {
+    toolbar?: (props: TableWidgetContext<T>) => VNode[];
+    pagination?: (props: TableWidgetContext<T>) => VNode[];
   };

@@ -13,6 +13,16 @@ import type { Widgets } from "./widget";
 export type Definition<Props, Emits = {}> = Passthrough<Props, Emits>;
 
 /**
+ * A definition's type stamp: a type-level phantom (`$contract` is never
+ * present at runtime) that carries the entity type on a definition, so
+ * `use*` infers `T` from the definition itself rather than from the
+ * wiring's fetch. `defineEntity`'s definers apply it; a hand-rolled
+ * definition without the stamp still works, with `T` inferred from the
+ * wiring.
+ */
+export type Stamp<T> = { $contract?: T };
+
+/**
  * The resolved machines of a registry, keyed like the registry — what wire
  * handlers receive to drive sibling widgets imperatively.
  */

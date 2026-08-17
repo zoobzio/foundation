@@ -29,7 +29,17 @@ export interface DataTableColumn<T> {
 export type SortDirection = "asc" | "desc";
 
 /**
- * Row action — rendered per-row in an actions menu.
+ * The serializable half of a row/bulk action: how it renders. The behavior
+ * half is a handler registered under the same key at `useTable`.
+ */
+export interface ActionDescriptor {
+  icon: IconAlias;
+  label: string;
+}
+
+/**
+ * Row action — rendered per-row in an actions menu. The live shape the
+ * service exposes: descriptor joined with its handler.
  */
 export interface RowAction<T> {
   icon: IconAlias;
@@ -38,12 +48,13 @@ export interface RowAction<T> {
 }
 
 /**
- * Bulk action — rendered when rows are selected.
+ * Bulk action — rendered when rows are selected. The live shape the service
+ * exposes: descriptor joined with its handler.
  */
-export interface BulkAction<K> {
+export interface BulkAction {
   icon: IconAlias;
   label: string;
-  action: (selected: Set<K>) => void;
+  action: (selected: Set<string>) => void;
 }
 
 /**
@@ -64,18 +75,20 @@ export interface DataTableFetchResult<T> {
 }
 
 /**
- * Config the consumer provides to the factory — pure data.
+ * Config the consumer provides — pure serializable data. Actions are
+ * descriptor records: the key is the action's identity, shared with the
+ * handler record wired at `useTable`.
  */
-export type Config<T, K = unknown> = {
+export type Config<T> = {
   columns: DataTableColumn<T>[];
   rowKey: keyof T;
-  actions?: RowAction<T>[];
-  bulkActions?: BulkAction<K>[];
+  actions?: Record<string, ActionDescriptor>;
+  bulkActions?: Record<string, ActionDescriptor>;
   pinnedColumns?: (keyof T)[];
   defaultColumnOrder?: (keyof T)[];
 };
 
-export type State<T, K> = {
+export type State<T> = {
   data: Ref<T[]>;
   loading: Ref<boolean>;
   initialized: Ref<boolean>;
@@ -85,27 +98,32 @@ export type State<T, K> = {
   pageCount: Ref<number>;
   sortField: Ref<string | null>;
   sortDirection: Ref<SortDirection>;
-  selected: Ref<Set<K>>;
+  selected: Ref<Set<string>>;
   columnOrder: Ref<string[]>;
 };
 
 /**
- * The consumer-supplied fetch mechanism — the table's data source.
+ * The consumer-supplied behavior, attached in setup at `useTable`: the fetch
+ * mechanism plus handlers keyed like the config's descriptor records. This is
+ * the erased shape the service receives; `useTable` accepts it keyed
+ * precisely to the definition's action vocabulary.
  */
-export type Actions<T, K = unknown> = {
+export type Actions<T> = {
   fetch: (
     params: DataTableFetchParams,
-    service: Service<T, K>,
+    service: Service<T>,
   ) => Promise<DataTableFetchResult<T>>;
+  actions?: Record<string, (row: T) => void>;
+  bulkActions?: Record<string, (selected: Set<string>) => void>;
 };
 
-export type Service<T, K = unknown> = {
+export type Service<T> = {
   readonly id: string;
-  readonly config: Config<T, K>;
+  readonly config: Config<T>;
   readonly columns: DataTableColumn<T>[];
   readonly rowKey: keyof T;
   readonly actions: RowAction<T>[];
-  readonly bulkActions: BulkAction<K>[];
+  readonly bulkActions: BulkAction[];
   readonly pinnedColumns: (keyof T)[];
 
   readonly data: T[];
@@ -117,7 +135,7 @@ export type Service<T, K = unknown> = {
   readonly pageCount: number;
   readonly sortField: string | null;
   readonly sortDirection: SortDirection;
-  readonly selected: Set<K>;
+  readonly selected: Set<string>;
   readonly columnOrder: string[];
 
   readonly visibleColumns: DataTableColumn<T>[];
@@ -132,8 +150,8 @@ export type Service<T, K = unknown> = {
   sortFieldFor(col: DataTableColumn<T>): string;
   isSorted(col: DataTableColumn<T>): boolean;
   getSortIcon(): IconAlias;
-  keyOf(row: T): K;
-  toggleRow(key: K): void;
+  keyOf(row: T): string;
+  toggleRow(key: string): void;
   toggleAll(): void;
   clearSelection(): void;
   isRowSelected(row: T): boolean;

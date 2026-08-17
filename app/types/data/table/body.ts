@@ -28,18 +28,18 @@ export type TableBodyPassthrough = {
   actionsTrigger: Passthrough<FabProps>;
 };
 
-export type TableBodyProps<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableBodyProps<T> = {
+  table: Service<T>;
   pt?: PT<TableBodyPassthrough>;
 };
 
-export type TableBodyContext<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableBodyContext<T> = {
+  table: Service<T>;
   el: ComponentPublicInstance | null;
   settings: TableBodyPassthrough;
 };
 
-export type TableCellContext<T, K = unknown> = TableBodyContext<T, K> & {
+export type TableCellContext<T> = TableBodyContext<T> & {
   row: T;
   column: DataTableColumn<T>;
   value: unknown;
@@ -49,11 +49,11 @@ export type TableCellContext<T, K = unknown> = TableBodyContext<T, K> & {
  * Cell overrides cascade: a specific `cell:<key>`, then `cell:<type>`, then the
  * catch-all `cell`. The keyed/typed variants share the template-literal slot.
  */
-export type TableBodySlots<T, K = unknown> = {
-  empty?: (props: TableBodyContext<T, K>) => VNode[];
-  cell?: (props: TableCellContext<T, K>) => VNode[];
+export type TableBodySlots<T> = {
+  empty?: (props: TableBodyContext<T>) => VNode[];
+  cell?: (props: TableCellContext<T>) => VNode[];
 } & {
   [name: `cell:${string}`]:
-    | ((props: TableCellContext<T, K>) => VNode[])
+    | ((props: TableCellContext<T>) => VNode[])
     | undefined;
 };

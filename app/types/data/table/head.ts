@@ -26,19 +26,19 @@ export type TableHeadPassthrough = {
   dragIcon: Passthrough<IconProps>;
 };
 
-export type TableHeadProps<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableHeadProps<T> = {
+  table: Service<T>;
   pt?: PT<TableHeadPassthrough>;
 };
 
-export type TableHeadContext<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableHeadContext<T> = {
+  table: Service<T>;
   el: ComponentPublicInstance | null;
   settings: TableHeadPassthrough;
 };
 
-export type TableHeadSlots<T, K = unknown> = {
+export type TableHeadSlots<T> = {
   header?: (
-    props: TableHeadContext<T, K> & { column: DataTableColumn<T> },
+    props: TableHeadContext<T> & { column: DataTableColumn<T> },
   ) => VNode[];
 };
