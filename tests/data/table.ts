@@ -1,4 +1,4 @@
-import type { DataTableColumn, RowAction, BulkAction } from "../../app/types/data/table";
+import type { ActionDescriptor, DataTableColumn } from "../../app/types/data/table";
 
 export type FakeRow = {
   id: number;
@@ -22,11 +22,11 @@ export const fakeRows: FakeRow[] = [
   { id: 3, name: "Charlie", status: "Pending", created: "2025-03-10", amount: 300 },
 ];
 
-export const fakeActions: RowAction<FakeRow>[] = [
-  { icon: "edit", label: "Edit", action: () => {} },
-  { icon: "delete", label: "Delete", action: () => {} },
-];
+export const fakeActions: Record<string, ActionDescriptor> = {
+  edit: { icon: "edit", label: "Edit" },
+  delete: { icon: "delete", label: "Delete" },
+};
 
-export const fakeBulkActions: BulkAction<number>[] = [
-  { icon: "delete", label: "Delete Selected", action: () => {} },
-];
+export const fakeBulkActions: Record<string, ActionDescriptor> = {
+  deleteSelected: { icon: "delete", label: "Delete Selected" },
+};

@@ -15,13 +15,13 @@ export type TableColumnsPassthrough = {
   command: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
 };
 
-export type TableColumnsProps<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableColumnsProps<T> = {
+  table: Service<T>;
   pt?: PT<TableColumnsPassthrough>;
 };
 
-export type TableColumnsContext<T, K = unknown> = {
-  table: Service<T, K>;
+export type TableColumnsContext<T> = {
+  table: Service<T>;
   el: ComponentPublicInstance | null;
   settings: TableColumnsPassthrough;
 };

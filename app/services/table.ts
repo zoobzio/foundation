@@ -9,19 +9,17 @@ import type {
 import type { IconAlias } from "../types/common/iconic";
 import type { Logger } from "../types/log";
 
-import {
-  TABLE_SORT_ASC_ICON,
-  TABLE_SORT_DESC_ICON,
-} from "../constants/table";
+import { entries } from "objectively";
+import { TABLE_SORT_ASC_ICON, TABLE_SORT_DESC_ICON } from "../constants/table";
 
-export class TableService<T, K = unknown> implements Service<T, K> {
+export class TableService<T> implements Service<T> {
   private readonly log: Logger;
   private readonly emit: NuxtApp["callHook"];
 
   readonly columns: DataTableColumn<T>[];
   readonly rowKey: keyof T;
-  readonly actions: Service<T, K>["actions"];
-  readonly bulkActions: Service<T, K>["bulkActions"];
+  readonly actions: Service<T>["actions"];
+  readonly bulkActions: Service<T>["bulkActions"];
   readonly pinnedColumns: (keyof T)[];
 
   private readonly columnMap: Map<string, DataTableColumn<T>>;
@@ -31,17 +29,26 @@ export class TableService<T, K = unknown> implements Service<T, K> {
   constructor(
     nuxt: NuxtApp,
     public readonly id: string,
-    public readonly config: Config<T, K>,
-    private readonly state: State<T, K>,
-    private readonly fetchAction: Actions<T, K>,
+    public readonly config: Config<T>,
+    private readonly state: State<T>,
+    private readonly wiring: Actions<T>,
   ) {
     this.log = nuxt.$logger(this.id);
     this.emit = nuxt.callHook;
 
     this.columns = config.columns;
     this.rowKey = config.rowKey;
-    this.actions = config.actions ?? [];
-    this.bulkActions = config.bulkActions ?? [];
+    this.actions = entries(config.actions ?? {}).map(([key, descriptor]) => ({
+      ...descriptor,
+      action: (row: T) => wiring.actions?.[key]?.(row),
+    }));
+    this.bulkActions = entries(config.bulkActions ?? {}).map(
+      ([key, descriptor]) => ({
+        ...descriptor,
+        action: (selected: Set<string>) =>
+          wiring.bulkActions?.[key]?.(selected),
+      }),
+    );
     this.pinnedColumns = config.pinnedColumns ?? [];
 
     this.columnMap = new Map(config.columns.map((c) => [String(c.key), c]));
@@ -49,13 +56,6 @@ export class TableService<T, K = unknown> implements Service<T, K> {
     this.defaultColumnKeys = (
       config.defaultColumnOrder ?? config.columns.map((c) => c.key)
     ).map(String);
-  }
-
-  // The row's key as K — the one inherent assertion of the K/rowKey design (K
-  // is the consumer-declared type of the rowKey field, unlinked structurally).
-  // Every selection path routes through here, so the cast lives in one place.
-  keyOf(row: T): K {
-    return row[this.config.rowKey] as K;
   }
 
   get data(): T[] {
@@ -85,7 +85,7 @@ export class TableService<T, K = unknown> implements Service<T, K> {
   get sortDirection() {
     return this.state.sortDirection.value;
   }
-  get selected(): Set<K> {
+  get selected(): Set<string> {
     return this.state.selected.value;
   }
   get columnOrder(): string[] {
@@ -119,6 +119,10 @@ export class TableService<T, K = unknown> implements Service<T, K> {
       (this.actions.length ? 1 : 0) +
       (this.bulkActions.length ? 1 : 0)
     );
+  }
+
+  keyOf(row: T): string {
+    return String(row[this.config.rowKey]);
   }
 
   goToPage(page: number): void {
@@ -159,7 +163,7 @@ export class TableService<T, K = unknown> implements Service<T, K> {
       : TABLE_SORT_DESC_ICON;
   }
 
-  toggleRow(key: K): void {
+  toggleRow(key: string): void {
     const next = new Set(this.selected);
     if (next.has(key)) next.delete(key);
     else next.add(key);
@@ -170,7 +174,9 @@ export class TableService<T, K = unknown> implements Service<T, K> {
     if (this.isAllSelected) {
       this.state.selected.value = new Set();
     } else {
-      this.state.selected.value = new Set(this.data.map((row) => this.keyOf(row)));
+      this.state.selected.value = new Set(
+        this.data.map((row) => this.keyOf(row)),
+      );
     }
   }
 
@@ -218,7 +224,7 @@ export class TableService<T, K = unknown> implements Service<T, K> {
   async fetch(): Promise<void> {
     this.state.loading.value = true;
     try {
-      const result = await this.fetchAction.fetch(
+      const result = await this.wiring.fetch(
         {
           page: this.page,
           pageSize: this.pageSize,

@@ -20,8 +20,8 @@ import {
 } from "../../../constants/table";
 </script>
 
-<script setup lang="ts" generic="T, K = unknown">
-const { table, pt } = defineProps<TableColumnsProps<T, K>>();
+<script setup lang="ts" generic="T">
+const { table, pt } = defineProps<TableColumnsProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 const open = ref(false);
@@ -50,7 +50,7 @@ const settings = usePassthrough<TableColumnsPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TableColumnsContext<T, K>>(
+const ctx = useContext<TableColumnsContext<T>>(
   "data-table-columns",
   () => ({ table, el: el.value, settings: settings.value }),
 );

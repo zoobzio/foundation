@@ -23,8 +23,8 @@ import { useContext } from "../../../composables/context";
 import { TABLE_DRAG_ICON } from "../../../constants/table";
 </script>
 
-<script setup lang="ts" generic="T, K = unknown">
-const { table, pt } = defineProps<TableHeadProps<T, K>>();
+<script setup lang="ts" generic="T">
+const { table, pt } = defineProps<TableHeadProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
@@ -64,14 +64,14 @@ const settings = usePassthrough<TableHeadPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TableHeadContext<T, K>>("data-table-head", () => ({
+const ctx = useContext<TableHeadContext<T>>("data-table-head", () => ({
   table,
   el: el.value,
   settings: settings.value,
 }));
 
 defineExpose({ ctx });
-defineSlots<TableHeadSlots<T, K>>();
+defineSlots<TableHeadSlots<T>>();
 </script>
 
 <template>

@@ -7,14 +7,14 @@ import type { FakeRow } from "#test/data/table";
 
 /**
  * Contract mock for mounting data-table widgets: a concrete
- * Service<FakeRow, number> shaped like the real class — plain-value getters
+ * Service<FakeRow> shaped like the real class — plain-value getters
  * over backing refs, vi.fn() commands. Typed against the real contract so tsc
  * flags drift when the Service type changes. `state` exposes the backing refs
  * for tests to drive; state logic depth belongs to the service tests, not
  * here.
  */
 export const createMockTable = (
-  overrides: Partial<Service<FakeRow, number>> = {},
+  overrides: Partial<Service<FakeRow>> = {},
 ) => {
   const state = {
     data: ref<FakeRow[]>(fakeRows),
@@ -26,7 +26,7 @@ export const createMockTable = (
     total: ref(100),
     sortField: ref<string | null>(null),
     sortDirection: ref<"asc" | "desc">("asc"),
-    selected: ref<Set<number>>(new Set()),
+    selected: ref<Set<string>>(new Set()),
     columnOrder: ref(fakeColumns.map((c) => String(c.key))),
   };
 
@@ -38,7 +38,7 @@ export const createMockTable = (
   const isAllSelected = computed(
     () =>
       state.data.value.length > 0 &&
-      state.data.value.every((row) => state.selected.value.has(row.id)),
+      state.data.value.every((row) => state.selected.value.has(String(row.id))),
   );
   const isIndeterminate = computed(
     () => state.selected.value.size > 0 && !isAllSelected.value,
@@ -47,7 +47,7 @@ export const createMockTable = (
     isIndeterminate.value ? "indeterminate" : isAllSelected.value,
   );
 
-  const service: Service<FakeRow, number> = {
+  const service: Service<FakeRow> = {
     id: "mock-table",
     config: { columns: fakeColumns, rowKey: "id" },
 
@@ -113,11 +113,11 @@ export const createMockTable = (
     sortFieldFor: (col) => col.sortKey ?? String(col.key),
     isSorted: () => false,
     getSortIcon: () => TABLE_SORT_ASC_ICON,
-    keyOf: (row) => row.id,
+    keyOf: (row) => String(row.id),
     toggleRow: vi.fn(),
     toggleAll: vi.fn(),
     clearSelection: vi.fn(),
-    isRowSelected: (row) => state.selected.value.has(row.id),
+    isRowSelected: (row) => state.selected.value.has(String(row.id)),
     toggleColumn: vi.fn(),
     reorderColumns: vi.fn(),
     resetColumns: vi.fn(),

@@ -6,10 +6,10 @@ import {
   TABLE_DEFAULT_SORT_DIRECTION,
 } from "../constants/table";
 
-export const accessTable = <T, K>(
+export const accessTable = <T>(
   id: string,
-  config: Config<T, K>,
-): State<T, K> => {
+  config: Config<T>,
+): State<T> => {
   const defaultColumnKeys = (
     config.defaultColumnOrder ?? config.columns.map((c) => c.key)
   ).map(String);
@@ -35,7 +35,10 @@ export const accessTable = <T, K>(
     `table-${id}-sortDirection`,
     () => TABLE_DEFAULT_SORT_DIRECTION,
   );
-  const selected = useState<Set<K>>(`table-${id}-selected`, () => new Set());
+  const selected = useState<Set<string>>(
+    `table-${id}-selected`,
+    () => new Set(),
+  );
   const columnOrder = useState<string[]>(
     `table-${id}-columnOrder`,
     () => defaultColumnKeys,

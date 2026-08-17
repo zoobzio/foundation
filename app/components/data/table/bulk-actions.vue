@@ -17,8 +17,8 @@ import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 </script>
 
-<script setup lang="ts" generic="T, K = unknown">
-const { table, pt } = defineProps<TableBulkActionsProps<T, K>>();
+<script setup lang="ts" generic="T">
+const { table, pt } = defineProps<TableBulkActionsProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
@@ -35,7 +35,7 @@ const settings = usePassthrough<TableBulkActionsPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TableBulkActionsContext<T, K>>(
+const ctx = useContext<TableBulkActionsContext<T>>(
   "data-table-bulk-actions",
   () => ({ table, el: el.value, settings: settings.value }),
 );

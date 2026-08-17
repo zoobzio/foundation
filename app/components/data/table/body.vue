@@ -24,8 +24,8 @@ import { useContext } from "../../../composables/context";
 import { cell } from "../../../utils/format";
 </script>
 
-<script setup lang="ts" generic="T, K = unknown">
-const { table, pt } = defineProps<TableBodyProps<T, K>>();
+<script setup lang="ts" generic="T">
+const { table, pt } = defineProps<TableBodyProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
@@ -57,14 +57,14 @@ const settings = usePassthrough<TableBodyPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TableBodyContext<T, K>>("data-table-body", () => ({
+const ctx = useContext<TableBodyContext<T>>("data-table-body", () => ({
   table,
   el: el.value,
   settings: settings.value,
 }));
 
 defineExpose({ ctx });
-defineSlots<TableBodySlots<T, K>>();
+defineSlots<TableBodySlots<T>>();
 </script>
 
 <template>

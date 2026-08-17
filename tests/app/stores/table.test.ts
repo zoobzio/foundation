@@ -11,7 +11,7 @@ const config = { columns: fakeColumns, rowKey: "id" as const };
 
 describe("accessTable", () => {
   it("initializes state with defaults", () => {
-    const state = accessTable<FakeRow, number>("t1", config);
+    const state = accessTable<FakeRow>("t1", config);
     expect(state.data.value).toEqual([]);
     expect(state.loading.value).toBe(false);
     expect(state.initialized.value).toBe(false);
@@ -22,22 +22,22 @@ describe("accessTable", () => {
   });
 
   it("same id shares state across calls", () => {
-    const first = accessTable<FakeRow, number>("t1", config);
+    const first = accessTable<FakeRow>("t1", config);
     first.page.value = 3;
-    const second = accessTable<FakeRow, number>("t1", config);
+    const second = accessTable<FakeRow>("t1", config);
     expect(second.page).toBe(first.page);
     expect(second.page.value).toBe(3);
   });
 
   it("different ids get independent state", () => {
-    const a = accessTable<FakeRow, number>("t1", config);
-    const b = accessTable<FakeRow, number>("t2", config);
+    const a = accessTable<FakeRow>("t1", config);
+    const b = accessTable<FakeRow>("t2", config);
     a.page.value = 5;
     expect(b.page.value).toBe(1);
   });
 
   it("defaultColumnOrder overrides the column-derived order", () => {
-    const state = accessTable<FakeRow, number>("t3", {
+    const state = accessTable<FakeRow>("t3", {
       ...config,
       defaultColumnOrder: ["name", "id"],
     });

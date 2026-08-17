@@ -16,7 +16,7 @@ import type {
 import { fakeColumns, fakeRows, fakeActions, fakeBulkActions } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 
-const makeState = (): State<FakeRow, number> => ({
+const makeState = (): State<FakeRow> => ({
   data: ref<FakeRow[]>([]),
   loading: ref(false),
   initialized: ref(false),
@@ -26,7 +26,7 @@ const makeState = (): State<FakeRow, number> => ({
   pageCount: ref(0),
   sortField: ref<string | null>(null),
   sortDirection: ref<SortDirection>("asc"),
-  selected: ref<Set<number>>(new Set()),
+  selected: ref<Set<string>>(new Set()),
   columnOrder: ref(fakeColumns.map((c) => String(c.key))),
 });
 
@@ -42,16 +42,16 @@ const makeActions = (rows: FakeRow[] = fakeRows) => ({
 
 const makeService = (
   overrides: {
-    state?: State<FakeRow, number>;
-    actions?: Actions<FakeRow, number>;
-    config?: Partial<Config<FakeRow, number>>;
+    state?: State<FakeRow>;
+    actions?: Actions<FakeRow>;
+    config?: Partial<Config<FakeRow>>;
   } = {},
 ) => {
   const state = overrides.state ?? makeState();
   const actions = overrides.actions ?? makeActions();
   const nuxt = useNuxtApp();
   const emitSpy = vi.spyOn(nuxt, "callHook");
-  const service = new TableService<FakeRow, number>(
+  const service = new TableService<FakeRow>(
     nuxt,
     "test-table",
     { columns: fakeColumns, rowKey: "id", ...overrides.config },
@@ -180,9 +180,9 @@ describe("sorting", () => {
 describe("selection", () => {
   it("toggleRow adds then removes a key", () => {
     const { service } = makeService();
-    service.toggleRow(1);
-    expect(service.selected).toEqual(new Set([1]));
-    service.toggleRow(1);
+    service.toggleRow("1");
+    expect(service.selected).toEqual(new Set(["1"]));
+    service.toggleRow("1");
     expect(service.selected).toEqual(new Set());
   });
 
@@ -190,11 +190,11 @@ describe("selection", () => {
     const { service } = makeService();
     await service.fetch();
     expect(service.selectAllState).toBe(false);
-    service.toggleRow(1);
+    service.toggleRow("1");
     expect(service.selectAllState).toBe("indeterminate");
     service.toggleAll();
     expect(service.selectAllState).toBe(true);
-    expect(service.selected).toEqual(new Set(fakeRows.map((r) => r.id)));
+    expect(service.selected).toEqual(new Set(fakeRows.map((r) => String(r.id))));
   });
 
   it("toggleAll clears when everything is selected", async () => {
