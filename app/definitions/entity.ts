@@ -1,3 +1,4 @@
+import type { DeckDefinition } from "./deck";
 import type { TableDefinition } from "./table";
 import type { Stamp } from "../types/definition";
 
@@ -19,5 +20,12 @@ export const defineEntity = <T>() => ({
    * carries the entity stamp so `useTable` infers `T` from the definition.
    */
   defineTable: <D extends TableDefinition<T>>(definition: D): D & Stamp<T> =>
+    definition,
+
+  /**
+   * Declares a deck over the entity at module scope — same checkpoint
+   * semantics as `defineTable`.
+   */
+  defineDeck: <D extends DeckDefinition<T>>(definition: D): D & Stamp<T> =>
     definition,
 });

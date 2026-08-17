@@ -23,5 +23,10 @@ descriptor vocabulary (required exactly when descriptors exist, rejected
 when they don't), and a reactive `pt` override merged over the definition's
 base per key. The service joins descriptors to handlers by key into the
 same fused shape the view already renders, so components and view
-composables are untouched. Remaining data widgets migrate in later
-releases.
+composables are untouched.
+
+Deck follows the same split: `defineDeck` on the entity yields a flat
+stamped `DeckDefinition<T>` (topic, rowKey, dateFields, polling/page
+config, pt base), and `useDeck(id, definition, wiring)` takes `fetch` and
+the reactive pt override. Deck has no action records, so its wiring is
+`T`-generic only. Remaining data widgets migrate in later releases.
