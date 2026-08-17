@@ -12,7 +12,7 @@ import Icon from "../../common/icon.vue";
 import Menu from "../../core/menu.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { useChart } from "../../../composables/chart";
+import { useChartView } from "../../../composables/chart";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { CHART_CONTROL_CHEVRON } from "../../../constants/chart";
@@ -24,7 +24,7 @@ const { chart, kind, align, options, trigger, pt } =
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { useControl } = useChart(chart);
+const { useControl } = useChartView(chart);
 const { recipes } = useControl(() => ({
   kind,
   align,

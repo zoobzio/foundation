@@ -24,12 +24,12 @@ Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsib
 | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Elements   | `components/common/` | Behavior-free HTML wrappers + slot-through primitives, with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JS behavior. |
 | Components | `components/core/`   | Stateful/interactive components composing elements + [reka-ui](https://reka-ui.com) primitives, with full passthrough & slotthrough.                          |
-| Widgets    | `components/data/`   | Factory-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                       |
+| Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                    |
 | System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                     |
 
 ### Data widgets
 
-Each widget pairs a **factory** (`createTable`, `createForm`, …) that returns a reactive interface with a **component** that renders it:
+Each widget pairs a **definition** (`defineTable`, `defineForm`, …) — inert typed config, storable in a constant — with a **widget composable** (`useTable`, `useForm`, …) that instances it in setup, and a **component** that renders it:
 
 - `DataAutocomplete` — stepped, suggestion-driven autocomplete input
 - `DataTable` — paginated, sortable, filterable data grid
@@ -44,7 +44,7 @@ Auto-import is **disabled** — everything is imported explicitly. Foundation-ow
 
 ```ts
 import Button from "#foundation/components/common/button.vue";
-import { createTable } from "#foundation/factories/data/table";
+import { useTable } from "#foundation/factories/table";
 import type { ButtonProps } from "#foundation/types/common/button";
 ```
 
@@ -60,7 +60,7 @@ app/
     data/       — data widgets: autocomplete, table, chart, deck, form, preview
     system/     — app-shell composition (1)
   composables/  — useBindings, usePassthrough, useContext, useModel, useHooks, …
-  factories/    — data-widget + workspace factories
+  factories/    — widget composables: use*(id, definition) → Widget
   services/     — feature logic classes (the unit under test)
   stores/       — useState-backed feature state
   plugins/      — log, tokens

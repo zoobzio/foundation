@@ -3,7 +3,7 @@ import type { TableWidgetProps } from "../types/data/table/widget";
 import type { WidgetSettings } from "../types/widget";
 
 /**
- * The static description `createTable` instances: everything about the
+ * The static description `useTable` instances: everything about the
  * feature except its id. Reusable — one definition, many ids, many machines.
  */
 export type TableDefinition<T, K = unknown> = {

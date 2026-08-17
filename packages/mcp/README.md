@@ -9,7 +9,7 @@ each tier — without reading the whole layer.
 
 | Tool                 | Purpose                                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `list_components`    | Every component (optionally by tier): name, tier, rendered parts, whether a definition/factory ships.          |
+| `list_components`    | Every component (optionally by tier): name, tier, rendered parts, whether a definition/widget composable ships.          |
 | `describe_component` | One component's full contract: import paths, element roles + token slots, and its type/definition file source. |
 | `help`               | The authoring guides — `overview` plus the per-tier contracts (`common`, `core`, `data`, `system`).            |
 

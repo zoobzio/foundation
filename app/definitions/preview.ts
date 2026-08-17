@@ -3,7 +3,7 @@ import type { PreviewWidgetProps } from "../types/data/preview/widget";
 import type { WidgetSettings } from "../types/widget";
 
 /**
- * The static description `createPreview` instances: everything about the
+ * The static description `usePreview` instances: everything about the
  * feature except its id. Reusable — one definition, many ids, many machines.
  */
 export type PreviewDefinition<T> = {

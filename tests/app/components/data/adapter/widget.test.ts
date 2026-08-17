@@ -8,7 +8,7 @@ import { defineComponent, h, nextTick } from "vue";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
 import Widget from "../../../../../app/components/data/adapter/widget.vue";
-import { createAdapter } from "../../../../../app/factories/adapter";
+import { useAdapter } from "../../../../../app/factories/adapter";
 import type { AdapterWidgetProps } from "../../../../../app/types/data/adapter/widget";
 import type { Service } from "../../../../../app/types/data/adapter";
 
@@ -36,13 +36,13 @@ type LogoContract = {
 const Adapter: FunctionalComponent<AdapterWidgetProps<LogoContract>> = Widget;
 
 const makeService = () =>
-  createAdapter<LogoContract>("logo", {
+  useAdapter<LogoContract>("logo", {
     component: FixtureLogo,
     emits: { activate: true },
-  })().service;
+  }).service;
 
 // Contract mock for the bridge-boundary cases, where the declared list must
-// vary independently of the factory's exhaustive config.
+// vary independently of the composable's exhaustive config.
 const mockService = (
   emits: readonly "activate"[],
 ): Service<LogoContract> => ({

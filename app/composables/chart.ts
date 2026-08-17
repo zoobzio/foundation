@@ -33,7 +33,7 @@ import {
  * per-control scope, and the canvas scope. DOM — canvas, chart.js,
  * `getComputedStyle` — stops in the canvas scope, never the service.
  */
-export const useChart = <T>(chart: Service<T>) => {
+export const useChartView = <T>(chart: Service<T>) => {
   const serviceRefs = useServiceRefs(chart);
 
   const controls = computed<ChartControlAnchor[]>(() => {

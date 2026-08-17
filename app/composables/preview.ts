@@ -10,7 +10,7 @@ import { PREVIEW_DEFAULT_FILENAME_BASE } from "../constants/preview";
  * download, external link). All DOM — clipboard, Blob, `document`, `window` —
  * stops here, never the service.
  */
-export const usePreview = <T>(preview: Service<T>) => {
+export const usePreviewView = <T>(preview: Service<T>) => {
   const refs = useServiceRefs(preview);
   const content = preview.content;
 

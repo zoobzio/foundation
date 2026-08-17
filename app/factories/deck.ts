@@ -10,21 +10,20 @@ import { useNuxtApp } from "#imports";
 import { DeckService } from "../services/deck";
 
 /**
- * Instances a definition: `id` is the only thing the factory adds — shared
- * state, hook scoping, wiring identity all key on it.
+ * Instances a definition in the calling scope — call in setup: `id` is the
+ * only thing the composable adds; shared state, hook scoping, wiring
+ * identity all key on it.
  */
-export const createDeck = <T>(
+export const useDeck = <T>(
   id: string,
   definition: DeckDefinition<T>,
-) => {
-  return (): Widget<DeckWidgetProps<T>, Events> => {
-    const nuxt = useNuxtApp();
-    const state = accessDeck(id, definition.config);
-    const service = new DeckService(nuxt, id, definition.config, state, definition.actions);
-    return {
-      service,
-      component,
-      settings: definition.settings,
-    };
+): Widget<DeckWidgetProps<T>, Events> => {
+  const nuxt = useNuxtApp();
+  const state = accessDeck(id, definition.config);
+  const service = new DeckService(nuxt, id, definition.config, state, definition.actions);
+  return {
+    service,
+    component,
+    settings: definition.settings,
   };
 };

@@ -15,7 +15,7 @@ import Fab from "../../core/fab.vue";
 import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
-import { useChart } from "../../../composables/chart";
+import { useChartView } from "../../../composables/chart";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
@@ -37,7 +37,7 @@ useHooks<Events>(service.id, {
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const { loading, variantData, titleControls, actionControls } =
-  useChart(service);
+  useChartView(service);
 
 const settings = usePassthrough<ChartWidgetPassthrough<T>>(() => ({
   pt,

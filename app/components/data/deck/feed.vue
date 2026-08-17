@@ -11,7 +11,7 @@ import Group from "../../common/group.vue";
 import Scroller from "../../core/scroller.vue";
 
 import { useTemplateRef } from "#imports";
-import { useDeck } from "../../../composables/deck";
+import { useDeckView } from "../../../composables/deck";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 </script>
@@ -21,7 +21,7 @@ const { deck, pt } = defineProps<DeckFeedProps<T>>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { items, loadingMore } = useDeck(deck);
+const { items, loadingMore } = useDeckView(deck);
 
 const settings = usePassthrough<DeckFeedPassthrough>(() => ({
   pt,

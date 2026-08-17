@@ -17,7 +17,7 @@ import Menu from "../../core/menu.vue";
 import Popover from "../../core/popover.vue";
 
 import { ref, useTemplateRef, watch } from "#imports";
-import { useDeck } from "../../../composables/deck";
+import { useDeckView } from "../../../composables/deck";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import {
@@ -42,7 +42,7 @@ const {
   onSearchInput,
   syncSearch,
   facetOptions,
-} = useDeck(deck);
+} = useDeckView(deck);
 
 const searchOpen = ref(false);
 watch(searchOpen, (open) => {

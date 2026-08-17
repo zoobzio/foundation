@@ -63,8 +63,9 @@ export type AnyWidget = {
 };
 
 /**
- * A widget registry: keyed widget composables, as yielded by factories.
- * Structural components (workspace) are generic over a literal `R extends
- * Widgets` and recover per-key types via `ReturnType<R[K]>`.
+ * A widget registry: live widgets keyed by name, as assembled in the user's
+ * composable from per-feature `use*` calls. Structural components are
+ * generic over a literal `R extends Widgets` and recover per-key types via
+ * `R[K]`; render paths widen to the erased record at the component boundary.
  */
-export type Widgets = Record<string, () => AnyWidget>;
+export type Widgets = Record<string, AnyWidget>;

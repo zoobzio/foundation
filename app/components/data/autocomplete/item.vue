@@ -12,7 +12,7 @@ import Icon from "../../common/icon.vue";
 import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
-import { useAutocomplete } from "../../../composables/autocomplete";
+import { useAutocompleteView } from "../../../composables/autocomplete";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 </script>
@@ -23,7 +23,7 @@ const { autocomplete, item, index, panel, pt } =
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { useItem } = useAutocomplete(autocomplete);
+const { useItem } = useAutocompleteView(autocomplete);
 const { locked, highlighted, recipes } = useItem(() => ({
   item,
   index,

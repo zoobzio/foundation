@@ -3,7 +3,7 @@ import type { ChartWidgetProps } from "../types/data/chart/widget";
 import type { WidgetSettings } from "../types/widget";
 
 /**
- * The static description `createChart` instances: everything about the
+ * The static description `useChart` instances: everything about the
  * feature except its id. Reusable — one definition, many ids, many machines.
  */
 export type ChartDefinition<T> = {

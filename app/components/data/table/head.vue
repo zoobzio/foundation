@@ -17,7 +17,7 @@ import Thead from "../../common/thead.vue";
 import Tr from "../../common/tr.vue";
 
 import { useTemplateRef } from "#imports";
-import { useTable } from "../../../composables/table";
+import { useTableView } from "../../../composables/table";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { TABLE_DRAG_ICON } from "../../../constants/table";
@@ -44,7 +44,7 @@ const {
   onHeaderDragLeave,
   onHeaderDrop,
   onHeaderDragEnd,
-} = useTable(table);
+} = useTableView(table);
 
 const settings = usePassthrough<TableHeadPassthrough>(() => ({
   pt,

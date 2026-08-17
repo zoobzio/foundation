@@ -10,21 +10,20 @@ import { useNuxtApp } from "#imports";
 import { FormService } from "../services/form";
 
 /**
- * Instances a definition: `id` is the only thing the factory adds — shared
- * state, hook scoping, wiring identity all key on it.
+ * Instances a definition in the calling scope — call in setup: `id` is the
+ * only thing the composable adds; shared state, hook scoping, wiring
+ * identity all key on it.
  */
-export const createForm = <T>(
+export const useForm = <T>(
   id: string,
   definition: FormDefinition<T>,
-) => {
-  return (): Widget<FormWidgetProps<T>, Events<T>> => {
-    const nuxt = useNuxtApp();
-    const state = accessForm(id, definition.config);
-    const service = new FormService(nuxt, id, definition.config, state, definition.actions);
-    return {
-      service,
-      component,
-      settings: definition.settings,
-    };
+): Widget<FormWidgetProps<T>, Events<T>> => {
+  const nuxt = useNuxtApp();
+  const state = accessForm(id, definition.config);
+  const service = new FormService(nuxt, id, definition.config, state, definition.actions);
+  return {
+    service,
+    component,
+    settings: definition.settings,
   };
 };

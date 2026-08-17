@@ -9,7 +9,7 @@ import { resolve } from "../utils/controls";
  * The view surface of the form feature, shared by every form component: the
  * service's state as refs plus the per-field scope.
  */
-export const useForm = <T>(form: Service<T>) => {
+export const useFormView = <T>(form: Service<T>) => {
   const serviceRefs = useServiceRefs(form);
 
   /**

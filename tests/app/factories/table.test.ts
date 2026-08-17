@@ -1,9 +1,9 @@
-// Gold standard: factories. The factory composes store + service through the
-// shim's Nuxt seams — tests assert the composition: live reactive views over
-// shared keyed state, not re-tested service logic (that depth lives in
-// tests/services/table.test.ts).
+// Gold standard: widget composables. The composable composes store + service
+// through the shim's Nuxt seams — tests assert the composition: live reactive
+// views over shared keyed state, not re-tested service logic (that depth
+// lives in tests/services/table.test.ts).
 import { describe, expect, it, vi } from "vitest";
-import { createTable } from "../../../app/factories/table";
+import { useTable } from "../../../app/factories/table";
 import type { DataTableFetchResult } from "../../../app/types/data/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
@@ -20,19 +20,19 @@ const makeActions = () => ({
 
 const config = { columns: fakeColumns, rowKey: "id" as const };
 
-describe("createTable", () => {
+describe("useTable", () => {
   it("yields the widget triple carrying the settings input", () => {
-    const widget = createTable<FakeRow, number>("f1", {
+    const widget = useTable<FakeRow, number>("f1", {
       config,
       actions: makeActions(),
       settings: { root: { label: "contacts" } },
-    })();
+    });
     expect(widget.component).toBeDefined();
     expect(widget.settings).toEqual({ root: { label: "contacts" } });
   });
 
   it("builds a table over fresh store state", () => {
-    const table = createTable<FakeRow, number>("f1", { config, actions: makeActions() })().service;
+    const table = useTable<FakeRow, number>("f1", { config, actions: makeActions() }).service;
     expect(table.id).toBe("f1");
     expect(table.data).toEqual([]);
     expect(table.initialized).toBe(false);
@@ -43,7 +43,7 @@ describe("createTable", () => {
 
   it("init drives the fetch pipeline into the reactive views", async () => {
     const actions = makeActions();
-    const table = createTable<FakeRow, number>("f1", { config, actions })().service;
+    const table = useTable<FakeRow, number>("f1", { config, actions }).service;
     await table.init();
     expect(table.data).toEqual(fakeRows);
     expect(table.total).toBe(fakeRows.length);
@@ -52,7 +52,7 @@ describe("createTable", () => {
   });
 
   it("returned refs track service mutations", async () => {
-    const table = createTable<FakeRow, number>("f1", { config, actions: makeActions() })().service;
+    const table = useTable<FakeRow, number>("f1", { config, actions: makeActions() }).service;
     await table.init();
     table.goToPage(2);
     expect(table.page).toBe(2);
@@ -63,10 +63,10 @@ describe("createTable", () => {
     expect(table.selectAllState).toBe("indeterminate");
   });
 
-  it("same id shares state across factory instances", async () => {
-    const useTable = createTable<FakeRow, number>("f1", { config, actions: makeActions() });
-    const a = useTable().service;
-    const b = useTable().service;
+  it("same id shares state across instances", async () => {
+    const definition = { config, actions: makeActions() };
+    const a = useTable<FakeRow, number>("f1", definition).service;
+    const b = useTable<FakeRow, number>("f1", definition).service;
     await a.init();
     a.goToPage(3);
     expect(b.page).toBe(3);
@@ -74,15 +74,15 @@ describe("createTable", () => {
   });
 
   it("different ids stay independent", async () => {
-    const a = createTable<FakeRow, number>("f1", { config, actions: makeActions() })().service;
-    const b = createTable<FakeRow, number>("f2", { config, actions: makeActions() })().service;
+    const a = useTable<FakeRow, number>("f1", { config, actions: makeActions() }).service;
+    const b = useTable<FakeRow, number>("f2", { config, actions: makeActions() }).service;
     await a.init();
     expect(b.initialized).toBe(false);
     expect(b.data).toEqual([]);
   });
 
   it("keyOf resolves the configured rowKey", () => {
-    const table = createTable<FakeRow, number>("f1", { config, actions: makeActions() })().service;
+    const table = useTable<FakeRow, number>("f1", { config, actions: makeActions() }).service;
     const row = fakeRows.at(0);
     if (!row) throw new Error("fakeRows is empty");
     expect(table.keyOf(row)).toBe(row.id);

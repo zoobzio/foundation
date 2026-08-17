@@ -1,14 +1,18 @@
-// Gold standard: structures. A fixture definition drives the workspace — assigned
-// cells render their widget through the erased `<component :is>` path with
-// service and resolved settings; unassigned cells stay slot-only; the
-// `slot:`/`widget:` override cascade and the grid math are the behavior
-// under test.
+// Gold standard: structures. A fixture definition drives the workspace
+// through the user flow under test: defineWorkspace holds grid geometry and
+// per-slot widget configs, a fixture feature composable maps each config to
+// a live widget, and useWorkspace assembles the handle. Filled cells render
+// their widget through the erased `<component :is>` path with service and
+// resolved settings; widgetless cells stay slot-only; the `slot:`/`widget:`
+// override cascade, the grid math, and the live workspace's id-keyed
+// services are the behavior under test.
 import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent, PropType } from "vue";
 import { mount } from "@vue/test-utils";
 import Structure from "../../../../app/components/system/workspace.vue";
 import { defineWorkspace } from "../../../../app/definitions/workspace";
+import { useWorkspace } from "../../../../app/composables/workspace";
 import type { WorkspaceProps } from "../../../../app/types/system/workspace";
 import type { AnyWidget } from "../../../../app/types/widget";
 
@@ -31,35 +35,49 @@ const FixtureWidget = defineComponent({
   },
 });
 
-const makeDefinition = () =>
-  defineWorkspace({
-    widgets: {
-      alpha: (): AnyWidget => ({
-        service: { id: "alpha-machine" },
-        component: FixtureWidget,
-        settings: () => ({ marker: "alpha-settings" }),
-      }),
-      beta: (): AnyWidget => ({
-        service: { id: "beta-machine" },
-        component: FixtureWidget,
-      }),
+// Inert configuration — what the user stores in constants/.
+const DEFINITION = defineWorkspace({
+  columns: 2,
+  rows: 2,
+  slots: {
+    main: {
+      position: [0, 0],
+      span: [1, 2],
+      widget: { machine: "alpha-machine", marker: "alpha-settings" },
     },
-    layout: {
-      columns: 2,
-      rows: 2,
-      slots: [
-        { id: "main", widget: "alpha", position: [0, 0], span: [1, 2] },
-        { id: "side", widget: "beta", position: [1, 0], span: [1, 1] },
-        { id: "free", position: [1, 1], span: [1, 1] },
-      ],
+    side: {
+      position: [1, 0],
+      span: [1, 1],
+      widget: { machine: "beta-machine" },
     },
-  });
+    free: { position: [1, 1], span: [1, 1] },
+  },
+});
 
-type Definition = ReturnType<typeof makeDefinition>;
+// The fixture feature composable: definition in, live widget out — the
+// user's definition→composable mapping at workspace scale.
+const useFixtureWidget = (definition: {
+  machine: string;
+  marker?: string;
+}): AnyWidget => ({
+  service: { id: definition.machine },
+  component: FixtureWidget,
+  settings:
+    definition.marker === undefined
+      ? undefined
+      : () => ({ marker: definition.marker }),
+});
+
+const makeWidgets = () => ({
+  main: useFixtureWidget(DEFINITION.slots.main.widget),
+  side: useFixtureWidget(DEFINITION.slots.side.widget),
+});
+
+type FixtureWidgets = ReturnType<typeof makeWidgets>;
 
 // Generic SFCs don't instantiate through mount()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates R for the harness.
-const Workspace: FunctionalComponent<WorkspaceProps<Definition["widgets"]>> =
+const Workspace: FunctionalComponent<WorkspaceProps<FixtureWidgets>> =
   Structure;
 
 const mountWorkspace = (
@@ -68,14 +86,15 @@ const mountWorkspace = (
   return mount(
     defineComponent({
       setup() {
-        return () => h(Workspace, { definition: makeDefinition() }, slots);
+        const workspace = useWorkspace(DEFINITION, makeWidgets());
+        return () => h(Workspace, { workspace }, slots);
       },
     }),
   );
 };
 
 describe("system workspace", () => {
-  it("renders assigned widgets with service and resolved settings", () => {
+  it("renders each slot's widget with service and resolved settings", () => {
     const wrapper = mountWorkspace();
     const rendered = wrapper.findAll(".fixture-widget");
     expect(rendered.map((w) => w.text())).toEqual([
@@ -88,7 +107,7 @@ describe("system workspace", () => {
     expect(rendered[1]?.attributes("data-pt")).toBe("null");
   });
 
-  it("leaves unassigned cells empty but present", () => {
+  it("leaves widgetless cells empty but present", () => {
     const wrapper = mountWorkspace();
     const cells = wrapper.findAll(".f-system-workspace-slot");
     expect(cells).toHaveLength(3);
@@ -116,13 +135,22 @@ describe("system workspace", () => {
     ).toEqual(["beta-machine"]);
   });
 
-  it("widget:<key> overrides the render and receives the service", () => {
+  it("widget:<id> overrides the render and receives the service", () => {
     const wrapper = mountWorkspace({
-      "widget:beta": () => h("div", { class: "override" }, "replaced"),
+      "widget:side": () => h("div", { class: "override" }, "replaced"),
     });
     expect(wrapper.get(".override").text()).toBe("replaced");
     expect(
       wrapper.findAll(".fixture-widget").map((w) => w.text()),
     ).toEqual(["alpha-machine"]);
+  });
+});
+
+describe("useWorkspace", () => {
+  it("exposes services keyed by slot id and the layout on the handle", () => {
+    const workspace = useWorkspace(DEFINITION, makeWidgets());
+    expect(workspace.services.main.id).toBe("alpha-machine");
+    expect(workspace.services.side.id).toBe("beta-machine");
+    expect(workspace.layout).toBe(DEFINITION);
   });
 });

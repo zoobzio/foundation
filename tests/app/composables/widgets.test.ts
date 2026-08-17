@@ -1,11 +1,11 @@
-// Gold standard: the widget consumption infra. Fixture composables stand in
-// for factory yields (AnyWidget-shaped); the wiring runner is exercised over
-// the real hook bus from the #imports shim — id filtering, services record,
-// and scope teardown are the behavior under test.
+// Gold standard: the wiring runner, exercised over the real hook bus from
+// the #imports shim — id filtering, services record, and scope teardown are
+// the behavior under test. Fixture widgets stand in for feature-composable
+// yields (AnyWidget-shaped).
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
 import { useNuxtApp } from "#imports";
-import { useWidgets, useWiring } from "../../../app/composables/widgets";
+import { useWiring } from "../../../app/composables/widgets";
 import { withSetup } from "#test/mount/composable";
 import type { AnyWidget } from "../../../app/types/widget";
 
@@ -23,28 +23,15 @@ const makeRegistry = () => {
     service: { id: "beta-machine" },
     component: FixtureView,
   };
-  const makeAlpha = vi.fn(() => alpha);
-  const makeBeta = vi.fn(() => beta);
-  return { alpha, beta, registry: { alpha: makeAlpha, beta: makeBeta } };
+  return { alpha, beta, widgets: { alpha, beta } };
 };
-
-describe("useWidgets", () => {
-  it("invokes each composable once, keyed like the registry", () => {
-    const { alpha, beta, registry } = makeRegistry();
-    const widgets = useWidgets(registry);
-    expect(widgets).toEqual({ alpha, beta });
-    expect(registry.alpha).toHaveBeenCalledOnce();
-    expect(registry.beta).toHaveBeenCalledOnce();
-  });
-});
 
 describe("useWiring", () => {
   it("dispatches a machine's event to its handler with the services record", async () => {
-    const { alpha, beta, registry } = makeRegistry();
+    const { alpha, beta, widgets } = makeRegistry();
     const handler = vi.fn();
 
     withSetup(() => {
-      const widgets = useWidgets(registry);
       useWiring({ alpha: { "table:updated": handler } }, widgets);
     });
 
@@ -59,11 +46,11 @@ describe("useWiring", () => {
   });
 
   it("filters by machine id — other instances do not fire the handler", async () => {
-    const { registry } = makeRegistry();
+    const { widgets } = makeRegistry();
     const handler = vi.fn();
 
     withSetup(() => {
-      useWiring({ alpha: { "table:updated": handler } }, useWidgets(registry));
+      useWiring({ alpha: { "table:updated": handler } }, widgets);
     });
 
     const nuxt = useNuxtApp();
@@ -73,11 +60,11 @@ describe("useWiring", () => {
   });
 
   it("tears down with the component scope", async () => {
-    const { registry } = makeRegistry();
+    const { widgets } = makeRegistry();
     const handler = vi.fn();
 
     const { app } = withSetup(() => {
-      useWiring({ alpha: { "table:updated": handler } }, useWidgets(registry));
+      useWiring({ alpha: { "table:updated": handler } }, widgets);
     });
     app.unmount();
 
@@ -88,10 +75,9 @@ describe("useWiring", () => {
   });
 
   it("ignores absent wiring and unknown registry keys", () => {
-    const { registry } = makeRegistry();
+    const { widgets } = makeRegistry();
 
     withSetup(() => {
-      const widgets = useWidgets(registry);
       useWiring(undefined, widgets);
       useWiring({ missing: { "table:updated": vi.fn() } }, widgets);
     });

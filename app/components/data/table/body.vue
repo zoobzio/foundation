@@ -18,7 +18,7 @@ import Td from "../../common/td.vue";
 import Tr from "../../common/tr.vue";
 
 import { useSlots, useTemplateRef } from "#imports";
-import { useTable } from "../../../composables/table";
+import { useTableView } from "../../../composables/table";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { cell } from "../../../utils/format";
@@ -39,7 +39,7 @@ const {
   hasActions,
   actionGroups,
   onActionSelect,
-} = useTable(table);
+} = useTableView(table);
 
 const settings = usePassthrough<TableBodyPassthrough>(() => ({
   pt,

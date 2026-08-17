@@ -15,7 +15,7 @@ export type Contract<Props, Emits = {}> = Definition<Props, Emits>;
  * are needed — plain SFCs export a constructable component type, generic
  * SFCs export a call signature.
  *
- * `P` is the adapter's **contract**: pass it explicitly to `createAdapter`
+ * `P` is the adapter's **contract**: pass it explicitly to `useAdapter`
  * to author the surface (props checked, emit names and payloads exact), or
  * omit it and inherit the component's own `$props`. A component whose props
  * don't satisfy the contract fails on the `component` property.

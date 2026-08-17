@@ -7,7 +7,7 @@ type RequiredKeys<P> = {
 }[keyof P];
 
 /**
- * The static description `createAdapter` instances: the contract's component
+ * The static description `useAdapter` instances: the contract's component
  * and exhaustive emit acknowledgment plus the base props. Reusable — one
  * definition, many ids, many override layers.
  */

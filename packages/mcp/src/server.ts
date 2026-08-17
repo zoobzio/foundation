@@ -16,9 +16,9 @@ const HELP_TOPICS = {
   system: "app/components/system/README.md",
 } as const;
 
-const INSTRUCTIONS = `@zoobzio/foundation is a Vue 3 + Nuxt design system delivered as a single Nuxt layer, organized into tiers: common (behavior-free HTML wrappers + behavioral element families), core (stateless interactive coordinators with a passthrough part system), data (factory-driven generic data widgets), and system (app-shell composition). Auto-import is disabled — everything is imported explicitly via the #foundation/* alias (framework symbols via #imports).
+const INSTRUCTIONS = `@zoobzio/foundation is a Vue 3 + Nuxt design system delivered as a single Nuxt layer, organized into tiers: common (behavior-free HTML wrappers + behavioral element families), core (stateless interactive coordinators with a passthrough part system), data (definition-driven generic data widgets), and system (app-shell composition). Auto-import is disabled — everything is imported explicitly via the #foundation/* alias (framework symbols via #imports).
 
-Before writing code against a tier, call help with that tier's topic — each tier has a strict authoring contract (bindings, passthrough parts, factories) that code must follow. Use list_components to discover what exists and describe_component to get a component's full type contract and import paths.`;
+Before writing code against a tier, call help with that tier's topic — each tier has a strict authoring contract (bindings, passthrough parts, define*/use* widget verbs) that code must follow. Use list_components to discover what exists and describe_component to get a component's full type contract and import paths.`;
 
 /**
  * Foundation's shipped sources (app/, config/) resolve from wherever the
@@ -71,7 +71,7 @@ function describe(entry: CatalogEntry, root: string): string {
   if (entry.factory) {
     lines.push(
       "",
-      `Factory: \`${entry.factory}\` (\`${importPath(entry.factory)}\`) — read it for the widget's reactive interface.`,
+      `Widget composable: \`${entry.factory}\` (\`${importPath(entry.factory)}\`) — read it for the widget's reactive interface.`,
     );
   }
   return lines.join("\n");
@@ -102,7 +102,7 @@ export function createServer(): McpServer {
           .join(", ");
         const extras = [
           c.definition ? "definition" : null,
-          c.factory ? "factory" : null,
+          c.factory ? "widget composable" : null,
         ].filter((x) => x !== null);
         return `${c.tier}/${c.name} — parts: ${parts}${extras.length ? ` (${extras.join(", ")})` : ""}`;
       });
