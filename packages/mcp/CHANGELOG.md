@@ -1,5 +1,12 @@
 # @zoobzio/foundation-mcp
 
+## 0.0.17
+
+### Patch Changes
+
+- Updated dependencies [[`f6b8637`](https://github.com/zoobzio/foundation/commit/f6b8637c6ac67057881d0fb6ef19a94600859d09)]:
+  - @zoobzio/foundation@0.0.17
+
 ## 0.0.16
 
 ### Patch Changes
