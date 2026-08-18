@@ -45,7 +45,7 @@ describe("select", () => {
     expect(trigger.attributes("data-state")).toBe("closed");
     expect(trigger.text()).toContain("Pick one");
     expect(trigger.find("use").attributes("href")).toBe(
-      "/icons.svg#chevron-down",
+      "#chevron-down",
     );
   });
 
@@ -63,7 +63,7 @@ describe("select", () => {
     expect(
       wrapper.get("button.f-select-trigger").attributes("data-state"),
     ).toBe("open");
-    expect(wrapper.get("use").attributes("href")).toBe("/icons.svg#chevron-up");
+    expect(wrapper.get("use").attributes("href")).toBe("#chevron-up");
     // Content is portalled — options live under document.body, one per option.
     const items = document.querySelectorAll('[role="option"]');
     expect(items).toHaveLength(fakeOptions.length);
@@ -86,7 +86,7 @@ describe("select", () => {
     const wrapper = mountSelect({
       pt: { triggerIcon: { alias: "settings" } },
     });
-    expect(wrapper.get("use").attributes("href")).toBe("/icons.svg#settings");
+    expect(wrapper.get("use").attributes("href")).toBe("#settings");
   });
 
   it("serves ctx to slot overrides", () => {
