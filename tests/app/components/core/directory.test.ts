@@ -111,7 +111,7 @@ describe("directory", () => {
     const wrapper = mountDirectory({
       pt: { itemIcon: () => ({ alias: "external" }) },
     });
-    expect(wrapper.get("use").attributes("href")).toBe("/icons.svg#external");
+    expect(wrapper.get("use").attributes("href")).toBe("#external");
   });
 
   it("serves ctx and the item to slot overrides", () => {

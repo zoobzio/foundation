@@ -69,7 +69,7 @@ describe("data table widget", () => {
   it("refresh control triggers a table fetch", async () => {
     const { service, wrapper } = mountWidget();
     const refresh = wrapper
-      .get('use[href="/icons.svg#refresh"]')
+      .get('use[href="#refresh"]')
       .element.closest("button");
     if (!refresh) throw new Error("refresh fab has no button root");
     refresh.click();
@@ -79,7 +79,7 @@ describe("data table widget", () => {
   it("pagination interaction routes through table.goToPage", async () => {
     const { service, wrapper } = mountWidget();
     const next = wrapper
-      .get('use[href="/icons.svg#chevron-right"]')
+      .get('use[href="#chevron-right"]')
       .element.closest("button");
     if (!next) throw new Error("next-page fab has no button root");
     next.click();
