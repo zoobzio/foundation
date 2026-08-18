@@ -29,4 +29,24 @@ Deck follows the same split: `defineDeck` on the entity yields a flat
 stamped `DeckDefinition<T>` (topic, rowKey, dateFields, polling/page
 config, pt base), and `useDeck(id, definition, wiring)` takes `fetch` and
 the reactive pt override. Deck has no action records, so its wiring is
-`T`-generic only. Remaining data widgets migrate in later releases.
+`T`-generic only.
+
+Preview follows the same split: `definePreview` on the entity yields a
+flat stamped `PreviewDefinition<T>` (fields, content variant, pt base),
+and `usePreview(id, definition, wiring)` takes `fetch` and the reactive pt
+override.
+
+Chart follows the same split: `defineChart` on the entity yields a flat
+stamped `ChartDefinition<T>` (topic, variant configs, color map, pt base),
+and `useChart(id, definition, wiring)` takes one fetcher per declared
+variant — required exactly when that variant's config exists, rejected
+when it doesn't — plus the reactive pt override.
+
+Form follows the same split, with one deliberate scope call: the Zod
+schema travels with the definition — it is the form's intrinsic contract,
+not wiring — so `defineForm` on the entity yields a flat stamped
+`FormDefinition<T>` (title, fields, schema, defaults, pt base).
+`useForm(id, definition, wiring?)` takes the optional init/submit
+lifecycle, per-key middleware, and the reactive pt override; the wiring
+argument is omittable for local-only forms. Autocomplete migrates in a
+later release.

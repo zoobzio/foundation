@@ -1,4 +1,7 @@
+import type { ChartDefinition } from "./chart";
 import type { DeckDefinition } from "./deck";
+import type { FormDefinition } from "./form";
+import type { PreviewDefinition } from "./preview";
 import type { TableDefinition } from "./table";
 import type { Stamp } from "../types/definition";
 
@@ -27,5 +30,28 @@ export const defineEntity = <T>() => ({
    * semantics as `defineTable`.
    */
   defineDeck: <D extends DeckDefinition<T>>(definition: D): D & Stamp<T> =>
+    definition,
+
+  /**
+   * Declares a preview over the entity at module scope — same checkpoint
+   * semantics as `defineTable`.
+   */
+  definePreview: <D extends PreviewDefinition<T>>(
+    definition: D,
+  ): D & Stamp<T> => definition,
+
+  /**
+   * Declares a chart over the entity at module scope — same checkpoint
+   * semantics as `defineTable`.
+   */
+  defineChart: <D extends ChartDefinition<T>>(definition: D): D & Stamp<T> =>
+    definition,
+
+  /**
+   * Declares a form over the entity at module scope — same checkpoint
+   * semantics as `defineTable`. The Zod schema rides the definition: it is
+   * the form's intrinsic contract, not wiring.
+   */
+  defineForm: <D extends FormDefinition<T>>(definition: D): D & Stamp<T> =>
     definition,
 });
