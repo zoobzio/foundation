@@ -36,7 +36,7 @@ alive (composables), and where it sits (template) stay separate:
 // constants/dashboard.ts — the whole page as inert typed data
 const contacts = defineEntity<Contact>();
 export const CONTACTS_TABLE = contacts.defineTable({ columns: …, rowKey: … });
-export const CONTACT_FORM = defineForm({ config: …, actions: … });
+export const CONTACT_FORM = contacts.defineForm({ title: …, fields: …, schema: … });
 
 export const DASHBOARD = defineWorkspace({
   columns: 3,
@@ -52,7 +52,7 @@ export const DASHBOARD = defineWorkspace({
 // composables/dashboard.ts — instantiation + wiring, the only place anything runs
 export const useDashboard = () => {
   const main = useTable("dash-contacts", DASHBOARD.slots.main.widget, { fetch: … });
-  const side = useForm("dash-form", DASHBOARD.slots.side.widget);
+  const side = useForm("dash-form", DASHBOARD.slots.side.widget, { submit: … });
 
   return useWorkspace(DASHBOARD, { main, side }, {
     main: {

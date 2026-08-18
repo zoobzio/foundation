@@ -1,23 +1,15 @@
-import type { Actions, Config } from "../types/data/preview";
+import type { Config } from "../types/data/preview";
 import type { PreviewWidgetProps } from "../types/data/preview/widget";
-import type { WidgetSettings } from "../types/widget";
+import type { Stamp } from "../types/definition";
 
 /**
- * The static description `usePreview` instances: everything about the
- * feature except its id. Reusable — one definition, many ids, many machines.
+ * The static description of a preview — one flat serializable record: the
+ * domain config plus the passthrough base. Everything functional — fetch,
+ * reactive pt — attaches at `usePreview`. Declared through an entity's
+ * `definePreview`, which checks every field against the entity type on the
+ * line it is written.
  */
-export type PreviewDefinition<T> = {
-  config: Config<T>;
-  actions: Actions<T>;
-  settings?: WidgetSettings<PreviewWidgetProps<T>>;
-};
-
-/**
- * Declares a preview at module scope — pure data plus consumer callbacks,
- * no runtime, no Vue. The identity function is the type checkpoint: the
- * generics infer from `config`, and every field errors on the line it is
- * written.
- */
-export const definePreview = <T>(
-  definition: PreviewDefinition<T>,
-): PreviewDefinition<T> => definition;
+export type PreviewDefinition<T> = Config<T> &
+  Stamp<T> & {
+    pt?: PreviewWidgetProps<T>["pt"];
+  };
