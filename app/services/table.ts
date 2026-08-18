@@ -6,7 +6,7 @@ import type {
   Service,
   State,
 } from "../types/data/table";
-import type { IconAlias } from "../types/common/iconic";
+import type { IconAlias } from "../types/common/icon";
 import type { Logger } from "../types/log";
 
 import { entries } from "objectively";

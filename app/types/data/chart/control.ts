@@ -1,6 +1,5 @@
 import type { ButtonProps, ButtonEmits } from "../../common/button";
-import type { IconProps } from "../../common/icon";
-import type { IconAlias } from "../../common/iconic";
+import type { IconProps, IconAlias  } from "../../common/icon";
 import type { FabProps, FabEmits } from "../../core/fab";
 import type { MenuProps, MenuEmits } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";

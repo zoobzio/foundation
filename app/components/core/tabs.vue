@@ -47,7 +47,7 @@ const settings = usePassthrough<TabsPassthrough>(() => ({
       disabled: option.disabled,
     }),
     triggerIcon: (option) => ({
-      alias: option.icon ?? "",
+      alias: option.icon!,
     }),
     content: (option) => ({
       value: option.value,

@@ -1,7 +1,6 @@
 import type { ButtonEmits, ButtonProps } from "../common/button";
 import type { GroupProps } from "../common/group";
-import type { IconProps } from "../common/icon";
-import type { IconAlias } from "../common/iconic";
+import type { IconAlias, IconProps } from "../common/icon";
 import type { EventEmits } from "../events";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";

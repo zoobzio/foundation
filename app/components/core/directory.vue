@@ -56,7 +56,7 @@ const settings = usePassthrough<DirectoryPassthrough<T>>(() => ({
       onClick: () => emit("select", item),
     }),
     itemIcon: (item) => ({
-      alias: item.icon ?? "",
+      alias: item.icon!,
     }),
     itemLabel: {},
   },

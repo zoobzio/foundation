@@ -58,6 +58,9 @@
     "access": "public"
   },
   "dependencies": {
+    "@icon-sheets/nuxt": "^0.0.1",
+    "@iconify-json/lucide": "^1.2.124",
+    "@iconify-json/mdi": "^1.2.3",
     "@internationalized/date": "^3.7.0",
     "@nuxt/kit": "^4.5.0",
     "@types/aria-query": "^5.0.4",
@@ -68,6 +71,7 @@
     "aria-query": "^5.3.2",
     "chart.js": "^4.5.1",
     "defu": "^6.1.7",
+    "icon-sheets": "^0.0.1",
     "ltrl-http": "^0.0.20",
     "objectively": "^0.1.0",
     "reka-ui": "^2.6.0",

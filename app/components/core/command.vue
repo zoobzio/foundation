@@ -115,7 +115,7 @@ const settings = usePassthrough<CommandPassthrough<T>>(() => ({
       modelValue: selected(item),
     }),
     itemIcon: (item) => ({
-      alias: item.icon ?? "",
+      alias: item.icon!,
     }),
     itemLabel: {},
     itemCount: {},

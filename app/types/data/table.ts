@@ -1,5 +1,5 @@
 import type { Ref } from "#imports";
-import type { IconAlias } from "../common/iconic";
+import type { IconAlias } from "../common/icon";
 
 /**
  * Column data type — drives cell rendering and sort behavior.

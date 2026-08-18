@@ -1,5 +1,5 @@
 // core/keywords constants
-import type { IconAlias } from "../types/common/iconic";
+import type { IconAlias } from "../types/common/icon";
 import type { Option } from "../types/core/common";
 
 export const MATCH_OPTIONS: Option[] = [
