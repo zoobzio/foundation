@@ -51,7 +51,7 @@ const settings = usePassthrough<SegmentedControlPassthrough>(() => ({
       disabled: option.disabled,
     }),
     itemIcon: (option) => ({
-      alias: option.icon ?? "",
+      alias: option.icon!,
     }),
     itemLabel: {},
   },

@@ -8,6 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@icon-sheets/nuxt':
+        specifier: ^0.0.1
+        version: 0.0.1(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+      '@iconify-json/lucide':
+        specifier: ^1.2.124
+        version: 1.2.124
+      '@iconify-json/mdi':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@internationalized/date':
         specifier: ^3.7.0
         version: 3.12.2
@@ -38,6 +47,9 @@ importers:
       defu:
         specifier: ^6.1.7
         version: 6.1.7
+      icon-sheets:
+        specifier: ^0.0.1
+        version: 0.0.1
       ltrl-http:
         specifier: ^0.0.20
         version: 0.0.20
@@ -646,6 +658,39 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
+
+  '@icon-sheets/catalog@0.0.1':
+    resolution: {integrity: sha512-mX2Chp6cxLTRIWHalex+KWslRitpl3k4sF8ZdevP4Tc8R1Dh0E0rNoRt/ZgbIfr0WxdTGGwzL9wnLpsnt7nEQQ==}
+
+  '@icon-sheets/core@0.0.1':
+    resolution: {integrity: sha512-pkEslWB26CKWwEGT/XOe2enMbGnr7CjhEld96+0oFbr0sHmXsU5RoxZO/ntdn+Dsh+ukCrCXpssy+tJBxAYW1A==}
+
+  '@icon-sheets/iconify@0.0.1':
+    resolution: {integrity: sha512-2di0IwY41BaSErp00zTkwQV47TQEvg0QnffUemFTDLl3zQrAbplUDLn3dbA+RMQ1dJYBUic7YunFY7SbvJuIOA==}
+
+  '@icon-sheets/nuxt@0.0.1':
+    resolution: {integrity: sha512-sfcZ80l3Psrdz929AKpdCg6dyi65mWuZc6E+5g0iqLEAUwHfIcQbRK2iIxJDycCUakaKqdFlDFAnGrkfSMfkNg==}
+
+  '@icon-sheets/schema@0.0.1':
+    resolution: {integrity: sha512-5IvgvuVzxE/dTCIl92sne6d3bHYBYSHY1vzf8/cGASBiZ+ZLLBJ2zNRlzemMztGh0aF3RjpRcxZEaSw83KFtwA==}
+
+  '@icon-sheets/svg@0.0.1':
+    resolution: {integrity: sha512-CwzLGrPEang1QCIKACqyM6b+fcJYeQ27B1JUtx440alSr4tLaZRy0/7sUU1goYdMQyAYeK2h+wjce8drIbDC3g==}
+
+  '@icon-sheets/utils@0.0.1':
+    resolution: {integrity: sha512-331pt+9fpOg5mSQe163ukYND+mL/Ju2AKrPA2YtKqcMELvRqOUjA3pQe6lzzFwbcFIULcBdjHOwqXtzz1OE0+Q==}
+
+  '@iconify-json/lucide@1.2.124':
+    resolution: {integrity: sha512-mO6JyBVNER7uXEkW2bXiN9Rrm6w91IXxwnNmIMbu2KZX0ZPcVZH1xDUTw94pryxESUIpBhinkOUIZIav+TA9ng==}
+
+  '@iconify-json/mdi@1.2.3':
+    resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
+
+  '@iconify/types@2.0.0':
+    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
+
+  '@iconify/utils@3.1.4':
+    resolution: {integrity: sha512-b1S7B1k9ohZ+iNTi2ATxbRYG9fTrJmUT0rc46bvVnNxqNRGW7dyo/vRREwyniI5IRN2RSJHDcm+s3BjWrSAjHw==}
 
   '@inquirer/external-editor@1.0.3':
     resolution: {integrity: sha512-RWbSrDiYmO4LbejWY7ttpxczuwQyZLBUyygsA9Nsv95hpzUWwnNTVQmAq3xuh7vNwCp07UTmE5i11XAEExx4RA==}
@@ -3123,6 +3168,9 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
+  icon-sheets@0.0.1:
+    resolution: {integrity: sha512-5aj0ValUBnesoQ4hLMEhjlAOS2beEKS6D2xpJJaaq5W9QBOhznpxcs4s3eeS06q4jsoORQvOljxL0VCtLTKmWA==}
+
   iconv-lite@0.7.3:
     resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
     engines: {node: '>=0.10.0'}
@@ -3144,6 +3192,9 @@ packages:
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
+
+  import-meta-resolve@4.2.0:
+    resolution: {integrity: sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg==}
 
   impound@1.1.5:
     resolution: {integrity: sha512-5AUn+QE0UofqNHu5f2Skf6Svukdg4ehOIq8O0EtqIx4jta0CDZYBPqpIHt0zrlUTiFVYlLpeH39DoikXBjPKpA==}
@@ -5639,6 +5690,71 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
+
+  '@icon-sheets/catalog@0.0.1':
+    dependencies:
+      '@icon-sheets/schema': 0.0.1
+      objectively: 0.1.1
+
+  '@icon-sheets/core@0.0.1':
+    dependencies:
+      '@icon-sheets/schema': 0.0.1
+      '@icon-sheets/utils': 0.0.1
+      objectively: 0.1.1
+
+  '@icon-sheets/iconify@0.0.1':
+    dependencies:
+      '@icon-sheets/schema': 0.0.1
+      '@iconify/types': 2.0.0
+      '@iconify/utils': 3.1.4
+      objectively: 0.1.1
+
+  '@icon-sheets/nuxt@0.0.1(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
+    dependencies:
+      '@icon-sheets/iconify': 0.0.1
+      '@nuxt/kit': 4.5.0(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+      h3: 1.15.11
+      icon-sheets: 0.0.1
+      objectively: 0.1.1
+      vue: 3.5.39(typescript@5.9.3)
+    transitivePeerDependencies:
+      - magic-string
+      - magicast
+      - oxc-parser
+      - rolldown
+      - typescript
+      - unplugin
+
+  '@icon-sheets/schema@0.0.1':
+    dependencies:
+      '@iconify/types': 2.0.0
+      objectively: 0.1.1
+
+  '@icon-sheets/svg@0.0.1':
+    dependencies:
+      '@icon-sheets/schema': 0.0.1
+      '@iconify/utils': 3.1.4
+
+  '@icon-sheets/utils@0.0.1':
+    dependencies:
+      '@icon-sheets/schema': 0.0.1
+      objectively: 0.1.1
+
+  '@iconify-json/lucide@1.2.124':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/mdi@1.2.3':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify/types@2.0.0': {}
+
+  '@iconify/utils@3.1.4':
+    dependencies:
+      '@antfu/install-pkg': 1.1.0
+      '@iconify/types': 2.0.0
+      import-meta-resolve: 4.2.0
 
   '@inquirer/external-editor@1.0.3(@types/node@26.1.1)':
     dependencies:
@@ -8311,6 +8427,14 @@ snapshots:
 
   human-signals@5.0.0: {}
 
+  icon-sheets@0.0.1:
+    dependencies:
+      '@icon-sheets/catalog': 0.0.1
+      '@icon-sheets/core': 0.0.1
+      '@icon-sheets/schema': 0.0.1
+      '@icon-sheets/svg': 0.0.1
+      '@icon-sheets/utils': 0.0.1
+
   iconv-lite@0.7.3:
     dependencies:
       safer-buffer: 2.1.2
@@ -8327,6 +8451,8 @@ snapshots:
     dependencies:
       parent-module: 1.0.1
       resolve-from: 4.0.0
+
+  import-meta-resolve@4.2.0: {}
 
   impound@1.1.5(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)):
     dependencies:

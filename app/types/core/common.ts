@@ -1,4 +1,4 @@
-import type { IconAlias } from "../common/iconic";
+import type { IconAlias } from "../common/icon";
 /**
  * Base type for selectable items (tabs, listbox, select, accordion)
  */

@@ -16,8 +16,7 @@ import type {
   DropdownMenuItemEmits,
 } from "../common/dropdown-menu/item";
 import type { DropdownMenuSeparatorProps } from "../common/dropdown-menu/separator";
-import type { IconProps } from "../common/icon";
-import type { IconAlias } from "../common/iconic";
+import type { IconAlias, IconProps } from "../common/icon";
 import type { SpanProps } from "../common/span";
 import type {
   Passthrough,

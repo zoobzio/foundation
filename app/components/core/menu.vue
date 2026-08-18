@@ -72,7 +72,7 @@ const settings = usePassthrough<MenuPassthrough>(() => ({
       },
     }),
     itemIcon: (item) => ({
-      alias: item.icon ?? "",
+      alias: item.icon!,
     }),
     itemLabel: {},
     separator: {},

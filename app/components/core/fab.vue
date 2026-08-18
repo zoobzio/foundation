@@ -39,7 +39,7 @@ const settings = usePassthrough<FabPassthrough>(() => ({
       disabled,
       aria: label ? { label } : undefined,
     },
-    icon: { alias: icon ?? "" },
+    icon: { alias: icon! },
     badge: {},
   },
 }));

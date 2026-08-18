@@ -58,7 +58,7 @@ const settings = usePassthrough<AccordionPassthrough>(() => ({
     header: {},
     trigger: {},
     triggerContent: {},
-    triggerIcon: (option) => ({ alias: option.icon ?? "" }),
+    triggerIcon: (option) => ({ alias: option.icon! }),
     chevron: (open) => ({ alias: open ? "chevron-down" : "chevron-right" }),
     content: {},
   },
