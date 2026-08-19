@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 0.0.19
+
+### Patch Changes
+
+- [`81ffc97`](https://github.com/zoobzio/foundation/commit/81ffc97e26de769363c643a26a15a7442cd2c24f) Thanks [@zoobzio](https://github.com/zoobzio)! - Update dependencies: icon-sheets/@icon-sheets/nuxt to 0.0.3 and the untheme family (untheme, @untheme/nuxt, @untheme/aurora) to 0.2.2, adapting to the renamed `AppUntheme*` generated types.
+
 ## 0.0.18
 
 ### Patch Changes
