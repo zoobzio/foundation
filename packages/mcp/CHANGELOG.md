@@ -1,5 +1,29 @@
 # @zoobzio/foundation-mcp
 
+## 0.0.20
+
+### Patch Changes
+
+- [`b0e1667`](https://github.com/zoobzio/foundation/commit/b0e1667430ade20b7b84e70c1dac76b594ccfb9f) Thanks [@zoobzio](https://github.com/zoobzio)! - Add a `health` tool: a graph-wide report that aggregates the diagnostics
+  the module graph already collects into one actionable summary — parse
+  errors, unresolved imports, and catalog drift (errors); import cycles
+  (with type-only cycles labeled), tier-layering violations
+  (common < core < data < system), dead-code candidates, and
+  imported-but-never-rendered components (warnings); blast-radius hotspots
+  and catalog adoption by the consuming app (info). Empty sections are
+  omitted; pass `section` to get one section in full detail.
+
+- [`2004da5`](https://github.com/zoobzio/foundation/commit/2004da508e4580ef4c04fa32666b895ce710e544) Thanks [@zoobzio](https://github.com/zoobzio)! - Add deterministic module-graph query tools: `resolve`, `usages`,
+  `dependencies`, and `dependents`. The server scans the installed layer and
+  the consuming Nuxt app into one unified import graph (script imports,
+  type-only imports, and SFC template render sites, with line numbers),
+  annotates layer files with their catalog identity, and answers
+  "where is X / what uses X / what is X built from / what breaks if X
+  changes" without filesystem exploration. Consumer root is cwd when it holds
+  a nuxt config, or `FOUNDATION_MCP_APP_DIR`.
+- Updated dependencies [[`abcf5f9`](https://github.com/zoobzio/foundation/commit/abcf5f950f9de9308d2513d201836574b33096c6)]:
+  - @zoobzio/foundation@0.0.20
+
 ## 0.0.19
 
 ### Patch Changes
