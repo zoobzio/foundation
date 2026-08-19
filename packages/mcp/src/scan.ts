@@ -145,7 +145,12 @@ function vueFacts(path: string, source: string): FileFacts {
       }
     });
   }
-  return { imports, exports, renders };
+  return {
+    imports,
+    exports,
+    renders,
+    hasTemplate: descriptor.template !== null,
+  };
 }
 
 /**
@@ -155,7 +160,7 @@ function vueFacts(path: string, source: string): FileFacts {
 export function parseFile(path: string, source: string): FileFacts {
   if (path.endsWith(".vue")) return vueFacts(path, source);
   try {
-    return { ...moduleFacts(source, 0), renders: [] };
+    return { ...moduleFacts(source, 0), renders: [], hasTemplate: false };
   } catch (error) {
     throw new Error(
       `${path}: ${error instanceof Error ? error.message : String(error)}`,

@@ -97,7 +97,7 @@ function factsFor(file: string): CacheEntry {
     entry = {
       mtimeMs: stat.mtimeMs,
       size: stat.size,
-      facts: { imports: [], exports: [], renders: [] },
+      facts: { imports: [], exports: [], renders: [], hasTemplate: false },
       error: error instanceof Error ? error.message : String(error),
     };
   }
@@ -252,6 +252,7 @@ export function buildGraph(roots: GraphRoot[], catalog: Catalog): Graph {
       name: stripExtension(rel.startsWith("app/") ? rel.slice(4) : rel),
       importPath: importPathFor(rel, root === layer),
       exports: cached.facts.exports,
+      hasTemplate: cached.facts.hasTemplate,
       outgoing: [],
       externals: [],
       unresolved: [],

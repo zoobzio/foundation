@@ -74,7 +74,11 @@ function catalogDrift(graph: Graph, catalog: Catalog): string[] {
   return lines.sort();
 }
 
-/** Tarjan SCC over the outgoing edges; only non-trivial components survive. */
+/**
+ * Tarjan SCC over the outgoing edges; only non-trivial components survive.
+ * Iterative — dependency chains grow with the consumer app, and recursion
+ * depth tracks the longest chain.
+ */
 function cycles(graph: Graph): string[] {
   let counter = 0;
   const index = new Map<string, number>();
@@ -83,39 +87,57 @@ function cycles(graph: Graph): string[] {
   const stack: string[] = [];
   const found: GraphNode[][] = [];
 
-  function connect(file: string): void {
-    index.set(file, counter);
-    low.set(file, counter);
-    counter += 1;
-    stack.push(file);
-    onStack.add(file);
-    for (const edge of graph.nodes.get(file)!.outgoing) {
-      if (!index.has(edge.to)) {
-        connect(edge.to);
-        low.set(file, Math.min(low.get(file)!, low.get(edge.to)!));
-      } else if (onStack.has(edge.to)) {
-        low.set(file, Math.min(low.get(file)!, index.get(edge.to)!));
-      }
-    }
-    if (low.get(file) === index.get(file)) {
-      const members: string[] = [];
-      let popped: string;
-      do {
-        popped = stack.pop()!;
-        onStack.delete(popped);
-        members.push(popped);
-      } while (popped !== file);
-      const selfLoop =
-        members.length === 1 &&
-        graph.nodes.get(file)!.outgoing.some((e) => e.to === file);
-      if (members.length > 1 || selfLoop) {
-        found.push(members.map((f) => graph.nodes.get(f)!).reverse());
-      }
+  function popComponent(root: string): void {
+    const members: string[] = [];
+    let popped: string;
+    do {
+      popped = stack.pop()!;
+      onStack.delete(popped);
+      members.push(popped);
+    } while (popped !== root);
+    const selfLoop =
+      members.length === 1 &&
+      graph.nodes.get(root)!.outgoing.some((e) => e.to === root);
+    if (members.length > 1 || selfLoop) {
+      found.push(members.map((f) => graph.nodes.get(f)!));
     }
   }
 
-  for (const file of graph.nodes.keys()) {
-    if (!index.has(file)) connect(file);
+  for (const start of graph.nodes.keys()) {
+    if (index.has(start)) continue;
+    const frames: { file: string; edge: number }[] = [{ file: start, edge: 0 }];
+    while (frames.length > 0) {
+      const frame = frames[frames.length - 1]!;
+      const { file } = frame;
+      if (frame.edge === 0) {
+        index.set(file, counter);
+        low.set(file, counter);
+        counter += 1;
+        stack.push(file);
+        onStack.add(file);
+      }
+      const edges = graph.nodes.get(file)!.outgoing;
+      let descended = false;
+      while (frame.edge < edges.length) {
+        const to = edges[frame.edge]!.to;
+        frame.edge += 1;
+        if (!index.has(to)) {
+          frames.push({ file: to, edge: 0 });
+          descended = true;
+          break;
+        }
+        if (onStack.has(to)) {
+          low.set(file, Math.min(low.get(file)!, index.get(to)!));
+        }
+      }
+      if (descended) continue;
+      frames.pop();
+      if (low.get(file) === index.get(file)) popComponent(file);
+      const parent = frames[frames.length - 1];
+      if (parent !== undefined) {
+        low.set(parent.file, Math.min(low.get(parent.file)!, low.get(file)!));
+      }
+    }
   }
   return found
     .map((members) => {
@@ -129,7 +151,10 @@ function cycles(graph: Graph): string[] {
         ),
       );
       const rels = members.map((n) => n.rel).sort();
-      return `- ${members.length} modules (${root}${typeOnly ? ", type-only" : ""}): ${rels.join(" ⇄ ")}`;
+      // ⇄ states real adjacency for a pair; larger cycles are listed as a
+      // set, since sorted order says nothing about who imports whom.
+      const joined = rels.join(members.length === 2 ? " ⇄ " : ", ");
+      return `- ${members.length} modules (${root}${typeOnly ? ", type-only" : ""}): ${joined}`;
     })
     .sort();
 }
@@ -199,17 +224,14 @@ function deadCode(graph: Graph): string[] {
 }
 
 /**
- * SFC imports of components that never appear in the template. Files with no
- * recorded render at all are skipped — they may have no template block.
+ * SFC imports of components that never appear in the template. Only files
+ * with a template block are judged — a renderless SFC has nowhere to put a
+ * tag, so its component imports are not evidence of anything.
  */
 function unrenderedImports(graph: Graph): string[] {
   const lines: string[] = [];
   for (const node of graph.nodes.values()) {
-    if (!node.file.endsWith(".vue")) continue;
-    const rendersAnything = node.outgoing.some((e) =>
-      e.refs.some((r) => r.kind === "render"),
-    );
-    if (!rendersAnything) continue;
+    if (!node.hasTemplate) continue;
     for (const edge of node.outgoing) {
       if (!edge.to.endsWith(".vue")) continue;
       const kinds = new Set(edge.refs.map((r) => r.kind));
@@ -272,12 +294,16 @@ function adoption(graph: Graph, catalog: Catalog): string[] {
       ...(entry.definition ? [entry.definition] : []),
       ...(entry.factory ? [entry.factory] : []),
     ].map((f) => join(layerDir, f));
-    let count = 0;
+    // Distinct consumer files, not edges — one file importing a component
+    // and its types is one adopter, not two.
+    const importers = new Set<string>();
     for (const file of files) {
       for (const edge of graph.incoming.get(file) ?? []) {
-        if (consumers.has(graph.nodes.get(edge.from)!.root)) count += 1;
+        if (consumers.has(graph.nodes.get(edge.from)!.root))
+          importers.add(edge.from);
       }
     }
+    const count = importers.size;
     const name = `${entry.tier}/${entry.name}`;
     if (count > 0) used.push({ entry: name, count });
     else unused.push(name);
@@ -289,7 +315,7 @@ function adoption(graph: Graph, catalog: Catalog): string[] {
     const top = used
       .sort((a, b) => b.count - a.count || a.entry.localeCompare(b.entry))
       .slice(0, ADOPTION_TOP)
-      .map((u) => `${u.entry} (${u.count})`);
+      .map((u) => `${u.entry} (${u.count} ${u.count === 1 ? "file" : "files"})`);
     lines.push(`Most used: ${top.join(", ")}.`);
   }
   if (unused.length > 0) {
@@ -373,7 +399,11 @@ function sectionCap(filtered: boolean): number {
   return filtered ? 200 : 30;
 }
 
-function renderSection(section: Section, cap: number): string[] {
+function renderSection(
+  section: Section,
+  cap: number,
+  filtered: boolean,
+): string[] {
   const lines = [
     "",
     `## ${section.title} (${section.lines.length}) — ${section.severity}`,
@@ -381,8 +411,11 @@ function renderSection(section: Section, cap: number): string[] {
   ];
   if (section.lines.length > cap) {
     lines.push(...section.lines.slice(0, cap));
+    const omitted = section.lines.length - cap;
     lines.push(
-      `… ${section.lines.length - cap} more — call health with section="${section.key}" for the full list`,
+      filtered
+        ? `… ${omitted} more not shown`
+        : `… ${omitted} more — call health with section="${section.key}" for the full list`,
     );
   } else {
     lines.push(...section.lines);
@@ -409,7 +442,7 @@ export function healthReport(
     }
     return [
       `# Foundation health — ${match.title}`,
-      ...renderSection(match, sectionCap(true)),
+      ...renderSection(match, sectionCap(true), true),
     ].join("\n");
   }
 
@@ -440,7 +473,7 @@ export function healthReport(
   const cap = sectionCap(false);
   for (const s of sections) {
     if (s.lines.length === 0) continue;
-    lines.push(...renderSection(s, cap));
+    lines.push(...renderSection(s, cap, false));
   }
   return lines.join("\n");
 }
