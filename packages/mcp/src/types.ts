@@ -69,6 +69,12 @@ export interface FileFacts {
   imports: ImportRef[];
   exports: string[];
   renders: RenderRef[];
+  /**
+   * Whether the file is an SFC with a template block. Distinguishes "renders
+   * no imported components" from "has no template to render from" — renders
+   * alone cannot, since only tags matched to imports are recorded.
+   */
+  hasTemplate: boolean;
 }
 
 // ─── Module graph ───────────────────────────────────────────────────────────
@@ -123,6 +129,8 @@ export interface GraphNode {
   /** Canonical import specifier, when the file has one. */
   importPath: string | null;
   exports: string[];
+  /** SFC with a template block (always false for .ts and parse failures). */
+  hasTemplate: boolean;
   outgoing: Edge[];
   /** Imports that leave the graph (packages, Nuxt virtuals); never traversed. */
   externals: { specifier: string; line: number; kind: "import" | "type" }[];

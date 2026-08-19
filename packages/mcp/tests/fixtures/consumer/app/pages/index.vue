@@ -11,6 +11,9 @@ import TheBadge from "~/components/TheBadge.vue";
 // Imported but never rendered — health's unrendered-imports check needs it.
 import Unused from "~/components/Unused.vue";
 import { useGreeting } from "../composables/greeting";
+// Second file of the same catalog entry — adoption must count this page as
+// ONE importing file of common/button, not two edges.
+import type { ButtonProps } from "@zoobzio/foundation/types/common/button";
 
 const greeting = useGreeting();
 void greeting;
