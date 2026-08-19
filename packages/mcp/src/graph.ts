@@ -331,6 +331,26 @@ export function buildGraph(roots: GraphRoot[], catalog: Catalog): Graph {
   return { roots, nodes, incoming };
 }
 
+/** Human identity for a graph node: catalog name when it has one. */
+export function identity(node: GraphNode): string {
+  if (node.catalog) {
+    const { entry, role } = node.catalog;
+    const base = `${entry.tier}/${entry.name}`;
+    if (role === "part") {
+      return entry.components.length > 1
+        ? `${base} · ${basename(node.file)}`
+        : base;
+    }
+    return `${base} (${role})`;
+  }
+  return node.name;
+}
+
+/** One-line node reference: identity, root-relative path, provenance. */
+export function display(node: GraphNode): string {
+  return `${identity(node)} — ${node.rel} (${node.root})`;
+}
+
 /** Export names that identify a module when queried (skips default/re-exports). */
 function namedExports(node: GraphNode): string[] {
   return node.exports.filter((e) => e !== "default" && !e.startsWith("* from "));
