@@ -1,12 +1,19 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { basename, dirname, join } from "node:path";
+import { dirname, join } from "node:path";
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 import { loadCatalog } from "./catalog.js";
-import { buildGraph, discoverRoots, findTargets, nearMatches } from "./graph.js";
+import {
+  buildGraph,
+  discoverRoots,
+  display,
+  findTargets,
+  nearMatches,
+} from "./graph.js";
+import { HEALTH_SECTIONS, healthReport } from "./health.js";
 import { TIERS } from "./types.js";
 import type { CatalogEntry, EdgeRef, Graph, GraphNode, Target } from "./types.js";
 
@@ -22,7 +29,9 @@ const INSTRUCTIONS = `@zoobzio/foundation is a Vue 3 + Nuxt design system delive
 
 Before writing code against a tier, call help with that tier's topic — each tier has a strict authoring contract (bindings, passthrough parts, define*/use* widget verbs) that code must follow. Use list_components to discover what exists and describe_component to get a component's full type contract and import paths.
 
-Because imports are explicit, the module graph is deterministic — prefer asking it over exploring the filesystem: resolve locates any component/module (file, kind, provenance, canonical import), usages lists every call site with line numbers, dependencies walks what something is built from, dependents shows the blast radius of a change. The graph spans the foundation layer AND the consuming app seamlessly; provenance on each node tells you which side it lives on.`;
+Because imports are explicit, the module graph is deterministic — prefer asking it over exploring the filesystem: resolve locates any component/module (file, kind, provenance, canonical import), usages lists every call site with line numbers, dependencies walks what something is built from, dependents shows the blast radius of a change. The graph spans the foundation layer AND the consuming app seamlessly; provenance on each node tells you which side it lives on.
+
+health aggregates graph-wide diagnostics — broken imports, parse errors, import cycles, tier-layering violations, dead-code candidates, blast-radius hotspots, and catalog adoption. It is a good first call when auditing, cleaning up, or getting oriented in an unfamiliar app.`;
 
 /**
  * Foundation's shipped sources (app/, config/) resolve from wherever the
@@ -81,26 +90,6 @@ function describe(entry: CatalogEntry, root: string): string {
     );
   }
   return lines.join("\n");
-}
-
-/** Human identity for a graph node: catalog name when it has one. */
-function identity(node: GraphNode): string {
-  if (node.catalog) {
-    const { entry, role } = node.catalog;
-    const base = `${entry.tier}/${entry.name}`;
-    if (role === "part") {
-      return entry.components.length > 1
-        ? `${base} · ${basename(node.file)}`
-        : base;
-    }
-    return `${base} (${role})`;
-  }
-  return node.name;
-}
-
-/** One-line node reference: identity, root-relative path, provenance. */
-function display(node: GraphNode): string {
-  return `${identity(node)} — ${node.rel} (${node.root})`;
 }
 
 /** Format edge refs grouped by kind: `import L12, render L41 L44`. */
@@ -427,6 +416,20 @@ export function createServer(): McpServer {
       inputSchema: { query: z.string() },
     },
     async ({ query }) => withTargets(query, resolveFor),
+  );
+
+  server.registerTool(
+    "health",
+    {
+      title: "Graph health report",
+      description:
+        "Aggregate diagnostics over the whole module graph: parse errors, unresolved imports, catalog drift (errors); import cycles, tier-layering violations, dead-code candidates, imported-but-never-rendered components (warnings); blast-radius hotspots and catalog adoption by the consuming app (info). Empty sections are omitted. Pass section to get one section in full detail.",
+      inputSchema: { section: z.enum(HEALTH_SECTIONS).optional() },
+    },
+    async ({ section }) => {
+      const graph = buildGraph(roots, catalog);
+      return text(healthReport(graph, catalog, section));
+    },
   );
 
   server.registerTool(

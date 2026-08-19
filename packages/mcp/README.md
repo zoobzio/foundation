@@ -16,6 +16,7 @@ without reading the whole layer.
 | `usages`             | Every call site of a component/module — importers and template render sites, with line numbers and edge kinds. |
 | `dependencies`       | What a module is built from: resolved import/render tree, externals collapsed, unresolved imports flagged.     |
 | `dependents`         | Blast radius: everything that transitively imports/renders a module, as a depth-limited tree.                  |
+| `health`             | Graph-wide report: broken imports, parse errors, catalog drift, cycles, tier-layering violations, dead-code candidates, hotspots, adoption. |
 
 Lookups are served from `catalog.json`, generated at build time from the
 layer's component tree joined with `config/components.ts` (mismatches in
@@ -40,6 +41,17 @@ The consumer root is the server's working directory when it contains a
 `nuxt.config.*`, or the directory named by the `FOUNDATION_MCP_APP_DIR`
 environment variable (relative to cwd) — this repo's `.mcp.json` points it
 at `example/`.
+
+`health` runs the whole graph through a battery of checks and reports only
+what it finds, ordered by severity: errors (files the scanner cannot parse,
+imports that resolve to nothing, catalog entries whose files no longer
+exist), warnings (import cycles — type-only cycles labeled as such — tier
+layering violations, dead-code candidates, components imported by an SFC
+but never rendered), and info (the modules with the largest transitive
+blast radius, and which catalog components the consuming app actually
+imports). Dead-code findings are candidates, not verdicts: dynamic
+`import()` and `nuxt.config` references are invisible to the scanner, so
+verify with `usages` before deleting.
 
 ## Usage
 
