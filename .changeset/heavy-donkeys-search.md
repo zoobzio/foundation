@@ -1,5 +1,5 @@
 ---
-"@zoobzio/foundation-mcp": minor
+"@zoobzio/foundation-mcp": patch
 ---
 
 Add deterministic module-graph query tools: `resolve`, `usages`,
