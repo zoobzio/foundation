@@ -2,7 +2,10 @@
   "mcpServers": {
     "foundation": {
       "command": "node",
-      "args": ["packages/mcp/dist/cli.js"]
+      "args": ["packages/mcp/dist/cli.js"],
+      "env": {
+        "FOUNDATION_MCP_APP_DIR": "example"
+      }
     }
   }
 }

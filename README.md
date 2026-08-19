@@ -40,12 +40,12 @@ Each widget pairs a **definition** (`defineTable`, `defineForm`, …) — inert 
 
 ## Imports
 
-Auto-import is **disabled** — everything is imported explicitly. Foundation-owned modules use the `#foundation/*` alias, an absolute path to the layer's `app/` so it keeps resolving to Foundation even when the layer is extended by a consumer app:
+Auto-import is **disabled** — everything is imported explicitly. Inside the layer, modules import each other by relative path; a consumer app imports Foundation modules through the package's subpath exports:
 
 ```ts
-import Button from "#foundation/components/common/button.vue";
-import { useTable } from "#foundation/factories/table";
-import type { ButtonProps } from "#foundation/types/common/button";
+import Button from "@zoobzio/foundation/components/common/button.vue";
+import { useTable } from "@zoobzio/foundation/factories/table";
+import type { ButtonProps } from "@zoobzio/foundation/types/common/button";
 ```
 
 Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
@@ -69,7 +69,7 @@ app/
   constants/    — shared constants
   app.vue · error.vue · app.d.ts
 tests/          — vitest suite mirroring app/ (see tests/README.md)
-nuxt.config.ts  — layer config (auto-import off, #foundation alias)
+nuxt.config.ts  — layer config (auto-import off)
 ```
 
 ## Development
@@ -98,7 +98,7 @@ Or via `make` (`make help` lists all targets):
 
 ## Testing
 
-Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#foundation` / `#test` are aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`commonStubs` / `coreStubs` / per-feature data maps).
+Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`commonStubs` / `coreStubs` / per-feature data maps).
 
 ## Companion modules (in progress)
 

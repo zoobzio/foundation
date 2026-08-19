@@ -12,7 +12,7 @@ import { join, resolve } from "node:path";
 
 import components from "../../../config/components.ts";
 
-import type { Catalog, CatalogEntry, ElementInfo, Tier } from "../src/catalog.ts";
+import type { Catalog, CatalogEntry, ElementInfo, Tier } from "../src/types.ts";
 
 const root = resolve(import.meta.dirname, "../../..");
 

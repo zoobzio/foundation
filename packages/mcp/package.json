@@ -20,10 +20,12 @@
     "generate": "node scripts/generate.ts",
     "build": "pnpm generate && tsc -p tsconfig.json",
     "typecheck": "pnpm generate && tsc -p tsconfig.json --noEmit",
+    "test": "pnpm generate && vitest run",
     "prepack": "pnpm build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",
+    "@vue/compiler-sfc": "^3.5.24",
     "zod": "^3.24.1"
   },
   "peerDependencies": {
@@ -32,7 +34,8 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@zoobzio/foundation": "workspace:*",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
