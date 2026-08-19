@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@icon-sheets/nuxt':
-        specifier: ^0.0.1
-        version: 0.0.1(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+        specifier: ^0.0.3
+        version: 0.0.3(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       '@iconify-json/lucide':
         specifier: ^1.2.124
         version: 1.2.124
@@ -27,11 +27,11 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
       '@untheme/aurora':
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
       '@untheme/nuxt':
-        specifier: ^0.2.1
-        version: 0.2.1(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+        specifier: ^0.2.2
+        version: 0.2.2(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.3.0(vue@3.5.39(typescript@5.9.3))
@@ -48,8 +48,8 @@ importers:
         specifier: ^6.1.7
         version: 6.1.7
       icon-sheets:
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.3
+        version: 0.0.3
       ltrl-http:
         specifier: ^0.0.20
         version: 0.0.20
@@ -60,8 +60,8 @@ importers:
         specifier: ^2.6.0
         version: 2.10.1(vue@3.5.39(typescript@5.9.3))
       untheme:
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: ^0.2.2
+        version: 0.2.2
       zod:
         specifier: ^3.23.0
         version: 3.25.76
@@ -659,26 +659,26 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@icon-sheets/catalog@0.0.1':
-    resolution: {integrity: sha512-mX2Chp6cxLTRIWHalex+KWslRitpl3k4sF8ZdevP4Tc8R1Dh0E0rNoRt/ZgbIfr0WxdTGGwzL9wnLpsnt7nEQQ==}
+  '@icon-sheets/catalog@0.0.3':
+    resolution: {integrity: sha512-0HVsvFMYNeUq0vgdOB2nylHilNuVCBhnCo+4zruy7D2V1A6CAvjHJr/HguIvkBTWHqIkgdDzt4pDHy9mSG1t/A==}
 
-  '@icon-sheets/core@0.0.1':
-    resolution: {integrity: sha512-pkEslWB26CKWwEGT/XOe2enMbGnr7CjhEld96+0oFbr0sHmXsU5RoxZO/ntdn+Dsh+ukCrCXpssy+tJBxAYW1A==}
+  '@icon-sheets/core@0.0.3':
+    resolution: {integrity: sha512-oRR+yKZOLeylIejwmaq0v+ozigyu4APX2QpZDM7QLuShQ/8ZQN4Xw3SNZCrmPO4FYjuZQ90q9K7vOPPUYlQ1MA==}
 
-  '@icon-sheets/iconify@0.0.1':
-    resolution: {integrity: sha512-2di0IwY41BaSErp00zTkwQV47TQEvg0QnffUemFTDLl3zQrAbplUDLn3dbA+RMQ1dJYBUic7YunFY7SbvJuIOA==}
+  '@icon-sheets/iconify@0.0.3':
+    resolution: {integrity: sha512-j2NgAogsv7r42Z8i8h1U5Hark5VB9zAs+t2rRd2iZDCDJMMjUh8g8mTOOKk7sC0pXzIGFzBfLkrMtvQXqjO3Yg==}
 
-  '@icon-sheets/nuxt@0.0.1':
-    resolution: {integrity: sha512-sfcZ80l3Psrdz929AKpdCg6dyi65mWuZc6E+5g0iqLEAUwHfIcQbRK2iIxJDycCUakaKqdFlDFAnGrkfSMfkNg==}
+  '@icon-sheets/nuxt@0.0.3':
+    resolution: {integrity: sha512-/a+afwao0h8rI0pN9OtrVqoR8AtE7/yGtXmQR9/VbfMzWcVw+RFMnZ0ND6cTUTyYDIdP7yPEHmtgrlbY8cctlw==}
 
-  '@icon-sheets/schema@0.0.1':
-    resolution: {integrity: sha512-5IvgvuVzxE/dTCIl92sne6d3bHYBYSHY1vzf8/cGASBiZ+ZLLBJ2zNRlzemMztGh0aF3RjpRcxZEaSw83KFtwA==}
+  '@icon-sheets/schema@0.0.3':
+    resolution: {integrity: sha512-vhm+VY9g2d3x3l1qh6B9qfJk4OTtYOgUpf32NWBs3WwbRlDdZcXLYIwz++rVEPYnD5h1qhtl/pmKG6wFwEPU9w==}
 
-  '@icon-sheets/svg@0.0.1':
-    resolution: {integrity: sha512-CwzLGrPEang1QCIKACqyM6b+fcJYeQ27B1JUtx440alSr4tLaZRy0/7sUU1goYdMQyAYeK2h+wjce8drIbDC3g==}
+  '@icon-sheets/svg@0.0.3':
+    resolution: {integrity: sha512-IZVVbQ0yRgWJwuQ0/Q5N4ZCsJiiQ8ADFa1wbbIEp10ZfqI74l1HytssTgp/NZc8LKK4bGXXp5K5H/kzZa2hB/Q==}
 
-  '@icon-sheets/utils@0.0.1':
-    resolution: {integrity: sha512-331pt+9fpOg5mSQe163ukYND+mL/Ju2AKrPA2YtKqcMELvRqOUjA3pQe6lzzFwbcFIULcBdjHOwqXtzz1OE0+Q==}
+  '@icon-sheets/utils@0.0.3':
+    resolution: {integrity: sha512-bddsFduGbzn8E+TssXb1mWVzUjpREQP46JBXxgbanYDbVAKUuFxIH0sMpfT0vAgSiSgDWYXAhtBDpBm/qIjzPQ==}
 
   '@iconify-json/lucide@1.2.124':
     resolution: {integrity: sha512-mO6JyBVNER7uXEkW2bXiN9Rrm6w91IXxwnNmIMbu2KZX0ZPcVZH1xDUTw94pryxESUIpBhinkOUIZIav+TA9ng==}
@@ -1813,29 +1813,29 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@untheme/aurora@0.2.1':
-    resolution: {integrity: sha512-XKSfjy2mjoULxQOYdrob3uky8fWQDVy/fFPC8bPTvs8hHTsmGPnrLw92x+kH5mw/xyaC5SWMrbrcPtSdnvPemw==}
+  '@untheme/aurora@0.2.2':
+    resolution: {integrity: sha512-u0LV1xTUzY+hC5zztZvjR4krLWLnGLwgugUV+hz2AT0lMVab9HHAwiCkoU/xUGEx7C1GFIFhh6FdfGcrI3aLGw==}
 
-  '@untheme/catalog@0.2.1':
-    resolution: {integrity: sha512-qQImGrReLcsVNXXdZ6779TgCyhH3NWhqHvHD5Ug1SHAwDvlKmG0TC/57XHvJj+8w4+8oLLZNR1ANiuE0URpLuA==}
+  '@untheme/catalog@0.2.2':
+    resolution: {integrity: sha512-t76HswGEWe+yZ/IvVzeCEUWjQZQad4odmrxpZ3c/MpAAsnYVDCegc0V5LWMzbHg1pCq27QXaYjPdwwOnXU4R2w==}
 
-  '@untheme/core@0.2.1':
-    resolution: {integrity: sha512-BefPpdiWXuIbjd5mtH4vdYxPYadfJk9W8NQWV/ooKe4OMjQV2unpR5/eD0yJT579nxYPqn5OFAnzUcX/pkaMsg==}
+  '@untheme/core@0.2.2':
+    resolution: {integrity: sha512-7F2IiWq7alr7v5Rl4Q8L5dR7BNBcXl9HM61Zj6yv103lfwAgjxrIK9dDrLypdNfOsuJ9NHic83dMKLdk7CdT5w==}
 
-  '@untheme/css@0.2.1':
-    resolution: {integrity: sha512-hy8l5fz2Kq0yoXe+3jflLD2dTDHD9IYQH0OyNIH3J9lQxA3x1EYsnQNpAcHYWYSHdmKmSc3HEL/UEZEOqjYeFg==}
+  '@untheme/css@0.2.2':
+    resolution: {integrity: sha512-4pXpZcUZgvWg1Dc5hnzyzYvsHkalsR2dO5Uol98nMf5A8rsfhOtsaz7QjB1VO2OIaQDYoac9BdcNuA+EkMxRWA==}
 
-  '@untheme/kit@0.2.1':
-    resolution: {integrity: sha512-V6jGBuEI4S6cppLh3S7n6XcwSB6GJZZW4khhJqOF8gcxXNbwwOJBvufFqZZovKCHYAKE4mjSS8KQklTeT4O+nw==}
+  '@untheme/kit@0.2.2':
+    resolution: {integrity: sha512-XswNtixuR3+fMkwRrZfetv2sSyUtOxQc60F9qDiv9JDfZqElFEDDuEbB3jjZwsqRJBma9jMerryxS7L4vkV7Bw==}
 
-  '@untheme/nuxt@0.2.1':
-    resolution: {integrity: sha512-WEdLayGwpwxyC1yMDrstrNYI+TXaekWBsv3ZxHLWcKmxUFmJi+ij/acdj8JWvpt0LFvXXp5PTj8BKxJY3z20vg==}
+  '@untheme/nuxt@0.2.2':
+    resolution: {integrity: sha512-/nW4WXOcCDzTPC+77u+Uvv9PI1vtUku1TSSOEsKQYFUL+yaEr54w1VQp7E8tYclMfJrDbPqUtIXhQb5cjftltA==}
 
-  '@untheme/schema@0.2.1':
-    resolution: {integrity: sha512-TkHjYwm9GbYwf0m70yFlbPHOieDBD/feUd1gy+t7/IgEXokEk0OoS+LBIcNmZS3ekHSYlsjFXKVQJwuxEe105A==}
+  '@untheme/schema@0.2.2':
+    resolution: {integrity: sha512-5Gkz5O+m3EMinE221zBYNa5Es6slbRXwh9QC2QCed3Rn4h4rZWvCoN7dFhlrehJzCHe+yPijY9oAuFrPmP8qBQ==}
 
-  '@untheme/utils@0.2.1':
-    resolution: {integrity: sha512-1SGuuQ9poqc0dbuglrDveKaYoQHgZDYvcQQ28LlvspGWsZKmeCTK8MLjW9hkSf0FdQ4+FPQURvTut01EYDlaoA==}
+  '@untheme/utils@0.2.2':
+    resolution: {integrity: sha512-t8ufVkQfTVDvWnacP6WTR0Kg8ipjrJHNB6rGnPLNpC6lyS+APzNDBwTjSf5DbJlDD6es8V1oVzu0psf7UIEbGg==}
 
   '@vercel/nft@1.10.2':
     resolution: {integrity: sha512-w+WyX5Ulmj4dtTZrxaulqrjaLZHSbnPzx75SJsTNYmotKsqn1JlLnDJa+lz5hn90HJofhl/2MAtw0mCrgM3qYw==}
@@ -3168,8 +3168,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  icon-sheets@0.0.1:
-    resolution: {integrity: sha512-5aj0ValUBnesoQ4hLMEhjlAOS2beEKS6D2xpJJaaq5W9QBOhznpxcs4s3eeS06q4jsoORQvOljxL0VCtLTKmWA==}
+  icon-sheets@0.0.3:
+    resolution: {integrity: sha512-hu/I76D/Pm1uwia0VJFAQDCJQnPeTpJOrX+3zLpnvMUj0geGspwycZLfOOQwGizaDD88efriMA6HLrjiPHkbuQ==}
 
   iconv-lite@0.7.3:
     resolution: {integrity: sha512-IKXpvIzjnC9XTAUbVBcMfGS0EPaIXtW6v+zr+RRp+hqULEpo0owZax6wyRwPOJbWbzjYspQwusTsfVr0ifh4uQ==}
@@ -4736,8 +4736,8 @@ packages:
       uploadthing:
         optional: true
 
-  untheme@0.2.1:
-    resolution: {integrity: sha512-85wzQpTaaEbTpfw5k2rB88nDDEaTWRw/iT0fDjriNa5JYo98yOyN7tqb/sjbkA5w5BF4lgt7t3nR8P2x+DCilQ==}
+  untheme@0.2.2:
+    resolution: {integrity: sha512-l25YBYjIzRhVgLs41PC0o50IQ7bC+R/H0+g1nTE5IFDEYAPy1jEDMRpcFEn41tGfR/2VCWaCet+bCNZDwy+hyQ==}
 
   untun@0.1.3:
     resolution: {integrity: sha512-4luGP9LMYszMRZwsvyUd9MrxgEGZdZuZgpVQHEEX0lCYFESasVRvZd0EYpCkOIbJKHMuv0LskpXc/8Un+MJzEQ==}
@@ -5691,30 +5691,30 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@icon-sheets/catalog@0.0.1':
+  '@icon-sheets/catalog@0.0.3':
     dependencies:
-      '@icon-sheets/schema': 0.0.1
+      '@icon-sheets/schema': 0.0.3
       objectively: 0.1.1
 
-  '@icon-sheets/core@0.0.1':
+  '@icon-sheets/core@0.0.3':
     dependencies:
-      '@icon-sheets/schema': 0.0.1
-      '@icon-sheets/utils': 0.0.1
+      '@icon-sheets/schema': 0.0.3
+      '@icon-sheets/utils': 0.0.3
       objectively: 0.1.1
 
-  '@icon-sheets/iconify@0.0.1':
+  '@icon-sheets/iconify@0.0.3':
     dependencies:
-      '@icon-sheets/schema': 0.0.1
+      '@icon-sheets/schema': 0.0.3
       '@iconify/types': 2.0.0
       '@iconify/utils': 3.1.4
       objectively: 0.1.1
 
-  '@icon-sheets/nuxt@0.0.1(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
+  '@icon-sheets/nuxt@0.0.3(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
     dependencies:
-      '@icon-sheets/iconify': 0.0.1
+      '@icon-sheets/iconify': 0.0.3
       '@nuxt/kit': 4.5.0(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       h3: 1.15.11
-      icon-sheets: 0.0.1
+      icon-sheets: 0.0.3
       objectively: 0.1.1
       vue: 3.5.39(typescript@5.9.3)
     transitivePeerDependencies:
@@ -5725,19 +5725,19 @@ snapshots:
       - typescript
       - unplugin
 
-  '@icon-sheets/schema@0.0.1':
+  '@icon-sheets/schema@0.0.3':
     dependencies:
       '@iconify/types': 2.0.0
       objectively: 0.1.1
 
-  '@icon-sheets/svg@0.0.1':
+  '@icon-sheets/svg@0.0.3':
     dependencies:
-      '@icon-sheets/schema': 0.0.1
+      '@icon-sheets/schema': 0.0.3
       '@iconify/utils': 3.1.4
 
-  '@icon-sheets/utils@0.0.1':
+  '@icon-sheets/utils@0.0.3':
     dependencies:
-      '@icon-sheets/schema': 0.0.1
+      '@icon-sheets/schema': 0.0.3
       objectively: 0.1.1
 
   '@iconify-json/lucide@1.2.124':
@@ -6911,39 +6911,39 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@untheme/aurora@0.2.1':
+  '@untheme/aurora@0.2.2':
     dependencies:
-      '@untheme/kit': 0.2.1
-      '@untheme/schema': 0.2.1
+      '@untheme/kit': 0.2.2
+      '@untheme/schema': 0.2.2
 
-  '@untheme/catalog@0.2.1':
+  '@untheme/catalog@0.2.2':
     dependencies:
-      '@untheme/schema': 0.2.1
+      '@untheme/schema': 0.2.2
       objectively: 0.1.1
 
-  '@untheme/core@0.2.1':
+  '@untheme/core@0.2.2':
     dependencies:
-      '@untheme/schema': 0.2.1
-      '@untheme/utils': 0.2.1
+      '@untheme/schema': 0.2.2
+      '@untheme/utils': 0.2.2
       objectively: 0.1.1
 
-  '@untheme/css@0.2.1':
+  '@untheme/css@0.2.2':
     dependencies:
-      '@untheme/schema': 0.2.1
+      '@untheme/schema': 0.2.2
       objectively: 0.1.1
 
-  '@untheme/kit@0.2.1':
+  '@untheme/kit@0.2.2':
     dependencies:
-      '@untheme/core': 0.2.1
-      '@untheme/schema': 0.2.1
-      '@untheme/utils': 0.2.1
+      '@untheme/core': 0.2.2
+      '@untheme/schema': 0.2.2
+      '@untheme/utils': 0.2.2
 
-  '@untheme/nuxt@0.2.1(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
+  '@untheme/nuxt@0.2.2(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
     dependencies:
       '@nuxt/kit': 4.5.0(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       h3: 1.15.11
       objectively: 0.1.1
-      untheme: 0.2.1
+      untheme: 0.2.2
       vue: 3.5.39(typescript@5.9.3)
     transitivePeerDependencies:
       - magic-string
@@ -6953,13 +6953,13 @@ snapshots:
       - typescript
       - unplugin
 
-  '@untheme/schema@0.2.1':
+  '@untheme/schema@0.2.2':
     dependencies:
       objectively: 0.1.1
 
-  '@untheme/utils@0.2.1':
+  '@untheme/utils@0.2.2':
     dependencies:
-      '@untheme/schema': 0.2.1
+      '@untheme/schema': 0.2.2
       objectively: 0.1.1
 
   '@vercel/nft@1.10.2(rollup@4.62.2)':
@@ -8427,13 +8427,13 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  icon-sheets@0.0.1:
+  icon-sheets@0.0.3:
     dependencies:
-      '@icon-sheets/catalog': 0.0.1
-      '@icon-sheets/core': 0.0.1
-      '@icon-sheets/schema': 0.0.1
-      '@icon-sheets/svg': 0.0.1
-      '@icon-sheets/utils': 0.0.1
+      '@icon-sheets/catalog': 0.0.3
+      '@icon-sheets/core': 0.0.3
+      '@icon-sheets/schema': 0.0.3
+      '@icon-sheets/svg': 0.0.3
+      '@icon-sheets/utils': 0.0.3
 
   iconv-lite@0.7.3:
     dependencies:
@@ -10195,14 +10195,14 @@ snapshots:
       db0: 0.3.4
       ioredis: 5.11.1
 
-  untheme@0.2.1:
+  untheme@0.2.2:
     dependencies:
-      '@untheme/catalog': 0.2.1
-      '@untheme/core': 0.2.1
-      '@untheme/css': 0.2.1
-      '@untheme/kit': 0.2.1
-      '@untheme/schema': 0.2.1
-      '@untheme/utils': 0.2.1
+      '@untheme/catalog': 0.2.2
+      '@untheme/core': 0.2.2
+      '@untheme/css': 0.2.2
+      '@untheme/kit': 0.2.2
+      '@untheme/schema': 0.2.2
+      '@untheme/utils': 0.2.2
 
   untun@0.1.3:
     dependencies:
