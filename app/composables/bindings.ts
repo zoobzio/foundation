@@ -5,7 +5,7 @@ import type {
   ModifierProps,
 } from "../types/modifiers";
 import type { TokenBindings, TokenProps } from "../types/tokens";
-import type { Element } from "../types/component";
+import type { Element } from "../types/element";
 import type { ComputedRef, MaybeRefOrGetter } from "vue";
 
 import { computed, toValue, useUntheme, useUnthemeRenderer } from "#imports";

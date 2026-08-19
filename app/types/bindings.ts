@@ -1,4 +1,4 @@
-import type { Element } from "./component";
+import type { Element } from "./element";
 import type { AriaBindings, AriaProps } from "./aria";
 import type {
   ModifierBindings,

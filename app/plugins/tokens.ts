@@ -1,4 +1,4 @@
-import type { Token } from "../types/tokens";
+import type { Token } from "../types/token";
 
 import components from "../../config/components";
 import { defineNuxtPlugin, useHead } from "#imports";

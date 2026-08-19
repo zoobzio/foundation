@@ -1,9 +1,7 @@
-import type { AppUnthemeContract } from "#imports";
 import type { Binding } from "untheme";
-import type { Element } from "./component";
+import type { Element } from "./element";
+import type { Token } from "./token";
 import type components from "../../config/components";
-
-export type Token = keyof AppUnthemeContract["tokens"];
 
 /**
  * Per-token style overrides for a component of type `T`: any theme token (the

@@ -1,6 +1,6 @@
 import type { AriaAttributes } from "vue";
 import type { GlobalAria, ProhibitedAria, RoleAria } from "./aria-spec";
-import type { Element } from "./component";
+import type { Element } from "./element";
 import type components from "../../config/components";
 
 type AllAria = {

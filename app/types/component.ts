@@ -1,13 +1,7 @@
 import type { AriaProps } from "./aria";
+import type { Element } from "./element";
 import type { ModifierProps } from "./modifiers";
 import type { TokenProps } from "./tokens";
-import type components from "../../config/components";
-
-export type Element = keyof typeof components.elements;
-
-export type Compound = keyof typeof components.compounds;
-
-export type Component = Element | Compound;
 
 /**
  * The full prop surface a component of type `C` contributes to its call site:
