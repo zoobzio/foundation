@@ -1,4 +1,4 @@
-import type { Element } from "./component";
+import type { Element } from "./element";
 import type modifiers from "../../config/modifiers";
 
 /**
