@@ -22,16 +22,16 @@ is the reference implementation.
 <script lang="ts">
 // type imports, then rendered components, then framework/composable imports
 import type { SelectProps, SelectEmits, SelectPassthrough, SelectContext, SelectSlots }
-  from "#foundation/types/core/select";
+  from "../../types/core/select";
 import type { ComponentPublicInstance } from "vue";
 
-import SelectRoot from "#foundation/components/common/select/root.vue";
-import SelectTrigger from "#foundation/components/common/select/trigger.vue"; /* … */
-import Icon from "#foundation/components/common/icon.vue";
+import SelectRoot from "../common/select/root.vue";
+import SelectTrigger from "../common/select/trigger.vue"; /* … */
+import Icon from "../common/icon.vue";
 
 import { computed, useTemplateRef } from "#imports";
-import { usePassthrough } from "#foundation/composables/passthrough";
-import { useModel } from "#foundation/composables/model";
+import { usePassthrough } from "../../composables/passthrough";
+import { useModel } from "../../composables/model";
 </script>
 
 <script setup lang="ts">

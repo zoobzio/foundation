@@ -2,8 +2,8 @@
 
 An MCP server that gives coding agents fast, structured context on
 [`@zoobzio/foundation`](../../README.md) — what components exist, their type
-contracts and `#foundation/*` import paths, and the authoring conventions for
-each tier — without reading the whole layer.
+contracts and import paths, and the authoring conventions for each tier —
+without reading the whole layer.
 
 ## Tools
 
@@ -12,12 +12,34 @@ each tier — without reading the whole layer.
 | `list_components`    | Every component (optionally by tier): name, tier, rendered parts, whether a definition/widget composable ships.          |
 | `describe_component` | One component's full contract: import paths, element roles + token slots, and its type/definition file source. |
 | `help`               | The authoring guides — `overview` plus the per-tier contracts (`common`, `core`, `data`, `system`).            |
+| `resolve`            | Locate a component/module: file, kind, provenance (layer vs app), canonical import, exports, edge counts.      |
+| `usages`             | Every call site of a component/module — importers and template render sites, with line numbers and edge kinds. |
+| `dependencies`       | What a module is built from: resolved import/render tree, externals collapsed, unresolved imports flagged.     |
+| `dependents`         | Blast radius: everything that transitively imports/renders a module, as a depth-limited tree.                  |
 
 Lookups are served from `catalog.json`, generated at build time from the
 layer's component tree joined with `config/components.ts` (mismatches in
 either direction fail the build). File contents — type contracts, tier
 guides — are read at runtime from the consumer's installed
 `@zoobzio/foundation`, so they always match the installed version.
+
+## The module graph
+
+Because the layer disables auto-import, every dependency edge is a literal
+import statement — so the graph tools are deterministic, not heuristic. On
+each call the server scans two roots with one scanner: the installed layer's
+`app/`, and the consuming app (`app/` + `server/`). Nodes carry provenance
+(which root they came from) and, for layer files, their catalog identity
+(tier/component/part), so `usages("core/select")` answers in design-system
+vocabulary and spans layer and app seamlessly. Edges record their kind —
+`import`, `type` (type-only), or `render` (matched template tag) — with line
+numbers. Parses are cached by mtime, so repeat queries only re-read files
+that changed.
+
+The consumer root is the server's working directory when it contains a
+`nuxt.config.*`, or the directory named by the `FOUNDATION_MCP_APP_DIR`
+environment variable (relative to cwd) — this repo's `.mcp.json` points it
+at `example/`.
 
 ## Usage
 

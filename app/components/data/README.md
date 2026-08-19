@@ -133,7 +133,7 @@ definition: `id` is the only thing it adds (shared state, hook scoping,
 wiring identity all key on it). Pure instancing, no logic:
 
 ```ts
-import component from "#foundation/components/data/autocomplete/widget.vue";
+import component from "../components/data/autocomplete/widget.vue";
 
 export const useAutocomplete = <M>(
   id: string,
@@ -281,7 +281,7 @@ same payloads.
 
 ## Conventions
 
-- **Explicit imports only** — `#foundation/*`, `#imports`, `#components`
+- **Explicit imports only** — relative paths within the layer, `#imports`, `#components`
   (e.g. `ClientOnly`); type imports first, rendered components second,
   composables third.
 - **No casts, no non-null assertions** — narrow structurally:
