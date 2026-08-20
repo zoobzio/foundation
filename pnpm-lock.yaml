@@ -27,11 +27,11 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
       '@untheme/aurora':
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       '@untheme/nuxt':
-        specifier: ^0.2.2
-        version: 0.2.2(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+        specifier: ^0.2.3
+        version: 0.2.3(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.3.0(vue@3.5.39(typescript@5.9.3))
@@ -60,8 +60,8 @@ importers:
         specifier: ^2.6.0
         version: 2.10.1(vue@3.5.39(typescript@5.9.3))
       untheme:
-        specifier: ^0.2.2
-        version: 0.2.2
+        specifier: ^0.2.3
+        version: 0.2.3
       zod:
         specifier: ^3.23.0
         version: 3.25.76
@@ -1819,29 +1819,29 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@untheme/aurora@0.2.2':
-    resolution: {integrity: sha512-u0LV1xTUzY+hC5zztZvjR4krLWLnGLwgugUV+hz2AT0lMVab9HHAwiCkoU/xUGEx7C1GFIFhh6FdfGcrI3aLGw==}
+  '@untheme/aurora@0.2.3':
+    resolution: {integrity: sha512-bmCGQQThoKmcxoT2BC2jgjQP3hQz0LV357ObSbb+wVMk4q+KgjlDk7MuNInyYMOG1USo6UqawwJcMJ+8Z75x0g==}
 
-  '@untheme/catalog@0.2.2':
-    resolution: {integrity: sha512-t76HswGEWe+yZ/IvVzeCEUWjQZQad4odmrxpZ3c/MpAAsnYVDCegc0V5LWMzbHg1pCq27QXaYjPdwwOnXU4R2w==}
+  '@untheme/catalog@0.2.3':
+    resolution: {integrity: sha512-FvF0BG2fuFF8LpRZ5Hv4mALD0SlKALtRkO8rIYz3msI96UNzeOor2fvdx5vR4MKwtYalXgSOFJNirrsw1k1duw==}
 
-  '@untheme/core@0.2.2':
-    resolution: {integrity: sha512-7F2IiWq7alr7v5Rl4Q8L5dR7BNBcXl9HM61Zj6yv103lfwAgjxrIK9dDrLypdNfOsuJ9NHic83dMKLdk7CdT5w==}
+  '@untheme/core@0.2.3':
+    resolution: {integrity: sha512-lG3WnKhkfAkal6AW1QwMkktQ2EE9di628bRarB8WC9eC5Sebo5zmL3CVzmLWsCoVJOCaIYkwGX/i+xuXuC+dCg==}
 
-  '@untheme/css@0.2.2':
-    resolution: {integrity: sha512-4pXpZcUZgvWg1Dc5hnzyzYvsHkalsR2dO5Uol98nMf5A8rsfhOtsaz7QjB1VO2OIaQDYoac9BdcNuA+EkMxRWA==}
+  '@untheme/css@0.2.3':
+    resolution: {integrity: sha512-Mwg/WoFIpNkpq7j/8bmPCvMPPWSHSdROf0IBuClKaZJ+21IJ18pclvTIBNvRImbhjUN/oaqWKqL6cVU2gGsbiA==}
 
-  '@untheme/kit@0.2.2':
-    resolution: {integrity: sha512-XswNtixuR3+fMkwRrZfetv2sSyUtOxQc60F9qDiv9JDfZqElFEDDuEbB3jjZwsqRJBma9jMerryxS7L4vkV7Bw==}
+  '@untheme/kit@0.2.3':
+    resolution: {integrity: sha512-lDc1icjji8Qt43/+aC9rj3GF0ghoIjwFymDZY4YyIdCulk2yygDBIJQaVScIgtFK3hAdSjmpY8OEpcW1CWJ/ng==}
 
-  '@untheme/nuxt@0.2.2':
-    resolution: {integrity: sha512-/nW4WXOcCDzTPC+77u+Uvv9PI1vtUku1TSSOEsKQYFUL+yaEr54w1VQp7E8tYclMfJrDbPqUtIXhQb5cjftltA==}
+  '@untheme/nuxt@0.2.3':
+    resolution: {integrity: sha512-7csRBaiYTulrfFRrIERM7qdgUjfSyiWyrMOS0vX1FkVaIWIaNHj0Ol3tsaDm67/JZJzhk4EN9AYbsEa0/02gLA==}
 
-  '@untheme/schema@0.2.2':
-    resolution: {integrity: sha512-5Gkz5O+m3EMinE221zBYNa5Es6slbRXwh9QC2QCed3Rn4h4rZWvCoN7dFhlrehJzCHe+yPijY9oAuFrPmP8qBQ==}
+  '@untheme/schema@0.2.3':
+    resolution: {integrity: sha512-mVFApHofMfdzdT9jsdTgeJgyvnjMsJPlODZVoYQ/Vu8ngKUWkwPsxDe1rok40OJXrqhFU0Pxumb+OijXbNrHeg==}
 
-  '@untheme/utils@0.2.2':
-    resolution: {integrity: sha512-t8ufVkQfTVDvWnacP6WTR0Kg8ipjrJHNB6rGnPLNpC6lyS+APzNDBwTjSf5DbJlDD6es8V1oVzu0psf7UIEbGg==}
+  '@untheme/utils@0.2.3':
+    resolution: {integrity: sha512-mD9wn38GgLszP+rekSyDatrWgaBrllPla33cfT/kN/7Yl7weU8888RpVQaUYhknOqIKnqwDpsY/inPtundWY5w==}
 
   '@vercel/nft@1.10.2':
     resolution: {integrity: sha512-w+WyX5Ulmj4dtTZrxaulqrjaLZHSbnPzx75SJsTNYmotKsqn1JlLnDJa+lz5hn90HJofhl/2MAtw0mCrgM3qYw==}
@@ -4742,8 +4742,8 @@ packages:
       uploadthing:
         optional: true
 
-  untheme@0.2.2:
-    resolution: {integrity: sha512-l25YBYjIzRhVgLs41PC0o50IQ7bC+R/H0+g1nTE5IFDEYAPy1jEDMRpcFEn41tGfR/2VCWaCet+bCNZDwy+hyQ==}
+  untheme@0.2.3:
+    resolution: {integrity: sha512-c6ZQkRsVeAn5kU2PxlAVGeqjnu9v03w9WpkEgcWkHl9rtZTDbBcTyv10q5ACbr2XpR8t9mrPzn0ijFRa7pisUg==}
 
   untun@0.1.3:
     resolution: {integrity: sha512-4luGP9LMYszMRZwsvyUd9MrxgEGZdZuZgpVQHEEX0lCYFESasVRvZd0EYpCkOIbJKHMuv0LskpXc/8Un+MJzEQ==}
@@ -6917,39 +6917,39 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@untheme/aurora@0.2.2':
+  '@untheme/aurora@0.2.3':
     dependencies:
-      '@untheme/kit': 0.2.2
-      '@untheme/schema': 0.2.2
+      '@untheme/kit': 0.2.3
+      '@untheme/schema': 0.2.3
 
-  '@untheme/catalog@0.2.2':
+  '@untheme/catalog@0.2.3':
     dependencies:
-      '@untheme/schema': 0.2.2
+      '@untheme/schema': 0.2.3
       objectively: 0.1.1
 
-  '@untheme/core@0.2.2':
+  '@untheme/core@0.2.3':
     dependencies:
-      '@untheme/schema': 0.2.2
-      '@untheme/utils': 0.2.2
+      '@untheme/schema': 0.2.3
+      '@untheme/utils': 0.2.3
       objectively: 0.1.1
 
-  '@untheme/css@0.2.2':
+  '@untheme/css@0.2.3':
     dependencies:
-      '@untheme/schema': 0.2.2
+      '@untheme/schema': 0.2.3
       objectively: 0.1.1
 
-  '@untheme/kit@0.2.2':
+  '@untheme/kit@0.2.3':
     dependencies:
-      '@untheme/core': 0.2.2
-      '@untheme/schema': 0.2.2
-      '@untheme/utils': 0.2.2
+      '@untheme/core': 0.2.3
+      '@untheme/schema': 0.2.3
+      '@untheme/utils': 0.2.3
 
-  '@untheme/nuxt@0.2.2(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
+  '@untheme/nuxt@0.2.3(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(typescript@5.9.3)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
     dependencies:
       '@nuxt/kit': 4.5.0(magic-string@0.30.21)(magicast@0.5.3)(oxc-parser@0.133.0)(unplugin@3.3.0(esbuild@0.28.1)(rollup@4.62.2)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       h3: 1.15.11
       objectively: 0.1.1
-      untheme: 0.2.2
+      untheme: 0.2.3
       vue: 3.5.39(typescript@5.9.3)
     transitivePeerDependencies:
       - magic-string
@@ -6959,13 +6959,13 @@ snapshots:
       - typescript
       - unplugin
 
-  '@untheme/schema@0.2.2':
+  '@untheme/schema@0.2.3':
     dependencies:
       objectively: 0.1.1
 
-  '@untheme/utils@0.2.2':
+  '@untheme/utils@0.2.3':
     dependencies:
-      '@untheme/schema': 0.2.2
+      '@untheme/schema': 0.2.3
       objectively: 0.1.1
 
   '@vercel/nft@1.10.2(rollup@4.62.2)':
@@ -10209,14 +10209,14 @@ snapshots:
       db0: 0.3.4
       ioredis: 5.11.1
 
-  untheme@0.2.2:
+  untheme@0.2.3:
     dependencies:
-      '@untheme/catalog': 0.2.2
-      '@untheme/core': 0.2.2
-      '@untheme/css': 0.2.2
-      '@untheme/kit': 0.2.2
-      '@untheme/schema': 0.2.2
-      '@untheme/utils': 0.2.2
+      '@untheme/catalog': 0.2.3
+      '@untheme/core': 0.2.3
+      '@untheme/css': 0.2.3
+      '@untheme/kit': 0.2.3
+      '@untheme/schema': 0.2.3
+      '@untheme/utils': 0.2.3
 
   untun@0.1.3:
     dependencies:

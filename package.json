@@ -64,8 +64,8 @@
     "@internationalized/date": "^3.7.0",
     "@nuxt/kit": "^4.5.0",
     "@types/aria-query": "^5.0.4",
-    "@untheme/aurora": "^0.2.2",
-    "@untheme/nuxt": "^0.2.2",
+    "@untheme/aurora": "^0.2.3",
+    "@untheme/nuxt": "^0.2.3",
     "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "^14.1.0",
     "aria-query": "^5.3.2",
@@ -75,7 +75,7 @@
     "ltrl-http": "^0.0.20",
     "objectively": "^0.1.0",
     "reka-ui": "^2.6.0",
-    "untheme": "^0.2.2",
+    "untheme": "^0.2.3",
     "zod": "^3.23.0"
   },
   "devDependencies": {
