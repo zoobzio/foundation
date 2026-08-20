@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 0.0.21
+
+### Patch Changes
+
+- [`840d56f`](https://github.com/zoobzio/foundation/commit/840d56f1a9d4d0e441b09cf7a43d423ded87cc88) Thanks [@zoobzio](https://github.com/zoobzio)! - Bump untheme, @untheme/aurora, and @untheme/nuxt to ^0.2.3
+
 ## 0.0.20
 
 ### Patch Changes
