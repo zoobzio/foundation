@@ -24,6 +24,22 @@ export interface DataTableColumn<T> {
   sortable?: boolean;
   sortKey?: string;
   enumValues?: string[];
+  /**
+   * Whether the column appears in the search autocomplete. Defaults by
+   * type: everything except `action` and `image` is filterable.
+   */
+  filterable?: boolean;
+}
+
+/**
+ * A committed column filter. Keys are strings, matching the `sortField` /
+ * `columnOrder` convention; `op` is present for operator-stage columns
+ * (date/datetime: before/after/on, number/currency: over/under/is).
+ */
+export interface TableFilter {
+  key: string;
+  op?: string;
+  value: string;
 }
 
 export type SortDirection = "asc" | "desc";
@@ -58,14 +74,17 @@ export interface BulkAction {
 }
 
 /**
- * Parameters passed to the fetch action. The table owns paging and sort only;
- * the consumer's fetch action closes over its own filtering.
+ * Parameters passed to the fetch action. The table owns paging, sort, and
+ * search: `query` is the committed free-text search, `filters` the committed
+ * column filters, both assembled by the search autocomplete.
  */
 export interface DataTableFetchParams {
   page: number;
   pageSize: number;
   sortField: string | null;
   sortDirection: SortDirection;
+  query: string;
+  filters: TableFilter[];
 }
 
 export interface DataTableFetchResult<T> {
@@ -86,6 +105,12 @@ export type Config<T> = {
   bulkActions?: Record<string, ActionDescriptor>;
   pinnedColumns?: (keyof T)[];
   defaultColumnOrder?: (keyof T)[];
+  /**
+   * Whether the widget renders the toolbar search autocomplete. Defaults to
+   * `true`. Hides the UI only — the search surface on the service (`query`,
+   * `filters`, mutators, fetch params) stays live for imperative use.
+   */
+  searchable?: boolean;
 };
 
 export type State<T> = {
@@ -100,6 +125,8 @@ export type State<T> = {
   sortDirection: Ref<SortDirection>;
   selected: Ref<Set<string>>;
   columnOrder: Ref<string[]>;
+  query: Ref<string>;
+  filters: Ref<TableFilter[]>;
 };
 
 /**
@@ -125,6 +152,7 @@ export type Service<T> = {
   readonly actions: RowAction<T>[];
   readonly bulkActions: BulkAction[];
   readonly pinnedColumns: (keyof T)[];
+  readonly searchable: boolean;
 
   readonly data: T[];
   readonly loading: boolean;
@@ -137,8 +165,11 @@ export type Service<T> = {
   readonly sortDirection: SortDirection;
   readonly selected: Set<string>;
   readonly columnOrder: string[];
+  readonly query: string;
+  readonly filters: TableFilter[];
 
   readonly visibleColumns: DataTableColumn<T>[];
+  readonly filterableColumns: DataTableColumn<T>[];
   readonly isAllSelected: boolean;
   readonly isIndeterminate: boolean;
   readonly selectAllState: boolean | "indeterminate";
@@ -160,10 +191,18 @@ export type Service<T> = {
   resetColumns(): void;
   isColumnPinned(key: keyof T): boolean;
   isColumnVisible(key: keyof T): boolean;
+  addFilter(key: string, value: string, op?: string): void;
+  removeFilter(index: number): void;
+  setQuery(value: string): void;
   init(): Promise<boolean>;
   fetch(): Promise<void>;
 };
 
 export type Events = {
   "table:updated": (event: { id: string; total: number }) => void;
+  "table:filtered": (event: {
+    id: string;
+    query: string;
+    filters: TableFilter[];
+  }) => void;
 };

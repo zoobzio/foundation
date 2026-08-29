@@ -61,6 +61,9 @@ export default {
     anchor: { role: "link", tokens: {} },
     article: { role: "article", tokens: {} },
     aside: { role: "complementary", tokens: {} },
+    "autocomplete-content": { role: "listbox", tokens: {} },
+    "autocomplete-input": { role: "combobox", tokens: {} },
+    "autocomplete-item": { role: "option", tokens: {} },
     "avatar-fallback": { role: "generic", tokens: {} },
     "avatar-image": { role: "img", tokens: {} },
     "avatar-root": { role: "img", tokens: {} },
@@ -247,6 +250,7 @@ export default {
   },
   compounds: {
     accordion: {},
+    autocomplete: {},
     avatar: {},
     calendar: {},
     checkbox: {},

@@ -11,9 +11,10 @@ Components build their reactivity through the feature composable
 Everything presentational conforms to the same passthrough / context / slots
 system as core.
 
-[`form`](./form/) and [`autocomplete`](./autocomplete/) are the reference
+[`form`](./form/) and [`chart`](./chart/) are the reference
 implementations: form shows async actions and config-keyed children,
-autocomplete shows a sync machine and data-driven (iterated) children.
+chart shows data-driven (iterated) children; [`table`](./table/) and
+[`deck`](./deck/) are the fullest machines.
 
 ## File anatomy
 
@@ -36,7 +37,7 @@ A feature `<name>` spans a fixed set of files:
 
 Type aliases, **unprefixed** — the module path is the namespace. A fixed
 progression, generic over the consumer's data (`Form<T>` over the payload,
-`Autocomplete<M>` over item metadata):
+`Deck<T>` over the row):
 
 | Type      | Meaning                                                                             |
 | --------- | ----------------------------------------------------------------------------------- |
@@ -54,17 +55,19 @@ component type files import them rather than redefining them.
 - **The `readonly` discipline is load-bearing.** `useServiceRefs` mirrors a
   service's state surface by its modifiers: `readonly` members become
   `ComputedRef`s, non-readonly members must be **get/set accessor pairs**
-  whose setter routes through the matching mutator (autocomplete's `input`,
-  form's `payload`, deck's filter fields) and become `WritableComputedRef`s.
+  whose setter routes through the matching mutator (form's `payload`,
+  deck's filter fields) and become `WritableComputedRef`s.
   Methods are excluded — call them on the machine.
 
 ## Store (`stores/<name>.ts`)
 
 ```ts
-export const accessAutocomplete = <M>(id: string): State<M> => {
-  const input = useState<string>(`autocomplete-${id}-input`, () => "");
+export const accessForm = <T>(id: string, config: Config<T>): State<T> => {
+  const payload = useState<Partial<T>>(`form-${id}-payload`, () => ({
+    ...config.defaults,
+  }));
   // … one useState per State key, keyed `<name>-${id}-<key>`
-  return { input, steps, focused, highlight };
+  return { initialized, payload, errors, touched, submitting, submitted };
 };
 ```
 
@@ -76,16 +79,16 @@ state; that is the instancing model.
 A plain class, `implements Service<T>`, constructed with the Nuxt app:
 
 ```ts
-export class AutocompleteService<M> implements Service<M> {
+export class DeckService<T> implements Service<T> {
   private readonly log: Logger;
   private readonly emit: NuxtApp["callHook"];
 
   constructor(
     nuxt: NuxtApp,
     public readonly id: string,
-    public readonly config: Config<M>,
-    private readonly state: State<M>,
-    private readonly actions: Actions<M>,
+    public readonly config: Config<T>,
+    private readonly state: State<T>,
+    private readonly actions: Actions<T>,
   ) {
     this.log = nuxt.$logger(this.id);
     this.emit = nuxt.callHook;
@@ -95,7 +98,7 @@ export class AutocompleteService<M> implements Service<M> {
 }
 ```
 
-- **All feature logic lives here** — validation, derivation, highlight
+- **All feature logic lives here** — validation, derivation, selection
   bookkeeping, everything. The service is the unit under test.
 - Getters return plain values (`this.state.x.value`); deriveds call the
   config resolvers. Keep derived getters cheap — the refs view's computeds
@@ -112,41 +115,38 @@ export class AutocompleteService<M> implements Service<M> {
 Authoring is split into two verbs, and there is no framework correlation
 between them — the user maps a definition to its composable explicitly,
 and TypeScript checks the pairing on that line. `define<Name>` is a typed
-constructor over the feature's static description — config, actions,
-settings — pure data plus consumer callbacks, definable at module scope
+constructor over the feature's static description — the domain config plus
+the passthrough base — pure serializable data, definable at module scope
 (storable in `constants/`), reusable across instances:
 
 ```ts
-export type AutocompleteDefinition<M> = {
-  config: Config<M>;
-  actions?: Actions<M>;
-  settings?: WidgetSettings<AutocompleteWidgetProps<M>>;
-};
-
-export const defineAutocomplete = <M>(
-  definition: AutocompleteDefinition<M>,
-): AutocompleteDefinition<M> => definition;
+export type DeckDefinition<T> = Config<T> &
+  Stamp<T> & {
+    pt?: DeckWidgetProps<T>["pt"];
+  };
 ```
 
 `use<Name>` is a composable — call it in setup — that instances a
 definition: `id` is the only thing it adds (shared state, hook scoping,
-wiring identity all key on it). Pure instancing, no logic:
+wiring identity all key on it), and `wiring` attaches the behavior half —
+fetchers, lifecycle, reactive pt. Pure instancing, no logic:
 
 ```ts
-import component from "../components/data/autocomplete/widget.vue";
+import component from "../components/data/deck/widget.vue";
 
-export const useAutocomplete = <M>(
+export const useDeck = <T>(
   id: string,
-  definition: AutocompleteDefinition<M>,
-): Widget<AutocompleteWidgetProps<M>> => {
+  definition: DeckDefinition<T>,
+  wiring: DeckWiring<T>,
+): Widget<DeckWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
-  const state = accessAutocomplete<M>(id);
-  const service = new AutocompleteService(nuxt, id, definition.config, state, definition.actions ?? {});
-  return { service, component, settings: definition.settings };
+  const state = accessDeck(id, definition);
+  const service = new DeckService(nuxt, id, definition, state, wiring);
+  return { service, component, settings: /* wiring pt merged over definition pt */ };
 };
 ```
 
-`Widget<Props>` is generic over the component's props type, which carries
+`Widget<Props, Events>` is generic over the component's props type, which carries
 both the machine (`Props["service"]`) and the settings tree
 (`NonNullable<Props["pt"]>`). The return annotation is the enforcement
 point: a component whose `service` prop doesn't accept the constructed
@@ -159,31 +159,35 @@ site.
 Script skeleton, in order:
 
 ```ts
-const { service, pt } = defineProps<AutocompleteWidgetProps<M>>();   // generic="M"
-const emit = defineEmits<AutocompleteWidgetEmits<M>>();
+const { service, pt } = defineProps<FormWidgetProps<T>>();   // generic="T"
+const emit = defineEmits<FormWidgetEmits<T>>();
 
-useHooks<Events<M>>(service.id, {                         // hook → emit, 1:1
-  "autocomplete:updated": (event) => emit("updated", event),
+useHooks<Events<T>>(service.id, {                         // hook → emit, 1:1
+  "form:submitted": (event) => emit("submitted", event),
   /* … every event … */
 });
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-// One feature composable per feature — refs + deriveds + recipes in one call
-const { input, hint, panels, dropdown, recipes } = useAutocompleteView(service, el);
+// One feature composable per feature — refs + shared deriveds in one call
+const { submitting } = useFormView(service);
 
-const settings = usePassthrough<AutocompleteWidgetPassthrough<M>>(() => ({
+const settings = usePassthrough<FormWidgetPassthrough>(() => ({
   pt,
-  recipes: { root: {}, /* … blank parts … */, ...recipes.value },
+  recipes: {
+    root: {},
+    /* … blank parts … */
+    submit: { type: "button", disabled: submitting.value, onClick: onSubmit },
+  },
 }));
 
-const ctx = useContext<AutocompleteWidgetContext<M>>("data-autocomplete", () => ({
-  autocomplete: service, el: el.value, settings: settings.value,
+const ctx = useContext<FormWidgetContext<T>>("data-form", () => ({
+  form: service, el: el.value, settings: settings.value,
 }));
 
 defineExpose({ ctx });
-const slots = defineSlots<AutocompleteWidgetSlots<M>>();
-const forwarded = useForwardSlots(slots, AUTOCOMPLETE_ITEM_SLOTS);
+const slots = defineSlots<FormWidgetSlots<T>>();
+const forwarded = useForwardSlots(slots, FORM_FIELD_SLOTS);
 ```
 
 Two hard rules the collapse introduced:
@@ -196,8 +200,8 @@ Two hard rules the collapse introduced:
   call: `useLazyRequest(key, service.init)` detaches and throws. Always
   close over the machine — `() => service.init()`.
 
-Component type files are **prefixed** (`AutocompleteWidgetProps`,
-`AutocompleteItemContext`, …) and follow core's progression —
+Component type files are **prefixed** (`FormWidgetProps`,
+`ChartControlContext`, …) and follow core's progression —
 `XPassthrough` / `XProps` / `XEmits` / `XContext` / `XSlots` — with two
 data-tier differences:
 
@@ -205,7 +209,7 @@ data-tier differences:
   plus passthrough, nothing else. Feature options belong in `Config`, not
   props.
 - `XEmits` is **derived from the domain events**, never authored:
-  `updated: Parameters<Events<M>["autocomplete:updated"]>`.
+  `submitted: Parameters<Events<T>["form:submitted"]>`.
 
 Template contract is core's (one `v-bind` per part, one ctx-scoped slot per
 overridable region, no `.value`), except classes: **data widgets own their
@@ -221,10 +225,11 @@ mechanisms, chosen by what keys the children:
 | Children keyed by                             | Mechanism                        | Shape                                                                                                                    |
 | --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | static config (form fields, table columns)    | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
-| runtime data (autocomplete items, table rows) | `PassthroughIter` manifest entry | `item: PassthroughIter<Anchor<M>, XItemProps<M>>`, bound as `v-bind="settings.item(anchor)"`                             |
+| runtime data (chart controls, table rows)     | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
 
-For iterated children, define an **anchor type** — the child's render
-position (`{ item, index, panel }`) — and reuse it as the iter's datum, the
+For iterated children, define an **anchor type** — the slice of widget
+state the child renders (chart's `ChartControlAnchor`) — and reuse it as
+the iter's datum, the
 child's props base, and the child composable's reactive source. Remember
 core's iter semantics: a consumer callback **replaces the recipe wholesale**,
 structural wiring included.
@@ -251,12 +256,12 @@ feature's whole view surface:
   DOM, timers, and browser APIs stop at this layer — they never reach the
   service.
 - **Anchored scopes** for repeated/positioned children, returned as
-  closures: `useItem(source)`, `useField(field)`, `useControl(source)`,
+  closures: `useField(field)`, `useControl(source)`,
   `useCanvas(canvasEl)`. Each takes a `MaybeRefOrGetter` anchor (child props
   are reactive per-render, so pass a getter, not values) and returns the
   child's deriveds plus its feature recipes. Annotate the recipes computed
-  (`computed<Pick<XItemPassthrough, "root" | "arrow">>`) so literal props
-  don't widen.
+  (`computed<Pick<XControlPassthrough, "root" | "trigger">>`) so literal
+  props don't widen.
 
 Derived names must not shadow service keys — the spread is silent
 (`facetOptions`, not a second `facetGroups`).
@@ -268,7 +273,7 @@ One backbone: Nuxt runtime hooks.
 1. Declare the map in the domain contract — names are
    `"<name>:<past-tense>"`, payloads carry `id`.
 2. Register it in [`app.d.ts`](../../app.d.ts):
-   `interface RuntimeNuxtHooks extends FormEvents<unknown>, AutocompleteEvents<unknown> {}`.
+   `interface RuntimeNuxtHooks extends FormEvents<unknown>, DeckEvents {}`.
 3. The **service** emits via `nuxt.callHook` at each state transition /
    dispatched action.
 4. The **widget** subscribes with
@@ -290,9 +295,9 @@ same payloads.
   item data binds `:alias="item.icon"` inside `v-if="item.icon"`, and the
   manifest omits that prop).
 - **Widening a common contract**: when the widget drives native behavior a
-  common component doesn't declare (form's `value`/`min`/`max`, this tier's
-  input `keydown`), widen the manifest entry —
-  `Passthrough<InputProps & { value?: string }, InputEmits & { keydown: [KeyboardEvent] }>`
+  common component doesn't declare (form's `value`/`min`/`max`), widen the
+  manifest entry —
+  `Passthrough<InputProps & { value?: string; min?: number }, InputEmits>`
   — and note it; the bindings fall through the component to its root
   element. Do not grow the common component's event list for one feature.
 - **Config resolvers are synchronous.** Async belongs in `Actions`
@@ -300,7 +305,7 @@ same payloads.
   `submitting`) and kicked off by the widget via `useLazyRequest` when the
   feature has an init lifecycle.
 - Constants live in `constants/<name>.ts`, `SCREAMING_SNAKE` with the
-  feature prefix (`AUTOCOMPLETE_BLUR_DELAY_MS`).
+  feature prefix (`TABLE_DEFAULT_PAGE_SIZE`).
 - Store keys are `` `<name>-${id}-<key>` ``; ctx names are
   `data-<name>` / `data-<name>-<part>`.
 
@@ -406,7 +411,7 @@ Build order for a new feature in this tier:
 | Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                     |
 | Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                  |
 | Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                                             |
-| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/autocomplete.ts`](../../services/autocomplete.ts)  |
-| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`autocomplete/widget.vue`](./autocomplete/widget.vue)              |
-| Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`autocomplete/item.vue`](./autocomplete/item.vue) (iterated) |
+| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/deck.ts`](../../services/deck.ts)                  |
+| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                            |
+| Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)         |
 | Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |

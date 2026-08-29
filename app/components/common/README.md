@@ -294,6 +294,10 @@ Legend: **Slot** ● = `ctx`-spread default slot · ○ = void (no slot).
 | [Listbox/Group](./listbox/group.vue)      | `listbox-group`    | `group`    | element    |                               |
 | [Listbox/GroupLabel](./listbox/group-label.vue) | `listbox-group-label` | `generic` | element |                          |
 | [Listbox/Item](./listbox/item.vue)        | `listbox-item`     | `option`   | element    |                               |
+| [Autocomplete/Root](./autocomplete/root.vue) | —               | —          | renderless | models: `modelValue` (input text) · `open` |
+| [Autocomplete/Input](./autocomplete/input.vue) | `autocomplete-input` | `combobox` | element | void input · model: `modelValue` |
+| [Autocomplete/Content](./autocomplete/content.vue) | `autocomplete-content` | `listbox` | element |                     |
+| [Autocomplete/Item](./autocomplete/item.vue) | `autocomplete-item` | `option` | element   | preventable `select`          |
 | [Checkbox/Root](./checkbox/root.vue)      | `checkbox-root`    | `checkbox` | element    | model: `modelValue`           |
 | [RadioGroup/Root](./radio-group/root.vue) | `radio-group-root` | `radiogroup` | element  | model: `modelValue`           |
 | [RadioGroup/Item](./radio-group/item.vue) | `radio-group-item` | `radio`    | element    |                               |

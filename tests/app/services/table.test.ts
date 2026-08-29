@@ -12,6 +12,7 @@ import type {
   DataTableFetchResult,
   SortDirection,
   State,
+  TableFilter,
 } from "../../../app/types/data/table";
 import { fakeColumns, fakeRows, fakeActions, fakeBulkActions } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
@@ -28,6 +29,8 @@ const makeState = (): State<FakeRow> => ({
   sortDirection: ref<SortDirection>("asc"),
   selected: ref<Set<string>>(new Set()),
   columnOrder: ref(fakeColumns.map((c) => String(c.key))),
+  query: ref(""),
+  filters: ref<TableFilter[]>([]),
 });
 
 const makeActions = (rows: FakeRow[] = fakeRows) => ({
@@ -71,7 +74,14 @@ describe("fetch", () => {
     await service.fetch();
 
     expect(actions.fetch).toHaveBeenCalledWith(
-      { page: 2, pageSize: 25, sortField: "name", sortDirection: "desc" },
+      {
+        page: 2,
+        pageSize: 25,
+        sortField: "name",
+        sortDirection: "desc",
+        query: "",
+        filters: [],
+      },
       service,
     );
     expect(service.data).toEqual(fakeRows);
@@ -248,6 +258,124 @@ describe("columns", () => {
       config: { actions: fakeActions, bulkActions: fakeBulkActions },
     });
     expect(armed.service.colSpan).toBe(fakeColumns.length + 2);
+  });
+});
+
+describe("search", () => {
+  it("setQuery resets the page, refetches, and emits table:filtered", async () => {
+    const { service, state, actions, emitSpy } = makeService();
+    state.page.value = 3;
+    service.setQuery("acme");
+    expect(service.query).toBe("acme");
+    expect(service.page).toBe(1);
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(emitSpy).toHaveBeenCalledWith("table:filtered", {
+      id: "test-table",
+      query: "acme",
+      filters: [],
+    });
+  });
+
+  it("setQuery with the current value is a no-op", () => {
+    const { service, actions } = makeService();
+    service.setQuery("");
+    expect(actions.fetch).not.toHaveBeenCalled();
+  });
+
+  it("addFilter commits the pair, resets the page, and refetches", () => {
+    const { service, state, actions, emitSpy } = makeService();
+    state.page.value = 2;
+    service.addFilter("status", "Active");
+    expect(service.filters).toEqual([{ key: "status", value: "Active" }]);
+    expect(service.page).toBe(1);
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(emitSpy).toHaveBeenCalledWith("table:filtered", {
+      id: "test-table",
+      query: "",
+      filters: [{ key: "status", value: "Active" }],
+    });
+  });
+
+  it("addFilter replaces a same-key filter and moves it to the end", () => {
+    const { service } = makeService();
+    service.addFilter("status", "quoted");
+    service.addFilter("name", "Alice");
+    service.addFilter("status", "draft");
+    expect(service.filters).toEqual([
+      { key: "name", value: "Alice" },
+      { key: "status", value: "draft" },
+    ]);
+  });
+
+  it("addFilter keeps distinct operators on one key as a range, recency ordered", () => {
+    const { service } = makeService();
+    service.addFilter("created", "2026-01-01", "after");
+    service.addFilter("created", "2026-06-01", "before");
+    service.addFilter("created", "2026-02-01", "after");
+    expect(service.filters).toEqual([
+      { key: "created", op: "before", value: "2026-06-01" },
+      { key: "created", op: "after", value: "2026-02-01" },
+    ]);
+  });
+
+  it("addFilter stores the operator when given", () => {
+    const { service } = makeService();
+    service.addFilter("created", "2026-02-01", "before");
+    expect(service.filters).toEqual([
+      { key: "created", op: "before", value: "2026-02-01" },
+    ]);
+  });
+
+  it("removeFilter drops exactly the indexed filter", () => {
+    const { service } = makeService();
+    service.addFilter("status", "Active");
+    service.addFilter("name", "Alice");
+    service.removeFilter(0);
+    expect(service.filters).toEqual([{ key: "name", value: "Alice" }]);
+  });
+
+  it("removeFilter ignores out-of-bounds indices", () => {
+    const { service, actions } = makeService();
+    service.removeFilter(0);
+    service.removeFilter(-1);
+    expect(actions.fetch).not.toHaveBeenCalled();
+  });
+
+  it("fetch params carry the committed query and filters", async () => {
+    const { service, actions } = makeService();
+    service.setQuery("acme");
+    service.addFilter("status", "Active");
+    await service.fetch();
+    expect(actions.fetch).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        query: "acme",
+        filters: [{ key: "status", value: "Active" }],
+      }),
+      service,
+    );
+  });
+
+  it("searchable defaults on and follows config off", () => {
+    expect(makeService().service.searchable).toBe(true);
+    expect(
+      makeService({ config: { searchable: false } }).service.searchable,
+    ).toBe(false);
+  });
+
+  it("filterableColumns excludes action and image columns by default", () => {
+    const { service } = makeService({
+      config: {
+        columns: [
+          ...fakeColumns,
+          { key: "id", label: "Open", type: "action" },
+          { key: "name", label: "Avatar", type: "image", filterable: true },
+        ],
+      },
+    });
+    const labels = service.filterableColumns.map((c) => c.label);
+    expect(labels).not.toContain("Open");
+    expect(labels).toContain("Avatar");
+    expect(labels).toContain("Status");
   });
 });
 

@@ -73,7 +73,7 @@
     "defu": "^6.1.7",
     "icon-sheets": "^0.0.3",
     "ltrl-http": "^0.0.20",
-    "objectively": "^0.1.0",
+    "objectively": "^0.1.1",
     "reka-ui": "^2.6.0",
     "untheme": "^0.2.3",
     "zod": "^3.23.0"

@@ -6,7 +6,12 @@ export default defineNuxtConfig({
 
   extends: ["@zoobzio/foundation"],
 
-  css: ["~/assets/css/app.css", "~/assets/css/sidebar.css"],
+  css: [
+    "~/assets/css/app.css",
+    "~/assets/css/sidebar.css",
+    "~/assets/css/foundation.css",
+    "~/assets/css/tables.css",
+  ],
 
   runtimeConfig: {
     // Absolute path so the SQLite file lands in example/.data regardless of

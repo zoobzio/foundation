@@ -14,3 +14,10 @@ export const TABLE_ACTIONS_ICON: IconAlias = "actions";
 export const TABLE_REFRESH_ICON: IconAlias = "refresh";
 
 export const TABLE_COLUMNS_PLACEHOLDER = "Search columns...";
+export const TABLE_SEARCH_PLACEHOLDER = "Search...";
+
+export const TABLE_DATE_OPERATORS = ["before", "after", "on"] as const;
+export const TABLE_NUMBER_OPERATORS = ["over", "under", "is"] as const;
+
+export const TABLE_SEARCH_LOOKAHEAD = 20;
+export const TABLE_SEARCH_LOOKAHEAD_MAX_DEPTH = 50;

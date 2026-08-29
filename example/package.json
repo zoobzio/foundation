@@ -4,5 +4,9 @@
   "type": "module",
   "devDependencies": {
     "@zoobzio/foundation": "workspace:*"
+  },
+  "dependencies": {
+    "objectively": "^0.1.1",
+    "untheme": "^0.2.3"
   }
 }

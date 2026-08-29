@@ -13,6 +13,7 @@ import Body from "./body.vue";
 import BulkActions from "./bulk-actions.vue";
 import Columns from "./columns.vue";
 import Head from "./head.vue";
+import Autocomplete from "../../core/autocomplete.vue";
 import Fab from "../../core/fab.vue";
 import Group from "../../common/group.vue";
 import Pagination from "../../core/pagination.vue";
@@ -35,17 +36,20 @@ const emit = defineEmits<TableWidgetEmits>();
 
 useHooks<Events>(service.id, {
   "table:updated": (event) => emit("updated", event),
+  "table:filtered": (event) => emit("filtered", event),
 });
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const { page, pageSize, pageCount, total, hasSelection } = useTableView(service);
+const { page, pageSize, pageCount, total, hasSelection, searchRecipes } =
+  useTableView(service);
 
-const settings = usePassthrough<TableWidgetPassthrough>(() => ({
+const settings = usePassthrough<TableWidgetPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {},
     toolbar: {},
+    ...searchRecipes.value,
     scroller: {},
     table: {},
     refresh: { icon: TABLE_REFRESH_ICON, onClick: () => service.fetch() },
@@ -90,6 +94,12 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
   <Group ref="el" v-bind="settings.root" class="f-data-table">
     <slot name="toolbar" v-bind="ctx">
       <Group v-bind="settings.toolbar" class="f-data-table-toolbar">
+        <slot v-if="service.searchable" name="search" v-bind="ctx">
+          <Autocomplete
+            v-bind="settings.search"
+            class="f-data-table-search"
+          />
+        </slot>
         <Columns :table="service" :pt="pt?.columns" />
         <Fab v-bind="settings.refresh" />
       </Group>

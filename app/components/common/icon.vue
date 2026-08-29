@@ -44,6 +44,6 @@ defineExpose({ ctx });
     fill="currentColor"
     v-bind="bindings"
   >
-    <use :href="'#' + alias" />
+    <use :href.attr="'#' + alias" />
   </svg>
 </template>

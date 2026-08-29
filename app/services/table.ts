@@ -5,6 +5,7 @@ import type {
   DataTableColumn,
   Service,
   State,
+  TableFilter,
 } from "../types/data/table";
 import type { IconAlias } from "../types/common/icon";
 import type { Logger } from "../types/log";
@@ -90,6 +91,21 @@ export class TableService<T> implements Service<T> {
   }
   get columnOrder(): string[] {
     return this.state.columnOrder.value;
+  }
+  get searchable(): boolean {
+    return this.config.searchable ?? true;
+  }
+  get query(): string {
+    return this.state.query.value;
+  }
+  get filters(): TableFilter[] {
+    return this.state.filters.value;
+  }
+
+  get filterableColumns(): DataTableColumn<T>[] {
+    return this.columns.filter(
+      (c) => c.filterable ?? (c.type !== "action" && c.type !== "image"),
+    );
   }
 
   get visibleColumns(): DataTableColumn<T>[] {
@@ -214,6 +230,49 @@ export class TableService<T> implements Service<T> {
     this.state.columnOrder.value = this.defaultColumnKeys;
   }
 
+  /**
+   * Commits a filter; a filter with the same key and operator is replaced
+   * and moved to the end, so order tracks recency (the freshest filter is
+   * the first to unwrap) while distinct operators on one key (a date/number
+   * range) coexist.
+   */
+  addFilter(key: string, value: string, op?: string): void {
+    const next: TableFilter = op ? { key, op, value } : { key, value };
+    this.state.filters.value = [
+      ...this.filters.filter((f) => !(f.key === key && f.op === op)),
+      next,
+    ];
+    this.search();
+  }
+
+  removeFilter(index: number): void {
+    if (index < 0 || index >= this.filters.length) return;
+    this.state.filters.value = this.filters.filter((_, i) => i !== index);
+    this.search();
+  }
+
+  setQuery(value: string): void {
+    if (value === this.query) return;
+    this.state.query.value = value;
+    this.search();
+  }
+
+  /** First page, refetch, emit — the same reset discipline as `sortBy`. */
+  private search(): void {
+    this.state.page.value = 1;
+    this.fetch();
+    this.log.debug("Table filtered", {
+      id: this.id,
+      query: this.query,
+      filters: this.filters,
+    });
+    this.emit("table:filtered", {
+      id: this.id,
+      query: this.query,
+      filters: this.filters,
+    });
+  }
+
   async init(): Promise<boolean> {
     if (this.state.initialized.value) return true;
     this.state.initialized.value = true;
@@ -230,6 +289,8 @@ export class TableService<T> implements Service<T> {
           pageSize: this.pageSize,
           sortField: this.sortField,
           sortDirection: this.sortDirection,
+          query: this.query,
+          filters: this.filters,
         },
         this,
       );

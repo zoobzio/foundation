@@ -23,7 +23,3 @@ export const chartStubs = {
 export const formStubs = {
   Field: createAllSlotsStub("Field"),
 } as const;
-
-export const autocompleteStubs = {
-  Item: createStub("Item"),
-} as const;

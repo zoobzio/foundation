@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 import { vi } from "vitest";
-import type { Service } from "../../app/types/data/table";
+import type { Service, TableFilter } from "../../app/types/data/table";
 import { TABLE_SORT_ASC_ICON } from "../../app/constants/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
@@ -28,6 +28,8 @@ export const createMockTable = (
     sortDirection: ref<"asc" | "desc">("asc"),
     selected: ref<Set<string>>(new Set()),
     columnOrder: ref(fakeColumns.map((c) => String(c.key))),
+    query: ref(""),
+    filters: ref<TableFilter[]>([]),
   };
 
   const visibleColumns = computed(() =>
@@ -56,6 +58,7 @@ export const createMockTable = (
     actions: [],
     bulkActions: [],
     pinnedColumns: [],
+    searchable: true,
 
     get data() {
       return state.data.value;
@@ -90,6 +93,18 @@ export const createMockTable = (
     get columnOrder() {
       return state.columnOrder.value;
     },
+    get query() {
+      return state.query.value;
+    },
+    get filters() {
+      return state.filters.value;
+    },
+
+    get filterableColumns() {
+      return fakeColumns.filter(
+        (c) => c.filterable ?? (c.type !== "action" && c.type !== "image"),
+      );
+    },
 
     get visibleColumns() {
       return visibleColumns.value;
@@ -123,6 +138,9 @@ export const createMockTable = (
     resetColumns: vi.fn(),
     isColumnPinned: () => false,
     isColumnVisible: () => true,
+    addFilter: vi.fn(),
+    removeFilter: vi.fn(),
+    setQuery: vi.fn(),
     init: vi.fn(async () => true),
     fetch: vi.fn(async () => {}),
 
