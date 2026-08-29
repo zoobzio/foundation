@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<body>
+<pre id="out">pending</pre>
+<iframe id="f" src="/commissions" style="width:1280px;height:900px"></iframe>
+<script>
+const out = (t) => { document.getElementById("out").textContent = t; };
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const f = document.getElementById("f");
+const report = {};
+const key = (el, k) =>
+  el.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true }));
+const typeSlow = async (el, text) => {
+  el.value = "";
+  el.dispatchEvent(new Event("input", { bubbles: true }));
+  for (const ch of text) {
+    el.value += ch;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    await sleep(40);
+  }
+  await sleep(250);
+};
+f.addEventListener("load", async () => {
+  try {
+    await sleep(3000);
+    const doc = f.contentDocument;
+    const input = doc.querySelector(".f-data-table-search input");
+    const chips = () => [...doc.querySelectorAll(".f-data-table-search .f-chip")].map((e) => e.textContent.trim());
+    const cells = () => doc.querySelectorAll(".f-td").length;
+    input.focus();
+    input.dispatchEvent(new Event("focus"));
+    await sleep(400);
+
+    await typeSlow(input, "Rush: true");
+    key(input, "Enter");
+    await sleep(1000);
+    report.afterTrue = { chips: chips(), cells: cells() };
+
+    await typeSlow(input, "Rush: false");
+    key(input, "Enter");
+    await sleep(1000);
+    report.afterFalse = { chips: chips(), cells: cells() };
+
+    await typeSlow(input, "Due: after: 2026-08-01");
+    key(input, "Enter");
+    await sleep(1000);
+    await typeSlow(input, "Due: before: 2026-11-01");
+    key(input, "Enter");
+    await sleep(1000);
+    report.range = { chips: chips(), cells: cells() };
+
+    await typeSlow(input, "Due: before: 2026-10-01");
+    key(input, "Enter");
+    await sleep(1000);
+    report.rangeUpdated = { chips: chips(), cells: cells() };
+
+    out("RESULT " + JSON.stringify(report));
+  } catch (e) {
+    out("RESULT ERR " + e.message + " | " + JSON.stringify(report));
+  }
+});
+</script>
+</body>
+</html>

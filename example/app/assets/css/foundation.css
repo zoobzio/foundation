@@ -1,0 +1,171 @@
+/* Base styling for foundation common/core elements, using aurora untheme
+   tokens. The layer ships zero CSS; every f-* class is a bare hook. */
+
+.f-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.f-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.f-button:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    var(--surface-container)
+  );
+}
+
+.f-button:disabled {
+  color: var(--on-surface-muted);
+  cursor: default;
+  background: var(--surface-container);
+}
+
+.f-popover-content {
+  z-index: 40;
+  min-width: 18rem;
+  padding: var(--space-2);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-listbox-filter {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  outline: none;
+}
+
+.f-listbox-filter:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-listbox-content {
+  max-height: 18rem;
+  overflow-y: auto;
+}
+
+.f-listbox-group-label {
+  display: block;
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface-muted);
+}
+
+.f-listbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.f-listbox-item:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-listbox-item[data-highlighted] {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+
+.f-listbox-item[data-disabled] {
+  color: var(--on-surface-muted);
+  cursor: default;
+}
+
+.f-checkbox-root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-checkbox-root[data-state="checked"] {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border-color: var(--primary-container);
+}
+
+.f-checkbox-root .f-icon {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.f-select-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-select-content {
+  z-index: 50;
+  padding: var(--space-1);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-select-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-select-item[data-highlighted] {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}

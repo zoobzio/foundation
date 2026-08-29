@@ -2,7 +2,9 @@ import { z } from "zod";
 import type {
   Commission,
   CommissionCreate,
-  CommissionFilters,
+  CommissionFilter,
+  CommissionListQuery,
+  CommissionListResult,
   CommissionUpdate,
 } from "#shared/commissions";
 import {
@@ -21,8 +23,10 @@ const rowSchema = z
     description: z.string(),
     status: z.enum(COMMISSION_STATUSES),
     material: z.enum(COMMISSION_MATERIALS),
+    rush: z.number(),
     price: z.number(),
     due_date: z.string().nullable(),
+    link: z.string(),
     created_at: z.string(),
     updated_at: z.string(),
   })
@@ -34,35 +38,106 @@ const rowSchema = z
       description: row.description,
       status: row.status,
       material: row.material,
+      rush: row.rush !== 0,
       price: row.price,
       dueDate: row.due_date,
+      link: row.link,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     }),
   );
 
-export const listCommissions = (filters: CommissionFilters): Commission[] => {
+const NUMERIC_OP: Record<string, string> = {
+  over: ">",
+  under: "<",
+  is: "=",
+};
+
+const DATE_OP: Record<string, string> = {
+  before: "<",
+  after: ">",
+  on: "=",
+};
+
+const applyFilter = (
+  conditions: string[],
+  params: (string | number)[],
+  filter: CommissionFilter,
+): void => {
+  switch (filter.key) {
+    case "title":
+    case "client":
+      conditions.push(`${filter.key} LIKE ?`);
+      params.push(`%${filter.value}%`);
+      return;
+    case "status":
+    case "material":
+      conditions.push(`${filter.key} = ?`);
+      params.push(filter.value);
+      return;
+    case "rush":
+      conditions.push("rush = ?");
+      params.push(filter.value === "true" ? 1 : 0);
+      return;
+    case "price": {
+      const op = NUMERIC_OP[filter.op ?? "is"] ?? "=";
+      conditions.push(`price ${op} ?`);
+      params.push(Number(filter.value) || 0);
+      return;
+    }
+    case "dueDate":
+    case "createdAt": {
+      const column = filter.key === "dueDate" ? "due_date" : "created_at";
+      const op = DATE_OP[filter.op ?? "on"] ?? "=";
+      conditions.push(`DATE(${column}) ${op} DATE(?)`);
+      params.push(filter.value);
+      return;
+    }
+  }
+};
+
+const countSchema = z.object({ count: z.number() });
+
+export const listCommissions = (
+  query: CommissionListQuery,
+): CommissionListResult => {
   const db = useDb();
 
   const conditions: string[] = [];
-  const params: string[] = [];
+  const params: (string | number)[] = [];
 
-  if (filters.status) {
-    conditions.push("status = ?");
-    params.push(filters.status);
+  for (const filter of query.filters) {
+    applyFilter(conditions, params, filter);
   }
-  if (filters.q) {
+  if (query.q) {
     conditions.push("(title LIKE ? OR client LIKE ? OR description LIKE ?)");
-    const like = `%${filters.q}%`;
+    const like = `%${query.q}%`;
     params.push(like, like, like);
   }
 
   const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-  const rows = db
-    .prepare(`SELECT * FROM commissions ${where} ORDER BY created_at DESC, id DESC`)
-    .all(...params);
 
-  return rows.map((row) => rowSchema.parse(row));
+  const countRow = db
+    .prepare(`SELECT COUNT(*) AS count FROM commissions ${where}`)
+    .get(...params);
+  const total = countSchema.parse(countRow).count;
+  const pageCount = Math.ceil(total / query.pageSize);
+
+  // sortField and sortDirection are enum-whitelisted by the query schema, so
+  // interpolating them is safe.
+  const order = query.sortField
+    ? `ORDER BY ${query.sortField} ${query.sortDirection === "desc" ? "DESC" : "ASC"}, id DESC`
+    : "ORDER BY created_at DESC, id DESC";
+
+  const rows = db
+    .prepare(`SELECT * FROM commissions ${where} ${order} LIMIT ? OFFSET ?`)
+    .all(...params, query.pageSize, (query.page - 1) * query.pageSize);
+
+  return {
+    data: rows.map((row) => rowSchema.parse(row)),
+    total,
+    pageCount,
+  };
 };
 
 export const getCommission = (id: number): Commission | null => {
@@ -80,8 +155,8 @@ export const createCommission = (input: CommissionCreate): Commission => {
 
   const result = db
     .prepare(
-      `INSERT INTO commissions (title, client, description, status, material, price, due_date, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO commissions (title, client, description, status, material, rush, price, due_date, link, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .run(
       input.title,
@@ -89,8 +164,10 @@ export const createCommission = (input: CommissionCreate): Commission => {
       input.description,
       input.status,
       input.material,
+      input.rush ? 1 : 0,
       input.price,
       input.dueDate,
+      input.link,
       now,
       now,
     );
@@ -107,8 +184,10 @@ const UPDATABLE_FIELDS = [
   "description",
   "status",
   "material",
+  "rush",
   "price",
   "dueDate",
+  "link",
 ] as const;
 
 const COLUMN_BY_FIELD: Record<(typeof UPDATABLE_FIELDS)[number], string> = {
@@ -117,8 +196,10 @@ const COLUMN_BY_FIELD: Record<(typeof UPDATABLE_FIELDS)[number], string> = {
   description: "description",
   status: "status",
   material: "material",
+  rush: "rush",
   price: "price",
   dueDate: "due_date",
+  link: "link",
 };
 
 export const updateCommission = (
@@ -137,7 +218,7 @@ export const updateCommission = (
     const value = patch[field];
     if (value !== undefined) {
       assignments.push(`${COLUMN_BY_FIELD[field]} = ?`);
-      params.push(value);
+      params.push(typeof value === "boolean" ? (value ? 1 : 0) : value);
     }
   }
 

@@ -1,0 +1,253 @@
+/* Consumer-side styling for the foundation data table + its search
+   autocomplete. Element basics live in foundation.css. */
+
+.f-data-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.f-data-table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ---- search autocomplete ------------------------------------------------ */
+
+/* The root is the field: chips and the input share one bordered row. */
+.f-data-table-search {
+  position: relative;
+  flex: 1;
+  max-width: 40rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+.f-data-table-search:focus-within {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-data-table-search .f-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-secondary-container);
+  background: var(--secondary-container);
+  border: none;
+  border-radius: var(--shape-full);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.f-data-table-search .f-chip:hover {
+  text-decoration: line-through;
+}
+
+.f-data-table-search .f-group:has(> .f-autocomplete-input) {
+  position: relative;
+  flex: 1;
+  min-width: 10rem;
+}
+
+.f-data-table-search .f-autocomplete-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-1) 0;
+  font: var(--type-body);
+  color: var(--on-surface);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* ghost hint: an invisible copy of the typed text pushes the completion to
+   the caret position */
+.f-data-table-search .f-group[aria-hidden="true"] {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--space-1) 0;
+  font: var(--type-body);
+  white-space: pre;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.f-data-table-search .f-group[aria-hidden="true"] .f-span:first-child {
+  color: transparent;
+}
+
+.f-data-table-search .f-group[aria-hidden="true"] .f-span:last-child {
+  color: var(--on-surface-muted);
+}
+
+/* dropdown: an unstyled layout wrapper anchored to the input (it sits
+   inside the field, so it travels with the caret as chips accumulate);
+   reka inlines flex-direction: column */
+.f-data-table-search .f-autocomplete-content {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: 30;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* each drill level is its own card with its own natural height */
+.f-data-table-search .f-autocomplete-content > .f-group {
+  min-width: 12rem;
+  padding: var(--space-1);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-data-table-search .f-scroll-area-viewport {
+  max-height: 16rem;
+}
+
+.f-data-table-search .f-autocomplete-item,
+.f-data-table-search .f-autocomplete-content .f-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: none;
+  border: none;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast);
+}
+
+.f-data-table-search .f-autocomplete-item .f-icon,
+.f-data-table-search .f-autocomplete-content .f-button .f-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-left: auto;
+}
+
+.f-data-table-search .f-autocomplete-item:hover,
+.f-data-table-search .f-autocomplete-content .f-button:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+/* keyboard highlight + the drilled trail column */
+.f-data-table-search .f-autocomplete-item[data-highlighted],
+.f-data-table-search .f-autocomplete-content .f-button[aria-current="true"] {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+
+.f-data-table-search .f-autocomplete-item[data-disabled] {
+  color: var(--on-surface-muted);
+  cursor: default;
+}
+
+.f-data-table-search .f-autocomplete-empty {
+  padding: var(--space-1) var(--space-2);
+  color: var(--on-surface-muted);
+  font: var(--type-label);
+}
+
+/* ---- table -------------------------------------------------------------- */
+
+.f-data-table .f-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--type-body);
+}
+
+.f-data-table .f-th,
+.f-data-table .f-td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-table .f-th {
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface-muted);
+  white-space: nowrap;
+}
+
+.f-data-table .f-tr:hover .f-td {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-table-header-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.f-data-table-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.f-data-table .f-icon.f-data-table-sort-icon {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.f-data-table .f-icon.f-data-table-drag-handle {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--on-surface-muted);
+  cursor: grab;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.f-data-table .f-th:hover .f-data-table-drag-handle {
+  opacity: 1;
+}
+
+/* ---- pagination row ----------------------------------------------------- */
+
+.f-data-table > .f-group:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+}

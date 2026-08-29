@@ -86,6 +86,97 @@ describe("data table widget", () => {
     expect(service.goToPage).toHaveBeenCalledWith(2);
   });
 
+  it("searchable: false hides the toolbar search", () => {
+    const { wrapper } = mountWidget(createMockTable({ searchable: false }));
+    expect(wrapper.find(".f-data-table-search").exists()).toBe(false);
+  });
+
+  it("search submit routes free text through table.setQuery", async () => {
+    const { service, wrapper } = mountWidget();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.setValue("acme");
+    await input.trigger("keydown", { key: "Enter" });
+    expect(service.setQuery).toHaveBeenCalledWith("acme");
+  });
+
+  it("a completed `Label: value` token commits through table.addFilter", async () => {
+    const { service, wrapper } = mountWidget();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.setValue("Status: Active");
+    await input.trigger("keydown", { key: "Enter" });
+    expect(service.addFilter).toHaveBeenCalledWith("status", "Active");
+    expect(service.setQuery).not.toHaveBeenCalled();
+  });
+
+  it("an operator token commits with its operator", async () => {
+    const { service, wrapper } = mountWidget();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.setValue("Created: before: 2026-02-01");
+    await input.trigger("keydown", { key: "Enter" });
+    expect(service.addFilter).toHaveBeenCalledWith(
+      "created",
+      "2026-02-01",
+      "before",
+    );
+  });
+
+  it("a bare value on an operator column commits with the default operator", async () => {
+    const { service, wrapper } = mountWidget();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.setValue("Created: 2026-03-10");
+    await input.trigger("keydown", { key: "Enter" });
+    expect(service.addFilter).toHaveBeenCalledWith(
+      "created",
+      "2026-03-10",
+      "on",
+    );
+  });
+
+  it("committed filters render as chips and click removes them", async () => {
+    const { service, state, wrapper } = mountWidget();
+    state.filters.value = [{ key: "status", value: "Active" }];
+    await flushPromises();
+    const chip = wrapper.get(".f-data-table-search .f-chip");
+    expect(chip.text()).toContain("Status: Active");
+    await chip.trigger("click");
+    expect(service.removeFilter).toHaveBeenCalledWith(0);
+  });
+
+  it("backspace on empty input unwraps the last chip into editable text", async () => {
+    const { service, state, wrapper } = mountWidget();
+    state.filters.value = [{ key: "status", value: "quoted" }];
+    await flushPromises();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.trigger("keydown", { key: "Backspace" });
+    await flushPromises();
+    expect(service.removeFilter).toHaveBeenCalledWith(0);
+    expect(input.element.value).toBe("Status: quote");
+  });
+
+  it("unwrapping an operator filter restores the full token form", async () => {
+    const { service, state, wrapper } = mountWidget();
+    state.filters.value = [
+      { key: "created", op: "before", value: "2026-02-01" },
+    ];
+    await flushPromises();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.trigger("keydown", { key: "Backspace" });
+    await flushPromises();
+    expect(service.removeFilter).toHaveBeenCalledWith(0);
+    expect(input.element.value).toBe("Created: before: 2026-02-0");
+  });
+
+  it("unwrapping the query chip restores the query text", async () => {
+    const { service, state, wrapper } = mountWidget();
+    state.query.value = "acme";
+    await flushPromises();
+    const input = wrapper.get(".f-data-table-search").get("input");
+    await input.trigger("keydown", { key: "Backspace" });
+    await flushPromises();
+    expect(service.setQuery).toHaveBeenCalledWith("");
+    expect(input.element.value).toBe("acm");
+  });
+
   it("re-emits table:updated hooks for its own table only", async () => {
     const { updated } = mountWidget();
     const nuxt = useNuxtApp();

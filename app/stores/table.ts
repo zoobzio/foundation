@@ -1,4 +1,9 @@
-import type { Config, SortDirection, State } from "../types/data/table";
+import type {
+  Config,
+  SortDirection,
+  State,
+  TableFilter,
+} from "../types/data/table";
 
 import { useState } from "#imports";
 import {
@@ -43,6 +48,8 @@ export const accessTable = <T>(
     `table-${id}-columnOrder`,
     () => defaultColumnKeys,
   );
+  const query = useState<string>(`table-${id}-query`, () => "");
+  const filters = useState<TableFilter[]>(`table-${id}-filters`, () => []);
 
   return {
     data,
@@ -56,5 +63,7 @@ export const accessTable = <T>(
     sortDirection,
     selected,
     columnOrder,
+    query,
+    filters,
   };
 };
