@@ -1,5 +1,4 @@
-import type { ButtonProps, ButtonEmits } from "../../common/button";
-import type { IconProps, IconAlias  } from "../../common/icon";
+import type { IconAlias } from "../../icon";
 import type { FabProps, FabEmits } from "../../core/fab";
 import type { MenuProps, MenuEmits } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";
@@ -48,8 +47,6 @@ export type ChartControlAnchor = {
 
 export type ChartControlPassthrough = {
   menu: Passthrough<MenuProps, MenuEmits>;
-  trigger: Passthrough<ButtonProps, ButtonEmits>;
-  chevron: Passthrough<IconProps>;
   fab: Passthrough<FabProps, FabEmits>;
 };
 

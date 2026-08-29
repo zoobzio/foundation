@@ -84,9 +84,11 @@ describe("select", () => {
 
   it("pt overrides reach their part", () => {
     const wrapper = mountSelect({
-      pt: { triggerIcon: { alias: "settings" } },
+      pt: { trigger: { disabled: true } },
     });
-    expect(wrapper.get("use").attributes("href")).toBe("#settings");
+    expect(
+      wrapper.get(".f-select-trigger").attributes("disabled"),
+    ).toBeDefined();
   });
 
   it("serves ctx to slot overrides", () => {

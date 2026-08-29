@@ -1,12 +1,10 @@
 import type {
   TooltipRootProps,
   TooltipRootEmits,
-} from "../common/tooltip/root";
-import type { TooltipTriggerProps } from "../common/tooltip/trigger";
-import type {
+  TooltipTriggerProps,
   TooltipContentProps,
   TooltipContentEmits,
-} from "../common/tooltip/content";
+} from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 

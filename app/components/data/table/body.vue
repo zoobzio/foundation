@@ -5,17 +5,10 @@ import type {
   TableBodyProps,
   TableBodySlots,
 } from "../../../types/data/table/body";
-import type { ComponentPublicInstance } from "vue";
 
-import Anchor from "../../common/anchor.vue";
 import Checkbox from "../../core/checkbox.vue";
 import Fab from "../../core/fab.vue";
-import Img from "../../common/img.vue";
 import Menu from "../../core/menu.vue";
-import Span from "../../common/span.vue";
-import Tbody from "../../common/tbody.vue";
-import Td from "../../common/td.vue";
-import Tr from "../../common/tr.vue";
 
 import { useSlots, useTemplateRef } from "#imports";
 import { useTableView } from "../../../composables/table";
@@ -27,7 +20,7 @@ import { cell } from "../../../utils/format";
 <script setup lang="ts" generic="T">
 const { table, pt } = defineProps<TableBodyProps<T>>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLTableSectionElement>("el");
 
 const slots = useSlots();
 
@@ -44,14 +37,7 @@ const {
 const settings = usePassthrough<TableBodyPassthrough>(() => ({
   pt,
   recipes: {
-    tbody: {},
-    tr: {},
-    td: {},
-    empty: {},
     rowCheckbox: {},
-    cellAnchor: { external: true },
-    cellImg: {},
-    cellSpan: {},
     actionsTrigger: { icon: "actions" },
     actionsMenu: { groups: actionGroups.value, align: "end" },
   },
@@ -68,25 +54,25 @@ defineSlots<TableBodySlots<T>>();
 </script>
 
 <template>
-  <Tbody ref="el" v-bind="settings.tbody">
-    <Tr v-if="!data.length" v-bind="settings.tr">
-      <Td v-bind="settings.empty" :colspan="colSpan">
+  <tbody ref="el" class="f-tbody">
+    <tr v-if="!data.length" class="f-tr">
+      <td class="f-td" :colspan="colSpan">
         <slot name="empty" v-bind="ctx">No data</slot>
-      </Td>
-    </Tr>
+      </td>
+    </tr>
     <template v-else>
-      <Tr v-for="(row, rowIndex) in data" :key="rowIndex" v-bind="settings.tr">
-        <Td v-if="isSelectable" v-bind="settings.td" class="f-data-table-select">
+      <tr v-for="(row, rowIndex) in data" :key="rowIndex" class="f-tr">
+        <td v-if="isSelectable" class="f-td f-data-table-select">
           <Checkbox
             v-bind="settings.rowCheckbox"
             :model-value="table.isRowSelected(row)"
             @update:model-value="table.toggleRow(table.keyOf(row))"
           />
-        </Td>
-        <Td
+        </td>
+        <td
           v-for="col in visibleColumns"
           :key="String(col.key)"
-          v-bind="settings.td"
+          class="f-td"
         >
           <!-- 1. cell:<key> — override a specific column -->
           <slot
@@ -107,28 +93,28 @@ defineSlots<TableBodySlots<T>>();
             v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
           >
             <!-- 4. Default type-based rendering -->
-            <Anchor
+            <NuxtLink
               v-if="col.type === 'url'"
-              v-bind="settings.cellAnchor"
+              class="f-anchor"
+              :external="true"
               :to="String(row[col.key])"
             >
               {{ row[col.key] }}
-            </Anchor>
-            <Img
+            </NuxtLink>
+            <img
               v-else-if="col.type === 'image'"
-              v-bind="settings.cellImg"
+              class="f-img"
               :src="String(row[col.key])"
               :alt="col.label"
-            />
-            <Span v-else v-bind="settings.cellSpan">
+            >
+            <span v-else class="f-span">
               {{ cell(row[col.key], col.type) }}
-            </Span>
+            </span>
           </slot>
-        </Td>
-        <Td
+        </td>
+        <td
           v-if="hasActions"
-          v-bind="settings.td"
-          class="f-data-table-actions"
+          class="f-td f-data-table-actions"
         >
           <Menu
             v-bind="settings.actionsMenu"
@@ -136,8 +122,8 @@ defineSlots<TableBodySlots<T>>();
           >
             <Fab v-bind="settings.actionsTrigger" />
           </Menu>
-        </Td>
-      </Tr>
+        </td>
+      </tr>
     </template>
-  </Tbody>
+  </tbody>
 </template>

@@ -7,7 +7,6 @@ import type {
   TableWidgetSlots,
 } from "../../../types/data/table/widget";
 import type { Events } from "../../../types/data/table";
-import type { ComponentPublicInstance } from "vue";
 
 import Body from "./body.vue";
 import BulkActions from "./bulk-actions.vue";
@@ -15,10 +14,8 @@ import Columns from "./columns.vue";
 import Head from "./head.vue";
 import Autocomplete from "../../core/autocomplete.vue";
 import Fab from "../../core/fab.vue";
-import Group from "../../common/group.vue";
 import Pagination from "../../core/pagination.vue";
 import Scroller from "../../core/scroller.vue";
-import Table from "../../common/table.vue";
 
 import { computed, useTemplateRef } from "#imports";
 import { useTableView } from "../../../composables/table";
@@ -39,7 +36,7 @@ useHooks<Events>(service.id, {
   "table:filtered": (event) => emit("filtered", event),
 });
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const { page, pageSize, pageCount, total, hasSelection, searchRecipes } =
   useTableView(service);
@@ -47,11 +44,8 @@ const { page, pageSize, pageCount, total, hasSelection, searchRecipes } =
 const settings = usePassthrough<TableWidgetPassthrough<T>>(() => ({
   pt,
   recipes: {
-    root: {},
-    toolbar: {},
     ...searchRecipes.value,
     scroller: {},
-    table: {},
     refresh: { icon: TABLE_REFRESH_ICON, onClick: () => service.fetch() },
     pagination: {
       page: page.value,
@@ -91,9 +85,9 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-table">
+  <div ref="el" class="f-group f-data-table">
     <slot name="toolbar" v-bind="ctx">
-      <Group v-bind="settings.toolbar" class="f-data-table-toolbar">
+      <div class="f-group f-data-table-toolbar">
         <slot v-if="service.searchable" name="search" v-bind="ctx">
           <Autocomplete
             v-bind="settings.search"
@@ -102,13 +96,13 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
         </slot>
         <Columns :table="service" :pt="pt?.columns" />
         <Fab v-bind="settings.refresh" />
-      </Group>
+      </div>
     </slot>
 
-    <BulkActions v-if="hasSelection" :table="service" :pt="pt?.bulkActions" />
+    <BulkActions v-if="hasSelection" :table="service" />
 
     <Scroller v-bind="settings.scroller">
-      <Table v-bind="settings.table">
+      <table class="f-table">
         <Head :table="service" :pt="pt?.head">
           <template #header="headerProps">
             <slot name="header" v-bind="headerProps" />
@@ -122,11 +116,11 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
             <slot :name="name" v-bind="slotProps" />
           </template>
         </Body>
-      </Table>
+      </table>
     </Scroller>
 
     <slot name="pagination" v-bind="ctx">
       <Pagination v-bind="settings.pagination" />
     </slot>
-  </Group>
+  </div>
 </template>

@@ -9,14 +9,14 @@ import type {
 import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
-import SelectRoot from "../common/select/root.vue";
-import SelectTrigger from "../common/select/trigger.vue";
-import SelectPortal from "../common/select/portal.vue";
-import SelectContent from "../common/select/content.vue";
-import SelectItem from "../common/select/item.vue";
-import SelectItemText from "../common/select/item-text.vue";
-import Icon from "../common/icon.vue";
-import Span from "../common/span.vue";
+import {
+  SelectRoot,
+  SelectTrigger,
+  SelectPortal,
+  SelectContent,
+  SelectItem,
+  SelectItemText,
+} from "reka-ui";
 import Checkbox from "./checkbox.vue";
 
 import { useTemplateRef } from "#imports";
@@ -75,10 +75,6 @@ const settings = usePassthrough<MultiSelectPassthrough<T>>(() => ({
     },
     trigger: {},
     content: { position: "popper", sideOffset: SELECT_SIDE_OFFSET },
-    triggerLabel: {},
-    triggerIcon: {
-      alias: $open.value ? "chevron-up" : "chevron-down",
-    },
     item: (option) => ({
       value: option.value,
       textValue: option.label,
@@ -108,28 +104,32 @@ defineSlots<MultiSelectSlots<T>>();
 </script>
 
 <template>
-  <SelectRoot ref="el" v-bind="settings.root">
+  <SelectRoot ref="el" class="f-select-root" v-bind="settings.root">
     <slot name="trigger" v-bind="ctx">
-      <SelectTrigger v-bind="settings.trigger">
+      <SelectTrigger class="f-select-trigger" v-bind="settings.trigger">
         <slot name="triggerLabel" v-bind="ctx">
-          <Span v-bind="settings.triggerLabel">
+          <span class="f-span">
             {{ display }}
-          </Span>
+          </span>
         </slot>
         <slot name="triggerIcon" v-bind="ctx">
-          <Icon v-bind="settings.triggerIcon" />
+          <Icon
+            class="f-icon"
+            fill="currentColor"
+            :name="$open ? 'chevron-up' : 'chevron-down'"
+          />
         </slot>
       </SelectTrigger>
     </slot>
     <SelectPortal>
       <slot name="content" v-bind="ctx">
-        <SelectContent v-bind="settings.content">
+        <SelectContent class="f-select-content" v-bind="settings.content">
           <template v-for="item in items" :key="item.value">
             <slot
               name="item"
               v-bind="{ ...ctx, item, selected: selected(item) }"
             >
-              <SelectItem v-bind="settings.item(item)">
+              <SelectItem class="f-select-item" v-bind="settings.item(item)">
                 <slot
                   name="itemCheckbox"
                   v-bind="{ ...ctx, item, selected: selected(item) }"
@@ -137,7 +137,10 @@ defineSlots<MultiSelectSlots<T>>();
                   <Checkbox v-bind="settings.itemCheckbox(item)" />
                 </slot>
                 <slot name="itemText" v-bind="{ ...ctx, item }">
-                  <SelectItemText v-bind="settings.itemText">
+                  <SelectItemText
+                    class="f-select-item-text"
+                    v-bind="settings.itemText"
+                  >
                     {{ item.label }}
                   </SelectItemText>
                 </slot>

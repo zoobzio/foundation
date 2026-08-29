@@ -1,19 +1,6 @@
-import type { AnchorEmits, AnchorProps } from "../common/anchor";
-import type { ButtonEmits, ButtonProps } from "../common/button";
-import type { CaptionProps } from "../common/caption";
-import type { GroupProps } from "../common/group";
-import type { IconAlias, IconProps } from "../common/icon";
-import type { LiProps } from "../common/li";
-import type { NavProps } from "../common/nav";
-import type { SpanProps } from "../common/span";
-import type { UlProps } from "../common/ul";
+import type { IconAlias } from "../icon";
 import type { Link } from "./common";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 /**
  * A directory entry: a labeled item that activates on click. `link` makes it
@@ -36,21 +23,8 @@ export type DirectoryGroup<T extends DirectoryItem = DirectoryItem> = {
   items: T[];
 };
 
-export type DirectoryPassthrough<T extends DirectoryItem = DirectoryItem> = {
-  root: Passthrough<NavProps>;
-  group: Passthrough<GroupProps>;
-  groupLabel: Passthrough<CaptionProps>;
-  list: Passthrough<UlProps>;
-  item: PassthroughIter<T, LiProps>;
-  itemAnchor: PassthroughIter<T, AnchorProps, AnchorEmits>;
-  itemButton: PassthroughIter<T, ButtonProps, ButtonEmits>;
-  itemIcon: PassthroughIter<T, IconProps>;
-  itemLabel: Passthrough<SpanProps>;
-};
-
 export type DirectoryProps<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
-  pt?: PT<DirectoryPassthrough<T>>;
 };
 
 export type DirectoryEmits<T extends DirectoryItem> =
@@ -60,8 +34,7 @@ export type DirectoryEmits<T extends DirectoryItem> =
 
 export type DirectoryContext<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
-  el: ComponentPublicInstance | null;
-  settings: DirectoryPassthrough<T>;
+  el: HTMLElement | null;
 };
 
 export type DirectorySlots<T extends DirectoryItem> = {

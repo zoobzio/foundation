@@ -9,18 +9,16 @@ import type {
 } from "../../types/core/command";
 import type { ComponentPublicInstance } from "vue";
 
-import ListboxRoot from "../common/listbox/root.vue";
-import ListboxFilter from "../common/listbox/filter.vue";
-import ListboxContent from "../common/listbox/content.vue";
-import ListboxGroup from "../common/listbox/group.vue";
-import ListboxGroupLabel from "../common/listbox/group-label.vue";
-import ListboxItem from "../common/listbox/item.vue";
+import {
+  ListboxRoot,
+  ListboxFilter,
+  ListboxContent,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxItem,
+} from "reka-ui";
 import Checkbox from "./checkbox.vue";
-import Group from "../common/group.vue";
-import Icon from "../common/icon.vue";
-import Kbd from "../common/kbd.vue";
 import Scroller from "./scroller.vue";
-import Span from "../common/span.vue";
 
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -93,7 +91,6 @@ const settings = usePassthrough<CommandPassthrough<T>>(() => ({
         $model.value = multiple ? next : next.slice(0, 1);
       },
     },
-    inputWrapper: {},
     filter: {
       modelValue: $search.value,
       autoFocus: true,
@@ -104,7 +101,6 @@ const settings = usePassthrough<CommandPassthrough<T>>(() => ({
     },
     content: {},
     viewport: {},
-    empty: {},
     group: {},
     groupLabel: {},
     item: (item) => ({
@@ -114,11 +110,6 @@ const settings = usePassthrough<CommandPassthrough<T>>(() => ({
     itemCheckbox: (item) => ({
       modelValue: selected(item),
     }),
-    itemIcon: (item) => ({
-      alias: item.icon!,
-    }),
-    itemLabel: {},
-    itemCount: {},
   },
 }));
 
@@ -139,30 +130,34 @@ defineSlots<CommandSlots<T>>();
 </script>
 
 <template>
-  <ListboxRoot ref="el" v-bind="settings.root">
+  <ListboxRoot ref="el" class="f-listbox-root" v-bind="settings.root">
     <slot name="inputWrapper" v-bind="ctx">
-      <Group v-bind="settings.inputWrapper">
+      <div class="f-group">
         <slot name="inputIcon" v-bind="ctx" />
         <slot name="filter" v-bind="ctx">
-          <ListboxFilter v-bind="settings.filter" />
+          <ListboxFilter class="f-listbox-filter" v-bind="settings.filter" />
         </slot>
-      </Group>
+      </div>
     </slot>
     <slot name="content" v-bind="ctx">
-      <ListboxContent v-bind="settings.content">
+      <ListboxContent class="f-listbox-content" v-bind="settings.content">
         <slot name="viewport" v-bind="ctx">
           <Scroller v-bind="settings.viewport">
-            <Group v-if="!hasResults" v-bind="settings.empty">
+            <div v-if="!hasResults" class="f-group">
               <slot name="empty" v-bind="ctx">No results found</slot>
-            </Group>
+            </div>
             <ListboxGroup
               v-for="group in results"
               :key="group.key"
+              class="f-listbox-group"
               v-bind="settings.group"
             >
               <template v-if="group.label && results.length > 1">
                 <slot name="groupLabel" v-bind="{ ...ctx, group }">
-                  <ListboxGroupLabel v-bind="settings.groupLabel">
+                  <ListboxGroupLabel
+                    class="f-listbox-group-label"
+                    v-bind="settings.groupLabel"
+                  >
                     {{ group.label }}
                   </ListboxGroupLabel>
                 </slot>
@@ -172,7 +167,10 @@ defineSlots<CommandSlots<T>>();
                   name="item"
                   v-bind="{ ...ctx, item, selected: selected(item) }"
                 >
-                  <ListboxItem v-bind="settings.item(item)">
+                  <ListboxItem
+                    class="f-listbox-item"
+                    v-bind="settings.item(item)"
+                  >
                     <slot
                       name="itemCheckbox"
                       v-bind="{ ...ctx, item, selected: selected(item) }"
@@ -183,18 +181,20 @@ defineSlots<CommandSlots<T>>();
                       />
                     </slot>
                     <slot name="itemIcon" v-bind="{ ...ctx, item }">
-                      <Icon v-if="item.icon" v-bind="settings.itemIcon(item)" />
+                      <Icon
+                        v-if="item.icon"
+                        class="f-icon"
+                        fill="currentColor"
+                        :name="item.icon!"
+                      />
                     </slot>
                     <slot name="itemLabel" v-bind="{ ...ctx, item }">
-                      <Span v-bind="settings.itemLabel">{{ item.label }}</Span>
+                      <span class="f-span">{{ item.label }}</span>
                     </slot>
                     <slot name="itemCount" v-bind="{ ...ctx, item }">
-                      <Kbd
-                        v-if="item.count !== undefined"
-                        v-bind="settings.itemCount"
-                      >
+                      <kbd v-if="item.count !== undefined" class="f-kbd">
                         {{ item.count }}
-                      </Kbd>
+                      </kbd>
                     </slot>
                   </ListboxItem>
                 </slot>

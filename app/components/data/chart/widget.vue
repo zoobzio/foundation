@@ -7,12 +7,10 @@ import type {
   ChartWidgetSlots,
 } from "../../../types/data/chart/widget";
 import type { Events } from "../../../types/data/chart";
-import type { ComponentPublicInstance } from "vue";
 
 import Canvas from "./canvas.vue";
 import Control from "./control.vue";
 import Fab from "../../core/fab.vue";
-import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
 import { useChartView } from "../../../composables/chart";
@@ -34,7 +32,7 @@ useHooks<Events>(service.id, {
   "chart:renderer-changed": (event) => emit("renderer-changed", event),
 });
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const { loading, variantData, titleControls, actionControls } =
   useChartView(service);
@@ -42,10 +40,6 @@ const { loading, variantData, titleControls, actionControls } =
 const settings = usePassthrough<ChartWidgetPassthrough<T>>(() => ({
   pt,
   recipes: {
-    root: {},
-    toolbar: {},
-    title: {},
-    actions: {},
     control: (anchor) => ({ chart: service, ...anchor }),
     refresh: { icon: CHART_REFRESH_ICON, onClick: () => service.fetch() },
   },
@@ -65,29 +59,29 @@ useLazyRequest(`init-chart-${service.id}`, () => service.init());
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-chart">
+  <div ref="el" class="f-group f-data-chart">
     <slot name="toolbar" v-bind="ctx">
-      <Group v-bind="settings.toolbar" class="f-data-chart-toolbar">
-        <Group v-bind="settings.title" class="f-data-chart-title">
+      <div class="f-group f-data-chart-toolbar">
+        <div class="f-group f-data-chart-title">
           <Control
             v-for="c in titleControls"
             :key="c.kind"
             v-bind="settings.control(c)"
           />
-        </Group>
-        <Group v-bind="settings.actions" class="f-data-chart-actions">
+        </div>
+        <div class="f-group f-data-chart-actions">
           <Control
             v-for="c in actionControls"
             :key="c.kind"
             v-bind="settings.control(c)"
           />
           <Fab v-bind="settings.refresh" />
-        </Group>
-      </Group>
+        </div>
+      </div>
     </slot>
 
     <slot v-if="loading" name="loading" v-bind="ctx" />
     <slot v-else-if="!variantData" name="empty" v-bind="ctx" />
-    <Canvas v-else :chart="service" :pt="pt?.canvas" />
-  </Group>
+    <Canvas v-else :chart="service" />
+  </div>
 </template>

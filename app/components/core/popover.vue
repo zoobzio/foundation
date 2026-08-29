@@ -8,13 +8,15 @@ import type {
 } from "../../types/core/popover";
 import type { ComponentPublicInstance } from "vue";
 
-import PopoverRoot from "../common/popover/root.vue";
-import PopoverAnchor from "../common/popover/anchor.vue";
-import PopoverTrigger from "../common/popover/trigger.vue";
-import PopoverPortal from "../common/popover/portal.vue";
-import PopoverContent from "../common/popover/content.vue";
-import PopoverArrow from "../common/popover/arrow.vue";
-import PopoverClose from "../common/popover/close.vue";
+import {
+  PopoverRoot,
+  PopoverAnchor,
+  PopoverTrigger,
+  PopoverPortal,
+  PopoverContent,
+  PopoverArrow,
+  PopoverClose,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -84,20 +86,28 @@ defineSlots<PopoverSlots>();
 </script>
 
 <template>
-  <PopoverRoot ref="el" v-bind="settings.root">
+  <PopoverRoot ref="el" class="f-popover-root" v-bind="settings.root">
     <slot name="anchor" v-bind="ctx">
-      <PopoverAnchor v-if="reference" v-bind="settings.anchor" />
-      <PopoverTrigger v-else v-bind="settings.trigger">
+      <PopoverAnchor
+        v-if="reference"
+        class="f-popover-anchor"
+        v-bind="settings.anchor"
+      />
+      <PopoverTrigger v-else class="f-popover-trigger" v-bind="settings.trigger">
         <slot name="trigger" v-bind="ctx" />
       </PopoverTrigger>
     </slot>
     <PopoverPortal>
-      <PopoverContent v-bind="settings.content">
+      <PopoverContent class="f-popover-content" v-bind="settings.content">
         <slot name="content" v-bind="ctx" />
         <slot name="arrow" v-bind="ctx">
-          <PopoverArrow v-if="arrow" v-bind="settings.arrow" />
+          <PopoverArrow v-if="arrow" class="f-popover-arrow" v-bind="settings.arrow" />
         </slot>
-        <PopoverClose v-if="$slots.close" v-bind="settings.close">
+        <PopoverClose
+          v-if="$slots.close"
+          class="f-popover-close"
+          v-bind="settings.close"
+        >
           <slot name="close" v-bind="ctx" />
         </PopoverClose>
       </PopoverContent>

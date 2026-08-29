@@ -1,16 +1,3 @@
-import type { IconProps } from "../common/icon";
-import type { SpanProps } from "../common/span";
-import type {
-  SelectRootProps,
-  SelectRootEmits,
-} from "../common/select/root";
-import type { SelectTriggerProps } from "../common/select/trigger";
-import type {
-  SelectContentProps,
-  SelectContentEmits,
-} from "../common/select/content";
-import type { SelectItemProps } from "../common/select/item";
-import type { SelectItemTextProps } from "../common/select/item-text";
 import type {
   CheckboxEmits,
   CheckboxProps,
@@ -22,12 +9,19 @@ import type {
   PT,
 } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type {
+  SelectRootProps,
+  SelectRootEmits,
+  SelectTriggerProps,
+  SelectContentProps,
+  SelectContentEmits,
+  SelectItemProps,
+  SelectItemTextProps,
+} from "reka-ui";
 
 export type MultiSelectPassthrough<T extends Option = Option> = {
   root: Passthrough<SelectRootProps, SelectRootEmits>;
   trigger: Passthrough<SelectTriggerProps>;
-  triggerLabel: Passthrough<SpanProps>;
-  triggerIcon: Passthrough<IconProps>;
   content: Passthrough<SelectContentProps, SelectContentEmits>;
   item: PassthroughIter<T, SelectItemProps>;
   itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;

@@ -8,11 +8,7 @@ import type {
 } from "../../types/core/toast";
 import type { ComponentPublicInstance } from "vue";
 
-import ToastRoot from "../common/toast/root.vue";
-import ToastTitle from "../common/toast/title.vue";
-import ToastDescription from "../common/toast/description.vue";
-import ToastClose from "../common/toast/close.vue";
-import Icon from "../common/icon.vue";
+import { ToastRoot, ToastTitle, ToastDescription, ToastClose } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -24,6 +20,7 @@ import { useContext } from "../../composables/context";
 const {
   title,
   description,
+  variant,
   open = undefined,
   duration,
   pt,
@@ -53,13 +50,13 @@ const settings = usePassthrough<ToastPassthrough>(() => ({
     title: {},
     description: {},
     close: {},
-    closeIcon: { alias: "close" },
   },
 }));
 
 const ctx = useContext<ToastContext>("toast", () => ({
   title,
   description,
+  variant,
   duration,
   open: $open,
   el: el.value,
@@ -71,21 +68,30 @@ defineSlots<ToastSlots>();
 </script>
 
 <template>
-  <ToastRoot ref="el" v-bind="settings.root">
+  <ToastRoot
+    ref="el"
+    class="f-toast-root"
+    :data-variant="variant"
+    v-bind="settings.root"
+  >
     <slot name="title" v-bind="ctx">
-      <ToastTitle v-if="title" v-bind="settings.title">
+      <ToastTitle v-if="title" class="f-toast-title" v-bind="settings.title">
         {{ title }}
       </ToastTitle>
     </slot>
     <slot name="description" v-bind="ctx">
-      <ToastDescription v-if="description" v-bind="settings.description">
+      <ToastDescription
+        v-if="description"
+        class="f-toast-description"
+        v-bind="settings.description"
+      >
         {{ description }}
       </ToastDescription>
     </slot>
     <slot name="close" v-bind="ctx">
-      <ToastClose v-bind="settings.close">
+      <ToastClose class="f-toast-close" v-bind="settings.close">
         <slot name="closeIcon" v-bind="ctx">
-          <Icon v-bind="settings.closeIcon" />
+          <Icon class="f-icon" fill="currentColor" name="close" />
         </slot>
       </ToastClose>
     </slot>

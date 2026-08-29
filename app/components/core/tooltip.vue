@@ -8,10 +8,7 @@ import type {
 } from "../../types/core/tooltip";
 import type { ComponentPublicInstance } from "vue";
 
-import TooltipRoot from "../common/tooltip/root.vue";
-import TooltipTrigger from "../common/tooltip/trigger.vue";
-import TooltipPortal from "../common/tooltip/portal.vue";
-import TooltipContent from "../common/tooltip/content.vue";
+import { TooltipRoot, TooltipTrigger, TooltipPortal, TooltipContent } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -72,15 +69,15 @@ defineSlots<TooltipSlots>();
 </script>
 
 <template>
-  <TooltipRoot ref="el" v-bind="settings.root">
+  <TooltipRoot ref="el" class="f-tooltip-root" v-bind="settings.root">
     <slot name="trigger" v-bind="ctx">
-      <TooltipTrigger v-bind="settings.trigger">
+      <TooltipTrigger class="f-tooltip-trigger" v-bind="settings.trigger">
         <slot v-bind="ctx" />
       </TooltipTrigger>
     </slot>
     <TooltipPortal>
       <slot name="content" v-bind="ctx">
-        <TooltipContent v-bind="settings.content">
+        <TooltipContent class="f-tooltip-content" v-bind="settings.content">
           {{ content }}
         </TooltipContent>
       </slot>

@@ -5,16 +5,8 @@ import type {
   TableHeadProps,
   TableHeadSlots,
 } from "../../../types/data/table/head";
-import type { ComponentPublicInstance } from "vue";
 
-import Button from "../../common/button.vue";
 import Checkbox from "../../core/checkbox.vue";
-import Group from "../../common/group.vue";
-import Icon from "../../common/icon.vue";
-import Span from "../../common/span.vue";
-import Th from "../../common/th.vue";
-import Thead from "../../common/thead.vue";
-import Tr from "../../common/tr.vue";
 
 import { useTemplateRef } from "#imports";
 import { useTableView } from "../../../composables/table";
@@ -26,7 +18,7 @@ import { TABLE_DRAG_ICON } from "../../../constants/table";
 <script setup lang="ts" generic="T">
 const { table, pt } = defineProps<TableHeadProps<T>>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLTableSectionElement>("el");
 
 const {
   visibleColumns,
@@ -49,14 +41,6 @@ const {
 const settings = usePassthrough<TableHeadPassthrough>(() => ({
   pt,
   recipes: {
-    thead: {},
-    theadTr: {},
-    th: {},
-    headerWrap: {},
-    headerLabel: {},
-    sortButton: {},
-    sortIcon: {},
-    dragIcon: { alias: TABLE_DRAG_ICON },
     selectAllCheckbox: {
       modelValue: selectAllState.value,
       "onUpdate:modelValue": () => table.toggleAll(),
@@ -75,15 +59,15 @@ defineSlots<TableHeadSlots<T>>();
 </script>
 
 <template>
-  <Thead ref="el" v-bind="settings.thead">
-    <Tr v-bind="settings.theadTr">
-      <Th v-if="isSelectable" v-bind="settings.th" class="f-data-table-select">
+  <thead ref="el" class="f-thead">
+    <tr class="f-tr">
+      <th v-if="isSelectable" class="f-th f-data-table-select">
         <Checkbox v-bind="settings.selectAllCheckbox" />
-      </Th>
-      <Th
+      </th>
+      <th
         v-for="col in visibleColumns"
         :key="String(col.key)"
-        v-bind="settings.th"
+        class="f-th"
         :draggable="draggableKey === String(col.key)"
         :class="{
           'f-data-table-sortable': col.sortable,
@@ -101,38 +85,35 @@ defineSlots<TableHeadSlots<T>>();
         @dragend="onHeaderDragEnd"
       >
         <slot name="header" v-bind="{ ...ctx, column: col }">
-          <Group v-bind="settings.headerWrap" class="f-data-table-header-wrap">
-            <Button
+          <div class="f-group f-data-table-header-wrap">
+            <button
               v-if="col.sortable"
-              v-bind="settings.sortButton"
-              class="f-data-table-header-btn"
+              type="button"
+              class="f-button f-data-table-header-btn"
               @click="table.sortBy(table.sortFieldFor(col))"
             >
               {{ col.label }}
               <Icon
                 v-if="table.isSorted(col)"
-                v-bind="settings.sortIcon"
-                :alias="table.getSortIcon()"
-                class="f-data-table-sort-icon"
+                class="f-icon f-data-table-sort-icon"
+                fill="currentColor"
+                :name="table.getSortIcon()"
               />
-            </Button>
-            <Span
-              v-else
-              v-bind="settings.headerLabel"
-              class="f-data-table-header"
-            >
+            </button>
+            <span v-else class="f-span f-data-table-header">
               {{ col.label }}
-            </Span>
+            </span>
             <Icon
-              v-bind="settings.dragIcon"
-              class="f-data-table-drag-handle"
+              class="f-icon f-data-table-drag-handle"
+              fill="currentColor"
+              :name="TABLE_DRAG_ICON"
               @mouseenter="onDragHandleEnter(String(col.key))"
               @mouseleave="onDragHandleLeave"
             />
-          </Group>
+          </div>
         </slot>
-      </Th>
-      <Th v-if="hasActions" v-bind="settings.th" class="f-data-table-actions" />
-    </Tr>
-  </Thead>
+      </th>
+      <th v-if="hasActions" class="f-th f-data-table-actions" />
+    </tr>
+  </thead>
 </template>

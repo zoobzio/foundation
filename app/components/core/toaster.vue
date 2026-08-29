@@ -7,8 +7,7 @@ import type {
 } from "../../types/core/toaster";
 import type { ComponentPublicInstance } from "vue";
 
-import ToastProvider from "../common/toast/provider.vue";
-import ToastViewport from "../common/toast/viewport.vue";
+import { ToastProvider, ToastViewport } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -41,7 +40,7 @@ defineSlots<ToasterSlots>();
   <ToastProvider ref="el" v-bind="settings.provider">
     <slot name="toasts" v-bind="ctx" />
     <slot name="viewport" v-bind="ctx">
-      <ToastViewport v-bind="settings.viewport" />
+      <ToastViewport class="f-toast-viewport" v-bind="settings.viewport" />
     </slot>
   </ToastProvider>
 </template>

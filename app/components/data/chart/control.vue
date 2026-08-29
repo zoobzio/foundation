@@ -6,9 +6,7 @@ import type {
 } from "../../../types/data/chart/control";
 import type { ComponentPublicInstance } from "vue";
 
-import Button from "../../common/button.vue";
 import Fab from "../../core/fab.vue";
-import Icon from "../../common/icon.vue";
 import Menu from "../../core/menu.vue";
 
 import { computed, useTemplateRef } from "#imports";
@@ -35,8 +33,6 @@ const { recipes } = useControl(() => ({
 const settings = usePassthrough<ChartControlPassthrough>(() => ({
   pt,
   recipes: {
-    trigger: {},
-    chevron: { alias: CHART_CONTROL_CHEVRON },
     fab: {},
     ...recipes.value,
   },
@@ -63,14 +59,18 @@ const fabTrigger = computed(() => (trigger.type === "fab" ? trigger : null));
 <template>
   <Menu ref="el" v-bind="settings.menu" class="f-data-chart-control">
     <template #trigger>
-      <Button
+      <button
         v-if="titleTrigger"
-        v-bind="settings.trigger"
-        class="f-data-chart-control-title"
+        type="button"
+        class="f-button f-data-chart-control-title"
       >
         {{ titleTrigger.label }}
-        <Icon v-bind="settings.chevron" class="f-data-chart-control-chevron" />
-      </Button>
+        <Icon
+          class="f-icon f-data-chart-control-chevron"
+          fill="currentColor"
+          :name="CHART_CONTROL_CHEVRON"
+        />
+      </button>
       <Fab
         v-else-if="fabTrigger"
         v-bind="settings.fab"

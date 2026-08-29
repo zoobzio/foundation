@@ -7,11 +7,8 @@ import type {
   PreviewWidgetSlots,
 } from "../../../types/data/preview/widget";
 import type { Events } from "../../../types/data/preview";
-import type { ComponentPublicInstance } from "vue";
 
 import Fab from "../../core/fab.vue";
-import Group from "../../common/group.vue";
-import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
 import { usePreviewView } from "../../../composables/preview";
@@ -35,7 +32,7 @@ useHooks<Events>(service.id, {
   "preview:loaded": (event) => emit("loaded", event),
 });
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const { loading, data, filename, hasExternal, copy, download, openExternal } =
   usePreviewView(service);
@@ -43,11 +40,6 @@ const { loading, data, filename, hasExternal, copy, download, openExternal } =
 const settings = usePassthrough<PreviewWidgetPassthrough>(() => ({
   pt,
   recipes: {
-    root: {},
-    toolbar: {},
-    title: {},
-    actions: {},
-    body: {},
     external: { icon: PREVIEW_EXTERNAL_ICON, onClick: openExternal },
     copy: { icon: PREVIEW_COPY_ICON, onClick: copy },
     download: { icon: PREVIEW_DOWNLOAD_ICON, onClick: download },
@@ -67,32 +59,32 @@ useLazyRequest(`init-preview-${service.id}`, () => service.init());
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-preview">
+  <div ref="el" class="f-group f-data-preview">
     <slot v-if="loading" name="loading" v-bind="ctx" />
 
     <slot v-else-if="!data" name="empty" v-bind="ctx" />
 
     <template v-else>
       <slot name="toolbar" v-bind="ctx">
-        <Group v-bind="settings.toolbar" class="f-data-preview-toolbar">
+        <div class="f-group f-data-preview-toolbar">
           <slot name="title" v-bind="ctx">
-            <Span v-bind="settings.title" class="f-data-preview-title">
+            <span class="f-span f-data-preview-title">
               {{ filename }}
-            </Span>
+            </span>
           </slot>
           <slot name="actions" v-bind="ctx">
-            <Group v-bind="settings.actions" class="f-data-preview-actions">
+            <div class="f-group f-data-preview-actions">
               <Fab v-if="hasExternal" v-bind="settings.external" />
               <Fab v-bind="settings.copy" />
               <Fab v-bind="settings.download" />
-            </Group>
+            </div>
           </slot>
-        </Group>
+        </div>
       </slot>
 
-      <Group v-bind="settings.body" class="f-data-preview-body">
+      <div class="f-group f-data-preview-body">
         <slot name="body" v-bind="ctx" />
-      </Group>
+      </div>
     </template>
-  </Group>
+  </div>
 </template>

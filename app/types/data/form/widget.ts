@@ -1,29 +1,17 @@
-import type { ButtonProps, ButtonEmits } from "../../common/button";
-import type { FormProps, FormEmits } from "../../common/form";
-import type { GroupProps } from "../../common/group";
-import type { SpanProps } from "../../common/span";
-import type { Passthrough, PT } from "../../passthrough";
 import type {
   ScrollerEmits,
   ScrollerProps,
 } from "../../core/scroller";
+import type { Passthrough, PT } from "../../passthrough";
 import type { Service, Events } from "../form";
 import type {
   FormFieldPassthrough,
   FormFieldSlots,
 } from "./field";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type FormWidgetPassthrough = {
-  root: Passthrough<GroupProps>;
-  toolbar: Passthrough<GroupProps>;
-  title: Passthrough<SpanProps>;
   scroller: Passthrough<ScrollerProps, ScrollerEmits>;
-  inner: Passthrough<FormProps, FormEmits>;
-  grid: Passthrough<GroupProps>;
-  footer: Passthrough<GroupProps>;
-  submit: Passthrough<ButtonProps, ButtonEmits>;
-  reset: Passthrough<ButtonProps, ButtonEmits>;
 };
 
 export type FormWidgetProps<T> = {
@@ -43,7 +31,7 @@ export type FormWidgetEmits<T> = {
 
 export type FormWidgetContext<T> = {
   form: Service<T>;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: FormWidgetPassthrough;
 };
 

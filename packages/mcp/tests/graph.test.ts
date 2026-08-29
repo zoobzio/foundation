@@ -86,13 +86,13 @@ describe("discoverRoots", () => {
 describe("buildGraph across layer and consumer", () => {
   const graph = fixtureGraph();
   const page = join(fixtureDir, "app/pages/index.vue");
-  const layerButton = join(layerDir, "app/components/common/button.vue");
+  const layerFab = join(layerDir, "app/components/core/fab.vue");
 
   it("resolves package subpath imports from the consumer into the layer", () => {
     const node = graph.nodes.get(page);
     expect(node).toBeDefined();
     expect(node!.root).toBe("fixture-app");
-    const edge = node!.outgoing.find((e) => e.to === layerButton);
+    const edge = node!.outgoing.find((e) => e.to === layerFab);
     expect(edge).toBeDefined();
     expect(edge!.refs).toEqual([
       { line: 3, kind: "render" },
@@ -112,7 +112,7 @@ describe("buildGraph across layer and consumer", () => {
       join(fixtureDir, "app/composables/greeting.ts"),
     )!;
     const edge = greeting.outgoing.find((e) =>
-      e.to.endsWith("app/types/common/button.ts"),
+      e.to.endsWith("app/types/core/fab.ts"),
     );
     expect(edge).toBeDefined();
     expect(edge!.refs[0]!.kind).toBe("type");
@@ -126,12 +126,12 @@ describe("buildGraph across layer and consumer", () => {
   });
 
   it("annotates layer nodes with catalog identity", () => {
-    const button = graph.nodes.get(layerButton)!;
-    expect(button.root).toBe("foundation");
-    expect(button.catalog?.entry.name).toBe("button");
-    expect(button.catalog?.entry.tier).toBe("common");
-    expect(button.importPath).toBe(
-      "@zoobzio/foundation/components/common/button.vue",
+    const fab = graph.nodes.get(layerFab)!;
+    expect(fab.root).toBe("foundation");
+    expect(fab.catalog?.entry.name).toBe("fab");
+    expect(fab.catalog?.entry.tier).toBe("core");
+    expect(fab.importPath).toBe(
+      "@zoobzio/foundation/components/core/fab.vue",
     );
   });
 
@@ -148,10 +148,9 @@ describe("buildGraph across layer and consumer", () => {
 describe("findTargets", () => {
   const graph = fixtureGraph();
 
-  it("matches catalog components, including name collisions across tiers", () => {
+  it("matches catalog components by bare name", () => {
     const targets = findTargets(graph, catalog, "select");
     const labels = targets.map((t) => t.label);
-    expect(labels).toContain("common/select");
     expect(labels).toContain("core/select");
   });
 
@@ -201,11 +200,11 @@ describe("findTargets", () => {
 });
 
 describe("cross-provenance usages", () => {
-  it("reports the consumer page as a call site of the layer button", () => {
+  it("reports the consumer page as a call site of the layer fab", () => {
     const graph = fixtureGraph();
-    const [target] = findTargets(graph, catalog, "common/button");
-    const buttonFile = join(layerDir, "app/components/common/button.vue");
-    const incoming = graph.incoming.get(buttonFile) ?? [];
+    const [target] = findTargets(graph, catalog, "core/fab");
+    const fabFile = join(layerDir, "app/components/core/fab.vue");
+    const incoming = graph.incoming.get(fabFile) ?? [];
     const froms = incoming.map((e) => graph.nodes.get(e.from)!.root);
     expect(target).toBeDefined();
     expect(froms).toContain("fixture-app");

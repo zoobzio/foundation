@@ -5,14 +5,9 @@ import type {
   DeckToolbarProps,
   DeckToolbarSlots,
 } from "../../../types/data/deck/toolbar";
-import type { ComponentPublicInstance } from "vue";
 
-import Button from "../../common/button.vue";
 import Facets from "../../core/facets.vue";
 import Fab from "../../core/fab.vue";
-import Group from "../../common/group.vue";
-import Icon from "../../common/icon.vue";
-import Input from "../../common/input.vue";
 import Menu from "../../core/menu.vue";
 import Popover from "../../core/popover.vue";
 
@@ -30,7 +25,7 @@ import {
 <script setup lang="ts" generic="T">
 const { deck, pt } = defineProps<DeckToolbarProps<T>>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const {
   title,
@@ -56,16 +51,11 @@ const onSearchKeydown = (event: KeyboardEvent) => {
 const settings = usePassthrough<DeckToolbarPassthrough>(() => ({
   pt,
   recipes: {
-    root: {},
-    title: {},
-    actions: {},
     sortMenu: {
       groups: sortGroups.value,
       align: "start",
       onSelect: onSort,
     },
-    sortTrigger: {},
-    sortChevron: { alias: DECK_SORT_CHEVRON },
     searchPopover: {
       open: searchOpen.value,
       align: "end",
@@ -76,12 +66,6 @@ const settings = usePassthrough<DeckToolbarPassthrough>(() => ({
     searchTrigger: {
       icon: DECK_SEARCH_ICON,
       badge: hasQuery.value ? "" : undefined,
-    },
-    search: {
-      value: searchInput.value,
-      placeholder: "Search...",
-      onInput: onSearchInput,
-      onKeydown: onSearchKeydown,
     },
     facets: {
       groups: facetOptions.value,
@@ -108,37 +92,47 @@ defineSlots<DeckToolbarSlots<T>>();
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-deck-toolbar">
+  <div ref="el" class="f-group f-data-deck-toolbar">
     <slot name="title" v-bind="ctx">
-      <Group v-bind="settings.title" class="f-data-deck-title">
+      <div class="f-group f-data-deck-title">
         <Menu v-bind="settings.sortMenu">
           <template #trigger>
-            <Button v-bind="settings.sortTrigger" class="f-data-deck-title-btn">
+            <button type="button" class="f-button f-data-deck-title-btn">
               {{ title }}
-              <Icon v-bind="settings.sortChevron" />
-            </Button>
+              <Icon
+                class="f-icon"
+                fill="currentColor"
+                :name="DECK_SORT_CHEVRON"
+              />
+            </button>
           </template>
         </Menu>
-      </Group>
+      </div>
     </slot>
 
     <slot name="actions" v-bind="ctx">
-      <Group v-bind="settings.actions" class="f-data-deck-actions">
+      <div class="f-group f-data-deck-actions">
         <Popover v-bind="settings.searchPopover">
           <template #trigger>
             <Fab v-bind="settings.searchTrigger" />
           </template>
           <template #content>
-            <Group class="f-data-deck-search">
-              <Input v-bind="settings.search" class="f-command-input" />
-            </Group>
+            <div class="f-group f-data-deck-search">
+              <input
+                class="f-input f-command-input"
+                :value="searchInput"
+                placeholder="Search..."
+                @input="onSearchInput"
+                @keydown="onSearchKeydown"
+              >
+            </div>
           </template>
         </Popover>
 
         <Facets v-bind="settings.facets" />
 
         <Fab v-bind="settings.refresh" />
-      </Group>
+      </div>
     </slot>
-  </Group>
+  </div>
 </template>

@@ -78,9 +78,9 @@ describe("healthReport", () => {
   it("measures catalog adoption from the consumer root", () => {
     expect(report).toContain("## Catalog adoption");
     expect(report).toMatch(/\d+ of \d+ components imported directly by fixture-app\./);
-    // index.vue imports both button.vue and its types file (one adopter) and
+    // index.vue imports both fab.vue and its types file (one adopter) and
     // greeting.ts type-imports the props (a second) — files, not edges.
-    expect(report).toContain("Most used: common/button (2 files)");
+    expect(report).toContain("Most used: core/fab (2 files)");
     expect(report).toMatch(/Never imported: .*core\/select/);
   });
 

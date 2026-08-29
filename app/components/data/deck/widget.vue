@@ -7,12 +7,10 @@ import type {
   DeckWidgetSlots,
 } from "../../../types/data/deck/widget";
 import type { Events } from "../../../types/data/deck";
-import type { ComponentPublicInstance } from "vue";
 
 import Feed from "./feed.vue";
 import Toolbar from "./toolbar.vue";
 import Fab from "../../core/fab.vue";
-import Group from "../../common/group.vue";
 
 import { useTemplateRef } from "#imports";
 import { useDeckView } from "../../../composables/deck";
@@ -34,15 +32,13 @@ useHooks<Events>(service.id, {
   "deck:polled": (event) => emit("polled", event),
 });
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const { pendingCount, hasPending, showPending } = useDeckView(service, el);
 
 const settings = usePassthrough<DeckWidgetPassthrough>(() => ({
   pt,
   recipes: {
-    root: {},
-    body: {},
     pending: {
       icon: DECK_PENDING_ICON,
       label: `${pendingCount.value} new`,
@@ -66,12 +62,12 @@ useLazyRequest(`init-deck-${service.id}`, () => service.init());
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-deck">
+  <div ref="el" class="f-group f-data-deck">
     <slot name="toolbar" v-bind="ctx">
       <Toolbar :deck="service" :pt="pt?.toolbar" />
     </slot>
 
-    <Group v-bind="settings.body" class="f-data-deck-body">
+    <div class="f-group f-data-deck-body">
       <slot name="pending" v-bind="ctx">
         <Fab
           v-if="hasPending"
@@ -88,6 +84,6 @@ useLazyRequest(`init-deck-${service.id}`, () => service.init());
           <slot :name="name" v-bind="slotProps" />
         </template>
       </Feed>
-    </Group>
-  </Group>
+    </div>
+  </div>
 </template>

@@ -8,18 +8,16 @@ import type {
 } from "../../types/core/menu";
 import type { ComponentPublicInstance } from "vue";
 
-import DropdownMenuRoot from "../common/dropdown-menu/root.vue";
-import DropdownMenuTrigger from "../common/dropdown-menu/trigger.vue";
-import DropdownMenuPortal from "../common/dropdown-menu/portal.vue";
-import DropdownMenuContent from "../common/dropdown-menu/content.vue";
-import DropdownMenuGroup from "../common/dropdown-menu/group.vue";
-import DropdownMenuLabel from "../common/dropdown-menu/label.vue";
-import DropdownMenuItem from "../common/dropdown-menu/item.vue";
-import DropdownMenuSeparator from "../common/dropdown-menu/separator.vue";
-import Button from "../common/button.vue";
-import Caption from "../common/caption.vue";
-import Icon from "../common/icon.vue";
-import Span from "../common/span.vue";
+import {
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+  DropdownMenuPortal,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -60,21 +58,15 @@ const settings = usePassthrough<MenuPassthrough>(() => ({
       },
     },
     trigger: { asChild: true },
-    triggerButton: { label },
     content: { side, align, sideOffset, alignOffset },
     group: {},
     label: { asChild: true },
-    groupLabel: {},
     item: (item) => ({
       disabled: item.disabled,
       onSelect: () => {
         emit("select", item);
       },
     }),
-    itemIcon: (item) => ({
-      alias: item.icon!,
-    }),
-    itemLabel: {},
     separator: {},
   },
 }));
@@ -96,36 +88,49 @@ defineSlots<MenuSlots>();
 </script>
 
 <template>
-  <DropdownMenuRoot ref="el" v-bind="settings.root">
+  <DropdownMenuRoot ref="el" class="f-dropdown-menu-root" v-bind="settings.root">
     <slot name="trigger" v-bind="ctx">
-      <DropdownMenuTrigger v-bind="settings.trigger">
+      <DropdownMenuTrigger class="f-dropdown-menu-trigger" v-bind="settings.trigger">
         <slot v-bind="ctx">
-          <Button v-bind="settings.triggerButton" />
+          <button type="button" class="f-button">{{ label }}</button>
         </slot>
       </DropdownMenuTrigger>
     </slot>
     <DropdownMenuPortal>
-      <DropdownMenuContent v-bind="settings.content">
+      <DropdownMenuContent class="f-dropdown-menu-content" v-bind="settings.content">
         <slot name="content" v-bind="ctx">
           <template v-for="(group, groupIndex) in groups" :key="group.key">
             <DropdownMenuSeparator
               v-if="groupIndex > 0"
+              class="f-dropdown-menu-separator"
               v-bind="settings.separator"
             />
-            <DropdownMenuGroup v-bind="settings.group">
-              <DropdownMenuLabel v-if="group.label" v-bind="settings.label">
+            <DropdownMenuGroup class="f-dropdown-menu-group" v-bind="settings.group">
+              <DropdownMenuLabel
+                v-if="group.label"
+                class="f-dropdown-menu-label"
+                v-bind="settings.label"
+              >
                 <slot name="groupLabel" v-bind="{ ...ctx, group }">
-                  <Caption v-bind="settings.groupLabel">{{ group.label }}</Caption>
+                  <div class="f-caption">{{ group.label }}</div>
                 </slot>
               </DropdownMenuLabel>
               <template v-for="item in group.items" :key="item.label">
                 <slot name="item" v-bind="{ ...ctx, item }">
-                  <DropdownMenuItem v-bind="settings.item(item)">
+                  <DropdownMenuItem
+                    class="f-dropdown-menu-item"
+                    v-bind="settings.item(item)"
+                  >
                     <slot name="itemIcon" v-bind="{ ...ctx, item }">
-                      <Icon v-if="item.icon" v-bind="settings.itemIcon(item)" />
+                      <Icon
+                        v-if="item.icon"
+                        class="f-icon"
+                        fill="currentColor"
+                        :name="item.icon"
+                      />
                     </slot>
                     <slot name="itemLabel" v-bind="{ ...ctx, item }">
-                      <Span v-bind="settings.itemLabel">{{ item.label }}</Span>
+                      <span class="f-span">{{ item.label }}</span>
                     </slot>
                   </DropdownMenuItem>
                 </slot>

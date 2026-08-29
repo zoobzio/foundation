@@ -67,15 +67,11 @@ Replicate the matching file for the tier you're testing:
 | stores | `tests/app/stores/table.test.ts` |
 | services | `tests/app/services/table.test.ts` |
 | factories | `tests/app/factories/table.test.ts` |
-| components/common (elements) | `tests/app/components/common/button.test.ts` |
-| components/common (reka wrappers) | `tests/app/components/common/select/root.test.ts` |
 | components/core | `tests/app/components/core/select.test.ts` |
 | components/data | `tests/app/components/data/table/widget.test.ts` |
 
 ## Conventions
 
-- Element wrappers: one thin `runElementSuite` call + a describe block for
-  element-specific behavior only.
 - No snapshots. Assert explicit DOM structure, attributes, text, and emitted
   payloads (`toEqual([[payload]])`, not just presence).
 - No type casts or non-null assertions — restructure instead (guard +
@@ -84,5 +80,5 @@ Replicate the matching file for the tier you're testing:
   assign to a concretely-typed `FunctionalComponent<Props, Emits>` first
   (see the data widget gold standard) — never `as DefineComponent`.
 - Don't re-test another file's depth: if you're re-deriving service logic in
-  a widget test or wrapper behavior in a core test, you're at the wrong
-  depth for that assertion.
+  a widget test or reka behavior in a core test, you're at the wrong depth
+  for that assertion.

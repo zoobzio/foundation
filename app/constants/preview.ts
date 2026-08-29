@@ -1,6 +1,6 @@
 // data/preview constants
 
-import type { IconAlias } from "../types/common/icon";
+import type { IconAlias } from "../types/icon";
 
 export const PREVIEW_EXTERNAL_ICON: IconAlias = "external";
 export const PREVIEW_COPY_ICON: IconAlias = "copy";

@@ -1,9 +1,10 @@
-import type { ScrollAreaRootProps } from "../common/scroll-area/root";
-import type { ScrollAreaViewportProps } from "../common/scroll-area/viewport";
-import type { ScrollAreaScrollbarProps } from "../common/scroll-area/scrollbar";
-import type { ScrollAreaThumbProps } from "../common/scroll-area/thumb";
-import type { ScrollAreaCornerProps } from "../common/scroll-area/corner";
-import type { ButtonEmits, ButtonProps } from "../common/button";
+import type {
+  ScrollAreaRootProps,
+  ScrollAreaViewportProps,
+  ScrollAreaScrollbarProps,
+  ScrollAreaThumbProps,
+  ScrollAreaCornerProps,
+} from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 
@@ -17,7 +18,6 @@ export type ScrollerPassthrough = {
   scrollbar: Passthrough<ScrollAreaScrollbarProps>;
   thumb: Passthrough<ScrollAreaThumbProps>;
   corner: Passthrough<ScrollAreaCornerProps>;
-  backToTop: Passthrough<ButtonProps, ButtonEmits>;
 };
 
 export type ScrollerProps = {

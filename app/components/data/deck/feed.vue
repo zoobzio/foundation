@@ -7,7 +7,6 @@ import type {
 } from "../../../types/data/deck/feed";
 import type { ComponentPublicInstance } from "vue";
 
-import Group from "../../common/group.vue";
 import Scroller from "../../core/scroller.vue";
 
 import { useTemplateRef } from "#imports";
@@ -27,8 +26,6 @@ const settings = usePassthrough<DeckFeedPassthrough>(() => ({
   pt,
   recipes: {
     root: {},
-    card: {},
-    sentinel: {},
   },
 }));
 
@@ -45,24 +42,23 @@ defineSlots<DeckFeedSlots<T>>();
 <template>
   <Scroller ref="el" v-bind="settings.root" class="f-data-deck-feed">
     <slot v-if="!items.length" name="empty" v-bind="ctx">
-      <Group class="f-data-deck-empty">No items</Group>
+      <div class="f-group f-data-deck-empty">No items</div>
     </slot>
 
     <template v-else>
-      <Group
+      <div
         v-for="(item, index) in items"
         :key="String(item[deck.rowKey])"
-        v-bind="settings.card"
-        class="f-data-deck-card"
+        class="f-group f-data-deck-card"
       >
         <slot name="card" v-bind="{ item, index, deck }" />
-      </Group>
+      </div>
 
       <!-- Infinite-scroll sentinel — surfaces loadingMore; loadMore is driven
            imperatively (deck.loadMore) until an observer is wired. -->
-      <Group v-bind="settings.sentinel" class="f-data-deck-sentinel">
+      <div class="f-group f-data-deck-sentinel">
         <slot v-if="loadingMore" name="loadingMore" v-bind="ctx" />
-      </Group>
+      </div>
     </template>
   </Scroller>
 </template>

@@ -1,19 +1,12 @@
-import type { GroupProps } from "../../common/group";
-import type { SpanProps } from "../../common/span";
 import type { FabProps, FabEmits } from "../../core/fab";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service, Events } from "../preview";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type PreviewWidgetPassthrough = {
-  root: Passthrough<GroupProps>;
-  toolbar: Passthrough<GroupProps>;
-  title: Passthrough<SpanProps>;
-  actions: Passthrough<GroupProps>;
   external: Passthrough<FabProps, FabEmits>;
   copy: Passthrough<FabProps, FabEmits>;
   download: Passthrough<FabProps, FabEmits>;
-  body: Passthrough<GroupProps>;
 };
 
 export type PreviewWidgetProps<T> = {
@@ -27,7 +20,7 @@ export type PreviewWidgetEmits = {
 
 export type PreviewWidgetContext<T> = {
   preview: Service<T>;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: PreviewWidgetPassthrough;
 };
 

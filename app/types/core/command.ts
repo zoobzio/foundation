@@ -1,22 +1,3 @@
-import type { GroupProps } from "../common/group";
-import type { IconProps } from "../common/icon";
-import type { KbdProps } from "../common/kbd";
-import type { SpanProps } from "../common/span";
-import type {
-  ListboxRootProps,
-  ListboxRootEmits,
-} from "../common/listbox/root";
-import type {
-  ListboxFilterProps,
-  ListboxFilterEmits,
-} from "../common/listbox/filter";
-import type { ListboxContentProps } from "../common/listbox/content";
-import type { ListboxGroupProps } from "../common/listbox/group";
-import type { ListboxGroupLabelProps } from "../common/listbox/group-label";
-import type {
-  ListboxItemProps,
-  ListboxItemEmits,
-} from "../common/listbox/item";
 import type {
   CheckboxEmits,
   CheckboxProps,
@@ -29,6 +10,17 @@ import type {
 } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type { Option } from "./common";
+import type {
+  ListboxRootProps,
+  ListboxRootEmits,
+  ListboxFilterProps,
+  ListboxFilterEmits,
+  ListboxContentProps,
+  ListboxGroupProps,
+  ListboxGroupLabelProps,
+  ListboxItemProps,
+  ListboxItemEmits,
+} from "reka-ui";
 
 export type CommandOption = Option & {
   count?: number;
@@ -42,18 +34,13 @@ export type CommandGroup<T extends CommandOption> = {
 
 export type CommandPassthrough<T extends CommandOption = CommandOption> = {
   root: Passthrough<ListboxRootProps, ListboxRootEmits>;
-  inputWrapper: Passthrough<GroupProps>;
   filter: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
   content: Passthrough<ListboxContentProps>;
   viewport: Passthrough<ScrollerProps>;
-  empty: Passthrough<GroupProps>;
   group: Passthrough<ListboxGroupProps>;
   groupLabel: Passthrough<ListboxGroupLabelProps>;
   item: PassthroughIter<T, ListboxItemProps, ListboxItemEmits>;
   itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;
-  itemIcon: PassthroughIter<T, IconProps>;
-  itemLabel: Passthrough<SpanProps>;
-  itemCount: Passthrough<KbdProps>;
 };
 
 export type CommandProps<T extends CommandOption> = {

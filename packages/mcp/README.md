@@ -11,7 +11,7 @@ without reading the whole layer.
 | -------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `list_components`    | Every component (optionally by tier): name, tier, rendered parts, whether a definition/widget composable ships.          |
 | `describe_component` | One component's full contract: import paths, element roles + token slots, and its type/definition file source. |
-| `help`               | The authoring guides — `overview` plus the per-tier contracts (`common`, `core`, `data`, `system`).            |
+| `help`               | The authoring guides — `overview` plus the per-tier contracts (`core`, `data`, `system`).                      |
 | `resolve`            | Locate a component/module: file, kind, provenance (layer vs app), canonical import, exports, edge counts.      |
 | `usages`             | Every call site of a component/module — importers and template render sites, with line numbers and edge kinds. |
 | `dependencies`       | What a module is built from: resolved import/render tree, externals collapsed, unresolved imports flagged.     |

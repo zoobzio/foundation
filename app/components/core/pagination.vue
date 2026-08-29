@@ -6,11 +6,7 @@ import type {
   PaginationContext,
   PaginationSlots,
 } from "../../types/core/pagination";
-import type { ComponentPublicInstance } from "vue";
 
-import Button from "../common/button.vue";
-import Group from "../common/group.vue";
-import Span from "../common/span.vue";
 import Fab from "./fab.vue";
 import Select from "./select.vue";
 
@@ -52,7 +48,7 @@ const currentSize = computed<number>({
   },
 });
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const { hasPrev, hasNext, options, first, prev, next, last, goToPage } =
   usePaginate(currentPage, () => count);
@@ -60,21 +56,10 @@ const { hasPrev, hasNext, options, first, prev, next, last, goToPage } =
 const settings = usePassthrough<PaginationPassthrough>(() => ({
   pt,
   recipes: {
-    root: {},
-    info: {},
-    pages: {},
     first: { icon: "chevron-first", disabled: !hasPrev.value, onClick: first },
     prev: { icon: "chevron-left", disabled: !hasPrev.value, onClick: prev },
     next: { icon: "chevron-right", disabled: !hasNext.value, onClick: next },
     last: { icon: "chevron-last", disabled: !hasNext.value, onClick: last },
-    options: {},
-    option: (p) => ({
-      disabled: p === "..." || p === page,
-      aria: p === page ? { current: "page" } : undefined,
-      onClick: () => {
-        if (typeof p === "number") goToPage(p);
-      },
-    }),
     size: {
       modelValue: PAGE_SIZE_OPTIONS.find(
         (o) => o.value === String(currentSize.value),
@@ -104,14 +89,14 @@ defineSlots<PaginationSlots>();
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root">
+  <div ref="el" class="f-group">
     <slot name="info" v-bind="ctx">
-      <Span v-bind="settings.info">
+      <span class="f-span">
         Page {{ page }} of {{ count }} ({{ total }} results)
-      </Span>
+      </span>
     </slot>
     <slot name="pages" v-bind="ctx">
-      <Group v-bind="settings.pages">
+      <div class="f-group">
         <slot name="first" v-bind="ctx">
           <Fab v-bind="settings.first" />
         </slot>
@@ -119,13 +104,19 @@ defineSlots<PaginationSlots>();
           <Fab v-bind="settings.prev" />
         </slot>
         <slot name="options" v-bind="ctx">
-          <Group v-bind="settings.options">
+          <div class="f-group">
             <template v-for="option in options" :key="option">
               <slot name="option" v-bind="{ ...ctx, option }">
-                <Button v-bind="settings.option(option)">{{ option }}</Button>
+                <button
+                  type="button"
+                  class="f-button"
+                  :disabled="option === '...' || option === page"
+                  :aria-current="option === page ? 'page' : undefined"
+                  @click="typeof option === 'number' && goToPage(option)"
+                >{{ option }}</button>
               </slot>
             </template>
-          </Group>
+          </div>
         </slot>
         <slot name="next" v-bind="ctx">
           <Fab v-bind="settings.next" />
@@ -133,10 +124,10 @@ defineSlots<PaginationSlots>();
         <slot name="last" v-bind="ctx">
           <Fab v-bind="settings.last" />
         </slot>
-      </Group>
+      </div>
     </slot>
     <slot name="size" v-bind="ctx">
       <Select v-bind="settings.size" />
     </slot>
-  </Group>
+  </div>
 </template>

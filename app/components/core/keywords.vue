@@ -8,9 +8,7 @@ import type {
 } from "../../types/core/keywords";
 import type { ComponentPublicInstance } from "vue";
 
-import Caption from "../common/caption.vue";
 import Fab from "./fab.vue";
-import Group from "../common/group.vue";
 import Popover from "./popover.vue";
 import SegmentedControl from "./segmented-control.vue";
 import TagsInput from "./tags-input.vue";
@@ -75,9 +73,6 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
       icon: KEYWORDS_TRIGGER_ICON,
       badge: activeCount.value > 0 ? activeCount.value : undefined,
     },
-    root: {},
-    include: {},
-    includeLabel: {},
     includeInput: {
       modelValue: include.value,
       delimiter: "",
@@ -85,8 +80,6 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
         include.value = v;
       },
     },
-    exclude: {},
-    excludeLabel: {},
     excludeInput: {
       modelValue: exclude.value,
       delimiter: "",
@@ -94,8 +87,6 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
         exclude.value = v;
       },
     },
-    match: {},
-    matchLabel: {},
     matchControl: {
       modelValue: mode.value,
       options: MATCH_OPTIONS,
@@ -128,13 +119,13 @@ defineSlots<KeywordsSlots>();
     </template>
     <template #content>
       <slot name="root" v-bind="ctx">
-        <Group v-bind="settings.root" class="f-keywords">
+        <div class="f-group f-keywords">
           <slot name="include" v-bind="ctx">
-            <Group v-bind="settings.include" class="f-keywords-section">
+            <div class="f-group f-keywords-section">
               <slot name="includeLabel" v-bind="ctx">
-                <Caption v-bind="settings.includeLabel" class="f-keywords-label">
+                <div class="f-caption f-keywords-label">
                   Include
-                </Caption>
+                </div>
               </slot>
               <slot name="includeInput" v-bind="ctx">
                 <TagsInput v-bind="settings.includeInput" class="f-keywords-tags">
@@ -149,14 +140,14 @@ defineSlots<KeywordsSlots>();
                   </template>
                 </TagsInput>
               </slot>
-            </Group>
+            </div>
           </slot>
           <slot name="exclude" v-bind="ctx">
-            <Group v-bind="settings.exclude" class="f-keywords-section">
+            <div class="f-group f-keywords-section">
               <slot name="excludeLabel" v-bind="ctx">
-                <Caption v-bind="settings.excludeLabel" class="f-keywords-label">
+                <div class="f-caption f-keywords-label">
                   Exclude
-                </Caption>
+                </div>
               </slot>
               <slot name="excludeInput" v-bind="ctx">
                 <TagsInput v-bind="settings.excludeInput" class="f-keywords-tags">
@@ -171,21 +162,21 @@ defineSlots<KeywordsSlots>();
                   </template>
                 </TagsInput>
               </slot>
-            </Group>
+            </div>
           </slot>
           <slot name="match" v-bind="ctx">
-            <Group v-bind="settings.match" class="f-keywords-match">
+            <div class="f-group f-keywords-match">
               <slot name="matchLabel" v-bind="ctx">
-                <Caption v-bind="settings.matchLabel" class="f-keywords-label">
+                <div class="f-caption f-keywords-label">
                   Match
-                </Caption>
+                </div>
               </slot>
               <slot name="matchControl" v-bind="ctx">
                 <SegmentedControl v-bind="settings.matchControl" />
               </slot>
-            </Group>
+            </div>
           </slot>
-        </Group>
+        </div>
       </slot>
     </template>
   </Popover>

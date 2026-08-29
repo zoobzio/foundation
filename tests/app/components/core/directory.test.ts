@@ -107,13 +107,6 @@ describe("directory", () => {
     expect(wrapper.emitted("select")).toBeUndefined();
   });
 
-  it("pt overrides reach their part", () => {
-    const wrapper = mountDirectory({
-      pt: { itemIcon: () => ({ alias: "external" }) },
-    });
-    expect(wrapper.get("use").attributes("href")).toBe("#external");
-  });
-
   it("serves ctx and the item to slot overrides", () => {
     const wrapper = mountDirectory(
       {},

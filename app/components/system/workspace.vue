@@ -2,27 +2,20 @@
 import type {
   Slot,
   WorkspaceContext,
-  WorkspacePassthrough,
   WorkspaceProps,
   WorkspaceSlots,
 } from "../../types/system/workspace";
 import type { AnyWidget, Widgets } from "../../types/widget";
-import type { ComponentPublicInstance } from "vue";
-
-import Footer from "../common/footer.vue";
-import Group from "../common/group.vue";
-import Header from "../common/header.vue";
 
 import { computed, toValue, useTemplateRef } from "#imports";
 import { entries } from "objectively";
-import { usePassthrough } from "../../composables/passthrough";
 import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts" generic="R extends Widgets">
-const { workspace, pt } = defineProps<WorkspaceProps<R>>();
+const { workspace } = defineProps<WorkspaceProps<R>>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 // Each grid cell paired with its instanced widget, if one shares its id.
 // The widening assignment is the erasure boundary: the render path drops to
@@ -48,21 +41,9 @@ const slotStyle = (slot: Slot): Record<string, string> => ({
   "grid-row": `${slot.position[1] + 1} / span ${slot.span[1]}`,
 });
 
-const settings = usePassthrough<WorkspacePassthrough>(() => ({
-  pt,
-  recipes: {
-    root: {},
-    header: {},
-    grid: {},
-    slot: () => ({}),
-    footer: {},
-  },
-}));
-
 const ctx = useContext<WorkspaceContext<R>>("system-workspace", () => ({
   workspace,
   el: el.value,
-  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -70,21 +51,16 @@ defineSlots<WorkspaceSlots<R>>();
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-system-workspace">
+  <div ref="el" class="f-group f-system-workspace">
     <slot name="header" v-bind="ctx">
-      <Header v-bind="settings.header" class="f-system-workspace-header" />
+      <header class="f-header f-system-workspace-header" />
     </slot>
 
-    <Group
-      v-bind="settings.grid"
-      class="f-system-workspace-grid"
-      :style="gridStyle"
-    >
-      <Group
+    <div class="f-group f-system-workspace-grid" :style="gridStyle">
+      <div
         v-for="c in cells"
         :key="c.id"
-        v-bind="settings.slot({ id: c.id, ...c.slot })"
-        class="f-system-workspace-slot"
+        class="f-group f-system-workspace-slot"
         :style="slotStyle(c.slot)"
       >
         <slot :name="`slot:${c.id}`" v-bind="{ ...ctx, id: c.id, slot: c.slot }">
@@ -101,11 +77,11 @@ defineSlots<WorkspaceSlots<R>>();
             </slot>
           </template>
         </slot>
-      </Group>
-    </Group>
+      </div>
+    </div>
 
     <slot name="footer" v-bind="ctx">
-      <Footer v-bind="settings.footer" class="f-system-workspace-footer" />
+      <footer class="f-footer f-system-workspace-footer" />
     </slot>
-  </Group>
+  </div>
 </template>

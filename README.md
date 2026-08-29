@@ -1,6 +1,6 @@
 # @zoobzio/foundation
 
-A design system for Vue 3 + Nuxt, delivered as a **single Nuxt layer**. Foundation spans the full range from behavior-free HTML element wrappers up to stateful, generic data widgets — consumed by extending one layer.
+A design system for Vue 3 + Nuxt, delivered as a **single Nuxt layer**. Foundation spans the full range from unstyled interactive components built on semantic HTML up to stateful, generic data widgets — consumed by extending one layer.
 
 ## Usage
 
@@ -22,8 +22,7 @@ Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsib
 
 | Tier       | Directory            | What it is                                                                                                                                                    |
 | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Elements   | `components/common/` | Behavior-free HTML wrappers + slot-through primitives, with a modifier system (`variant`, `size`, `color`, `radius`, `density`, `elevation`). No JS behavior. |
-| Components | `components/core/`   | Stateful/interactive components composing elements + [reka-ui](https://reka-ui.com) primitives, with full passthrough & slotthrough.                          |
+| Components | `components/core/`   | Stateless interactive components composing [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.  |
 | Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                    |
 | System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                     |
 
@@ -43,9 +42,9 @@ Each widget pairs a **definition** (`defineTable`, `defineForm`, …) — inert 
 Auto-import is **disabled** — everything is imported explicitly. Inside the layer, modules import each other by relative path; a consumer app imports Foundation modules through the package's subpath exports:
 
 ```ts
-import Button from "@zoobzio/foundation/components/common/button.vue";
+import Select from "@zoobzio/foundation/components/core/select.vue";
 import { useTable } from "@zoobzio/foundation/factories/table";
-import type { ButtonProps } from "@zoobzio/foundation/types/common/button";
+import type { SelectProps } from "@zoobzio/foundation/types/core/select";
 ```
 
 Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
@@ -55,11 +54,10 @@ Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
 ```
 app/
   components/
-    common/     — HTML element wrappers (48) + behavioral element families (19)
-    core/       — interactive components (28)
+    core/       — interactive components (30)
     data/       — data widgets: autocomplete, table, chart, deck, form, preview
-    system/     — app-shell composition (1)
-  composables/  — useBindings, usePassthrough, useContext, useModel, useHooks, …
+    system/     — app-shell composition (2)
+  composables/  — usePassthrough, useContext, useModel, useHooks, …
   factories/    — widget composables: use*(id, definition) → Widget
   services/     — feature logic classes (the unit under test)
   stores/       — useState-backed feature state
@@ -98,7 +96,7 @@ Or via `make` (`make help` lists all targets):
 
 ## Testing
 
-Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`commonStubs` / `coreStubs` / per-feature data maps).
+Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`coreStubs` / per-feature data maps).
 
 ## Companion modules (in progress)
 

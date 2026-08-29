@@ -1,6 +1,6 @@
 // data/chart constants
 
-import type { IconAlias } from "../types/common/icon";
+import type { IconAlias } from "../types/icon";
 
 // Default palette
 export const PALETTE = [

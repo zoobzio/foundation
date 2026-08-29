@@ -7,14 +7,9 @@ import type {
   FormWidgetSlots,
 } from "../../../types/data/form/widget";
 import type { Events } from "../../../types/data/form";
-import type { ComponentPublicInstance } from "vue";
 
-import Button from "../../common/button.vue";
 import Field from "./field.vue";
-import Form from "../../common/form.vue";
-import Group from "../../common/group.vue";
 import Scroller from "../../core/scroller.vue";
-import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
 import { useFormView } from "../../../composables/form";
@@ -41,7 +36,7 @@ useHooks<Events<T>>(service.id, {
 
 const { submitting } = useFormView(service);
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const onSubmit = (e: Event) => {
   e.preventDefault();
@@ -51,24 +46,7 @@ const onSubmit = (e: Event) => {
 const settings = usePassthrough<FormWidgetPassthrough>(() => ({
   pt,
   recipes: {
-    root: {},
-    toolbar: {},
-    title: {},
     scroller: {},
-    inner: {
-      onSubmit,
-    },
-    grid: {},
-    footer: {},
-    submit: {
-      type: "button",
-      disabled: submitting.value,
-      onClick: onSubmit,
-    },
-    reset: {
-      type: "button",
-      onClick: () => service.reset(),
-    },
   },
 }));
 
@@ -87,18 +65,18 @@ useLazyRequest(`init-form-${service.id}`, () => service.initialize());
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-form">
+  <div ref="el" class="f-group f-data-form">
     <slot name="toolbar" v-bind="ctx">
-      <Group v-bind="settings.toolbar" class="f-data-form-toolbar">
-        <Span v-bind="settings.title" class="f-data-form-title">
+      <div class="f-group f-data-form-toolbar">
+        <span class="f-span f-data-form-title">
           {{ service.config.title }}
-        </Span>
-      </Group>
+        </span>
+      </div>
     </slot>
     <Scroller v-bind="settings.scroller">
       <template #content>
-        <Form v-bind="settings.inner" class="f-data-form-inner">
-          <Group v-bind="settings.grid" class="f-data-form-grid">
+        <form class="f-form f-data-form-inner" @submit="onSubmit">
+          <div class="f-group f-data-form-grid">
             <Field
               v-for="field in service.config.fields"
               :key="String(field.key)"
@@ -114,19 +92,28 @@ useLazyRequest(`init-form-${service.id}`, () => service.initialize());
                 <slot :name="name" v-bind="slotProps" />
               </template>
             </Field>
-          </Group>
-        </Form>
+          </div>
+        </form>
       </template>
     </Scroller>
     <slot name="footer" v-bind="ctx">
-      <Group v-bind="settings.footer" class="f-data-form-footer">
-        <Button v-bind="settings.reset" class="f-data-form-reset">
+      <div class="f-group f-data-form-footer">
+        <button
+          type="button"
+          class="f-button f-data-form-reset"
+          @click="service.reset()"
+        >
           Reset
-        </Button>
-        <Button v-bind="settings.submit" class="f-data-form-submit">
+        </button>
+        <button
+          type="button"
+          class="f-button f-data-form-submit"
+          :disabled="submitting"
+          @click="onSubmit"
+        >
           {{ submitting ? "Submitting..." : "Submit" }}
-        </Button>
-      </Group>
+        </button>
+      </div>
     </slot>
-  </Group>
+  </div>
 </template>

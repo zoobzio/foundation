@@ -1,15 +1,6 @@
-import type { ButtonEmits, ButtonProps } from "../common/button";
-import type { GroupProps } from "../common/group";
-import type { IconAlias, IconProps } from "../common/icon";
+import type { IconAlias } from "../icon";
 import type { EventEmits } from "../events";
-import type { Passthrough, PT } from "../passthrough";
-import type { ComponentPublicInstance, VNode } from "vue";
-
-export type FabPassthrough = {
-  root: Passthrough<ButtonProps, ButtonEmits>;
-  icon: Passthrough<IconProps>;
-  badge: Passthrough<GroupProps>;
-};
+import type { VNode } from "vue";
 
 export type FabProps = {
   icon?: IconAlias;
@@ -17,7 +8,6 @@ export type FabProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   badge?: number | string;
-  pt?: PT<FabPassthrough>;
 };
 
 export type FabEmits = EventEmits<"click">;
@@ -28,8 +18,7 @@ export type FabContext = {
   type: "button" | "submit" | "reset";
   disabled?: boolean;
   badge?: number | string;
-  el: ComponentPublicInstance | null;
-  settings: FabPassthrough;
+  el: HTMLButtonElement | null;
 };
 
 export type FabSlots = {

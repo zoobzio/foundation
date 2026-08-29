@@ -19,15 +19,14 @@ import type { CatalogEntry, EdgeRef, Graph, GraphNode, Target } from "./types.js
 
 const HELP_TOPICS = {
   overview: "README.md",
-  common: "app/components/common/README.md",
   core: "app/components/core/README.md",
   data: "app/components/data/README.md",
   system: "app/components/system/README.md",
 } as const;
 
-const INSTRUCTIONS = `@zoobzio/foundation is a Vue 3 + Nuxt design system delivered as a single Nuxt layer, organized into tiers: common (behavior-free HTML wrappers + behavioral element families), core (stateless interactive coordinators with a passthrough part system), data (definition-driven generic data widgets), and system (app-shell composition). Auto-import is disabled — everything is imported explicitly: relative paths within the layer, @zoobzio/foundation/* package subpaths from the consuming app (framework symbols via #imports).
+const INSTRUCTIONS = `@zoobzio/foundation is a Vue 3 + Nuxt design system delivered as a single Nuxt layer, organized into tiers: core (stateless interactive coordinators composing reka-ui primitives and semantic HTML, with a passthrough part system), data (definition-driven generic data widgets), and system (app-shell composition). Auto-import is disabled — everything is imported explicitly: relative paths within the layer, @zoobzio/foundation/* package subpaths from the consuming app (framework symbols via #imports).
 
-Before writing code against a tier, call help with that tier's topic — each tier has a strict authoring contract (bindings, passthrough parts, define*/use* widget verbs) that code must follow. Use list_components to discover what exists and describe_component to get a component's full type contract and import paths.
+Before writing code against a tier, call help with that tier's topic — each tier has a strict authoring contract (passthrough parts, semantic classes, define*/use* widget verbs) that code must follow. Use list_components to discover what exists and describe_component to get a component's full type contract and import paths.
 
 Because imports are explicit, the module graph is deterministic — prefer asking it over exploring the filesystem: resolve locates any component/module (file, kind, provenance, canonical import), usages lists every call site with line numbers, dependencies walks what something is built from, dependents shows the blast radius of a change. The graph spans the foundation layer AND the consuming app seamlessly; provenance on each node tells you which side it lives on.
 
@@ -310,7 +309,7 @@ export function createServer(): McpServer {
     {
       title: "List foundation components",
       description:
-        "List every component in @zoobzio/foundation, optionally filtered by tier (common | core | data | system). Returns one line per component: name, tier, and its rendered parts.",
+        "List every component in @zoobzio/foundation, optionally filtered by tier (core | data | system). Returns one line per component: name, tier, and its rendered parts.",
       inputSchema: { tier: z.enum(TIERS).optional() },
     },
     async ({ tier }) => {
@@ -336,7 +335,7 @@ export function createServer(): McpServer {
     {
       title: "Describe a foundation component",
       description:
-        "Full contract for one component: @zoobzio/foundation/* import paths, element roles and token slots, and the source of its type files and definition. Pass tier to disambiguate names that exist in more than one tier (e.g. 'select' is both a common element family and a core component).",
+        "Full contract for one component: @zoobzio/foundation/* import paths, element roles and token slots, and the source of its type files and definition. Pass tier to disambiguate names that exist in more than one tier.",
       inputSchema: { name: z.string(), tier: z.enum(TIERS).optional() },
     },
     async ({ name, tier }) => {
@@ -437,7 +436,7 @@ export function createServer(): McpServer {
     {
       title: "Foundation usage guide",
       description:
-        "Authoring guides for @zoobzio/foundation. 'overview' covers architecture, tiers, and the explicit-import model; each tier topic (common | core | data | system) is that tier's full authoring contract — read it before writing code that uses or extends the tier.",
+        "Authoring guides for @zoobzio/foundation. 'overview' covers architecture, tiers, and the explicit-import model; each tier topic (core | data | system) is that tier's full authoring contract — read it before writing code that uses or extends the tier.",
       inputSchema: {
         topic: z.enum(
           Object.keys(HELP_TOPICS) as [keyof typeof HELP_TOPICS],

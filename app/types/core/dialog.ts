@@ -1,14 +1,12 @@
 import type {
   DialogRootProps,
   DialogRootEmits,
-} from "../common/dialog/root";
-import type { DialogOverlayProps } from "../common/dialog/overlay";
-import type {
+  DialogOverlayProps,
   DialogContentProps,
   DialogContentEmits,
-} from "../common/dialog/content";
-import type { DialogTitleProps } from "../common/dialog/title";
-import type { DialogDescriptionProps } from "../common/dialog/description";
+  DialogTitleProps,
+  DialogDescriptionProps,
+} from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 

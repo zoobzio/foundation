@@ -8,13 +8,13 @@ import type {
 } from "../../types/core/accordion";
 import type { ComponentPublicInstance } from "vue";
 
-import AccordionRoot from "../common/accordion/root.vue";
-import AccordionItem from "../common/accordion/item.vue";
-import AccordionHeader from "../common/accordion/header.vue";
-import AccordionTrigger from "../common/accordion/trigger.vue";
-import AccordionContent from "../common/accordion/content.vue";
-import Group from "../common/group.vue";
-import Icon from "../common/icon.vue";
+import {
+  AccordionRoot,
+  AccordionItem,
+  AccordionHeader,
+  AccordionTrigger,
+  AccordionContent,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -57,9 +57,6 @@ const settings = usePassthrough<AccordionPassthrough>(() => ({
     item: (option) => ({ value: option.value }),
     header: {},
     trigger: {},
-    triggerContent: {},
-    triggerIcon: (option) => ({ alias: option.icon! }),
-    chevron: (open) => ({ alias: open ? "chevron-down" : "chevron-right" }),
     content: {},
   },
 }));
@@ -79,31 +76,41 @@ defineSlots<AccordionSlots>();
 </script>
 
 <template>
-  <AccordionRoot ref="el" v-bind="settings.root">
+  <AccordionRoot ref="el" class="f-accordion-root" v-bind="settings.root">
     <template v-for="item in items" :key="item.value">
-      <AccordionItem v-slot="{ open }" v-bind="settings.item(item)">
+      <AccordionItem
+        v-slot="{ open }"
+        class="f-accordion-item"
+        v-bind="settings.item(item)"
+      >
         <slot name="item" v-bind="{ ...ctx, item, open }">
-          <AccordionHeader v-bind="settings.header">
+          <AccordionHeader class="f-accordion-header" v-bind="settings.header">
             <slot name="header" v-bind="{ ...ctx, item, open }">
-              <AccordionTrigger v-bind="settings.trigger">
+              <AccordionTrigger class="f-accordion-trigger" v-bind="settings.trigger">
                 <slot name="trigger" v-bind="{ ...ctx, item, open }">
                   <slot name="triggerContent" v-bind="{ ...ctx, item, open }">
-                    <Group v-bind="settings.triggerContent">
+                    <div class="f-group">
                       <Icon
                         v-if="item.icon"
-                        v-bind="settings.triggerIcon(item)"
+                        class="f-icon"
+                        fill="currentColor"
+                        :name="item.icon"
                       />
                       {{ item.label }}
-                    </Group>
+                    </div>
                   </slot>
                   <slot name="chevron" v-bind="{ ...ctx, item, open }">
-                    <Icon v-bind="settings.chevron(open)" />
+                    <Icon
+                      class="f-icon"
+                      fill="currentColor"
+                      :name="open ? 'chevron-down' : 'chevron-right'"
+                    />
                   </slot>
                 </slot>
               </AccordionTrigger>
             </slot>
           </AccordionHeader>
-          <AccordionContent v-bind="settings.content">
+          <AccordionContent class="f-accordion-content" v-bind="settings.content">
             <slot name="content" v-bind="{ ...ctx, item, open }" />
           </AccordionContent>
         </slot>

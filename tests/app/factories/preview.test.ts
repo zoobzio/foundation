@@ -29,11 +29,13 @@ describe("usePreview", () => {
   it("yields the widget triple resolving pt into settings", () => {
     const widget = usePreview(
       "p1",
-      { ...definition, pt: { root: { label: "preview" } } },
+      { ...definition, pt: { external: { label: "preview" } } },
       makeWiring(),
     );
     expect(widget.component).toBeDefined();
-    expect(toValue(widget.settings)).toEqual({ root: { label: "preview" } });
+    expect(toValue(widget.settings)).toEqual({
+      external: { label: "preview" },
+    });
   });
 
   it("merges wiring pt over the definition base per key", () => {
@@ -41,13 +43,13 @@ describe("usePreview", () => {
       "p1",
       {
         ...definition,
-        pt: { root: { label: "base" }, body: { label: "kept" } },
+        pt: { external: { label: "base" }, copy: { label: "kept" } },
       },
-      { ...makeWiring(), pt: { root: { label: "override" } } },
+      { ...makeWiring(), pt: { external: { label: "override" } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      root: { label: "override" },
-      body: { label: "kept" },
+      external: { label: "override" },
+      copy: { label: "kept" },
     });
   });
 

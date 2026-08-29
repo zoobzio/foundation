@@ -1,5 +1,3 @@
-import type { GroupProps } from "../../common/group";
-import type { TableProps } from "../../common/table";
 import type {
   AutocompleteEmits,
   AutocompleteProps,
@@ -24,19 +22,15 @@ import type {
   TableBodySlots,
 } from "./body";
 import type { TableColumnsPassthrough } from "./columns";
-import type { TableBulkActionsPassthrough } from "./bulk-actions";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type TableWidgetPassthrough<T> = {
-  root: Passthrough<GroupProps>;
-  toolbar: Passthrough<GroupProps>;
   search: Passthrough<
     AutocompleteProps<DataTableColumn<T>>,
     AutocompleteEmits<DataTableColumn<T>>
   >;
   refresh: Passthrough<FabProps, FabEmits>;
   scroller: Passthrough<ScrollerProps, ScrollerEmits>;
-  table: Passthrough<TableProps>;
   pagination: Passthrough<PaginationProps, PaginationEmits>;
 };
 
@@ -46,7 +40,6 @@ export type TableWidgetProps<T> = {
     head?: PT<TableHeadPassthrough>;
     body?: PT<TableBodyPassthrough>;
     columns?: PT<TableColumnsPassthrough>;
-    bulkActions?: PT<TableBulkActionsPassthrough>;
   };
 };
 
@@ -57,7 +50,7 @@ export type TableWidgetEmits = {
 
 export type TableWidgetContext<T> = {
   table: Service<T>;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: TableWidgetPassthrough<T>;
 };
 

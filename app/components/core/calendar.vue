@@ -9,19 +9,20 @@ import type {
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 
-import CalendarRoot from "../common/calendar/root.vue";
-import CalendarHeader from "../common/calendar/header.vue";
-import CalendarHeading from "../common/calendar/heading.vue";
-import CalendarPrev from "../common/calendar/prev.vue";
-import CalendarNext from "../common/calendar/next.vue";
-import CalendarGrid from "../common/calendar/grid.vue";
-import CalendarGridHead from "../common/calendar/grid-head.vue";
-import CalendarGridBody from "../common/calendar/grid-body.vue";
-import CalendarGridRow from "../common/calendar/grid-row.vue";
-import CalendarHeadCell from "../common/calendar/head-cell.vue";
-import CalendarCell from "../common/calendar/cell.vue";
-import CalendarCellTrigger from "../common/calendar/cell-trigger.vue";
-import Icon from "../common/icon.vue";
+import {
+  CalendarRoot,
+  CalendarHeader,
+  CalendarHeading,
+  CalendarPrev,
+  CalendarNext,
+  CalendarGrid,
+  CalendarGridHead,
+  CalendarGridBody,
+  CalendarGridRow,
+  CalendarHeadCell,
+  CalendarCell,
+  CalendarCellTrigger,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -54,10 +55,8 @@ const settings = usePassthrough<CalendarPassthrough>(() => ({
     },
     header: {},
     prev: {},
-    prevIcon: { alias: "chevron-left" },
     heading: {},
     next: {},
-    nextIcon: { alias: "chevron-right" },
     grid: {},
     gridHead: {},
     gridBody: {},
@@ -80,24 +79,24 @@ defineSlots<CalendarSlots>();
 </script>
 
 <template>
-  <CalendarRoot ref="el" v-bind="settings.root">
+  <CalendarRoot ref="el" class="f-calendar-root" v-bind="settings.root">
     <template #default="{ weekDays, grid }">
       <slot name="header" v-bind="{ ...ctx, weekDays, grid }">
-        <CalendarHeader v-bind="settings.header">
+        <CalendarHeader class="f-calendar-header" v-bind="settings.header">
           <slot name="prev" v-bind="{ ...ctx, weekDays, grid }">
-            <CalendarPrev v-bind="settings.prev">
+            <CalendarPrev class="f-calendar-prev" v-bind="settings.prev">
               <slot name="prevIcon" v-bind="{ ...ctx, weekDays, grid }">
-                <Icon v-bind="settings.prevIcon" />
+                <Icon class="f-icon" fill="currentColor" name="chevron-left" />
               </slot>
             </CalendarPrev>
           </slot>
           <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
-            <CalendarHeading v-bind="settings.heading" />
+            <CalendarHeading class="f-calendar-heading" v-bind="settings.heading" />
           </slot>
           <slot name="next" v-bind="{ ...ctx, weekDays, grid }">
-            <CalendarNext v-bind="settings.next">
+            <CalendarNext class="f-calendar-next" v-bind="settings.next">
               <slot name="nextIcon" v-bind="{ ...ctx, weekDays, grid }">
-                <Icon v-bind="settings.nextIcon" />
+                <Icon class="f-icon" fill="currentColor" name="chevron-right" />
               </slot>
             </CalendarNext>
           </slot>
@@ -105,13 +104,13 @@ defineSlots<CalendarSlots>();
       </slot>
       <template v-for="month in grid" :key="month.value.toString()">
         <slot name="grid" v-bind="{ ...ctx, weekDays, grid, month }">
-          <CalendarGrid v-bind="settings.grid">
+          <CalendarGrid class="f-calendar-grid" v-bind="settings.grid">
             <slot name="gridHead" v-bind="{ ...ctx, weekDays, grid, month }">
-              <CalendarGridHead v-bind="settings.gridHead">
-                <CalendarGridRow v-bind="settings.gridRow">
+              <CalendarGridHead class="f-calendar-grid-head" v-bind="settings.gridHead">
+                <CalendarGridRow class="f-calendar-grid-row" v-bind="settings.gridRow">
                   <template v-for="day in weekDays" :key="day">
                     <slot name="headCell" v-bind="{ ...ctx, day }">
-                      <CalendarHeadCell v-bind="settings.headCell">
+                      <CalendarHeadCell class="f-calendar-head-cell" v-bind="settings.headCell">
                         {{ day }}
                       </CalendarHeadCell>
                     </slot>
@@ -120,17 +119,19 @@ defineSlots<CalendarSlots>();
               </CalendarGridHead>
             </slot>
             <slot name="gridBody" v-bind="{ ...ctx, weekDays, grid, month }">
-              <CalendarGridBody v-bind="settings.gridBody">
+              <CalendarGridBody class="f-calendar-grid-body" v-bind="settings.gridBody">
                 <CalendarGridRow
                   v-for="(week, i) in month.rows"
                   :key="i"
+                  class="f-calendar-grid-row"
                   v-bind="settings.gridRow"
                 >
                   <template v-for="date in week" :key="date.toString()">
                     <slot name="cell" v-bind="{ ...ctx, month, date }">
-                      <CalendarCell v-bind="settings.cell(date)">
+                      <CalendarCell class="f-calendar-cell" v-bind="settings.cell(date)">
                         <slot name="cellTrigger" v-bind="{ ...ctx, month, date }">
                           <CalendarCellTrigger
+                            class="f-calendar-cell-trigger"
                             v-bind="settings.cellTrigger({ day: date, month: month.value })"
                           />
                         </slot>

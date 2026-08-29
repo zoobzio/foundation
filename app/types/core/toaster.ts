@@ -1,5 +1,4 @@
-import type { ToastProviderProps } from "../common/toast/provider";
-import type { ToastViewportProps } from "../common/toast/viewport";
+import type { ToastProviderProps, ToastViewportProps } from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 

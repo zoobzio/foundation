@@ -1,8 +1,6 @@
-import type { GroupProps } from "../common/group";
-import type { Passthrough, PT } from "../passthrough";
 import type { ServicesOf } from "../definition";
 import type { AnyWidget, Widgets } from "../widget";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 /**
  * The panel's arrangement vocabulary: three fixed regions. How the regions
@@ -40,22 +38,13 @@ export type Panel<R extends Widgets & Regions> = {
   services: ServicesOf<R>;
 };
 
-export type PanelPassthrough = {
-  root: Passthrough<GroupProps>;
-  header: Passthrough<GroupProps>;
-  content: Passthrough<GroupProps>;
-  footer: Passthrough<GroupProps>;
-};
-
 export type PanelProps<R extends Widgets & Regions> = {
   panel: Panel<R>;
-  pt?: PT<PanelPassthrough>;
 };
 
 export type PanelContext<R extends Widgets & Regions> = {
   panel: Panel<R>;
-  el: ComponentPublicInstance | null;
-  settings: PanelPassthrough;
+  el: HTMLDivElement | null;
 };
 
 export type PanelRegionContext<R extends Widgets & Regions> =

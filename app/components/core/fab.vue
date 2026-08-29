@@ -2,18 +2,11 @@
 import type {
   FabProps,
   FabEmits,
-  FabPassthrough,
   FabContext,
   FabSlots,
 } from "../../types/core/fab";
-import type { ComponentPublicInstance } from "vue";
-
-import Button from "../common/button.vue";
-import Group from "../common/group.vue";
-import Icon from "../common/icon.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "../../composables/passthrough";
 import { useContext } from "../../composables/context";
 </script>
 
@@ -24,25 +17,11 @@ const {
   type = "button",
   disabled,
   badge,
-  pt,
 } = defineProps<FabProps>();
 
 const emit = defineEmits<FabEmits>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
-
-const settings = usePassthrough<FabPassthrough>(() => ({
-  pt,
-  recipes: {
-    root: {
-      type,
-      disabled,
-      aria: label ? { label } : undefined,
-    },
-    icon: { alias: icon! },
-    badge: {},
-  },
-}));
+const el = useTemplateRef<HTMLButtonElement>("el");
 
 const ctx = useContext<FabContext>("fab", () => ({
   icon,
@@ -51,7 +30,6 @@ const ctx = useContext<FabContext>("fab", () => ({
   disabled,
   badge,
   el: el.value,
-  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -59,14 +37,21 @@ defineSlots<FabSlots>();
 </script>
 
 <template>
-  <Button ref="el" v-bind="settings.root" @click="emit('click', $event)">
+  <button
+    ref="el"
+    :type="type"
+    :disabled="disabled"
+    :aria-label="label || undefined"
+    class="f-button"
+    @click="emit('click', $event)"
+  >
     <slot name="icon" v-bind="ctx">
-      <Icon v-if="icon" v-bind="settings.icon" />
+      <Icon v-if="icon" class="f-icon" fill="currentColor" :name="icon" />
     </slot>
     <slot name="badge" v-bind="ctx">
-      <Group v-if="badge !== undefined" v-bind="settings.badge">
+      <div v-if="badge !== undefined" class="f-group">
         {{ badge }}
-      </Group>
+      </div>
     </slot>
-  </Button>
+  </button>
 </template>

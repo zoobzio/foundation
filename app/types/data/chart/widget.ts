@@ -1,4 +1,3 @@
-import type { GroupProps } from "../../common/group";
 import type { FabProps, FabEmits } from "../../core/fab";
 import type {
   Passthrough,
@@ -6,27 +5,20 @@ import type {
   PT,
 } from "../../passthrough";
 import type { Service, Events } from "../chart";
-import type { ChartCanvasPassthrough } from "./canvas";
 import type {
   ChartControlAnchor,
   ChartControlProps,
 } from "./control";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type ChartWidgetPassthrough<T> = {
-  root: Passthrough<GroupProps>;
-  toolbar: Passthrough<GroupProps>;
-  title: Passthrough<GroupProps>;
-  actions: Passthrough<GroupProps>;
   control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>;
   refresh: Passthrough<FabProps, FabEmits>;
 };
 
 export type ChartWidgetProps<T> = {
   service: Service<T>;
-  pt?: PT<ChartWidgetPassthrough<T>> & {
-    canvas?: PT<ChartCanvasPassthrough>;
-  };
+  pt?: PT<ChartWidgetPassthrough<T>>;
 };
 
 export type ChartWidgetEmits = {
@@ -37,7 +29,7 @@ export type ChartWidgetEmits = {
 
 export type ChartWidgetContext<T> = {
   chart: Service<T>;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: ChartWidgetPassthrough<T>;
 };
 
