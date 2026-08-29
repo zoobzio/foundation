@@ -1,7 +1,7 @@
 import type { Service } from "../types/data/deck";
 import type { FacetGroup } from "../types/core/facets";
 import type { MenuGroup, MenuItem } from "../types/core/menu";
-import type { ComponentPublicInstance, ShallowRef } from "vue";
+import type { ShallowRef } from "vue";
 
 import {
   computed,
@@ -24,7 +24,7 @@ import { DECK_SEARCH_DEBOUNCE } from "../constants/deck";
  */
 export const useDeckView = <T>(
   deck: Service<T>,
-  el?: Readonly<ShallowRef<ComponentPublicInstance | null>>,
+  el?: Readonly<ShallowRef<HTMLElement | null>>,
 ) => {
   const serviceRefs = useServiceRefs(deck);
 
@@ -51,7 +51,7 @@ export const useDeckView = <T>(
   const showPending = () => {
     deck.showPending();
     nextTick(() => {
-      const viewport = el?.value?.$el?.querySelector(".f-scroll-area-viewport");
+      const viewport = el?.value?.querySelector(".f-scroll-area-viewport");
       if (viewport instanceof HTMLElement) {
         viewport.scrollTo({ top: 0, behavior: "smooth" });
       }

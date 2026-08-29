@@ -1,15 +1,11 @@
-import type { IconProps } from "../common/icon";
 import type {
   TagsInputRootProps,
   TagsInputRootEmits,
-} from "../common/tags-input/root";
-import type { TagsInputItemProps } from "../common/tags-input/item";
-import type { TagsInputItemTextProps } from "../common/tags-input/item-text";
-import type {
+  TagsInputItemProps,
+  TagsInputItemTextProps,
   TagsInputItemDeleteProps,
-  TagsInputItemDeleteEmits,
-} from "../common/tags-input/item-delete";
-import type { TagsInputInputProps } from "../common/tags-input/input";
+  TagsInputInputProps,
+} from "reka-ui";
 import type {
   Passthrough,
   PassthroughIter,
@@ -21,8 +17,7 @@ export type TagsInputPassthrough = {
   root: Passthrough<TagsInputRootProps, TagsInputRootEmits>;
   item: PassthroughIter<string, TagsInputItemProps>;
   itemText: Passthrough<TagsInputItemTextProps>;
-  itemDelete: Passthrough<TagsInputItemDeleteProps, TagsInputItemDeleteEmits>;
-  itemDeleteIcon: Passthrough<IconProps>;
+  itemDelete: Passthrough<TagsInputItemDeleteProps>;
   input: Passthrough<TagsInputInputProps>;
 };
 

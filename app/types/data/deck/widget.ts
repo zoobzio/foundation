@@ -1,4 +1,3 @@
-import type { GroupProps } from "../../common/group";
 import type { FabProps, FabEmits } from "../../core/fab";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service, Events } from "../deck";
@@ -7,11 +6,9 @@ import type {
   DeckFeedSlots,
 } from "./feed";
 import type { DeckToolbarPassthrough } from "./toolbar";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type DeckWidgetPassthrough = {
-  root: Passthrough<GroupProps>;
-  body: Passthrough<GroupProps>;
   pending: Passthrough<FabProps, FabEmits>;
 };
 
@@ -30,7 +27,7 @@ export type DeckWidgetEmits = {
 
 export type DeckWidgetContext<T> = {
   deck: Service<T>;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: DeckWidgetPassthrough;
 };
 

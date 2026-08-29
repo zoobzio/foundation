@@ -1,28 +1,25 @@
-import type { IconProps } from "../common/icon";
 import type {
   ToastRootProps,
   ToastRootEmits,
-} from "../common/toast/root";
-import type { ToastTitleProps } from "../common/toast/title";
-import type { ToastDescriptionProps } from "../common/toast/description";
-import type {
+  ToastTitleProps,
+  ToastDescriptionProps,
   ToastCloseProps,
-  ToastCloseEmits,
-} from "../common/toast/close";
+} from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
+import type { ModifierAxesOptions } from "../modifiers";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type ToastPassthrough = {
   root: Passthrough<ToastRootProps, ToastRootEmits>;
   title: Passthrough<ToastTitleProps>;
   description: Passthrough<ToastDescriptionProps>;
-  close: Passthrough<ToastCloseProps, ToastCloseEmits>;
-  closeIcon: Passthrough<IconProps>;
+  close: Passthrough<ToastCloseProps>;
 };
 
 export type ToastProps = {
   title?: string;
   description?: string;
+  variant?: ModifierAxesOptions<"toast-root", "variant">;
   open?: boolean;
   duration?: number;
   pt?: PT<ToastPassthrough>;
@@ -36,6 +33,7 @@ export type ToastEmits = {
 export type ToastContext = {
   title?: string;
   description?: string;
+  variant?: ModifierAxesOptions<"toast-root", "variant">;
   duration?: number;
   open: Ref<boolean | undefined>;
   el: ComponentPublicInstance | null;

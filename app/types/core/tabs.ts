@@ -1,11 +1,10 @@
-import type { IconProps } from "../common/icon";
 import type {
   TabsRootProps,
   TabsRootEmits,
-} from "../common/tabs/root";
-import type { TabsListProps } from "../common/tabs/list";
-import type { TabsTriggerProps } from "../common/tabs/trigger";
-import type { TabsContentProps } from "../common/tabs/content";
+  TabsListProps,
+  TabsTriggerProps,
+  TabsContentProps,
+} from "reka-ui";
 import type { Option } from "./common";
 import type {
   Passthrough,
@@ -18,7 +17,6 @@ export type TabsPassthrough = {
   root: Passthrough<TabsRootProps, TabsRootEmits>;
   list: Passthrough<TabsListProps>;
   trigger: PassthroughIter<Option, TabsTriggerProps>;
-  triggerIcon: PassthroughIter<Option, IconProps>;
   content: PassthroughIter<Option, TabsContentProps>;
 };
 

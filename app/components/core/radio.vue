@@ -8,11 +8,7 @@ import type {
 } from "../../types/core/radio";
 import type { ComponentPublicInstance } from "vue";
 
-import RadioGroupRoot from "../common/radio-group/root.vue";
-import RadioGroupItem from "../common/radio-group/item.vue";
-import RadioGroupIndicator from "../common/radio-group/indicator.vue";
-import Label from "../common/label.vue";
-import Span from "../common/span.vue";
+import { RadioGroupRoot, RadioGroupItem, RadioGroupIndicator } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -53,13 +49,11 @@ const settings = usePassthrough<RadioPassthrough>(() => ({
         $model.value = String(v);
       },
     },
-    option: {},
     item: (option) => ({
       value: option.value,
       disabled: option.disabled,
     }),
     indicator: {},
-    optionLabel: {},
   },
 }));
 
@@ -79,19 +73,22 @@ defineSlots<RadioSlots>();
 </script>
 
 <template>
-  <RadioGroupRoot ref="el" v-bind="settings.root">
+  <RadioGroupRoot ref="el" class="f-radio-group-root" v-bind="settings.root">
     <template v-for="option in options" :key="option.value">
       <slot name="option" v-bind="{ ...ctx, option }">
-        <Label v-bind="settings.option">
-          <RadioGroupItem v-bind="settings.item(option)">
+        <label class="f-label">
+          <RadioGroupItem class="f-radio-group-item" v-bind="settings.item(option)">
             <slot name="indicator" v-bind="{ ...ctx, option }">
-              <RadioGroupIndicator v-bind="settings.indicator" />
+              <RadioGroupIndicator
+                class="f-radio-group-indicator"
+                v-bind="settings.indicator"
+              />
             </slot>
           </RadioGroupItem>
           <slot name="optionLabel" v-bind="{ ...ctx, option }">
-            <Span v-bind="settings.optionLabel">{{ option.label }}</Span>
+            <span class="f-span">{{ option.label }}</span>
           </slot>
-        </Label>
+        </label>
       </slot>
     </template>
   </RadioGroupRoot>

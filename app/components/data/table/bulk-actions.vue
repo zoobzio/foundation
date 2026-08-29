@@ -1,65 +1,50 @@
 <script lang="ts">
 import type {
   TableBulkActionsContext,
-  TableBulkActionsPassthrough,
   TableBulkActionsProps,
 } from "../../../types/data/table/bulk-actions";
-import type { ComponentPublicInstance } from "vue";
-
-import Button from "../../common/button.vue";
-import Group from "../../common/group.vue";
-import Icon from "../../common/icon.vue";
-import Span from "../../common/span.vue";
 
 import { useTemplateRef } from "#imports";
 import { useTableView } from "../../../composables/table";
-import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 </script>
 
 <script setup lang="ts" generic="T">
-const { table, pt } = defineProps<TableBulkActionsProps<T>>();
+const { table } = defineProps<TableBulkActionsProps<T>>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const { bulkActions, selected } = useTableView(table);
 
-const settings = usePassthrough<TableBulkActionsPassthrough>(() => ({
-  pt,
-  recipes: {
-    root: {},
-    count: {},
-    action: {},
-    actionIcon: {},
-    clear: { onClick: () => table.clearSelection() },
-  },
-}));
-
 const ctx = useContext<TableBulkActionsContext<T>>(
   "data-table-bulk-actions",
-  () => ({ table, el: el.value, settings: settings.value }),
+  () => ({ table, el: el.value }),
 );
 
 defineExpose({ ctx });
 </script>
 
 <template>
-  <Group ref="el" v-bind="settings.root" class="f-data-table-bulk-actions">
-    <Span v-bind="settings.count" class="f-data-table-bulk-actions-count">
+  <div ref="el" class="f-group f-data-table-bulk-actions">
+    <span class="f-span f-data-table-bulk-actions-count">
       {{ selected.size }} selected
-    </Span>
-    <Button
+    </span>
+    <button
       v-for="bulk in bulkActions"
       :key="bulk.label"
-      v-bind="settings.action"
-      class="f-data-table-bulk-action"
+      type="button"
+      class="f-button f-data-table-bulk-action"
       @click="bulk.action(selected)"
     >
-      <Icon v-bind="settings.actionIcon" :alias="bulk.icon" />
+      <Icon class="f-icon" fill="currentColor" :name="bulk.icon" />
       {{ bulk.label }}
-    </Button>
-    <Button v-bind="settings.clear" class="f-data-table-bulk-action-clear">
+    </button>
+    <button
+      type="button"
+      class="f-button f-data-table-bulk-action-clear"
+      @click="table.clearSelection()"
+    >
       Clear
-    </Button>
-  </Group>
+    </button>
+  </div>
 </template>

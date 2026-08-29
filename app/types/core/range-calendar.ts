@@ -1,41 +1,31 @@
-import type { IconProps } from "../common/icon";
-import type {
-  RangeCalendarRootProps,
-  RangeCalendarRootEmits,
-  RangeCalendarRootSlotProps,
-} from "../common/range-calendar/root";
-import type { RangeCalendarHeaderProps } from "../common/range-calendar/header";
-import type { RangeCalendarHeadingProps } from "../common/range-calendar/heading";
-import type {
-  RangeCalendarPrevProps,
-  RangeCalendarPrevEmits,
-} from "../common/range-calendar/prev";
-import type {
-  RangeCalendarNextProps,
-  RangeCalendarNextEmits,
-} from "../common/range-calendar/next";
-import type { RangeCalendarGridProps } from "../common/range-calendar/grid";
-import type { RangeCalendarGridHeadProps } from "../common/range-calendar/grid-head";
-import type { RangeCalendarGridBodyProps } from "../common/range-calendar/grid-body";
-import type { RangeCalendarGridRowProps } from "../common/range-calendar/grid-row";
-import type { RangeCalendarHeadCellProps } from "../common/range-calendar/head-cell";
-import type { RangeCalendarCellProps } from "../common/range-calendar/cell";
-import type {
-  RangeCalendarCellTriggerProps,
-  RangeCalendarCellTriggerEmits,
-} from "../common/range-calendar/cell-trigger";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
 } from "../passthrough";
-import type { DateValue } from "@internationalized/date";
-import type { DateRange } from "reka-ui";
+import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type {
+  RangeCalendarRoot,
+  RangeCalendarRootProps,
+  RangeCalendarRootEmits,
+  RangeCalendarHeaderProps,
+  RangeCalendarHeadingProps,
+  RangeCalendarPrevProps,
+  RangeCalendarNextProps,
+  RangeCalendarGridProps,
+  RangeCalendarGridHeadProps,
+  RangeCalendarGridBodyProps,
+  RangeCalendarGridRowProps,
+  RangeCalendarHeadCellProps,
+  RangeCalendarCellProps,
+  RangeCalendarCellTriggerProps, DateRange 
+} from "reka-ui";
+import type { DateValue } from "@internationalized/date";
 
 // The share of the root's render-scope payload the core template forwards
 // into its slots.
-export type RangeCalendarView = Pick<RangeCalendarRootSlotProps, "weekDays" | "grid">;
+export type RangeCalendarView = Pick<SlotProps<typeof RangeCalendarRoot>, "weekDays" | "grid">;
 
 // One month of the root's render-scope grid payload.
 export type RangeCalendarMonth = RangeCalendarView["grid"][number];
@@ -43,11 +33,9 @@ export type RangeCalendarMonth = RangeCalendarView["grid"][number];
 export type RangeCalendarPassthrough = {
   root: Passthrough<RangeCalendarRootProps, RangeCalendarRootEmits>;
   header: Passthrough<RangeCalendarHeaderProps>;
-  prev: Passthrough<RangeCalendarPrevProps, RangeCalendarPrevEmits>;
-  prevIcon: Passthrough<IconProps>;
+  prev: Passthrough<RangeCalendarPrevProps>;
   heading: Passthrough<RangeCalendarHeadingProps>;
-  next: Passthrough<RangeCalendarNextProps, RangeCalendarNextEmits>;
-  nextIcon: Passthrough<IconProps>;
+  next: Passthrough<RangeCalendarNextProps>;
   grid: Passthrough<RangeCalendarGridProps>;
   gridHead: Passthrough<RangeCalendarGridHeadProps>;
   gridBody: Passthrough<RangeCalendarGridBodyProps>;
@@ -56,8 +44,7 @@ export type RangeCalendarPassthrough = {
   cell: PassthroughIter<DateValue, RangeCalendarCellProps>;
   cellTrigger: PassthroughIter<
     { day: DateValue; month: DateValue },
-    RangeCalendarCellTriggerProps,
-    RangeCalendarCellTriggerEmits
+    RangeCalendarCellTriggerProps
   >;
 };
 

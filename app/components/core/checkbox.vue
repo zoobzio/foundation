@@ -8,9 +8,7 @@ import type {
 } from "../../types/core/checkbox";
 import type { ComponentPublicInstance } from "vue";
 
-import CheckboxRoot from "../common/checkbox/root.vue";
-import Group from "../common/group.vue";
-import Icon from "../common/icon.vue";
+import { CheckboxRoot } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -50,10 +48,6 @@ const settings = usePassthrough<CheckboxPassthrough>(() => ({
         $model.value = v;
       },
     },
-    indicator: {},
-    icon: {
-      alias: $model.value === "indeterminate" ? "minus" : "check",
-    },
   },
 }));
 
@@ -72,13 +66,17 @@ defineSlots<CheckboxSlots>();
 </script>
 
 <template>
-  <CheckboxRoot ref="el" v-bind="settings.root">
+  <CheckboxRoot ref="el" class="f-checkbox-root" v-bind="settings.root">
     <slot name="indicator" v-bind="ctx">
-      <Group v-bind="settings.indicator">
+      <div class="f-group">
         <slot name="icon" v-bind="ctx">
-          <Icon v-bind="settings.icon" />
+          <Icon
+            class="f-icon"
+            fill="currentColor"
+            :name="$model === 'indeterminate' ? 'minus' : 'check'"
+          />
         </slot>
-      </Group>
+      </div>
     </slot>
   </CheckboxRoot>
 </template>

@@ -1,4 +1,3 @@
-import type { GroupProps } from "../../common/group";
 import type {
   ScrollerEmits,
   ScrollerProps,
@@ -9,8 +8,6 @@ import type { ComponentPublicInstance, VNode } from "vue";
 
 export type DeckFeedPassthrough = {
   root: Passthrough<ScrollerProps, ScrollerEmits>;
-  card: Passthrough<GroupProps>;
-  sentinel: Passthrough<GroupProps>;
 };
 
 export type DeckFeedProps<T> = {

@@ -160,10 +160,9 @@ function cycles(graph: Graph): string[] {
 }
 
 const TIER_RANK: Record<Tier, number> = {
-  common: 0,
-  core: 1,
-  data: 2,
-  system: 3,
+  core: 0,
+  data: 1,
+  system: 2,
 };
 
 /** Edges from a lower-tier catalog file into a higher tier: layering breaks. */
@@ -360,7 +359,7 @@ function computeSections(graph: Graph, catalog: Catalog): Section[] {
       key: "layering",
       title: "Tier layering violations",
       severity: "warning",
-      note: "Lower tiers must not depend on higher tiers (common < core < data < system).",
+      note: "Lower tiers must not depend on higher tiers (core < data < system).",
       lines: layering(graph),
     },
     {

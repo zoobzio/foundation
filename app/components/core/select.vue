@@ -9,14 +9,14 @@ import type {
 import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
-import SelectRoot from "../common/select/root.vue";
-import SelectTrigger from "../common/select/trigger.vue";
-import SelectPortal from "../common/select/portal.vue";
-import SelectContent from "../common/select/content.vue";
-import SelectItem from "../common/select/item.vue";
-import SelectItemText from "../common/select/item-text.vue";
-import Icon from "../common/icon.vue";
-import Span from "../common/span.vue";
+import {
+  SelectRoot,
+  SelectTrigger,
+  SelectPortal,
+  SelectContent,
+  SelectItem,
+  SelectItemText,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -76,10 +76,6 @@ const settings = usePassthrough<SelectPassthrough>(() => ({
     },
     trigger: {},
     content: { position: "popper", sideOffset: SELECT_SIDE_OFFSET },
-    triggerLabel: {},
-    triggerIcon: {
-      alias: $open.value ? "chevron-up" : "chevron-down",
-    },
     itemText: {},
     item: (obj) => ({
       value: obj.value,
@@ -107,27 +103,35 @@ defineSlots<SelectSlots<T>>();
 </script>
 
 <template>
-  <SelectRoot ref="el" v-bind="settings.root">
+  <SelectRoot ref="el" class="f-select-root" v-bind="settings.root">
     <slot name="trigger" v-bind="ctx">
-      <SelectTrigger v-bind="settings.trigger">
+      <SelectTrigger class="f-select-trigger" v-bind="settings.trigger">
         <slot name="triggerLabel" v-bind="ctx">
-          <Span v-bind="settings.triggerLabel">
-            {{ display }}
-          </Span>
+          <span class="f-span">{{ display }}</span>
         </slot>
         <slot name="triggerIcon" v-bind="ctx">
-          <Icon v-bind="settings.triggerIcon" />
+          <Icon
+            class="f-icon"
+            fill="currentColor"
+            :name="$open ? 'chevron-up' : 'chevron-down'"
+          />
         </slot>
       </SelectTrigger>
     </slot>
     <SelectPortal>
       <slot name="content" v-bind="ctx">
-        <SelectContent v-bind="settings.content">
+        <SelectContent class="f-select-content" v-bind="settings.content">
           <template v-for="option in options" :key="option.value">
             <slot name="item" v-bind="{ ...ctx, option }">
-              <SelectItem v-bind="settings.item(option)">
+              <SelectItem
+                class="f-select-item"
+                v-bind="settings.item(option)"
+              >
                 <slot name="itemText" v-bind="{ ...ctx, option }">
-                  <SelectItemText v-bind="settings.itemText">
+                  <SelectItemText
+                    class="f-select-item-text"
+                    v-bind="settings.itemText"
+                  >
                     {{ option.label }}
                   </SelectItemText>
                 </slot>

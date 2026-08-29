@@ -8,12 +8,14 @@ import type {
 } from "../../types/core/dialog";
 import type { ComponentPublicInstance } from "vue";
 
-import DialogRoot from "../common/dialog/root.vue";
-import DialogPortal from "../common/dialog/portal.vue";
-import DialogOverlay from "../common/dialog/overlay.vue";
-import DialogContent from "../common/dialog/content.vue";
-import DialogTitle from "../common/dialog/title.vue";
-import DialogDescription from "../common/dialog/description.vue";
+import {
+  DialogRoot,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -68,20 +70,23 @@ defineSlots<DialogSlots>();
 </script>
 
 <template>
-  <DialogRoot ref="el" v-bind="settings.root">
+  <DialogRoot ref="el" class="f-dialog-root" v-bind="settings.root">
     <DialogPortal>
       <slot name="overlay" v-bind="ctx">
-        <DialogOverlay v-bind="settings.overlay" />
+        <DialogOverlay class="f-dialog-overlay" v-bind="settings.overlay" />
       </slot>
       <slot name="content" v-bind="ctx">
-        <DialogContent v-bind="settings.content">
+        <DialogContent class="f-dialog-content" v-bind="settings.content">
           <slot name="title" v-bind="ctx">
-            <DialogTitle v-bind="settings.title">
+            <DialogTitle class="f-dialog-title" v-bind="settings.title">
               {{ title }}
             </DialogTitle>
           </slot>
           <slot name="description" v-bind="ctx">
-            <DialogDescription v-bind="settings.description">
+            <DialogDescription
+              class="f-dialog-description"
+              v-bind="settings.description"
+            >
               {{ description }}
             </DialogDescription>
           </slot>

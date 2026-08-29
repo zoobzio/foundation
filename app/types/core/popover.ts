@@ -1,18 +1,14 @@
 import type {
   PopoverRootProps,
   PopoverRootEmits,
-} from "../common/popover/root";
-import type {
   PopoverAnchorProps,
   ReferenceElement,
-} from "../common/popover/anchor";
-import type { PopoverTriggerProps } from "../common/popover/trigger";
-import type {
+  PopoverTriggerProps,
   PopoverContentProps,
   PopoverContentEmits,
-} from "../common/popover/content";
-import type { PopoverArrowProps } from "../common/popover/arrow";
-import type { PopoverCloseProps } from "../common/popover/close";
+  PopoverArrowProps,
+  PopoverCloseProps,
+} from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 

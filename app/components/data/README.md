@@ -291,15 +291,13 @@ same payloads.
   composables third.
 - **No casts, no non-null assertions** — narrow structurally:
   `event.target instanceof HTMLInputElement` for DOM payloads, `v-if`
-  scope for data-driven required props (an `Icon` whose `alias` comes from
-  item data binds `:alias="item.icon"` inside `v-if="item.icon"`, and the
-  manifest omits that prop).
-- **Widening a common contract**: when the widget drives native behavior a
-  common component doesn't declare (form's `value`/`min`/`max`), widen the
-  manifest entry —
-  `Passthrough<InputProps & { value?: string; min?: number }, InputEmits>`
-  — and note it; the bindings fall through the component to its root
-  element. Do not grow the common component's event list for one feature.
+  scope for data-driven required props (an `Icon` whose alias comes from
+  item data binds `:name="item.icon"` inside `v-if="item.icon"`).
+- **Native controls type against native attributes**: manifest entries the
+  widget binds to a native tag (form's `input`/`textarea`) are typed on
+  Vue's HTML attribute types, widened with the fields the feature drives —
+  `Passthrough<InputHTMLAttributes & { value?: string; min?: number }>` —
+  and the bindings land directly on the element.
 - **Config resolvers are synchronous.** Async belongs in `Actions`
   (form's `init`/`submit`), guarded by service state (`initialized`,
   `submitting`) and kicked off by the widget via `useLazyRequest` when the

@@ -6,7 +6,7 @@
 
 // ─── Catalog ────────────────────────────────────────────────────────────────
 
-export const TIERS = ["common", "core", "data", "system"] as const;
+export const TIERS = ["core", "data", "system"] as const;
 
 export type Tier = (typeof TIERS)[number];
 

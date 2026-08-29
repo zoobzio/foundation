@@ -8,12 +8,13 @@ import type {
 } from "../../types/core/tags-input";
 import type { ComponentPublicInstance } from "vue";
 
-import TagsInputRoot from "../common/tags-input/root.vue";
-import TagsInputItem from "../common/tags-input/item.vue";
-import TagsInputItemText from "../common/tags-input/item-text.vue";
-import TagsInputItemDelete from "../common/tags-input/item-delete.vue";
-import TagsInputInput from "../common/tags-input/input.vue";
-import Icon from "../common/icon.vue";
+import {
+  TagsInputRoot,
+  TagsInputItem,
+  TagsInputItemText,
+  TagsInputItemDelete,
+  TagsInputInput,
+} from "reka-ui";
 
 import { computed, useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -58,7 +59,6 @@ const settings = usePassthrough<TagsInputPassthrough>(() => ({
     item: (tag) => ({ value: tag }),
     itemText: {},
     itemDelete: {},
-    itemDeleteIcon: { alias: "close" },
     input: { placeholder },
   },
 }));
@@ -78,19 +78,25 @@ defineSlots<TagsInputSlots>();
 </script>
 
 <template>
-  <TagsInputRoot ref="el" v-bind="settings.root">
+  <TagsInputRoot ref="el" class="f-tags-input-root" v-bind="settings.root">
     <template v-for="tag in tags" :key="tag">
       <slot name="item" v-bind="{ ...ctx, tag }">
-        <TagsInputItem v-bind="settings.item(tag)">
+        <TagsInputItem class="f-tags-input-item" v-bind="settings.item(tag)">
           <slot name="itemText" v-bind="{ ...ctx, tag }">
-            <TagsInputItemText v-bind="settings.itemText">
+            <TagsInputItemText
+              class="f-tags-input-item-text"
+              v-bind="settings.itemText"
+            >
               {{ tag }}
             </TagsInputItemText>
           </slot>
           <slot name="itemDelete" v-bind="{ ...ctx, tag }">
-            <TagsInputItemDelete v-bind="settings.itemDelete">
+            <TagsInputItemDelete
+              class="f-tags-input-item-delete"
+              v-bind="settings.itemDelete"
+            >
               <slot name="itemDeleteIcon" v-bind="{ ...ctx, tag }">
-                <Icon v-bind="settings.itemDeleteIcon" />
+                <Icon class="f-icon" fill="currentColor" name="close" />
               </slot>
             </TagsInputItemDelete>
           </slot>
@@ -98,7 +104,7 @@ defineSlots<TagsInputSlots>();
       </slot>
     </template>
     <slot name="input" v-bind="ctx">
-      <TagsInputInput v-bind="settings.input" />
+      <TagsInputInput class="f-tags-input-input" v-bind="settings.input" />
     </slot>
   </TagsInputRoot>
 </template>

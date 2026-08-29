@@ -7,7 +7,7 @@ import type {
   State,
   TableFilter,
 } from "../types/data/table";
-import type { IconAlias } from "../types/common/icon";
+import type { IconAlias } from "../types/icon";
 import type { Logger } from "../types/log";
 
 import { entries } from "objectively";

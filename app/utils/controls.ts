@@ -35,7 +35,7 @@ export const input = <T>(
   placeholder: field.placeholder,
   disabled: field.disabled,
   required: field.required,
-  aria: { invalid: !!error },
+  "aria-invalid": error ? true : undefined,
   onInput: (event) => {
     if (event.target instanceof HTMLInputElement) {
       form.set(field.key, event.target.value);
@@ -61,7 +61,7 @@ export const number = <T>(
   min: field.min,
   max: field.max,
   step: field.step,
-  aria: { invalid: !!error },
+  "aria-invalid": error ? true : undefined,
   onInput: (event) => {
     if (event.target instanceof HTMLInputElement) {
       const parsed = event.target.valueAsNumber;
@@ -85,7 +85,7 @@ export const textarea = <T>(
   disabled: field.disabled,
   required: field.required,
   rows: field.rows,
-  aria: { invalid: !!error },
+  "aria-invalid": error ? true : undefined,
   onInput: (event) => {
     if (event.target instanceof HTMLTextAreaElement) {
       form.set(field.key, event.target.value);

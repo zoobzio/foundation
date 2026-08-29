@@ -1,25 +1,16 @@
-import type { ButtonEmits, ButtonProps } from "../common/button";
-import type { ChipEmits, ChipProps } from "../common/chip";
-import type { GroupProps } from "../common/group";
-import type { IconProps } from "../common/icon";
-import type { SpanProps } from "../common/span";
-import type {
-  AutocompleteRootProps,
-  AutocompleteRootEmits,
-} from "../common/autocomplete/root";
-import type {
-  AutocompleteInputProps,
-  AutocompleteInputEmits,
-} from "../common/autocomplete/input";
-import type { AutocompleteContentProps } from "../common/autocomplete/content";
-import type {
-  AutocompleteItemProps,
-  AutocompleteItemEmits,
-} from "../common/autocomplete/item";
 import type { ScrollerProps } from "./scroller";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type { Option } from "./common";
+import type {
+  AutocompleteRootProps,
+  AutocompleteRootEmits,
+  AutocompleteInputProps,
+  AutocompleteInputEmits,
+  AutocompleteContentProps,
+  AutocompleteItemProps,
+  AutocompleteItemEmits,
+} from "reka-ui";
 
 /**
  * A suggestion, trail entry, or committed chip. `active` marks the trail
@@ -52,11 +43,6 @@ export type AutocompleteChipAnchor<M = unknown> = {
 
 export type AutocompletePassthrough<M = unknown> = {
   root: Passthrough<AutocompleteRootProps, AutocompleteRootEmits>;
-  chip: PassthroughIter<AutocompleteChipAnchor<M>, ChipProps, ChipEmits>;
-  field: Passthrough<GroupProps>;
-  hint: Passthrough<GroupProps>;
-  hintText: Passthrough<SpanProps>;
-  hintChar: Passthrough<SpanProps>;
   // widened with the native keydown surface (README § widening)
   input: Passthrough<
     AutocompleteInputProps,
@@ -68,20 +54,12 @@ export type AutocompletePassthrough<M = unknown> = {
     AutocompleteContentProps,
     { scrollCapture: [event: Event] }
   >;
-  panel: Passthrough<GroupProps>;
   scroller: Passthrough<ScrollerProps>;
   item: PassthroughIter<
     AutocompleteAnchor<M>,
     AutocompleteItemProps,
     AutocompleteItemEmits
   >;
-  // plain buttons: outside the listbox collection, so keyboard navigation
-  // stays on the active panel
-  trailItem: PassthroughIter<AutocompleteAnchor<M>, ButtonProps, ButtonEmits>;
-  itemIcon: PassthroughIter<AutocompleteAnchor<M>, IconProps>;
-  itemLabel: Passthrough<SpanProps>;
-  itemArrow: Passthrough<IconProps>;
-  empty: Passthrough<SpanProps>;
 };
 
 /**

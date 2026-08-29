@@ -1,13 +1,11 @@
-import type { GroupProps } from "../common/group";
-import type { IconProps } from "../common/icon";
 import type {
   AccordionRootProps,
   AccordionRootEmits,
-} from "../common/accordion/root";
-import type { AccordionItemProps } from "../common/accordion/item";
-import type { AccordionHeaderProps } from "../common/accordion/header";
-import type { AccordionTriggerProps } from "../common/accordion/trigger";
-import type { AccordionContentProps } from "../common/accordion/content";
+  AccordionItemProps,
+  AccordionHeaderProps,
+  AccordionTriggerProps,
+  AccordionContentProps,
+} from "reka-ui";
 import type { Option } from "./common";
 import type {
   Passthrough,
@@ -21,9 +19,6 @@ export type AccordionPassthrough = {
   item: PassthroughIter<Option, AccordionItemProps>;
   header: Passthrough<AccordionHeaderProps>;
   trigger: Passthrough<AccordionTriggerProps>;
-  triggerContent: Passthrough<GroupProps>;
-  triggerIcon: PassthroughIter<Option, IconProps>;
-  chevron: PassthroughIter<boolean, IconProps>;
   content: Passthrough<AccordionContentProps>;
 };
 

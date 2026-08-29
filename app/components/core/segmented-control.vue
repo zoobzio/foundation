@@ -8,10 +8,7 @@ import type {
 } from "../../types/core/segmented-control";
 import type { ComponentPublicInstance } from "vue";
 
-import ToggleGroupRoot from "../common/toggle-group/root.vue";
-import ToggleGroupItem from "../common/toggle-group/item.vue";
-import Icon from "../common/icon.vue";
-import Span from "../common/span.vue";
+import { ToggleGroupRoot, ToggleGroupItem } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -50,10 +47,6 @@ const settings = usePassthrough<SegmentedControlPassthrough>(() => ({
       value: option.value,
       disabled: option.disabled,
     }),
-    itemIcon: (option) => ({
-      alias: option.icon!,
-    }),
-    itemLabel: {},
   },
 }));
 
@@ -71,17 +64,20 @@ defineSlots<SegmentedControlSlots>();
 </script>
 
 <template>
-  <ToggleGroupRoot ref="el" v-bind="settings.root">
+  <ToggleGroupRoot ref="el" class="f-toggle-group-root" v-bind="settings.root">
     <template v-for="option in options" :key="option.value">
       <slot name="item" v-bind="{ ...ctx, option }">
-        <ToggleGroupItem v-bind="settings.item(option)">
+        <ToggleGroupItem class="f-toggle-group-item" v-bind="settings.item(option)">
           <slot name="itemIcon" v-bind="{ ...ctx, option }">
-            <Icon v-if="option.icon" v-bind="settings.itemIcon(option)" />
+            <Icon
+              v-if="option.icon"
+              class="f-icon"
+              fill="currentColor"
+              :name="option.icon"
+            />
           </slot>
           <slot name="itemLabel" v-bind="{ ...ctx, option }">
-            <Span v-if="option.label" v-bind="settings.itemLabel">{{
-              option.label
-            }}</Span>
+            <span v-if="option.label" class="f-span">{{ option.label }}</span>
           </slot>
         </ToggleGroupItem>
       </slot>

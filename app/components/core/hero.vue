@@ -1,21 +1,11 @@
 <script lang="ts">
 import type {
   HeroProps,
-  HeroPassthrough,
   HeroContext,
   HeroSlots,
 } from "../../types/core/hero";
-import type { ComponentPublicInstance } from "vue";
-
-import Section from "../common/section.vue";
-import Group from "../common/group.vue";
-import H1 from "../common/h1.vue";
-import Em from "../common/em.vue";
-import P from "../common/p.vue";
-import Button from "../common/button.vue";
 
 import { useTemplateRef } from "#imports";
-import { usePassthrough } from "../../composables/passthrough";
 import { useContext } from "../../composables/context";
 </script>
 
@@ -25,23 +15,9 @@ const {
   taglineHighlight,
   description,
   action,
-  pt,
 } = defineProps<HeroProps>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
-
-const settings = usePassthrough<HeroPassthrough>(() => ({
-  pt,
-  recipes: {
-    root: {},
-    content: {},
-    tagline: {},
-    taglineHighlight: {},
-    description: {},
-    button: action ? { label: action.label } : {},
-    showcase: {},
-  },
-}));
+const el = useTemplateRef<HTMLElement>("el");
 
 const ctx = useContext<HeroContext>("hero", () => ({
   tagline,
@@ -49,7 +25,6 @@ const ctx = useContext<HeroContext>("hero", () => ({
   description,
   action,
   el: el.value,
-  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -57,31 +32,31 @@ defineSlots<HeroSlots>();
 </script>
 
 <template>
-  <Section ref="el" v-bind="settings.root">
+  <section ref="el" class="f-section">
     <slot name="content" v-bind="ctx">
-      <Group v-bind="settings.content">
+      <div class="f-group">
         <slot name="tagline" v-bind="ctx">
-          <H1 v-bind="settings.tagline">
+          <h1 class="f-h1">
             {{ tagline }}
             <slot name="taglineHighlight" v-bind="ctx">
-              <Em v-if="taglineHighlight" v-bind="settings.taglineHighlight">
+              <em v-if="taglineHighlight" class="f-em">
                 {{ taglineHighlight }}
-              </Em>
+              </em>
             </slot>
-          </H1>
+          </h1>
         </slot>
         <slot name="description" v-bind="ctx">
-          <P v-if="description" v-bind="settings.description">
+          <p v-if="description" class="f-p">
             {{ description }}
-          </P>
+          </p>
         </slot>
         <slot name="button" v-bind="ctx">
-          <Button v-if="action" v-bind="settings.button" />
+          <button v-if="action" type="button" class="f-button">{{ action.label }}</button>
         </slot>
-      </Group>
+      </div>
     </slot>
-    <Group v-if="$slots.showcase" v-bind="settings.showcase">
+    <div v-if="$slots.showcase" class="f-group">
       <slot name="showcase" v-bind="ctx" />
-    </Group>
-  </Section>
+    </div>
+  </section>
 </template>

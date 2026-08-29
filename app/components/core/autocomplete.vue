@@ -9,15 +9,12 @@ import type {
 } from "../../types/core/autocomplete";
 import type { ComponentPublicInstance } from "vue";
 
-import AutocompleteRoot from "../common/autocomplete/root.vue";
-import AutocompleteInput from "../common/autocomplete/input.vue";
-import AutocompleteContent from "../common/autocomplete/content.vue";
-import AutocompleteItem from "../common/autocomplete/item.vue";
-import Button from "../common/button.vue";
-import Chip from "../common/chip.vue";
-import Group from "../common/group.vue";
-import Icon from "../common/icon.vue";
-import Span from "../common/span.vue";
+import {
+  AutocompleteRoot,
+  AutocompleteInput,
+  AutocompleteContent,
+  AutocompleteItem,
+} from "reka-ui";
 import Scroller from "./scroller.vue";
 
 import { computed, useTemplateRef } from "#imports";
@@ -93,16 +90,6 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
         $open.value = v;
       },
     },
-    chip: (anchor) => ({
-      label: anchor.option.label,
-      onClick: () => {
-        emit("unwind", anchor.index);
-      },
-    }),
-    field: {},
-    hint: { aria: { hidden: true } },
-    hintText: {},
-    hintChar: {},
     input: {
       placeholder,
       disabled,
@@ -119,7 +106,6 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
       },
     },
     content: { onScrollCapture: onPanelScroll },
-    panel: {},
     scroller: {},
     item: (anchor) => ({
       value: anchor.option.value,
@@ -131,20 +117,6 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
         if (!anchor.option.disabled) emit("select", anchor.option);
       },
     }),
-    trailItem: (anchor) => ({
-      type: "button",
-      disabled: anchor.option.disabled,
-      aria: anchor.option.active ? { current: true } : {},
-      onClick: () => {
-        if (!anchor.option.disabled) emit("select", anchor.option);
-      },
-    }),
-    itemIcon: (anchor) => ({
-      alias: anchor.option.icon!,
-    }),
-    itemLabel: {},
-    itemArrow: { alias: "chevron-right" },
-    empty: {},
   },
 }));
 
@@ -168,32 +140,38 @@ defineSlots<AutocompleteSlots<M>>();
 </script>
 
 <template>
-  <AutocompleteRoot ref="el" v-bind="settings.root">
+  <AutocompleteRoot ref="el" class="f-autocomplete-root" v-bind="settings.root">
     <slot name="chips" v-bind="ctx">
       <template v-for="(step, i) in steps" :key="step.value">
         <slot name="chip" v-bind="{ ...ctx, option: step, index: i }">
-          <Chip v-bind="settings.chip({ option: step, index: i })" />
+          <button type="button" class="f-chip" @click="emit('unwind', i)">
+            {{ step.label }}
+          </button>
         </slot>
       </template>
     </slot>
-    <Group v-bind="settings.field">
+    <div class="f-group">
       <slot name="hint" v-bind="ctx">
-        <Group v-show="hint" v-bind="settings.hint">
-          <Span v-bind="settings.hintText">{{ $model }}</Span>
-          <Span v-bind="settings.hintChar">{{ hint }}</Span>
-        </Group>
+        <div v-show="hint" class="f-group" aria-hidden="true">
+          <span class="f-span">{{ $model }}</span>
+          <span class="f-span">{{ hint }}</span>
+        </div>
       </slot>
       <slot name="input" v-bind="ctx">
-        <AutocompleteInput v-bind="settings.input" />
+        <AutocompleteInput
+          class="f-autocomplete-input"
+          v-bind="settings.input"
+        />
       </slot>
       <AutocompleteContent
         v-if="panels.length || empty"
+        class="f-autocomplete-content"
         v-bind="settings.content"
       >
-      <Group
+      <div
         v-for="(options, p) in panels"
         :key="p"
-        v-bind="settings.panel"
+        class="f-group"
       >
         <Scroller v-bind="settings.scroller">
           <template v-for="(option, i) in options" :key="option.value">
@@ -201,13 +179,14 @@ defineSlots<AutocompleteSlots<M>>();
               name="item"
               v-bind="{ ...ctx, option, index: i, panel: p }"
             >
-              <component
-                :is="p < trail.length ? Button : AutocompleteItem"
-                v-bind="
-                  p < trail.length
-                    ? settings.trailItem({ option, index: i, panel: p })
-                    : settings.item({ option, index: i, panel: p })
-                "
+              <!-- plain buttons: outside the listbox collection, so keyboard navigation stays on the active panel -->
+              <button
+                v-if="p < trail.length"
+                type="button"
+                class="f-button"
+                :disabled="option.disabled"
+                :aria-current="option.active ? true : undefined"
+                @click="() => { if (!option.disabled) emit('select', option); }"
               >
                 <slot
                   name="itemIcon"
@@ -215,14 +194,16 @@ defineSlots<AutocompleteSlots<M>>();
                 >
                   <Icon
                     v-if="option.icon"
-                    v-bind="settings.itemIcon({ option, index: i, panel: p })"
+                    class="f-icon"
+                    fill="currentColor"
+                    :name="option.icon!"
                   />
                 </slot>
                 <slot
                   name="itemLabel"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
                 >
-                  <Span v-bind="settings.itemLabel">{{ option.label }}</Span>
+                  <span class="f-span">{{ option.label }}</span>
                 </slot>
                 <slot
                   name="itemArrow"
@@ -230,20 +211,56 @@ defineSlots<AutocompleteSlots<M>>();
                 >
                   <Icon
                     v-if="option.hasChildren"
-                    v-bind="settings.itemArrow"
+                    class="f-icon"
+                    fill="currentColor"
+                    name="chevron-right"
                   />
                 </slot>
-              </component>
+              </button>
+              <AutocompleteItem
+                v-else
+                class="f-autocomplete-item"
+                v-bind="settings.item({ option, index: i, panel: p })"
+              >
+                <slot
+                  name="itemIcon"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                >
+                  <Icon
+                    v-if="option.icon"
+                    class="f-icon"
+                    fill="currentColor"
+                    :name="option.icon!"
+                  />
+                </slot>
+                <slot
+                  name="itemLabel"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                >
+                  <span class="f-span">{{ option.label }}</span>
+                </slot>
+                <slot
+                  name="itemArrow"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                >
+                  <Icon
+                    v-if="option.hasChildren"
+                    class="f-icon"
+                    fill="currentColor"
+                    name="chevron-right"
+                  />
+                </slot>
+              </AutocompleteItem>
             </slot>
           </template>
         </Scroller>
-      </Group>
+      </div>
       <slot name="empty" v-bind="ctx">
-        <Group v-if="empty" v-bind="settings.panel">
-          <Span v-bind="settings.empty">No matches</Span>
-        </Group>
+        <div v-if="empty" class="f-group">
+          <span class="f-span">No matches</span>
+        </div>
       </slot>
       </AutocompleteContent>
-    </Group>
+    </div>
   </AutocompleteRoot>
 </template>

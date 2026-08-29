@@ -8,9 +8,7 @@ import type {
 } from "../../types/core/listbox";
 import type { ComponentPublicInstance } from "vue";
 
-import ListboxRoot from "../common/listbox/root.vue";
-import ListboxContent from "../common/listbox/content.vue";
-import ListboxItem from "../common/listbox/item.vue";
+import { ListboxRoot, ListboxContent, ListboxItem } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -71,12 +69,12 @@ defineSlots<ListboxSlots>();
 </script>
 
 <template>
-  <ListboxRoot ref="el" v-bind="settings.root">
+  <ListboxRoot ref="el" class="f-listbox-root" v-bind="settings.root">
     <slot name="content" v-bind="ctx">
-      <ListboxContent v-bind="settings.content">
+      <ListboxContent class="f-listbox-content" v-bind="settings.content">
         <template v-for="option in items" :key="option.value">
           <slot name="item" v-bind="{ ...ctx, item: option }">
-            <ListboxItem v-bind="settings.item(option)">
+            <ListboxItem class="f-listbox-item" v-bind="settings.item(option)">
               {{ option.label }}
             </ListboxItem>
           </slot>

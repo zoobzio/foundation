@@ -7,9 +7,7 @@ import type {
 } from "../../types/core/avatar";
 import type { ComponentPublicInstance } from "vue";
 
-import AvatarRoot from "../common/avatar/root.vue";
-import AvatarImage from "../common/avatar/image.vue";
-import AvatarFallback from "../common/avatar/fallback.vue";
+import { AvatarRoot, AvatarImage, AvatarFallback } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -44,12 +42,12 @@ defineSlots<AvatarSlots>();
 
 <template>
   <slot name="root" v-bind="ctx">
-    <AvatarRoot ref="el" v-bind="settings.root">
+    <AvatarRoot ref="el" class="f-avatar-root" v-bind="settings.root">
       <slot name="image" v-bind="ctx">
-        <AvatarImage v-bind="settings.image" />
+        <AvatarImage class="f-avatar-image" v-bind="settings.image" />
       </slot>
       <slot name="fallback" v-bind="ctx">
-        <AvatarFallback v-bind="settings.fallback">
+        <AvatarFallback class="f-avatar-fallback" v-bind="settings.fallback">
           {{ fallback }}
         </AvatarFallback>
       </slot>

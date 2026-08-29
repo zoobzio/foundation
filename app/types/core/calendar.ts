@@ -1,40 +1,31 @@
-import type { IconProps } from "../common/icon";
-import type {
-  CalendarRootProps,
-  CalendarRootEmits,
-  CalendarRootSlotProps,
-} from "../common/calendar/root";
-import type { CalendarHeaderProps } from "../common/calendar/header";
-import type { CalendarHeadingProps } from "../common/calendar/heading";
-import type {
-  CalendarPrevProps,
-  CalendarPrevEmits,
-} from "../common/calendar/prev";
-import type {
-  CalendarNextProps,
-  CalendarNextEmits,
-} from "../common/calendar/next";
-import type { CalendarGridProps } from "../common/calendar/grid";
-import type { CalendarGridHeadProps } from "../common/calendar/grid-head";
-import type { CalendarGridBodyProps } from "../common/calendar/grid-body";
-import type { CalendarGridRowProps } from "../common/calendar/grid-row";
-import type { CalendarHeadCellProps } from "../common/calendar/head-cell";
-import type { CalendarCellProps } from "../common/calendar/cell";
-import type {
-  CalendarCellTriggerProps,
-  CalendarCellTriggerEmits,
-} from "../common/calendar/cell-trigger";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
 } from "../passthrough";
-import type { DateValue } from "@internationalized/date";
+import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type {
+  CalendarRoot,
+  CalendarRootProps,
+  CalendarRootEmits,
+  CalendarHeaderProps,
+  CalendarHeadingProps,
+  CalendarPrevProps,
+  CalendarNextProps,
+  CalendarGridProps,
+  CalendarGridHeadProps,
+  CalendarGridBodyProps,
+  CalendarGridRowProps,
+  CalendarHeadCellProps,
+  CalendarCellProps,
+  CalendarCellTriggerProps,
+} from "reka-ui";
+import type { DateValue } from "@internationalized/date";
 
 // The share of the root's render-scope payload the core template forwards
 // into its slots.
-export type CalendarView = Pick<CalendarRootSlotProps, "weekDays" | "grid">;
+export type CalendarView = Pick<SlotProps<typeof CalendarRoot>, "weekDays" | "grid">;
 
 // One month of the root's render-scope grid payload.
 export type CalendarMonth = CalendarView["grid"][number];
@@ -42,11 +33,9 @@ export type CalendarMonth = CalendarView["grid"][number];
 export type CalendarPassthrough = {
   root: Passthrough<CalendarRootProps, CalendarRootEmits>;
   header: Passthrough<CalendarHeaderProps>;
-  prev: Passthrough<CalendarPrevProps, CalendarPrevEmits>;
-  prevIcon: Passthrough<IconProps>;
+  prev: Passthrough<CalendarPrevProps>;
   heading: Passthrough<CalendarHeadingProps>;
-  next: Passthrough<CalendarNextProps, CalendarNextEmits>;
-  nextIcon: Passthrough<IconProps>;
+  next: Passthrough<CalendarNextProps>;
   grid: Passthrough<CalendarGridProps>;
   gridHead: Passthrough<CalendarGridHeadProps>;
   gridBody: Passthrough<CalendarGridBodyProps>;
@@ -55,8 +44,7 @@ export type CalendarPassthrough = {
   cell: PassthroughIter<DateValue, CalendarCellProps>;
   cellTrigger: PassthroughIter<
     { day: DateValue; month: DateValue },
-    CalendarCellTriggerProps,
-    CalendarCellTriggerEmits
+    CalendarCellTriggerProps
   >;
 };
 

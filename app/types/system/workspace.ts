@@ -1,14 +1,6 @@
-import type { FooterProps } from "../common/footer";
-import type { GroupProps } from "../common/group";
-import type { HeaderProps } from "../common/header";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
 import type { ServicesOf } from "../definition";
 import type { Widgets } from "../widget";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 /**
  * A grid cell: placement plus, in definitions, the widget configuration
@@ -50,23 +42,13 @@ export type Workspace<R extends Widgets> = {
   services: ServicesOf<R>;
 };
 
-export type WorkspacePassthrough = {
-  root: Passthrough<GroupProps>;
-  header: Passthrough<HeaderProps>;
-  grid: Passthrough<GroupProps>;
-  slot: PassthroughIter<Slot & { id: string }, GroupProps>;
-  footer: Passthrough<FooterProps>;
-};
-
 export type WorkspaceProps<R extends Widgets> = {
   workspace: Workspace<R>;
-  pt?: PT<WorkspacePassthrough>;
 };
 
 export type WorkspaceContext<R extends Widgets> = {
   workspace: Workspace<R>;
-  el: ComponentPublicInstance | null;
-  settings: WorkspacePassthrough;
+  el: HTMLDivElement | null;
 };
 
 export type WorkspaceSlotContext<R extends Widgets> = WorkspaceContext<R> & {

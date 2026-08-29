@@ -7,14 +7,13 @@ import type {
 } from "../../types/core/scroller";
 import type { ComponentPublicInstance } from "vue";
 
-import ScrollAreaRoot from "../common/scroll-area/root.vue";
-import ScrollAreaViewport from "../common/scroll-area/viewport.vue";
-import ScrollAreaScrollbar from "../common/scroll-area/scrollbar.vue";
-import ScrollAreaThumb from "../common/scroll-area/thumb.vue";
-import ScrollAreaCorner from "../common/scroll-area/corner.vue";
-import Button from "../common/button.vue";
-import Icon from "../common/icon.vue";
-import Span from "../common/span.vue";
+import {
+  ScrollAreaRoot,
+  ScrollAreaViewport,
+  ScrollAreaScrollbar,
+  ScrollAreaThumb,
+  ScrollAreaCorner,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -45,7 +44,6 @@ const settings = usePassthrough<ScrollerPassthrough>(() => ({
     scrollbar: {},
     thumb: {},
     corner: {},
-    backToTop: { onClick: scrollToTop },
   },
 }));
 
@@ -64,9 +62,13 @@ defineSlots<ScrollerSlots>();
 </script>
 
 <template>
-  <ScrollAreaRoot ref="el" v-bind="settings.root">
+  <ScrollAreaRoot ref="el" class="f-scroll-area-root" v-bind="settings.root">
     <slot name="viewport" v-bind="ctx">
-      <ScrollAreaViewport ref="viewport" v-bind="settings.viewport">
+      <ScrollAreaViewport
+        ref="viewport"
+        class="f-scroll-area-viewport"
+        v-bind="settings.viewport"
+      >
         <slot v-bind="ctx" />
       </ScrollAreaViewport>
     </slot>
@@ -74,10 +76,11 @@ defineSlots<ScrollerSlots>();
     <slot name="scrollbar" v-bind="{ ...ctx, orientation: 'vertical' }">
       <ScrollAreaScrollbar
         v-if="orientation === 'vertical' || orientation === 'both'"
+        class="f-scroll-area-scrollbar"
         v-bind="{ ...settings.scrollbar, orientation: 'vertical' }"
       >
         <slot name="thumb" v-bind="ctx">
-          <ScrollAreaThumb v-bind="settings.thumb" />
+          <ScrollAreaThumb class="f-scroll-area-thumb" v-bind="settings.thumb" />
         </slot>
       </ScrollAreaScrollbar>
     </slot>
@@ -85,23 +88,28 @@ defineSlots<ScrollerSlots>();
     <slot name="scrollbar" v-bind="{ ...ctx, orientation: 'horizontal' }">
       <ScrollAreaScrollbar
         v-if="orientation === 'horizontal' || orientation === 'both'"
+        class="f-scroll-area-scrollbar"
         v-bind="{ ...settings.scrollbar, orientation: 'horizontal' }"
       >
         <slot name="thumb" v-bind="ctx">
-          <ScrollAreaThumb v-bind="settings.thumb" />
+          <ScrollAreaThumb class="f-scroll-area-thumb" v-bind="settings.thumb" />
         </slot>
       </ScrollAreaScrollbar>
     </slot>
 
     <slot name="corner" v-bind="ctx">
-      <ScrollAreaCorner v-if="orientation === 'both'" v-bind="settings.corner" />
+      <ScrollAreaCorner
+        v-if="orientation === 'both'"
+        class="f-scroll-area-corner"
+        v-bind="settings.corner"
+      />
     </slot>
 
     <slot name="backToTop" v-bind="ctx">
-      <Button v-if="isScrolled" v-bind="settings.backToTop">
-        <Icon alias="arrow-up" />
-        <Span>Back to top</Span>
-      </Button>
+      <button v-if="isScrolled" type="button" class="f-button" @click="scrollToTop">
+        <Icon class="f-icon" fill="currentColor" name="arrow-up" />
+        <span class="f-span">Back to top</span>
+      </button>
     </slot>
   </ScrollAreaRoot>
 </template>

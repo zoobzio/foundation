@@ -1,9 +1,9 @@
-import type { AvatarRootProps } from "../common/avatar/root";
 import type {
+  AvatarRootProps,
   AvatarImageProps,
   AvatarImageEmits,
-} from "../common/avatar/image";
-import type { AvatarFallbackProps } from "../common/avatar/fallback";
+  AvatarFallbackProps,
+} from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, VNode } from "vue";
 

@@ -10,14 +10,10 @@ import type {
 import type { CommandOption } from "../../types/core/command";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
-import type { ComponentPublicInstance } from "vue";
 
-import Button from "../common/button.vue";
 import Calendar from "./calendar.vue";
 import Command from "./command.vue";
 import Fab from "./fab.vue";
-import Group from "../common/group.vue";
-import Icon from "../common/icon.vue";
 import Popover from "./popover.vue";
 import RangeCalendar from "./range-calendar.vue";
 
@@ -31,7 +27,7 @@ import { serialize, deserialize, format } from "../../utils/date";
 <script setup lang="ts">
 const { modelValue: filters, fields, addFilter, pt } = defineProps<DateFiltersProps>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 const open = ref(false);
 const step = ref<1 | 2 | 3>(1);
@@ -193,9 +189,6 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       icon: "calendar",
       badge: activeCount.value > 0 ? "" : undefined,
     },
-    root: {},
-    stepper: {},
-    stepSeparator: { alias: "chevron-right" },
     fieldCommand: {
       groups: fieldGroups.value,
       placeholder: "Search fields...",
@@ -212,7 +205,6 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
         if (option) onOperatorSelect(option.value);
       },
     },
-    calendarWrapper: {},
     calendar: {
       modelValue: selectedDate.value,
       maxValue: today(getLocalTimeZone()),
@@ -226,12 +218,6 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       "onUpdate:modelValue": (v) => {
         selectedRange.value = v;
       },
-    },
-    actions: {},
-    applyButton: {
-      type: "button",
-      disabled: !isFormValid.value,
-      onClick: () => applyFilter(),
     },
   },
 }));
@@ -258,9 +244,9 @@ defineSlots<DateFiltersSlots>();
       </template>
       <template #content>
         <slot name="root" v-bind="ctx">
-          <Group ref="el" v-bind="settings.root" class="f-date-filters">
+          <div ref="el" class="f-group f-date-filters">
             <slot name="stepper" v-bind="ctx">
-              <Group v-bind="settings.stepper" class="f-date-filters-stepper">
+              <div class="f-group f-date-filters-stepper">
                 <button
                   type="button"
                   :tabindex="step === 1 ? -1 : 0"
@@ -274,7 +260,7 @@ defineSlots<DateFiltersSlots>();
                 >
                   {{ fieldLabel }}
                 </button>
-                <Icon v-bind="settings.stepSeparator" class="f-date-filters-step-separator" />
+                <Icon class="f-icon f-date-filters-step-separator" fill="currentColor" name="chevron-right" />
                 <button
                   type="button"
                   :tabindex="step === 2 ? -1 : 0"
@@ -289,7 +275,7 @@ defineSlots<DateFiltersSlots>();
                 >
                   {{ operatorLabel }}
                 </button>
-                <Icon v-bind="settings.stepSeparator" class="f-date-filters-step-separator" />
+                <Icon class="f-icon f-date-filters-step-separator" fill="currentColor" name="chevron-right" />
                 <button
                   type="button"
                   :class="[
@@ -301,7 +287,7 @@ defineSlots<DateFiltersSlots>();
                 >
                   {{ valueLabel }}
                 </button>
-              </Group>
+              </div>
             </slot>
 
             <slot name="fieldCommand" v-bind="ctx">
@@ -313,21 +299,21 @@ defineSlots<DateFiltersSlots>();
             </slot>
 
             <slot name="calendarWrapper" v-bind="ctx">
-              <Group v-if="step === 3" v-bind="settings.calendarWrapper" class="f-date-filters-calendar">
+              <div v-if="step === 3" class="f-group f-date-filters-calendar">
                 <slot name="calendar" v-bind="ctx">
                   <RangeCalendar v-if="selectedOperator === 'between'" v-bind="settings.rangeCalendar" />
                   <Calendar v-else v-bind="settings.calendar" />
                 </slot>
                 <slot name="actions" v-bind="ctx">
-                  <Group v-bind="settings.actions" class="f-date-filters-actions">
+                  <div class="f-group f-date-filters-actions">
                     <slot name="applyButton" v-bind="ctx">
-                      <Button v-bind="settings.applyButton">Apply</Button>
+                      <button type="button" class="f-button" :disabled="!isFormValid" @click="applyFilter">Apply</button>
                     </slot>
-                  </Group>
+                  </div>
                 </slot>
-              </Group>
+              </div>
             </slot>
-          </Group>
+          </div>
         </slot>
       </template>
     </Popover>

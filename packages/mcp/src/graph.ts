@@ -428,8 +428,8 @@ export function findTargets(graph: Graph, catalog: Catalog, query: string): Targ
  * "did you mean" pool for a failed lookup.
  */
 export function nearMatches(graph: Graph, query: string): string[] {
-  // A tier-qualified miss (e.g. "core/button" for a common-tier component)
-  // should still suggest by the bare name.
+  // A tier-qualified miss (e.g. "data/select" for a core component) should
+  // still suggest by the bare name.
   const bare = (query.toLowerCase().split("/").pop() ?? query).toLowerCase();
   const out: string[] = [];
   for (const node of graph.nodes.values()) {

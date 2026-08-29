@@ -1,14 +1,10 @@
-import type { LabelProps } from "../common/label";
 import type {
   RadioGroupRootProps,
   RadioGroupRootEmits,
-} from "../common/radio-group/root";
-import type {
   RadioGroupItemProps,
   RadioGroupItemEmits,
-} from "../common/radio-group/item";
-import type { RadioGroupIndicatorProps } from "../common/radio-group/indicator";
-import type { SpanProps } from "../common/span";
+  RadioGroupIndicatorProps,
+} from "reka-ui";
 import type { Option } from "./common";
 import type {
   Passthrough,
@@ -19,10 +15,8 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type RadioPassthrough = {
   root: Passthrough<RadioGroupRootProps, RadioGroupRootEmits>;
-  option: Passthrough<LabelProps>;
   item: PassthroughIter<Option, RadioGroupItemProps, RadioGroupItemEmits>;
   indicator: Passthrough<RadioGroupIndicatorProps>;
-  optionLabel: Passthrough<SpanProps>;
 };
 
 export type RadioProps = {

@@ -1,55 +1,47 @@
-import type { EmProps } from "../common/em";
-import type { IconProps } from "../common/icon";
-import type {
-  DateRangePickerRootProps,
-  DateRangePickerRootEmits,
-} from "../common/date-range-picker/root";
-import type {
-  DateRangePickerFieldProps,
-  DateRangePickerFieldSlotProps,
-  DateRangePickerSegment,
-} from "../common/date-range-picker/field";
-import type { DateRangePickerInputProps } from "../common/date-range-picker/input";
-import type {
-  DateRangePickerTriggerProps,
-  DateRangePickerTriggerEmits,
-} from "../common/date-range-picker/trigger";
-import type {
-  DateRangePickerContentProps,
-  DateRangePickerContentEmits,
-} from "../common/date-range-picker/content";
-import type {
-  DateRangePickerCalendarProps,
-  DateRangePickerCalendarSlotProps,
-} from "../common/date-range-picker/calendar";
-import type { DateRangePickerHeaderProps } from "../common/date-range-picker/header";
-import type { DateRangePickerHeadingProps } from "../common/date-range-picker/heading";
-import type {
-  DateRangePickerPrevProps,
-  DateRangePickerPrevEmits,
-} from "../common/date-range-picker/prev";
-import type {
-  DateRangePickerNextProps,
-  DateRangePickerNextEmits,
-} from "../common/date-range-picker/next";
-import type { DateRangePickerGridProps } from "../common/date-range-picker/grid";
-import type { DateRangePickerGridHeadProps } from "../common/date-range-picker/grid-head";
-import type { DateRangePickerGridBodyProps } from "../common/date-range-picker/grid-body";
-import type { DateRangePickerGridRowProps } from "../common/date-range-picker/grid-row";
-import type { DateRangePickerHeadCellProps } from "../common/date-range-picker/head-cell";
-import type { DateRangePickerCellProps } from "../common/date-range-picker/cell";
-import type {
-  DateRangePickerCellTriggerProps,
-  DateRangePickerCellTriggerEmits,
-} from "../common/date-range-picker/cell-trigger";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
 } from "../passthrough";
-import type { DateValue } from "@internationalized/date";
-import type { DateRange } from "reka-ui";
+import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type {
+  DateRangePickerField,
+  DateRangePickerCalendar,
+  DateRangePickerRootProps,
+  DateRangePickerRootEmits,
+  DateRangePickerInputProps,
+  DateRangePickerTriggerProps,
+  DateRangePickerContentProps,
+  DateRangePickerContentEmits,
+  DateRangePickerHeaderProps,
+  DateRangePickerHeadingProps,
+  DateRangePickerPrevProps,
+  DateRangePickerNextProps,
+  DateRangePickerGridProps,
+  DateRangePickerGridHeadProps,
+  DateRangePickerGridBodyProps,
+  DateRangePickerGridRowProps,
+  DateRangePickerHeadCellProps,
+  DateRangePickerCellProps,
+  DateRangePickerCellTriggerProps, DateRange 
+} from "reka-ui";
+import type { DateValue } from "@internationalized/date";
+
+// reka's DateRangePickerField and DateRangePickerCalendar declare no props —
+// they are pure render-scope payload providers, so their passthrough surface
+// is empty.
+export type DateRangePickerFieldProps = Record<string, never>;
+export type DateRangePickerCalendarProps = Record<string, never>;
+
+// The render-scope payload reka delivers through the field's default slot
+// (start/end segments + a modelValue snapshot), derived from the imported
+// component.
+export type DateRangePickerFieldSlotProps = SlotProps<typeof DateRangePickerField>;
+
+// One segment of either side of the field's render-scope payload.
+export type DateRangePickerSegment =
+  DateRangePickerFieldSlotProps["segments"]["start"][number];
 
 // The share of the field's render-scope payload the core template forwards.
 export type DateRangePickerSegments = Pick<
@@ -66,7 +58,7 @@ export type DateRangePickerInputItem = {
 // The share of the calendar's render-scope payload the core template
 // forwards into its slots.
 export type DateRangePickerView = Pick<
-  DateRangePickerCalendarSlotProps,
+  SlotProps<typeof DateRangePickerCalendar>,
   "weekDays" | "grid"
 >;
 
@@ -77,17 +69,13 @@ export type DateRangePickerPassthrough = {
   root: Passthrough<DateRangePickerRootProps, DateRangePickerRootEmits>;
   field: Passthrough<DateRangePickerFieldProps>;
   input: PassthroughIter<DateRangePickerInputItem, DateRangePickerInputProps>;
-  separator: Passthrough<EmProps>;
-  trigger: Passthrough<DateRangePickerTriggerProps, DateRangePickerTriggerEmits>;
-  triggerIcon: Passthrough<IconProps>;
+  trigger: Passthrough<DateRangePickerTriggerProps>;
   content: Passthrough<DateRangePickerContentProps, DateRangePickerContentEmits>;
   calendar: Passthrough<DateRangePickerCalendarProps>;
   header: Passthrough<DateRangePickerHeaderProps>;
-  prev: Passthrough<DateRangePickerPrevProps, DateRangePickerPrevEmits>;
-  prevIcon: Passthrough<IconProps>;
+  prev: Passthrough<DateRangePickerPrevProps>;
   heading: Passthrough<DateRangePickerHeadingProps>;
-  next: Passthrough<DateRangePickerNextProps, DateRangePickerNextEmits>;
-  nextIcon: Passthrough<IconProps>;
+  next: Passthrough<DateRangePickerNextProps>;
   grid: Passthrough<DateRangePickerGridProps>;
   gridHead: Passthrough<DateRangePickerGridHeadProps>;
   gridBody: Passthrough<DateRangePickerGridBodyProps>;
@@ -96,8 +84,7 @@ export type DateRangePickerPassthrough = {
   cell: PassthroughIter<DateValue, DateRangePickerCellProps>;
   cellTrigger: PassthroughIter<
     { day: DateValue; month: DateValue },
-    DateRangePickerCellTriggerProps,
-    DateRangePickerCellTriggerEmits
+    DateRangePickerCellTriggerProps
   >;
 };
 

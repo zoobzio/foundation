@@ -33,11 +33,11 @@ describe("useChart", () => {
   it("yields the widget triple resolving pt into settings", () => {
     const widget = useChart(
       "c1",
-      { ...definition, pt: { root: { label: "chart" } } },
+      { ...definition, pt: { refresh: { label: "chart" } } },
       makeWiring(),
     );
     expect(widget.component).toBeDefined();
-    expect(toValue(widget.settings)).toEqual({ root: { label: "chart" } });
+    expect(toValue(widget.settings)).toEqual({ refresh: { label: "chart" } });
   });
 
   it("merges wiring pt over the definition base per key", () => {
@@ -45,13 +45,12 @@ describe("useChart", () => {
       "c1",
       {
         ...definition,
-        pt: { root: { label: "base" }, title: { label: "kept" } },
+        pt: { refresh: { label: "base", icon: "chevron-left" } },
       },
-      { ...makeWiring(), pt: { root: { label: "override" } } },
+      { ...makeWiring(), pt: { refresh: { label: "override" } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      root: { label: "override" },
-      title: { label: "kept" },
+      refresh: { label: "override", icon: "chevron-left" },
     });
   });
 

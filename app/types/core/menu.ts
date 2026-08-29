@@ -1,23 +1,16 @@
-import type { ButtonEmits, ButtonProps } from "../common/button";
-import type { CaptionProps } from "../common/caption";
 import type {
   DropdownMenuRootProps,
   DropdownMenuRootEmits,
-} from "../common/dropdown-menu/root";
-import type { DropdownMenuTriggerProps } from "../common/dropdown-menu/trigger";
-import type {
+  DropdownMenuTriggerProps,
   DropdownMenuContentProps,
   DropdownMenuContentEmits,
-} from "../common/dropdown-menu/content";
-import type { DropdownMenuGroupProps } from "../common/dropdown-menu/group";
-import type { DropdownMenuLabelProps } from "../common/dropdown-menu/label";
-import type {
+  DropdownMenuGroupProps,
+  DropdownMenuLabelProps,
   DropdownMenuItemProps,
   DropdownMenuItemEmits,
-} from "../common/dropdown-menu/item";
-import type { DropdownMenuSeparatorProps } from "../common/dropdown-menu/separator";
-import type { IconAlias, IconProps } from "../common/icon";
-import type { SpanProps } from "../common/span";
+  DropdownMenuSeparatorProps,
+} from "reka-ui";
+import type { IconAlias } from "../icon";
 import type {
   Passthrough,
   PassthroughIter,
@@ -40,14 +33,10 @@ export type MenuGroup = {
 export type MenuPassthrough = {
   root: Passthrough<DropdownMenuRootProps, DropdownMenuRootEmits>;
   trigger: Passthrough<DropdownMenuTriggerProps>;
-  triggerButton: Passthrough<ButtonProps, ButtonEmits>;
   content: Passthrough<DropdownMenuContentProps, DropdownMenuContentEmits>;
   group: Passthrough<DropdownMenuGroupProps>;
   label: Passthrough<DropdownMenuLabelProps>;
-  groupLabel: Passthrough<CaptionProps>;
   item: PassthroughIter<MenuItem, DropdownMenuItemProps, DropdownMenuItemEmits>;
-  itemIcon: PassthroughIter<MenuItem, IconProps>;
-  itemLabel: Passthrough<SpanProps>;
   separator: Passthrough<DropdownMenuSeparatorProps>;
 };
 

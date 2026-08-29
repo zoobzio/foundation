@@ -26,11 +26,11 @@ describe("useForm", () => {
   it("yields the widget triple resolving pt into settings", () => {
     const widget = useForm("f1", {
       ...definition,
-      pt: { root: { label: "contact-form" } },
+      pt: { scroller: { scrollHideDelay: 100 } },
     });
     expect(widget.component).toBeDefined();
     expect(toValue(widget.settings)).toEqual({
-      root: { label: "contact-form" },
+      scroller: { scrollHideDelay: 100 },
     });
   });
 
@@ -39,13 +39,12 @@ describe("useForm", () => {
       "f1",
       {
         ...definition,
-        pt: { root: { label: "base" }, title: { label: "kept" } },
+        pt: { scroller: { scrollHideDelay: 1, type: "hover" } },
       },
-      { pt: { root: { label: "override" } } },
+      { pt: { scroller: { scrollHideDelay: 2 } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      root: { label: "override" },
-      title: { label: "kept" },
+      scroller: { scrollHideDelay: 2, type: "hover" },
     });
   });
 

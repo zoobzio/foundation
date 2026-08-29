@@ -28,11 +28,11 @@ describe("useDeck", () => {
   it("yields the widget triple resolving pt into settings", () => {
     const widget = useDeck(
       "d1",
-      { ...definition, pt: { root: { label: "feed" } } },
+      { ...definition, pt: { pending: { label: "feed" } } },
       makeWiring(),
     );
     expect(widget.component).toBeDefined();
-    expect(toValue(widget.settings)).toEqual({ root: { label: "feed" } });
+    expect(toValue(widget.settings)).toEqual({ pending: { label: "feed" } });
   });
 
   it("merges wiring pt over the definition base per key", () => {
@@ -40,13 +40,12 @@ describe("useDeck", () => {
       "d1",
       {
         ...definition,
-        pt: { root: { label: "base" }, body: { label: "kept" } },
+        pt: { pending: { label: "base", icon: "chevron-left" } },
       },
-      { ...makeWiring(), pt: { root: { label: "override" } } },
+      { ...makeWiring(), pt: { pending: { label: "override" } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      root: { label: "override" },
-      body: { label: "kept" },
+      pending: { label: "override", icon: "chevron-left" },
     });
   });
 

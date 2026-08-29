@@ -1,12 +1,3 @@
-import type {
-  ListboxRootProps,
-  ListboxRootEmits,
-} from "../common/listbox/root";
-import type { ListboxContentProps } from "../common/listbox/content";
-import type {
-  ListboxItemProps,
-  ListboxItemEmits,
-} from "../common/listbox/item";
 import type { Option } from "./common";
 import type {
   Passthrough,
@@ -14,6 +5,13 @@ import type {
   PT,
 } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type {
+  ListboxRootProps,
+  ListboxRootEmits,
+  ListboxContentProps,
+  ListboxItemProps,
+  ListboxItemEmits,
+} from "reka-ui";
 
 export type ListboxPassthrough = {
   root: Passthrough<ListboxRootProps, ListboxRootEmits>;

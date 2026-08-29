@@ -1,8 +1,3 @@
-import type { InputProps, InputEmits } from "../common/input";
-import type {
-  TextareaProps,
-  TextareaEmits,
-} from "../common/textarea";
 import type {
   CheckboxProps,
   CheckboxEmits,
@@ -23,26 +18,25 @@ import type {
 } from "../core/tags-input";
 import type { Option } from "../core/common";
 import type { Passthrough } from "../passthrough";
+import type { InputHTMLAttributes, TextareaHTMLAttributes } from "vue";
 
 /**
  * One passthrough entry per control the form widget can render.
  *
- * The `input` and `textarea` entries widen their component's props with the
- * native attributes the form binds (`value`, `min`, `max`, `step`); those are
- * not part of the common contract — they fall through the component to its
- * root element.
+ * The `input` and `textarea` entries type against native HTML attributes and
+ * bind directly to the rendered `<input>`/`<textarea>` tags, widened with the
+ * field bindings the form drives (`value`, `min`, `max`, `step`).
  */
 export type Controls = {
   input: Passthrough<
-    InputProps & {
+    InputHTMLAttributes & {
       value?: string | number;
       min?: number;
       max?: number;
       step?: number;
-    },
-    InputEmits
+    }
   >;
-  textarea: Passthrough<TextareaProps & { value?: string }, TextareaEmits>;
+  textarea: Passthrough<TextareaHTMLAttributes & { value?: string }>;
   select: Passthrough<SelectProps<Option>, SelectEmits<Option>>;
   multiSelect: Passthrough<MultiSelectProps<Option>, MultiSelectEmits<Option>>;
   checkbox: Passthrough<CheckboxProps, CheckboxEmits>;

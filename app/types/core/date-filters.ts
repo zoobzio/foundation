@@ -1,6 +1,3 @@
-import type { ButtonProps, ButtonEmits } from "../common/button";
-import type { GroupProps } from "../common/group";
-import type { IconProps } from "../common/icon";
 import type { CalendarProps, CalendarEmits } from "./calendar";
 import type {
   CommandOption,
@@ -14,7 +11,7 @@ import type {
   RangeCalendarProps,
   RangeCalendarEmits,
 } from "./range-calendar";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
 export type DateFilterOperator = "before" | "after" | "between";
 
@@ -33,16 +30,10 @@ export type DateFieldConfig = {
 export type DateFiltersPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
-  root: Passthrough<GroupProps>;
-  stepper: Passthrough<GroupProps>;
-  stepSeparator: Passthrough<IconProps>;
   fieldCommand: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
   operatorCommand: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
-  calendarWrapper: Passthrough<GroupProps>;
   calendar: Passthrough<CalendarProps, CalendarEmits>;
   rangeCalendar: Passthrough<RangeCalendarProps, RangeCalendarEmits>;
-  actions: Passthrough<GroupProps>;
-  applyButton: Passthrough<ButtonProps, ButtonEmits>;
 };
 
 export type DateFiltersProps = {
@@ -58,7 +49,7 @@ export type DateFiltersContext = {
   fields: DateFieldConfig[];
   filters?: DateFilter[];
   activeCount: number;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: DateFiltersPassthrough;
 };
 

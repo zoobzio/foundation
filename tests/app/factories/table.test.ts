@@ -25,11 +25,13 @@ describe("useTable", () => {
   it("yields the widget triple resolving pt into settings", () => {
     const widget = useTable(
       "f1",
-      { ...definition, pt: { root: { label: "contacts" } } },
+      { ...definition, pt: { refresh: { label: "contacts" } } },
       makeWiring(),
     );
     expect(widget.component).toBeDefined();
-    expect(toValue(widget.settings)).toEqual({ root: { label: "contacts" } });
+    expect(toValue(widget.settings)).toEqual({
+      refresh: { label: "contacts" },
+    });
   });
 
   it("merges wiring pt over the definition base per key", () => {
@@ -37,13 +39,13 @@ describe("useTable", () => {
       "f1",
       {
         ...definition,
-        pt: { root: { label: "base" }, toolbar: { label: "kept" } },
+        pt: { refresh: { label: "base" }, pagination: { size: 25 } },
       },
-      { ...makeWiring(), pt: { root: { label: "override" } } },
+      { ...makeWiring(), pt: { refresh: { label: "override" } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      root: { label: "override" },
-      toolbar: { label: "kept" },
+      refresh: { label: "override" },
+      pagination: { size: 25 },
     });
   });
 

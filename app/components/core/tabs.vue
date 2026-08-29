@@ -8,11 +8,7 @@ import type {
 } from "../../types/core/tabs";
 import type { ComponentPublicInstance } from "vue";
 
-import TabsRoot from "../common/tabs/root.vue";
-import TabsList from "../common/tabs/list.vue";
-import TabsTrigger from "../common/tabs/trigger.vue";
-import TabsContent from "../common/tabs/content.vue";
-import Icon from "../common/icon.vue";
+import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -46,9 +42,6 @@ const settings = usePassthrough<TabsPassthrough>(() => ({
       value: option.value,
       disabled: option.disabled,
     }),
-    triggerIcon: (option) => ({
-      alias: option.icon!,
-    }),
     content: (option) => ({
       value: option.value,
     }),
@@ -67,13 +60,18 @@ defineSlots<TabsSlots>();
 </script>
 
 <template>
-  <TabsRoot ref="el" v-bind="settings.root">
+  <TabsRoot ref="el" class="f-tabs-root" v-bind="settings.root">
     <slot name="list" v-bind="ctx">
-      <TabsList v-bind="settings.list">
+      <TabsList class="f-tabs-list" v-bind="settings.list">
         <template v-for="option in tabs" :key="option.value">
-          <TabsTrigger v-bind="settings.trigger(option)">
+          <TabsTrigger class="f-tabs-trigger" v-bind="settings.trigger(option)">
             <slot name="trigger" v-bind="{ ...ctx, option }">
-              <Icon v-if="option.icon" v-bind="settings.triggerIcon(option)" />
+              <Icon
+                v-if="option.icon"
+                class="f-icon"
+                fill="currentColor"
+                :name="option.icon"
+              />
               {{ option.label }}
             </slot>
           </TabsTrigger>
@@ -81,7 +79,7 @@ defineSlots<TabsSlots>();
       </TabsList>
     </slot>
     <template v-for="option in tabs" :key="option.value">
-      <TabsContent v-bind="settings.content(option)">
+      <TabsContent class="f-tabs-content" v-bind="settings.content(option)">
         <slot name="content" v-bind="{ ...ctx, option }" />
       </TabsContent>
     </template>

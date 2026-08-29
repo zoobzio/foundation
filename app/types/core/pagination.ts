@@ -1,26 +1,17 @@
-import type { ButtonEmits, ButtonProps } from "../common/button";
-import type { GroupProps } from "../common/group";
-import type { SpanProps } from "../common/span";
 import type { FabEmits, FabProps } from "./fab";
 import type {
   Passthrough,
-  PassthroughIter,
   PT,
 } from "../passthrough";
 import type { SelectEmits, SelectProps } from "./select";
 import type { Option } from "./common";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { Ref, VNode } from "vue";
 
 export type PaginationPassthrough = {
-  root: Passthrough<GroupProps>;
-  info: Passthrough<SpanProps>;
-  pages: Passthrough<GroupProps>;
   first: Passthrough<FabProps, FabEmits>;
   prev: Passthrough<FabProps, FabEmits>;
   next: Passthrough<FabProps, FabEmits>;
   last: Passthrough<FabProps, FabEmits>;
-  options: Passthrough<GroupProps>;
-  option: PassthroughIter<number | "...", ButtonProps, ButtonEmits>;
   size: Passthrough<SelectProps<Option>, SelectEmits<Option>>;
 };
 
@@ -45,7 +36,7 @@ export type PaginationContext = {
   hasPrev: boolean;
   hasNext: boolean;
   options: (number | "...")[];
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   settings: PaginationPassthrough;
 };
 

@@ -1,16 +1,9 @@
-import type {
-  CheckboxRootProps,
-  CheckboxRootEmits,
-} from "../common/checkbox/root";
-import type { GroupProps } from "../common/group";
-import type { IconProps } from "../common/icon";
+import type { CheckboxRootProps, CheckboxRootEmits } from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type CheckboxPassthrough = {
   root: Passthrough<CheckboxRootProps, CheckboxRootEmits>;
-  indicator: Passthrough<GroupProps>;
-  icon: Passthrough<IconProps>;
 };
 
 export type CheckboxProps = {

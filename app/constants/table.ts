@@ -1,6 +1,6 @@
 // data/table constants
 
-import type { IconAlias } from "../types/common/icon";
+import type { IconAlias } from "../types/icon";
 import type { SortDirection } from "../types/data/table";
 
 export const TABLE_DEFAULT_PAGE_SIZE = 25;

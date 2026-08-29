@@ -1,11 +1,10 @@
 <script lang="ts">
 import type { AppError } from "./types/error";
 
-import TooltipProvider from "./components/common/tooltip/provider.vue";
 import Toast from "./components/core/toast.vue";
 import Toaster from "./components/core/toaster.vue";
 
-import { ConfigProvider } from "reka-ui";
+import { ConfigProvider, TooltipProvider } from "reka-ui";
 import { useHead, useId } from "#imports";
 import { useNotifications } from "./composables/notification";
 </script>
@@ -53,7 +52,7 @@ const onError = (err: unknown) => {
             :key="notification.id"
             :title="notification.title"
             :description="notification.description"
-            :pt="{ root: { modifiers: { variant: notification.variant } } }"
+            :variant="notification.variant"
             @close="remove(notification.id)"
           />
         </template>

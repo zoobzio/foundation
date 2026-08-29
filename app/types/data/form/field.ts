@@ -1,16 +1,9 @@
-import type { CaptionProps } from "../../common/caption";
-import type { GroupProps } from "../../common/group";
-import type { LabelProps } from "../../common/label";
-import type { Passthrough, PT } from "../../passthrough";
+import type { PT } from "../../passthrough";
 import type { Control, Controls } from "../controls";
 import type { Field, Service } from "../form";
-import type { ComponentPublicInstance, VNode } from "vue";
+import type { VNode } from "vue";
 
-export type FormFieldPassthrough = {
-  root: Passthrough<GroupProps>;
-  label: Passthrough<LabelProps>;
-  error: Passthrough<CaptionProps>;
-} & Controls;
+export type FormFieldPassthrough = Controls;
 
 export interface FormFieldProps<T> {
   form: Service<T>;
@@ -23,7 +16,7 @@ export type FormFieldContext<T> = {
   field: Field<T>;
   value: T[keyof T] | undefined;
   error: string | undefined;
-  el: ComponentPublicInstance | null;
+  el: HTMLDivElement | null;
   control: Control;
   settings: FormFieldPassthrough;
 };
