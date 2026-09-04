@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
 
 import iconSheets from "./config/icon-sheets";
@@ -8,6 +9,9 @@ export default defineNuxtConfig({
   imports: { autoImport: false, scan: false },
   components: false,
   modules: ["@vueuse/nuxt", "@untheme/nuxt", "@icon-sheets/nuxt"],
+  // Absolute path so the entry resolves from any consuming app, not just
+  // when this layer is the project root.
+  css: [fileURLToPath(new URL("./app/assets/css/reset.css", import.meta.url))],
   untheme,
   iconSheets,
   vite: {
