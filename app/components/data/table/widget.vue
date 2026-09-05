@@ -68,9 +68,13 @@ defineExpose({ ctx });
 
 const slots = defineSlots<TableWidgetSlots<T>>();
 
-// Body-owned slots relay to the body, filtered so the body keeps its own
-// defaults for any the consumer didn't supply. `empty` (body ctx) and the cell
-// slots (cell ctx) forward in separate loops to stay homogeneously typed.
+// Child-owned slots relay to the head and body, filtered so each child
+// keeps its own defaults for any the consumer didn't supply. `header`
+// (head ctx), `empty` (body ctx), and the cell slots (cell ctx) forward in
+// separate loops to stay homogeneously typed.
+const headerSlots = computed(() =>
+  Object.keys(slots).filter((n): n is "header" => n === "header"),
+);
 const emptySlots = computed(() =>
   Object.keys(slots).filter((n): n is "empty" => n === "empty"),
 );
@@ -104,8 +108,8 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
     <Scroller v-bind="settings.scroller">
       <table class="f-table">
         <Head :table="service" :pt="pt?.head">
-          <template #header="headerProps">
-            <slot name="header" v-bind="headerProps" />
+          <template v-for="name in headerSlots" :key="name" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps" />
           </template>
         </Head>
         <Body :table="service" :pt="pt?.body">

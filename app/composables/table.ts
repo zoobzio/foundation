@@ -160,6 +160,7 @@ export const useTableView = <T>(table: Service<T>) => {
         return TABLE_DATE_OPERATORS;
       case "number":
       case "currency":
+      case "filesize":
         return TABLE_NUMBER_OPERATORS;
       default:
         return [];
@@ -175,6 +176,7 @@ export const useTableView = <T>(table: Service<T>) => {
         return "on";
       case "number":
       case "currency":
+      case "filesize":
         return "is";
       default:
         return undefined;
@@ -269,6 +271,7 @@ export const useTableView = <T>(table: Service<T>) => {
         return ["true", "false"];
       case "number":
       case "currency":
+      case "filesize":
         return numberOptions(term.trim(), count);
       case "date":
       case "datetime":
@@ -313,6 +316,7 @@ export const useTableView = <T>(table: Service<T>) => {
       const generated =
         column.type === "number" ||
         column.type === "currency" ||
+        column.type === "filesize" ||
         column.type === "date" ||
         column.type === "datetime";
       return valueOptions(

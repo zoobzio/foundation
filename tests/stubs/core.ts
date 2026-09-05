@@ -6,6 +6,7 @@ import { createStub, createAllSlotsStub } from "#test/stubs/factories";
 export const coreStubs = {
   Accordion: createStub("Accordion"),
   Avatar: createStub("Avatar"),
+  Breadcrumb: createStub("Breadcrumb", "nav"),
   Calendar: createStub("Calendar"),
   Checkbox: createStub("Checkbox"),
   Command: createStub("Command"),
@@ -32,4 +33,5 @@ export const coreStubs = {
   Toast: createStub("Toast"),
   Toaster: createStub("Toaster"),
   Tooltip: createStub("Tooltip"),
+  Tree: createStub("Tree", "ul"),
 } as const;
