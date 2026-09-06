@@ -62,15 +62,11 @@ defineExpose({ ctx });
 
 const slots = defineSlots<BrowserWidgetSlots<T>>();
 
-// Child-owned slots relay to the folders section and the files table,
-// filtered so each child keeps its own defaults for any the consumer
-// didn't supply. `header` forwards explicitly; `noFiles` (files ctx) and
-// the cell slots (cell ctx) forward in separate loops to stay
-// homogeneously typed.
+// Child-owned slots relay to the folder and file row sections, filtered so
+// each child keeps its own defaults for any the consumer didn't supply.
+// `noFiles` (files ctx) and the cell slots (cell ctx) forward in separate
+// loops to stay homogeneously typed.
 const folderSlots = useForwardSlots(slots, BROWSER_FOLDER_SLOTS);
-const headerSlots = computed(() =>
-  Object.keys(slots).filter((n): n is "header" => n === "header"),
-);
 const noFilesSlots = computed(() =>
   Object.keys(slots).filter((n): n is "noFiles" => n === "noFiles"),
 );
@@ -104,26 +100,35 @@ useLazyRequest(`init-browser-${service.id}`, () => service.init());
       <div class="f-group f-data-browser-empty">Empty folder</div>
     </slot>
     <Scroller v-else v-bind="settings.scroller">
-      <Folders
-        v-if="service.folders.length"
-        :browser="service"
-        :pt="pt?.folders"
-      >
-        <template v-for="name in folderSlots" :key="name" #[name]="slotProps">
-          <slot :name="name" v-bind="slotProps" />
-        </template>
-      </Folders>
-      <Files :browser="service" :pt="pt?.files">
-        <template v-for="name in headerSlots" :key="name" #[name]="slotProps">
-          <slot :name="name" v-bind="slotProps" />
-        </template>
-        <template v-for="name in noFilesSlots" :key="name" #[name]="slotProps">
-          <slot :name="name" v-bind="slotProps" />
-        </template>
-        <template v-for="name in cellSlots" :key="name" #[name]="slotProps">
-          <slot :name="name" v-bind="slotProps" />
-        </template>
-      </Files>
+      <!-- One headerless table: folder rows on top, file rows below, each
+           section its own tbody so alignment holds across both. -->
+      <table class="f-table">
+        <Folders
+          v-if="service.folders.length"
+          :browser="service"
+          :pt="pt?.folders"
+        >
+          <template
+            v-for="name in folderSlots"
+            :key="name"
+            #[name]="slotProps"
+          >
+            <slot :name="name" v-bind="slotProps" />
+          </template>
+        </Folders>
+        <Files :browser="service" :pt="pt?.files">
+          <template
+            v-for="name in noFilesSlots"
+            :key="name"
+            #[name]="slotProps"
+          >
+            <slot :name="name" v-bind="slotProps" />
+          </template>
+          <template v-for="name in cellSlots" :key="name" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps" />
+          </template>
+        </Files>
+      </table>
     </Scroller>
   </div>
 </template>

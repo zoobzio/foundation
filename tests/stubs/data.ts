@@ -16,8 +16,8 @@ export const deckStubs = {
 } as const;
 
 export const browserStubs = {
-  Folders: createStub("Folders", "ul"),
-  Files: createAllSlotsStub("Files", "table"),
+  Folders: createStub("Folders", "tbody"),
+  Files: createAllSlotsStub("Files", "tbody"),
   BulkActions: createStub("BulkActions"),
 } as const;
 

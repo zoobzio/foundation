@@ -1,7 +1,7 @@
-// The folders section's own logic: the open dispatch, icon fallback, the
-// count badge, and the folder actions affordance. The contract mock is the
-// unit seam — alphabetical ordering is the service's contract, tested in
-// tests/app/services/browser.test.ts.
+// The folder rows' own logic: the open dispatch, icon fallback, the count
+// badge, column alignment against the file rows, and the folder actions
+// affordance. The contract mock is the unit seam — alphabetical ordering
+// is the service's contract, tested in tests/app/services/browser.test.ts.
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
@@ -23,7 +23,8 @@ const mountFolders = (
   const wrapper = mount(
     defineComponent({
       setup(_, { slots: forwarded }) {
-        return () => h(Folders, { browser: mock.service }, forwarded);
+        return () =>
+          h("table", h(Folders, { browser: mock.service }, forwarded));
       },
     }),
     { slots },
@@ -32,13 +33,37 @@ const mountFolders = (
 };
 
 describe("data browser folders", () => {
-  it("renders one row per folder in service order", () => {
+  it("renders one table row per folder in service order", () => {
     const { wrapper } = mountFolders();
-    const rows = wrapper.findAll("li");
+    expect(wrapper.get("tbody").classes()).toContain(
+      "f-data-browser-folders",
+    );
+    const rows = wrapper.findAll("tr");
     expect(rows).toHaveLength(3);
-    expect(
-      rows.map((li) => li.get(".f-span").text()),
-    ).toEqual(["Media", "Archive", "Drafts"]);
+    expect(rows.map((tr) => tr.get(".f-span").text())).toEqual([
+      "Media",
+      "Archive",
+      "Drafts",
+    ]);
+  });
+
+  it("spans the label cell across the data columns", () => {
+    const { wrapper } = mountFolders();
+    const label = wrapper.findAll("tr td").at(0);
+    expect(label?.attributes("colspan")).toBe("3");
+  });
+
+  it("keeps an empty selection cell for alignment when files are selectable", () => {
+    const plain = mountFolders();
+    expect(plain.wrapper.find(".f-data-browser-select").exists()).toBe(false);
+    const selectable = mountFolders(
+      createMockBrowser({
+        bulkActions: [{ icon: "delete", label: "Purge", action: vi.fn() }],
+      }),
+    );
+    const select = selectable.wrapper.find("td.f-data-browser-select");
+    expect(select.exists()).toBe(true);
+    expect(select.find('[role="checkbox"]').exists()).toBe(false);
   });
 
   it("folder activation routes through browser.open", async () => {
@@ -53,23 +78,25 @@ describe("data browser folders", () => {
 
   it("falls back to the folder icon unless the folder brings its own", () => {
     const { wrapper } = mountFolders();
-    const rows = wrapper.findAll("li");
+    const rows = wrapper.findAll("tr");
     expect(rows.at(0)?.get("use").attributes("href")).toBe("#folder");
     expect(rows.at(1)?.get("use").attributes("href")).toBe("#layers");
   });
 
   it("shows the count badge only when the folder carries one", () => {
     const { wrapper } = mountFolders();
-    const rows = wrapper.findAll("li");
-    expect(rows.at(0)?.find(".f-data-browser-folder-count").text()).toBe("12");
+    const rows = wrapper.findAll("tr");
+    expect(rows.at(0)?.find(".f-data-browser-folder-count").text()).toBe(
+      "12",
+    );
     expect(
       rows.at(1)?.find(".f-data-browser-folder-count").exists(),
     ).toBe(false);
   });
 
-  it("renders the folder actions affordance only when actions exist", () => {
+  it("renders the folder actions cell only when actions exist", () => {
     const bare = mountFolders();
-    expect(bare.wrapper.find('use[href="#actions"]').exists()).toBe(false);
+    expect(bare.wrapper.find(".f-data-browser-actions").exists()).toBe(false);
     const acting = mountFolders(
       createMockBrowser({
         folderActions: [{ icon: "edit", label: "Rename", action: vi.fn() }],

@@ -1,7 +1,8 @@
-// The files table's own logic: sortable headers, the typed-cell cascade
-// (including the filesize formatter), selection wiring, and the empty row.
+// The file rows' own logic: the typed-cell cascade (including the filesize
+// formatter), selection wiring, the actions column, and the empty row.
 // The contract mock is the unit seam; Checkbox renders real because the
-// selection wiring drives through it.
+// selection wiring drives through it. The section is headerless by design —
+// sorting lives on the service, not in this markup.
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
@@ -22,7 +23,8 @@ const mountFiles = (
   const wrapper = mount(
     defineComponent({
       setup(_, { slots: forwarded }) {
-        return () => h(Files, { browser: mock.service }, forwarded);
+        return () =>
+          h("table", h(Files, { browser: mock.service }, forwarded));
       },
     }),
     { slots },
@@ -30,43 +32,12 @@ const mountFiles = (
   return { ...mock, wrapper };
 };
 
-const selectableMock = () =>
-  createMockBrowser({
-    bulkActions: [{ icon: "delete", label: "Purge", action: vi.fn() }],
-  });
-
 describe("data browser files", () => {
-  it("renders one header per column, sortable ones as buttons", () => {
+  it("renders no header row — the section is rows only", () => {
     const { wrapper } = mountFiles();
-    const headers = wrapper.findAll("th");
-    expect(headers.map((th) => th.text())).toEqual([
-      "Name",
-      "Size",
-      "Modified",
-    ]);
-    expect(headers.at(0)?.find("button").exists()).toBe(true);
-    expect(headers.at(1)?.find("button").exists()).toBe(true);
-    expect(headers.at(2)?.find("button").exists()).toBe(false);
-  });
-
-  it("header activation routes through browser.sortBy", async () => {
-    const { service, wrapper } = mountFiles();
-    const size = wrapper.findAll("th button").find((b) => b.text() === "Size");
-    if (!size) throw new Error("no Size header button rendered");
-    await size.trigger("click");
-    expect(service.sortBy).toHaveBeenCalledWith("size");
-  });
-
-  it("marks the sorted column and shows its direction icon", () => {
-    const { wrapper } = mountFiles(
-      createMockBrowser({
-        isSorted: (col) => String(col.key) === "size",
-        getSortIcon: () => "chevron-down",
-      }),
-    );
-    const sorted = wrapper.findAll("th").at(1);
-    expect(sorted?.classes()).toContain("f-data-browser-sorted");
-    expect(sorted?.get("use").attributes("href")).toBe("#chevron-down");
+    expect(wrapper.find("thead").exists()).toBe(false);
+    expect(wrapper.find("th").exists()).toBe(false);
+    expect(wrapper.get("tbody").classes()).toContain("f-data-browser-files");
   });
 
   it("renders typed cells through the shared formatter", () => {
@@ -101,14 +72,14 @@ describe("data browser files", () => {
     ]);
   });
 
-  it("wires selection through the checkboxes when bulk actions exist", async () => {
-    const { service, wrapper } = mountFiles(selectableMock());
+  it("wires row selection through the checkboxes when bulk actions exist", async () => {
+    const mock = createMockBrowser({
+      bulkActions: [{ icon: "delete", label: "Purge", action: vi.fn() }],
+    });
+    const { service, wrapper } = mountFiles(mock);
     const checkboxes = wrapper.findAll('[role="checkbox"]');
-    expect(checkboxes).toHaveLength(4);
+    expect(checkboxes).toHaveLength(3);
     await checkboxes.at(0)?.trigger("click");
-    await flushPromises();
-    expect(service.toggleAll).toHaveBeenCalledOnce();
-    await checkboxes.at(1)?.trigger("click");
     await flushPromises();
     expect(service.toggleRow).toHaveBeenCalledWith("1");
   });
@@ -116,9 +87,10 @@ describe("data browser files", () => {
   it("hides the selection column without bulk actions", () => {
     const { wrapper } = mountFiles();
     expect(wrapper.find('[role="checkbox"]').exists()).toBe(false);
+    expect(wrapper.find(".f-data-browser-select").exists()).toBe(false);
   });
 
-  it("renders the actions column only when file actions exist", () => {
+  it("renders the actions cell only when file actions exist", () => {
     const bare = mountFiles();
     expect(bare.wrapper.find(".f-data-browser-actions").exists()).toBe(false);
     const acting = mountFiles(
@@ -129,9 +101,18 @@ describe("data browser files", () => {
     expect(
       acting.wrapper.find("td.f-data-browser-actions").exists(),
     ).toBe(true);
-    expect(
-      acting.wrapper.find('use[href="#actions"]').exists(),
-    ).toBe(true);
+    expect(acting.wrapper.find('use[href="#actions"]').exists()).toBe(true);
+  });
+
+  it("keeps the trailing cell for alignment when only folder actions exist", () => {
+    const { wrapper } = mountFiles(
+      createMockBrowser({
+        folderActions: [{ icon: "edit", label: "Rename", action: vi.fn() }],
+      }),
+    );
+    const trailing = wrapper.find("td.f-data-browser-actions");
+    expect(trailing.exists()).toBe(true);
+    expect(trailing.find('use[href="#actions"]').exists()).toBe(false);
   });
 
   it("spans the empty row across every column", async () => {

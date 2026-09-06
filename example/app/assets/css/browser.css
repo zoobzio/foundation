@@ -72,48 +72,7 @@
   color: var(--on-surface-muted);
 }
 
-/* ---- folders ------------------------------------------------------------ */
-
-.f-data-browser-folders {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-  gap: var(--space-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.f-data-browser-folder {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  background: var(--surface-container);
-  border: 1px var(--stroke-solid) var(--outline-muted);
-  border-radius: var(--shape-md);
-  padding-right: var(--space-1);
-}
-
-.f-data-browser-folder-btn {
-  flex: 1;
-  min-width: 0;
-  justify-content: flex-start;
-  background: none;
-  border: none;
-}
-
-.f-data-browser-folder-btn .f-span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.f-data-browser-folder-count {
-  margin-left: auto;
-  font: var(--type-label);
-  color: var(--on-surface-muted);
-}
-
-/* ---- files table -------------------------------------------------------- */
+/* ---- entry table (folder rows above file rows) -------------------------- */
 
 .f-data-browser .f-table {
   width: 100%;
@@ -121,19 +80,11 @@
   font: var(--type-body);
 }
 
-.f-data-browser .f-th,
 .f-data-browser .f-td {
   padding: var(--space-2) var(--space-3);
   text-align: left;
   vertical-align: middle;
   border-bottom: 1px var(--stroke-solid) var(--outline-muted);
-}
-
-.f-data-browser .f-th {
-  font: var(--type-label);
-  letter-spacing: var(--type-label-letter-spacing);
-  color: var(--on-surface-muted);
-  white-space: nowrap;
 }
 
 .f-data-browser .f-tr:hover .f-td {
@@ -144,22 +95,40 @@
   );
 }
 
-.f-data-browser-header-btn {
+.f-data-browser-folder-btn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  font: inherit;
-  letter-spacing: inherit;
-  color: inherit;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0;
+  font: var(--type-body);
+  color: var(--on-surface);
   background: none;
   border: none;
-  padding: 0;
   cursor: pointer;
+  text-align: left;
 }
 
-.f-data-browser .f-icon.f-data-browser-sort-icon {
-  width: 0.9rem;
-  height: 0.9rem;
+.f-data-browser-folder-btn .f-span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.f-data-browser-folder-count {
+  margin-left: var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+}
+
+.f-data-browser-select {
+  width: 2rem;
+}
+
+.f-data-browser-actions {
+  width: 3rem;
+  text-align: right;
 }
 
 /* ---- bulk actions ------------------------------------------------------- */

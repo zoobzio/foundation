@@ -53,11 +53,13 @@ describe("data browser widget", () => {
     expect(service.init).toHaveBeenCalledOnce();
   });
 
-  it("renders the toolbar and stubbed feature parts inside the frame", () => {
+  it("renders the toolbar and stubbed row sections inside one headerless table", () => {
     const { wrapper } = mountWidget();
     expect(wrapper.find(".f-data-browser").exists()).toBe(true);
-    expect(wrapper.findComponent({ name: "Folders" }).exists()).toBe(true);
-    expect(wrapper.findComponent({ name: "Files" }).exists()).toBe(true);
+    const table = wrapper.get("table.f-table");
+    expect(table.find("thead").exists()).toBe(false);
+    expect(table.findComponent({ name: "Folders" }).exists()).toBe(true);
+    expect(table.findComponent({ name: "Files" }).exists()).toBe(true);
   });
 
   it("hides the folders section when the folder has no subfolders", async () => {

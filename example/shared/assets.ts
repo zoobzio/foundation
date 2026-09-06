@@ -112,14 +112,16 @@ const resolveFolder = (path: string[]): AssetFolder | undefined => {
 };
 
 /**
- * The crumb trail from the root to a folder key — what the browser's
- * `open` calls need to jump the trail to a tree selection.
+ * The crumb trail from the root to a key — what the browser's `open` calls
+ * need to jump the trail to a tree selection. A folder key resolves to its
+ * own trail; a file id resolves to its containing folder's trail.
  */
 export const assetTrail = (key: string): BrowserCrumb[] | undefined => {
   const walk = (
     node: AssetFolder,
     trail: BrowserCrumb[],
   ): BrowserCrumb[] | undefined => {
+    if (node.files.some((file) => file.id === key)) return trail;
     for (const folder of node.folders) {
       const next = [...trail, { key: folder.key, label: folder.label }];
       if (folder.key === key) return next;

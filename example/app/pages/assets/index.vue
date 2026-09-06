@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TreeNode } from "@zoobzio/foundation/types/core/tree";
-import type { AssetFolder } from "#shared/assets";
+import type { AssetFile, AssetFolder } from "#shared/assets";
 
 import { ref } from "vue";
 import Tree from "@zoobzio/foundation/components/core/tree.vue";
@@ -38,18 +38,26 @@ const browser = useBrowser("assets", ASSETS_BROWSER, {
   },
 });
 
-// The folder hierarchy as a nav tree — the same shape a docs sidebar would
-// build from nested articles, here mirroring the browsable folders.
+// The full hierarchy as a nav tree — folders hold their content: subfolder
+// branches first, then file leaves. The same shape a docs sidebar would
+// build from nested articles (file leaves would carry `link` there).
+const fileLeaf = (file: AssetFile): TreeNode => ({
+  key: file.id,
+  label: file.name,
+  icon: "file",
+});
+
 const toTreeNode = (folder: AssetFolder): TreeNode => ({
   key: folder.key,
   label: folder.label,
   icon: "folder",
-  children: folder.folders.length
-    ? folder.folders.map(toTreeNode)
-    : undefined,
+  children: [...folder.folders.map(toTreeNode), ...folder.files.map(fileLeaf)],
 });
 
-const treeItems = ASSET_ROOT.folders.map(toTreeNode);
+const treeItems = [
+  ...ASSET_ROOT.folders.map(toTreeNode),
+  ...ASSET_ROOT.files.map(fileLeaf),
+];
 
 const branchKeys = (nodes: TreeNode[]): string[] =>
   nodes.flatMap((n) =>
@@ -59,10 +67,11 @@ const branchKeys = (nodes: TreeNode[]): string[] =>
 const selectedNode = ref<TreeNode>();
 const expanded = ref<string[]>(branchKeys(treeItems));
 
-// Jumps the browser to the selected tree folder by replaying the trail
-// through the public surface: back to the root, then one `open` per level.
-// The in-memory backend resolves fetches in call order; against a real API
-// you would navigate level by level (or link tree nodes) instead.
+// Jumps the browser to the selected node by replaying the trail through
+// the public surface: back to the root, then one `open` per level. A file
+// leaf resolves to its containing folder. The in-memory backend resolves
+// fetches in call order; against a real API you would navigate level by
+// level (or link tree nodes) instead.
 const onTreeSelect = (node: TreeNode) => {
   const trail = assetTrail(node.key);
   if (!trail) return;

@@ -7,7 +7,6 @@ import type { DataTableColumn } from "../table";
 import type { VNode } from "vue";
 
 export type BrowserFilesPassthrough = {
-  selectAllCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
   rowCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
   actionsMenu: Passthrough<MenuProps, MenuEmits>;
   actionsTrigger: Passthrough<FabProps>;
@@ -20,7 +19,7 @@ export type BrowserFilesProps<T> = {
 
 export type BrowserFilesContext<T> = {
   browser: Service<T>;
-  el: HTMLTableElement | null;
+  el: HTMLTableSectionElement | null;
   settings: BrowserFilesPassthrough;
 };
 
@@ -33,14 +32,11 @@ export type BrowserFileCellContext<T> = BrowserFilesContext<T> & {
 /**
  * Cell overrides cascade: a specific `cell:<key>`, then `cell:<type>`, then
  * the catch-all `cell`. The keyed/typed variants share the template-literal
- * slot. `noFiles` is the empty tbody row — distinct from the widget's
- * `empty` slot, which replaces the whole browser body when the folder has
- * neither folders nor files.
+ * slot. `noFiles` is the empty file-rows section — distinct from the
+ * widget's `empty` slot, which replaces the whole browser body when the
+ * folder has neither folders nor files.
  */
 export type BrowserFilesSlots<T> = {
-  header?: (
-    props: BrowserFilesContext<T> & { column: DataTableColumn<T> },
-  ) => VNode[];
   noFiles?: (props: BrowserFilesContext<T>) => VNode[];
   cell?: (props: BrowserFileCellContext<T>) => VNode[];
 } & {

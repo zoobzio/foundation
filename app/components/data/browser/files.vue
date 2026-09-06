@@ -21,7 +21,7 @@ import { BROWSER_ACTIONS_ICON } from "../../../constants/browser";
 <script setup lang="ts" generic="T">
 const { browser, pt } = defineProps<BrowserFilesProps<T>>();
 
-const el = useTemplateRef<HTMLTableElement>("el");
+const el = useTemplateRef<HTMLTableSectionElement>("el");
 
 const slots = useSlots();
 
@@ -29,9 +29,9 @@ const {
   files,
   columns,
   colSpan,
-  selectAllState,
   isSelectable,
   hasActions,
+  hasFolderActions,
   actionGroups,
   onActionSelect,
 } = useBrowserView(browser);
@@ -39,10 +39,6 @@ const {
 const settings = usePassthrough<BrowserFilesPassthrough>(() => ({
   pt,
   recipes: {
-    selectAllCheckbox: {
-      modelValue: selectAllState.value,
-      "onUpdate:modelValue": () => browser.toggleAll(),
-    },
     rowCheckbox: {},
     actionsMenu: { groups: actionGroups.value, align: "end" },
     actionsTrigger: { icon: BROWSER_ACTIONS_ICON },
@@ -60,108 +56,73 @@ defineSlots<BrowserFilesSlots<T>>();
 </script>
 
 <template>
-  <table ref="el" class="f-table f-data-browser-files">
-    <thead class="f-thead">
-      <tr class="f-tr">
-        <th v-if="isSelectable" class="f-th f-data-browser-select">
-          <Checkbox v-bind="settings.selectAllCheckbox" />
-        </th>
-        <th
-          v-for="col in columns"
-          :key="String(col.key)"
-          class="f-th"
-          :class="{
-            'f-data-browser-sortable': col.sortable,
-            'f-data-browser-sorted': browser.isSorted(col),
-          }"
-        >
-          <slot name="header" v-bind="{ ...ctx, column: col }">
-            <button
-              v-if="col.sortable"
-              type="button"
-              class="f-button f-data-browser-header-btn"
-              @click="browser.sortBy(browser.sortFieldFor(col))"
+  <tbody ref="el" class="f-tbody f-data-browser-files">
+    <tr v-if="!files.length" class="f-tr">
+      <td class="f-td" :colspan="colSpan">
+        <slot name="noFiles" v-bind="ctx">No files</slot>
+      </td>
+    </tr>
+    <template v-else>
+      <tr v-for="row in files" :key="browser.keyOf(row)" class="f-tr">
+        <td v-if="isSelectable" class="f-td f-data-browser-select">
+          <Checkbox
+            v-bind="settings.rowCheckbox"
+            :model-value="browser.isRowSelected(row)"
+            @update:model-value="browser.toggleRow(browser.keyOf(row))"
+          />
+        </td>
+        <td v-for="col in columns" :key="String(col.key)" class="f-td">
+          <!-- 1. cell:<key> — override a specific column -->
+          <slot
+            v-if="slots[`cell:${String(col.key)}`]"
+            :name="`cell:${String(col.key)}`"
+            v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+          />
+          <!-- 2. cell:<type> — override all columns of a type -->
+          <slot
+            v-else-if="col.type && slots[`cell:${col.type}`]"
+            :name="`cell:${col.type}`"
+            v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+          />
+          <!-- 3. cell — override all cells -->
+          <slot
+            v-else
+            name="cell"
+            v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+          >
+            <!-- 4. Default type-based rendering -->
+            <NuxtLink
+              v-if="col.type === 'url'"
+              class="f-anchor"
+              :external="true"
+              :to="String(row[col.key])"
             >
-              {{ col.label }}
-              <Icon
-                v-if="browser.isSorted(col)"
-                class="f-icon f-data-browser-sort-icon"
-                fill="currentColor"
-                :name="browser.getSortIcon()"
-              />
-            </button>
-            <span v-else class="f-span f-data-browser-header">
-              {{ col.label }}
+              {{ row[col.key] }}
+            </NuxtLink>
+            <img
+              v-else-if="col.type === 'image'"
+              class="f-img"
+              :src="String(row[col.key])"
+              :alt="col.label"
+            >
+            <span v-else class="f-span">
+              {{ cell(row[col.key], col.type) }}
             </span>
           </slot>
-        </th>
-        <th v-if="hasActions" class="f-th f-data-browser-actions" />
-      </tr>
-    </thead>
-    <tbody class="f-tbody">
-      <tr v-if="!files.length" class="f-tr">
-        <td class="f-td" :colspan="colSpan">
-          <slot name="noFiles" v-bind="ctx">No files</slot>
+        </td>
+        <td
+          v-if="hasActions || hasFolderActions"
+          class="f-td f-data-browser-actions"
+        >
+          <Menu
+            v-if="hasActions"
+            v-bind="settings.actionsMenu"
+            @select="onActionSelect(row, $event)"
+          >
+            <Fab v-bind="settings.actionsTrigger" />
+          </Menu>
         </td>
       </tr>
-      <template v-else>
-        <tr v-for="row in files" :key="browser.keyOf(row)" class="f-tr">
-          <td v-if="isSelectable" class="f-td f-data-browser-select">
-            <Checkbox
-              v-bind="settings.rowCheckbox"
-              :model-value="browser.isRowSelected(row)"
-              @update:model-value="browser.toggleRow(browser.keyOf(row))"
-            />
-          </td>
-          <td v-for="col in columns" :key="String(col.key)" class="f-td">
-            <!-- 1. cell:<key> — override a specific column -->
-            <slot
-              v-if="slots[`cell:${String(col.key)}`]"
-              :name="`cell:${String(col.key)}`"
-              v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
-            />
-            <!-- 2. cell:<type> — override all columns of a type -->
-            <slot
-              v-else-if="col.type && slots[`cell:${col.type}`]"
-              :name="`cell:${col.type}`"
-              v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
-            />
-            <!-- 3. cell — override all cells -->
-            <slot
-              v-else
-              name="cell"
-              v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
-            >
-              <!-- 4. Default type-based rendering -->
-              <NuxtLink
-                v-if="col.type === 'url'"
-                class="f-anchor"
-                :external="true"
-                :to="String(row[col.key])"
-              >
-                {{ row[col.key] }}
-              </NuxtLink>
-              <img
-                v-else-if="col.type === 'image'"
-                class="f-img"
-                :src="String(row[col.key])"
-                :alt="col.label"
-              >
-              <span v-else class="f-span">
-                {{ cell(row[col.key], col.type) }}
-              </span>
-            </slot>
-          </td>
-          <td v-if="hasActions" class="f-td f-data-browser-actions">
-            <Menu
-              v-bind="settings.actionsMenu"
-              @select="onActionSelect(row, $event)"
-            >
-              <Fab v-bind="settings.actionsTrigger" />
-            </Menu>
-          </td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
+    </template>
+  </tbody>
 </template>

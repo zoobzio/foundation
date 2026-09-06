@@ -313,4 +313,12 @@ describe("action joins", () => {
     });
     expect(service.colSpan).toBe(fakeFileColumns.length + 2);
   });
+
+  it("counts the shared trailing column when only folder actions exist", () => {
+    const { service } = makeService({
+      config: { folderActions: fakeFolderActions },
+      actions: { ...makeActions(), folderActions: { rename: vi.fn() } },
+    });
+    expect(service.colSpan).toBe(fakeFileColumns.length + 1);
+  });
 });

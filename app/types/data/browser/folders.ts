@@ -16,7 +16,7 @@ export type BrowserFoldersProps<T> = {
 
 export type BrowserFoldersContext<T> = {
   browser: Service<T>;
-  el: HTMLUListElement | null;
+  el: HTMLTableSectionElement | null;
   settings: BrowserFoldersPassthrough;
 };
 

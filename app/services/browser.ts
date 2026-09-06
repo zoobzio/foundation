@@ -110,7 +110,7 @@ export class BrowserService<T> implements Service<T> {
   get colSpan(): number {
     return (
       this.columns.length +
-      (this.actions.length ? 1 : 0) +
+      (this.actions.length || this.folderActions.length ? 1 : 0) +
       (this.bulkActions.length ? 1 : 0)
     );
   }
