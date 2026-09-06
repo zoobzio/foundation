@@ -25,9 +25,16 @@ export const useBrowserView = <T>(browser: Service<T>) => {
   const isSelectable = computed(() => browser.bulkActions.length > 0);
   const hasActions = computed(() => browser.actions.length > 0);
   const hasFolderActions = computed(() => browser.folderActions.length > 0);
+  // Gated on `initialized` so SSR and hydration agree: before the first
+  // fetch resolves, both server and client render the body branch, not the
+  // empty state — branching on loading alone mismatches when init kicks
+  // off during client setup.
   const isEmpty = computed(
     () =>
-      !browser.loading && !browser.folders.length && !browser.files.length,
+      browser.initialized &&
+      !browser.loading &&
+      !browser.folders.length &&
+      !browser.files.length,
   );
 
   // Breadcrumb bridge — the root crumb comes from config, the rest from
