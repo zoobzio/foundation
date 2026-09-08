@@ -26,6 +26,27 @@ export const cell = (value: unknown, type?: ColumnType) => {
       }).format(Number(value));
     case "number":
       return new Intl.NumberFormat("en-US").format(Number(value));
+    case "filesize": {
+      const units = [
+        "byte",
+        "kilobyte",
+        "megabyte",
+        "gigabyte",
+        "terabyte",
+      ] as const;
+      let size = Number(value);
+      let unit = 0;
+      while (size >= 1024 && unit < units.length - 1) {
+        size /= 1024;
+        unit += 1;
+      }
+      return new Intl.NumberFormat("en-US", {
+        style: "unit",
+        unit: units[unit],
+        unitDisplay: "short",
+        maximumFractionDigits: 1,
+      }).format(size);
+    }
     case "boolean":
       return value ? "Yes" : "No";
     default:
