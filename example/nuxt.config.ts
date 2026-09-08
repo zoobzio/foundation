@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     "~/assets/css/sidebar.css",
     "~/assets/css/foundation.css",
     "~/assets/css/tables.css",
+    "~/assets/css/browser.css",
   ],
 
   runtimeConfig: {

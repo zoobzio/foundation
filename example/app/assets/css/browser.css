@@ -1,0 +1,230 @@
+/* Consumer-side styling for the foundation data browser, its breadcrumb,
+   and the core tree. Element basics live in foundation.css. */
+
+.f-data-browser {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.f-data-browser-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* ---- breadcrumb --------------------------------------------------------- */
+
+.f-data-browser-breadcrumb .f-ol {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.f-data-browser-breadcrumb .f-li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.f-data-browser-breadcrumb .f-button,
+.f-data-browser-breadcrumb .f-anchor {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface-muted);
+  background: none;
+  border: none;
+  border-radius: var(--shape-sm);
+  cursor: pointer;
+}
+
+.f-data-browser-breadcrumb .f-button:hover,
+.f-data-browser-breadcrumb .f-anchor:hover {
+  color: var(--on-surface);
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-browser-breadcrumb [aria-current="page"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+}
+
+.f-data-browser-breadcrumb > .f-ol > .f-li > .f-icon:last-child {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--on-surface-muted);
+}
+
+/* ---- entry table (folder rows above file rows) -------------------------- */
+
+.f-data-browser .f-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--type-body);
+}
+
+.f-data-browser .f-td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-browser .f-tr:hover .f-td {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-browser-folder-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0;
+  font: var(--type-body);
+  color: var(--on-surface);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.f-data-browser-folder-btn .f-span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.f-data-browser-folder-count {
+  margin-left: var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+}
+
+.f-data-browser-select {
+  width: 2rem;
+}
+
+.f-data-browser-actions {
+  width: 3rem;
+  text-align: right;
+}
+
+/* ---- bulk actions ------------------------------------------------------- */
+
+.f-data-browser-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+.f-data-browser-bulk-actions-count {
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+}
+
+/* ---- empty state -------------------------------------------------------- */
+
+.f-data-browser-empty {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--on-surface-muted);
+}
+
+/* ---- core tree ---------------------------------------------------------- */
+
+.f-tree-root {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.f-tree-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  border-radius: var(--shape-sm);
+  cursor: pointer;
+  outline: none;
+}
+
+.f-tree-item:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-tree-item:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-tree-item[data-selected] {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-selected, 0.12) * 100%),
+    transparent
+  );
+}
+
+.f-tree-item[data-disabled] {
+  color: var(--on-surface-muted);
+  cursor: default;
+}
+
+.f-tree-item .f-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--on-surface-muted);
+}
+
+.f-tree-item[data-indent="2"] {
+  padding-left: calc(var(--space-2) + var(--space-4));
+}
+
+.f-tree-item[data-indent="3"] {
+  padding-left: calc(var(--space-2) + var(--space-4) * 2);
+}
+
+.f-tree-item[data-indent="4"] {
+  padding-left: calc(var(--space-2) + var(--space-4) * 3);
+}
+
+.f-tree-item .f-anchor {
+  color: inherit;
+  text-decoration: none;
+}
