@@ -246,6 +246,8 @@ export default {
     "tooltip-content": { role: "tooltip", tokens: {} },
     "tooltip-trigger": { role: "button", tokens: {} },
     tr: { role: "row", tokens: {} },
+    "tree-item": { role: "treeitem", tokens: {} },
+    "tree-root": { role: "tree", tokens: {} },
     ul: { role: "list", tokens: {} },
   },
   compounds: {
@@ -279,5 +281,6 @@ export default {
     toast: {},
     toaster: {},
     tooltip: {},
+    tree: {},
   },
 } as const satisfies ComponentConfig;
