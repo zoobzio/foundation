@@ -1,5 +1,21 @@
 # @zoobzio/foundation
 
+## 1.0.0
+
+### Minor Changes
+
+- [#11](https://github.com/zoobzio/foundation/pull/11) [`5eb24ba`](https://github.com/zoobzio/foundation/commit/5eb24ba0df5eb270a0ae790fa13a3ba87c1f1b3d) Thanks [@zoobzio](https://github.com/zoobzio)! - Add `core/breadcrumb`: a pure-semantic-HTML navigation trail (`nav > ol > li`). Ancestors render as NuxtLinks or buttons emitting `select` with directory's link duality; the last item is always inert text with `aria-current="page"`; the separator slot defaults to a chevron.
+
+- [#10](https://github.com/zoobzio/foundation/pull/10) [`c1277dc`](https://github.com/zoobzio/foundation/commit/c1277dc966da0de567f275aa42e89f2ba063adf3) Thanks [@zoobzio](https://github.com/zoobzio)! - Add a `filesize` column type to the table column vocabulary: the shared `cell()` formatter renders byte counts through binary units ("2 kB", "174 MB"), and filesize columns get the number operator stage (over/under/is) in the table search.
+
+- [#7](https://github.com/zoobzio/foundation/pull/7) [`04c2525`](https://github.com/zoobzio/foundation/commit/04c252598a1d5c4cc184a0a7fb22be5ca8060f78) Thanks [@zoobzio](https://github.com/zoobzio)! - Add `core/tree`: a stateless nav tree over reka-ui `TreeRoot`/`TreeItem` (keyboard navigation and aria-tree semantics included). Nodes carry directory's link duality; `v-model` and `v-model:expanded` control selection and expansion; `select`/`toggle` re-emits support lazy-loading branches by declaring `children: []` and swapping `items` on toggle.
+
+- [#8](https://github.com/zoobzio/foundation/pull/8) [`b08011e`](https://github.com/zoobzio/foundation/commit/b08011ee4536d33e321c2d29a1914c20d1f766ab) Thanks [@zoobzio](https://github.com/zoobzio)! - Add the `data/browser` feature: a fetch-driven file browser rendering one headerless table with alphabetical folder rows above typed file rows, breadcrumb trail navigation, and descriptor-keyed file/folder/bulk actions. Sorting and select-all live on the service surface for consumers to wire via the toolbar slot. Registers `file`/`folder`/`folder-open` icon aliases.
+
+### Patch Changes
+
+- [#4](https://github.com/zoobzio/foundation/pull/4) [`5f97164`](https://github.com/zoobzio/foundation/commit/5f97164f113905224a64c503aefaa460abfe7246) Thanks [@zoobzio](https://github.com/zoobzio)! - Fix the table widget forwarding its `header` slot to the head unconditionally, which blanked the head's default sortable-header buttons whenever a consumer used the widget without supplying a `header` slot. Slot forwards now relay only consumer-supplied slots.
+
 ## 0.0.22
 
 ### Patch Changes
