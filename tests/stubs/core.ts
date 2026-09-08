@@ -33,4 +33,5 @@ export const coreStubs = {
   Toast: createStub("Toast"),
   Toaster: createStub("Toaster"),
   Tooltip: createStub("Tooltip"),
+  Tree: createStub("Tree", "ul"),
 } as const;
