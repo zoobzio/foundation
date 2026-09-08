@@ -252,6 +252,7 @@ export default {
     accordion: {},
     autocomplete: {},
     avatar: {},
+    breadcrumb: {},
     calendar: {},
     checkbox: {},
     command: {},
