@@ -12,6 +12,7 @@ export type ColumnType =
   | "boolean"
   | "enum"
   | "currency"
+  | "filesize"
   | "url"
   | "image"
   | "action";
