@@ -1,6 +1,6 @@
 // Core component test in the select.test.ts mold: reka renders real DOM,
-// interactions drive TreeRoot/TreeItem for real. NuxtLink is the one
-// framework global, stubbed to a bare <a> that maps `to` → `href`.
+// interactions drive TreeRoot/TreeItem for real. NuxtLink is imported from
+// #components, stubbed to a bare <a> that maps `to` → `href`.
 import { afterEach, describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";

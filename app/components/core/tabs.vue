@@ -11,6 +11,8 @@ import type { ComponentPublicInstance } from "vue";
 
 import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";
 
+import { NuxtLink } from "#components";
+
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
 import { useModel } from "../../composables/model";

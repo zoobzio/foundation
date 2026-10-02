@@ -1,6 +1,6 @@
 // Core component test in the select.test.ts mold: the menu opens through a
 // real trigger click and its content teleports to document.body.
-// NuxtLink is the one framework global, stubbed to a bare <a> that maps
+// NuxtLink is imported from #components, stubbed to a bare <a> that maps
 // `to` → `href`.
 import { afterEach, describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";

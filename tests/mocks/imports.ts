@@ -7,7 +7,7 @@
 // are erased by esbuild before this module is ever loaded, so only value exports
 // matter here.
 
-import { defineComponent, ref, type Ref } from "vue";
+import { defineComponent, h, ref, type Ref } from "vue";
 
 // Real Vue APIs (ref, computed, watch, useTemplateRef, useId, …).
 export * from "vue";
@@ -137,7 +137,23 @@ export const defineNuxtLink = () => ({
   template: "<a><slot /></a>",
 });
 
-// `#components` also resolves here — ClientOnly just renders its slot.
+// `#components` also resolves here. NuxtLink is a bare <a> that maps
+// `to` → `href`; ClientOnly just renders its slot.
+export const NuxtLink = defineComponent({
+  name: "NuxtLink",
+  props: {
+    to: { type: String, default: undefined },
+    external: { type: Boolean, default: undefined },
+    target: { type: String, default: undefined },
+    replace: { type: Boolean, default: undefined },
+    prefetch: { type: Boolean, default: undefined },
+  },
+  setup(props, { slots }) {
+    return () =>
+      h("a", { href: props.to, target: props.target }, slots.default?.());
+  },
+});
+
 export const ClientOnly = defineComponent({
   name: "ClientOnly",
   setup(_, { slots }) {

@@ -9,6 +9,7 @@ import type {
 import Checkbox from "../../core/checkbox.vue";
 import Fab from "../../core/fab.vue";
 import Menu from "../../core/menu.vue";
+import { NuxtLink } from "#components";
 
 import { useSlots, useTemplateRef } from "#imports";
 import { useTableView } from "../../../composables/table";

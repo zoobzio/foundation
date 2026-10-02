@@ -1,6 +1,6 @@
 // Mount depth follows the behavior under test: the terminal-vs-ancestor
 // branch, the link/button duality, the disabled guards, and the select emit
-// are the component's own logic. NuxtLink is the one framework global,
+// are the component's own logic. NuxtLink is imported from #components,
 // stubbed to a bare <a> that maps `to` → `href`.
 import { describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";

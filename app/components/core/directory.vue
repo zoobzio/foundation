@@ -7,6 +7,8 @@ import type {
   DirectorySlots,
 } from "../../types/core/directory";
 
+import { NuxtLink } from "#components";
+
 import { useTemplateRef } from "#imports";
 import { useContext } from "../../composables/context";
 </script>
