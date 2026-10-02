@@ -17,9 +17,9 @@ import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useLazyRequest } from "../../../composables/request";
 import {
-  PREVIEW_COPY_ICON,
-  PREVIEW_DOWNLOAD_ICON,
-  PREVIEW_EXTERNAL_ICON,
+  PREVIEW_COPY_LABEL,
+  PREVIEW_DOWNLOAD_LABEL,
+  PREVIEW_EXTERNAL_LABEL,
 } from "../../../constants/preview";
 </script>
 
@@ -40,9 +40,9 @@ const { loading, data, filename, hasExternal, copy, download, openExternal } =
 const settings = usePassthrough<PreviewWidgetPassthrough>(() => ({
   pt,
   recipes: {
-    external: { icon: PREVIEW_EXTERNAL_ICON, onClick: openExternal },
-    copy: { icon: PREVIEW_COPY_ICON, onClick: copy },
-    download: { icon: PREVIEW_DOWNLOAD_ICON, onClick: download },
+    external: { label: PREVIEW_EXTERNAL_LABEL, onClick: openExternal },
+    copy: { label: PREVIEW_COPY_LABEL, onClick: copy },
+    download: { label: PREVIEW_DOWNLOAD_LABEL, onClick: download },
   },
 }));
 
@@ -74,9 +74,21 @@ useLazyRequest(`init-preview-${service.id}`, () => service.init());
           </slot>
           <slot name="actions" v-bind="ctx">
             <div class="f-group f-data-preview-actions">
-              <Fab v-if="hasExternal" v-bind="settings.external" />
-              <Fab v-bind="settings.copy" />
-              <Fab v-bind="settings.download" />
+              <Fab v-if="hasExternal" v-bind="settings.external">
+                <template v-if="$slots.externalIcon" #icon>
+                  <slot name="externalIcon" v-bind="ctx" />
+                </template>
+              </Fab>
+              <Fab v-bind="settings.copy">
+                <template v-if="$slots.copyIcon" #icon>
+                  <slot name="copyIcon" v-bind="ctx" />
+                </template>
+              </Fab>
+              <Fab v-bind="settings.download">
+                <template v-if="$slots.downloadIcon" #icon>
+                  <slot name="downloadIcon" v-bind="ctx" />
+                </template>
+              </Fab>
             </div>
           </slot>
         </div>

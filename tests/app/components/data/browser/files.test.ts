@@ -74,7 +74,7 @@ describe("data browser files", () => {
 
   it("wires row selection through the checkboxes when bulk actions exist", async () => {
     const mock = createMockBrowser({
-      bulkActions: [{ icon: "delete", label: "Purge", action: vi.fn() }],
+      bulkActions: [{ label: "Purge", action: vi.fn() }],
     });
     const { service, wrapper } = mountFiles(mock);
     const checkboxes = wrapper.findAll('[role="checkbox"]');
@@ -95,24 +95,70 @@ describe("data browser files", () => {
     expect(bare.wrapper.find(".f-data-browser-actions").exists()).toBe(false);
     const acting = mountFiles(
       createMockBrowser({
-        actions: [{ icon: "download", label: "Download", action: vi.fn() }],
+        actions: [{ label: "Download", action: vi.fn() }],
       }),
     );
     expect(
       acting.wrapper.find("td.f-data-browser-actions").exists(),
     ).toBe(true);
-    expect(acting.wrapper.find('use[href="#actions"]').exists()).toBe(true);
+    expect(
+      acting.wrapper.find('button[aria-label="Actions"]').text(),
+    ).toBe("Actions");
   });
 
   it("keeps the trailing cell for alignment when only folder actions exist", () => {
     const { wrapper } = mountFiles(
       createMockBrowser({
-        folderActions: [{ icon: "edit", label: "Rename", action: vi.fn() }],
+        folderActions: [{ label: "Rename", action: vi.fn() }],
       }),
     );
     const trailing = wrapper.find("td.f-data-browser-actions");
     expect(trailing.exists()).toBe(true);
-    expect(trailing.find('use[href="#actions"]').exists()).toBe(false);
+    expect(trailing.find("button").exists()).toBe(false);
+  });
+
+  it("relays the row-scoped action icon slots into the actions menu", async () => {
+    const mock = createMockBrowser({
+      actions: [{ label: "Download", action: vi.fn() }],
+    });
+    const wrapper = mount(
+      defineComponent({
+        setup(_, { slots: forwarded }) {
+          return () =>
+            h(
+              "table",
+              h(
+                Files,
+                { browser: mock.service, pt: { actionsMenu: { open: true } } },
+                forwarded,
+              ),
+            );
+        },
+      }),
+      {
+        attachTo: document.body,
+        slots: {
+          actionsIcon: `<template #actionsIcon="s"><i>{{ s.row.name }}</i></template>`,
+          actionIcon: `<template #actionIcon="s"><b>{{ s.row.name }}:{{ s.item.label }}</b></template>`,
+        },
+      },
+    );
+    await flushPromises();
+    const triggers = wrapper.findAll('button[aria-label="Actions"]');
+    expect(triggers.map((t) => t.text())).toEqual([
+      "logo.svg",
+      "hero.png",
+      "notes.md",
+    ]);
+    // Menu content is portalled under document.body, one open menu per row.
+    const items = document.querySelectorAll('[role="menuitem"] b');
+    expect(Array.from(items, (b) => b.textContent)).toEqual([
+      "logo.svg:Download",
+      "hero.png:Download",
+      "notes.md:Download",
+    ]);
+    wrapper.unmount();
+    document.body.innerHTML = "";
   });
 
   it("spans the empty row across every column", async () => {

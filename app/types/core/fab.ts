@@ -1,9 +1,7 @@
-import type { IconAlias } from "../icon";
 import type { EventEmits } from "../events";
 import type { VNode } from "vue";
 
 export type FabProps = {
-  icon?: IconAlias;
   label?: string;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
@@ -13,7 +11,6 @@ export type FabProps = {
 export type FabEmits = EventEmits<"click">;
 
 export type FabContext = {
-  icon?: IconAlias;
   label?: string;
   type: "button" | "submit" | "reset";
   disabled?: boolean;

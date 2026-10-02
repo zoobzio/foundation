@@ -6,7 +6,6 @@ import { computed } from "#imports";
 import { useServiceRefs } from "./refs";
 
 import {
-  BROWSER_ROOT_ICON,
   BROWSER_ROOT_KEY,
   BROWSER_ROOT_LABEL,
 } from "../constants/browser";
@@ -46,7 +45,6 @@ export const useBrowserView = <T>(browser: Service<T>) => {
     {
       key: BROWSER_ROOT_KEY,
       label: browser.config.rootLabel ?? BROWSER_ROOT_LABEL,
-      icon: browser.config.rootIcon ?? BROWSER_ROOT_ICON,
     },
     ...browser.path.map((crumb, index) => ({
       key: browser.pathKeys.slice(0, index + 1).join("/"),
@@ -64,7 +62,7 @@ export const useBrowserView = <T>(browser: Service<T>) => {
   const actionGroups = computed<MenuGroup[]>(() => [
     {
       key: "actions",
-      items: browser.actions.map((a) => ({ icon: a.icon, label: a.label })),
+      items: browser.actions.map((a) => ({ label: a.label })),
     },
   ]);
 
@@ -77,10 +75,7 @@ export const useBrowserView = <T>(browser: Service<T>) => {
   const folderActionGroups = computed<MenuGroup[]>(() => [
     {
       key: "folder-actions",
-      items: browser.folderActions.map((a) => ({
-        icon: a.icon,
-        label: a.label,
-      })),
+      items: browser.folderActions.map((a) => ({ label: a.label })),
     },
   ]);
 

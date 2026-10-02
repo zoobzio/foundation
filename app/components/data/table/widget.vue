@@ -23,7 +23,11 @@ import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useLazyRequest } from "../../../composables/request";
-import { TABLE_REFRESH_ICON } from "../../../constants/table";
+import { useForwardSlots } from "../../../composables/slots";
+import {
+  TABLE_HEAD_SLOTS,
+  TABLE_REFRESH_LABEL,
+} from "../../../constants/table";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -46,7 +50,7 @@ const settings = usePassthrough<TableWidgetPassthrough<T>>(() => ({
   recipes: {
     ...searchRecipes.value,
     scroller: {},
-    refresh: { icon: TABLE_REFRESH_ICON, onClick: () => service.fetch() },
+    refresh: { label: TABLE_REFRESH_LABEL, onClick: () => service.fetch() },
     pagination: {
       page: page.value,
       size: pageSize.value,
@@ -69,12 +73,11 @@ defineExpose({ ctx });
 const slots = defineSlots<TableWidgetSlots<T>>();
 
 // Child-owned slots relay to the head and body, filtered so each child
-// keeps its own defaults for any the consumer didn't supply. `header`
-// (head ctx), `empty` (body ctx), and the cell slots (cell ctx) forward in
-// separate loops to stay homogeneously typed.
-const headerSlots = computed(() =>
-  Object.keys(slots).filter((n): n is "header" => n === "header"),
-);
+// keeps its own defaults for any the consumer didn't supply. The per-column
+// head slots (column-scoped head ctx), `empty` (body ctx), and the cell
+// slots (cell ctx) forward in separate loops to stay homogeneously typed;
+// the row-scoped action icon slots relay explicitly below.
+const headSlots = useForwardSlots(slots, TABLE_HEAD_SLOTS);
 const emptySlots = computed(() =>
   Object.keys(slots).filter((n): n is "empty" => n === "empty"),
 );
@@ -98,17 +101,29 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
             class="f-data-table-search"
           />
         </slot>
-        <Columns :table="service" :pt="pt?.columns" />
-        <Fab v-bind="settings.refresh" />
+        <Columns :table="service" :pt="pt?.columns">
+          <template v-if="slots.columnsIcon" #columnsIcon="slotProps">
+            <slot name="columnsIcon" v-bind="slotProps" />
+          </template>
+        </Columns>
+        <Fab v-bind="settings.refresh">
+          <template v-if="slots.refreshIcon" #icon>
+            <slot name="refreshIcon" v-bind="ctx" />
+          </template>
+        </Fab>
       </div>
     </slot>
 
-    <BulkActions v-if="hasSelection" :table="service" />
+    <BulkActions v-if="hasSelection" :table="service">
+      <template v-if="slots.bulkActionIcon" #bulkActionIcon="slotProps">
+        <slot name="bulkActionIcon" v-bind="slotProps" />
+      </template>
+    </BulkActions>
 
     <Scroller v-bind="settings.scroller">
       <table class="f-table">
         <Head :table="service" :pt="pt?.head">
-          <template v-for="name in headerSlots" :key="name" #[name]="slotProps">
+          <template v-for="name in headSlots" :key="name" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps" />
           </template>
         </Head>
@@ -118,6 +133,12 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
           </template>
           <template v-for="name in cellSlots" :key="name" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps" />
+          </template>
+          <template v-if="slots.actionsIcon" #actionsIcon="slotProps">
+            <slot name="actionsIcon" v-bind="slotProps" />
+          </template>
+          <template v-if="slots.actionIcon" #actionIcon="slotProps">
+            <slot name="actionIcon" v-bind="slotProps" />
           </template>
         </Body>
       </table>

@@ -1,7 +1,6 @@
 import { computed, ref } from "vue";
 import { vi } from "vitest";
 import type { BrowserCrumb, Service } from "../../app/types/data/browser";
-import { BROWSER_SORT_ASC_ICON } from "../../app/constants/browser";
 import { fakeFileColumns, fakeFiles, fakeFolders } from "#test/data/browser";
 import type { FakeFile } from "#test/data/browser";
 
@@ -100,7 +99,6 @@ export const createMockBrowser = (
     sortBy: vi.fn(),
     sortFieldFor: (col) => col.sortKey ?? String(col.key),
     isSorted: () => false,
-    getSortIcon: () => BROWSER_SORT_ASC_ICON,
     keyOf: (row) => String(row.id),
     toggleRow: vi.fn(),
     toggleAll: vi.fn(),

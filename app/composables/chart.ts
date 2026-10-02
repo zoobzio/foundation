@@ -10,13 +10,12 @@ import type { MaybeRefOrGetter, ShallowRef } from "vue";
 import { computed, toValue, watchEffect } from "#imports";
 import { useServiceRefs } from "./refs";
 import {
-  CHART_BUCKET_ICON,
-  CHART_FIELD_ICON,
-  CHART_GROUP_BY_ICON,
-  CHART_X_ICON,
-  CHART_Y_ICON,
-  RENDERER_FALLBACK_ICON,
-  RENDERER_ICONS,
+  CHART_BUCKET_LABEL,
+  CHART_FIELD_LABEL,
+  CHART_GROUP_BY_LABEL,
+  CHART_RENDERER_LABEL,
+  CHART_X_LABEL,
+  CHART_Y_LABEL,
   VARIANT_LABELS,
 } from "../constants/chart";
 import {
@@ -65,7 +64,7 @@ export const useChartView = <T>(chart: Service<T>) => {
         list.push({
           kind: "field",
           align: "end",
-          trigger: { type: "fab", icon: CHART_FIELD_ICON },
+          trigger: { type: "fab", label: CHART_FIELD_LABEL },
           options: fieldOptions(chart.activeField),
         });
         break;
@@ -73,13 +72,13 @@ export const useChartView = <T>(chart: Service<T>) => {
         list.push({
           kind: "field",
           align: "end",
-          trigger: { type: "fab", icon: CHART_FIELD_ICON },
+          trigger: { type: "fab", label: CHART_FIELD_LABEL },
           options: fieldOptions(chart.activeField),
         });
         list.push({
           kind: "bucket",
           align: "end",
-          trigger: { type: "fab", icon: CHART_BUCKET_ICON },
+          trigger: { type: "fab", label: CHART_BUCKET_LABEL },
           options: variant.buckets.map((b) => ({
             value: b,
             label: b,
@@ -91,13 +90,13 @@ export const useChartView = <T>(chart: Service<T>) => {
         list.push({
           kind: "x",
           align: "end",
-          trigger: { type: "fab", icon: CHART_X_ICON, label: "X" },
+          trigger: { type: "fab", label: CHART_X_LABEL },
           options: fieldOptions(chart.activeX),
         });
         list.push({
           kind: "y",
           align: "end",
-          trigger: { type: "fab", icon: CHART_Y_ICON, label: "Y" },
+          trigger: { type: "fab", label: CHART_Y_LABEL },
           options: fieldOptions(chart.activeY),
         });
         break;
@@ -105,13 +104,13 @@ export const useChartView = <T>(chart: Service<T>) => {
         list.push({
           kind: "field",
           align: "end",
-          trigger: { type: "fab", icon: CHART_FIELD_ICON },
+          trigger: { type: "fab", label: CHART_FIELD_LABEL },
           options: fieldOptions(chart.activeField),
         });
         list.push({
           kind: "groupBy",
           align: "end",
-          trigger: { type: "fab", icon: CHART_GROUP_BY_ICON },
+          trigger: { type: "fab", label: CHART_GROUP_BY_LABEL },
           options: fieldOptions(chart.activeGroupBy),
         });
         break;
@@ -121,14 +120,10 @@ export const useChartView = <T>(chart: Service<T>) => {
     list.push({
       kind: "renderer",
       align: "end",
-      trigger: {
-        type: "fab",
-        icon: RENDERER_ICONS[chart.activeRenderer] ?? RENDERER_FALLBACK_ICON,
-      },
+      trigger: { type: "fab", label: CHART_RENDERER_LABEL },
       options: variant.renderers.map((r: RendererConfig) => ({
         value: r.type,
         label: r.label ?? r.type,
-        icon: RENDERER_ICONS[r.type],
         disabled: r.type === chart.activeRenderer,
       })),
     });
@@ -211,7 +206,6 @@ export const useChartView = <T>(chart: Service<T>) => {
           key: kind,
           items: options.map((o) => ({
             label: o.label,
-            icon: o.icon,
             disabled: o.disabled,
           })),
         },

@@ -12,7 +12,6 @@ import { useContext } from "../../composables/context";
 
 <script setup lang="ts">
 const {
-  icon,
   label,
   type = "button",
   disabled,
@@ -24,7 +23,6 @@ const emit = defineEmits<FabEmits>();
 const el = useTemplateRef<HTMLButtonElement>("el");
 
 const ctx = useContext<FabContext>("fab", () => ({
-  icon,
   label,
   type,
   disabled,
@@ -46,7 +44,7 @@ defineSlots<FabSlots>();
     @click="emit('click', $event)"
   >
     <slot name="icon" v-bind="ctx">
-      <Icon v-if="icon" class="f-icon" fill="currentColor" :name="icon" />
+      <span v-if="label" class="f-span">{{ label }}</span>
     </slot>
     <slot name="badge" v-bind="ctx">
       <div v-if="badge !== undefined" class="f-group">

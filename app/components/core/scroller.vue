@@ -107,7 +107,7 @@ defineSlots<ScrollerSlots>();
 
     <slot name="backToTop" v-bind="ctx">
       <button v-if="isScrolled" type="button" class="f-button" @click="scrollToTop">
-        <Icon class="f-icon" fill="currentColor" name="arrow-up" />
+        <slot name="backToTopIcon" v-bind="ctx" />
         <span class="f-span">Back to top</span>
       </button>
     </slot>

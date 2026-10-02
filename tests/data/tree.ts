@@ -11,7 +11,6 @@ export const fakeTreeNodes: FakeTreeNode[] = [
   {
     key: "guides",
     label: "Guides",
-    icon: "layers",
     slug: "guides",
     children: [
       {

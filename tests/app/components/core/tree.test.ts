@@ -2,7 +2,6 @@
 // interactions drive TreeRoot/TreeItem for real. NuxtLink is the one
 // framework global, stubbed to a bare <a> that maps `to` → `href`.
 import { afterEach, describe, expect, it } from "vitest";
-import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import Core from "../../../../app/components/core/tree.vue";
@@ -16,21 +15,6 @@ const Tree: FunctionalComponent<
   TreeProps<FakeTreeNode>,
   TreeEmits<FakeTreeNode>
 > = Core;
-
-const NuxtLink = defineComponent({
-  name: "NuxtLink",
-  props: {
-    to: { type: String, default: undefined },
-    external: { type: Boolean, default: undefined },
-    target: { type: String, default: undefined },
-    replace: { type: Boolean, default: undefined },
-    prefetch: { type: Boolean, default: undefined },
-  },
-  setup(props, { slots }) {
-    return () =>
-      h("a", { href: props.to, target: props.target }, slots.default?.());
-  },
-});
 
 const node = (key: string): FakeTreeNode => {
   const walk = (nodes: FakeTreeNode[]): FakeTreeNode | undefined => {
@@ -55,7 +39,6 @@ const mountTree = (
   const wrapper = mount(Tree, {
     props: { items: fakeTreeNodes, ...props },
     slots,
-    global: { components: { NuxtLink } },
     attachTo: document.body,
   });
   mounted.push(wrapper);
@@ -156,17 +139,34 @@ describe("tree", () => {
     ).toContain("f-span");
   });
 
-  it("branch nodes show a chevron that follows expansion", async () => {
+  it("renders no toggle or icon unless the consumer supplies one", () => {
     const wrapper = mountTree();
-    expect(
-      itemByText(wrapper, "Guides").get("use").attributes("href"),
-    ).toBe("#chevron-right");
-    expect(itemByText(wrapper, "Reference").find("use").exists()).toBe(false);
+    const guides = itemByText(wrapper, "Guides");
+    expect(guides.element.childElementCount).toBe(1);
+    expect(guides.element.firstElementChild?.textContent).toBe("Guides");
+  });
+
+  it("renders the itemToggle slot before the label, following expansion", async () => {
+    const wrapper = mountTree(
+      {},
+      {
+        itemToggle: `<template #itemToggle="s">
+          <i v-if="s.item.hasChildren">{{ s.isExpanded ? "open" : "closed" }}</i>
+        </template>`,
+        itemIcon: `<template #itemIcon="s"><b>{{ s.item.value.slug }}</b></template>`,
+      },
+    );
+    const tags = () =>
+      Array.from(itemByText(wrapper, "Guides").element.children).map(
+        (el) => el.tagName,
+      );
+    expect(tags()).toEqual(["I", "B", "SPAN"]);
+    expect(itemByText(wrapper, "Guides").get("i").text()).toBe("closed");
+    expect(itemByText(wrapper, "Reference").find("i").exists()).toBe(false);
+    expect(itemByText(wrapper, "Reference").get("b").text()).toBe("reference");
     await itemByText(wrapper, "Guides").trigger("click");
     await flushPromises();
-    expect(
-      itemByText(wrapper, "Guides").get("use").attributes("href"),
-    ).toBe("#chevron-down");
+    expect(itemByText(wrapper, "Guides").get("i").text()).toBe("open");
   });
 
   it("disabled nodes stay inert", async () => {

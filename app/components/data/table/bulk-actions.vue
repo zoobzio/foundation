@@ -2,6 +2,7 @@
 import type {
   TableBulkActionsContext,
   TableBulkActionsProps,
+  TableBulkActionsSlots,
 } from "../../../types/data/table/bulk-actions";
 
 import { useTemplateRef } from "#imports";
@@ -22,6 +23,7 @@ const ctx = useContext<TableBulkActionsContext<T>>(
 );
 
 defineExpose({ ctx });
+defineSlots<TableBulkActionsSlots<T>>();
 </script>
 
 <template>
@@ -36,7 +38,7 @@ defineExpose({ ctx });
       class="f-button f-data-table-bulk-action"
       @click="bulk.action(selected)"
     >
-      <Icon class="f-icon" fill="currentColor" :name="bulk.icon" />
+      <slot name="bulkActionIcon" v-bind="{ ...ctx, action: bulk }" />
       {{ bulk.label }}
     </button>
     <button

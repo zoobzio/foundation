@@ -139,13 +139,6 @@
   transition: background-color var(--transition-fast);
 }
 
-.f-data-table-search .f-autocomplete-item .f-icon,
-.f-data-table-search .f-autocomplete-content .f-button .f-icon {
-  width: 1rem;
-  height: 1rem;
-  margin-left: auto;
-}
-
 .f-data-table-search .f-autocomplete-item:hover,
 .f-data-table-search .f-autocomplete-content .f-button:hover {
   background: color-mix(
@@ -223,12 +216,10 @@
   cursor: pointer;
 }
 
-.f-data-table .f-icon.f-data-table-sort-icon {
-  width: 0.9rem;
-  height: 0.9rem;
-}
-
-.f-data-table .f-icon.f-data-table-drag-handle {
+/* The handle is an empty span until a dragIcon slot fills it — sized here
+   so it stays a hover target for arming column drag. */
+.f-data-table .f-data-table-drag-handle {
+  display: inline-block;
   width: 0.9rem;
   height: 0.9rem;
   color: var(--on-surface-muted);

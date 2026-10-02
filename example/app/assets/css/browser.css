@@ -66,12 +66,6 @@
   color: var(--on-surface);
 }
 
-.f-data-browser-breadcrumb > .f-ol > .f-li > .f-icon:last-child {
-  width: 0.9rem;
-  height: 0.9rem;
-  color: var(--on-surface-muted);
-}
-
 /* ---- entry table (folder rows above file rows) -------------------------- */
 
 .f-data-browser .f-table {
@@ -204,12 +198,6 @@
 .f-tree-item[data-disabled] {
   color: var(--on-surface-muted);
   cursor: default;
-}
-
-.f-tree-item .f-icon {
-  width: 1rem;
-  height: 1rem;
-  color: var(--on-surface-muted);
 }
 
 .f-tree-item[data-indent="2"] {

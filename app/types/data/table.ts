@@ -1,5 +1,4 @@
 import type { Ref } from "#imports";
-import type { IconAlias } from "../icon";
 
 /**
  * Column data type — drives cell rendering and sort behavior.
@@ -50,7 +49,6 @@ export type SortDirection = "asc" | "desc";
  * half is a handler registered under the same key at `useTable`.
  */
 export interface ActionDescriptor {
-  icon: IconAlias;
   label: string;
 }
 
@@ -59,7 +57,6 @@ export interface ActionDescriptor {
  * service exposes: descriptor joined with its handler.
  */
 export interface RowAction<T> {
-  icon: IconAlias;
   label: string;
   action: (row: T) => void;
 }
@@ -69,7 +66,6 @@ export interface RowAction<T> {
  * exposes: descriptor joined with its handler.
  */
 export interface BulkAction {
-  icon: IconAlias;
   label: string;
   action: (selected: Set<string>) => void;
 }
@@ -181,7 +177,6 @@ export type Service<T> = {
   sortBy(field: string): void;
   sortFieldFor(col: DataTableColumn<T>): string;
   isSorted(col: DataTableColumn<T>): boolean;
-  getSortIcon(): IconAlias;
   keyOf(row: T): string;
   toggleRow(key: string): void;
   toggleAll(): void;

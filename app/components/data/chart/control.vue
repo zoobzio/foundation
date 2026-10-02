@@ -3,6 +3,7 @@ import type {
   ChartControlContext,
   ChartControlPassthrough,
   ChartControlProps,
+  ChartControlSlots,
 } from "../../../types/data/chart/control";
 import type { ComponentPublicInstance } from "vue";
 
@@ -13,7 +14,6 @@ import { computed, useTemplateRef } from "#imports";
 import { useChartView } from "../../../composables/chart";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import { CHART_CONTROL_CHEVRON } from "../../../constants/chart";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -49,6 +49,7 @@ const ctx = useContext<ChartControlContext<T>>("data-chart-control", () => ({
 }));
 
 defineExpose({ ctx });
+defineSlots<ChartControlSlots<T>>();
 
 const titleTrigger = computed(() =>
   trigger.type === "title" ? trigger : null,
@@ -65,18 +66,20 @@ const fabTrigger = computed(() => (trigger.type === "fab" ? trigger : null));
         class="f-button f-data-chart-control-title"
       >
         {{ titleTrigger.label }}
-        <Icon
-          class="f-icon f-data-chart-control-chevron"
-          fill="currentColor"
-          :name="CHART_CONTROL_CHEVRON"
-        />
+        <slot name="controlTitleIcon" v-bind="ctx" />
       </button>
       <Fab
         v-else-if="fabTrigger"
         v-bind="settings.fab"
-        :icon="fabTrigger.icon"
         :label="fabTrigger.label"
-      />
+      >
+        <template v-if="$slots.controlIcon" #icon>
+          <slot name="controlIcon" v-bind="ctx" />
+        </template>
+      </Fab>
+    </template>
+    <template v-if="$slots.controlOptionIcon" #itemIcon="{ item }">
+      <slot name="controlOptionIcon" v-bind="{ ...ctx, item }" />
     </template>
   </Menu>
 </template>

@@ -7,7 +7,7 @@ import type { FabProps } from "../../core/fab";
 import type { PopoverEmits, PopoverProps } from "../../core/popover";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service } from "../table";
-import type { ComponentPublicInstance } from "vue";
+import type { ComponentPublicInstance, VNode } from "vue";
 
 export type TableColumnsPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
@@ -24,4 +24,8 @@ export type TableColumnsContext<T> = {
   table: Service<T>;
   el: ComponentPublicInstance | null;
   settings: TableColumnsPassthrough;
+};
+
+export type TableColumnsSlots<T> = {
+  columnsIcon?: (props: TableColumnsContext<T>) => VNode[];
 };

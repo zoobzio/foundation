@@ -12,7 +12,6 @@ import { useTemplateRef } from "#imports";
 import { useTableView } from "../../../composables/table";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import { TABLE_DRAG_ICON } from "../../../constants/table";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -93,23 +92,22 @@ defineSlots<TableHeadSlots<T>>();
               @click="table.sortBy(table.sortFieldFor(col))"
             >
               {{ col.label }}
-              <Icon
+              <slot
                 v-if="table.isSorted(col)"
-                class="f-icon f-data-table-sort-icon"
-                fill="currentColor"
-                :name="table.getSortIcon()"
+                name="sortIcon"
+                v-bind="{ ...ctx, column: col }"
               />
             </button>
             <span v-else class="f-span f-data-table-header">
               {{ col.label }}
             </span>
-            <Icon
-              class="f-icon f-data-table-drag-handle"
-              fill="currentColor"
-              :name="TABLE_DRAG_ICON"
+            <span
+              class="f-span f-data-table-drag-handle"
               @mouseenter="onDragHandleEnter(String(col.key))"
               @mouseleave="onDragHandleLeave"
-            />
+            >
+              <slot name="dragIcon" v-bind="{ ...ctx, column: col }" />
+            </span>
           </div>
         </slot>
       </th>

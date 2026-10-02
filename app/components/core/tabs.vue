@@ -66,12 +66,7 @@ defineSlots<TabsSlots>();
         <template v-for="option in tabs" :key="option.value">
           <TabsTrigger class="f-tabs-trigger" v-bind="settings.trigger(option)">
             <slot name="trigger" v-bind="{ ...ctx, option }">
-              <Icon
-                v-if="option.icon"
-                class="f-icon"
-                fill="currentColor"
-                :name="option.icon"
-              />
+              <slot name="triggerIcon" v-bind="{ ...ctx, option }" />
               {{ option.label }}
             </slot>
           </TabsTrigger>

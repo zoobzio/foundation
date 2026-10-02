@@ -6,8 +6,9 @@ import type {
   ToastCloseProps,
 } from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
-import type { ModifierAxesOptions } from "../modifiers";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
+
+export type ToastVariant = "info" | "success" | "warning" | "error";
 
 export type ToastPassthrough = {
   root: Passthrough<ToastRootProps, ToastRootEmits>;
@@ -19,7 +20,7 @@ export type ToastPassthrough = {
 export type ToastProps = {
   title?: string;
   description?: string;
-  variant?: ModifierAxesOptions<"toast-root", "variant">;
+  variant?: ToastVariant;
   open?: boolean;
   duration?: number;
   pt?: PT<ToastPassthrough>;
@@ -33,7 +34,7 @@ export type ToastEmits = {
 export type ToastContext = {
   title?: string;
   description?: string;
-  variant?: ModifierAxesOptions<"toast-root", "variant">;
+  variant?: ToastVariant;
   duration?: number;
   open: Ref<boolean | undefined>;
   el: ComponentPublicInstance | null;

@@ -69,13 +69,7 @@ defineSlots<CheckboxSlots>();
   <CheckboxRoot ref="el" class="f-checkbox-root" v-bind="settings.root">
     <slot name="indicator" v-bind="ctx">
       <div class="f-group">
-        <slot name="icon" v-bind="ctx">
-          <Icon
-            class="f-icon"
-            fill="currentColor"
-            :name="$model === 'indeterminate' ? 'minus' : 'check'"
-          />
-        </slot>
+        <slot name="icon" v-bind="ctx" />
       </div>
     </slot>
   </CheckboxRoot>

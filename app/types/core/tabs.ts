@@ -40,5 +40,6 @@ export type TabsContext = {
 export type TabsSlots = {
   list?: (props: TabsContext) => VNode[];
   trigger?: (props: TabsContext & { option: Option }) => VNode[];
+  triggerIcon?: (props: TabsContext & { option: Option }) => VNode[];
   content?: (props: TabsContext & { option: Option }) => VNode[];
 };

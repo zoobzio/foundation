@@ -1,8 +1,8 @@
-import type { ModifierAxesOptions } from "./modifiers";
+import type { ToastVariant } from "./core/toast";
 
 export interface Notification {
   id: `${string}${string}-${string}-${string}-${string}`;
-  variant: ModifierAxesOptions<"toast-root", "variant">;
+  variant: ToastVariant;
   title: string;
   description?: string;
 }

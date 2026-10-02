@@ -1,6 +1,6 @@
 import type { CheckboxEmits, CheckboxProps } from "../../core/checkbox";
 import type { FabProps } from "../../core/fab";
-import type { MenuEmits, MenuProps } from "../../core/menu";
+import type { MenuEmits, MenuItem, MenuProps } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service } from "../browser";
 import type { DataTableColumn } from "../table";
@@ -39,6 +39,10 @@ export type BrowserFileCellContext<T> = BrowserFilesContext<T> & {
 export type BrowserFilesSlots<T> = {
   noFiles?: (props: BrowserFilesContext<T>) => VNode[];
   cell?: (props: BrowserFileCellContext<T>) => VNode[];
+  actionsIcon?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
+  actionIcon?: (
+    props: BrowserFilesContext<T> & { row: T; item: MenuItem },
+  ) => VNode[];
 } & {
   [name: `cell:${string}`]:
     | ((props: BrowserFileCellContext<T>) => VNode[])

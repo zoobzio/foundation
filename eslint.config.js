@@ -34,8 +34,6 @@ export default createConfigForNuxt({
       "**/.output/**",
       "**/dist/**",
       "**/.nitro/**",
-      // Deliberately broken sources exercised by the MCP graph tests.
-      "packages/mcp/tests/fixtures/**",
     ],
   },
   {

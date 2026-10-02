@@ -19,7 +19,10 @@ import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useForwardSlots } from "../../../composables/slots";
 import { useLazyRequest } from "../../../composables/request";
-import { DECK_FEED_SLOTS, DECK_PENDING_ICON } from "../../../constants/deck";
+import {
+  DECK_FEED_SLOTS,
+  DECK_TOOLBAR_SLOTS,
+} from "../../../constants/deck";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -40,7 +43,6 @@ const settings = usePassthrough<DeckWidgetPassthrough>(() => ({
   pt,
   recipes: {
     pending: {
-      icon: DECK_PENDING_ICON,
       label: `${pendingCount.value} new`,
       onClick: showPending,
     },
@@ -57,6 +59,7 @@ defineExpose({ ctx });
 
 const slots = defineSlots<DeckWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, DECK_FEED_SLOTS);
+const toolbarSlots = useForwardSlots(slots, DECK_TOOLBAR_SLOTS);
 
 useLazyRequest(`init-deck-${service.id}`, () => service.init());
 </script>
@@ -64,7 +67,11 @@ useLazyRequest(`init-deck-${service.id}`, () => service.init());
 <template>
   <div ref="el" class="f-group f-data-deck">
     <slot name="toolbar" v-bind="ctx">
-      <Toolbar :deck="service" :pt="pt?.toolbar" />
+      <Toolbar :deck="service" :pt="pt?.toolbar">
+        <template v-for="name in toolbarSlots" :key="name" #[name]="slotProps">
+          <slot :name="name" v-bind="slotProps" />
+        </template>
+      </Toolbar>
     </slot>
 
     <div class="f-group f-data-deck-body">
@@ -73,7 +80,11 @@ useLazyRequest(`init-deck-${service.id}`, () => service.init());
           v-if="hasPending"
           v-bind="settings.pending"
           class="f-data-deck-pending"
-        />
+        >
+          <template v-if="slots.pendingIcon" #icon>
+            <slot name="pendingIcon" v-bind="ctx" />
+          </template>
+        </Fab>
       </slot>
 
       <Feed :deck="service" :pt="pt?.feed">

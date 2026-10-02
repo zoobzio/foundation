@@ -1,5 +1,5 @@
 // system/error constants
-import type { ModifierAxesOptions } from "../types/modifiers";
+import type { ToastVariant } from "../types/core/toast";
 
 // Fallback HTTP status code used when a NuxtError carries no statusCode.
 export const ERROR_DEFAULT_STATUS_CODE = 500;
@@ -9,10 +9,10 @@ export const ERROR_NOT_FOUND_STATUS_CODE = 404;
 
 export const ERROR_SEVERITY = ["fatal", "error", "warning"] as const;
 
-// Maps an error severity to the toast-root variant modifier used to surface it.
+// Maps an error severity to the toast variant used to surface it.
 export const severityToVariant: Record<
   (typeof ERROR_SEVERITY)[number],
-  ModifierAxesOptions<"toast-root", "variant">
+  ToastVariant
 > = {
   fatal: "error",
   error: "error",

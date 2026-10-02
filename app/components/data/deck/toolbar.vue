@@ -16,9 +16,8 @@ import { useDeckView } from "../../../composables/deck";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import {
-  DECK_REFRESH_ICON,
-  DECK_SEARCH_ICON,
-  DECK_SORT_CHEVRON,
+  DECK_REFRESH_LABEL,
+  DECK_SEARCH_LABEL,
 } from "../../../constants/deck";
 </script>
 
@@ -64,7 +63,7 @@ const settings = usePassthrough<DeckToolbarPassthrough>(() => ({
       },
     },
     searchTrigger: {
-      icon: DECK_SEARCH_ICON,
+      label: DECK_SEARCH_LABEL,
       badge: hasQuery.value ? "" : undefined,
     },
     facets: {
@@ -75,7 +74,7 @@ const settings = usePassthrough<DeckToolbarPassthrough>(() => ({
       },
     },
     refresh: {
-      icon: DECK_REFRESH_ICON,
+      label: DECK_REFRESH_LABEL,
       onClick: () => deck.fetch(),
     },
   },
@@ -99,11 +98,7 @@ defineSlots<DeckToolbarSlots<T>>();
           <template #trigger>
             <button type="button" class="f-button f-data-deck-title-btn">
               {{ title }}
-              <Icon
-                class="f-icon"
-                fill="currentColor"
-                :name="DECK_SORT_CHEVRON"
-              />
+              <slot name="sortIcon" v-bind="ctx" />
             </button>
           </template>
         </Menu>
@@ -114,7 +109,11 @@ defineSlots<DeckToolbarSlots<T>>();
       <div class="f-group f-data-deck-actions">
         <Popover v-bind="settings.searchPopover">
           <template #trigger>
-            <Fab v-bind="settings.searchTrigger" />
+            <Fab v-bind="settings.searchTrigger">
+              <template v-if="$slots.searchIcon" #icon>
+                <slot name="searchIcon" v-bind="ctx" />
+              </template>
+            </Fab>
           </template>
           <template #content>
             <div class="f-group f-data-deck-search">
@@ -129,9 +128,17 @@ defineSlots<DeckToolbarSlots<T>>();
           </template>
         </Popover>
 
-        <Facets v-bind="settings.facets" />
+        <Facets v-bind="settings.facets">
+          <template v-if="$slots.facetsIcon" #triggerIcon>
+            <slot name="facetsIcon" v-bind="ctx" />
+          </template>
+        </Facets>
 
-        <Fab v-bind="settings.refresh" />
+        <Fab v-bind="settings.refresh">
+          <template v-if="$slots.refreshIcon" #icon>
+            <slot name="refreshIcon" v-bind="ctx" />
+          </template>
+        </Fab>
       </div>
     </slot>
   </div>

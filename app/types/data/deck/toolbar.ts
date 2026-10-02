@@ -28,4 +28,8 @@ export type DeckToolbarContext<T> = {
 export type DeckToolbarSlots<T> = {
   title?: (props: DeckToolbarContext<T>) => VNode[];
   actions?: (props: DeckToolbarContext<T>) => VNode[];
+  sortIcon?: (props: DeckToolbarContext<T>) => VNode[];
+  searchIcon?: (props: DeckToolbarContext<T>) => VNode[];
+  facetsIcon?: (props: DeckToolbarContext<T>) => VNode[];
+  refreshIcon?: (props: DeckToolbarContext<T>) => VNode[];
 };

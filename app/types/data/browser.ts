@@ -1,5 +1,4 @@
 import type { Ref } from "#imports";
-import type { IconAlias } from "../icon";
 import type {
   ActionDescriptor,
   BulkAction,
@@ -16,7 +15,6 @@ import type {
 export type BrowserFolder = {
   key: string;
   label: string;
-  icon?: IconAlias;
   count?: number;
 };
 
@@ -52,7 +50,6 @@ export interface BrowserFetchResult<T> {
  * the service exposes: descriptor joined with its handler.
  */
 export type FolderAction = {
-  icon: IconAlias;
   label: string;
   action: (folder: BrowserFolder) => void;
 };
@@ -67,7 +64,6 @@ export type Config<T> = {
   columns: DataTableColumn<T>[];
   fileKey: keyof T;
   rootLabel?: string;
-  rootIcon?: IconAlias;
   actions?: Record<string, ActionDescriptor>;
   folderActions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;
@@ -114,7 +110,6 @@ export type Service<T> = {
   sortBy(field: string): void;
   sortFieldFor(col: DataTableColumn<T>): string;
   isSorted(col: DataTableColumn<T>): boolean;
-  getSortIcon(): IconAlias;
   keyOf(row: T): string;
   toggleRow(key: string): void;
   toggleAll(): void;

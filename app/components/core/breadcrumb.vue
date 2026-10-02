@@ -43,14 +43,7 @@ defineSlots<BreadcrumbSlots<T>>();
             <slot
               name="itemIcon"
               v-bind="{ ...ctx, item, index, last: true }"
-            >
-              <Icon
-                v-if="item.icon"
-                class="f-icon"
-                fill="currentColor"
-                :name="item.icon"
-              />
-            </slot>
+            />
             <slot name="itemLabel" v-bind="{ ...ctx, item, index, last: true }">
               {{ item.label }}
             </slot>
@@ -68,14 +61,7 @@ defineSlots<BreadcrumbSlots<T>>();
             <slot
               name="itemIcon"
               v-bind="{ ...ctx, item, index, last: false }"
-            >
-              <Icon
-                v-if="item.icon"
-                class="f-icon"
-                fill="currentColor"
-                :name="item.icon"
-              />
-            </slot>
+            />
             <slot
               name="itemLabel"
               v-bind="{ ...ctx, item, index, last: false }"
@@ -93,14 +79,7 @@ defineSlots<BreadcrumbSlots<T>>();
             <slot
               name="itemIcon"
               v-bind="{ ...ctx, item, index, last: false }"
-            >
-              <Icon
-                v-if="item.icon"
-                class="f-icon"
-                fill="currentColor"
-                :name="item.icon"
-              />
-            </slot>
+            />
             <slot
               name="itemLabel"
               v-bind="{ ...ctx, item, index, last: false }"
@@ -113,9 +92,7 @@ defineSlots<BreadcrumbSlots<T>>();
           v-if="index < items.length - 1"
           name="separator"
           v-bind="{ ...ctx, item, index }"
-        >
-          <Icon class="f-icon" fill="currentColor" name="chevron-right" />
-        </slot>
+        />
       </li>
     </ol>
   </nav>

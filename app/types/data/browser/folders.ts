@@ -1,5 +1,5 @@
 import type { FabProps } from "../../core/fab";
-import type { MenuEmits, MenuProps } from "../../core/menu";
+import type { MenuEmits, MenuItem, MenuProps } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";
 import type { BrowserFolder, Service } from "../browser";
 import type { VNode } from "vue";
@@ -29,5 +29,11 @@ export type BrowserFoldersSlots<T> = {
   ) => VNode[];
   folderLabel?: (
     props: BrowserFoldersContext<T> & { folder: BrowserFolder },
+  ) => VNode[];
+  folderActionsIcon?: (
+    props: BrowserFoldersContext<T> & { folder: BrowserFolder },
+  ) => VNode[];
+  folderActionIcon?: (
+    props: BrowserFoldersContext<T> & { folder: BrowserFolder; item: MenuItem },
   ) => VNode[];
 };

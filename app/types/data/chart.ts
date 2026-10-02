@@ -1,5 +1,4 @@
 import type { Ref } from "#imports";
-import type { IconAlias } from "../icon";
 import type {
   ChartType as CJSChartType,
   ChartOptions as CJSChartOptions,
@@ -69,7 +68,6 @@ export type BucketSize = "1h" | "1d" | "1w" | "1mo";
 export interface RendererConfig<T extends CJSChartType = CJSChartType> {
   type: T;
   label?: string;
-  icon?: IconAlias;
   options?: CJSChartOptions<T>;
 }
 

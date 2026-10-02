@@ -10,7 +10,6 @@ import type {
   DropdownMenuItemEmits,
   DropdownMenuSeparatorProps,
 } from "reka-ui";
-import type { IconAlias } from "../icon";
 import type {
   Passthrough,
   PassthroughIter,
@@ -19,7 +18,6 @@ import type {
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type MenuItem = {
-  icon?: IconAlias;
   label: string;
   disabled?: boolean;
 };

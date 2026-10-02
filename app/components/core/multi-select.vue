@@ -112,13 +112,7 @@ defineSlots<MultiSelectSlots<T>>();
             {{ display }}
           </span>
         </slot>
-        <slot name="triggerIcon" v-bind="ctx">
-          <Icon
-            class="f-icon"
-            fill="currentColor"
-            :name="$open ? 'chevron-up' : 'chevron-down'"
-          />
-        </slot>
+        <slot name="triggerIcon" v-bind="ctx" />
       </SelectTrigger>
     </slot>
     <SelectPortal>

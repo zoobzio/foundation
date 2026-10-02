@@ -90,22 +90,11 @@ defineSlots<AccordionSlots>();
                 <slot name="trigger" v-bind="{ ...ctx, item, open }">
                   <slot name="triggerContent" v-bind="{ ...ctx, item, open }">
                     <div class="f-group">
-                      <Icon
-                        v-if="item.icon"
-                        class="f-icon"
-                        fill="currentColor"
-                        :name="item.icon"
-                      />
+                      <slot name="triggerIcon" v-bind="{ ...ctx, item, open }" />
                       {{ item.label }}
                     </div>
                   </slot>
-                  <slot name="chevron" v-bind="{ ...ctx, item, open }">
-                    <Icon
-                      class="f-icon"
-                      fill="currentColor"
-                      :name="open ? 'chevron-down' : 'chevron-right'"
-                    />
-                  </slot>
+                  <slot name="chevron" v-bind="{ ...ctx, item, open }" />
                 </slot>
               </AccordionTrigger>
             </slot>

@@ -1,5 +1,5 @@
 // Smoke tests for the harness itself: alias resolution, the #imports shim's
-// useState contract, and VTU stub matching against registered component names.
+// useState contract, and VTU stub matching against component import bindings.
 // Component behavior belongs in per-component suites, not here.
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
@@ -31,12 +31,12 @@ describe("component mounting", () => {
     expect(trigger.text()).toContain("Select an option");
   });
 
-  it("stubs match registered global component names", () => {
+  it("stubs match the component's import binding names", () => {
     const wrapper = mount(Select, {
       props: { options: fakeOptions },
-      global: { stubs: { Icon: createStub("Icon", "i") } },
+      global: { stubs: { SelectTrigger: createStub("SelectTrigger", "i") } },
     });
     expect(wrapper.find("i").exists()).toBe(true);
-    expect(wrapper.find("svg").exists()).toBe(false);
+    expect(wrapper.find("button.f-select-trigger").exists()).toBe(false);
   });
 });

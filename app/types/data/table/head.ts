@@ -25,4 +25,10 @@ export type TableHeadSlots<T> = {
   header?: (
     props: TableHeadContext<T> & { column: DataTableColumn<T> },
   ) => VNode[];
+  sortIcon?: (
+    props: TableHeadContext<T> & { column: DataTableColumn<T> },
+  ) => VNode[];
+  dragIcon?: (
+    props: TableHeadContext<T> & { column: DataTableColumn<T> },
+  ) => VNode[];
 };

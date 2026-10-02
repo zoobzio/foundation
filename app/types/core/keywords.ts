@@ -45,6 +45,7 @@ export type KeywordsContext = {
 
 export type KeywordsSlots = {
   trigger?: (props: KeywordsContext) => VNode[];
+  triggerIcon?: (props: KeywordsContext) => VNode[];
   root?: (props: KeywordsContext) => VNode[];
   include?: (props: KeywordsContext) => VNode[];
   includeLabel?: (props: KeywordsContext) => VNode[];

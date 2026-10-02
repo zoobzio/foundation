@@ -1,9 +1,8 @@
-import type { IconAlias } from "../../icon";
 import type { FabProps, FabEmits } from "../../core/fab";
-import type { MenuProps, MenuEmits } from "../../core/menu";
+import type { MenuProps, MenuEmits, MenuItem } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service } from "../chart";
-import type { ComponentPublicInstance } from "vue";
+import type { ComponentPublicInstance, VNode } from "vue";
 
 /**
  * Which machine dimension a toolbar selector drives. `useChartControl` maps
@@ -21,17 +20,17 @@ export type ChartControlKind =
 export type ChartControlOption = {
   value: string;
   label: string;
-  icon?: IconAlias;
   disabled?: boolean;
 };
 
 /**
  * The selector's trigger surface: the variant selector shows the chart title
- * as text with a chevron; every other selector is an icon fab.
+ * as text; every other selector is a fab whose label is its visible text
+ * until the consumer fills the `controlIcon` slot.
  */
 export type ChartControlTrigger =
   | { type: "title"; label: string }
-  | { type: "fab"; icon: IconAlias; label?: string };
+  | { type: "fab"; label: string };
 
 /**
  * A toolbar selector's render position: which dimension it drives, where it
@@ -59,4 +58,17 @@ export type ChartControlContext<T> = ChartControlAnchor & {
   chart: Service<T>;
   el: ComponentPublicInstance | null;
   settings: ChartControlPassthrough;
+};
+
+/**
+ * `controlTitleIcon` sits after the title trigger's text; `controlIcon`
+ * fills the fab trigger (switch on `kind` to pick per selector);
+ * `controlOptionIcon` renders before each option in the menu.
+ */
+export type ChartControlSlots<T> = {
+  controlTitleIcon?: (props: ChartControlContext<T>) => VNode[];
+  controlIcon?: (props: ChartControlContext<T>) => VNode[];
+  controlOptionIcon?: (
+    props: ChartControlContext<T> & { item: MenuItem },
+  ) => VNode[];
 };

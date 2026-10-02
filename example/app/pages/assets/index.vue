@@ -44,13 +44,11 @@ const browser = useBrowser("assets", ASSETS_BROWSER, {
 const fileLeaf = (file: AssetFile): TreeNode => ({
   key: file.id,
   label: file.name,
-  icon: "file",
 });
 
 const toTreeNode = (folder: AssetFolder): TreeNode => ({
   key: folder.key,
   label: folder.label,
-  icon: "folder",
   children: [...folder.folders.map(toTreeNode), ...folder.files.map(fileLeaf)],
 });
 

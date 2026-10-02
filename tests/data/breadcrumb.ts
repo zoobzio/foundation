@@ -7,7 +7,7 @@ export type FakeCrumb = BreadcrumbItem & {
 };
 
 export const fakeCrumbs: FakeCrumb[] = [
-  { key: "root", label: "Home", icon: "home", depth: 0, link: { to: "/" } },
+  { key: "root", label: "Home", depth: 0, link: { to: "/" } },
   { key: "docs", label: "Docs", depth: 1 },
   { key: "legacy", label: "Legacy", depth: 2, disabled: true },
   { key: "current", label: "Current Page", depth: 3 },

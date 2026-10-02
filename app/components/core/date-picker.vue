@@ -120,7 +120,7 @@ defineSlots<DatePickerSlots>();
           <slot name="trigger" v-bind="ctx">
             <DatePickerTrigger class="f-date-picker-trigger" v-bind="settings.trigger">
               <slot name="triggerIcon" v-bind="ctx">
-                <Icon class="f-icon" fill="currentColor" name="calendar" />
+                <span class="f-span">Calendar</span>
               </slot>
             </DatePickerTrigger>
           </slot>
@@ -136,7 +136,7 @@ defineSlots<DatePickerSlots>();
                 <slot name="prev" v-bind="{ ...ctx, weekDays, grid }">
                   <DatePickerPrev class="f-date-picker-prev" v-bind="settings.prev">
                     <slot name="prevIcon" v-bind="{ ...ctx, weekDays, grid }">
-                      <Icon class="f-icon" fill="currentColor" name="chevron-left" />
+                      <span class="f-span">Previous</span>
                     </slot>
                   </DatePickerPrev>
                 </slot>
@@ -146,7 +146,7 @@ defineSlots<DatePickerSlots>();
                 <slot name="next" v-bind="{ ...ctx, weekDays, grid }">
                   <DatePickerNext class="f-date-picker-next" v-bind="settings.next">
                     <slot name="nextIcon" v-bind="{ ...ctx, weekDays, grid }">
-                      <Icon class="f-icon" fill="currentColor" name="chevron-right" />
+                      <span class="f-span">Next</span>
                     </slot>
                   </DatePickerNext>
                 </slot>

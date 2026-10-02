@@ -1,4 +1,4 @@
-// The folder rows' own logic: the open dispatch, icon fallback, the count
+// The folder rows' own logic: the open dispatch, the icon slots, the count
 // badge, column alignment against the file rows, and the folder actions
 // affordance. The contract mock is the unit seam — alphabetical ordering
 // is the service's contract, tested in tests/app/services/browser.test.ts.
@@ -58,7 +58,7 @@ describe("data browser folders", () => {
     expect(plain.wrapper.find(".f-data-browser-select").exists()).toBe(false);
     const selectable = mountFolders(
       createMockBrowser({
-        bulkActions: [{ icon: "delete", label: "Purge", action: vi.fn() }],
+        bulkActions: [{ label: "Purge", action: vi.fn() }],
       }),
     );
     const select = selectable.wrapper.find("td.f-data-browser-select");
@@ -76,11 +76,27 @@ describe("data browser folders", () => {
     expect(service.open).toHaveBeenCalledWith(fakeFolders.at(0));
   });
 
-  it("falls back to the folder icon unless the folder brings its own", () => {
+  it("renders no folder icon unless the consumer supplies one", () => {
     const { wrapper } = mountFolders();
-    const rows = wrapper.findAll("tr");
-    expect(rows.at(0)?.get("use").attributes("href")).toBe("#folder");
-    expect(rows.at(1)?.get("use").attributes("href")).toBe("#layers");
+    const media = wrapper.findAll("button").at(0);
+    expect(media?.element.firstElementChild?.textContent).toBe("Media");
+  });
+
+  it("renders the folderIcon slot before the label, scoped with the folder", () => {
+    const { wrapper } = mountFolders(createMockBrowser(), {
+      folderIcon: `<template #folderIcon="s"><i>{{ s.folder.key }}</i></template>`,
+    });
+    const buttons = wrapper.findAll("button");
+    expect(buttons.map((b) => b.element.firstElementChild?.tagName)).toEqual([
+      "I",
+      "I",
+      "I",
+    ]);
+    expect(wrapper.findAll("i").map((i) => i.text())).toEqual([
+      "media",
+      "archive",
+      "drafts",
+    ]);
   });
 
   it("shows the count badge only when the folder carries one", () => {
@@ -99,12 +115,26 @@ describe("data browser folders", () => {
     expect(bare.wrapper.find(".f-data-browser-actions").exists()).toBe(false);
     const acting = mountFolders(
       createMockBrowser({
-        folderActions: [{ icon: "edit", label: "Rename", action: vi.fn() }],
+        folderActions: [{ label: "Rename", action: vi.fn() }],
       }),
     );
-    expect(
-      acting.wrapper.findAll('use[href="#actions"]'),
-    ).toHaveLength(fakeFolders.length);
+    const triggers = acting.wrapper.findAll('button[aria-label="Actions"]');
+    expect(triggers).toHaveLength(fakeFolders.length);
+    expect(triggers.at(0)?.text()).toBe("Actions");
+  });
+
+  it("folderActionsIcon fills the actions trigger in place of its label", () => {
+    const { wrapper } = mountFolders(
+      createMockBrowser({
+        folderActions: [{ label: "Rename", action: vi.fn() }],
+      }),
+      {
+        folderActionsIcon: `<template #folderActionsIcon="s"><i>{{ s.folder.key }}</i></template>`,
+      },
+    );
+    const trigger = wrapper.findAll('button[aria-label="Actions"]').at(0);
+    expect(trigger?.get("i").text()).toBe("media");
+    expect(trigger?.find(".f-span").exists()).toBe(false);
   });
 
   it("serves ctx and the folder to slot overrides", () => {

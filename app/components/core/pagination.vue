@@ -56,10 +56,10 @@ const { hasPrev, hasNext, options, first, prev, next, last, goToPage } =
 const settings = usePassthrough<PaginationPassthrough>(() => ({
   pt,
   recipes: {
-    first: { icon: "chevron-first", disabled: !hasPrev.value, onClick: first },
-    prev: { icon: "chevron-left", disabled: !hasPrev.value, onClick: prev },
-    next: { icon: "chevron-right", disabled: !hasNext.value, onClick: next },
-    last: { icon: "chevron-last", disabled: !hasNext.value, onClick: last },
+    first: { label: "First", disabled: !hasPrev.value, onClick: first },
+    prev: { label: "Previous", disabled: !hasPrev.value, onClick: prev },
+    next: { label: "Next", disabled: !hasNext.value, onClick: next },
+    last: { label: "Last", disabled: !hasNext.value, onClick: last },
     size: {
       modelValue: PAGE_SIZE_OPTIONS.find(
         (o) => o.value === String(currentSize.value),
@@ -98,10 +98,18 @@ defineSlots<PaginationSlots>();
     <slot name="pages" v-bind="ctx">
       <div class="f-group">
         <slot name="first" v-bind="ctx">
-          <Fab v-bind="settings.first" />
+          <Fab v-bind="settings.first">
+            <template v-if="$slots.firstIcon" #icon>
+              <slot name="firstIcon" v-bind="ctx" />
+            </template>
+          </Fab>
         </slot>
         <slot name="prev" v-bind="ctx">
-          <Fab v-bind="settings.prev" />
+          <Fab v-bind="settings.prev">
+            <template v-if="$slots.prevIcon" #icon>
+              <slot name="prevIcon" v-bind="ctx" />
+            </template>
+          </Fab>
         </slot>
         <slot name="options" v-bind="ctx">
           <div class="f-group">
@@ -119,10 +127,18 @@ defineSlots<PaginationSlots>();
           </div>
         </slot>
         <slot name="next" v-bind="ctx">
-          <Fab v-bind="settings.next" />
+          <Fab v-bind="settings.next">
+            <template v-if="$slots.nextIcon" #icon>
+              <slot name="nextIcon" v-bind="ctx" />
+            </template>
+          </Fab>
         </slot>
         <slot name="last" v-bind="ctx">
-          <Fab v-bind="settings.last" />
+          <Fab v-bind="settings.last">
+            <template v-if="$slots.lastIcon" #icon>
+              <slot name="lastIcon" v-bind="ctx" />
+            </template>
+          </Fab>
         </slot>
       </div>
     </slot>

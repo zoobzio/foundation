@@ -5,7 +5,7 @@
 // own files. The breadcrumb and refresh fab render real because the
 // widget's wiring to them (crumb → navigate, refresh → fetch) is the
 // behavior under test here.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -26,22 +26,30 @@ const BrowserWidget: FunctionalComponent<
   BrowserWidgetEmits
 > = Widget;
 
-const mountWidget = (mock = createMockBrowser()) => {
+const mountWidget = (
+  mock = createMockBrowser(),
+  slots: Record<string, string> = {},
+  stubs: Partial<typeof browserStubs> = browserStubs,
+) => {
   const updated: { id: string }[] = [];
   const navigated: { id: string; path: string[] }[] = [];
   const wrapper = mount(
     defineComponent({
-      setup() {
+      setup(_, { slots: forwarded }) {
         return () =>
-          h(BrowserWidget, {
-            service: mock.service,
-            onUpdated: (event: { id: string }) => updated.push(event),
-            onNavigated: (event: { id: string; path: string[] }) =>
-              navigated.push(event),
-          });
+          h(
+            BrowserWidget,
+            {
+              service: mock.service,
+              onUpdated: (event: { id: string }) => updated.push(event),
+              onNavigated: (event: { id: string; path: string[] }) =>
+                navigated.push(event),
+            },
+            forwarded,
+          );
       },
     }),
-    { global: { stubs: browserStubs } },
+    { slots, global: { stubs } },
   );
   return { ...mock, wrapper, updated, navigated };
 };
@@ -112,12 +120,39 @@ describe("data browser widget", () => {
 
   it("refresh control triggers a browser fetch", async () => {
     const { service, wrapper } = mountWidget();
-    const refresh = wrapper
-      .get('use[href="#refresh"]')
-      .element.closest("button");
-    if (!refresh) throw new Error("refresh fab has no button root");
-    refresh.click();
+    const refresh = wrapper.get('button[aria-label="Refresh"]');
+    expect(refresh.text()).toBe("Refresh");
+    await refresh.trigger("click");
     expect(service.fetch).toHaveBeenCalledOnce();
+  });
+
+  it("refreshIcon fills the refresh fab in place of its label", () => {
+    const { wrapper } = mountWidget(createMockBrowser(), {
+      refreshIcon: `<template #refreshIcon="s"><i>{{ s.browser.id }}</i></template>`,
+    });
+    const refresh = wrapper.get('button[aria-label="Refresh"]');
+    expect(refresh.get("i").text()).toBe("mock-browser");
+    expect(refresh.find(".f-span").exists()).toBe(false);
+  });
+
+  it("relays icon slots down to the folder rows and bulk actions", async () => {
+    const mock = createMockBrowser({
+      bulkActions: [{ label: "Purge", action: vi.fn() }],
+    });
+    mock.state.selected.value = new Set(["1"]);
+    const { wrapper } = mountWidget(
+      mock,
+      {
+        folderIcon: `<template #folderIcon="s"><i>{{ s.folder.key }}</i></template>`,
+        bulkActionIcon: `<template #bulkActionIcon="s"><b>{{ s.action.label }}</b></template>`,
+      },
+      { Files: browserStubs.Files },
+    );
+    await flushPromises();
+    expect(
+      wrapper.findAll(".f-data-browser-folder-btn i").map((i) => i.text()),
+    ).toEqual(["media", "archive", "drafts"]);
+    expect(wrapper.get(".f-data-browser-bulk-action b").text()).toBe("Purge");
   });
 
   it("shows bulk actions only while files are selected", async () => {

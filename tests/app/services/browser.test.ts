@@ -234,9 +234,9 @@ describe("sorting", () => {
     expect(service.sortFieldFor(sized)).toBe("bytes");
     service.sortBy("bytes");
     expect(service.isSorted(sized)).toBe(true);
-    expect(service.getSortIcon()).toBe("chevron-up");
     service.sortBy("bytes");
-    expect(service.getSortIcon()).toBe("chevron-down");
+    expect(service.isSorted(sized)).toBe(true);
+    expect(service.sortDirection).toBe("desc");
   });
 });
 

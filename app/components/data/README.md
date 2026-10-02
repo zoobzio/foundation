@@ -236,7 +236,11 @@ structural wiring included.
 
 The widget relays the child's slot names from a constant
 (`constants/<name>.ts`, typed `(keyof XItemSlots<unknown>)[]`) via
-`useForwardSlots` + a dynamic `<template #[name]>` loop.
+`useForwardSlots` + a dynamic `<template #[name]>` loop. The loop only
+typechecks when every listed slot shares one prop type: when the child also
+declares differently-scoped slots (an `item`-scoped icon, say), narrow the
+constant to the shared ones — `[…] as const satisfies readonly (keyof
+XItemSlots<unknown>)[]` — and relay the rest with explicit `v-if` templates.
 
 ## Feature composables (`composables/<name>.ts`)
 
@@ -291,8 +295,8 @@ same payloads.
   composables third.
 - **No casts, no non-null assertions** — narrow structurally:
   `event.target instanceof HTMLInputElement` for DOM payloads, `v-if`
-  scope for data-driven required props (an `Icon` whose alias comes from
-  item data binds `:name="item.icon"` inside `v-if="item.icon"`).
+  scope for data-driven required props (a `NuxtLink` whose target comes
+  from item data binds `:to="item.link.to"` inside `v-if="item.link"`).
 - **Native controls type against native attributes**: manifest entries the
   widget binds to a native tag (form's `input`/`textarea`) are typed on
   Vue's HTML attribute types, widened with the fields the feature drives —

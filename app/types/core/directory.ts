@@ -1,4 +1,3 @@
-import type { IconAlias } from "../icon";
 import type { Link } from "./common";
 import type { VNode } from "vue";
 
@@ -12,7 +11,6 @@ import type { VNode } from "vue";
 export type DirectoryItem = {
   key: string;
   label: string;
-  icon?: IconAlias;
   disabled?: boolean;
   link?: Pick<Link, "to" | "external" | "target" | "replace" | "prefetch">;
 };

@@ -106,25 +106,11 @@ defineSlots<TreeSlots<T>>();
         <slot
           name="itemToggle"
           v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
-        >
-          <Icon
-            v-if="flat.hasChildren"
-            class="f-icon"
-            fill="currentColor"
-            :name="isExpanded ? 'chevron-down' : 'chevron-right'"
-          />
-        </slot>
+        />
         <slot
           name="itemIcon"
           v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
-        >
-          <Icon
-            v-if="flat.value.icon"
-            class="f-icon"
-            fill="currentColor"
-            :name="flat.value.icon"
-          />
-        </slot>
+        />
         <slot
           name="itemLabel"
           v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"

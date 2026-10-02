@@ -43,10 +43,7 @@ describe("select", () => {
     const trigger = wrapper.get("button.f-select-trigger");
     expect(trigger.attributes("role")).toBe("combobox");
     expect(trigger.attributes("data-state")).toBe("closed");
-    expect(trigger.text()).toContain("Pick one");
-    expect(trigger.find("use").attributes("href")).toBe(
-      "#chevron-down",
-    );
+    expect(trigger.text()).toBe("Pick one");
   });
 
   it("displays the controlled model's label instead of the placeholder", () => {
@@ -56,14 +53,13 @@ describe("select", () => {
     expect(wrapper.get("button.f-select-trigger").text()).toContain("Apple");
   });
 
-  it("opens on trigger interaction: emits, flips the icon, mounts options", async () => {
+  it("opens on trigger interaction: emits, mounts options", async () => {
     const wrapper = mountSelect();
     await openSelect(wrapper);
     expect(wrapper.emitted("update:open")).toEqual([[true]]);
     expect(
       wrapper.get("button.f-select-trigger").attributes("data-state"),
     ).toBe("open");
-    expect(wrapper.get("use").attributes("href")).toBe("#chevron-up");
     // Content is portalled — options live under document.body, one per option.
     const items = document.querySelectorAll('[role="option"]');
     expect(items).toHaveLength(fakeOptions.length);
@@ -89,6 +85,20 @@ describe("select", () => {
     expect(
       wrapper.get(".f-select-trigger").attributes("disabled"),
     ).toBeDefined();
+  });
+
+  it("renders the triggerIcon slot inside the trigger, scoped with the open state", async () => {
+    const wrapper = mountSelect(
+      {},
+      {
+        triggerIcon: `<template #triggerIcon="{ open }">
+          <i>{{ open.value ? "up" : "down" }}</i>
+        </template>`,
+      },
+    );
+    expect(wrapper.get("button.f-select-trigger i").text()).toBe("down");
+    await openSelect(wrapper);
+    expect(wrapper.get("button.f-select-trigger i").text()).toBe("up");
   });
 
   it("serves ctx to slot overrides", () => {
