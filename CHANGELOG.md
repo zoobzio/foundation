@@ -1,5 +1,19 @@
 # @zoobzio/foundation
 
+## 1.0.1
+
+### Patch Changes
+
+- [`45e78b3`](https://github.com/zoobzio/foundation/commit/45e78b38c6c2f38452da1eded2e7ae5d2c4c2214) Thanks [@zoobzio](https://github.com/zoobzio)! - Decouple icons from the layer: components no longer render icons. The `@icon-sheets/nuxt` module and its `config/icon-sheets` registry are no longer registered or shipped, and with them go the global `Icon` component, the `IconAlias` type, the `icon` prop on `Fab`, the `icon` field on options, links, menu/tree/breadcrumb/directory items, folders, and action descriptors, `rootIcon` on the browser config, and `getSortIcon()` on the table and browser services.
+
+  Every former icon position is a slot instead: existing icon slots (`itemIcon`, `triggerIcon`, `prevIcon`, `nextIcon`, `closeIcon`, …) keep their names with no icon fallback, new slots cover the remaining positions (`backToTopIcon`, `stepSeparator`, pagination's `firstIcon`/`lastIcon`, …), and the data widgets relay named slots (`refreshIcon`, `columnsIcon`, `sortIcon`, `dragIcon`, `actionsIcon`, `actionIcon`, `bulkActionIcon`, `controlIcon`, …) down to their nested controls. `Fab` renders its `label` as visible text when its `icon` slot is empty, and every built-in `Fab` now carries a label.
+
+- [`45e78b3`](https://github.com/zoobzio/foundation/commit/45e78b38c6c2f38452da1eded2e7ae5d2c4c2214) Thanks [@zoobzio](https://github.com/zoobzio)! - Remove the theming, binding, and MCP subsystems from the layer. The `@untheme/nuxt` module, its `config/untheme` theme definition, and the `tokens` plugin are no longer registered or shipped, so the layer no longer provides a theme or component-token defaults. The component registry (`config/components`), the modifier schema (`config/modifiers`), and everything they powered are gone: the `useBindings`, `useAria`, `useModifiers`, and `useTokens` composables, and the `aria`, `aria-spec`, `bindings`, `component`, `element`, `modifiers`, `token`, and `tokens` type modules. The `aria-query`, `untheme`, `@untheme/*`, `icon-sheets`, and `@iconify-json/*` dependencies are dropped.
+
+  The toast variant is now a plain `ToastVariant` union exported from `types/core/toast`, replacing the modifier-derived type on `ToastProps`, `Notification`, and `severityToVariant`.
+
+  The `@zoobzio/foundation-mcp` package is removed from the repository and is no longer versioned alongside the layer.
+
 ## 1.0.0
 
 ### Minor Changes
