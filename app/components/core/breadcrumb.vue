@@ -7,6 +7,8 @@ import type {
   BreadcrumbSlots,
 } from "../../types/core/breadcrumb";
 
+import { NuxtLink } from "#components";
+
 import { useTemplateRef } from "#imports";
 import { useContext } from "../../composables/context";
 </script>

@@ -1,7 +1,7 @@
 // Mount depth follows the behavior under test: the item-kind branch (Anchor
 // vs Button), the disabled guards, and the select emit are the component's
-// own logic; the elements underneath have their own suites. NuxtLink is the
-// one framework global, stubbed to a bare <a> that maps `to` → `href`.
+// own logic; the elements underneath have their own suites. NuxtLink is
+// imported from #components, stubbed to a bare <a> that maps `to` → `href`.
 import { describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
