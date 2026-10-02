@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 1.0.2
+
+### Patch Changes
+
+- [`9700ef4`](https://github.com/zoobzio/foundation/commit/9700ef4dad5295c797ea4fc345a5784f3f85ce31) Thanks [@zoobzio](https://github.com/zoobzio)! - Make option-based components generic over their item type. Accordion, Facets, Listbox, Menu, Radio, SegmentedControl, Select, and Tabs now infer `T` from their items, so slot props, passthrough iterators, and context carry the caller's own option type instead of the base `Option`/`FacetItem`.
+
 ## 1.0.1
 
 ### Patch Changes
