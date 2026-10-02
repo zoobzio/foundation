@@ -3,6 +3,7 @@ import type {
   TableColumnsContext,
   TableColumnsPassthrough,
   TableColumnsProps,
+  TableColumnsSlots,
 } from "../../../types/data/table/columns";
 import type { ComponentPublicInstance } from "vue";
 
@@ -15,7 +16,7 @@ import { useTableView } from "../../../composables/table";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import {
-  TABLE_COLUMNS_ICON,
+  TABLE_COLUMNS_LABEL,
   TABLE_COLUMNS_PLACEHOLDER,
 } from "../../../constants/table";
 </script>
@@ -39,7 +40,7 @@ const settings = usePassthrough<TableColumnsPassthrough>(() => ({
         open.value = v;
       },
     },
-    trigger: { icon: TABLE_COLUMNS_ICON },
+    trigger: { label: TABLE_COLUMNS_LABEL },
     command: {
       groups: columnGroups.value,
       modelValue: selectedColumnOptions.value,
@@ -56,12 +57,17 @@ const ctx = useContext<TableColumnsContext<T>>(
 );
 
 defineExpose({ ctx });
+defineSlots<TableColumnsSlots<T>>();
 </script>
 
 <template>
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
-      <Fab v-bind="settings.trigger" />
+      <Fab v-bind="settings.trigger">
+        <template v-if="$slots.columnsIcon" #icon>
+          <slot name="columnsIcon" v-bind="ctx" />
+        </template>
+      </Fab>
     </template>
     <template #content>
       <Command v-bind="settings.command" />

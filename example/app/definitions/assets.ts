@@ -27,13 +27,13 @@ export const ASSETS_BROWSER = asset.defineBrowser({
     { key: "uploadedAt", label: "Uploaded", type: "date", sortable: true },
   ],
   actions: {
-    download: { icon: "download", label: "Download" },
-    remove: { icon: "delete", label: "Delete" },
+    download: { label: "Download" },
+    remove: { label: "Delete" },
   },
   folderActions: {
-    rename: { icon: "edit", label: "Rename" },
+    rename: { label: "Rename" },
   },
   bulkActions: {
-    removeSelected: { icon: "delete", label: "Delete selected" },
+    removeSelected: { label: "Delete selected" },
   },
 });

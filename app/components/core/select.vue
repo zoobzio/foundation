@@ -109,13 +109,7 @@ defineSlots<SelectSlots<T>>();
         <slot name="triggerLabel" v-bind="ctx">
           <span class="f-span">{{ display }}</span>
         </slot>
-        <slot name="triggerIcon" v-bind="ctx">
-          <Icon
-            class="f-icon"
-            fill="currentColor"
-            :name="$open ? 'chevron-up' : 'chevron-down'"
-          />
-        </slot>
+        <slot name="triggerIcon" v-bind="ctx" />
       </SelectTrigger>
     </slot>
     <SelectPortal>

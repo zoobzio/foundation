@@ -54,5 +54,6 @@ export type FacetsContext = {
 
 export type FacetsSlots = {
   trigger?: (props: FacetsContext) => VNode[];
+  triggerIcon?: (props: FacetsContext) => VNode[];
   command?: (props: FacetsContext) => VNode[];
 };

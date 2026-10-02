@@ -1,11 +1,9 @@
-import type { IconAlias } from "../icon";
 /**
  * Base type for selectable items (tabs, listbox, select, accordion)
  */
 export interface Option {
   value: string;
   label: string;
-  icon?: IconAlias;
   disabled?: boolean;
 }
 
@@ -15,7 +13,6 @@ export interface Option {
 export interface Link {
   label: string;
   to: string;
-  icon?: IconAlias;
   description?: string;
   external?: boolean;
   target?: "_blank" | "_self";

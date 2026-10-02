@@ -186,7 +186,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     trigger: {
-      icon: "calendar",
+      label: "Dates",
       badge: activeCount.value > 0 ? "" : undefined,
     },
     fieldCommand: {
@@ -239,7 +239,11 @@ defineSlots<DateFiltersSlots>();
     <Popover v-bind="settings.popover">
       <template #trigger>
         <slot name="trigger" v-bind="ctx">
-          <Fab v-bind="settings.trigger" />
+          <Fab v-bind="settings.trigger">
+            <template v-if="$slots.triggerIcon" #icon>
+              <slot name="triggerIcon" v-bind="ctx" />
+            </template>
+          </Fab>
         </slot>
       </template>
       <template #content>
@@ -260,7 +264,7 @@ defineSlots<DateFiltersSlots>();
                 >
                   {{ fieldLabel }}
                 </button>
-                <Icon class="f-icon f-date-filters-step-separator" fill="currentColor" name="chevron-right" />
+                <slot name="stepSeparator" v-bind="ctx" />
                 <button
                   type="button"
                   :tabindex="step === 2 ? -1 : 0"
@@ -275,7 +279,7 @@ defineSlots<DateFiltersSlots>();
                 >
                   {{ operatorLabel }}
                 </button>
-                <Icon class="f-icon f-date-filters-step-separator" fill="currentColor" name="chevron-right" />
+                <slot name="stepSeparator" v-bind="ctx" />
                 <button
                   type="button"
                   :class="[

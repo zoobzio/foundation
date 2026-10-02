@@ -20,11 +20,11 @@ export default defineNuxtConfig({
 
 Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsibility:
 
-| Tier       | Directory            | What it is                                                                                                                                                    |
-| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Components | `components/core/`   | Stateless interactive components composing [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.  |
-| Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                    |
-| System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                     |
+| Tier       | Directory            | What it is                                                                                                                                                   |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Components | `components/core/`   | Stateless interactive components composing [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough. |
+| Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                   |
+| System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                    |
 
 ### Data widgets
 
@@ -61,7 +61,7 @@ app/
   factories/    — widget composables: use*(id, definition) → Widget
   services/     — feature logic classes (the unit under test)
   stores/       — useState-backed feature state
-  plugins/      — log, tokens
+  plugins/      — log
   types/        — per-component prop/emit types
   utils/        — pure helpers (dates, formatting, passthrough merge, …)
   constants/    — shared constants
@@ -97,10 +97,6 @@ Or via `make` (`make help` lists all targets):
 ## Testing
 
 Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`coreStubs` / per-feature data maps).
-
-## Companion modules (in progress)
-
-Theming, i18n, auth, telemetry, and icons are being extracted into standalone modules — `@zoobz-io/untheme`, `@zoobz-io/rosetta`, `@zoobz-io/rampart`, `@zoobz-io/crucible`, `@zoobz-io/iconic`. Until they land, the components that depend on them (auth / theme / locale controls, the icon sprite) are not wired up.
 
 ## Contributing
 

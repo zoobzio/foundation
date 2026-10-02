@@ -23,10 +23,10 @@ export const fakeRows: FakeRow[] = [
 ];
 
 export const fakeActions: Record<string, ActionDescriptor> = {
-  edit: { icon: "edit", label: "Edit" },
-  delete: { icon: "delete", label: "Delete" },
+  edit: { label: "Edit" },
+  delete: { label: "Delete" },
 };
 
 export const fakeBulkActions: Record<string, ActionDescriptor> = {
-  deleteSelected: { icon: "delete", label: "Delete Selected" },
+  deleteSelected: { label: "Delete Selected" },
 };

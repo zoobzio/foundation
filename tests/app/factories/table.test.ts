@@ -56,8 +56,8 @@ describe("useTable", () => {
       "f1",
       {
         ...definition,
-        actions: { edit: { icon: "edit", label: "Edit" } },
-        bulkActions: { purge: { icon: "delete", label: "Purge" } },
+        actions: { edit: { label: "Edit" } },
+        bulkActions: { purge: { label: "Purge" } },
       },
       { ...makeWiring(), actions: { edit }, bulkActions: { purge } },
     ).service;

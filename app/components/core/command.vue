@@ -180,14 +180,7 @@ defineSlots<CommandSlots<T>>();
                         v-bind="settings.itemCheckbox(item)"
                       />
                     </slot>
-                    <slot name="itemIcon" v-bind="{ ...ctx, item }">
-                      <Icon
-                        v-if="item.icon"
-                        class="f-icon"
-                        fill="currentColor"
-                        :name="item.icon!"
-                      />
-                    </slot>
+                    <slot name="itemIcon" v-bind="{ ...ctx, item }" />
                     <slot name="itemLabel" v-bind="{ ...ctx, item }">
                       <span class="f-span">{{ item.label }}</span>
                     </slot>

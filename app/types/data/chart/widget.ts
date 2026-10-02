@@ -8,6 +8,7 @@ import type { Service, Events } from "../chart";
 import type {
   ChartControlAnchor,
   ChartControlProps,
+  ChartControlSlots,
 } from "./control";
 import type { VNode } from "vue";
 
@@ -33,8 +34,9 @@ export type ChartWidgetContext<T> = {
   settings: ChartWidgetPassthrough<T>;
 };
 
-export type ChartWidgetSlots<T> = {
+export type ChartWidgetSlots<T> = ChartControlSlots<T> & {
   toolbar?: (props: ChartWidgetContext<T>) => VNode[];
+  refreshIcon?: (props: ChartWidgetContext<T>) => VNode[];
   loading?: (props: ChartWidgetContext<T>) => VNode[];
   empty?: (props: ChartWidgetContext<T>) => VNode[];
 };

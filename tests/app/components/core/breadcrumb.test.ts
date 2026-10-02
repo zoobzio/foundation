@@ -3,7 +3,6 @@
 // are the component's own logic. NuxtLink is the one framework global,
 // stubbed to a bare <a> that maps `to` → `href`.
 import { describe, expect, it } from "vitest";
-import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
 import Core from "../../../../app/components/core/breadcrumb.vue";
@@ -21,21 +20,6 @@ const Breadcrumb: FunctionalComponent<
   BreadcrumbEmits<FakeCrumb>
 > = Core;
 
-const NuxtLink = defineComponent({
-  name: "NuxtLink",
-  props: {
-    to: { type: String, default: undefined },
-    external: { type: Boolean, default: undefined },
-    target: { type: String, default: undefined },
-    replace: { type: Boolean, default: undefined },
-    prefetch: { type: Boolean, default: undefined },
-  },
-  setup(props, { slots }) {
-    return () =>
-      h("a", { href: props.to, target: props.target }, slots.default?.());
-  },
-});
-
 const crumb = (key: string): FakeCrumb => {
   const found = fakeCrumbs.find((entry) => entry.key === key);
   if (!found) throw new Error(`no fixture crumb ${key}`);
@@ -49,7 +33,6 @@ const mountBreadcrumb = (
   return mount(Breadcrumb, {
     props: { items: fakeCrumbs, ...props },
     slots,
-    global: { components: { NuxtLink } },
   });
 };
 
@@ -83,14 +66,36 @@ describe("breadcrumb", () => {
     ]);
   });
 
-  it("renders a separator after every item but the last", () => {
+  it("renders no separator or icon unless the consumer supplies one", () => {
     const wrapper = mountBreadcrumb();
-    const chevrons = wrapper
-      .findAll("use")
-      .filter((u) => u.attributes("href") === "#chevron-right");
-    expect(chevrons).toHaveLength(3);
-    const last = wrapper.findAll("li").at(3);
-    expect(last?.find('use[href="#chevron-right"]').exists()).toBe(false);
+    // Each item holds only its link/button/span — no glyph around it.
+    expect(
+      wrapper.findAll("li").map((li) => li.element.childElementCount),
+    ).toEqual([1, 1, 1, 1]);
+    expect(wrapper.findAll("li").map((li) => li.text())).toEqual([
+      "Home",
+      "Docs",
+      "Legacy",
+      "Current Page",
+    ]);
+  });
+
+  it("renders the itemIcon slot inside each item, before the label", () => {
+    const wrapper = mountBreadcrumb(
+      {},
+      {
+        itemIcon: `<template #itemIcon="s">
+          <i>{{ s.item.key }}:{{ s.last }}</i>
+        </template>`,
+      },
+    );
+    expect(wrapper.get("a").element.firstElementChild?.tagName).toBe("I");
+    expect(wrapper.findAll("i").map((i) => i.text())).toEqual([
+      "root:false",
+      "docs:false",
+      "legacy:false",
+      "current:true",
+    ]);
   });
 
   it("anchor activation emits select with the full consumer item", async () => {
@@ -135,7 +140,7 @@ describe("breadcrumb", () => {
     expect(wrapper.findAll("button")).toHaveLength(0);
   });
 
-  it("separator overrides replace the default chevron", () => {
+  it("renders the separator slot after every item but the last", () => {
     const wrapper = mountBreadcrumb(
       {},
       {
@@ -149,6 +154,6 @@ describe("breadcrumb", () => {
       "sep:1",
       "sep:2",
     ]);
-    expect(wrapper.find('use[href="#chevron-right"]').exists()).toBe(false);
+    expect(wrapper.findAll("li").at(3)?.find("output").exists()).toBe(false);
   });
 });

@@ -96,7 +96,7 @@ defineSlots<TagsInputSlots>();
               v-bind="settings.itemDelete"
             >
               <slot name="itemDeleteIcon" v-bind="{ ...ctx, tag }">
-                <Icon class="f-icon" fill="currentColor" name="close" />
+                <span class="f-span">Remove</span>
               </slot>
             </TagsInputItemDelete>
           </slot>

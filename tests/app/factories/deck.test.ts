@@ -40,12 +40,12 @@ describe("useDeck", () => {
       "d1",
       {
         ...definition,
-        pt: { pending: { label: "base", icon: "chevron-left" } },
+        pt: { pending: { label: "base" } },
       },
       { ...makeWiring(), pt: { pending: { label: "override" } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      pending: { label: "override", icon: "chevron-left" },
+      pending: { label: "override" },
     });
   });
 

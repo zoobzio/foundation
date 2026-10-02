@@ -15,7 +15,7 @@ import { useBrowserView } from "../../../composables/browser";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { cell } from "../../../utils/format";
-import { BROWSER_ACTIONS_ICON } from "../../../constants/browser";
+import { BROWSER_ACTIONS_LABEL } from "../../../constants/browser";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -41,7 +41,7 @@ const settings = usePassthrough<BrowserFilesPassthrough>(() => ({
   recipes: {
     rowCheckbox: {},
     actionsMenu: { groups: actionGroups.value, align: "end" },
-    actionsTrigger: { icon: BROWSER_ACTIONS_ICON },
+    actionsTrigger: { label: BROWSER_ACTIONS_LABEL },
   },
 }));
 
@@ -119,7 +119,14 @@ defineSlots<BrowserFilesSlots<T>>();
             v-bind="settings.actionsMenu"
             @select="onActionSelect(row, $event)"
           >
-            <Fab v-bind="settings.actionsTrigger" />
+            <Fab v-bind="settings.actionsTrigger">
+              <template v-if="slots.actionsIcon" #icon>
+                <slot name="actionsIcon" v-bind="{ ...ctx, row }" />
+              </template>
+            </Fab>
+            <template v-if="slots.actionIcon" #itemIcon="{ item }">
+              <slot name="actionIcon" v-bind="{ ...ctx, row, item }" />
+            </template>
           </Menu>
         </td>
       </tr>

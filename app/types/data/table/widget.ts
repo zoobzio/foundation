@@ -21,7 +21,11 @@ import type {
   TableBodyPassthrough,
   TableBodySlots,
 } from "./body";
-import type { TableColumnsPassthrough } from "./columns";
+import type {
+  TableColumnsPassthrough,
+  TableColumnsSlots,
+} from "./columns";
+import type { TableBulkActionsSlots } from "./bulk-actions";
 import type { VNode } from "vue";
 
 export type TableWidgetPassthrough<T> = {
@@ -55,8 +59,11 @@ export type TableWidgetContext<T> = {
 };
 
 export type TableWidgetSlots<T> = TableHeadSlots<T> &
-  TableBodySlots<T> & {
+  TableBodySlots<T> &
+  TableColumnsSlots<T> &
+  TableBulkActionsSlots<T> & {
     toolbar?: (props: TableWidgetContext<T>) => VNode[];
+    refreshIcon?: (props: TableWidgetContext<T>) => VNode[];
     search?: (props: TableWidgetContext<T>) => VNode[];
     pagination?: (props: TableWidgetContext<T>) => VNode[];
   };

@@ -24,7 +24,7 @@ import { useForwardSlots } from "../../../composables/slots";
 import { useLazyRequest } from "../../../composables/request";
 import {
   BROWSER_FOLDER_SLOTS,
-  BROWSER_REFRESH_ICON,
+  BROWSER_REFRESH_LABEL,
 } from "../../../constants/browser";
 </script>
 
@@ -47,7 +47,7 @@ const settings = usePassthrough<BrowserWidgetPassthrough>(() => ({
   pt,
   recipes: {
     breadcrumb: { items: crumbItems.value, onSelect: onCrumbSelect },
-    refresh: { icon: BROWSER_REFRESH_ICON, onClick: () => service.fetch() },
+    refresh: { label: BROWSER_REFRESH_LABEL, onClick: () => service.fetch() },
     scroller: {},
   },
 }));
@@ -65,7 +65,8 @@ const slots = defineSlots<BrowserWidgetSlots<T>>();
 // Child-owned slots relay to the folder and file row sections, filtered so
 // each child keeps its own defaults for any the consumer didn't supply.
 // `noFiles` (files ctx) and the cell slots (cell ctx) forward in separate
-// loops to stay homogeneously typed.
+// loops to stay homogeneously typed; the item-scoped action icon slots
+// relay explicitly below.
 const folderSlots = useForwardSlots(slots, BROWSER_FOLDER_SLOTS);
 const noFilesSlots = computed(() =>
   Object.keys(slots).filter((n): n is "noFiles" => n === "noFiles"),
@@ -90,11 +91,19 @@ useLazyRequest(`init-browser-${service.id}`, () => service.init());
             class="f-data-browser-breadcrumb"
           />
         </slot>
-        <Fab v-bind="settings.refresh" />
+        <Fab v-bind="settings.refresh">
+          <template v-if="slots.refreshIcon" #icon>
+            <slot name="refreshIcon" v-bind="ctx" />
+          </template>
+        </Fab>
       </div>
     </slot>
 
-    <BulkActions v-if="hasSelection" :browser="service" />
+    <BulkActions v-if="hasSelection" :browser="service">
+      <template v-if="slots.bulkActionIcon" #bulkActionIcon="slotProps">
+        <slot name="bulkActionIcon" v-bind="slotProps" />
+      </template>
+    </BulkActions>
 
     <slot v-if="isEmpty" name="empty" v-bind="ctx">
       <div class="f-group f-data-browser-empty">Empty folder</div>
@@ -115,6 +124,9 @@ useLazyRequest(`init-browser-${service.id}`, () => service.init());
           >
             <slot :name="name" v-bind="slotProps" />
           </template>
+          <template v-if="slots.folderActionIcon" #folderActionIcon="slotProps">
+            <slot name="folderActionIcon" v-bind="slotProps" />
+          </template>
         </Folders>
         <Files :browser="service" :pt="pt?.files">
           <template
@@ -126,6 +138,12 @@ useLazyRequest(`init-browser-${service.id}`, () => service.init());
           </template>
           <template v-for="name in cellSlots" :key="name" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps" />
+          </template>
+          <template v-if="slots.actionsIcon" #actionsIcon="slotProps">
+            <slot name="actionsIcon" v-bind="slotProps" />
+          </template>
+          <template v-if="slots.actionIcon" #actionIcon="slotProps">
+            <slot name="actionIcon" v-bind="slotProps" />
           </template>
         </Files>
       </table>

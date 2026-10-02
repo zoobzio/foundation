@@ -2,6 +2,7 @@
 import type {
   BrowserBulkActionsContext,
   BrowserBulkActionsProps,
+  BrowserBulkActionsSlots,
 } from "../../../types/data/browser/bulk-actions";
 
 import { useTemplateRef } from "#imports";
@@ -22,6 +23,7 @@ const ctx = useContext<BrowserBulkActionsContext<T>>(
 );
 
 defineExpose({ ctx });
+defineSlots<BrowserBulkActionsSlots<T>>();
 </script>
 
 <template>
@@ -36,7 +38,7 @@ defineExpose({ ctx });
       class="f-button f-data-browser-bulk-action"
       @click="bulk.action(selected)"
     >
-      <Icon class="f-icon" fill="currentColor" :name="bulk.icon" />
+      <slot name="bulkActionIcon" v-bind="{ ...ctx, action: bulk }" />
       {{ bulk.label }}
     </button>
     <button

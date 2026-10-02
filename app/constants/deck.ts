@@ -1,6 +1,7 @@
 // data/deck constants
 
 import type { MatchMode } from "../types/data/deck";
+import type { DeckToolbarSlots } from "../types/data/deck/toolbar";
 
 // Feed slots that share the feed ctx — relayed conditionally so the feed's
 // own defaults survive. The per-item `card` slot is relayed explicitly.
@@ -25,8 +26,14 @@ export const DECK_SEARCH_DEBOUNCE = 300;
 // Default filter match mode
 export const DECK_DEFAULT_MATCH_MODE: MatchMode = "all";
 
-// Sort selector trigger chevron / refresh icons
-export const DECK_SORT_CHEVRON = "chevron-down";
-export const DECK_SEARCH_ICON = "search";
-export const DECK_REFRESH_ICON = "refresh";
-export const DECK_PENDING_ICON = "add";
+// Toolbar fab labels
+export const DECK_SEARCH_LABEL = "Search";
+export const DECK_REFRESH_LABEL = "Refresh";
+
+// Toolbar icon slots the widget relays — all share the toolbar ctx.
+export const DECK_TOOLBAR_SLOTS = [
+  "sortIcon",
+  "searchIcon",
+  "facetsIcon",
+  "refreshIcon",
+] as const satisfies readonly (keyof DeckToolbarSlots<unknown>)[];

@@ -1,5 +1,4 @@
 // core/keywords constants
-import type { IconAlias } from "../types/icon";
 import type { Option } from "../types/core/common";
 
 export const MATCH_OPTIONS: Option[] = [
@@ -7,6 +6,6 @@ export const MATCH_OPTIONS: Option[] = [
   { value: "or", label: "OR" },
 ];
 
-export const KEYWORDS_TRIGGER_ICON: IconAlias = "tag";
+export const KEYWORDS_TRIGGER_LABEL = "Keywords";
 export const KEYWORDS_INCLUDE_PLACEHOLDER = "Add keyword...";
 export const KEYWORDS_EXCLUDE_PLACEHOLDER = "Exclude keyword...";

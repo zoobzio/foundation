@@ -81,21 +81,38 @@ describe("data table widget", () => {
 
   it("refresh control triggers a table fetch", async () => {
     const { service, wrapper } = mountWidget();
-    const refresh = wrapper
-      .get('use[href="#refresh"]')
-      .element.closest("button");
-    if (!refresh) throw new Error("refresh fab has no button root");
-    refresh.click();
+    const refresh = wrapper.get('button[aria-label="Refresh"]');
+    expect(refresh.text()).toBe("Refresh");
+    await refresh.trigger("click");
     expect(service.fetch).toHaveBeenCalledOnce();
+  });
+
+  it("refreshIcon fills the refresh fab in place of its label", () => {
+    const mock = createMockTable();
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              TableWidget,
+              { service: mock.service },
+              {
+                refreshIcon: (scope: { table: { id: string } }) =>
+                  h("i", scope.table.id),
+              },
+            );
+        },
+      }),
+      { global: { stubs: tableStubs } },
+    );
+    const refresh = wrapper.get('button[aria-label="Refresh"]');
+    expect(refresh.get("i").text()).toBe(mock.service.id);
+    expect(refresh.find(".f-span").exists()).toBe(false);
   });
 
   it("pagination interaction routes through table.goToPage", async () => {
     const { service, wrapper } = mountWidget();
-    const next = wrapper
-      .get('use[href="#chevron-right"]')
-      .element.closest("button");
-    if (!next) throw new Error("next-page fab has no button root");
-    next.click();
+    await wrapper.get('button[aria-label="Next"]').trigger("click");
     expect(service.goToPage).toHaveBeenCalledWith(2);
   });
 
@@ -212,6 +229,37 @@ describe("data table widget", () => {
     );
     const sortable = wrapper.findAll(".f-data-table-header-btn");
     expect(sortable.map((b) => b.text())).toEqual(["Name", "Created"]);
+    // Drag handles keep their hover wiring but stay empty until filled.
+    const handles = wrapper.findAll(".f-data-table-drag-handle");
+    expect(handles).toHaveLength(mock.service.visibleColumns.length);
+    expect(handles.every((s) => s.element.childElementCount === 0)).toBe(true);
+  });
+
+  it("relays sortIcon (sorted column only) and dragIcon through the head", () => {
+    const mock = createMockTable({ isSorted: (col) => col.key === "name" });
+    const wrapper = mount(
+      defineComponent({
+        setup() {
+          return () =>
+            h(
+              TableWidget,
+              { service: mock.service },
+              {
+                sortIcon: (scope: HeaderScope) =>
+                  h("b", `${String(scope.column.key)}:${scope.table.sortDirection}`),
+                dragIcon: (scope: HeaderScope) =>
+                  h("i", String(scope.column.key)),
+              },
+            );
+        },
+      }),
+      { global: { stubs: headlessStubs } },
+    );
+    expect(wrapper.findAll(".f-data-table-header-btn b").map((b) => b.text()))
+      .toEqual(["name:asc"]);
+    expect(
+      wrapper.findAll(".f-data-table-drag-handle i").map((i) => i.text()),
+    ).toEqual(mock.service.visibleColumns.map((c) => String(c.key)));
   });
 
   it("a supplied header slot overrides the head's default", () => {

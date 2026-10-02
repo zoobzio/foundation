@@ -191,14 +191,7 @@ defineSlots<AutocompleteSlots<M>>();
                 <slot
                   name="itemIcon"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
-                >
-                  <Icon
-                    v-if="option.icon"
-                    class="f-icon"
-                    fill="currentColor"
-                    :name="option.icon!"
-                  />
-                </slot>
+                />
                 <slot
                   name="itemLabel"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
@@ -208,14 +201,7 @@ defineSlots<AutocompleteSlots<M>>();
                 <slot
                   name="itemArrow"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
-                >
-                  <Icon
-                    v-if="option.hasChildren"
-                    class="f-icon"
-                    fill="currentColor"
-                    name="chevron-right"
-                  />
-                </slot>
+                />
               </button>
               <AutocompleteItem
                 v-else
@@ -225,14 +211,7 @@ defineSlots<AutocompleteSlots<M>>();
                 <slot
                   name="itemIcon"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
-                >
-                  <Icon
-                    v-if="option.icon"
-                    class="f-icon"
-                    fill="currentColor"
-                    :name="option.icon!"
-                  />
-                </slot>
+                />
                 <slot
                   name="itemLabel"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
@@ -242,14 +221,7 @@ defineSlots<AutocompleteSlots<M>>();
                 <slot
                   name="itemArrow"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
-                >
-                  <Icon
-                    v-if="option.hasChildren"
-                    class="f-icon"
-                    fill="currentColor"
-                    name="chevron-right"
-                  />
-                </slot>
+                />
               </AutocompleteItem>
             </slot>
           </template>

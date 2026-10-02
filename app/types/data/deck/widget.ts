@@ -5,7 +5,10 @@ import type {
   DeckFeedPassthrough,
   DeckFeedSlots,
 } from "./feed";
-import type { DeckToolbarPassthrough } from "./toolbar";
+import type {
+  DeckToolbarPassthrough,
+  DeckToolbarSlots,
+} from "./toolbar";
 import type { VNode } from "vue";
 
 export type DeckWidgetPassthrough = {
@@ -31,7 +34,12 @@ export type DeckWidgetContext<T> = {
   settings: DeckWidgetPassthrough;
 };
 
-export type DeckWidgetSlots<T> = DeckFeedSlots<T> & {
-  toolbar?: (props: DeckWidgetContext<T>) => VNode[];
-  pending?: (props: DeckWidgetContext<T>) => VNode[];
-};
+export type DeckWidgetSlots<T> = DeckFeedSlots<T> &
+  Pick<
+    DeckToolbarSlots<T>,
+    "sortIcon" | "searchIcon" | "facetsIcon" | "refreshIcon"
+  > & {
+    toolbar?: (props: DeckWidgetContext<T>) => VNode[];
+    pending?: (props: DeckWidgetContext<T>) => VNode[];
+    pendingIcon?: (props: DeckWidgetContext<T>) => VNode[];
+  };

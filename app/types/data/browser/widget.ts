@@ -7,6 +7,7 @@ import type { FabEmits, FabProps } from "../../core/fab";
 import type { ScrollerEmits, ScrollerProps } from "../../core/scroller";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Events, Service } from "../browser";
+import type { BrowserBulkActionsSlots } from "./bulk-actions";
 import type { BrowserFilesPassthrough, BrowserFilesSlots } from "./files";
 import type {
   BrowserFoldersPassthrough,
@@ -43,8 +44,10 @@ export type BrowserWidgetContext<T> = {
 };
 
 export type BrowserWidgetSlots<T> = BrowserFoldersSlots<T> &
-  BrowserFilesSlots<T> & {
+  BrowserFilesSlots<T> &
+  BrowserBulkActionsSlots<T> & {
     toolbar?: (props: BrowserWidgetContext<T>) => VNode[];
+    refreshIcon?: (props: BrowserWidgetContext<T>) => VNode[];
     breadcrumb?: (props: BrowserWidgetContext<T>) => VNode[];
     empty?: (props: BrowserWidgetContext<T>) => VNode[];
   };

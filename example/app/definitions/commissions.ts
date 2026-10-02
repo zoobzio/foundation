@@ -70,10 +70,10 @@ export const COMMISSIONS_TABLE = commission.defineTable({
     { key: "link", label: "Link", type: "url", filterable: false },
   ],
   actions: {
-    edit: { icon: "edit", label: "Edit" },
-    remove: { icon: "delete", label: "Delete" },
+    edit: { label: "Edit" },
+    remove: { label: "Delete" },
   },
   bulkActions: {
-    removeSelected: { icon: "delete", label: "Delete selected" },
+    removeSelected: { label: "Delete selected" },
   },
 });

@@ -45,12 +45,12 @@ describe("useChart", () => {
       "c1",
       {
         ...definition,
-        pt: { refresh: { label: "base", icon: "chevron-left" } },
+        pt: { refresh: { label: "base" } },
       },
       { ...makeWiring(), pt: { refresh: { label: "override" } } },
     );
     expect(toValue(widget.settings)).toEqual({
-      refresh: { label: "override", icon: "chevron-left" },
+      refresh: { label: "override" },
     });
   });
 

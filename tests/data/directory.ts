@@ -15,7 +15,6 @@ export const fakeDirectoryGroups: DirectoryGroup<FakeEntry>[] = [
       {
         key: "home",
         label: "Home",
-        icon: "settings",
         link: { to: "/" },
         section: "workspace",
       },

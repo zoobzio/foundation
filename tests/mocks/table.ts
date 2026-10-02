@@ -1,7 +1,6 @@
 import { computed, ref } from "vue";
 import { vi } from "vitest";
 import type { Service, TableFilter } from "../../app/types/data/table";
-import { TABLE_SORT_ASC_ICON } from "../../app/constants/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 
@@ -127,7 +126,6 @@ export const createMockTable = (
     sortBy: vi.fn(),
     sortFieldFor: (col) => col.sortKey ?? String(col.key),
     isSorted: () => false,
-    getSortIcon: () => TABLE_SORT_ASC_ICON,
     keyOf: (row) => String(row.id),
     toggleRow: vi.fn(),
     toggleAll: vi.fn(),

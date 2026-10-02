@@ -13,10 +13,7 @@ import { useTemplateRef } from "#imports";
 import { useBrowserView } from "../../../composables/browser";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import {
-  BROWSER_ACTIONS_ICON,
-  BROWSER_FOLDER_ICON,
-} from "../../../constants/browser";
+import { BROWSER_ACTIONS_LABEL } from "../../../constants/browser";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -38,7 +35,7 @@ const settings = usePassthrough<BrowserFoldersPassthrough>(() => ({
   pt,
   recipes: {
     actionsMenu: { groups: folderActionGroups.value, align: "end" },
-    actionsTrigger: { icon: BROWSER_ACTIONS_ICON },
+    actionsTrigger: { label: BROWSER_ACTIONS_LABEL },
   },
 }));
 
@@ -71,13 +68,7 @@ defineSlots<BrowserFoldersSlots<T>>();
             class="f-button f-data-browser-folder-btn"
             @click="browser.open(folder)"
           >
-            <slot name="folderIcon" v-bind="{ ...ctx, folder }">
-              <Icon
-                class="f-icon"
-                fill="currentColor"
-                :name="folder.icon ?? BROWSER_FOLDER_ICON"
-              />
-            </slot>
+            <slot name="folderIcon" v-bind="{ ...ctx, folder }" />
             <slot name="folderLabel" v-bind="{ ...ctx, folder }">
               <span class="f-span">{{ folder.label }}</span>
             </slot>
@@ -99,7 +90,14 @@ defineSlots<BrowserFoldersSlots<T>>();
           v-bind="settings.actionsMenu"
           @select="onFolderActionSelect(folder, $event)"
         >
-          <Fab v-bind="settings.actionsTrigger" />
+          <Fab v-bind="settings.actionsTrigger">
+            <template v-if="$slots.folderActionsIcon" #icon>
+              <slot name="folderActionsIcon" v-bind="{ ...ctx, folder }" />
+            </template>
+          </Fab>
+          <template v-if="$slots.folderActionIcon" #itemIcon="{ item }">
+            <slot name="folderActionIcon" v-bind="{ ...ctx, folder, item }" />
+          </template>
         </Menu>
       </td>
     </tr>

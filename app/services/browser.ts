@@ -8,14 +8,9 @@ import type {
   State,
 } from "../types/data/browser";
 import type { DataTableColumn } from "../types/data/table";
-import type { IconAlias } from "../types/icon";
 import type { Logger } from "../types/log";
 
 import { entries } from "objectively";
-import {
-  BROWSER_SORT_ASC_ICON,
-  BROWSER_SORT_DESC_ICON,
-} from "../constants/browser";
 
 export class BrowserService<T> implements Service<T> {
   private readonly log: Logger;
@@ -161,12 +156,6 @@ export class BrowserService<T> implements Service<T> {
 
   isSorted(col: DataTableColumn<T>): boolean {
     return this.sortField === this.sortFieldFor(col);
-  }
-
-  getSortIcon(): IconAlias {
-    return this.sortDirection === "asc"
-      ? BROWSER_SORT_ASC_ICON
-      : BROWSER_SORT_DESC_ICON;
   }
 
   toggleRow(key: string): void {

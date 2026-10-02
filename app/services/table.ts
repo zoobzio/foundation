@@ -7,11 +7,9 @@ import type {
   State,
   TableFilter,
 } from "../types/data/table";
-import type { IconAlias } from "../types/icon";
 import type { Logger } from "../types/log";
 
 import { entries } from "objectively";
-import { TABLE_SORT_ASC_ICON, TABLE_SORT_DESC_ICON } from "../constants/table";
 
 export class TableService<T> implements Service<T> {
   private readonly log: Logger;
@@ -171,12 +169,6 @@ export class TableService<T> implements Service<T> {
 
   isSorted(col: DataTableColumn<T>): boolean {
     return this.sortField === this.sortFieldFor(col);
-  }
-
-  getSortIcon(): IconAlias {
-    return this.sortDirection === "asc"
-      ? TABLE_SORT_ASC_ICON
-      : TABLE_SORT_DESC_ICON;
   }
 
   toggleRow(key: string): void {

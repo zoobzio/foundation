@@ -3,17 +3,24 @@ import { config } from "@vue/test-utils";
 import { defineComponent, h } from "vue";
 import { clearNuxtHooks, clearNuxtStateRegistry } from "#test/mocks/imports";
 
-// The `Icon` global is registered by @icon-sheets/nuxt at build time; the
-// no-Nuxt vitest environment mirrors it so `<use href="#alias">` assertions
-// keep working.
+// The `NuxtLink` global is registered by Nuxt at runtime; the no-Nuxt vitest
+// environment mirrors it as a bare <a> that maps `to` → `href`.
 config.global.components = {
   ...config.global.components,
-  Icon: defineComponent(
-    (props: { name: string }) => {
-      return () => h("svg", [h("use", { href: `#${props.name}` })]);
+  NuxtLink: defineComponent({
+    name: "NuxtLink",
+    props: {
+      to: { type: String, default: undefined },
+      external: { type: Boolean, default: undefined },
+      target: { type: String, default: undefined },
+      replace: { type: Boolean, default: undefined },
+      prefetch: { type: Boolean, default: undefined },
     },
-    { name: "Icon", props: ["name"] },
-  ),
+    setup(props, { slots }) {
+      return () =>
+        h("a", { href: props.to, target: props.target }, slots.default?.());
+    },
+  }),
 };
 
 // Shared useState refs and hook listeners (see mocks/imports.ts) must not

@@ -121,14 +121,7 @@ defineSlots<MenuSlots>();
                     class="f-dropdown-menu-item"
                     v-bind="settings.item(item)"
                   >
-                    <slot name="itemIcon" v-bind="{ ...ctx, item }">
-                      <Icon
-                        v-if="item.icon"
-                        class="f-icon"
-                        fill="currentColor"
-                        :name="item.icon"
-                      />
-                    </slot>
+                    <slot name="itemIcon" v-bind="{ ...ctx, item }" />
                     <slot name="itemLabel" v-bind="{ ...ctx, item }">
                       <span class="f-span">{{ item.label }}</span>
                     </slot>

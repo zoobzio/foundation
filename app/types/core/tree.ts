@@ -1,4 +1,3 @@
-import type { IconAlias } from "../icon";
 import type { Link } from "./common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
@@ -27,7 +26,6 @@ import type {
 export type TreeNode = {
   key: string;
   label: string;
-  icon?: IconAlias;
   disabled?: boolean;
   link?: Pick<Link, "to" | "external" | "target" | "replace" | "prefetch">;
   children?: TreeNode[];

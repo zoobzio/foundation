@@ -3,7 +3,6 @@
 // own logic; the elements underneath have their own suites. NuxtLink is the
 // one framework global, stubbed to a bare <a> that maps `to` → `href`.
 import { describe, expect, it } from "vitest";
-import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
 import Core from "../../../../app/components/core/directory.vue";
@@ -21,21 +20,6 @@ const Directory: FunctionalComponent<
   DirectoryEmits<FakeEntry>
 > = Core;
 
-const NuxtLink = defineComponent({
-  name: "NuxtLink",
-  props: {
-    to: { type: String, default: undefined },
-    external: { type: Boolean, default: undefined },
-    target: { type: String, default: undefined },
-    replace: { type: Boolean, default: undefined },
-    prefetch: { type: Boolean, default: undefined },
-  },
-  setup(props, { slots }) {
-    return () =>
-      h("a", { href: props.to, target: props.target }, slots.default?.());
-  },
-});
-
 const item = (key: string): FakeEntry => {
   const found = fakeDirectoryGroups
     .flatMap((group) => group.items)
@@ -51,7 +35,6 @@ const mountDirectory = (
   return mount(Directory, {
     props: { groups: fakeDirectoryGroups, ...props },
     slots,
-    global: { components: { NuxtLink } },
   });
 };
 

@@ -30,5 +30,8 @@ export type PreviewWidgetSlots<T> = {
   toolbar?: (props: PreviewWidgetContext<T>) => VNode[];
   title?: (props: PreviewWidgetContext<T>) => VNode[];
   actions?: (props: PreviewWidgetContext<T>) => VNode[];
+  externalIcon?: (props: PreviewWidgetContext<T>) => VNode[];
+  copyIcon?: (props: PreviewWidgetContext<T>) => VNode[];
+  downloadIcon?: (props: PreviewWidgetContext<T>) => VNode[];
   body?: (props: PreviewWidgetContext<T>) => VNode[];
 };

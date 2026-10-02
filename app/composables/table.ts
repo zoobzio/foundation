@@ -518,7 +518,7 @@ export const useTableView = <T>(table: Service<T>) => {
   const actionGroups = computed<MenuGroup[]>(() => [
     {
       key: "actions",
-      items: table.actions.map((a) => ({ icon: a.icon, label: a.label })),
+      items: table.actions.map((a) => ({ label: a.label })),
     },
   ]);
 

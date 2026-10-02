@@ -3,7 +3,7 @@ import type {
   CheckboxProps,
 } from "../../core/checkbox";
 import type { FabProps } from "../../core/fab";
-import type { MenuEmits, MenuProps } from "../../core/menu";
+import type { MenuEmits, MenuItem, MenuProps } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";
 import type { DataTableColumn, Service } from "../table";
 import type { VNode } from "vue";
@@ -38,6 +38,10 @@ export type TableCellContext<T> = TableBodyContext<T> & {
 export type TableBodySlots<T> = {
   empty?: (props: TableBodyContext<T>) => VNode[];
   cell?: (props: TableCellContext<T>) => VNode[];
+  actionsIcon?: (props: TableBodyContext<T> & { row: T }) => VNode[];
+  actionIcon?: (
+    props: TableBodyContext<T> & { row: T; item: MenuItem },
+  ) => VNode[];
 } & {
   [name: `cell:${string}`]:
     | ((props: TableCellContext<T>) => VNode[])

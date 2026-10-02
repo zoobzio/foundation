@@ -28,19 +28,19 @@ export const fakeFiles: FakeFile[] = [
 /** Deliberately unsorted — the service re-sorts alphabetically. */
 export const fakeFolders: BrowserFolder[] = [
   { key: "media", label: "Media", count: 12 },
-  { key: "archive", label: "Archive", icon: "layers" },
+  { key: "archive", label: "Archive" },
   { key: "drafts", label: "Drafts" },
 ];
 
 export const fakeFileActions: Record<string, ActionDescriptor> = {
-  download: { icon: "download", label: "Download" },
-  delete: { icon: "delete", label: "Delete" },
+  download: { label: "Download" },
+  delete: { label: "Delete" },
 };
 
 export const fakeFolderActions: Record<string, ActionDescriptor> = {
-  rename: { icon: "edit", label: "Rename" },
+  rename: { label: "Rename" },
 };
 
 export const fakeBrowserBulkActions: Record<string, ActionDescriptor> = {
-  deleteSelected: { icon: "delete", label: "Delete Selected" },
+  deleteSelected: { label: "Delete Selected" },
 };

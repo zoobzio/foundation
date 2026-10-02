@@ -6,7 +6,7 @@ import { computed, toValue } from "#imports";
 /**
  * Wraps a component's view model as its addressable context.
  *
- * The reactive sibling of `useBindings`/`usePassthrough`: one source in, the
+ * The reactive sibling of `usePassthrough`: one source in, the
  * ctx computed out. `name` identifies the component to the system and is
  * inherited by the context as `id`. This is the entry point for system-level
  * capabilities — registration, lifecycle tracking, instrumentation — in later

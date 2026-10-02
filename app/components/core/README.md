@@ -21,9 +21,14 @@ Every rendered piece is one of two kinds:
 Every rendered element owns a semantic class: `f-<kebab-name>` of the reka
 component for behavioral parts (`f-select-trigger`), `f-<tag>` for native
 tags (`f-span`). `*Portal` and `*Provider` components render no element and
-carry no class. Icons render through the global `Icon` component
-(`<Icon class="f-icon" fill="currentColor" :name="…" />` — `name` is typed to
-the registered alias union); links render through the global `<NuxtLink>`.
+carry no class. Links render through the global `<NuxtLink>`.
+
+**The layer renders no icons.** Wherever a glyph belongs, the component
+exposes a named slot in that position (`triggerIcon`, `itemIcon`,
+`separator`, …) and the consumer supplies whatever they like. Decorative
+positions render nothing by default; controls that would otherwise be empty
+fall back to visible label text (`Fab` shows its `label`, calendar
+navigation shows "Previous"/"Next").
 
 A component whose template is pure semantic HTML (no behavioral parts) has no
 passthrough system at all: no `pt` prop, no `XPassthrough` type, no
@@ -99,13 +104,8 @@ defineExpose({ ctx });
         <slot name="triggerLabel" v-bind="ctx">
           <span class="f-span">{{ displayText }}</span>
         </slot>
-        <slot name="triggerIcon" v-bind="ctx">
-          <Icon
-            class="f-icon"
-            fill="currentColor"
-            :name="open ? 'chevron-up' : 'chevron-down'"
-          />
-        </slot>
+        <!-- icon position: an empty slot, filled by the consumer -->
+        <slot name="triggerIcon" v-bind="ctx" />
       </SelectTrigger>
     </slot>
     <SelectPortal>
@@ -252,9 +252,8 @@ object is what an [adapter](../data/README.md#the-adapter) captures as
 - Every behavioral part appears in the recipe map, even when its recipe is
   empty (`{}`) — the map *is* the manifest.
 - Slot names, pt keys, and settings keys always agree.
-- Data-driven required props narrow structurally — an `Icon` whose alias
-  comes from item data binds `:name="item.icon!"` inside
-  `v-if="item.icon"`.
+- Icon positions are slots, never data — items carry no `icon` field; the
+  slot receives the item and the consumer maps item to glyph.
 
 ## Source map
 

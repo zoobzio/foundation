@@ -1,17 +1,21 @@
 // data/table constants
 
-import type { IconAlias } from "../types/icon";
 import type { SortDirection } from "../types/data/table";
+import type { TableHeadSlots } from "../types/data/table/head";
 
 export const TABLE_DEFAULT_PAGE_SIZE = 25;
 export const TABLE_DEFAULT_SORT_DIRECTION: SortDirection = "asc";
 
-export const TABLE_SORT_ASC_ICON: IconAlias = "chevron-up";
-export const TABLE_SORT_DESC_ICON: IconAlias = "chevron-down";
-export const TABLE_DRAG_ICON: IconAlias = "drag";
-export const TABLE_COLUMNS_ICON: IconAlias = "settings";
-export const TABLE_ACTIONS_ICON: IconAlias = "actions";
-export const TABLE_REFRESH_ICON: IconAlias = "refresh";
+export const TABLE_REFRESH_LABEL = "Refresh";
+export const TABLE_COLUMNS_LABEL = "Columns";
+export const TABLE_ACTIONS_LABEL = "Actions";
+
+/** Per-column head slots the widget relays — all share the column-scoped head ctx. */
+export const TABLE_HEAD_SLOTS: (keyof TableHeadSlots<unknown>)[] = [
+  "header",
+  "sortIcon",
+  "dragIcon",
+];
 
 export const TABLE_COLUMNS_PLACEHOLDER = "Search columns...";
 export const TABLE_SEARCH_PLACEHOLDER = "Search...";

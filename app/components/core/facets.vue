@@ -22,7 +22,7 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 import {
   FACETS_PLACEHOLDER,
-  FACETS_TRIGGER_ICON,
+  FACETS_TRIGGER_LABEL,
 } from "../../constants/facets";
 </script>
 
@@ -80,7 +80,7 @@ const settings = usePassthrough<FacetsPassthrough>(() => ({
       },
     },
     trigger: {
-      icon: FACETS_TRIGGER_ICON,
+      label: FACETS_TRIGGER_LABEL,
       badge: activeCount.value > 0 ? activeCount.value : undefined,
     },
     command: {
@@ -112,7 +112,11 @@ defineSlots<FacetsSlots>();
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
       <slot name="trigger" v-bind="ctx">
-        <Fab v-bind="settings.trigger" />
+        <Fab v-bind="settings.trigger">
+          <template v-if="$slots.triggerIcon" #icon>
+            <slot name="triggerIcon" v-bind="ctx" />
+          </template>
+        </Fab>
       </slot>
     </template>
     <template #content>

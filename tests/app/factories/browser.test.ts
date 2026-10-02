@@ -60,9 +60,9 @@ describe("useBrowser", () => {
       "b1",
       {
         ...definition,
-        actions: { download: { icon: "download", label: "Download" } },
-        folderActions: { rename: { icon: "edit", label: "Rename" } },
-        bulkActions: { purge: { icon: "delete", label: "Purge" } },
+        actions: { download: { label: "Download" } },
+        folderActions: { rename: { label: "Rename" } },
+        bulkActions: { purge: { label: "Purge" } },
       },
       {
         ...makeWiring(),

@@ -21,7 +21,7 @@ import { useKeywords } from "../../composables/keywords";
 import {
   KEYWORDS_EXCLUDE_PLACEHOLDER,
   KEYWORDS_INCLUDE_PLACEHOLDER,
-  KEYWORDS_TRIGGER_ICON,
+  KEYWORDS_TRIGGER_LABEL,
   MATCH_OPTIONS,
 } from "../../constants/keywords";
 </script>
@@ -70,7 +70,7 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
       },
     },
     trigger: {
-      icon: KEYWORDS_TRIGGER_ICON,
+      label: KEYWORDS_TRIGGER_LABEL,
       badge: activeCount.value > 0 ? activeCount.value : undefined,
     },
     includeInput: {
@@ -114,7 +114,11 @@ defineSlots<KeywordsSlots>();
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
       <slot name="trigger" v-bind="ctx">
-        <Fab v-bind="settings.trigger" />
+        <Fab v-bind="settings.trigger">
+          <template v-if="$slots.triggerIcon" #icon>
+            <slot name="triggerIcon" v-bind="ctx" />
+          </template>
+        </Fab>
       </slot>
     </template>
     <template #content>
