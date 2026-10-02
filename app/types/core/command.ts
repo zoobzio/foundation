@@ -1,13 +1,6 @@
-import type {
-  CheckboxEmits,
-  CheckboxProps,
-} from "./checkbox";
+import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { ScrollerProps } from "./scroller";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type { Option } from "./common";
 import type {
@@ -53,11 +46,10 @@ export type CommandProps<T extends CommandOption> = {
   pt?: PT<CommandPassthrough<T>>;
 };
 
-export type CommandEmits<T extends CommandOption> =
-  {
-    "update:modelValue": [value: T[] | undefined];
-    "update:search": [value: string];
-  };
+export type CommandEmits<T extends CommandOption> = {
+  "update:modelValue": [value: T[] | undefined];
+  "update:search": [value: string];
+};
 
 export type CommandContext<T extends CommandOption> = {
   groups: CommandGroup<T>[];

@@ -246,7 +246,10 @@ describe("data table widget", () => {
               { service: mock.service },
               {
                 sortIcon: (scope: HeaderScope) =>
-                  h("b", `${String(scope.column.key)}:${scope.table.sortDirection}`),
+                  h(
+                    "b",
+                    `${String(scope.column.key)}:${scope.table.sortDirection}`,
+                  ),
                 dragIcon: (scope: HeaderScope) =>
                   h("i", String(scope.column.key)),
               },
@@ -255,8 +258,9 @@ describe("data table widget", () => {
       }),
       { global: { stubs: headlessStubs } },
     );
-    expect(wrapper.findAll(".f-data-table-header-btn b").map((b) => b.text()))
-      .toEqual(["name:asc"]);
+    expect(
+      wrapper.findAll(".f-data-table-header-btn b").map((b) => b.text()),
+    ).toEqual(["name:asc"]);
     expect(
       wrapper.findAll(".f-data-table-drag-handle i").map((i) => i.text()),
     ).toEqual(mock.service.visibleColumns.map((c) => String(c.key)));

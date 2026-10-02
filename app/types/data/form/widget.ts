@@ -1,13 +1,7 @@
-import type {
-  ScrollerEmits,
-  ScrollerProps,
-} from "../../core/scroller";
+import type { ScrollerEmits, ScrollerProps } from "../../core/scroller";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service, Events } from "../form";
-import type {
-  FormFieldPassthrough,
-  FormFieldSlots,
-} from "./field";
+import type { FormFieldPassthrough, FormFieldSlots } from "./field";
 import type { VNode } from "vue";
 
 export type FormWidgetPassthrough = {

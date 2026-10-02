@@ -1,4 +1,7 @@
-import type { SegmentedControlEmits, SegmentedControlProps } from "../types/core/segmented-control";
+import type {
+  SegmentedControlEmits,
+  SegmentedControlProps,
+} from "../types/core/segmented-control";
 import type { Definition } from "../types/definition";
 
 /**

@@ -1,4 +1,8 @@
-import type { CommandEmits, CommandOption, CommandProps } from "../types/core/command";
+import type {
+  CommandEmits,
+  CommandOption,
+  CommandProps,
+} from "../types/core/command";
 import type { Definition } from "../types/definition";
 
 /**

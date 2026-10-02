@@ -1,8 +1,4 @@
-import type {
-  CommandOption,
-  CommandProps,
-  CommandEmits,
-} from "./command";
+import type { CommandOption, CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverProps, PopoverEmits } from "./popover";
 import type { Passthrough, PT } from "../passthrough";
@@ -27,7 +23,10 @@ export type FacetGroup = {
 export type FacetsPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
-  command: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
+  command: Passthrough<
+    CommandProps<CommandOption>,
+    CommandEmits<CommandOption>
+  >;
 };
 
 export type FacetsProps = {

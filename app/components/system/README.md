@@ -3,7 +3,7 @@
 Page-level **structures** one tier above [data](../data/README.md). A
 structure is an arrangement strategy over widgets — the workspace arranges a
 grid of slots, the panel arranges three fixed regions (header / content /
-footer) — and a page implements exactly one. Structures are *not*
+footer) — and a page implements exactly one. Structures are _not_
 widgets: a widget is what a widget composable yields; a structure is a
 component a page uses, on [core](../core/README.md)'s component contract
 (props / pt / ctx / slots), with **no machine** — no store, no service, no
@@ -14,11 +14,11 @@ events of its own.
 Static configuration and reactive wiring are isolated features, implemented
 independently and connected by the user:
 
-| Verb       | Home                 | Nature                                                        |
-| ---------- | -------------------- | ------------------------------------------------------------- |
-| `define*`  | `definitions/`       | pure module-scope identity fn — inert typed config, no runtime |
-| `use*`     | `factories/` (widgets) · `composables/` (structures) | setup-scope instantiation — definition in, live entity out |
-| structures | `components/system/` | components rendering a live handle                            |
+| Verb       | Home                                                 | Nature                                                         |
+| ---------- | ---------------------------------------------------- | -------------------------------------------------------------- |
+| `define*`  | `definitions/`                                       | pure module-scope identity fn — inert typed config, no runtime |
+| `use*`     | `factories/` (widgets) · `composables/` (structures) | setup-scope instantiation — definition in, live entity out     |
+| structures | `components/system/`                                 | components rendering a live handle                             |
 
 `define*` follows the `defineNuxtConfig` idiom: it runs anywhere, does
 nothing, and exists so types are enforced **at the definition site** — a
@@ -114,7 +114,7 @@ DOM; region overrides use plain named slots (`#header`) rather than
   Each structure widens its registry to `Record<string, AnyWidget>` at its
   own boundary (one widening assignment, no cast) before the template binds
   `<component :is="w.component" :service="w.service"
-  :pt="toValue(w.settings)" />`. That render path is unchecked by design —
+:pt="toValue(w.settings)" />`. That render path is unchecked by design —
   correlation was proven where each widget was instanced.
 
 Content without a widget of its own rides the
@@ -149,7 +149,7 @@ Two deliberate semantics:
 - **No machines in this tier.** If a structure seems to need a store or a
   service, the state belongs to a widget (data tier) or to the page.
   Arrangement math (grid styles, cell pairing) lives in the structure's own
-  script — it *is* the component.
+  script — it _is_ the component.
 - Structures follow core's component contract: parts manifest via
   `usePassthrough`, `useContext` (`system-<name>`), typed `defineSlots`,
   `f-system-<name>-*` classes.
@@ -173,18 +173,18 @@ Two deliberate semantics:
 3. **Composable** — `composables/<name>.ts`: `use<Name>(…, widgets, wire?)`
    — key-vocabulary guard, `useWiring`, services assembly, the handle.
 4. **Component** — `components/system/<name>.vue`: `generic="R extends
-   Widgets"`, one handle prop, arrangement math inline, the consumption
+Widgets"`, one handle prop, arrangement math inline, the consumption
    cell (`slot:` fallback → `widget:` fallback → `<component :is>`).
-5. **Verify** — typecheck, eslint, and a mount test over a fixture
+5. **Verify** — typecheck, oxlint, and a mount test over a fixture
    definition driven through the full define → use → mount flow.
 
 ## Source map
 
-| Concern             | File                                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------------------- |
-| Widget contract     | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `AnyWidget` · `Widgets`)                          |
-| Definition/wiring types | [`types/definition.ts`](../../types/definition.ts) (`Wiring` · `ServicesOf` · `EventsOf` · `WireHandler`) |
-| Wiring runner       | [`composables/widgets.ts`](../../composables/widgets.ts) (`useWiring`)                                   |
-| Hook backbone       | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)              |
-| Grid structure      | [`workspace.vue`](./workspace.vue) · [`types/system/workspace.ts`](../../types/system/workspace.ts) · [`definitions/workspace.ts`](../../definitions/workspace.ts) · [`composables/workspace.ts`](../../composables/workspace.ts) |
-| Region structure    | [`panel.vue`](./panel.vue) · [`types/system/panel.ts`](../../types/system/panel.ts) · [`definitions/panel.ts`](../../definitions/panel.ts) · [`composables/panel.ts`](../../composables/panel.ts) |
+| Concern                 | File                                                                                                                                                                                                                              |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Widget contract         | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `AnyWidget` · `Widgets`)                                                                                                                                                   |
+| Definition/wiring types | [`types/definition.ts`](../../types/definition.ts) (`Wiring` · `ServicesOf` · `EventsOf` · `WireHandler`)                                                                                                                         |
+| Wiring runner           | [`composables/widgets.ts`](../../composables/widgets.ts) (`useWiring`)                                                                                                                                                            |
+| Hook backbone           | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                                                                                                                                       |
+| Grid structure          | [`workspace.vue`](./workspace.vue) · [`types/system/workspace.ts`](../../types/system/workspace.ts) · [`definitions/workspace.ts`](../../definitions/workspace.ts) · [`composables/workspace.ts`](../../composables/workspace.ts) |
+| Region structure        | [`panel.vue`](./panel.vue) · [`types/system/panel.ts`](../../types/system/panel.ts) · [`definitions/panel.ts`](../../definitions/panel.ts) · [`composables/panel.ts`](../../composables/panel.ts)                                 |

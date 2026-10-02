@@ -12,7 +12,10 @@ type Equal<A, B> =
 /**
  * True when K is declared readonly on O.
  */
-type ReadonlyKey<O, K extends keyof O> = Equal<Pick<O, K>, Readonly<Pick<O, K>>>;
+type ReadonlyKey<O, K extends keyof O> = Equal<
+  Pick<O, K>,
+  Readonly<Pick<O, K>>
+>;
 
 /**
  * The non-method keys of a service: the state surface useServiceRefs mirrors.

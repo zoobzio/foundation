@@ -157,9 +157,7 @@ describe("data browser widget", () => {
 
   it("shows bulk actions only while files are selected", async () => {
     const { state, wrapper } = mountWidget();
-    expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(
-      false,
-    );
+    expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(false);
     state.selected.value = new Set(["1"]);
     await flushPromises();
     expect(wrapper.findComponent({ name: "BulkActions" }).exists()).toBe(true);

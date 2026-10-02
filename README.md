@@ -77,22 +77,25 @@ pnpm install
 pnpm dev          # run the layer in a Nuxt dev server
 pnpm test         # run the vitest suite
 pnpm typecheck    # nuxi typecheck
-pnpm lint         # eslint (lint:fix to auto-fix)
+pnpm lint         # oxlint (lint:fix to auto-fix)
+pnpm format       # oxfmt (format:check to verify)
 ```
 
 Or via `make` (`make help` lists all targets):
 
-| Command          | Description                   |
-| ---------------- | ----------------------------- |
-| `make install`   | Install dependencies          |
-| `make dev`       | Start the Nuxt dev server     |
-| `make lint`      | Run ESLint                    |
-| `make lint-fix`  | Run ESLint with auto-fix      |
-| `make typecheck` | Type-check (`nuxi typecheck`) |
-| `make test`      | Run all tests                 |
-| `make coverage`  | Run tests with coverage       |
-| `make check`     | Lint + typecheck + test       |
-| `make clean`     | Remove generated files        |
+| Command             | Description                      |
+| ------------------- | -------------------------------- |
+| `make install`      | Install dependencies             |
+| `make dev`          | Start the Nuxt dev server        |
+| `make lint`         | Run oxlint                       |
+| `make lint-fix`     | Run oxlint with auto-fix         |
+| `make format`       | Format code with oxfmt           |
+| `make format-check` | Check formatting with oxfmt      |
+| `make typecheck`    | Type-check (`nuxi typecheck`)    |
+| `make test`         | Run all tests                    |
+| `make coverage`     | Run tests with coverage          |
+| `make check`        | Lint + format + typecheck + test |
+| `make clean`        | Remove generated files           |
 
 ## Testing
 

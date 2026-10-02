@@ -43,7 +43,9 @@ export type ScrollerContext = {
 export type ScrollerSlots = {
   default?: (props: ScrollerContext) => VNode[];
   viewport?: (props: ScrollerContext) => VNode[];
-  scrollbar?: (props: ScrollerContext & { orientation: "vertical" | "horizontal" }) => VNode[];
+  scrollbar?: (
+    props: ScrollerContext & { orientation: "vertical" | "horizontal" },
+  ) => VNode[];
   thumb?: (props: ScrollerContext) => VNode[];
   corner?: (props: ScrollerContext) => VNode[];
   backToTop?: (props: ScrollerContext) => VNode[];

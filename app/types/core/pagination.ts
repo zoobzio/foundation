@@ -1,8 +1,5 @@
 import type { FabEmits, FabProps } from "./fab";
-import type {
-  Passthrough,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PT } from "../passthrough";
 import type { SelectEmits, SelectProps } from "./select";
 import type { Option } from "./common";
 import type { Ref, VNode } from "vue";

@@ -18,7 +18,9 @@ describe("accessTable", () => {
     expect(state.page.value).toBe(1);
     expect(state.pageSize.value).toBe(TABLE_DEFAULT_PAGE_SIZE);
     expect(state.selected.value).toEqual(new Set());
-    expect(state.columnOrder.value).toEqual(fakeColumns.map((c) => String(c.key)));
+    expect(state.columnOrder.value).toEqual(
+      fakeColumns.map((c) => String(c.key)),
+    );
     expect(state.query.value).toBe("");
     expect(state.filters.value).toEqual([]);
   });

@@ -49,4 +49,3 @@ export type Recipe<Props, Emits = {}> = {
   props: Props & HtmlAttrs;
   handlers: EmitHandlers<Emits> & DomHandlers;
 };
-

@@ -1,4 +1,7 @@
-import type { DateFilter, DateFieldConfig } from "../../app/types/core/date-filters";
+import type {
+  DateFilter,
+  DateFieldConfig,
+} from "../../app/types/core/date-filters";
 
 export const fakeDateFields: DateFieldConfig[] = [
   { key: "created", label: "Created" },

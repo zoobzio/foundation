@@ -2,10 +2,7 @@ import type { Commission } from "#shared/commissions";
 
 import { defineEntity } from "@zoobzio/foundation/definitions/entity";
 
-import {
-  COMMISSION_MATERIALS,
-  COMMISSION_STATUSES,
-} from "#shared/commissions";
+import { COMMISSION_MATERIALS, COMMISSION_STATUSES } from "#shared/commissions";
 
 const commission = defineEntity<Commission>();
 

@@ -7,9 +7,7 @@ import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
 import Core from "../../../../../app/components/data/browser/folders.vue";
-import type {
-  BrowserFoldersProps,
-} from "../../../../../app/types/data/browser/folders";
+import type { BrowserFoldersProps } from "../../../../../app/types/data/browser/folders";
 import { createMockBrowser } from "#test/mocks/browser";
 import { fakeFolders } from "#test/data/browser";
 import type { FakeFile } from "#test/data/browser";
@@ -35,9 +33,7 @@ const mountFolders = (
 describe("data browser folders", () => {
   it("renders one table row per folder in service order", () => {
     const { wrapper } = mountFolders();
-    expect(wrapper.get("tbody").classes()).toContain(
-      "f-data-browser-folders",
-    );
+    expect(wrapper.get("tbody").classes()).toContain("f-data-browser-folders");
     const rows = wrapper.findAll("tr");
     expect(rows).toHaveLength(3);
     expect(rows.map((tr) => tr.get(".f-span").text())).toEqual([
@@ -102,12 +98,10 @@ describe("data browser folders", () => {
   it("shows the count badge only when the folder carries one", () => {
     const { wrapper } = mountFolders();
     const rows = wrapper.findAll("tr");
-    expect(rows.at(0)?.find(".f-data-browser-folder-count").text()).toBe(
-      "12",
+    expect(rows.at(0)?.find(".f-data-browser-folder-count").text()).toBe("12");
+    expect(rows.at(1)?.find(".f-data-browser-folder-count").exists()).toBe(
+      false,
     );
-    expect(
-      rows.at(1)?.find(".f-data-browser-folder-count").exists(),
-    ).toBe(false);
   });
 
   it("renders the folder actions cell only when actions exist", () => {

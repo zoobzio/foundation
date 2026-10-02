@@ -1,5 +1,8 @@
 <script lang="ts">
-import type { ChartCanvasContext, ChartCanvasProps } from "../../../types/data/chart/canvas";
+import type {
+  ChartCanvasContext,
+  ChartCanvasProps,
+} from "../../../types/data/chart/canvas";
 
 import { useTemplateRef } from "#imports";
 import { useChartView } from "../../../composables/chart";

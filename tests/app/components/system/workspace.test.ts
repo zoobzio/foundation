@@ -29,7 +29,10 @@ const FixtureWidget = defineComponent({
     return () =>
       h(
         "div",
-        { class: "fixture-widget", "data-pt": JSON.stringify(props.pt ?? null) },
+        {
+          class: "fixture-widget",
+          "data-pt": JSON.stringify(props.pt ?? null),
+        },
         props.service.id,
       );
   },
@@ -130,9 +133,9 @@ describe("system workspace", () => {
       "slot:main": () => h("div", { class: "override" }, "custom"),
     });
     expect(wrapper.get(".override").text()).toBe("custom");
-    expect(
-      wrapper.findAll(".fixture-widget").map((w) => w.text()),
-    ).toEqual(["beta-machine"]);
+    expect(wrapper.findAll(".fixture-widget").map((w) => w.text())).toEqual([
+      "beta-machine",
+    ]);
   });
 
   it("widget:<id> overrides the render and receives the service", () => {
@@ -140,9 +143,9 @@ describe("system workspace", () => {
       "widget:side": () => h("div", { class: "override" }, "replaced"),
     });
     expect(wrapper.get(".override").text()).toBe("replaced");
-    expect(
-      wrapper.findAll(".fixture-widget").map((w) => w.text()),
-    ).toEqual(["alpha-machine"]);
+    expect(wrapper.findAll(".fixture-widget").map((w) => w.text())).toEqual([
+      "alpha-machine",
+    ]);
   });
 });
 

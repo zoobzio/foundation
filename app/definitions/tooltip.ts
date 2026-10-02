@@ -5,10 +5,7 @@ import type { Definition } from "../types/definition";
  * A tooltip instance as data: props plus emit listeners — the object a
  * template `v-bind`s and an adapter captures as settings.
  */
-export type TooltipDefinition = Definition<
-  TooltipProps,
-  TooltipEmits
->;
+export type TooltipDefinition = Definition<TooltipProps, TooltipEmits>;
 
 /**
  * Declares a tooltip at module scope — pure data, no runtime, no Vue. The

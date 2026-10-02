@@ -1,9 +1,6 @@
 import type { DataTableColumn, Service } from "../types/data/table";
 import type { AutocompleteOption } from "../types/core/autocomplete";
-import type {
-  CommandGroup,
-  CommandOption,
-} from "../types/core/command";
+import type { CommandGroup, CommandOption } from "../types/core/command";
 import type { MenuGroup, MenuItem } from "../types/core/menu";
 import type { TableWidgetPassthrough } from "../types/data/table/widget";
 
@@ -256,7 +253,11 @@ export const useTableView = <T>(table: Service<T>) => {
     if (t) return [];
     const start = new Date();
     return Array.from({ length: count }, (_, i) => {
-      const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      const d = new Date(
+        start.getFullYear(),
+        start.getMonth(),
+        start.getDate() + i,
+      );
       return isoDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
     });
   };
@@ -281,53 +282,50 @@ export const useTableView = <T>(table: Service<T>) => {
     }
   };
 
-  const columnOptions = computed<AutocompleteOption<DataTableColumn<T>>[]>(
-    () =>
-      table.filterableColumns.map((c) => ({
-        value: `col:${String(c.key)}`,
-        label: c.label,
-        hasChildren: true,
-        meta: c,
-      })),
+  const columnOptions = computed<AutocompleteOption<DataTableColumn<T>>[]>(() =>
+    table.filterableColumns.map((c) => ({
+      value: `col:${String(c.key)}`,
+      label: c.label,
+      hasChildren: true,
+      meta: c,
+    })),
   );
 
-  const searchItems = computed<AutocompleteOption<DataTableColumn<T>>[]>(
-    () => {
-      const { column, op, term } = searchParse.value;
-      const q = term.trim().toLowerCase();
-      if (!column) {
-        return columnOptions.value.filter(
-          (c) => !q || c.label.toLowerCase().includes(q),
-        );
-      }
-      const ops = operatorsFor(column);
-      if (ops.length && !op) {
-        return ops
-          .filter((o) => !q || o.includes(q))
-          .map((o) => ({
-            value: `op:${o}`,
-            label: o,
-            hasChildren: true,
-            meta: column,
-          }));
-      }
-      // generated options already derive from the term; only literal value
-      // lists (enum/boolean) need narrowing
-      const generated =
-        column.type === "number" ||
-        column.type === "currency" ||
-        column.type === "filesize" ||
-        column.type === "date" ||
-        column.type === "datetime";
-      return valueOptions(
-        column,
-        term,
-        TABLE_SEARCH_LOOKAHEAD * searchDepth.value,
-      )
-        .filter((v) => generated || !q || v.toLowerCase().includes(q))
-        .map((v) => ({ value: `val:${v}`, label: v }));
-    },
-  );
+  const searchItems = computed<AutocompleteOption<DataTableColumn<T>>[]>(() => {
+    const { column, op, term } = searchParse.value;
+    const q = term.trim().toLowerCase();
+    if (!column) {
+      return columnOptions.value.filter(
+        (c) => !q || c.label.toLowerCase().includes(q),
+      );
+    }
+    const ops = operatorsFor(column);
+    if (ops.length && !op) {
+      return ops
+        .filter((o) => !q || o.includes(q))
+        .map((o) => ({
+          value: `op:${o}`,
+          label: o,
+          hasChildren: true,
+          meta: column,
+        }));
+    }
+    // generated options already derive from the term; only literal value
+    // lists (enum/boolean) need narrowing
+    const generated =
+      column.type === "number" ||
+      column.type === "currency" ||
+      column.type === "filesize" ||
+      column.type === "date" ||
+      column.type === "datetime";
+    return valueOptions(
+      column,
+      term,
+      TABLE_SEARCH_LOOKAHEAD * searchDepth.value,
+    )
+      .filter((v) => generated || !q || v.toLowerCase().includes(q))
+      .map((v) => ({ value: `val:${v}`, label: v }));
+  });
 
   watch(
     () => {
@@ -391,23 +389,21 @@ export const useTableView = <T>(table: Service<T>) => {
     return match ? match.slice(q.length) : "";
   });
 
-  const searchSteps = computed<AutocompleteOption<DataTableColumn<T>>[]>(
-    () => {
-      const steps: AutocompleteOption<DataTableColumn<T>>[] = [];
-      if (table.query) {
-        steps.push({ value: "query", label: `"${table.query}"` });
-      }
-      table.filters.forEach((f, i) => {
-        const col = columnByKey.get(f.key);
-        steps.push({
-          value: `filter:${i}`,
-          label: `${col?.label ?? f.key}: ${f.op ? `${f.op} ` : ""}${f.value}`,
-          meta: col,
-        });
+  const searchSteps = computed<AutocompleteOption<DataTableColumn<T>>[]>(() => {
+    const steps: AutocompleteOption<DataTableColumn<T>>[] = [];
+    if (table.query) {
+      steps.push({ value: "query", label: `"${table.query}"` });
+    }
+    table.filters.forEach((f, i) => {
+      const col = columnByKey.get(f.key);
+      steps.push({
+        value: `filter:${i}`,
+        label: `${col?.label ?? f.key}: ${f.op ? `${f.op} ` : ""}${f.value}`,
+        meta: col,
       });
-      return steps;
-    },
-  );
+    });
+    return steps;
+  });
 
   const commitFilter = (column: DataTableColumn<T>, value: string) => {
     const op = searchParse.value.op ?? defaultOperatorFor(column);

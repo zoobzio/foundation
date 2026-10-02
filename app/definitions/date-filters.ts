@@ -1,4 +1,7 @@
-import type { DateFiltersEmits, DateFiltersProps } from "../types/core/date-filters";
+import type {
+  DateFiltersEmits,
+  DateFiltersProps,
+} from "../types/core/date-filters";
 import type { Definition } from "../types/definition";
 
 /**

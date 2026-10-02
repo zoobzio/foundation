@@ -5,10 +5,7 @@ import type { Definition } from "../types/definition";
  * A toaster instance as data: props plus emit listeners — the object a
  * template `v-bind`s and an adapter captures as settings.
  */
-export type ToasterDefinition = Definition<
-  ToasterProps,
-  ToasterEmits
->;
+export type ToasterDefinition = Definition<ToasterProps, ToasterEmits>;
 
 /**
  * Declares a toaster at module scope — pure data, no runtime, no Vue. The

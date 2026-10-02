@@ -15,10 +15,7 @@ import { ref, useTemplateRef, watch } from "#imports";
 import { useDeckView } from "../../../composables/deck";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import {
-  DECK_REFRESH_LABEL,
-  DECK_SEARCH_LABEL,
-} from "../../../constants/deck";
+import { DECK_REFRESH_LABEL, DECK_SEARCH_LABEL } from "../../../constants/deck";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -123,7 +120,7 @@ defineSlots<DeckToolbarSlots<T>>();
                 placeholder="Search..."
                 @input="onSearchInput"
                 @keydown="onSearchKeydown"
-              >
+              />
             </div>
           </template>
         </Popover>

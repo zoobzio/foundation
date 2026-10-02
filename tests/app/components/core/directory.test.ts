@@ -99,9 +99,13 @@ describe("directory", () => {
         </template>`,
       },
     );
-    expect(
-      wrapper.findAll("output").map((o) => o.text()),
-    ).toEqual(["home:2", "contacts:2", "billing:2", "logout:2", "danger:2"]);
+    expect(wrapper.findAll("output").map((o) => o.text())).toEqual([
+      "home:2",
+      "contacts:2",
+      "billing:2",
+      "logout:2",
+      "danger:2",
+    ]);
     expect(wrapper.findAll("a")).toHaveLength(0);
     expect(wrapper.findAll("button")).toHaveLength(0);
   });

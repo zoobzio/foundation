@@ -1,8 +1,4 @@
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
@@ -25,7 +21,10 @@ import type { DateValue } from "@internationalized/date";
 
 // The share of the root's render-scope payload the core template forwards
 // into its slots.
-export type CalendarView = Pick<SlotProps<typeof CalendarRoot>, "weekDays" | "grid">;
+export type CalendarView = Pick<
+  SlotProps<typeof CalendarRoot>,
+  "weekDays" | "grid"
+>;
 
 // One month of the root's render-scope grid payload.
 export type CalendarMonth = CalendarView["grid"][number];
@@ -75,10 +74,20 @@ export type CalendarSlots = {
   heading?: (props: CalendarContext & CalendarView) => VNode[];
   next?: (props: CalendarContext & CalendarView) => VNode[];
   nextIcon?: (props: CalendarContext & CalendarView) => VNode[];
-  grid?: (props: CalendarContext & CalendarView & { month: CalendarMonth }) => VNode[];
-  gridHead?: (props: CalendarContext & CalendarView & { month: CalendarMonth }) => VNode[];
-  gridBody?: (props: CalendarContext & CalendarView & { month: CalendarMonth }) => VNode[];
+  grid?: (
+    props: CalendarContext & CalendarView & { month: CalendarMonth },
+  ) => VNode[];
+  gridHead?: (
+    props: CalendarContext & CalendarView & { month: CalendarMonth },
+  ) => VNode[];
+  gridBody?: (
+    props: CalendarContext & CalendarView & { month: CalendarMonth },
+  ) => VNode[];
   headCell?: (props: CalendarContext & { day: string }) => VNode[];
-  cell?: (props: CalendarContext & { month: CalendarMonth; date: DateValue }) => VNode[];
-  cellTrigger?: (props: CalendarContext & { month: CalendarMonth; date: DateValue }) => VNode[];
+  cell?: (
+    props: CalendarContext & { month: CalendarMonth; date: DateValue },
+  ) => VNode[];
+  cellTrigger?: (
+    props: CalendarContext & { month: CalendarMonth; date: DateValue },
+  ) => VNode[];
 };

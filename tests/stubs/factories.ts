@@ -11,7 +11,11 @@ export const createStub = (name: string, tag = "div") =>
   });
 
 /** Like createStub, but calls the default slot with the given scope. */
-export const createScopedStub = (name: string, slotProps: Record<string, unknown> = {}, tag = "div") =>
+export const createScopedStub = (
+  name: string,
+  slotProps: Record<string, unknown> = {},
+  tag = "div",
+) =>
   defineComponent({
     name,
     inheritAttrs: false,

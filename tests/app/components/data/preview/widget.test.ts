@@ -40,8 +40,7 @@ const mountWidget = async (slots: Record<string, string> = {}) => {
         const widget = usePreview("p1", definition, {
           fetch: vi.fn<Actions<FakeRow>["fetch"]>(async () => subject),
         });
-        return () =>
-          h(PreviewWidget, { service: widget.service }, forwarded);
+        return () => h(PreviewWidget, { service: widget.service }, forwarded);
       },
     }),
     { slots },

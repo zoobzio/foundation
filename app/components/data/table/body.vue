@@ -70,11 +70,7 @@ defineSlots<TableBodySlots<T>>();
             @update:model-value="table.toggleRow(table.keyOf(row))"
           />
         </td>
-        <td
-          v-for="col in visibleColumns"
-          :key="String(col.key)"
-          class="f-td"
-        >
+        <td v-for="col in visibleColumns" :key="String(col.key)" class="f-td">
           <!-- 1. cell:<key> — override a specific column -->
           <slot
             v-if="slots[`cell:${String(col.key)}`]"
@@ -107,16 +103,13 @@ defineSlots<TableBodySlots<T>>();
               class="f-img"
               :src="String(row[col.key])"
               :alt="col.label"
-            >
+            />
             <span v-else class="f-span">
               {{ cell(row[col.key], col.type) }}
             </span>
           </slot>
         </td>
-        <td
-          v-if="hasActions"
-          class="f-td f-data-table-actions"
-        >
+        <td v-if="hasActions" class="f-td f-data-table-actions">
           <Menu
             v-bind="settings.actionsMenu"
             @select="onActionSelect(row, $event)"

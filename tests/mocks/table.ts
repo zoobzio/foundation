@@ -12,9 +12,7 @@ import type { FakeRow } from "#test/data/table";
  * for tests to drive; state logic depth belongs to the service tests, not
  * here.
  */
-export const createMockTable = (
-  overrides: Partial<Service<FakeRow>> = {},
-) => {
+export const createMockTable = (overrides: Partial<Service<FakeRow>> = {}) => {
   const state = {
     data: ref<FakeRow[]>(fakeRows),
     loading: ref(false),

@@ -67,7 +67,10 @@ defineSlots<SegmentedControlSlots>();
   <ToggleGroupRoot ref="el" class="f-toggle-group-root" v-bind="settings.root">
     <template v-for="option in options" :key="option.value">
       <slot name="item" v-bind="{ ...ctx, option }">
-        <ToggleGroupItem class="f-toggle-group-item" v-bind="settings.item(option)">
+        <ToggleGroupItem
+          class="f-toggle-group-item"
+          v-bind="settings.item(option)"
+        >
           <slot name="itemIcon" v-bind="{ ...ctx, option }" />
           <slot name="itemLabel" v-bind="{ ...ctx, option }">
             <span v-if="option.label" class="f-span">{{ option.label }}</span>

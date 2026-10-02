@@ -50,10 +50,7 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-const itemByText = (
-  wrapper: ReturnType<typeof mountTree>,
-  label: string,
-) => {
+const itemByText = (wrapper: ReturnType<typeof mountTree>, label: string) => {
   const found = wrapper
     .findAll('[role="treeitem"]')
     .find((i) => i.text().includes(label));
@@ -84,9 +81,9 @@ describe("tree", () => {
     expect(itemByText(wrapper, "Introduction").attributes("aria-level")).toBe(
       "2",
     );
-    expect(
-      itemByText(wrapper, "Guides").attributes("aria-expanded"),
-    ).toBe("true");
+    expect(itemByText(wrapper, "Guides").attributes("aria-expanded")).toBe(
+      "true",
+    );
   });
 
   it("branch activation emits expansion, post-toggle state, and selection", async () => {
@@ -119,9 +116,9 @@ describe("tree", () => {
 
   it("the controlled model marks its item selected", () => {
     const wrapper = mountTree({ modelValue: node("reference") });
-    expect(
-      itemByText(wrapper, "Reference").attributes("aria-selected"),
-    ).toBe("true");
+    expect(itemByText(wrapper, "Reference").attributes("aria-selected")).toBe(
+      "true",
+    );
     expect(itemByText(wrapper, "Archive").attributes("aria-selected")).toBe(
       "false",
     );
@@ -134,9 +131,9 @@ describe("tree", () => {
     expect(reference.attributes("href")).toBe("/reference");
     expect(reference.attributes("target")).toBe("_blank");
     expect(itemByText(wrapper, "Guides").find("a").exists()).toBe(false);
-    expect(
-      itemByText(wrapper, "Guides").get("span").classes(),
-    ).toContain("f-span");
+    expect(itemByText(wrapper, "Guides").get("span").classes()).toContain(
+      "f-span",
+    );
   });
 
   it("renders no toggle or icon unless the consumer supplies one", () => {
@@ -182,9 +179,9 @@ describe("tree", () => {
   it("pt overrides reach their part", () => {
     const wrapper = mountTree({ pt: { root: { disabled: true } } });
     const items = wrapper.findAll('[role="treeitem"]');
-    expect(
-      items.every((i) => i.attributes("aria-disabled") === "true"),
-    ).toBe(true);
+    expect(items.every((i) => i.attributes("aria-disabled") === "true")).toBe(
+      true,
+    );
   });
 
   it("serves ctx, the flattened item, and expansion state to slot overrides", () => {

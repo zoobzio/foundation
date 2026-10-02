@@ -11,20 +11,14 @@ import {
   TABLE_DEFAULT_SORT_DIRECTION,
 } from "../constants/table";
 
-export const accessTable = <T>(
-  id: string,
-  config: Config<T>,
-): State<T> => {
+export const accessTable = <T>(id: string, config: Config<T>): State<T> => {
   const defaultColumnKeys = (
     config.defaultColumnOrder ?? config.columns.map((c) => c.key)
   ).map(String);
 
   const data = useState<T[]>(`table-${id}-data`, () => []);
   const loading = useState<boolean>(`table-${id}-loading`, () => false);
-  const initialized = useState<boolean>(
-    `table-${id}-initialized`,
-    () => false,
-  );
+  const initialized = useState<boolean>(`table-${id}-initialized`, () => false);
   const page = useState<number>(`table-${id}-page`, () => 1);
   const pageSize = useState<number>(
     `table-${id}-pageSize`,

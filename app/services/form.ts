@@ -1,11 +1,5 @@
 import type { NuxtApp } from "#app";
-import type {
-  Config,
-  State,
-  Actions,
-  Service,
-  Keys,
-} from "../types/data/form";
+import type { Config, State, Actions, Service, Keys } from "../types/data/form";
 import type { Logger } from "../types/log";
 
 import { keys } from "objectively";

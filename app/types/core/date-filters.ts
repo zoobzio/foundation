@@ -1,16 +1,9 @@
 import type { CalendarProps, CalendarEmits } from "./calendar";
-import type {
-  CommandOption,
-  CommandProps,
-  CommandEmits,
-} from "./command";
+import type { CommandOption, CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
 import type { Passthrough, PT } from "../passthrough";
 import type { PopoverProps, PopoverEmits } from "./popover";
-import type {
-  RangeCalendarProps,
-  RangeCalendarEmits,
-} from "./range-calendar";
+import type { RangeCalendarProps, RangeCalendarEmits } from "./range-calendar";
 import type { VNode } from "vue";
 
 export type DateFilterOperator = "before" | "after" | "between";
@@ -30,8 +23,14 @@ export type DateFieldConfig = {
 export type DateFiltersPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
-  fieldCommand: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
-  operatorCommand: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
+  fieldCommand: Passthrough<
+    CommandProps<CommandOption>,
+    CommandEmits<CommandOption>
+  >;
+  operatorCommand: Passthrough<
+    CommandProps<CommandOption>,
+    CommandEmits<CommandOption>
+  >;
   calendar: Passthrough<CalendarProps, CalendarEmits>;
   rangeCalendar: Passthrough<RangeCalendarProps, RangeCalendarEmits>;
 };

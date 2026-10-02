@@ -1,4 +1,7 @@
-import type { DateRangePickerEmits, DateRangePickerProps } from "../types/core/date-range-picker";
+import type {
+  DateRangePickerEmits,
+  DateRangePickerProps,
+} from "../types/core/date-range-picker";
 import type { Definition } from "../types/definition";
 
 /**

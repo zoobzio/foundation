@@ -24,12 +24,7 @@ import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">
-const {
-  title,
-  description,
-  open = undefined,
-  pt,
-} = defineProps<DialogProps>();
+const { title, description, open = undefined, pt } = defineProps<DialogProps>();
 
 const emit = defineEmits<DialogEmits>();
 

@@ -19,10 +19,7 @@ import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useForwardSlots } from "../../../composables/slots";
 import { useLazyRequest } from "../../../composables/request";
-import {
-  DECK_FEED_SLOTS,
-  DECK_TOOLBAR_SLOTS,
-} from "../../../constants/deck";
+import { DECK_FEED_SLOTS, DECK_TOOLBAR_SLOTS } from "../../../constants/deck";
 </script>
 
 <script setup lang="ts" generic="T">

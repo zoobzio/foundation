@@ -121,7 +121,9 @@ defineSlots<PaginationSlots>();
                   :disabled="option === '...' || option === page"
                   :aria-current="option === page ? 'page' : undefined"
                   @click="typeof option === 'number' && goToPage(option)"
-                >{{ option }}</button>
+                >
+                  {{ option }}
+                </button>
               </slot>
             </template>
           </div>

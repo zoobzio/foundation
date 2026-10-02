@@ -6,11 +6,7 @@ import type {
   TagsInputItemDeleteProps,
   TagsInputInputProps,
 } from "reka-ui";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type TagsInputPassthrough = {

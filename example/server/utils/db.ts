@@ -60,7 +60,8 @@ const SEED: Array<{
   {
     title: "Fireplace tool set",
     client: "Larkspur Lodge",
-    description: "Poker, brush, shovel, and stand. Twisted square-stock handles.",
+    description:
+      "Poker, brush, shovel, and stand. Twisted square-stock handles.",
     status: "complete",
     material: "iron",
     rush: false,
@@ -71,7 +72,8 @@ const SEED: Array<{
   {
     title: "Ship's bell",
     client: "Port Authority of Brindle",
-    description: "Cast bell, 12in mouth, engraved crest. Includes mounting bracket.",
+    description:
+      "Cast bell, 12in mouth, engraved crest. Includes mounting bracket.",
     status: "in_progress",
     material: "bronze",
     rush: true,
@@ -93,7 +95,8 @@ const SEED: Array<{
   {
     title: "Weathervane, running fox",
     client: "Foxglove Farm",
-    description: "Silhouette weathervane with cardinal points and copper patina.",
+    description:
+      "Silhouette weathervane with cardinal points and copper patina.",
     status: "quoted",
     material: "copper",
     rush: false,
@@ -104,7 +107,8 @@ const SEED: Array<{
   {
     title: "Serving spoons, set of four",
     client: "The Tin Whistle",
-    description: "Forged serving spoons for restaurant service. Brushed finish.",
+    description:
+      "Forged serving spoons for restaurant service. Brushed finish.",
     status: "complete",
     material: "silver",
     rush: false,
@@ -138,7 +142,8 @@ const SEED: Array<{
   {
     title: "Garden trellis arch",
     client: "Mossbank Nursery",
-    description: "Arched trellis with leaf-and-vine motif, galvanized for outdoor use.",
+    description:
+      "Arched trellis with leaf-and-vine motif, galvanized for outdoor use.",
     status: "draft",
     material: "iron",
     rush: false,
@@ -149,7 +154,8 @@ const SEED: Array<{
   {
     title: "Pendant lamp cages, dozen",
     client: "Cinder Coffee Co.",
-    description: "Twelve geometric lamp cages for pendant fixtures. Raw finish, clear coat.",
+    description:
+      "Twelve geometric lamp cages for pendant fixtures. Raw finish, clear coat.",
     status: "quoted",
     material: "brass",
     rush: true,
@@ -178,7 +184,9 @@ const seed = (database: DatabaseSync) => {
   const day = 86_400_000;
   for (const [i, row] of SEED.entries()) {
     // spread created_at across recent weeks so datetime filters have range
-    const created = new Date(Date.now() - (SEED.length - i) * 9 * day).toISOString();
+    const created = new Date(
+      Date.now() - (SEED.length - i) * 9 * day,
+    ).toISOString();
     insert.run(
       row.title,
       row.client,

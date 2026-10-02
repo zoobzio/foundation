@@ -11,12 +11,7 @@ import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">
-const {
-  label,
-  type = "button",
-  disabled,
-  badge,
-} = defineProps<FabProps>();
+const { label, type = "button", disabled, badge } = defineProps<FabProps>();
 
 const emit = defineEmits<FabEmits>();
 

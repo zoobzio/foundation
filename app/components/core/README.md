@@ -13,7 +13,7 @@ Every rendered piece is one of two kinds:
   recipes, the resolved `settings`, and a named slot — is keyed by the same
   part names (`root`, `trigger`, `content`, `item`, …).
 - **Semantic HTML** — native tags (`<span>`, `<button>`, `<div>`, `<kbd>`, …)
-  written directly in the template. They are *not* parts: they carry no pt
+  written directly in the template. They are _not_ parts: they carry no pt
   key and no settings entry. Their props are template expressions; consumers
   restyle them through their class or replace them through the enclosing
   slot.
@@ -42,11 +42,22 @@ is the reference implementation.
 ```vue
 <script lang="ts">
 // type imports, then rendered components, then framework/composable imports
-import type { SelectProps, SelectEmits, SelectPassthrough, SelectContext, SelectSlots }
-  from "../../types/core/select";
+import type {
+  SelectProps,
+  SelectEmits,
+  SelectPassthrough,
+  SelectContext,
+  SelectSlots,
+} from "../../types/core/select";
 import type { ComponentPublicInstance } from "vue";
 
-import { SelectRoot, SelectTrigger, SelectPortal, SelectContent, SelectItem } from "reka-ui";
+import {
+  SelectRoot,
+  SelectTrigger,
+  SelectPortal,
+  SelectContent,
+  SelectItem,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";
@@ -61,8 +72,15 @@ defineSlots<SelectSlots>();
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 // v-model-able state: the prop wins, internal state is the fallback
-const model = useModel(() => modelValue, (v) => emit("update:modelValue", v));
-const open = useModel(() => openProp, (v) => emit("update:open", v), { default: false });
+const model = useModel(
+  () => modelValue,
+  (v) => emit("update:modelValue", v),
+);
+const open = useModel(
+  () => openProp,
+  (v) => emit("update:open", v),
+  { default: false },
+);
 
 // the part manifest: local recipes must satisfy every part; `pt` layers on
 // top. A real composable — one reactive source in, the settings computed out.
@@ -88,7 +106,8 @@ const settings = usePassthrough<SelectPassthrough>(() => ({
 
 const ctx = useContext<SelectContext>("select", () => ({
   /* props */ options,
-  /* models — the writable refs themselves */ modelValue: model, open,
+  /* models — the writable refs themselves */ modelValue: model,
+  open,
   /* derived */ displayText: displayText.value,
   el: el.value,
   settings: settings.value,
@@ -110,7 +129,9 @@ defineExpose({ ctx });
     </slot>
     <SelectPortal>
       …
-      <SelectItem class="f-select-item" v-bind="settings.item(option)">…</SelectItem>
+      <SelectItem class="f-select-item" v-bind="settings.item(option)"
+        >…</SelectItem
+      >
     </SelectPortal>
   </SelectRoot>
 </template>
@@ -118,13 +139,13 @@ defineExpose({ ctx });
 
 Each component's type file declares five types, in a fixed progression:
 
-| Type           | Meaning                                                                       | Built from                     |
-| -------------- | ----------------------------------------------------------------------------- | ------------------------------ |
-| `XPassthrough` | part manifest: one key per behavioral part → `Passthrough<Props, Emits>`      | reka-ui `*Props` / `*Emits`    |
-| `XProps`       | authored surface: coordination props + `pt?: PT<XPassthrough>`                | `XPassthrough`                 |
-| `XEmits`       | re-emitted events in the component's own vocabulary                           | —                              |
-| `XContext`     | view model: props + derived state + `el` + resolved `settings`                | `XProps` + `XPassthrough`      |
-| `XSlots`       | per-region slots, ctx spread (+ the item for iterated regions)                | `XContext`                     |
+| Type           | Meaning                                                                  | Built from                  |
+| -------------- | ------------------------------------------------------------------------ | --------------------------- |
+| `XPassthrough` | part manifest: one key per behavioral part → `Passthrough<Props, Emits>` | reka-ui `*Props` / `*Emits` |
+| `XProps`       | authored surface: coordination props + `pt?: PT<XPassthrough>`           | `XPassthrough`              |
+| `XEmits`       | re-emitted events in the component's own vocabulary                      | —                           |
+| `XContext`     | view model: props + derived state + `el` + resolved `settings`           | `XProps` + `XPassthrough`   |
+| `XSlots`       | per-region slots, ctx spread (+ the item for iterated regions)           | `XContext`                  |
 
 Part types come straight from reka-ui's exports
 (`Passthrough<SelectRootProps, SelectRootEmits>`); keep the `Emits` argument
@@ -136,13 +157,13 @@ Three layers per part, merged by
 [`usePassthrough`](../../composables/passthrough.ts) →
 [`utils/passthrough.ts`](../../utils/passthrough.ts):
 
-| Layer         | Type                              | Owner     | Role                                    |
-| ------------- | --------------------------------- | --------- | --------------------------------------- |
-| local recipes | `XPassthrough` (all keys required) | component | coordination logic + required props     |
-| `pt` prop     | `PT<XPassthrough>` (deep partial) | consumer  | purely additive overrides               |
-| `settings`    | `XPassthrough` (resolved)         | merge     | what the template binds                 |
+| Layer         | Type                               | Owner     | Role                                |
+| ------------- | ---------------------------------- | --------- | ----------------------------------- |
+| local recipes | `XPassthrough` (all keys required) | component | coordination logic + required props |
+| `pt` prop     | `PT<XPassthrough>` (deep partial)  | consumer  | purely additive overrides           |
+| `settings`    | `XPassthrough` (resolved)          | merge     | what the template binds             |
 
-Because the local layer must *satisfy* the full manifest — every part key,
+Because the local layer must _satisfy_ the full manifest — every part key,
 every required prop — and the user layer is deep-partial, the merged result
 types as the satisfied `XPassthrough`: required props stay
 required-and-present in `settings` with no gymnastics.
@@ -153,7 +174,7 @@ required-and-present in `settings` with no gymnastics.
 - plain objects recurse (fresh objects — inputs never mutated; untouched
   parts pass through as local references)
 - arrays, functions, and class instances **replace wholesale** — never merged
-- user `null`/`undefined` values are treated as *not provided* (local wins)
+- user `null`/`undefined` values are treated as _not provided_ (local wins)
 
 **Handlers ride with props.** Emits are authored in listener-prop form
 (`"onUpdate:modelValue"`), typed against the part's emits record by
@@ -163,7 +184,7 @@ overrides replace handlers wholesale, a consumer overriding a wired handler
 takes over that wiring. Listeners for events reka does not declare belong on
 the tag as template `@event` handlers, not in a recipe.
 
-**Iterated parts** (`PassthroughIter<Item, Props>`) are recipe *callbacks* —
+**Iterated parts** (`PassthroughIter<Item, Props>`) are recipe _callbacks_ —
 the local callback is the per-item default and a user-supplied callback
 **replaces it entirely** (callbacks are not records, so the merge never looks
 inside). A replacement owns the full per-item props, structural wiring
@@ -210,8 +231,8 @@ expose proxy unwraps the computed, so a parent reads `ref.ctx` live, no
   owns (e.g. `open`) is a prop + `update:X` emit pair declared in
   `XProps`/`XEmits`, so consumers can drive it with `v-model:X`.
   [`useModel`](../../composables/model.ts) abstracts the dance: reads resolve
-  prop-over-internal-fallback (`null`/`undefined` count as *not provided*,
-  matching the merge semantics), writes update the fallback *and* emit. The
+  prop-over-internal-fallback (`null`/`undefined` count as _not provided_,
+  matching the merge semantics), writes update the fallback _and_ emit. The
   recipe binds `model.value` down to the child part — controlled either way —
   and its `onUpdate:X` handler writes the model, coercing reka payloads to
   the component's vocabulary at the boundary (`String(v)`).
@@ -250,18 +271,18 @@ object is what an [adapter](../data/README.md#the-adapter) captures as
   every mount as controlled-at-false. An explicit `undefined` default
   suppresses the cast so "not provided" stays detectable.
 - Every behavioral part appears in the recipe map, even when its recipe is
-  empty (`{}`) — the map *is* the manifest.
+  empty (`{}`) — the map _is_ the manifest.
 - Slot names, pt keys, and settings keys always agree.
 - Icon positions are slots, never data — items carry no `icon` field; the
   slot receives the item and the consumer maps item to glyph.
 
 ## Source map
 
-| Concern                    | File                                                                                                   |
-| -------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Passthrough types          | [`types/passthrough.ts`](../../types/passthrough.ts) (`Passthrough` · `PassthroughIter` · `PT`)        |
-| Deep merge                 | [`utils/passthrough.ts`](../../utils/passthrough.ts)                                                   |
-| Composable                 | [`composables/passthrough.ts`](../../composables/passthrough.ts)                                       |
-| Model fallback             | [`composables/model.ts`](../../composables/model.ts) (`useModel`)                                      |
-| Shared item types          | [`types/core/common.ts`](../../types/core/common.ts) (`Option` · `Link` · …)                           |
-| Reference component        | [`select.vue`](./select.vue) · [`types/core/select.ts`](../../types/core/select.ts)                    |
+| Concern             | File                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| Passthrough types   | [`types/passthrough.ts`](../../types/passthrough.ts) (`Passthrough` · `PassthroughIter` · `PT`) |
+| Deep merge          | [`utils/passthrough.ts`](../../utils/passthrough.ts)                                            |
+| Composable          | [`composables/passthrough.ts`](../../composables/passthrough.ts)                                |
+| Model fallback      | [`composables/model.ts`](../../composables/model.ts) (`useModel`)                               |
+| Shared item types   | [`types/core/common.ts`](../../types/core/common.ts) (`Option` · `Link` · …)                    |
+| Reference component | [`select.vue`](./select.vue) · [`types/core/select.ts`](../../types/core/select.ts)             |

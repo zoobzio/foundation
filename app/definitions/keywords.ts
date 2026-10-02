@@ -5,10 +5,7 @@ import type { Definition } from "../types/definition";
  * A keywords instance as data: props plus emit listeners — the object a
  * template `v-bind`s and an adapter captures as settings.
  */
-export type KeywordsDefinition = Definition<
-  KeywordsProps,
-  KeywordsEmits
->;
+export type KeywordsDefinition = Definition<KeywordsProps, KeywordsEmits>;
 
 /**
  * Declares a keywords at module scope — pure data, no runtime, no Vue. The

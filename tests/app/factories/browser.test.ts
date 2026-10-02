@@ -6,20 +6,14 @@ import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
 import { useBrowser } from "../../../app/factories/browser";
 import type { BrowserFetchResult } from "../../../app/types/data/browser";
-import {
-  fakeFileColumns,
-  fakeFiles,
-  fakeFolders,
-} from "#test/data/browser";
+import { fakeFileColumns, fakeFiles, fakeFolders } from "#test/data/browser";
 import type { FakeFile } from "#test/data/browser";
 
 const makeWiring = () => ({
-  fetch: vi.fn(
-    async (): Promise<BrowserFetchResult<FakeFile>> => ({
-      folders: fakeFolders,
-      files: fakeFiles,
-    }),
-  ),
+  fetch: vi.fn(async (): Promise<BrowserFetchResult<FakeFile>> => ({
+    folders: fakeFolders,
+    files: fakeFiles,
+  })),
 });
 
 const definition = { columns: fakeFileColumns, fileKey: "id" as const };

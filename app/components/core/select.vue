@@ -117,10 +117,7 @@ defineSlots<SelectSlots<T>>();
         <SelectContent class="f-select-content" v-bind="settings.content">
           <template v-for="option in options" :key="option.value">
             <slot name="item" v-bind="{ ...ctx, option }">
-              <SelectItem
-                class="f-select-item"
-                v-bind="settings.item(option)"
-              >
+              <SelectItem class="f-select-item" v-bind="settings.item(option)">
                 <slot name="itemText" v-bind="{ ...ctx, option }">
                   <SelectItemText
                     class="f-select-item-text"

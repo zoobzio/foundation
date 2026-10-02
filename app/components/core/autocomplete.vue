@@ -168,70 +168,67 @@ defineSlots<AutocompleteSlots<M>>();
         class="f-autocomplete-content"
         v-bind="settings.content"
       >
-      <div
-        v-for="(options, p) in panels"
-        :key="p"
-        class="f-group"
-      >
-        <Scroller v-bind="settings.scroller">
-          <template v-for="(option, i) in options" :key="option.value">
-            <slot
-              name="item"
-              v-bind="{ ...ctx, option, index: i, panel: p }"
-            >
-              <!-- plain buttons: outside the listbox collection, so keyboard navigation stays on the active panel -->
-              <button
-                v-if="p < trail.length"
-                type="button"
-                class="f-button"
-                :disabled="option.disabled"
-                :aria-current="option.active ? true : undefined"
-                @click="() => { if (!option.disabled) emit('select', option); }"
-              >
-                <slot
-                  name="itemIcon"
-                  v-bind="{ ...ctx, option, index: i, panel: p }"
-                />
-                <slot
-                  name="itemLabel"
-                  v-bind="{ ...ctx, option, index: i, panel: p }"
+        <div v-for="(options, p) in panels" :key="p" class="f-group">
+          <Scroller v-bind="settings.scroller">
+            <template v-for="(option, i) in options" :key="option.value">
+              <slot name="item" v-bind="{ ...ctx, option, index: i, panel: p }">
+                <!-- plain buttons: outside the listbox collection, so keyboard navigation stays on the active panel -->
+                <button
+                  v-if="p < trail.length"
+                  type="button"
+                  class="f-button"
+                  :disabled="option.disabled"
+                  :aria-current="option.active ? true : undefined"
+                  @click="
+                    () => {
+                      if (!option.disabled) emit('select', option);
+                    }
+                  "
                 >
-                  <span class="f-span">{{ option.label }}</span>
-                </slot>
-                <slot
-                  name="itemArrow"
-                  v-bind="{ ...ctx, option, index: i, panel: p }"
-                />
-              </button>
-              <AutocompleteItem
-                v-else
-                class="f-autocomplete-item"
-                v-bind="settings.item({ option, index: i, panel: p })"
-              >
-                <slot
-                  name="itemIcon"
-                  v-bind="{ ...ctx, option, index: i, panel: p }"
-                />
-                <slot
-                  name="itemLabel"
-                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                  <slot
+                    name="itemIcon"
+                    v-bind="{ ...ctx, option, index: i, panel: p }"
+                  />
+                  <slot
+                    name="itemLabel"
+                    v-bind="{ ...ctx, option, index: i, panel: p }"
+                  >
+                    <span class="f-span">{{ option.label }}</span>
+                  </slot>
+                  <slot
+                    name="itemArrow"
+                    v-bind="{ ...ctx, option, index: i, panel: p }"
+                  />
+                </button>
+                <AutocompleteItem
+                  v-else
+                  class="f-autocomplete-item"
+                  v-bind="settings.item({ option, index: i, panel: p })"
                 >
-                  <span class="f-span">{{ option.label }}</span>
-                </slot>
-                <slot
-                  name="itemArrow"
-                  v-bind="{ ...ctx, option, index: i, panel: p }"
-                />
-              </AutocompleteItem>
-            </slot>
-          </template>
-        </Scroller>
-      </div>
-      <slot name="empty" v-bind="ctx">
-        <div v-if="empty" class="f-group">
-          <span class="f-span">No matches</span>
+                  <slot
+                    name="itemIcon"
+                    v-bind="{ ...ctx, option, index: i, panel: p }"
+                  />
+                  <slot
+                    name="itemLabel"
+                    v-bind="{ ...ctx, option, index: i, panel: p }"
+                  >
+                    <span class="f-span">{{ option.label }}</span>
+                  </slot>
+                  <slot
+                    name="itemArrow"
+                    v-bind="{ ...ctx, option, index: i, panel: p }"
+                  />
+                </AutocompleteItem>
+              </slot>
+            </template>
+          </Scroller>
         </div>
-      </slot>
+        <slot name="empty" v-bind="ctx">
+          <div v-if="empty" class="f-group">
+            <span class="f-span">No matches</span>
+          </div>
+        </slot>
       </AutocompleteContent>
     </div>
   </AutocompleteRoot>

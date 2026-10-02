@@ -12,7 +12,10 @@ import type { ComponentPublicInstance, VNode } from "vue";
 export type TableColumnsPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
-  command: Passthrough<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
+  command: Passthrough<
+    CommandProps<CommandOption>,
+    CommandEmits<CommandOption>
+  >;
 };
 
 export type TableColumnsProps<T> = {

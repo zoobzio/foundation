@@ -104,7 +104,7 @@ defineSlots<BrowserFilesSlots<T>>();
               class="f-img"
               :src="String(row[col.key])"
               :alt="col.label"
-            >
+            />
             <span v-else class="f-span">
               {{ cell(row[col.key], col.type) }}
             </span>
