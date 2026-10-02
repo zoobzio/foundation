@@ -6,6 +6,7 @@ import type {
   SegmentedControlContext,
   SegmentedControlSlots,
 } from "../../types/core/segmented-control";
+import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToggleGroupRoot, ToggleGroupItem } from "reka-ui";
@@ -16,9 +17,9 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Option">
 const { modelValue, options, disabled, required, pt } =
-  defineProps<SegmentedControlProps>();
+  defineProps<SegmentedControlProps<T>>();
 
 const emit = defineEmits<SegmentedControlEmits>();
 
@@ -29,7 +30,7 @@ const $model = useModel(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const settings = usePassthrough<SegmentedControlPassthrough>(() => ({
+const settings = usePassthrough<SegmentedControlPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {
@@ -50,7 +51,7 @@ const settings = usePassthrough<SegmentedControlPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<SegmentedControlContext>("segmented-control", () => ({
+const ctx = useContext<SegmentedControlContext<T>>("segmented-control", () => ({
   options,
   disabled,
   required,
@@ -60,7 +61,7 @@ const ctx = useContext<SegmentedControlContext>("segmented-control", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<SegmentedControlSlots>();
+defineSlots<SegmentedControlSlots<T>>();
 </script>
 
 <template>

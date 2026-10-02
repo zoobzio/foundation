@@ -6,6 +6,7 @@ import type {
   TabsContext,
   TabsSlots,
 } from "../../types/core/tabs";
+import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";
@@ -16,8 +17,8 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts">
-const { modelValue, tabs, pt } = defineProps<TabsProps>();
+<script setup lang="ts" generic="T extends Option">
+const { modelValue, tabs, pt } = defineProps<TabsProps<T>>();
 
 const emit = defineEmits<TabsEmits>();
 
@@ -28,7 +29,7 @@ const $model = useModel(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const settings = usePassthrough<TabsPassthrough>(() => ({
+const settings = usePassthrough<TabsPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {
@@ -48,7 +49,7 @@ const settings = usePassthrough<TabsPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TabsContext>("tabs", () => ({
+const ctx = useContext<TabsContext<T>>("tabs", () => ({
   tabs,
   modelValue: $model,
   el: el.value,
@@ -56,7 +57,7 @@ const ctx = useContext<TabsContext>("tabs", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<TabsSlots>();
+defineSlots<TabsSlots<T>>();
 </script>
 
 <template>

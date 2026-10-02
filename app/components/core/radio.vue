@@ -6,6 +6,7 @@ import type {
   RadioContext,
   RadioSlots,
 } from "../../types/core/radio";
+import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import { RadioGroupRoot, RadioGroupItem, RadioGroupIndicator } from "reka-ui";
@@ -16,7 +17,7 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Option">
 const {
   modelValue,
   options,
@@ -25,7 +26,7 @@ const {
   name,
   orientation = "vertical",
   pt,
-} = defineProps<RadioProps>();
+} = defineProps<RadioProps<T>>();
 
 const emit = defineEmits<RadioEmits>();
 
@@ -36,7 +37,7 @@ const $model = useModel(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const settings = usePassthrough<RadioPassthrough>(() => ({
+const settings = usePassthrough<RadioPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {
@@ -57,7 +58,7 @@ const settings = usePassthrough<RadioPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<RadioContext>("radio", () => ({
+const ctx = useContext<RadioContext<T>>("radio", () => ({
   options,
   disabled,
   required,
@@ -69,7 +70,7 @@ const ctx = useContext<RadioContext>("radio", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<RadioSlots>();
+defineSlots<RadioSlots<T>>();
 </script>
 
 <template>

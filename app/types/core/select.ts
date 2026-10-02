@@ -11,15 +11,15 @@ import type {
   SelectItemTextProps,
 } from "reka-ui";
 
-export type SelectPassthrough = {
+export type SelectPassthrough<T extends Option = Option> = {
   root: Passthrough<SelectRootProps, SelectRootEmits>;
   trigger: Passthrough<SelectTriggerProps>;
   content: Passthrough<SelectContentProps, SelectContentEmits>;
-  item: PassthroughIter<Option, SelectItemProps>;
+  item: PassthroughIter<T, SelectItemProps>;
   itemText: Passthrough<SelectItemTextProps>;
 };
 
-export type SelectProps<T extends Option> = {
+export type SelectProps<T extends Option = Option> = {
   modelValue?: NoInfer<T>;
   open?: boolean;
   options: T[];
@@ -27,15 +27,15 @@ export type SelectProps<T extends Option> = {
   disabled?: boolean;
   required?: boolean;
   name?: string;
-  pt?: PT<SelectPassthrough>;
+  pt?: PT<SelectPassthrough<T>>;
 };
 
-export type SelectEmits<T extends Option> = {
+export type SelectEmits<T extends Option = Option> = {
   "update:modelValue": [value: T];
   "update:open": [value: boolean];
 };
 
-export type SelectContext<T extends Option> = {
+export type SelectContext<T extends Option = Option> = {
   options: T[];
   placeholder: string;
   disabled?: boolean;
@@ -45,10 +45,10 @@ export type SelectContext<T extends Option> = {
   display: string;
   open: Ref<boolean | undefined>;
   el: ComponentPublicInstance | null;
-  settings: SelectPassthrough;
+  settings: SelectPassthrough<T>;
 };
 
-export type SelectSlots<T extends Option> = {
+export type SelectSlots<T extends Option = Option> = {
   trigger?: (props: SelectContext<T>) => VNode[];
   triggerLabel?: (props: SelectContext<T>) => VNode[];
   triggerIcon?: (props: SelectContext<T>) => VNode[];

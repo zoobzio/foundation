@@ -57,7 +57,7 @@ const { display } = useSelection($model, () => ({
   placeholder,
 }));
 
-const settings = usePassthrough<SelectPassthrough>(() => ({
+const settings = usePassthrough<SelectPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {

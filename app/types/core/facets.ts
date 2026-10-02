@@ -1,4 +1,4 @@
-import type { CommandOption, CommandProps, CommandEmits } from "./command";
+import type { CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverProps, PopoverEmits } from "./popover";
 import type { Passthrough, PT } from "../passthrough";
@@ -14,27 +14,24 @@ export type FacetItem = {
   count: number;
 };
 
-export type FacetGroup = {
+export type FacetGroup<T extends FacetItem = FacetItem> = {
   key: string;
   label: string;
-  items: FacetItem[];
+  items: T[];
 };
 
-export type FacetsPassthrough = {
+export type FacetsPassthrough<T extends FacetItem = FacetItem> = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
-  command: Passthrough<
-    CommandProps<CommandOption>,
-    CommandEmits<CommandOption>
-  >;
+  command: Passthrough<CommandProps<T>, CommandEmits<T>>;
 };
 
-export type FacetsProps = {
-  groups: FacetGroup[];
+export type FacetsProps<T extends FacetItem = FacetItem> = {
+  groups: FacetGroup<T>[];
   selected?: Set<string>;
   open?: boolean;
   placeholder?: string;
-  pt?: PT<FacetsPassthrough>;
+  pt?: PT<FacetsPassthrough<T>>;
 };
 
 export type FacetsEmits = {
@@ -42,17 +39,17 @@ export type FacetsEmits = {
   "update:open": [value: boolean];
 };
 
-export type FacetsContext = {
-  groups: FacetGroup[];
+export type FacetsContext<T extends FacetItem = FacetItem> = {
+  groups: FacetGroup<T>[];
   selected?: Set<string>;
   open: Ref<boolean | undefined>;
   activeCount: number;
   el: ComponentPublicInstance | null;
-  settings: FacetsPassthrough;
+  settings: FacetsPassthrough<T>;
 };
 
-export type FacetsSlots = {
-  trigger?: (props: FacetsContext) => VNode[];
-  triggerIcon?: (props: FacetsContext) => VNode[];
-  command?: (props: FacetsContext) => VNode[];
+export type FacetsSlots<T extends FacetItem = FacetItem> = {
+  trigger?: (props: FacetsContext<T>) => VNode[];
+  triggerIcon?: (props: FacetsContext<T>) => VNode[];
+  command?: (props: FacetsContext<T>) => VNode[];
 };

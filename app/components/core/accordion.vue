@@ -6,6 +6,7 @@ import type {
   AccordionContext,
   AccordionSlots,
 } from "../../types/core/accordion";
+import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import {
@@ -22,7 +23,7 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Option">
 const {
   items,
   modelValue,
@@ -30,7 +31,7 @@ const {
   collapsible = true,
   defaultValue,
   pt,
-} = defineProps<AccordionProps>();
+} = defineProps<AccordionProps<T>>();
 
 const emit = defineEmits<AccordionEmits>();
 
@@ -42,7 +43,7 @@ const $model = useModel<string | string[] | undefined>(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const settings = usePassthrough<AccordionPassthrough>(() => ({
+const settings = usePassthrough<AccordionPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {
@@ -61,7 +62,7 @@ const settings = usePassthrough<AccordionPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<AccordionContext>("accordion", () => ({
+const ctx = useContext<AccordionContext<T>>("accordion", () => ({
   items,
   type,
   collapsible,
@@ -72,7 +73,7 @@ const ctx = useContext<AccordionContext>("accordion", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<AccordionSlots>();
+defineSlots<AccordionSlots<T>>();
 </script>
 
 <template>
