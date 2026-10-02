@@ -10,12 +10,20 @@ import type {
   DropdownMenuItemEmits,
   DropdownMenuSeparatorProps,
 } from "reka-ui";
+import type { LinkTarget } from "./common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * A menu entry. `link` makes it a real hyperlink rendered through NuxtLink —
+ * the item renders as the anchor itself, so pointer and keyboard activation
+ * both navigate natively; `select` still fires and the menu still closes.
+ * Without it the item is a plain action and only the emit fires.
+ */
 export type MenuItem = {
   label: string;
   disabled?: boolean;
+  link?: LinkTarget;
 };
 
 export type MenuGroup<T extends MenuItem = MenuItem> = {
