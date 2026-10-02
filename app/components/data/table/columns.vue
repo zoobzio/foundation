@@ -51,10 +51,11 @@ const settings = usePassthrough<TableColumnsPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<TableColumnsContext<T>>(
-  "data-table-columns",
-  () => ({ table, el: el.value, settings: settings.value }),
-);
+const ctx = useContext<TableColumnsContext<T>>("data-table-columns", () => ({
+  table,
+  el: el.value,
+  settings: settings.value,
+}));
 
 defineExpose({ ctx });
 defineSlots<TableColumnsSlots<T>>();

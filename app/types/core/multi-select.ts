@@ -1,13 +1,6 @@
-import type {
-  CheckboxEmits,
-  CheckboxProps,
-} from "./checkbox";
+import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { Option } from "./common";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
   SelectRootProps,
@@ -37,11 +30,10 @@ export type MultiSelectProps<T extends Option> = {
   pt?: PT<MultiSelectPassthrough<T>>;
 };
 
-export type MultiSelectEmits<T extends Option> =
-  {
-    "update:modelValue": [value: T[] | undefined];
-    "update:open": [value: boolean];
-  };
+export type MultiSelectEmits<T extends Option> = {
+  "update:modelValue": [value: T[] | undefined];
+  "update:open": [value: boolean];
+};
 
 export type MultiSelectContext<T extends Option> = {
   items: T[];

@@ -39,13 +39,13 @@ Type aliases, **unprefixed** — the module path is the namespace. A fixed
 progression, generic over the consumer's data (`Form<T>` over the payload,
 `Deck<T>` over the row):
 
-| Type      | Meaning                                                                             |
-| --------- | ----------------------------------------------------------------------------------- |
-| `Config`  | consumer-declared description: static config + **synchronous** resolvers            |
-| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns         |
+| Type      | Meaning                                                                                                                          |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `Config`  | consumer-declared description: static config + **synchronous** resolvers                                                         |
+| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns                                                      |
 | `Service` | the machine contract: **unwrapped** state + deriveds + full method surface — the widget's `service` prop; actions receive it too |
-| `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`          |
-| `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`            |
+| `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`                                                       |
+| `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`                                                         |
 
 Supporting types (`Field`, `Item`, `Query`, …) live in the same file;
 component type files import them rather than redefining them.
@@ -159,10 +159,11 @@ site.
 Script skeleton, in order:
 
 ```ts
-const { service, pt } = defineProps<FormWidgetProps<T>>();   // generic="T"
+const { service, pt } = defineProps<FormWidgetProps<T>>(); // generic="T"
 const emit = defineEmits<FormWidgetEmits<T>>();
 
-useHooks<Events<T>>(service.id, {                         // hook → emit, 1:1
+useHooks<Events<T>>(service.id, {
+  // hook → emit, 1:1
   "form:submitted": (event) => emit("submitted", event),
   /* … every event … */
 });
@@ -182,7 +183,9 @@ const settings = usePassthrough<FormWidgetPassthrough>(() => ({
 }));
 
 const ctx = useContext<FormWidgetContext<T>>("data-form", () => ({
-  form: service, el: el.value, settings: settings.value,
+  form: service,
+  el: el.value,
+  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -222,10 +225,10 @@ The repeated unit is its **own sub-component** with its own type file,
 composable, ctx, and forwarded slots — never inlined in the widget. Two
 mechanisms, chosen by what keys the children:
 
-| Children keyed by                             | Mechanism                        | Shape                                                                                                                    |
-| --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| static config (form fields, table columns)    | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
-| runtime data (chart controls, table rows)     | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
+| Children keyed by                          | Mechanism                        | Shape                                                                                                                    |
+| ------------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| static config (form fields, table columns) | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
+| runtime data (chart controls, table rows)  | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
 
 For iterated children, define an **anchor type** — the slice of widget
 state the child renders (chart's `ChartControlAnchor`) — and reuse it as
@@ -399,21 +402,21 @@ Build order for a new feature in this tier:
 9. **Feature composables** — everything in the widget script that isn't
    wiring goes here.
 10. **Widgets** — the skeleton above; `f-data-*` classes; slots forwarded.
-11. **Verify** — `npx nuxt typecheck` and `npx eslint` on every touched
+11. **Verify** — `npx nuxt typecheck` and `npx oxlint` on every touched
     path.
 
 ## Source map
 
-| Concern             | File                                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Passthrough system  | [core README](../core/README.md#the-passthrough-system) — identical merge semantics                          |
-| Widget contract     | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `WidgetSettings` · `AnyWidget` · `Widgets`)           |
-| Refs view           | [`composables/refs.ts`](../../composables/refs.ts) (`useServiceRefs`) · [`types/refs.ts`](../../types/refs.ts) |
-| Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                  |
-| Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                     |
-| Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                  |
-| Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                                             |
-| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/deck.ts`](../../services/deck.ts)                  |
-| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                            |
-| Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)         |
+| Concern             | File                                                                                                                                                                                                                    |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Passthrough system  | [core README](../core/README.md#the-passthrough-system) — identical merge semantics                                                                                                                                     |
+| Widget contract     | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `WidgetSettings` · `AnyWidget` · `Widgets`)                                                                                                                      |
+| Refs view           | [`composables/refs.ts`](../../composables/refs.ts) (`useServiceRefs`) · [`types/refs.ts`](../../types/refs.ts)                                                                                                          |
+| Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                                                                                                                             |
+| Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                                                                                                                                |
+| Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                                                                                                                             |
+| Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                                                                                                                                                        |
+| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/deck.ts`](../../services/deck.ts)                                                                                                                             |
+| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                       |
+| Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                                    |
 | Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |

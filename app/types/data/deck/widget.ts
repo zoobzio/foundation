@@ -1,14 +1,8 @@
 import type { FabProps, FabEmits } from "../../core/fab";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service, Events } from "../deck";
-import type {
-  DeckFeedPassthrough,
-  DeckFeedSlots,
-} from "./feed";
-import type {
-  DeckToolbarPassthrough,
-  DeckToolbarSlots,
-} from "./toolbar";
+import type { DeckFeedPassthrough, DeckFeedSlots } from "./feed";
+import type { DeckToolbarPassthrough, DeckToolbarSlots } from "./toolbar";
 import type { VNode } from "vue";
 
 export type DeckWidgetPassthrough = {

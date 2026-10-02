@@ -7,11 +7,7 @@ import type {
   AccordionContentProps,
 } from "reka-ui";
 import type { Option } from "./common";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 export type AccordionPassthrough = {
@@ -47,14 +43,22 @@ export type AccordionContext = {
 
 export type AccordionSlots = {
   item?: (props: AccordionContext & { item: Option; open: boolean }) => VNode[];
-  header?: (props: AccordionContext & { item: Option; open: boolean }) => VNode[];
-  trigger?: (props: AccordionContext & { item: Option; open: boolean }) => VNode[];
+  header?: (
+    props: AccordionContext & { item: Option; open: boolean },
+  ) => VNode[];
+  trigger?: (
+    props: AccordionContext & { item: Option; open: boolean },
+  ) => VNode[];
   triggerContent?: (
     props: AccordionContext & { item: Option; open: boolean },
   ) => VNode[];
   triggerIcon?: (
     props: AccordionContext & { item: Option; open: boolean },
   ) => VNode[];
-  chevron?: (props: AccordionContext & { item: Option; open: boolean }) => VNode[];
-  content?: (props: AccordionContext & { item: Option; open: boolean }) => VNode[];
+  chevron?: (
+    props: AccordionContext & { item: Option; open: boolean },
+  ) => VNode[];
+  content?: (
+    props: AccordionContext & { item: Option; open: boolean },
+  ) => VNode[];
 };

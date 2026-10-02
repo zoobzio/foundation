@@ -5,10 +5,7 @@ import type { Definition } from "../types/definition";
  * A accordion instance as data: props plus emit listeners — the object a
  * template `v-bind`s and an adapter captures as settings.
  */
-export type AccordionDefinition = Definition<
-  AccordionProps,
-  AccordionEmits
->;
+export type AccordionDefinition = Definition<AccordionProps, AccordionEmits>;
 
 /**
  * Declares a accordion at module scope — pure data, no runtime, no Vue. The

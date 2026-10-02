@@ -58,9 +58,7 @@ const treeItems = [
 ];
 
 const branchKeys = (nodes: TreeNode[]): string[] =>
-  nodes.flatMap((n) =>
-    n.children ? [n.key, ...branchKeys(n.children)] : [],
-  );
+  nodes.flatMap((n) => (n.children ? [n.key, ...branchKeys(n.children)] : []));
 
 const selectedNode = ref<TreeNode>();
 const expanded = ref<string[]>(branchKeys(treeItems));
@@ -83,8 +81,8 @@ const onTreeSelect = (node: TreeNode) => {
     <h1 class="page-title">Assets</h1>
     <p class="page-lead">
       A file browser over nested upload folders: the tree mirrors the folder
-      hierarchy, the browser shows folders alphabetically above a sortable
-      file table, and the breadcrumb walks back up the trail.
+      hierarchy, the browser shows folders alphabetically above a sortable file
+      table, and the breadcrumb walks back up the trail.
     </p>
     <div class="assets-layout">
       <aside class="assets-tree">

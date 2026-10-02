@@ -28,7 +28,10 @@ const FixtureBadge = defineComponent({
     return () =>
       h(
         "output",
-        { class: "fixture-badge", onClick: () => emit("activate", props.label) },
+        {
+          class: "fixture-badge",
+          onClick: () => emit("activate", props.label),
+        },
         props.label,
       );
   },

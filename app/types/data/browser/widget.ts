@@ -9,10 +9,7 @@ import type { Passthrough, PT } from "../../passthrough";
 import type { Events, Service } from "../browser";
 import type { BrowserBulkActionsSlots } from "./bulk-actions";
 import type { BrowserFilesPassthrough, BrowserFilesSlots } from "./files";
-import type {
-  BrowserFoldersPassthrough,
-  BrowserFoldersSlots,
-} from "./folders";
+import type { BrowserFoldersPassthrough, BrowserFoldersSlots } from "./folders";
 import type { VNode } from "vue";
 
 export type BrowserWidgetPassthrough = {

@@ -1,7 +1,7 @@
 export type Passthrough<Props, Emits = {}> = Props & {
-  [K in keyof Emits as `on${Capitalize<K & string>}`]?: Emits[K] extends unknown[]
-    ? (...args: Emits[K]) => void
-    : never;
+  [
+    K in keyof Emits as `on${Capitalize<K & string>}`
+  ]?: Emits[K] extends unknown[] ? (...args: Emits[K]) => void : never;
 };
 
 export type PassthroughIter<T, Props, Emits = {}> = (

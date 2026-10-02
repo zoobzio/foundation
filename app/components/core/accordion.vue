@@ -86,11 +86,17 @@ defineSlots<AccordionSlots>();
         <slot name="item" v-bind="{ ...ctx, item, open }">
           <AccordionHeader class="f-accordion-header" v-bind="settings.header">
             <slot name="header" v-bind="{ ...ctx, item, open }">
-              <AccordionTrigger class="f-accordion-trigger" v-bind="settings.trigger">
+              <AccordionTrigger
+                class="f-accordion-trigger"
+                v-bind="settings.trigger"
+              >
                 <slot name="trigger" v-bind="{ ...ctx, item, open }">
                   <slot name="triggerContent" v-bind="{ ...ctx, item, open }">
                     <div class="f-group">
-                      <slot name="triggerIcon" v-bind="{ ...ctx, item, open }" />
+                      <slot
+                        name="triggerIcon"
+                        v-bind="{ ...ctx, item, open }"
+                      />
                       {{ item.label }}
                     </div>
                   </slot>
@@ -99,7 +105,10 @@ defineSlots<AccordionSlots>();
               </AccordionTrigger>
             </slot>
           </AccordionHeader>
-          <AccordionContent class="f-accordion-content" v-bind="settings.content">
+          <AccordionContent
+            class="f-accordion-content"
+            v-bind="settings.content"
+          >
             <slot name="content" v-bind="{ ...ctx, item, open }" />
           </AccordionContent>
         </slot>

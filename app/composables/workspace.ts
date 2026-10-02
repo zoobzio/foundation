@@ -1,8 +1,5 @@
 import type { ServicesOf, Wiring } from "../types/definition";
-import type {
-  Workspace,
-  WorkspaceDefinition,
-} from "../types/system/workspace";
+import type { Workspace, WorkspaceDefinition } from "../types/system/workspace";
 import type { AnyWidget, Widgets } from "../types/widget";
 
 import { rekey } from "objectively";

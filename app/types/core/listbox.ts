@@ -1,9 +1,5 @@
 import type { Option } from "./common";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
   ListboxRootProps,

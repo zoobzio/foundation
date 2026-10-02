@@ -1,4 +1,8 @@
-import type { DirectoryEmits, DirectoryItem, DirectoryProps } from "../types/core/directory";
+import type {
+  DirectoryEmits,
+  DirectoryItem,
+  DirectoryProps,
+} from "../types/core/directory";
 import type { Definition } from "../types/definition";
 
 /**

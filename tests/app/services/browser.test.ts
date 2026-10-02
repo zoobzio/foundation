@@ -36,12 +36,10 @@ const makeState = (): State<FakeFile> => ({
 });
 
 const makeActions = (): Actions<FakeFile> => ({
-  fetch: vi.fn(
-    async (): Promise<BrowserFetchResult<FakeFile>> => ({
-      folders: fakeFolders,
-      files: fakeFiles,
-    }),
-  ),
+  fetch: vi.fn(async (): Promise<BrowserFetchResult<FakeFile>> => ({
+    folders: fakeFolders,
+    files: fakeFiles,
+  })),
 });
 
 const fixture = <V>(value: V | undefined): V => {

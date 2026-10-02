@@ -1,4 +1,4 @@
-.PHONY: help install install-hooks dev dev-example lint lint-fix typecheck test test-watch coverage check ci clean
+.PHONY: help install install-hooks dev dev-example lint lint-fix format format-check typecheck test test-watch coverage check ci clean
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -15,11 +15,17 @@ dev: ## Start the Nuxt dev server
 dev-example: ## Start the example app dev server
 	pnpm dev:example
 
-lint: ## Run ESLint
+lint: ## Run oxlint
 	pnpm lint
 
-lint-fix: ## Run ESLint with auto-fix
+lint-fix: ## Run oxlint with auto-fix
 	pnpm lint:fix
+
+format: ## Format code with oxfmt
+	pnpm format
+
+format-check: ## Check formatting with oxfmt
+	pnpm format:check
 
 typecheck: ## Run type checking
 	pnpm typecheck
@@ -33,7 +39,7 @@ test-watch: ## Run tests in watch mode
 coverage: ## Run tests with coverage report
 	pnpm test:coverage
 
-check: lint typecheck test ## Run lint, typecheck, and tests
+check: lint format-check typecheck test ## Run lint, format check, typecheck, and tests
 
 ci: clean install check coverage ## Full CI simulation
 

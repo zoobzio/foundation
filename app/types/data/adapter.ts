@@ -30,12 +30,15 @@ export type Wrapped<P> =
  * render plumbing, not component emits.
  */
 export type EmitName<P> = keyof {
-  [K in keyof P as K extends `onVnode${string}`
-    ? never
-    : K extends `on${infer N}`
-      ? Uncapitalize<N>
-      : never]: P[K];
-} & string;
+  [
+    K in keyof P as K extends `onVnode${string}`
+      ? never
+      : K extends `on${infer N}`
+        ? Uncapitalize<N>
+        : never
+  ]: P[K];
+} &
+  string;
 
 type EmitArgs<P, N extends string> = `on${Capitalize<N>}` extends infer K
   ? K extends keyof P

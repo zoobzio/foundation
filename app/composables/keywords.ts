@@ -113,7 +113,11 @@ export const useKeywords = (model: Ref<string | undefined>) => {
       includeInput.value = "";
     }
     const last = include.value.at(-1);
-    if (event.key === "Backspace" && !includeInput.value && last !== undefined) {
+    if (
+      event.key === "Backspace" &&
+      !includeInput.value &&
+      last !== undefined
+    ) {
       removeTag(last, "include");
     }
   };
@@ -126,7 +130,11 @@ export const useKeywords = (model: Ref<string | undefined>) => {
       excludeInput.value = "";
     }
     const last = exclude.value.at(-1);
-    if (event.key === "Backspace" && !excludeInput.value && last !== undefined) {
+    if (
+      event.key === "Backspace" &&
+      !excludeInput.value &&
+      last !== undefined
+    ) {
       removeTag(last, "exclude");
     }
   };

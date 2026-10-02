@@ -77,7 +77,10 @@ defineSlots<RadioSlots>();
     <template v-for="option in options" :key="option.value">
       <slot name="option" v-bind="{ ...ctx, option }">
         <label class="f-label">
-          <RadioGroupItem class="f-radio-group-item" v-bind="settings.item(option)">
+          <RadioGroupItem
+            class="f-radio-group-item"
+            v-bind="settings.item(option)"
+          >
             <slot name="indicator" v-bind="{ ...ctx, option }">
               <RadioGroupIndicator
                 class="f-radio-group-indicator"

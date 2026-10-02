@@ -1,21 +1,9 @@
-import type {
-  CheckboxProps,
-  CheckboxEmits,
-} from "../core/checkbox";
-import type {
-  DatePickerProps,
-  DatePickerEmits,
-} from "../core/date-picker";
-import type {
-  MultiSelectProps,
-  MultiSelectEmits,
-} from "../core/multi-select";
+import type { CheckboxProps, CheckboxEmits } from "../core/checkbox";
+import type { DatePickerProps, DatePickerEmits } from "../core/date-picker";
+import type { MultiSelectProps, MultiSelectEmits } from "../core/multi-select";
 import type { RadioProps, RadioEmits } from "../core/radio";
 import type { SelectProps, SelectEmits } from "../core/select";
-import type {
-  TagsInputProps,
-  TagsInputEmits,
-} from "../core/tags-input";
+import type { TagsInputProps, TagsInputEmits } from "../core/tags-input";
 import type { Option } from "../core/common";
 import type { Passthrough } from "../passthrough";
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "vue";

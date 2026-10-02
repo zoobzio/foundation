@@ -13,7 +13,8 @@ declare module "#app" {
     $logger: (name?: string) => Logger;
   }
   interface RuntimeNuxtHooks
-    extends FormEvents<unknown>,
+    extends
+      FormEvents<unknown>,
       AdapterEvents,
       BrowserEvents,
       ChartEvents,

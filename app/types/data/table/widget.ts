@@ -3,28 +3,13 @@ import type {
   AutocompleteProps,
 } from "../../core/autocomplete";
 import type { FabProps, FabEmits } from "../../core/fab";
-import type {
-  PaginationEmits,
-  PaginationProps,
-} from "../../core/pagination";
-import type {
-  ScrollerEmits,
-  ScrollerProps,
-} from "../../core/scroller";
+import type { PaginationEmits, PaginationProps } from "../../core/pagination";
+import type { ScrollerEmits, ScrollerProps } from "../../core/scroller";
 import type { Passthrough, PT } from "../../passthrough";
 import type { DataTableColumn, Service, Events } from "../table";
-import type {
-  TableHeadPassthrough,
-  TableHeadSlots,
-} from "./head";
-import type {
-  TableBodyPassthrough,
-  TableBodySlots,
-} from "./body";
-import type {
-  TableColumnsPassthrough,
-  TableColumnsSlots,
-} from "./columns";
+import type { TableHeadPassthrough, TableHeadSlots } from "./head";
+import type { TableBodyPassthrough, TableBodySlots } from "./body";
+import type { TableColumnsPassthrough, TableColumnsSlots } from "./columns";
 import type { TableBulkActionsSlots } from "./bulk-actions";
 import type { VNode } from "vue";
 

@@ -1,7 +1,4 @@
-import type {
-  ScrollerEmits,
-  ScrollerProps,
-} from "../../core/scroller";
+import type { ScrollerEmits, ScrollerProps } from "../../core/scroller";
 import type { Passthrough, PT } from "../../passthrough";
 import type { Service } from "../deck";
 import type { ComponentPublicInstance, VNode } from "vue";

@@ -7,10 +7,7 @@ import type {
   CommissionListResult,
   CommissionUpdate,
 } from "#shared/commissions";
-import {
-  COMMISSION_MATERIALS,
-  COMMISSION_STATUSES,
-} from "#shared/commissions";
+import { COMMISSION_MATERIALS, COMMISSION_STATUSES } from "#shared/commissions";
 import { useDb } from "~~/server/utils/db";
 
 // Rows come out of node:sqlite as untyped records; parse them into the
@@ -30,22 +27,20 @@ const rowSchema = z
     created_at: z.string(),
     updated_at: z.string(),
   })
-  .transform(
-    (row): Commission => ({
-      id: row.id,
-      title: row.title,
-      client: row.client,
-      description: row.description,
-      status: row.status,
-      material: row.material,
-      rush: row.rush !== 0,
-      price: row.price,
-      dueDate: row.due_date,
-      link: row.link,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }),
-  );
+  .transform((row): Commission => ({
+    id: row.id,
+    title: row.title,
+    client: row.client,
+    description: row.description,
+    status: row.status,
+    material: row.material,
+    rush: row.rush !== 0,
+    price: row.price,
+    dueDate: row.due_date,
+    link: row.link,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
 
 const NUMERIC_OP: Record<string, string> = {
   over: ">",
@@ -115,7 +110,8 @@ export const listCommissions = (
     params.push(like, like, like);
   }
 
-  const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const where =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
   const countRow = db
     .prepare(`SELECT COUNT(*) AS count FROM commissions ${where}`)
@@ -230,10 +226,9 @@ export const updateCommission = (
   params.push(new Date().toISOString());
 
   const db = useDb();
-  db.prepare(`UPDATE commissions SET ${assignments.join(", ")} WHERE id = ?`).run(
-    ...params,
-    id,
-  );
+  db.prepare(
+    `UPDATE commissions SET ${assignments.join(", ")} WHERE id = ?`,
+  ).run(...params, id);
 
   return getCommission(id);
 };

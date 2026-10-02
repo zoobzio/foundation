@@ -5,10 +5,7 @@ import type { BrowserFolder, Service } from "../types/data/browser";
 import { computed } from "#imports";
 import { useServiceRefs } from "./refs";
 
-import {
-  BROWSER_ROOT_KEY,
-  BROWSER_ROOT_LABEL,
-} from "../constants/browser";
+import { BROWSER_ROOT_KEY, BROWSER_ROOT_LABEL } from "../constants/browser";
 
 /**
  * The view surface of the browser feature, shared by every browser

@@ -63,11 +63,19 @@ defineSlots<WorkspaceSlots<R>>();
         class="f-group f-system-workspace-slot"
         :style="slotStyle(c.slot)"
       >
-        <slot :name="`slot:${c.id}`" v-bind="{ ...ctx, id: c.id, slot: c.slot }">
+        <slot
+          :name="`slot:${c.id}`"
+          v-bind="{ ...ctx, id: c.id, slot: c.slot }"
+        >
           <template v-if="c.widget">
             <slot
               :name="`widget:${c.id}`"
-              v-bind="{ ...ctx, id: c.id, slot: c.slot, service: c.widget.service }"
+              v-bind="{
+                ...ctx,
+                id: c.id,
+                slot: c.slot,
+                service: c.widget.service,
+              }"
             >
               <component
                 :is="c.widget.component"

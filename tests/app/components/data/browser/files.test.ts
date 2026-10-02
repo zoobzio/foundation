@@ -8,9 +8,7 @@ import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import Core from "../../../../../app/components/data/browser/files.vue";
-import type {
-  BrowserFilesProps,
-} from "../../../../../app/types/data/browser/files";
+import type { BrowserFilesProps } from "../../../../../app/types/data/browser/files";
 import { createMockBrowser } from "#test/mocks/browser";
 import type { FakeFile } from "#test/data/browser";
 
@@ -23,8 +21,7 @@ const mountFiles = (
   const wrapper = mount(
     defineComponent({
       setup(_, { slots: forwarded }) {
-        return () =>
-          h("table", h(Files, { browser: mock.service }, forwarded));
+        return () => h("table", h(Files, { browser: mock.service }, forwarded));
       },
     }),
     { slots },
@@ -98,12 +95,12 @@ describe("data browser files", () => {
         actions: [{ label: "Download", action: vi.fn() }],
       }),
     );
-    expect(
-      acting.wrapper.find("td.f-data-browser-actions").exists(),
-    ).toBe(true);
-    expect(
-      acting.wrapper.find('button[aria-label="Actions"]').text(),
-    ).toBe("Actions");
+    expect(acting.wrapper.find("td.f-data-browser-actions").exists()).toBe(
+      true,
+    );
+    expect(acting.wrapper.find('button[aria-label="Actions"]').text()).toBe(
+      "Actions",
+    );
   });
 
   it("keeps the trailing cell for alignment when only folder actions exist", () => {

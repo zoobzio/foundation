@@ -1,7 +1,4 @@
-import type {
-  CheckboxEmits,
-  CheckboxProps,
-} from "../../core/checkbox";
+import type { CheckboxEmits, CheckboxProps } from "../../core/checkbox";
 import type { Passthrough, PT } from "../../passthrough";
 import type { DataTableColumn, Service } from "../table";
 import type { VNode } from "vue";

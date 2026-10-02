@@ -127,12 +127,13 @@ defineSlots<KeywordsSlots>();
           <slot name="include" v-bind="ctx">
             <div class="f-group f-keywords-section">
               <slot name="includeLabel" v-bind="ctx">
-                <div class="f-caption f-keywords-label">
-                  Include
-                </div>
+                <div class="f-caption f-keywords-label">Include</div>
               </slot>
               <slot name="includeInput" v-bind="ctx">
-                <TagsInput v-bind="settings.includeInput" class="f-keywords-tags">
+                <TagsInput
+                  v-bind="settings.includeInput"
+                  class="f-keywords-tags"
+                >
                   <template #input>
                     <input
                       :value="includeInput"
@@ -140,7 +141,7 @@ defineSlots<KeywordsSlots>();
                       class="f-tags-input-input"
                       @input="onIncludeInput"
                       @keydown="onIncludeKeydown"
-                    >
+                    />
                   </template>
                 </TagsInput>
               </slot>
@@ -149,12 +150,13 @@ defineSlots<KeywordsSlots>();
           <slot name="exclude" v-bind="ctx">
             <div class="f-group f-keywords-section">
               <slot name="excludeLabel" v-bind="ctx">
-                <div class="f-caption f-keywords-label">
-                  Exclude
-                </div>
+                <div class="f-caption f-keywords-label">Exclude</div>
               </slot>
               <slot name="excludeInput" v-bind="ctx">
-                <TagsInput v-bind="settings.excludeInput" class="f-keywords-tags">
+                <TagsInput
+                  v-bind="settings.excludeInput"
+                  class="f-keywords-tags"
+                >
                   <template #input>
                     <input
                       :value="excludeInput"
@@ -162,7 +164,7 @@ defineSlots<KeywordsSlots>();
                       class="f-tags-input-input"
                       @input="onExcludeInput"
                       @keydown="onExcludeKeydown"
-                    >
+                    />
                   </template>
                 </TagsInput>
               </slot>
@@ -171,9 +173,7 @@ defineSlots<KeywordsSlots>();
           <slot name="match" v-bind="ctx">
             <div class="f-group f-keywords-match">
               <slot name="matchLabel" v-bind="ctx">
-                <div class="f-caption f-keywords-label">
-                  Match
-                </div>
+                <div class="f-caption f-keywords-label">Match</div>
               </slot>
               <slot name="matchControl" v-bind="ctx">
                 <SegmentedControl v-bind="settings.matchControl" />

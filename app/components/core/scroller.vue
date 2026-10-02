@@ -80,7 +80,10 @@ defineSlots<ScrollerSlots>();
         v-bind="{ ...settings.scrollbar, orientation: 'vertical' }"
       >
         <slot name="thumb" v-bind="ctx">
-          <ScrollAreaThumb class="f-scroll-area-thumb" v-bind="settings.thumb" />
+          <ScrollAreaThumb
+            class="f-scroll-area-thumb"
+            v-bind="settings.thumb"
+          />
         </slot>
       </ScrollAreaScrollbar>
     </slot>
@@ -92,7 +95,10 @@ defineSlots<ScrollerSlots>();
         v-bind="{ ...settings.scrollbar, orientation: 'horizontal' }"
       >
         <slot name="thumb" v-bind="ctx">
-          <ScrollAreaThumb class="f-scroll-area-thumb" v-bind="settings.thumb" />
+          <ScrollAreaThumb
+            class="f-scroll-area-thumb"
+            v-bind="settings.thumb"
+          />
         </slot>
       </ScrollAreaScrollbar>
     </slot>
@@ -106,7 +112,12 @@ defineSlots<ScrollerSlots>();
     </slot>
 
     <slot name="backToTop" v-bind="ctx">
-      <button v-if="isScrolled" type="button" class="f-button" @click="scrollToTop">
+      <button
+        v-if="isScrolled"
+        type="button"
+        class="f-button"
+        @click="scrollToTop"
+      >
         <slot name="backToTopIcon" v-bind="ctx" />
         <span class="f-span">Back to top</span>
       </button>

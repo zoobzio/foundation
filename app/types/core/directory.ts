@@ -25,10 +25,9 @@ export type DirectoryProps<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
 };
 
-export type DirectoryEmits<T extends DirectoryItem> =
-  {
-    select: [item: T];
-  };
+export type DirectoryEmits<T extends DirectoryItem> = {
+  select: [item: T];
+};
 
 export type DirectoryContext<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];

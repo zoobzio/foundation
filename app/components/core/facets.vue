@@ -6,10 +6,7 @@ import type {
   FacetsProps,
   FacetsSlots,
 } from "../../types/core/facets";
-import type {
-  CommandGroup,
-  CommandOption,
-} from "../../types/core/command";
+import type { CommandGroup, CommandOption } from "../../types/core/command";
 import type { ComponentPublicInstance } from "vue";
 
 import Command from "./command.vue";

@@ -1,10 +1,7 @@
 import type { Option } from "../types/core/common";
 import type { MaybeRefOrGetter, Ref } from "vue";
 
-import {
-  SELECT_TRUNCATE,
-  SELECT_PLACEHOLDER,
-} from "../constants/select";
+import { SELECT_TRUNCATE, SELECT_PLACEHOLDER } from "../constants/select";
 import { computed, toValue } from "vue";
 
 export const useSelection = <T extends Option>(

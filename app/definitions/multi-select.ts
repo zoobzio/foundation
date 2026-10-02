@@ -1,4 +1,7 @@
-import type { MultiSelectEmits, MultiSelectProps } from "../types/core/multi-select";
+import type {
+  MultiSelectEmits,
+  MultiSelectProps,
+} from "../types/core/multi-select";
 import type { Option } from "../types/core/common";
 import type { Definition } from "../types/definition";
 

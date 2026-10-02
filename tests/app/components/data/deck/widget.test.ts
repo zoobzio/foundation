@@ -43,8 +43,7 @@ const mountWidget = async (slots: Record<string, string> = {}) => {
             hasMore: false,
           })),
         });
-        return () =>
-          h(DeckWidget, { service: widget.service }, forwarded);
+        return () => h(DeckWidget, { service: widget.service }, forwarded);
       },
     }),
     { slots, global: { stubs: { Feed: createStub("Feed") } } },
@@ -77,8 +76,6 @@ describe("data deck widget", () => {
     expect(wrapper.get('button[aria-label="Refresh"] b').text()).toBe(
       "refresh",
     );
-    expect(wrapper.get('button[aria-label="Filters"] b').text()).toBe(
-      "facets",
-    );
+    expect(wrapper.get('button[aria-label="Filters"] b').text()).toBe("facets");
   });
 });

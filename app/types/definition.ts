@@ -42,10 +42,9 @@ type WireEvent<
   R extends Widgets,
   K extends keyof R,
   H extends keyof EventsOf<R, K>,
-> =
-  EventsOf<R, K>[H] extends (event: infer E extends ScopedEvent) => unknown
-    ? E
-    : never;
+> = EventsOf<R, K>[H] extends (event: infer E extends ScopedEvent) => unknown
+  ? E
+  : never;
 
 /**
  * Definition-level coordination: per registry key, a handler per domain

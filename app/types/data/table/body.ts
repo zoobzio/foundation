@@ -1,7 +1,4 @@
-import type {
-  CheckboxEmits,
-  CheckboxProps,
-} from "../../core/checkbox";
+import type { CheckboxEmits, CheckboxProps } from "../../core/checkbox";
 import type { FabProps } from "../../core/fab";
 import type { MenuEmits, MenuItem, MenuProps } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";

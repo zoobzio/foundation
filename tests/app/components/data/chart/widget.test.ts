@@ -13,7 +13,10 @@ import type {
   ChartWidgetEmits,
   ChartWidgetProps,
 } from "../../../../../app/types/data/chart/widget";
-import type { Actions, BreakdownData } from "../../../../../app/types/data/chart";
+import type {
+  Actions,
+  BreakdownData,
+} from "../../../../../app/types/data/chart";
 import { chartStubs } from "#test/stubs/data";
 import type { FakeRow } from "#test/data/table";
 
@@ -48,8 +51,7 @@ const mountWidget = async (slots: Record<string, string> = {}) => {
             async () => slices,
           ),
         });
-        return () =>
-          h(ChartWidget, { service: widget.service }, forwarded);
+        return () => h(ChartWidget, { service: widget.service }, forwarded);
       },
     }),
     { slots, global: { stubs: { Canvas: chartStubs.Canvas } } },
@@ -75,9 +77,7 @@ describe("data chart widget", () => {
       controlIcon: `<template #controlIcon="s"><i>{{ s.kind }}</i></template>`,
       refreshIcon: `<template #refreshIcon="s"><b>{{ s.chart.id }}</b></template>`,
     });
-    expect(wrapper.get(".f-data-chart-control-title i").text()).toBe(
-      "variant",
-    );
+    expect(wrapper.get(".f-data-chart-control-title i").text()).toBe("variant");
     expect(
       wrapper.findAll(".f-data-chart-actions i").map((i) => i.text()),
     ).toEqual(["field", "renderer"]);

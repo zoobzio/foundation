@@ -112,10 +112,8 @@ const makeAsyncData = (handler: () => Promise<unknown>) => {
   };
 };
 
-export const useAsyncData = (
-  _key: unknown,
-  handler: () => Promise<unknown>,
-) => makeAsyncData(handler);
+export const useAsyncData = (_key: unknown, handler: () => Promise<unknown>) =>
+  makeAsyncData(handler);
 
 export const useLazyAsyncData = (
   _key: unknown,
@@ -134,7 +132,10 @@ export const createError = (input: string | Record<string, unknown>) => {
   }
   return err;
 };
-export const defineNuxtLink = () => ({ name: "NuxtLink", template: "<a><slot /></a>" });
+export const defineNuxtLink = () => ({
+  name: "NuxtLink",
+  template: "<a><slot /></a>",
+});
 
 // `#components` also resolves here — ClientOnly just renders its slot.
 export const ClientOnly = defineComponent({

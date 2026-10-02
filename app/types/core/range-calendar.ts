@@ -1,8 +1,4 @@
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
@@ -19,13 +15,17 @@ import type {
   RangeCalendarGridRowProps,
   RangeCalendarHeadCellProps,
   RangeCalendarCellProps,
-  RangeCalendarCellTriggerProps, DateRange 
+  RangeCalendarCellTriggerProps,
+  DateRange,
 } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 
 // The share of the root's render-scope payload the core template forwards
 // into its slots.
-export type RangeCalendarView = Pick<SlotProps<typeof RangeCalendarRoot>, "weekDays" | "grid">;
+export type RangeCalendarView = Pick<
+  SlotProps<typeof RangeCalendarRoot>,
+  "weekDays" | "grid"
+>;
 
 // One month of the root's render-scope grid payload.
 export type RangeCalendarMonth = RangeCalendarView["grid"][number];
@@ -75,10 +75,29 @@ export type RangeCalendarSlots = {
   heading?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   next?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   nextIcon?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  grid?: (props: RangeCalendarContext & RangeCalendarView & { month: RangeCalendarMonth }) => VNode[];
-  gridHead?: (props: RangeCalendarContext & RangeCalendarView & { month: RangeCalendarMonth }) => VNode[];
-  gridBody?: (props: RangeCalendarContext & RangeCalendarView & { month: RangeCalendarMonth }) => VNode[];
+  grid?: (
+    props: RangeCalendarContext &
+      RangeCalendarView & { month: RangeCalendarMonth },
+  ) => VNode[];
+  gridHead?: (
+    props: RangeCalendarContext &
+      RangeCalendarView & { month: RangeCalendarMonth },
+  ) => VNode[];
+  gridBody?: (
+    props: RangeCalendarContext &
+      RangeCalendarView & { month: RangeCalendarMonth },
+  ) => VNode[];
   headCell?: (props: RangeCalendarContext & { day: string }) => VNode[];
-  cell?: (props: RangeCalendarContext & { month: RangeCalendarMonth; date: DateValue }) => VNode[];
-  cellTrigger?: (props: RangeCalendarContext & { month: RangeCalendarMonth; date: DateValue }) => VNode[];
+  cell?: (
+    props: RangeCalendarContext & {
+      month: RangeCalendarMonth;
+      date: DateValue;
+    },
+  ) => VNode[];
+  cellTrigger?: (
+    props: RangeCalendarContext & {
+      month: RangeCalendarMonth;
+      date: DateValue;
+    },
+  ) => VNode[];
 };

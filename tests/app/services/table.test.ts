@@ -14,7 +14,12 @@ import type {
   State,
   TableFilter,
 } from "../../../app/types/data/table";
-import { fakeColumns, fakeRows, fakeActions, fakeBulkActions } from "#test/data/table";
+import {
+  fakeColumns,
+  fakeRows,
+  fakeActions,
+  fakeBulkActions,
+} from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 
 const makeState = (): State<FakeRow> => ({
@@ -34,13 +39,11 @@ const makeState = (): State<FakeRow> => ({
 });
 
 const makeActions = (rows: FakeRow[] = fakeRows) => ({
-  fetch: vi.fn(
-    async (): Promise<DataTableFetchResult<FakeRow>> => ({
-      data: rows,
-      total: rows.length,
-      pageCount: 4,
-    }),
-  ),
+  fetch: vi.fn(async (): Promise<DataTableFetchResult<FakeRow>> => ({
+    data: rows,
+    total: rows.length,
+    pageCount: 4,
+  })),
 });
 
 const makeService = (
@@ -109,7 +112,9 @@ describe("fetch", () => {
   });
 
   it("clears loading and still emits when the action throws", async () => {
-    const actions = { fetch: vi.fn(async () => Promise.reject(new Error("boom"))) };
+    const actions = {
+      fetch: vi.fn(async () => Promise.reject(new Error("boom"))),
+    };
     const { service, emitSpy } = makeService({ actions });
 
     await expect(service.fetch()).rejects.toThrow("boom");
@@ -204,7 +209,9 @@ describe("selection", () => {
     expect(service.selectAllState).toBe("indeterminate");
     service.toggleAll();
     expect(service.selectAllState).toBe(true);
-    expect(service.selected).toEqual(new Set(fakeRows.map((r) => String(r.id))));
+    expect(service.selected).toEqual(
+      new Set(fakeRows.map((r) => String(r.id))),
+    );
   });
 
   it("toggleAll clears when everything is selected", async () => {

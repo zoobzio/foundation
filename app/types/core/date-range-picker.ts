@@ -1,8 +1,4 @@
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
@@ -24,7 +20,8 @@ import type {
   DateRangePickerGridRowProps,
   DateRangePickerHeadCellProps,
   DateRangePickerCellProps,
-  DateRangePickerCellTriggerProps, DateRange 
+  DateRangePickerCellTriggerProps,
+  DateRange,
 } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 
@@ -37,7 +34,9 @@ export type DateRangePickerCalendarProps = Record<string, never>;
 // The render-scope payload reka delivers through the field's default slot
 // (start/end segments + a modelValue snapshot), derived from the imported
 // component.
-export type DateRangePickerFieldSlotProps = SlotProps<typeof DateRangePickerField>;
+export type DateRangePickerFieldSlotProps = SlotProps<
+  typeof DateRangePickerField
+>;
 
 // One segment of either side of the field's render-scope payload.
 export type DateRangePickerSegment =
@@ -70,7 +69,10 @@ export type DateRangePickerPassthrough = {
   field: Passthrough<DateRangePickerFieldProps>;
   input: PassthroughIter<DateRangePickerInputItem, DateRangePickerInputProps>;
   trigger: Passthrough<DateRangePickerTriggerProps>;
-  content: Passthrough<DateRangePickerContentProps, DateRangePickerContentEmits>;
+  content: Passthrough<
+    DateRangePickerContentProps,
+    DateRangePickerContentEmits
+  >;
   calendar: Passthrough<DateRangePickerCalendarProps>;
   header: Passthrough<DateRangePickerHeaderProps>;
   prev: Passthrough<DateRangePickerPrevProps>;
@@ -122,10 +124,29 @@ export type DateRangePickerSlots = {
   heading?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
   next?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
   nextIcon?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
-  grid?: (props: DateRangePickerContext & DateRangePickerView & { month: DateRangePickerMonth }) => VNode[];
-  gridHead?: (props: DateRangePickerContext & DateRangePickerView & { month: DateRangePickerMonth }) => VNode[];
-  gridBody?: (props: DateRangePickerContext & DateRangePickerView & { month: DateRangePickerMonth }) => VNode[];
+  grid?: (
+    props: DateRangePickerContext &
+      DateRangePickerView & { month: DateRangePickerMonth },
+  ) => VNode[];
+  gridHead?: (
+    props: DateRangePickerContext &
+      DateRangePickerView & { month: DateRangePickerMonth },
+  ) => VNode[];
+  gridBody?: (
+    props: DateRangePickerContext &
+      DateRangePickerView & { month: DateRangePickerMonth },
+  ) => VNode[];
   headCell?: (props: DateRangePickerContext & { day: string }) => VNode[];
-  cell?: (props: DateRangePickerContext & { month: DateRangePickerMonth; date: DateValue }) => VNode[];
-  cellTrigger?: (props: DateRangePickerContext & { month: DateRangePickerMonth; date: DateValue }) => VNode[];
+  cell?: (
+    props: DateRangePickerContext & {
+      month: DateRangePickerMonth;
+      date: DateValue;
+    },
+  ) => VNode[];
+  cellTrigger?: (
+    props: DateRangePickerContext & {
+      month: DateRangePickerMonth;
+      date: DateValue;
+    },
+  ) => VNode[];
 };

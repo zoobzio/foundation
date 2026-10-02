@@ -70,7 +70,8 @@ ChartJS.register(
  */
 export const buildVariants = <T>(config: Config<T>): DataChartVariant<T>[] => {
   const variants: DataChartVariant<T>[] = [];
-  if (config.breakdown) variants.push({ type: "breakdown", ...config.breakdown });
+  if (config.breakdown)
+    variants.push({ type: "breakdown", ...config.breakdown });
   if (config.series) variants.push({ type: "series", ...config.series });
   if (config.distribution)
     variants.push({ type: "distribution", ...config.distribution });
@@ -191,7 +192,9 @@ export const renderBreakdown = <T>(
     type: renderer.type,
     data: {
       labels: data.labels,
-      datasets: [{ data: data.values, backgroundColor: colors, borderWidth: 0 }],
+      datasets: [
+        { data: data.values, backgroundColor: colors, borderWidth: 0 },
+      ],
     },
     options: mergeOptions(renderer),
   });

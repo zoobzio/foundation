@@ -60,7 +60,7 @@ defineSlots<FormFieldSlots<T>>();
       </label>
     </slot>
     <slot v-if="control === 'input'" name="input" v-bind="ctx">
-      <input v-bind="settings.input" class="f-input f-data-form-input" >
+      <input v-bind="settings.input" class="f-input f-data-form-input" />
     </slot>
     <slot v-else-if="control === 'textarea'" name="textarea" v-bind="ctx">
       <textarea

@@ -8,7 +8,12 @@ import type {
 } from "../../types/core/tooltip";
 import type { ComponentPublicInstance } from "vue";
 
-import { TooltipRoot, TooltipTrigger, TooltipPortal, TooltipContent } from "reka-ui";
+import {
+  TooltipRoot,
+  TooltipTrigger,
+  TooltipPortal,
+  TooltipContent,
+} from "reka-ui";
 
 import { useTemplateRef } from "#imports";
 import { usePassthrough } from "../../composables/passthrough";

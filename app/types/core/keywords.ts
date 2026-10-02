@@ -4,10 +4,7 @@ import type {
   SegmentedControlProps,
   SegmentedControlEmits,
 } from "./segmented-control";
-import type {
-  TagsInputProps,
-  TagsInputEmits,
-} from "./tags-input";
+import type { TagsInputProps, TagsInputEmits } from "./tags-input";
 import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 

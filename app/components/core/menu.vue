@@ -88,16 +88,26 @@ defineSlots<MenuSlots>();
 </script>
 
 <template>
-  <DropdownMenuRoot ref="el" class="f-dropdown-menu-root" v-bind="settings.root">
+  <DropdownMenuRoot
+    ref="el"
+    class="f-dropdown-menu-root"
+    v-bind="settings.root"
+  >
     <slot name="trigger" v-bind="ctx">
-      <DropdownMenuTrigger class="f-dropdown-menu-trigger" v-bind="settings.trigger">
+      <DropdownMenuTrigger
+        class="f-dropdown-menu-trigger"
+        v-bind="settings.trigger"
+      >
         <slot v-bind="ctx">
           <button type="button" class="f-button">{{ label }}</button>
         </slot>
       </DropdownMenuTrigger>
     </slot>
     <DropdownMenuPortal>
-      <DropdownMenuContent class="f-dropdown-menu-content" v-bind="settings.content">
+      <DropdownMenuContent
+        class="f-dropdown-menu-content"
+        v-bind="settings.content"
+      >
         <slot name="content" v-bind="ctx">
           <template v-for="(group, groupIndex) in groups" :key="group.key">
             <DropdownMenuSeparator
@@ -105,7 +115,10 @@ defineSlots<MenuSlots>();
               class="f-dropdown-menu-separator"
               v-bind="settings.separator"
             />
-            <DropdownMenuGroup class="f-dropdown-menu-group" v-bind="settings.group">
+            <DropdownMenuGroup
+              class="f-dropdown-menu-group"
+              v-bind="settings.group"
+            >
               <DropdownMenuLabel
                 v-if="group.label"
                 class="f-dropdown-menu-label"

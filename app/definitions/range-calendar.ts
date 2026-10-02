@@ -1,4 +1,7 @@
-import type { RangeCalendarEmits, RangeCalendarProps } from "../types/core/range-calendar";
+import type {
+  RangeCalendarEmits,
+  RangeCalendarProps,
+} from "../types/core/range-calendar";
 import type { Definition } from "../types/definition";
 
 /**

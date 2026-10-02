@@ -93,7 +93,11 @@ defineSlots<PopoverSlots>();
         class="f-popover-anchor"
         v-bind="settings.anchor"
       />
-      <PopoverTrigger v-else class="f-popover-trigger" v-bind="settings.trigger">
+      <PopoverTrigger
+        v-else
+        class="f-popover-trigger"
+        v-bind="settings.trigger"
+      >
         <slot name="trigger" v-bind="ctx" />
       </PopoverTrigger>
     </slot>
@@ -101,7 +105,11 @@ defineSlots<PopoverSlots>();
       <PopoverContent class="f-popover-content" v-bind="settings.content">
         <slot name="content" v-bind="ctx" />
         <slot name="arrow" v-bind="ctx">
-          <PopoverArrow v-if="arrow" class="f-popover-arrow" v-bind="settings.arrow" />
+          <PopoverArrow
+            v-if="arrow"
+            class="f-popover-arrow"
+            v-bind="settings.arrow"
+          />
         </slot>
         <PopoverClose
           v-if="$slots.close"

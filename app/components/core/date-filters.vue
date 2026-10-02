@@ -25,7 +25,12 @@ import { serialize, deserialize, format } from "../../utils/date";
 </script>
 
 <script setup lang="ts">
-const { modelValue: filters, fields, addFilter, pt } = defineProps<DateFiltersProps>();
+const {
+  modelValue: filters,
+  fields,
+  addFilter,
+  pt,
+} = defineProps<DateFiltersProps>();
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
@@ -38,7 +43,9 @@ const selectedRange = ref<DateRange>();
 
 const activeCount = computed(() => filters?.length ?? 0);
 
-const fieldGroups = computed<{ key: string; label: string; options: CommandOption[] }[]>(() => [
+const fieldGroups = computed<
+  { key: string; label: string; options: CommandOption[] }[]
+>(() => [
   {
     key: "fields",
     label: "Fields",
@@ -46,7 +53,11 @@ const fieldGroups = computed<{ key: string; label: string; options: CommandOptio
   },
 ]);
 
-const operatorGroups: { key: string; label: string; options: CommandOption[] }[] = [
+const operatorGroups: {
+  key: string;
+  label: string;
+  options: CommandOption[];
+}[] = [
   {
     key: "operators",
     label: "Operators",
@@ -130,18 +141,22 @@ const goToStep = (target: 1 | 2 | 3) => {
   }
 };
 
-const fieldLabel = computed(() =>
-  fields.find((f) => f.key === selectedField.value)?.label ?? "Field",
+const fieldLabel = computed(
+  () => fields.find((f) => f.key === selectedField.value)?.label ?? "Field",
 );
 
 const operatorLabel = computed(() => {
   if (!selectedOperator.value) return "Operator";
-  return selectedOperator.value.charAt(0).toUpperCase() + selectedOperator.value.slice(1);
+  return (
+    selectedOperator.value.charAt(0).toUpperCase() +
+    selectedOperator.value.slice(1)
+  );
 });
 
 const valueLabel = computed(() => {
   if (selectedOperator.value === "between") {
-    if (!selectedRange.value?.start || !selectedRange.value?.end) return "Value";
+    if (!selectedRange.value?.start || !selectedRange.value?.end)
+      return "Value";
     return `${format(selectedRange.value.start)},${format(selectedRange.value.end)}`;
   }
   if (!selectedDate.value) return "Value";
@@ -258,7 +273,10 @@ defineSlots<DateFiltersSlots>();
                     'f-date-filters-step',
                     { 'f-date-filters-step--active': step === 1 },
                     { 'f-date-filters-step--completed': selectedField },
-                    { 'f-date-filters-step--disabled': !selectedField && step !== 1 },
+                    {
+                      'f-date-filters-step--disabled':
+                        !selectedField && step !== 1,
+                    },
                   ]"
                   @click="goToStep(1)"
                 >
@@ -272,7 +290,10 @@ defineSlots<DateFiltersSlots>();
                     'f-date-filters-step',
                     { 'f-date-filters-step--active': step === 2 },
                     { 'f-date-filters-step--completed': selectedOperator },
-                    { 'f-date-filters-step--disabled': !selectedOperator && step !== 2 },
+                    {
+                      'f-date-filters-step--disabled':
+                        !selectedOperator && step !== 2,
+                    },
                   ]"
                   :disabled="!selectedField"
                   @click="goToStep(2)"
@@ -305,13 +326,23 @@ defineSlots<DateFiltersSlots>();
             <slot name="calendarWrapper" v-bind="ctx">
               <div v-if="step === 3" class="f-group f-date-filters-calendar">
                 <slot name="calendar" v-bind="ctx">
-                  <RangeCalendar v-if="selectedOperator === 'between'" v-bind="settings.rangeCalendar" />
+                  <RangeCalendar
+                    v-if="selectedOperator === 'between'"
+                    v-bind="settings.rangeCalendar"
+                  />
                   <Calendar v-else v-bind="settings.calendar" />
                 </slot>
                 <slot name="actions" v-bind="ctx">
                   <div class="f-group f-date-filters-actions">
                     <slot name="applyButton" v-bind="ctx">
-                      <button type="button" class="f-button" :disabled="!isFormValid" @click="applyFilter">Apply</button>
+                      <button
+                        type="button"
+                        class="f-button"
+                        :disabled="!isFormValid"
+                        @click="applyFilter"
+                      >
+                        Apply
+                      </button>
                     </slot>
                   </div>
                 </slot>

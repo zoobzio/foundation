@@ -43,9 +43,7 @@ const makeService = () =>
 
 // Contract mock for the bridge-boundary cases, where the declared list must
 // vary independently of the composable's exhaustive config.
-const mockService = (
-  emits: readonly "activate"[],
-): Service<LogoContract> => ({
+const mockService = (emits: readonly "activate"[]): Service<LogoContract> => ({
   id: "logo",
   component: FixtureLogo,
   emits,
@@ -55,10 +53,7 @@ const mockService = (
   emitted: vi.fn(),
 });
 
-const mountAdapter = (
-  service: Service<LogoContract>,
-  pt?: LogoContract,
-) => {
+const mountAdapter = (service: Service<LogoContract>, pt?: LogoContract) => {
   return mount(
     defineComponent({
       setup() {

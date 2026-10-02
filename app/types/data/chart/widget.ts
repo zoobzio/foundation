@@ -1,9 +1,5 @@
 import type { FabProps, FabEmits } from "../../core/fab";
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../../passthrough";
 import type { Service, Events } from "../chart";
 import type {
   ChartControlAnchor,

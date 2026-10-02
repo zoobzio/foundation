@@ -5,10 +5,7 @@ import type { Definition } from "../types/definition";
  * A tags-input instance as data: props plus emit listeners — the object a
  * template `v-bind`s and an adapter captures as settings.
  */
-export type TagsInputDefinition = Definition<
-  TagsInputProps,
-  TagsInputEmits
->;
+export type TagsInputDefinition = Definition<TagsInputProps, TagsInputEmits>;
 
 /**
  * Declares a tags-input at module scope — pure data, no runtime, no Vue. The

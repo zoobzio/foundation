@@ -185,7 +185,10 @@ export class DeckService<T> implements Service<T> {
       );
       if (result.data.length) {
         this.state.pending.value = [...result.data, ...this.pending];
-        this.log.debug("Deck polled", { id: this.id, count: result.data.length });
+        this.log.debug("Deck polled", {
+          id: this.id,
+          count: result.data.length,
+        });
         this.emit("deck:polled", { id: this.id, count: result.data.length });
       }
       if (result.facets) this.state.facetGroups.value = result.facets;

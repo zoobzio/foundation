@@ -117,11 +117,7 @@ useLazyRequest(`init-browser-${service.id}`, () => service.init());
           :browser="service"
           :pt="pt?.folders"
         >
-          <template
-            v-for="name in folderSlots"
-            :key="name"
-            #[name]="slotProps"
-          >
+          <template v-for="name in folderSlots" :key="name" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps" />
           </template>
           <template v-if="slots.folderActionIcon" #folderActionIcon="slotProps">

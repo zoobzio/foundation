@@ -18,6 +18,8 @@ export default defineConfig({
   },
   test: {
     environment: "happy-dom",
+    // One happy-dom per worker; VM contexts still isolate each test file.
+    pool: "vmThreads",
     include: ["tests/**/*.test.ts"],
     setupFiles: ["tests/setup.ts"],
     coverage: {

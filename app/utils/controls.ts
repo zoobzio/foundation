@@ -1,7 +1,4 @@
-import type {
-  Controls,
-  ResolvedControl,
-} from "../types/data/controls";
+import type { Controls, ResolvedControl } from "../types/data/controls";
 import type {
   CheckboxField,
   DateField,

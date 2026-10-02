@@ -60,14 +60,14 @@ asserted is not tested.
 
 Replicate the matching file for the tier you're testing:
 
-| Tier | File |
-| --- | --- |
-| utils | `tests/app/utils/passthrough.test.ts` |
-| composables | `tests/app/composables/model.test.ts` |
-| stores | `tests/app/stores/table.test.ts` |
-| services | `tests/app/services/table.test.ts` |
-| factories | `tests/app/factories/table.test.ts` |
-| components/core | `tests/app/components/core/select.test.ts` |
+| Tier            | File                                             |
+| --------------- | ------------------------------------------------ |
+| utils           | `tests/app/utils/passthrough.test.ts`            |
+| composables     | `tests/app/composables/model.test.ts`            |
+| stores          | `tests/app/stores/table.test.ts`                 |
+| services        | `tests/app/services/table.test.ts`               |
+| factories       | `tests/app/factories/table.test.ts`              |
+| components/core | `tests/app/components/core/select.test.ts`       |
 | components/data | `tests/app/components/data/table/widget.test.ts` |
 
 ## Conventions

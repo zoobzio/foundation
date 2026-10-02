@@ -1,8 +1,4 @@
-import type {
-  Passthrough,
-  PassthroughIter,
-  PT,
-} from "../passthrough";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { SlotProps } from "../slots";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
@@ -101,7 +97,9 @@ export type DatePickerContext = {
 
 export type DatePickerSlots = {
   field?: (props: DatePickerContext & DatePickerSegments) => VNode[];
-  input?: (props: DatePickerContext & { segment: DatePickerSegment }) => VNode[];
+  input?: (
+    props: DatePickerContext & { segment: DatePickerSegment },
+  ) => VNode[];
   trigger?: (props: DatePickerContext) => VNode[];
   triggerIcon?: (props: DatePickerContext) => VNode[];
   content?: (props: DatePickerContext) => VNode[];
@@ -111,10 +109,20 @@ export type DatePickerSlots = {
   heading?: (props: DatePickerContext & DatePickerView) => VNode[];
   next?: (props: DatePickerContext & DatePickerView) => VNode[];
   nextIcon?: (props: DatePickerContext & DatePickerView) => VNode[];
-  grid?: (props: DatePickerContext & DatePickerView & { month: DatePickerMonth }) => VNode[];
-  gridHead?: (props: DatePickerContext & DatePickerView & { month: DatePickerMonth }) => VNode[];
-  gridBody?: (props: DatePickerContext & DatePickerView & { month: DatePickerMonth }) => VNode[];
+  grid?: (
+    props: DatePickerContext & DatePickerView & { month: DatePickerMonth },
+  ) => VNode[];
+  gridHead?: (
+    props: DatePickerContext & DatePickerView & { month: DatePickerMonth },
+  ) => VNode[];
+  gridBody?: (
+    props: DatePickerContext & DatePickerView & { month: DatePickerMonth },
+  ) => VNode[];
   headCell?: (props: DatePickerContext & { day: string }) => VNode[];
-  cell?: (props: DatePickerContext & { month: DatePickerMonth; date: DateValue }) => VNode[];
-  cellTrigger?: (props: DatePickerContext & { month: DatePickerMonth; date: DateValue }) => VNode[];
+  cell?: (
+    props: DatePickerContext & { month: DatePickerMonth; date: DateValue },
+  ) => VNode[];
+  cellTrigger?: (
+    props: DatePickerContext & { month: DatePickerMonth; date: DateValue },
+  ) => VNode[];
 };

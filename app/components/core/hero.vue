@@ -1,21 +1,13 @@
 <script lang="ts">
-import type {
-  HeroProps,
-  HeroContext,
-  HeroSlots,
-} from "../../types/core/hero";
+import type { HeroProps, HeroContext, HeroSlots } from "../../types/core/hero";
 
 import { useTemplateRef } from "#imports";
 import { useContext } from "../../composables/context";
 </script>
 
 <script setup lang="ts">
-const {
-  tagline,
-  taglineHighlight,
-  description,
-  action,
-} = defineProps<HeroProps>();
+const { tagline, taglineHighlight, description, action } =
+  defineProps<HeroProps>();
 
 const el = useTemplateRef<HTMLElement>("el");
 
@@ -51,7 +43,9 @@ defineSlots<HeroSlots>();
           </p>
         </slot>
         <slot name="button" v-bind="ctx">
-          <button v-if="action" type="button" class="f-button">{{ action.label }}</button>
+          <button v-if="action" type="button" class="f-button">
+            {{ action.label }}
+          </button>
         </slot>
       </div>
     </slot>

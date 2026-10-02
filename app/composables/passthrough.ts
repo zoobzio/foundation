@@ -1,7 +1,4 @@
-import type {
-  Passthrough,
-  PassthroughSource,
-} from "../types/passthrough";
+import type { Passthrough, PassthroughSource } from "../types/passthrough";
 import type { ComputedRef, MaybeRefOrGetter } from "vue";
 
 import { computed, toValue } from "#imports";

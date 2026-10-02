@@ -120,7 +120,8 @@ export class ChartService<T> implements Service<T> {
   }
 
   setRenderer(type: string): void {
-    if (!this.activeVariantConfig.renderers.some((r) => r.type === type)) return;
+    if (!this.activeVariantConfig.renderers.some((r) => r.type === type))
+      return;
     this.state.activeRenderer.value = type;
     this.log.debug("Chart renderer changed", { id: this.id, renderer: type });
     this.emit("chart:renderer-changed", { id: this.id, renderer: type });

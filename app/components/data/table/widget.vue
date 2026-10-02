@@ -96,10 +96,7 @@ useLazyRequest(`init-table-${service.id}`, () => service.init());
     <slot name="toolbar" v-bind="ctx">
       <div class="f-group f-data-table-toolbar">
         <slot v-if="service.searchable" name="search" v-bind="ctx">
-          <Autocomplete
-            v-bind="settings.search"
-            class="f-data-table-search"
-          />
+          <Autocomplete v-bind="settings.search" class="f-data-table-search" />
         </slot>
         <Columns :table="service" :pt="pt?.columns">
           <template v-if="slots.columnsIcon" #columnsIcon="slotProps">

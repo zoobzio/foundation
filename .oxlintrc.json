@@ -1,0 +1,32 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "vue", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "ignorePatterns": [
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/dist/**",
+    ".coverage/**"
+  ],
+  "rules": {
+    // Composables deliberately define helpers inside their setup scope
+    "unicorn/consistent-function-scoping": "off",
+    // `export {}` is required to make .d.ts files module augmentations
+    "unicorn/require-module-specifiers": "off",
+    // Sorting a fresh copy is fine; toSorted() isn't needed
+    "unicorn/no-array-sort": "off",
+    "eslint/no-shadow": "off",
+    // Untyped vi.fn() is fine in tests
+    "vitest/require-mock-type-parameters": "off",
+    // Some tests only assert that setup doesn't throw
+    "vitest/expect-expect": "off"
+  }
+}

@@ -10,13 +10,11 @@ import { fakeColumns, fakeRows } from "#test/data/table";
 import type { FakeRow } from "#test/data/table";
 
 const makeWiring = () => ({
-  fetch: vi.fn(
-    async (): Promise<DataTableFetchResult<FakeRow>> => ({
-      data: fakeRows,
-      total: fakeRows.length,
-      pageCount: 4,
-    }),
-  ),
+  fetch: vi.fn(async (): Promise<DataTableFetchResult<FakeRow>> => ({
+    data: fakeRows,
+    total: fakeRows.length,
+    pageCount: 4,
+  })),
 });
 
 const definition = { columns: fakeColumns, rowKey: "id" as const };
