@@ -1,12 +1,11 @@
-import type { TabsEmits, TabsProps } from "../types/core/tabs";
-import type { Option } from "../types/core/common";
+import type { TabsEmits, TabsOption, TabsProps } from "../types/core/tabs";
 import type { Definition } from "../types/definition";
 
 /**
  * A tabs instance as data: props plus emit listeners — the object a
  * template `v-bind`s and an adapter captures as settings.
  */
-export type TabsDefinition<T extends Option = Option> = Definition<
+export type TabsDefinition<T extends TabsOption = TabsOption> = Definition<
   TabsProps<T>,
   TabsEmits
 >;
@@ -16,6 +15,6 @@ export type TabsDefinition<T extends Option = Option> = Definition<
  * identity function is the type checkpoint: every field errors on the line
  * it is written.
  */
-export const defineTabs = <T extends Option>(
+export const defineTabs = <T extends TabsOption>(
   definition: TabsDefinition<T>,
 ): TabsDefinition<T> => definition;

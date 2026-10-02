@@ -23,6 +23,13 @@ component for behavioral parts (`f-select-trigger`), `f-<tag>` for native
 tags (`f-span`). `*Portal` and `*Provider` components render no element and
 carry no class. Links render through the global `<NuxtLink>`.
 
+Items that can navigate (`Menu`, `Tabs`, `SegmentedControl`, `Tree`,
+`Directory`, `Breadcrumb`) carry an optional `link` field
+([`LinkTarget`](../../types/core/common.ts)). With it the item is a real
+hyperlink — where the item is a reka part, the part renders `as-child` onto
+the anchor, so it keeps its role, class, and emits — and without it the item
+is an emit-only control. No slot override is needed to get links.
+
 **The layer renders no icons.** Wherever a glyph belongs, the component
 exposes a named slot in that position (`triggerIcon`, `itemIcon`,
 `separator`, …) and the consumer supplies whatever they like. Decorative

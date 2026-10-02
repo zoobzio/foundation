@@ -64,6 +64,7 @@ const settings = usePassthrough<MenuPassthrough<T>>(() => ({
     label: { asChild: true },
     item: (item) => ({
       disabled: item.disabled,
+      asChild: !!item.link,
       onSelect: () => {
         emit("select", item);
       },
@@ -135,10 +136,25 @@ defineSlots<MenuSlots<T>>();
                     class="f-dropdown-menu-item"
                     v-bind="settings.item(item)"
                   >
-                    <slot name="itemIcon" v-bind="{ ...ctx, item }" />
-                    <slot name="itemLabel" v-bind="{ ...ctx, item }">
-                      <span class="f-span">{{ item.label }}</span>
-                    </slot>
+                    <NuxtLink
+                      v-if="item.link"
+                      :to="item.disabled ? undefined : item.link.to"
+                      :external="item.link.external"
+                      :target="item.link.target"
+                      :replace="item.link.replace"
+                      :prefetch="item.link.prefetch"
+                    >
+                      <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+                      <slot name="itemLabel" v-bind="{ ...ctx, item }">
+                        <span class="f-span">{{ item.label }}</span>
+                      </slot>
+                    </NuxtLink>
+                    <template v-else>
+                      <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+                      <slot name="itemLabel" v-bind="{ ...ctx, item }">
+                        <span class="f-span">{{ item.label }}</span>
+                      </slot>
+                    </template>
                   </DropdownMenuItem>
                 </slot>
               </template>

@@ -5,8 +5,8 @@ import type {
   TabsPassthrough,
   TabsContext,
   TabsSlots,
+  TabsOption,
 } from "../../types/core/tabs";
-import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";
@@ -17,7 +17,7 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts" generic="T extends Option">
+<script setup lang="ts" generic="T extends TabsOption">
 const { modelValue, tabs, pt } = defineProps<TabsProps<T>>();
 
 const emit = defineEmits<TabsEmits>();
@@ -34,6 +34,9 @@ const settings = usePassthrough<TabsPassthrough<T>>(() => ({
   recipes: {
     root: {
       modelValue: $model.value,
+      activationMode: tabs.some((option) => option.link)
+        ? "manual"
+        : "automatic",
       "onUpdate:modelValue": (v) => {
         $model.value = String(v);
       },
@@ -42,6 +45,9 @@ const settings = usePassthrough<TabsPassthrough<T>>(() => ({
     trigger: (option) => ({
       value: option.value,
       disabled: option.disabled,
+      // as-child onto the anchor; `as` off "button" drops reka's type attr.
+      asChild: !!option.link,
+      as: option.link ? "a" : undefined,
     }),
     content: (option) => ({
       value: option.value,
@@ -66,7 +72,20 @@ defineSlots<TabsSlots<T>>();
       <TabsList class="f-tabs-list" v-bind="settings.list">
         <template v-for="option in tabs" :key="option.value">
           <TabsTrigger class="f-tabs-trigger" v-bind="settings.trigger(option)">
-            <slot name="trigger" v-bind="{ ...ctx, option }">
+            <NuxtLink
+              v-if="option.link"
+              :to="option.disabled ? undefined : option.link.to"
+              :external="option.link.external"
+              :target="option.link.target"
+              :replace="option.link.replace"
+              :prefetch="option.link.prefetch"
+            >
+              <slot name="trigger" v-bind="{ ...ctx, option }">
+                <slot name="triggerIcon" v-bind="{ ...ctx, option }" />
+                {{ option.label }}
+              </slot>
+            </NuxtLink>
+            <slot v-else name="trigger" v-bind="{ ...ctx, option }">
               <slot name="triggerIcon" v-bind="{ ...ctx, option }" />
               {{ option.label }}
             </slot>

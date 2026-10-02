@@ -5,8 +5,8 @@ import type {
   SegmentedControlPassthrough,
   SegmentedControlContext,
   SegmentedControlSlots,
+  SegmentedControlOption,
 } from "../../types/core/segmented-control";
-import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToggleGroupRoot, ToggleGroupItem } from "reka-ui";
@@ -17,7 +17,7 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts" generic="T extends Option">
+<script setup lang="ts" generic="T extends SegmentedControlOption">
 const { modelValue, options, disabled, required, pt } =
   defineProps<SegmentedControlProps<T>>();
 
@@ -47,6 +47,9 @@ const settings = usePassthrough<SegmentedControlPassthrough<T>>(() => ({
     item: (option) => ({
       value: option.value,
       disabled: option.disabled,
+      // as-child onto the anchor; `as` off "button" drops reka's type attr.
+      asChild: !!option.link,
+      as: option.link ? "a" : undefined,
     }),
   },
 }));
@@ -72,10 +75,25 @@ defineSlots<SegmentedControlSlots<T>>();
           class="f-toggle-group-item"
           v-bind="settings.item(option)"
         >
-          <slot name="itemIcon" v-bind="{ ...ctx, option }" />
-          <slot name="itemLabel" v-bind="{ ...ctx, option }">
-            <span v-if="option.label" class="f-span">{{ option.label }}</span>
-          </slot>
+          <NuxtLink
+            v-if="option.link"
+            :to="option.disabled ? undefined : option.link.to"
+            :external="option.link.external"
+            :target="option.link.target"
+            :replace="option.link.replace"
+            :prefetch="option.link.prefetch"
+          >
+            <slot name="itemIcon" v-bind="{ ...ctx, option }" />
+            <slot name="itemLabel" v-bind="{ ...ctx, option }">
+              <span v-if="option.label" class="f-span">{{ option.label }}</span>
+            </slot>
+          </NuxtLink>
+          <template v-else>
+            <slot name="itemIcon" v-bind="{ ...ctx, option }" />
+            <slot name="itemLabel" v-bind="{ ...ctx, option }">
+              <span v-if="option.label" class="f-span">{{ option.label }}</span>
+            </slot>
+          </template>
         </ToggleGroupItem>
       </slot>
     </template>

@@ -1,4 +1,4 @@
-import type { Link } from "./common";
+import type { LinkTarget } from "./common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
@@ -27,7 +27,7 @@ export type TreeNode = {
   key: string;
   label: string;
   disabled?: boolean;
-  link?: Pick<Link, "to" | "external" | "target" | "replace" | "prefetch">;
+  link?: LinkTarget;
   children?: TreeNode[];
 };
 

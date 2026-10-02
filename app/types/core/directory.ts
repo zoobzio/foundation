@@ -1,4 +1,4 @@
-import type { Link } from "./common";
+import type { LinkTarget } from "./common";
 import type { VNode } from "vue";
 
 /**
@@ -12,7 +12,7 @@ export type DirectoryItem = {
   key: string;
   label: string;
   disabled?: boolean;
-  link?: Pick<Link, "to" | "external" | "target" | "replace" | "prefetch">;
+  link?: LinkTarget;
 };
 
 export type DirectoryGroup<T extends DirectoryItem = DirectoryItem> = {

@@ -1,4 +1,4 @@
-import type { Link } from "./common";
+import type { LinkTarget } from "./common";
 import type { VNode } from "vue";
 
 /**
@@ -14,7 +14,7 @@ export type BreadcrumbItem = {
   key: string;
   label: string;
   disabled?: boolean;
-  link?: Pick<Link, "to" | "external" | "target" | "replace" | "prefetch">;
+  link?: LinkTarget;
 };
 
 export type BreadcrumbProps<T extends BreadcrumbItem> = {

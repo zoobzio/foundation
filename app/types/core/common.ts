@@ -22,6 +22,15 @@ export interface Link {
 }
 
 /**
+ * The navigation half of a Link: what an item carries in its `link` field to
+ * render as a real hyperlink through NuxtLink instead of an emit-only control
+ */
+export type LinkTarget = Pick<
+  Link,
+  "to" | "external" | "target" | "replace" | "prefetch"
+>;
+
+/**
  * Mixin for hierarchical structures with children
  */
 export interface Hierarchy<T> {
