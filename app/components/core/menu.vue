@@ -5,6 +5,7 @@ import type {
   MenuPassthrough,
   MenuContext,
   MenuSlots,
+  MenuItem,
 } from "../../types/core/menu";
 import type { ComponentPublicInstance } from "vue";
 
@@ -26,7 +27,7 @@ import { useContext } from "../../composables/context";
 import { MENU_SIDE_OFFSET } from "../../constants/menu";
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends MenuItem">
 const {
   open = undefined,
   label,
@@ -36,9 +37,9 @@ const {
   sideOffset = MENU_SIDE_OFFSET,
   alignOffset = 0,
   pt,
-} = defineProps<MenuProps>();
+} = defineProps<MenuProps<T>>();
 
-const emit = defineEmits<MenuEmits>();
+const emit = defineEmits<MenuEmits<T>>();
 
 const $open = useModel(
   () => open,
@@ -48,7 +49,7 @@ const $open = useModel(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const settings = usePassthrough<MenuPassthrough>(() => ({
+const settings = usePassthrough<MenuPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {
@@ -71,7 +72,7 @@ const settings = usePassthrough<MenuPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<MenuContext>("menu", () => ({
+const ctx = useContext<MenuContext<T>>("menu", () => ({
   label,
   groups,
   side,
@@ -84,7 +85,7 @@ const ctx = useContext<MenuContext>("menu", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<MenuSlots>();
+defineSlots<MenuSlots<T>>();
 </script>
 
 <template>

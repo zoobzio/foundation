@@ -6,6 +6,7 @@ import type {
   ListboxContext,
   ListboxSlots,
 } from "../../types/core/listbox";
+import type { Option } from "../../types/core/common";
 import type { ComponentPublicInstance } from "vue";
 
 import { ListboxRoot, ListboxContent, ListboxItem } from "reka-ui";
@@ -16,14 +17,14 @@ import { useModel } from "../../composables/model";
 import { useContext } from "../../composables/context";
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Option">
 const {
   items,
   modelValue,
   multiple = false,
   disabled,
   pt,
-} = defineProps<ListboxProps>();
+} = defineProps<ListboxProps<T>>();
 
 const emit = defineEmits<ListboxEmits>();
 
@@ -34,7 +35,7 @@ const $model = useModel<string | string[]>(
   (v) => emit("update:modelValue", v),
 );
 
-const settings = usePassthrough<ListboxPassthrough>(() => ({
+const settings = usePassthrough<ListboxPassthrough<T>>(() => ({
   pt,
   recipes: {
     root: {
@@ -55,7 +56,7 @@ const settings = usePassthrough<ListboxPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<ListboxContext>("listbox", () => ({
+const ctx = useContext<ListboxContext<T>>("listbox", () => ({
   items,
   multiple,
   disabled,
@@ -65,7 +66,7 @@ const ctx = useContext<ListboxContext>("listbox", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<ListboxSlots>();
+defineSlots<ListboxSlots<T>>();
 </script>
 
 <template>

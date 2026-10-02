@@ -1,12 +1,13 @@
 <script lang="ts">
 import type {
+  FacetItem,
   FacetsContext,
   FacetsEmits,
   FacetsPassthrough,
   FacetsProps,
   FacetsSlots,
 } from "../../types/core/facets";
-import type { CommandGroup, CommandOption } from "../../types/core/command";
+import type { CommandGroup } from "../../types/core/command";
 import type { ComponentPublicInstance } from "vue";
 
 import Command from "./command.vue";
@@ -23,14 +24,14 @@ import {
 } from "../../constants/facets";
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends FacetItem">
 const {
   groups,
   selected,
   open = undefined,
   placeholder = FACETS_PLACEHOLDER,
   pt,
-} = defineProps<FacetsProps>();
+} = defineProps<FacetsProps<T>>();
 
 const emit = defineEmits<FacetsEmits>();
 
@@ -44,29 +45,26 @@ const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const activeCount = computed(() => selected?.size ?? 0);
 
-// FacetGroup → CommandGroup: the command speaks Options with counts.
-const commandGroups = computed<CommandGroup<CommandOption>[]>(() =>
+// FacetGroup → CommandGroup: a facet item is already a counted option, so
+// items pass through whole and the command's item passthrough sees `T`.
+const commandGroups = computed<CommandGroup<T>[]>(() =>
   groups.map((g) => ({
     key: g.key,
     label: g.label,
-    options: g.items.map((i) => ({
-      value: i.value,
-      label: i.label,
-      count: i.count,
-    })),
+    options: g.items,
   })),
 );
 
 // The command's model is the option objects; reconstruct them from the
 // selected value set on the way in, collapse back to a Set on the way out.
-const selectedOptions = computed<CommandOption[]>(() => {
+const selectedOptions = computed<T[]>(() => {
   const set = selected ?? new Set<string>();
   return commandGroups.value
     .flatMap((g) => g.options)
     .filter((o) => set.has(o.value));
 });
 
-const settings = usePassthrough<FacetsPassthrough>(() => ({
+const settings = usePassthrough<FacetsPassthrough<T>>(() => ({
   pt,
   recipes: {
     popover: {
@@ -92,7 +90,7 @@ const settings = usePassthrough<FacetsPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<FacetsContext>("facets", () => ({
+const ctx = useContext<FacetsContext<T>>("facets", () => ({
   groups,
   selected,
   open: $open,
@@ -102,7 +100,7 @@ const ctx = useContext<FacetsContext>("facets", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<FacetsSlots>();
+defineSlots<FacetsSlots<T>>();
 </script>
 
 <template>
