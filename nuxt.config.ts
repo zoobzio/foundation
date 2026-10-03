@@ -15,15 +15,4 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: { exclude: ["@zoobzio/foundation"] },
   },
-
-  typescript: {
-    tsConfig: {
-      include: ["../tests/**/*"],
-      compilerOptions: {
-        paths: {
-          "#test/*": ["../tests/*"],
-        },
-      },
-    },
-  },
 });
