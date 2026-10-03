@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 1.0.4
+
+### Patch Changes
+
+- [`3fe86b0`](https://github.com/zoobzio/foundation/commit/3fe86b043e5987cd9d36d0aa12065db93dd01f9f) Thanks [@zoobzio](https://github.com/zoobzio)! - Components that render links (Breadcrumb, Directory, Menu, SegmentedControl, Tabs, Tree, and the data browser/table rows) now import `NuxtLink` explicitly from `#components` instead of relying on auto-import resolution. The layer's `nuxt.config.ts` also no longer adds the test-only `../tests/**/*` include and `#test/*` path alias to the generated tsconfig, so consuming apps don't inherit references to a `tests` directory that isn't published.
+
 ## 1.0.3
 
 ### Patch Changes
