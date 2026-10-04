@@ -2,7 +2,10 @@ import type {
   DateRangePickerEmits,
   DateRangePickerProps,
 } from "../types/core/date-range-picker";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A date-range-picker instance as data: props plus emit listeners — the object a
@@ -14,10 +17,22 @@ export type DateRangePickerDefinition = Definition<
 >;
 
 /**
- * Declares a date-range-picker at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a date-range-picker. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineDateRangePicker = (
+export function defineDateRangePicker(
   definition: DateRangePickerDefinition,
-): DateRangePickerDefinition => definition;
+): DateRangePickerDefinition;
+export function defineDateRangePicker(
+  definition: DefinitionSource<DateRangePickerDefinition>,
+): ComputedRef<DateRangePickerDefinition>;
+export function defineDateRangePicker(
+  definition:
+    | DateRangePickerDefinition
+    | DefinitionSource<DateRangePickerDefinition>,
+): DateRangePickerDefinition | ComputedRef<DateRangePickerDefinition> {
+  return define(definition);
+}

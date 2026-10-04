@@ -263,10 +263,37 @@ const picker = defineSelect({ options, "onUpdate:modelValue": (v) => {} });
 <Select v-bind="picker" />
 ```
 
-Definitions are pure data at module scope (the identity function is the type
-checkpoint), declared as named consts and composed by reference. The same
-object is what an [adapter](../data/README.md#the-adapter) captures as
-`settings` when a composite becomes page furniture.
+A plain definition is pure data at module scope (the call is the type
+checkpoint, the object comes back untouched), declared as a named const and
+composed by reference. The same object is what an
+[adapter](../data/README.md#the-adapter) captures as `settings` when a
+composite becomes page furniture.
+
+A definition that depends on reactive state is authored the same way, with a
+getter (or a ref) instead of the object — `define<Name>` returns a
+`ComputedRef` of the definition, so no hand-rolled `computed` wrapper:
+
+```ts
+const picker = defineSelect(() => ({
+  options: options.value,
+  disabled: loading.value,
+}));
+```
+
+- Declared at the top level of `<script setup>`, it binds exactly like the
+  static form — `v-bind="picker"` — because the template unwraps it. Held
+  anywhere else (inside a nested object, say), bind `picker.value`.
+- It is valid adapter `settings` as is: settings are resolved with `toValue`
+  at the bind site, so the adapted component follows the source.
+- Declare it where its sources live — normally in setup. A getter closing
+  over module-level state is shared across SSR requests like that state is.
+- A wrongly typed field errors on its line in both forms. Unknown keys are
+  only rejected in the plain form: TypeScript does not excess-check an
+  object returned from a getter.
+
+Only composite definers take a source. Data definitions (`defineTable`, …)
+and structures (`definePanel`, `defineWorkspace`) stay static — their
+reactivity attaches at `use*`.
 
 ## Conventions
 

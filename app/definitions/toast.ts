@@ -1,5 +1,8 @@
 import type { ToastEmits, ToastProps } from "../types/core/toast";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A toast instance as data: props plus emit listeners — the object a
@@ -8,9 +11,18 @@ import type { Definition } from "../types/definition";
 export type ToastDefinition = Definition<ToastProps, ToastEmits>;
 
 /**
- * Declares a toast at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a toast. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineToast = (definition: ToastDefinition): ToastDefinition =>
-  definition;
+export function defineToast(definition: ToastDefinition): ToastDefinition;
+export function defineToast(
+  definition: DefinitionSource<ToastDefinition>,
+): ComputedRef<ToastDefinition>;
+export function defineToast(
+  definition: ToastDefinition | DefinitionSource<ToastDefinition>,
+): ToastDefinition | ComputedRef<ToastDefinition> {
+  return define(definition);
+}

@@ -3,7 +3,10 @@ import type {
   CommandOption,
   CommandProps,
 } from "../types/core/command";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A command instance as data: props plus emit listeners — the object a
@@ -15,10 +18,20 @@ export type CommandDefinition<T extends CommandOption> = Definition<
 >;
 
 /**
- * Declares a command at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a command. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineCommand = <T extends CommandOption>(
+export function defineCommand<T extends CommandOption>(
   definition: CommandDefinition<T>,
-): CommandDefinition<T> => definition;
+): CommandDefinition<T>;
+export function defineCommand<T extends CommandOption>(
+  definition: DefinitionSource<CommandDefinition<T>>,
+): ComputedRef<CommandDefinition<T>>;
+export function defineCommand<T extends CommandOption>(
+  definition: CommandDefinition<T> | DefinitionSource<CommandDefinition<T>>,
+): CommandDefinition<T> | ComputedRef<CommandDefinition<T>> {
+  return define(definition);
+}

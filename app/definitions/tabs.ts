@@ -1,5 +1,8 @@
 import type { TabsEmits, TabsOption, TabsProps } from "../types/core/tabs";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A tabs instance as data: props plus emit listeners — the object a
@@ -11,10 +14,20 @@ export type TabsDefinition<T extends TabsOption = TabsOption> = Definition<
 >;
 
 /**
- * Declares a tabs at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a tabs. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineTabs = <T extends TabsOption>(
+export function defineTabs<T extends TabsOption>(
   definition: TabsDefinition<T>,
-): TabsDefinition<T> => definition;
+): TabsDefinition<T>;
+export function defineTabs<T extends TabsOption>(
+  definition: DefinitionSource<TabsDefinition<T>>,
+): ComputedRef<TabsDefinition<T>>;
+export function defineTabs<T extends TabsOption>(
+  definition: TabsDefinition<T> | DefinitionSource<TabsDefinition<T>>,
+): TabsDefinition<T> | ComputedRef<TabsDefinition<T>> {
+  return define(definition);
+}

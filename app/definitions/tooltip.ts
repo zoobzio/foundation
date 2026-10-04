@@ -1,5 +1,8 @@
 import type { TooltipEmits, TooltipProps } from "../types/core/tooltip";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A tooltip instance as data: props plus emit listeners — the object a
@@ -8,10 +11,18 @@ import type { Definition } from "../types/definition";
 export type TooltipDefinition = Definition<TooltipProps, TooltipEmits>;
 
 /**
- * Declares a tooltip at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a tooltip. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineTooltip = (
-  definition: TooltipDefinition,
-): TooltipDefinition => definition;
+export function defineTooltip(definition: TooltipDefinition): TooltipDefinition;
+export function defineTooltip(
+  definition: DefinitionSource<TooltipDefinition>,
+): ComputedRef<TooltipDefinition>;
+export function defineTooltip(
+  definition: TooltipDefinition | DefinitionSource<TooltipDefinition>,
+): TooltipDefinition | ComputedRef<TooltipDefinition> {
+  return define(definition);
+}

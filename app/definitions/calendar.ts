@@ -1,5 +1,8 @@
 import type { CalendarEmits, CalendarProps } from "../types/core/calendar";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A calendar instance as data: props plus emit listeners — the object a
@@ -8,10 +11,20 @@ import type { Definition } from "../types/definition";
 export type CalendarDefinition = Definition<CalendarProps, CalendarEmits>;
 
 /**
- * Declares a calendar at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a calendar. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineCalendar = (
+export function defineCalendar(
   definition: CalendarDefinition,
-): CalendarDefinition => definition;
+): CalendarDefinition;
+export function defineCalendar(
+  definition: DefinitionSource<CalendarDefinition>,
+): ComputedRef<CalendarDefinition>;
+export function defineCalendar(
+  definition: CalendarDefinition | DefinitionSource<CalendarDefinition>,
+): CalendarDefinition | ComputedRef<CalendarDefinition> {
+  return define(definition);
+}
