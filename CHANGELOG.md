@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 1.0.5
+
+### Patch Changes
+
+- [`a649c27`](https://github.com/zoobzio/foundation/commit/a649c279f5d40298d00c8b43dcfad0d60303b026) Thanks [@zoobzio](https://github.com/zoobzio)! - Composite definers (`defineSelect`, `defineDirectory`, …) accept a getter or ref as well as a plain object. A plain definition is still returned untouched; a getter or ref returns a `ComputedRef` of the definition, so a reactive instance is `defineSelect(() => ({ … }))` rather than a hand-rolled `computed`. The computed binds with `v-bind` from `<script setup>` and is valid adapter `settings` as is. New `DefinitionSource` type in `types/definition`.
+
 ## 1.0.4
 
 ### Patch Changes
