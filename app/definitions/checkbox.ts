@@ -1,5 +1,8 @@
 import type { CheckboxEmits, CheckboxProps } from "../types/core/checkbox";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A checkbox instance as data: props plus emit listeners — the object a
@@ -8,10 +11,20 @@ import type { Definition } from "../types/definition";
 export type CheckboxDefinition = Definition<CheckboxProps, CheckboxEmits>;
 
 /**
- * Declares a checkbox at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a checkbox. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineCheckbox = (
+export function defineCheckbox(
   definition: CheckboxDefinition,
-): CheckboxDefinition => definition;
+): CheckboxDefinition;
+export function defineCheckbox(
+  definition: DefinitionSource<CheckboxDefinition>,
+): ComputedRef<CheckboxDefinition>;
+export function defineCheckbox(
+  definition: CheckboxDefinition | DefinitionSource<CheckboxDefinition>,
+): CheckboxDefinition | ComputedRef<CheckboxDefinition> {
+  return define(definition);
+}

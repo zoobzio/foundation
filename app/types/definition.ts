@@ -1,6 +1,7 @@
 import type { ScopedEvent } from "./hook";
 import type { Passthrough } from "./passthrough";
 import type { Widgets } from "./widget";
+import type { Ref } from "vue";
 
 /**
  * A component instance as data: props plus emit listeners in `on*` form —
@@ -11,6 +12,13 @@ import type { Widgets } from "./widget";
  * adapters capture components).
  */
 export type Definition<Props, Emits = {}> = Passthrough<Props, Emits>;
+
+/**
+ * The reactive authoring form of a definition: a ref or getter yielding it.
+ * A composite `define*` given a source returns a computed definition, so a
+ * reactive instance needs no hand-rolled `computed` wrapper.
+ */
+export type DefinitionSource<D> = Ref<D> | (() => D);
 
 /**
  * A definition's type stamp: a type-level phantom (`$contract` is never

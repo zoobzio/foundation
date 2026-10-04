@@ -3,7 +3,12 @@
 // definition constructors (`defineAdapter`, `defineDirectory`); override and
 // bridge logic get their depth in tests/services/adapter.test.ts.
 import { describe, expect, it } from "vitest";
-import { defineComponent, h } from "vue";
+import type {
+  DirectoryGroup,
+  DirectoryItem,
+} from "../../../app/types/core/directory";
+
+import { defineComponent, h, ref, toValue } from "vue";
 import { useAdapter } from "../../../app/factories/adapter";
 import { defineAdapter } from "../../../app/definitions/adapter";
 import { defineDirectory } from "../../../app/definitions/directory";
@@ -92,6 +97,22 @@ describe("useAdapter", () => {
     expect(widget.service.component).toBe(Directory);
     expect(widget.service.emits).toEqual(["select"]);
     expect(widget.settings).toBe(nav);
+  });
+
+  it("a reactive composite definition rides through as live settings", () => {
+    const groups = ref<DirectoryGroup<DirectoryItem>[]>([]);
+    const nav = defineDirectory(() => ({ groups: groups.value }));
+    const adapter = defineAdapter({
+      component: Directory,
+      emits: { select: true },
+      settings: nav,
+    });
+    const widget = useAdapter("nav", adapter);
+    expect(toValue(widget.settings)).toEqual({ groups: [] });
+    groups.value = [{ label: "Main", items: [] }];
+    expect(toValue(widget.settings)).toEqual({
+      groups: [{ label: "Main", items: [] }],
+    });
   });
 
   it("same id shares the override layer across instances", () => {

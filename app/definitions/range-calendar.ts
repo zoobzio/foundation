@@ -2,7 +2,10 @@ import type {
   RangeCalendarEmits,
   RangeCalendarProps,
 } from "../types/core/range-calendar";
-import type { Definition } from "../types/definition";
+import type { Definition, DefinitionSource } from "../types/definition";
+import type { ComputedRef } from "vue";
+
+import { define } from "../utils/definition";
 
 /**
  * A range-calendar instance as data: props plus emit listeners — the object a
@@ -14,10 +17,22 @@ export type RangeCalendarDefinition = Definition<
 >;
 
 /**
- * Declares a range-calendar at module scope — pure data, no runtime, no Vue. The
- * identity function is the type checkpoint: every field errors on the line
+ * Declares a range-calendar. A plain object is returned as is — pure data, storable at
+ * module scope; a ref or getter yields a computed definition that tracks
+ * its source, so a reactive instance needs no `computed` wrapper. Either
+ * way the call is the type checkpoint: a mistyped field errors on the line
  * it is written.
  */
-export const defineRangeCalendar = (
+export function defineRangeCalendar(
   definition: RangeCalendarDefinition,
-): RangeCalendarDefinition => definition;
+): RangeCalendarDefinition;
+export function defineRangeCalendar(
+  definition: DefinitionSource<RangeCalendarDefinition>,
+): ComputedRef<RangeCalendarDefinition>;
+export function defineRangeCalendar(
+  definition:
+    | RangeCalendarDefinition
+    | DefinitionSource<RangeCalendarDefinition>,
+): RangeCalendarDefinition | ComputedRef<RangeCalendarDefinition> {
+  return define(definition);
+}
