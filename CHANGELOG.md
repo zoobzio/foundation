@@ -1,5 +1,11 @@
 # @zoobzio/foundation
 
+## 1.0.6
+
+### Patch Changes
+
+- [`7f888b6`](https://github.com/zoobzio/foundation/commit/7f888b6cf54e2ba3a8db6bb5d6248c0891ecb2f0) Thanks [@zoobzio](https://github.com/zoobzio)! - Bump `objectively` dependency from `^0.1.1` to `^0.3.0`.
+
 ## 1.0.5
 
 ### Patch Changes
