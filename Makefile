@@ -45,6 +45,6 @@ ci: clean install check coverage ## Full CI simulation
 
 clean: ## Remove generated files
 	rm -rf node_modules/.cache
-	rm -rf .coverage
+	find . -name '.coverage' -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null || true
 	find . -name '.nuxt' -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null || true
 	find . -name '.output' -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null || true

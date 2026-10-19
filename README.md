@@ -51,23 +51,30 @@ Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
 
 ## Project structure
 
+The repo is a pnpm workspace. The published layer lives in `layers/foundation/`;
+`packages/` is reserved for headless packages and `example/` is a playground app
+that extends the layer.
+
 ```
-app/
-  components/
-    core/       — interactive components (30)
-    data/       — data widgets: autocomplete, table, chart, deck, form, preview
-    system/     — app-shell composition (2)
-  composables/  — usePassthrough, useContext, useModel, useHooks, …
-  factories/    — widget composables: use*(id, definition) → Widget
-  services/     — feature logic classes (the unit under test)
-  stores/       — useState-backed feature state
-  plugins/      — log
-  types/        — per-component prop/emit types
-  utils/        — pure helpers (dates, formatting, passthrough merge, …)
-  constants/    — shared constants
-  app.vue · error.vue · app.d.ts
-tests/          — vitest suite mirroring app/ (see tests/README.md)
-nuxt.config.ts  — layer config (auto-import off)
+layers/foundation/
+  app/
+    components/
+      core/       — interactive components (30)
+      data/       — data widgets: autocomplete, table, chart, deck, form, preview
+      system/     — app-shell composition (2)
+    composables/  — usePassthrough, useContext, useModel, useHooks, …
+    factories/    — widget composables: use*(id, definition) → Widget
+    services/     — feature logic classes (the unit under test)
+    stores/       — useState-backed feature state
+    plugins/      — log
+    types/        — per-component prop/emit types
+    utils/        — pure helpers (dates, formatting, passthrough merge, …)
+    constants/    — shared constants
+    app.vue · error.vue · app.d.ts
+  tests/          — vitest suite mirroring app/ (see tests/README.md)
+  nuxt.config.ts  — layer config (auto-import off)
+packages/         — headless packages (none yet)
+example/          — playground app extending the layer
 ```
 
 ## Development
@@ -75,11 +82,16 @@ nuxt.config.ts  — layer config (auto-import off)
 ```bash
 pnpm install
 pnpm dev          # run the layer in a Nuxt dev server
-pnpm test         # run the vitest suite
-pnpm typecheck    # nuxi typecheck
+pnpm dev:example  # run the example app
+pnpm test         # run the vitest suite in every workspace package
+pnpm typecheck    # nuxi typecheck in every workspace package
 pnpm lint         # oxlint (lint:fix to auto-fix)
 pnpm format       # oxfmt (format:check to verify)
 ```
+
+Lint and format run from the root and walk the whole tree. `typecheck`,
+`test`, `build`, and `prepare` fan out with `pnpm -r`; run them inside
+`layers/foundation/` to target the layer alone.
 
 Or via `make` (`make help` lists all targets):
 
@@ -107,7 +119,7 @@ Tests run under **vitest** (happy-dom). Because the layer uses explicit imports,
 - Tests required for all new code
 - `make check` (lint + typecheck + test) must pass before opening a PR
 - Add a changeset (`pnpm changeset`) in any PR that should ship a release
-- Node 22, pnpm 9.10.0
+- Node 22, pnpm 10.27.0
 
 ## Releasing
 
