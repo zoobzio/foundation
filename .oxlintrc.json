@@ -14,6 +14,7 @@
     "**/.nuxt/**",
     "**/.output/**",
     "**/dist/**",
+    "**/.dist/**",
     ".coverage/**"
   ],
   "rules": {

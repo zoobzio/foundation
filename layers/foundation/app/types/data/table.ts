@@ -1,199 +1,38 @@
-import type { Ref } from "#imports";
+import type { TableFilter } from "@zoobzio/table";
 
 /**
- * Column data type — drives cell rendering and sort behavior.
+ * The table domain contract lives in the headless `@zoobzio/table` package.
+ * Re-exported here so layer modules and consumers keep one import path.
  */
-export type ColumnType =
-  | "text"
-  | "number"
-  | "date"
-  | "datetime"
-  | "boolean"
-  | "enum"
-  | "currency"
-  | "filesize"
-  | "url"
-  | "image"
-  | "action";
+export type {
+  ActionDescriptor,
+  Actions,
+  BulkAction,
+  Change,
+  Changes,
+  ColumnType,
+  Config,
+  DataTableColumn,
+  DataTableFetchParams,
+  DataTableFetchResult,
+  Event,
+  Listener,
+  Middleware,
+  Options,
+  RowAction,
+  Service,
+  SortDirection,
+  State,
+  StateKey,
+  TableFilter,
+} from "@zoobzio/table";
 
-export interface DataTableColumn<T> {
-  key: keyof T;
-  label: string;
-  type?: ColumnType;
-  align?: "left" | "center" | "right";
-  sortable?: boolean;
-  sortKey?: string;
-  enumValues?: string[];
-  /**
-   * Whether the column appears in the search autocomplete. Defaults by
-   * type: everything except `action` and `image` is filterable.
-   */
-  filterable?: boolean;
-}
+export type { Events as ServiceEvents } from "@zoobzio/table";
 
 /**
- * A committed column filter. Keys are strings, matching the `sortField` /
- * `columnOrder` convention; `op` is present for operator-stage columns
- * (date/datetime: before/after/on, number/currency: over/under/is).
+ * The Nuxt hook map of a table: the service's domain events, prefixed and
+ * id-scoped, as `useTable` relays them onto the app hook bus.
  */
-export interface TableFilter {
-  key: string;
-  op?: string;
-  value: string;
-}
-
-export type SortDirection = "asc" | "desc";
-
-/**
- * The serializable half of a row/bulk action: how it renders. The behavior
- * half is a handler registered under the same key at `useTable`.
- */
-export interface ActionDescriptor {
-  label: string;
-}
-
-/**
- * Row action — rendered per-row in an actions menu. The live shape the
- * service exposes: descriptor joined with its handler.
- */
-export interface RowAction<T> {
-  label: string;
-  action: (row: T) => void;
-}
-
-/**
- * Bulk action — rendered when rows are selected. The live shape the service
- * exposes: descriptor joined with its handler.
- */
-export interface BulkAction {
-  label: string;
-  action: (selected: Set<string>) => void;
-}
-
-/**
- * Parameters passed to the fetch action. The table owns paging, sort, and
- * search: `query` is the committed free-text search, `filters` the committed
- * column filters, both assembled by the search autocomplete.
- */
-export interface DataTableFetchParams {
-  page: number;
-  pageSize: number;
-  sortField: string | null;
-  sortDirection: SortDirection;
-  query: string;
-  filters: TableFilter[];
-}
-
-export interface DataTableFetchResult<T> {
-  data: T[];
-  total: number;
-  pageCount: number;
-}
-
-/**
- * Config the consumer provides — pure serializable data. Actions are
- * descriptor records: the key is the action's identity, shared with the
- * handler record wired at `useTable`.
- */
-export type Config<T> = {
-  columns: DataTableColumn<T>[];
-  rowKey: keyof T;
-  actions?: Record<string, ActionDescriptor>;
-  bulkActions?: Record<string, ActionDescriptor>;
-  pinnedColumns?: (keyof T)[];
-  defaultColumnOrder?: (keyof T)[];
-  /**
-   * Whether the widget renders the toolbar search autocomplete. Defaults to
-   * `true`. Hides the UI only — the search surface on the service (`query`,
-   * `filters`, mutators, fetch params) stays live for imperative use.
-   */
-  searchable?: boolean;
-};
-
-export type State<T> = {
-  data: Ref<T[]>;
-  loading: Ref<boolean>;
-  initialized: Ref<boolean>;
-  page: Ref<number>;
-  pageSize: Ref<number>;
-  total: Ref<number>;
-  pageCount: Ref<number>;
-  sortField: Ref<string | null>;
-  sortDirection: Ref<SortDirection>;
-  selected: Ref<Set<string>>;
-  columnOrder: Ref<string[]>;
-  query: Ref<string>;
-  filters: Ref<TableFilter[]>;
-};
-
-/**
- * The consumer-supplied behavior, attached in setup at `useTable`: the fetch
- * mechanism plus handlers keyed like the config's descriptor records. This is
- * the erased shape the service receives; `useTable` accepts it keyed
- * precisely to the definition's action vocabulary.
- */
-export type Actions<T> = {
-  fetch: (
-    params: DataTableFetchParams,
-    service: Service<T>,
-  ) => Promise<DataTableFetchResult<T>>;
-  actions?: Record<string, (row: T) => void>;
-  bulkActions?: Record<string, (selected: Set<string>) => void>;
-};
-
-export type Service<T> = {
-  readonly id: string;
-  readonly config: Config<T>;
-  readonly columns: DataTableColumn<T>[];
-  readonly rowKey: keyof T;
-  readonly actions: RowAction<T>[];
-  readonly bulkActions: BulkAction[];
-  readonly pinnedColumns: (keyof T)[];
-  readonly searchable: boolean;
-
-  readonly data: T[];
-  readonly loading: boolean;
-  readonly initialized: boolean;
-  readonly page: number;
-  readonly pageSize: number;
-  readonly total: number;
-  readonly pageCount: number;
-  readonly sortField: string | null;
-  readonly sortDirection: SortDirection;
-  readonly selected: Set<string>;
-  readonly columnOrder: string[];
-  readonly query: string;
-  readonly filters: TableFilter[];
-
-  readonly visibleColumns: DataTableColumn<T>[];
-  readonly filterableColumns: DataTableColumn<T>[];
-  readonly isAllSelected: boolean;
-  readonly isIndeterminate: boolean;
-  readonly selectAllState: boolean | "indeterminate";
-  readonly colSpan: number;
-
-  goToPage(page: number): void;
-  setPageSize(size: number): void;
-  sortBy(field: string): void;
-  sortFieldFor(col: DataTableColumn<T>): string;
-  isSorted(col: DataTableColumn<T>): boolean;
-  keyOf(row: T): string;
-  toggleRow(key: string): void;
-  toggleAll(): void;
-  clearSelection(): void;
-  isRowSelected(row: T): boolean;
-  toggleColumn(key: keyof T): void;
-  reorderColumns(order: string[]): void;
-  resetColumns(): void;
-  isColumnPinned(key: keyof T): boolean;
-  isColumnVisible(key: keyof T): boolean;
-  addFilter(key: string, value: string, op?: string): void;
-  removeFilter(index: number): void;
-  setQuery(value: string): void;
-  init(): Promise<boolean>;
-  fetch(): Promise<void>;
-};
-
 export type Events = {
   "table:updated": (event: { id: string; total: number }) => void;
   "table:filtered": (event: {

@@ -1,40 +1,52 @@
-import type { NuxtApp } from "#app";
 import type {
   Actions,
   Config,
   DataTableColumn,
+  Emitter,
+  Event,
+  Events,
+  Listener,
+  Options,
   Service,
   State,
   TableFilter,
-} from "../types/data/table";
-import type { Logger } from "../types/log";
+} from "./types";
 
 import { entries } from "objectively";
+import { makeEmitter } from "./emitter";
+import { makeProxy } from "./proxy";
 
+/**
+ * The headless table machine. Owns paging, sort, selection, column order,
+ * and committed search; delegates data loading to `wiring.fetch`.
+ *
+ * The service reads and writes the `state` container through the `options`
+ * middleware. The container can be a plain object or a reactive proxy; the
+ * service replaces each member as a whole. Each write emits `change`, and
+ * the domain methods emit `updated` and `filtered`. `on` subscribes.
+ */
 export class TableService<T> implements Service<T> {
-  private readonly log: Logger;
-  private readonly emit: NuxtApp["callHook"];
-
   readonly columns: DataTableColumn<T>[];
   readonly rowKey: keyof T;
   readonly actions: Service<T>["actions"];
   readonly bulkActions: Service<T>["bulkActions"];
   readonly pinnedColumns: (keyof T)[];
 
+  private readonly state: State<T>;
+  private readonly emitter: Emitter<Events<T>> = makeEmitter();
+
   private readonly columnMap: Map<string, DataTableColumn<T>>;
   private readonly pinnedSet: Set<string>;
   private readonly defaultColumnKeys: string[];
 
   constructor(
-    nuxt: NuxtApp,
     public readonly id: string,
     public readonly config: Config<T>,
-    private readonly state: State<T>,
+    state: State<T>,
     private readonly wiring: Actions<T>,
+    options: Options<T> = {},
   ) {
-    this.log = nuxt.$logger(this.id);
-    this.emit = nuxt.callHook;
-
+    this.state = makeProxy(state, options, this.emitter);
     this.columns = config.columns;
     this.rowKey = config.rowKey;
     this.actions = entries(config.actions ?? {}).map(([key, descriptor]) => ({
@@ -57,48 +69,56 @@ export class TableService<T> implements Service<T> {
     ).map(String);
   }
 
+  on<E extends Event<T>>(event: E, listener: Listener<T, E>): () => void {
+    return this.emitter.on(event, listener);
+  }
+
+  // --- state -----------------------------------------------------------
+
   get data(): T[] {
-    return this.state.data.value;
+    return this.state.data;
   }
   get loading(): boolean {
-    return this.state.loading.value;
+    return this.state.loading;
   }
   get initialized(): boolean {
-    return this.state.initialized.value;
+    return this.state.initialized;
   }
   get page(): number {
-    return this.state.page.value;
+    return this.state.page;
   }
   get pageSize(): number {
-    return this.state.pageSize.value;
+    return this.state.pageSize;
   }
   get total(): number {
-    return this.state.total.value;
+    return this.state.total;
   }
   get pageCount(): number {
-    return this.state.pageCount.value;
+    return this.state.pageCount;
   }
   get sortField(): string | null {
-    return this.state.sortField.value;
+    return this.state.sortField;
   }
   get sortDirection() {
-    return this.state.sortDirection.value;
+    return this.state.sortDirection;
   }
   get selected(): Set<string> {
-    return this.state.selected.value;
+    return this.state.selected;
   }
   get columnOrder(): string[] {
-    return this.state.columnOrder.value;
+    return this.state.columnOrder;
   }
   get searchable(): boolean {
     return this.config.searchable ?? true;
   }
   get query(): string {
-    return this.state.query.value;
+    return this.state.query;
   }
   get filters(): TableFilter[] {
-    return this.state.filters.value;
+    return this.state.filters;
   }
+
+  // --- derived ---------------------------------------------------------
 
   get filterableColumns(): DataTableColumn<T>[] {
     return this.columns.filter(
@@ -107,7 +127,7 @@ export class TableService<T> implements Service<T> {
   }
 
   get visibleColumns(): DataTableColumn<T>[] {
-    return this.state.columnOrder.value
+    return this.columnOrder
       .map((key) => this.columnMap.get(key))
       .filter((c): c is DataTableColumn<T> => c !== undefined);
   }
@@ -139,27 +159,30 @@ export class TableService<T> implements Service<T> {
     return String(row[this.config.rowKey]);
   }
 
+  // --- paging ----------------------------------------------------------
+
   goToPage(page: number): void {
     if (page < 1 || page > this.pageCount) return;
-    this.state.page.value = page;
+    this.state.page = page;
     this.fetch();
   }
 
   setPageSize(size: number): void {
-    this.state.pageSize.value = size;
-    this.state.page.value = 1;
+    this.state.pageSize = size;
+    this.state.page = 1;
     this.fetch();
   }
 
+  // --- sorting ---------------------------------------------------------
+
   sortBy(field: string): void {
     if (this.sortField === field) {
-      this.state.sortDirection.value =
-        this.sortDirection === "asc" ? "desc" : "asc";
+      this.state.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
     } else {
-      this.state.sortField.value = field;
-      this.state.sortDirection.value = "asc";
+      this.state.sortField = field;
+      this.state.sortDirection = "asc";
     }
-    this.state.page.value = 1;
+    this.state.page = 1;
     this.fetch();
   }
 
@@ -171,30 +194,32 @@ export class TableService<T> implements Service<T> {
     return this.sortField === this.sortFieldFor(col);
   }
 
+  // --- selection -------------------------------------------------------
+
   toggleRow(key: string): void {
     const next = new Set(this.selected);
     if (next.has(key)) next.delete(key);
     else next.add(key);
-    this.state.selected.value = next;
+    this.state.selected = next;
   }
 
   toggleAll(): void {
     if (this.isAllSelected) {
-      this.state.selected.value = new Set();
+      this.state.selected = new Set();
     } else {
-      this.state.selected.value = new Set(
-        this.data.map((row) => this.keyOf(row)),
-      );
+      this.state.selected = new Set(this.data.map((row) => this.keyOf(row)));
     }
   }
 
   clearSelection(): void {
-    this.state.selected.value = new Set();
+    this.state.selected = new Set();
   }
 
   isRowSelected(row: T): boolean {
     return this.selected.has(this.keyOf(row));
   }
+
+  // --- columns ---------------------------------------------------------
 
   isColumnPinned(key: keyof T): boolean {
     return this.pinnedSet.has(String(key));
@@ -208,19 +233,21 @@ export class TableService<T> implements Service<T> {
     const k = String(key);
     if (this.pinnedSet.has(k)) return;
     if (this.columnOrder.includes(k)) {
-      this.state.columnOrder.value = this.columnOrder.filter((c) => c !== k);
+      this.state.columnOrder = this.columnOrder.filter((c) => c !== k);
     } else {
-      this.state.columnOrder.value = [...this.columnOrder, k];
+      this.state.columnOrder = [...this.columnOrder, k];
     }
   }
 
   reorderColumns(order: string[]): void {
-    this.state.columnOrder.value = order;
+    this.state.columnOrder = order;
   }
 
   resetColumns(): void {
-    this.state.columnOrder.value = this.defaultColumnKeys;
+    this.state.columnOrder = this.defaultColumnKeys;
   }
+
+  // --- search ----------------------------------------------------------
 
   /**
    * Commits a filter; a filter with the same key and operator is replaced
@@ -230,7 +257,7 @@ export class TableService<T> implements Service<T> {
    */
   addFilter(key: string, value: string, op?: string): void {
     const next: TableFilter = op ? { key, op, value } : { key, value };
-    this.state.filters.value = [
+    this.state.filters = [
       ...this.filters.filter((f) => !(f.key === key && f.op === op)),
       next,
     ];
@@ -239,41 +266,38 @@ export class TableService<T> implements Service<T> {
 
   removeFilter(index: number): void {
     if (index < 0 || index >= this.filters.length) return;
-    this.state.filters.value = this.filters.filter((_, i) => i !== index);
+    this.state.filters = this.filters.filter((_, i) => i !== index);
     this.search();
   }
 
   setQuery(value: string): void {
     if (value === this.query) return;
-    this.state.query.value = value;
+    this.state.query = value;
     this.search();
   }
 
   /** First page, refetch, emit — the same reset discipline as `sortBy`. */
   private search(): void {
-    this.state.page.value = 1;
+    this.state.page = 1;
     this.fetch();
-    this.log.debug("Table filtered", {
-      id: this.id,
-      query: this.query,
-      filters: this.filters,
-    });
-    this.emit("table:filtered", {
+    this.emitter.emit("filtered", {
       id: this.id,
       query: this.query,
       filters: this.filters,
     });
   }
 
+  // --- loading ---------------------------------------------------------
+
   async init(): Promise<boolean> {
-    if (this.state.initialized.value) return true;
-    this.state.initialized.value = true;
+    if (this.initialized) return true;
+    this.state.initialized = true;
     await this.fetch();
     return true;
   }
 
   async fetch(): Promise<void> {
-    this.state.loading.value = true;
+    this.state.loading = true;
     try {
       const result = await this.wiring.fetch(
         {
@@ -286,13 +310,12 @@ export class TableService<T> implements Service<T> {
         },
         this,
       );
-      this.state.data.value = result.data;
-      this.state.total.value = result.total;
-      this.state.pageCount.value = result.pageCount;
+      this.state.data = result.data;
+      this.state.total = result.total;
+      this.state.pageCount = result.pageCount;
     } finally {
-      this.state.loading.value = false;
-      this.log.debug("Table updated", { id: this.id, total: this.total });
-      this.emit("table:updated", { id: this.id, total: this.total });
+      this.state.loading = false;
+      this.emitter.emit("updated", { id: this.id, total: this.total });
     }
   }
 }

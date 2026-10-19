@@ -4,6 +4,7 @@
 // lives in tests/services/table.test.ts).
 import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
+import { useNuxtApp } from "#imports";
 import { useTable } from "../../../app/factories/table";
 import type { DataTableFetchResult } from "../../../app/types/data/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
@@ -116,6 +117,25 @@ describe("useTable", () => {
     await a.init();
     expect(b.initialized).toBe(false);
     expect(b.data).toEqual([]);
+  });
+
+  it("routes service events onto the Nuxt hook bus", async () => {
+    const updated = vi.fn();
+    const filtered = vi.fn();
+    useNuxtApp().hooks.addHooks({
+      "table:updated": updated,
+      "table:filtered": filtered,
+    });
+    const table = useTable("f1", definition, makeWiring()).service;
+    await table.init();
+    expect(updated).toHaveBeenCalledWith({ id: "f1", total: fakeRows.length });
+    table.setQuery("acme");
+    await Promise.resolve();
+    expect(filtered).toHaveBeenCalledWith({
+      id: "f1",
+      query: "acme",
+      filters: [],
+    });
   });
 
   it("keyOf resolves the configured rowKey", () => {

@@ -57,10 +57,11 @@ const mountWidget = (mock = createMockTable()) => {
 };
 
 describe("data table widget", () => {
-  it("kicks off table init through the lazy request", async () => {
+  it("does not init the service on mount — the caller drives init", async () => {
     const { service } = mountWidget();
     await flushPromises();
-    expect(service.init).toHaveBeenCalledOnce();
+    expect(service.init).not.toHaveBeenCalled();
+    expect(service.fetch).not.toHaveBeenCalled();
   });
 
   it("renders toolbar and stubbed feature parts inside the frame", () => {

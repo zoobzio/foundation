@@ -1,42 +1,23 @@
-// Gold standard: services. Constructor-injected seams — hand-rolled State
-// refs, a vi.fn() Actions fake, and the shim's NuxtApp. No mounting; every
-// test drives a state transition and asserts both the new state and the
-// side-channel contracts (fetch params, hook emission).
+// Constructor-injected seams — a plain state container, a vi.fn() Actions
+// fake, and vi.fn() listeners. Every test drives a state transition and
+// asserts both the new state and the side-channel contracts (fetch params,
+// events).
 import { describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
-import { useNuxtApp } from "#imports";
-import { TableService } from "../../../app/services/table";
+import { TableService } from "../src/service";
+import { createTableState } from "../src/state";
 import type {
   Actions,
+  Change,
   Config,
   DataTableFetchResult,
-  SortDirection,
+  Options,
   State,
-  TableFilter,
-} from "../../../app/types/data/table";
-import {
-  fakeColumns,
-  fakeRows,
-  fakeActions,
-  fakeBulkActions,
-} from "#test/data/table";
-import type { FakeRow } from "#test/data/table";
+} from "../src/types";
+import { fakeColumns, fakeRows, fakeActions, fakeBulkActions } from "./data";
+import type { FakeRow } from "./data";
 
-const makeState = (): State<FakeRow> => ({
-  data: ref<FakeRow[]>([]),
-  loading: ref(false),
-  initialized: ref(false),
-  page: ref(1),
-  pageSize: ref(25),
-  total: ref(0),
-  pageCount: ref(0),
-  sortField: ref<string | null>(null),
-  sortDirection: ref<SortDirection>("asc"),
-  selected: ref<Set<string>>(new Set()),
-  columnOrder: ref(fakeColumns.map((c) => String(c.key))),
-  query: ref(""),
-  filters: ref<TableFilter[]>([]),
-});
+const makeState = (): State<FakeRow> =>
+  createTableState<FakeRow>({ columns: fakeColumns, rowKey: "id" });
 
 const makeActions = (rows: FakeRow[] = fakeRows) => ({
   fetch: vi.fn(async (): Promise<DataTableFetchResult<FakeRow>> => ({
@@ -51,28 +32,31 @@ const makeService = (
     state?: State<FakeRow>;
     actions?: Actions<FakeRow>;
     config?: Partial<Config<FakeRow>>;
+    options?: Options<FakeRow>;
   } = {},
 ) => {
   const state = overrides.state ?? makeState();
   const actions = overrides.actions ?? makeActions();
-  const nuxt = useNuxtApp();
-  const emitSpy = vi.spyOn(nuxt, "callHook");
   const service = new TableService<FakeRow>(
-    nuxt,
     "test-table",
     { columns: fakeColumns, rowKey: "id", ...overrides.config },
     state,
     actions,
+    overrides.options,
   );
-  return { service, state, actions, emitSpy };
+  const updated = vi.fn();
+  const filtered = vi.fn();
+  service.on("updated", updated);
+  service.on("filtered", filtered);
+  return { service, state, actions, updated, filtered };
 };
 
 describe("fetch", () => {
   it("passes current paging/sort params and applies the result", async () => {
     const { service, state, actions } = makeService();
-    state.page.value = 2;
-    state.sortField.value = "name";
-    state.sortDirection.value = "desc";
+    state.page = 2;
+    state.sortField = "name";
+    state.sortDirection = "desc";
 
     await service.fetch();
 
@@ -115,20 +99,17 @@ describe("fetch", () => {
     const actions = {
       fetch: vi.fn(async () => Promise.reject(new Error("boom"))),
     };
-    const { service, emitSpy } = makeService({ actions });
+    const { service, updated } = makeService({ actions });
 
     await expect(service.fetch()).rejects.toThrow("boom");
     expect(service.loading).toBe(false);
-    expect(emitSpy).toHaveBeenCalledWith("table:updated", {
-      id: "test-table",
-      total: 0,
-    });
+    expect(updated).toHaveBeenCalledWith({ id: "test-table", total: 0 });
   });
 
-  it("emits table:updated with the fresh total", async () => {
-    const { service, emitSpy } = makeService();
+  it("emits updated with the fresh total", async () => {
+    const { service, updated } = makeService();
     await service.fetch();
-    expect(emitSpy).toHaveBeenCalledWith("table:updated", {
+    expect(updated).toHaveBeenCalledWith({
       id: "test-table",
       total: fakeRows.length,
     });
@@ -138,7 +119,7 @@ describe("fetch", () => {
 describe("paging", () => {
   it("goToPage fetches the page inside bounds", async () => {
     const { service, state, actions } = makeService();
-    state.pageCount.value = 3;
+    state.pageCount = 3;
     service.goToPage(2);
     expect(service.page).toBe(2);
     expect(actions.fetch).toHaveBeenCalledOnce();
@@ -146,7 +127,7 @@ describe("paging", () => {
 
   it("goToPage ignores out-of-bounds targets", () => {
     const { service, state, actions } = makeService();
-    state.pageCount.value = 3;
+    state.pageCount = 3;
     service.goToPage(0);
     service.goToPage(4);
     expect(service.page).toBe(1);
@@ -155,8 +136,8 @@ describe("paging", () => {
 
   it("setPageSize resets to the first page", () => {
     const { service, state } = makeService();
-    state.page.value = 3;
-    state.pageCount.value = 5;
+    state.page = 3;
+    state.pageCount = 5;
     service.setPageSize(50);
     expect(service.pageSize).toBe(50);
     expect(service.page).toBe(1);
@@ -166,8 +147,8 @@ describe("paging", () => {
 describe("sorting", () => {
   it("first sort on a field starts ascending and resets the page", () => {
     const { service, state } = makeService();
-    state.page.value = 2;
-    state.pageCount.value = 5;
+    state.page = 2;
+    state.pageCount = 5;
     service.sortBy("name");
     expect(service.sortField).toBe("name");
     expect(service.sortDirection).toBe("asc");
@@ -269,14 +250,14 @@ describe("columns", () => {
 });
 
 describe("search", () => {
-  it("setQuery resets the page, refetches, and emits table:filtered", async () => {
-    const { service, state, actions, emitSpy } = makeService();
-    state.page.value = 3;
+  it("setQuery resets the page, refetches, and emits filtered", async () => {
+    const { service, state, actions, filtered } = makeService();
+    state.page = 3;
     service.setQuery("acme");
     expect(service.query).toBe("acme");
     expect(service.page).toBe(1);
     expect(actions.fetch).toHaveBeenCalledOnce();
-    expect(emitSpy).toHaveBeenCalledWith("table:filtered", {
+    expect(filtered).toHaveBeenCalledWith({
       id: "test-table",
       query: "acme",
       filters: [],
@@ -290,13 +271,13 @@ describe("search", () => {
   });
 
   it("addFilter commits the pair, resets the page, and refetches", () => {
-    const { service, state, actions, emitSpy } = makeService();
-    state.page.value = 2;
+    const { service, state, actions, filtered } = makeService();
+    state.page = 2;
     service.addFilter("status", "Active");
     expect(service.filters).toEqual([{ key: "status", value: "Active" }]);
     expect(service.page).toBe(1);
     expect(actions.fetch).toHaveBeenCalledOnce();
-    expect(emitSpy).toHaveBeenCalledWith("table:filtered", {
+    expect(filtered).toHaveBeenCalledWith({
       id: "test-table",
       query: "",
       filters: [{ key: "status", value: "Active" }],
@@ -383,6 +364,88 @@ describe("search", () => {
     expect(labels).not.toContain("Open");
     expect(labels).toContain("Avatar");
     expect(labels).toContain("Status");
+  });
+});
+
+describe("middleware", () => {
+  it("get middleware shapes every read of its field", () => {
+    const { service, state } = makeService({
+      options: { get: { state: { page: (page) => page * 10 } } },
+    });
+    state.page = 2;
+    expect(service.page).toBe(20);
+    expect(state.page).toBe(2);
+  });
+
+  it("set middleware shapes the stored value", () => {
+    const { service, state } = makeService({
+      options: { set: { state: { query: (query) => query.trim() } } },
+    });
+    service.setQuery("  acme  ");
+    expect(state.query).toBe("acme");
+    expect(service.query).toBe("acme");
+  });
+
+  it("a missing slot passes the value on", () => {
+    const { service, state } = makeService({ options: { get: {}, set: {} } });
+    service.setPageSize(50);
+    expect(state.pageSize).toBe(50);
+    expect(service.pageSize).toBe(50);
+  });
+});
+
+describe("events", () => {
+  it("emits change for every write, after the set middleware", () => {
+    const changes: Change<FakeRow>[] = [];
+    const { service } = makeService({
+      options: { set: { state: { query: (query) => query.trim() } } },
+    });
+    service.on("change", (change) => changes.push(change));
+    service.setQuery(" acme ");
+    expect(changes).toEqual([
+      { field: "query", before: "", after: "acme" },
+      { field: "page", before: 1, after: 1 },
+      { field: "loading", before: false, after: true },
+    ]);
+  });
+
+  it("change narrows on field", () => {
+    const { service } = makeService();
+    const seen: number[] = [];
+    service.on("change", (change) => {
+      if (change.field === "page") seen.push(change.after);
+    });
+    service.setPageSize(10);
+    expect(seen).toEqual([1]);
+  });
+
+  it("calls listeners in subscription order and unsubscribes", async () => {
+    const { service } = makeService();
+    const order: string[] = [];
+    const off = service.on("updated", () => order.push("a"));
+    service.on("updated", () => order.push("b"));
+    await service.fetch();
+    off();
+    await service.fetch();
+    expect(order).toEqual(["a", "b", "b"]);
+  });
+
+  it("a listener can unsubscribe itself during the call", async () => {
+    const { service } = makeService();
+    const calls = vi.fn();
+    const off = service.on("updated", () => {
+      calls();
+      off();
+    });
+    await service.fetch();
+    await service.fetch();
+    expect(calls).toHaveBeenCalledOnce();
+  });
+
+  it("skips the change object when nothing listens", () => {
+    const { service, state } = makeService();
+    service.goToPage(1);
+    expect(state.page).toBe(1);
   });
 });
 

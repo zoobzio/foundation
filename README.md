@@ -52,8 +52,8 @@ Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
 ## Project structure
 
 The repo is a pnpm workspace. The published layer lives in `layers/foundation/`;
-`packages/` is reserved for headless packages and `example/` is a playground app
-that extends the layer.
+`packages/` holds the headless packages the layer wires into Nuxt, and
+`example/` is a playground app that extends the layer.
 
 ```
 layers/foundation/
@@ -73,7 +73,8 @@ layers/foundation/
     app.vue · error.vue · app.d.ts
   tests/          — vitest suite mirroring app/ (see tests/README.md)
   nuxt.config.ts  — layer config (auto-import off)
-packages/         — headless packages (none yet)
+packages/
+  table/          — @zoobzio/table: headless table service (pure TS, no framework)
 example/          — playground app extending the layer
 ```
 

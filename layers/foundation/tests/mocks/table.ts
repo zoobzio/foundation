@@ -139,6 +139,7 @@ export const createMockTable = (overrides: Partial<Service<FakeRow>> = {}) => {
     setQuery: vi.fn(),
     init: vi.fn(async () => true),
     fetch: vi.fn(async () => {}),
+    on: vi.fn(() => () => {}),
 
     ...overrides,
   };

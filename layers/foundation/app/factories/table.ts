@@ -10,7 +10,7 @@ import component from "../components/data/table/widget.vue";
 import { rekey } from "objectively";
 import { accessTable } from "../stores/table";
 import { toValue, useNuxtApp } from "#imports";
-import { TableService } from "../services/table";
+import { TableService } from "@zoobzio/table";
 import { merge } from "../utils/merge";
 
 /**
@@ -39,11 +39,13 @@ export type TableWiring<T, D extends TableDefinition<T>> = {
 /**
  * Instances a definition in the calling scope — call in setup: `id` is the
  * only thing the composable adds; shared state, hook scoping, wiring
- * identity all key on it. `T` infers from the definition's stamp (falling
- * back to the wiring's fetch for unstamped definitions), and the wiring is
- * checked against it here. Settings resolve wiring pt over definition pt
- * per key (widget recipes are the third layer, merged in the component);
- * the getter keeps a reactive wiring pt live.
+ * identity all key on it. The Nuxt wiring is here: the `useState` container
+ * via the store, and the service's events relayed onto the hook bus and the
+ * app logger — the machine itself is `@zoobzio/table`. `T` infers from the
+ * definition's stamp (falling back to the wiring's fetch for unstamped
+ * definitions), and the wiring is checked against it here. Settings resolve
+ * wiring pt over definition pt per key (widget recipes are the third layer,
+ * merged in the component); the getter keeps a reactive wiring pt live.
  */
 export const useTable = <T, D extends TableDefinition<T>>(
   id: string,
@@ -51,8 +53,17 @@ export const useTable = <T, D extends TableDefinition<T>>(
   wiring: TableWiring<T, D>,
 ): Widget<TableWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
+  const log = nuxt.$logger(id);
   const state = accessTable(id, definition);
-  const service = new TableService(nuxt, id, definition, state, wiring);
+  const service = new TableService(id, definition, state, wiring);
+  service.on("updated", (event) => {
+    log.debug("Table updated", event);
+    nuxt.callHook("table:updated", event);
+  });
+  service.on("filtered", (event) => {
+    log.debug("Table filtered", event);
+    nuxt.callHook("table:filtered", event);
+  });
   return {
     service,
     component,

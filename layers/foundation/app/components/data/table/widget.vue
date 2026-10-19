@@ -22,7 +22,6 @@ import { useTableView } from "../../../composables/table";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import { useLazyRequest } from "../../../composables/request";
 import { useForwardSlots } from "../../../composables/slots";
 import {
   TABLE_HEAD_SLOTS,
@@ -87,8 +86,6 @@ const cellSlots = computed(() =>
       n === "cell" || n.startsWith("cell:"),
   ),
 );
-
-useLazyRequest(`init-table-${service.id}`, () => service.init());
 </script>
 
 <template>
