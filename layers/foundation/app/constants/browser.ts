@@ -1,7 +1,9 @@
-import type { BrowserFoldersSlots } from "../types/data/browser/folders";
-import type { SortDirection } from "../types/data/table";
+// data/browser constants — domain values come from the headless package; the
+// view-only values (labels, root crumb, slots) live here.
 
-export const BROWSER_DEFAULT_SORT_DIRECTION: SortDirection = "asc";
+import type { BrowserFoldersSlots } from "../types/data/browser/folders";
+
+export { BROWSER_DEFAULT_SORT_DIRECTION } from "@zoobzio/browser";
 
 export const BROWSER_REFRESH_LABEL = "Refresh";
 export const BROWSER_ACTIONS_LABEL = "Actions";

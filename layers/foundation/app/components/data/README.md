@@ -1,11 +1,13 @@
 # Data components
 
 Stateful features one tier above [core](../core/README.md). Each data feature
-is split into a **headless machine** — store, service — and the
-**presentational components** that render it. The widget composable yields
-the canonical **widget** (`types/widget.ts`): the service (a plain, Vue-free class over
-ref-backed state), the component that renders it under the uniform `service`
-prop, and the consumer's reactive settings for its passthrough tree.
+is split into a **headless machine** — the service, a `@zoobzio/<name>`
+package, over a store-backed state container — and the **presentational
+components** that render it. The widget composable yields the canonical
+**widget** (`types/widget.ts`): the service (a plain, Vue-free class over
+a shared state container), the component that renders it under the uniform
+`service` prop, and the consumer's reactive settings for its passthrough
+tree.
 Components build their reactivity through the feature composable
 (`useServiceRefs` under the hood) and own no feature state of their own.
 Everything presentational conforms to the same passthrough / context / slots
@@ -25,7 +27,7 @@ A feature `<name>` spans a fixed set of files:
 | Domain contract     | `types/data/<name>.ts`                                  |
 | Component types     | `types/data/<name>/widget.ts` (+ one per sub-component) |
 | State               | `stores/<name>.ts`                                      |
-| Logic               | `services/<name>.ts`                                    |
+| Logic               | `packages/<name>/src/service.ts` (`@zoobzio/<name>`)    |
 | Definition          | `definitions/<name>.ts`                                 |
 | Instancing          | `factories/<name>.ts`                                   |
 | Feature composables | `composables/<name>.ts`                                 |
@@ -61,7 +63,7 @@ component type files import them rather than redefining them.
 
 ## Store (`stores/<name>.ts`)
 
-Extracted machines (table, deck) back one `useState` record per id with the
+One `useState` record per id, keyed `` `<name>-${id}` ``, built by the
 package's container factory; its value is a reactive proxy, so the service's
 whole-member writes are tracked and shared by id:
 
@@ -70,18 +72,16 @@ export const accessDeck = <T>(id: string, config: Config<T>): State<T> =>
   useState<State<T>>(`deck-${id}`, () => createDeckState(config)).value;
 ```
 
-Unextracted machines keep one `useState` per `State` key, keyed
-`<name>-${id}-<key>`, and return the `Ref` record. Defaults only — no logic,
-no deriveds. Two callers with the same `id` share state; that is the
-instancing model.
+Defaults only — no logic, no deriveds. Two callers with the same `id` share
+state; that is the instancing model.
 
-## Service (`packages/<name>/` · `services/<name>.ts`)
+## Service (`packages/<name>/`)
 
-A plain class, `implements Service<T>`. The extracted machines live in
-`packages/` as headless packages (`@zoobzio/table`, `@zoobzio/deck`): no
-Nuxt, no Vue — the constructor takes the id, the config, the state
-container, the actions, and optional get/set middleware, and the class emits
-its domain events through its own `on`:
+A plain class, `implements Service<T>`. Every data machine lives in
+`packages/` as a headless package (`@zoobzio/table`, `@zoobzio/deck`,
+`@zoobzio/form`, …): no Nuxt, no Vue — the constructor takes the id, the
+config, the state container, the actions, and optional get/set middleware,
+and the class emits its domain events through its own `on`:
 
 ```ts
 export class DeckService<T> implements Service<T> {
@@ -99,9 +99,9 @@ export class DeckService<T> implements Service<T> {
 }
 ```
 
-Unextracted machines (`services/<name>.ts`) are constructed with the Nuxt
-app and log/emit through it directly; they migrate to the package shape one
-by one.
+The one in-layer service is the adapter's (`services/adapter.ts`): it is
+widget-system plumbing, not a data machine, so it is constructed with the
+Nuxt app and logs/emits through it directly.
 
 - **All feature logic lives here** — validation, derivation, selection
   bookkeeping, everything. The service is the unit under test.
@@ -321,11 +321,11 @@ same payloads.
   and the bindings land directly on the element.
 - **Config resolvers are synchronous.** Async belongs in `Actions`
   (form's `init`/`submit`), guarded by service state (`initialized`,
-  `submitting`) and kicked off by the widget via `useLazyRequest` when the
-  feature has an init lifecycle.
+  `submitting`). Widgets do not init on mount — the caller drives `init()`
+  (`useLazyRequest` is one way to do it).
 - Constants live in `constants/<name>.ts`, `SCREAMING_SNAKE` with the
   feature prefix (`TABLE_DEFAULT_PAGE_SIZE`).
-- Store keys are `` `<name>-${id}-<key>` ``; ctx names are
+- Store keys are `` `<name>-${id}` ``; ctx names are
   `data-<name>` / `data-<name>-<part>`.
 
 ## The adapter
@@ -400,14 +400,17 @@ Build order for a new feature in this tier:
    `Config` / `State` / `Service` / `Actions` / `Events`. Decide the generic,
    the action surface, the event set, and which members are writable accessor
    pairs here, not in the component.
-2. **Store** — `accessX(id)` over `useState`, defaults only.
-3. **Service** — _all_ feature logic lives in the class; log + emit
-   discipline. Typecheck before moving on: the service compiles clean before
-   any component exists.
+2. **Package** — `packages/<name>/`: the domain types, the container
+   factory (`create<Name>State`), and the service class — _all_ feature
+   logic lives there, emitted through `on`. Build, typecheck, and test the
+   package before any layer file exists.
+3. **Store** — `accessX(id, config)` over one `useState` container per id,
+   built by the package factory.
 4. **Definition** — `definitions/<name>.ts`: the `<Name>Definition` bundle
    and its `define<Name>` constructor.
 5. **Widget composable** — `factories/<name>.ts`: pure instancing over the
-   definition, `use<Name>(id, definition) => Widget`.
+   definition, `use<Name>(id, definition, wiring) => Widget`; the package's
+   events relayed onto the logger and the hook bus.
 6. **Register events** in `app.d.ts`.
 7. **Component types** — `types/data/<name>/widget.ts` (+ per sub-component),
    prefixed, emits derived from `Events`.
@@ -429,8 +432,8 @@ Build order for a new feature in this tier:
 | Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                                                                                                                             |
 | Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                                                                                                                                |
 | Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                                                                                                                             |
-| Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                                                                                                                                                        |
-| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) (extracted) · [`services/form.ts`](../../services/form.ts) (in-layer)                                                                                    |
+| Schema helpers      | [`packages/form`](../../../../../packages/form/src/util.ts) (`flatten` · `check`)                                                                                                                                       |
+| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) · [`packages/form`](../../../../../packages/form/src/service.ts)                                                                                         |
 | Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                       |
 | Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                                    |
 | Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |

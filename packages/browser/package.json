@@ -1,0 +1,51 @@
+{
+  "name": "@zoobzio/browser",
+  "version": "0.0.0",
+  "description": "Headless data browser service: folder trail navigation, file sort, selection, action joins. No framework dependency.",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoobzio/foundation.git",
+    "directory": "packages/browser"
+  },
+  "files": [
+    ".dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./.dist/index.mjs",
+  "types": "./.dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./.dist/index.d.mts",
+      "import": "./.dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "obuild",
+    "stub": "obuild --stub",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "objectively": "^0.3.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.3",
+    "obuild": "^0.4.44",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

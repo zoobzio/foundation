@@ -2,8 +2,7 @@ import type { CheckboxEmits, CheckboxProps } from "../../core/checkbox";
 import type { FabProps } from "../../core/fab";
 import type { MenuEmits, MenuItem, MenuProps } from "../../core/menu";
 import type { Passthrough, PT } from "../../passthrough";
-import type { Service } from "../browser";
-import type { DataTableColumn } from "../table";
+import type { BrowserColumn, Service } from "../browser";
 import type { VNode } from "vue";
 
 export type BrowserFilesPassthrough = {
@@ -25,7 +24,7 @@ export type BrowserFilesContext<T> = {
 
 export type BrowserFileCellContext<T> = BrowserFilesContext<T> & {
   row: T;
-  column: DataTableColumn<T>;
+  column: BrowserColumn<T>;
   value: unknown;
 };
 

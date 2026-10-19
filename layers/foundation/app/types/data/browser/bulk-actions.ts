@@ -1,5 +1,4 @@
-import type { Service } from "../browser";
-import type { BulkAction } from "../table";
+import type { BulkAction, Service } from "../browser";
 import type { VNode } from "vue";
 
 export type BrowserBulkActionsProps<T> = {

@@ -1,14 +1,14 @@
 import type { State } from "../types/data/preview";
 
 import { useState } from "#imports";
+import { createPreviewState } from "@zoobzio/preview";
 
-export const accessPreview = <T>(id: string): State<T> => {
-  const initialized = useState<boolean>(
-    `preview-${id}-initialized`,
-    () => false,
-  );
-  const loading = useState<boolean>(`preview-${id}-loading`, () => false);
-  const data = useState<T | null>(`preview-${id}-data`, () => null);
-
-  return { initialized, loading, data };
-};
+/**
+ * The Nuxt backing for a preview's state container: one `useState` record
+ * keyed `preview-<id>`. Its value is a reactive proxy, so the service's
+ * field writes are tracked; instances sharing an id share the container
+ * across the app and it survives SSR hydration. No config parameter — the
+ * defaults derive from nothing.
+ */
+export const accessPreview = <T>(id: string): State<T> =>
+  useState<State<T>>(`preview-${id}`, () => createPreviewState<T>()).value;

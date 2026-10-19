@@ -9,7 +9,7 @@ import component from "../components/data/preview/widget.vue";
 import { rekey } from "objectively";
 import { accessPreview } from "../stores/preview";
 import { toValue, useNuxtApp } from "#imports";
-import { PreviewService } from "../services/preview";
+import { PreviewService } from "@zoobzio/preview";
 import { merge } from "../utils/merge";
 
 /**
@@ -24,11 +24,13 @@ export type PreviewWiring<T> = {
 /**
  * Instances a definition in the calling scope — call in setup: `id` is the
  * only thing the composable adds; shared state, hook scoping, wiring
- * identity all key on it. `T` infers from the definition's stamp (falling
- * back to the wiring's fetch for unstamped definitions). Settings resolve
- * wiring pt over definition pt per key (widget recipes are the third
- * layer, merged in the component); the getter keeps a reactive wiring pt
- * live.
+ * identity all key on it. The Nuxt wiring is here: the `useState` container
+ * via the store, and the service's events relayed onto the hook bus and the
+ * app logger — the machine itself is `@zoobzio/preview`. `T` infers from
+ * the definition's stamp (falling back to the wiring's fetch for unstamped
+ * definitions). Settings resolve wiring pt over definition pt per key
+ * (widget recipes are the third layer, merged in the component); the getter
+ * keeps a reactive wiring pt live.
  */
 export const usePreview = <T>(
   id: string,
@@ -36,8 +38,13 @@ export const usePreview = <T>(
   wiring: PreviewWiring<T>,
 ): Widget<PreviewWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
+  const log = nuxt.$logger(id);
   const state = accessPreview<T>(id);
-  const service = new PreviewService(nuxt, id, definition, state, wiring);
+  const service = new PreviewService(id, definition, state, wiring);
+  service.on("loaded", (event) => {
+    log.debug("Preview loaded", event);
+    nuxt.callHook("preview:loaded", event);
+  });
   return {
     service,
     component,

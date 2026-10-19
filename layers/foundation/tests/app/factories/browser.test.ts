@@ -1,9 +1,10 @@
 // Widget-composable test in the factories/table.test.ts mold — asserts the
 // composition of store + service through the shim's Nuxt seams: live
 // reactive views over shared keyed state, not re-tested service logic
-// (that depth lives in tests/app/services/browser.test.ts).
+// (that depth lives in packages/browser/tests/service.test.ts).
 import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
+import { useNuxtApp } from "#imports";
 import { useBrowser } from "../../../app/factories/browser";
 import type { BrowserFetchResult } from "../../../app/types/data/browser";
 import { fakeFileColumns, fakeFiles, fakeFolders } from "#test/data/browser";
@@ -110,6 +111,25 @@ describe("useBrowser", () => {
     expect(browser.sortField).toBe("name");
     browser.toggleRow("1");
     expect(browser.selectAllState).toBe("indeterminate");
+  });
+
+  it("routes service events onto the Nuxt hook bus", async () => {
+    const updated = vi.fn();
+    const navigated = vi.fn();
+    useNuxtApp().hooks.addHooks({
+      "browser:updated": updated,
+      "browser:navigated": navigated,
+    });
+    const browser = useBrowser("b1", definition, makeWiring()).service;
+    await browser.init();
+    expect(updated).toHaveBeenCalledWith({
+      id: "b1",
+      path: [],
+      folders: fakeFolders.length,
+      files: fakeFiles.length,
+    });
+    browser.open({ key: "media", label: "Media" });
+    expect(navigated).toHaveBeenCalledWith({ id: "b1", path: ["media"] });
   });
 
   it("same id shares state across instances", async () => {

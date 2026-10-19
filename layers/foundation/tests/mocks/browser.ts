@@ -106,6 +106,7 @@ export const createMockBrowser = (
     isRowSelected: (row) => state.selected.value.has(String(row.id)),
     init: vi.fn(async () => true),
     fetch: vi.fn(async () => {}),
+    on: vi.fn(() => () => {}),
 
     ...overrides,
   };

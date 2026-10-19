@@ -1,0 +1,50 @@
+import type {
+  ActionDescriptor,
+  BrowserColumn,
+  BrowserFolder,
+  Config,
+} from "../src/types";
+
+export type FakeFile = {
+  id: number;
+  name: string;
+  size: number;
+  modified: string;
+};
+
+export const fakeFileColumns: BrowserColumn<FakeFile>[] = [
+  { key: "name", label: "Name", type: "text", sortable: true },
+  { key: "size", label: "Size", type: "filesize", sortable: true },
+  { key: "modified", label: "Modified", type: "date" },
+];
+
+export const fakeFiles: FakeFile[] = [
+  { id: 1, name: "logo.svg", size: 2048, modified: "2025-01-15T12:00:00" },
+  { id: 2, name: "hero.png", size: 1048576, modified: "2025-02-20T12:00:00" },
+  { id: 3, name: "notes.md", size: 512, modified: "2025-03-10T12:00:00" },
+];
+
+/** Deliberately unsorted — the service re-sorts alphabetically. */
+export const fakeFolders: BrowserFolder[] = [
+  { key: "media", label: "Media", count: 12 },
+  { key: "archive", label: "Archive" },
+  { key: "drafts", label: "Drafts" },
+];
+
+export const fakeFileActions: Record<string, ActionDescriptor> = {
+  download: { label: "Download" },
+  delete: { label: "Delete" },
+};
+
+export const fakeFolderActions: Record<string, ActionDescriptor> = {
+  rename: { label: "Rename" },
+};
+
+export const fakeBrowserBulkActions: Record<string, ActionDescriptor> = {
+  deleteSelected: { label: "Delete Selected" },
+};
+
+export const fakeConfig: Config<FakeFile> = {
+  columns: fakeFileColumns,
+  fileKey: "id",
+};

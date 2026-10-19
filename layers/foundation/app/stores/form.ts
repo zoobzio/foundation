@@ -1,31 +1,13 @@
 import type { Config, State } from "../types/data/form";
 
 import { useState } from "#imports";
+import { createFormState } from "@zoobzio/form";
 
-export const accessForm = <T>(id: string, config: Config<T>): State<T> => {
-  const initialized = useState<boolean>(`form-${id}-initialized`, () => false);
-
-  const payload = useState<Partial<T>>(`form-${id}-payload`, () => ({
-    ...config.defaults,
-  }));
-
-  const errors = useState<Record<string, string>>(
-    `form-${id}-errors`,
-    () => ({}),
-  );
-
-  const touched = useState<Set<string>>(`form-${id}-touched`, () => new Set());
-
-  const submitting = useState<boolean>(`form-${id}-submitting`, () => false);
-
-  const submitted = useState<boolean>(`form-${id}-submitted`, () => false);
-
-  return {
-    initialized,
-    payload,
-    errors,
-    touched,
-    submitting,
-    submitted,
-  };
-};
+/**
+ * The Nuxt backing for a form's state container: one `useState` record
+ * keyed `form-<id>`. Its value is a reactive proxy, so the service's field
+ * writes are tracked; instances sharing an id share the container across
+ * the app and it survives SSR hydration.
+ */
+export const accessForm = <T>(id: string, config: Config<T>): State<T> =>
+  useState<State<T>>(`form-${id}`, () => createFormState(config)).value;

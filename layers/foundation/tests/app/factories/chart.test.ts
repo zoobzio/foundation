@@ -3,6 +3,7 @@
 // views over shared keyed state, not re-tested service logic.
 import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
+import { useNuxtApp } from "#imports";
 import { defineEntity } from "../../../app/definitions/entity";
 import { useChart } from "../../../app/factories/chart";
 import type { Actions, BreakdownData } from "../../../app/types/data/chart";
@@ -74,6 +75,34 @@ describe("useChart", () => {
     });
     expect(chart.variantData).toEqual(slices);
     expect(chart.initialized).toBe(true);
+  });
+
+  it("routes service events onto the Nuxt hook bus", async () => {
+    const updated = vi.fn();
+    const variantChanged = vi.fn();
+    const rendererChanged = vi.fn();
+    useNuxtApp().hooks.addHooks({
+      "chart:updated": updated,
+      "chart:variant-changed": variantChanged,
+      "chart:renderer-changed": rendererChanged,
+    });
+    const chart = useChart("c1", definition, makeWiring()).service;
+    await chart.init();
+    expect(updated).toHaveBeenCalledWith({
+      id: "c1",
+      variant: "breakdown",
+      data: slices,
+    });
+    chart.setRenderer("bar");
+    expect(rendererChanged).toHaveBeenCalledWith({
+      id: "c1",
+      renderer: "bar",
+    });
+    chart.setVariant("breakdown");
+    expect(variantChanged).toHaveBeenCalledWith({
+      id: "c1",
+      variant: "breakdown",
+    });
   });
 
   it("same id shares state across instances", async () => {

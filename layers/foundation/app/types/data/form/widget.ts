@@ -21,6 +21,7 @@ export type FormWidgetEmits<T> = {
   rejected: Parameters<Events<T>["form:rejected"]>;
   restored: Parameters<Events<T>["form:restored"]>;
   reset: Parameters<Events<T>["form:reset"]>;
+  failed: Parameters<Events<T>["form:failed"]>;
 };
 
 export type FormWidgetContext<T> = {

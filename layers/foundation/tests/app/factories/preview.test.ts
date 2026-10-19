@@ -3,6 +3,7 @@
 // views over shared keyed state, not re-tested service logic.
 import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
+import { useNuxtApp } from "#imports";
 import { defineEntity } from "../../../app/definitions/entity";
 import { usePreview } from "../../../app/factories/preview";
 import type { Actions } from "../../../app/types/data/preview";
@@ -70,6 +71,18 @@ describe("usePreview", () => {
     expect(preview.contentValue).toBe(subject.name);
     expect(preview.fieldValue("status")).toBe(subject.status);
     expect(wiring.fetch).toHaveBeenCalledOnce();
+  });
+
+  it("routes service events onto the Nuxt hook bus", async () => {
+    const loaded = vi.fn();
+    useNuxtApp().hooks.addHooks({ "preview:loaded": loaded });
+    const wiring = makeWiring();
+    const preview = usePreview("p1", definition, wiring).service;
+    await preview.init();
+    expect(loaded).toHaveBeenCalledWith({ id: "p1" });
+    wiring.fetch.mockRejectedValueOnce(new Error("boom"));
+    await expect(preview.fetch()).rejects.toThrow("boom");
+    expect(loaded).toHaveBeenCalledTimes(2);
   });
 
   it("same id shares state across instances", async () => {

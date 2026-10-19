@@ -1,4 +1,11 @@
+import type { State, StateKey } from "./types";
 import type { ZodError, ZodRawShape } from "zod";
+
+export const change = <T>(
+  field: StateKey,
+  before: State<T>[StateKey],
+  after: State<T>[StateKey],
+) => ({ field, before, after });
 
 /**
  * Collapses a ZodError into a `path -> message` record, keeping the first

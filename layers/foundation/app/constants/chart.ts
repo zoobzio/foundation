@@ -1,6 +1,9 @@
-// data/chart constants
+// data/chart constants — domain values come from the headless package; the
+// view-only values (palette, chart.js base options, slots, labels) live here.
 
 import type { ChartControlSlots } from "../types/data/chart/control";
+
+export { CHART_VARIANT_LABELS as VARIANT_LABELS } from "@zoobzio/chart";
 
 // Control slots the widget relays that share the control ctx. The
 // item-scoped `controlOptionIcon` is relayed explicitly.
@@ -25,14 +28,6 @@ export const BASE_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
 } as const;
-
-// Variant label for title
-export const VARIANT_LABELS: Record<string, string> = {
-  breakdown: "Breakdown",
-  series: "Series",
-  distribution: "Distribution",
-  comparison: "Comparison",
-};
 
 // Toolbar control fab labels per selector kind
 export const CHART_FIELD_LABEL = "Field";

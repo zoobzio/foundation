@@ -7,8 +7,9 @@ async-data executes its handler). `#test/*` resolves to this directory.
 `setup.ts` clears shim state between tests automatically.
 
 Tests live here only, under `tests/app/`, mirroring `app/` path-for-path:
-one `.test.ts` per source file that has logic (`app/services/table.ts` →
-`tests/app/services/table.test.ts`). Types, constants, and config files
+one `.test.ts` per source file that has logic (`app/stores/table.ts` →
+`tests/app/stores/table.test.ts`). The machines themselves live in
+`packages/<name>/` and carry their own suites (`packages/table/tests/`). Types, constants, and config files
 don't get test files — assertions about literals are theater.
 
 ## Layout
@@ -65,7 +66,7 @@ Replicate the matching file for the tier you're testing:
 | utils           | `tests/app/utils/passthrough.test.ts`            |
 | composables     | `tests/app/composables/model.test.ts`            |
 | stores          | `tests/app/stores/table.test.ts`                 |
-| services        | `tests/app/services/table.test.ts`               |
+| services        | `packages/table/tests/service.test.ts`           |
 | factories       | `tests/app/factories/table.test.ts`              |
 | components/core | `tests/app/components/core/select.test.ts`       |
 | components/data | `tests/app/components/data/table/widget.test.ts` |

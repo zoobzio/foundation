@@ -21,7 +21,6 @@ import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useForwardSlots } from "../../../composables/slots";
-import { useLazyRequest } from "../../../composables/request";
 import {
   BROWSER_FOLDER_SLOTS,
   BROWSER_REFRESH_LABEL,
@@ -77,8 +76,6 @@ const cellSlots = computed(() =>
       n === "cell" || n.startsWith("cell:"),
   ),
 );
-
-useLazyRequest(`init-browser-${service.id}`, () => service.init());
 </script>
 
 <template>

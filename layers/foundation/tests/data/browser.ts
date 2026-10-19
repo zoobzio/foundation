@@ -1,8 +1,8 @@
-import type { BrowserFolder } from "../../app/types/data/browser";
 import type {
   ActionDescriptor,
-  DataTableColumn,
-} from "../../app/types/data/table";
+  BrowserColumn,
+  BrowserFolder,
+} from "../../app/types/data/browser";
 
 export type FakeFile = {
   id: number;
@@ -11,7 +11,7 @@ export type FakeFile = {
   modified: string;
 };
 
-export const fakeFileColumns: DataTableColumn<FakeFile>[] = [
+export const fakeFileColumns: BrowserColumn<FakeFile>[] = [
   { key: "name", label: "Name", type: "text", sortable: true },
   { key: "size", label: "Size", type: "filesize", sortable: true },
   { key: "modified", label: "Modified", type: "date" },

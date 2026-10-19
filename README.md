@@ -64,7 +64,7 @@ layers/foundation/
       system/     — app-shell composition (2)
     composables/  — usePassthrough, useContext, useModel, useHooks, …
     factories/    — widget composables: use*(id, definition) → Widget
-    services/     — feature logic classes (the unit under test)
+    services/     — the adapter service (the data machines live in packages/)
     stores/       — useState-backed feature state
     plugins/      — log
     types/        — per-component prop/emit types
@@ -74,7 +74,11 @@ layers/foundation/
   tests/          — vitest suite mirroring app/ (see tests/README.md)
   nuxt.config.ts  — layer config (auto-import off)
 packages/
+  browser/        — @zoobzio/browser: headless browser service (pure TS, no framework)
+  chart/          — @zoobzio/chart: headless chart service (pure TS, no framework)
   deck/           — @zoobzio/deck: headless deck service (pure TS, no framework)
+  form/           — @zoobzio/form: headless form service (pure TS, no framework)
+  preview/        — @zoobzio/preview: headless preview service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
 example/          — playground app extending the layer
 ```

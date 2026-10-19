@@ -43,26 +43,30 @@ const slices: BreakdownData = {
 };
 
 const mountWidget = async (slots: Record<string, string> = {}) => {
+  const breakdown = vi.fn<NonNullable<Actions<FakeRow>["breakdown"]>>(
+    async () => slices,
+  );
   const wrapper = mount(
     defineComponent({
       setup(_, { slots: forwarded }) {
-        const widget = useChart("c1", definition, {
-          breakdown: vi.fn<NonNullable<Actions<FakeRow>["breakdown"]>>(
-            async () => slices,
-          ),
-        });
+        const widget = useChart("c1", definition, { breakdown });
         return () => h(ChartWidget, { service: widget.service }, forwarded);
       },
     }),
     { slots, global: { stubs: { Canvas: chartStubs.Canvas } } },
   );
   await flushPromises();
-  return wrapper;
+  return { wrapper, breakdown };
 };
 
 describe("data chart widget", () => {
+  it("does not init the service on mount — the caller drives init", async () => {
+    const { breakdown } = await mountWidget();
+    expect(breakdown).not.toHaveBeenCalled();
+  });
+
   it("labels the control fabs and refresh by default", async () => {
-    const wrapper = await mountWidget();
+    const { wrapper } = await mountWidget();
     expect(
       wrapper.findAll(".f-data-chart-actions button").map((b) => b.text()),
     ).toEqual(["Field", "Chart type", "Refresh"]);
@@ -72,7 +76,7 @@ describe("data chart widget", () => {
   });
 
   it("relays control and refresh icon slots into both control regions", async () => {
-    const wrapper = await mountWidget({
+    const { wrapper } = await mountWidget({
       controlTitleIcon: `<template #controlTitleIcon="s"><i>{{ s.kind }}</i></template>`,
       controlIcon: `<template #controlIcon="s"><i>{{ s.kind }}</i></template>`,
       refreshIcon: `<template #refreshIcon="s"><b>{{ s.chart.id }}</b></template>`,

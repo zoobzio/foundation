@@ -15,7 +15,6 @@ import { usePreviewView } from "../../../composables/preview";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import { useLazyRequest } from "../../../composables/request";
 import {
   PREVIEW_COPY_LABEL,
   PREVIEW_DOWNLOAD_LABEL,
@@ -54,8 +53,6 @@ const ctx = useContext<PreviewWidgetContext<T>>("data-preview", () => ({
 
 defineExpose({ ctx });
 defineSlots<PreviewWidgetSlots<T>>();
-
-useLazyRequest(`init-preview-${service.id}`, () => service.init());
 </script>
 
 <template>

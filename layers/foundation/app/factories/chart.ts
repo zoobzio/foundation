@@ -10,7 +10,7 @@ import component from "../components/data/chart/widget.vue";
 import { rekey } from "objectively";
 import { accessChart } from "../stores/chart";
 import { toValue, useNuxtApp } from "#imports";
-import { ChartService } from "../services/chart";
+import { ChartService } from "@zoobzio/chart";
 import { merge } from "../utils/merge";
 
 /**
@@ -37,11 +37,13 @@ export type ChartWiring<T, D extends ChartDefinition<T>> = {
 /**
  * Instances a definition in the calling scope — call in setup: `id` is the
  * only thing the composable adds; shared state, hook scoping, wiring
- * identity all key on it. `T` infers from the definition's stamp (falling
- * back to the wiring's fetchers for unstamped definitions). Settings
- * resolve wiring pt over definition pt per key (widget recipes are the
- * third layer, merged in the component); the getter keeps a reactive
- * wiring pt live.
+ * identity all key on it. The Nuxt wiring is here: the `useState` container
+ * via the store, and the service's events relayed onto the hook bus and the
+ * app logger — the machine itself is `@zoobzio/chart`. `T` infers from the
+ * definition's stamp (falling back to the wiring's fetchers for unstamped
+ * definitions). Settings resolve wiring pt over definition pt per key
+ * (widget recipes are the third layer, merged in the component); the getter
+ * keeps a reactive wiring pt live.
  */
 export const useChart = <T, D extends ChartDefinition<T>>(
   id: string,
@@ -49,8 +51,21 @@ export const useChart = <T, D extends ChartDefinition<T>>(
   wiring: ChartWiring<T, D>,
 ): Widget<ChartWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
+  const log = nuxt.$logger(id);
   const state = accessChart(id, definition);
-  const service = new ChartService(nuxt, id, definition, state, wiring);
+  const service = new ChartService(id, definition, state, wiring);
+  service.on("updated", (event) => {
+    log.debug("Chart updated", { id: event.id, variant: event.variant });
+    nuxt.callHook("chart:updated", event);
+  });
+  service.on("variantChanged", (event) => {
+    log.debug("Chart variant changed", event);
+    nuxt.callHook("chart:variant-changed", event);
+  });
+  service.on("rendererChanged", (event) => {
+    log.debug("Chart renderer changed", event);
+    nuxt.callHook("chart:renderer-changed", event);
+  });
   return {
     service,
     component,

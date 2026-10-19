@@ -4,9 +4,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
 import { z } from "zod";
+import { useNuxtApp } from "#imports";
 import { defineEntity } from "../../../app/definitions/entity";
 import { useForm } from "../../../app/factories/form";
-import type { Service } from "../../../app/types/data/form";
+import type { Actions, Service } from "../../../app/types/data/form";
 
 type Payload = { name: string; amount: number };
 
@@ -83,6 +84,54 @@ describe("useForm", () => {
     }).service;
     form.set("name", "  Bob  ");
     expect(form.payload.name).toBe("Bob");
+  });
+
+  it("routes service events onto the Nuxt hook bus", async () => {
+    const initialized = vi.fn();
+    const submitted = vi.fn();
+    const rejected = vi.fn();
+    const reset = vi.fn();
+    const failed = vi.fn();
+    useNuxtApp().hooks.addHooks({
+      "form:initialized": initialized,
+      "form:submitted": submitted,
+      "form:rejected": rejected,
+      "form:reset": reset,
+      "form:failed": failed,
+    });
+    const cause = new Error("boom");
+    const submit = vi
+      .fn<NonNullable<Actions<Payload>["submit"]>>()
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(cause);
+    const form = useForm("f1", definition, { submit }).service;
+
+    await form.initialize();
+    expect(initialized).toHaveBeenCalledWith({
+      id: "f1",
+      data: { name: "Alice" },
+    });
+
+    await form.submit();
+    expect(rejected).toHaveBeenCalledWith({
+      id: "f1",
+      data: { name: "Alice" },
+      errors: { amount: "Required" },
+    });
+
+    form.set("amount", 10);
+    await form.submit();
+    expect(submitted).toHaveBeenCalledWith({
+      id: "f1",
+      data: { name: "Alice", amount: 10 },
+    });
+
+    form.reset();
+    expect(reset).toHaveBeenCalledWith({ id: "f1", data: { name: "Alice" } });
+
+    form.set("amount", 10);
+    await expect(form.submit()).rejects.toBe(cause);
+    expect(failed).toHaveBeenCalledWith({ id: "f1", stage: "submit", cause });
   });
 
   it("same id shares state across instances", () => {

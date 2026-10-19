@@ -1,6 +1,6 @@
 // Data-widget test in the table widget.test.ts mold. The contract mock is
 // the unit seam — browser state logic has its depth in
-// tests/app/services/browser.test.ts. Sibling feature parts
+// packages/browser/tests/service.test.ts. Sibling feature parts
 // (Folders/Files/BulkActions) are stubbed: their behavior belongs to their
 // own files. The breadcrumb and refresh fab render real because the
 // widget's wiring to them (crumb → navigate, refresh → fetch) is the
@@ -55,10 +55,11 @@ const mountWidget = (
 };
 
 describe("data browser widget", () => {
-  it("kicks off browser init through the lazy request", async () => {
+  it("does not init the service on mount — the caller drives init", async () => {
     const { service } = mountWidget();
     await flushPromises();
-    expect(service.init).toHaveBeenCalledOnce();
+    expect(service.init).not.toHaveBeenCalled();
+    expect(service.fetch).not.toHaveBeenCalled();
   });
 
   it("renders the toolbar and stubbed row sections inside one headerless table", () => {

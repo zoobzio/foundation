@@ -1,7 +1,7 @@
 // The folder rows' own logic: the open dispatch, the icon slots, the count
 // badge, column alignment against the file rows, and the folder actions
 // affordance. The contract mock is the unit seam — alphabetical ordering
-// is the service's contract, tested in tests/app/services/browser.test.ts.
+// is the service's contract, tested in packages/browser/tests/service.test.ts.
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import type { FunctionalComponent } from "vue";

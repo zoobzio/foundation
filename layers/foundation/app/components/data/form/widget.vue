@@ -17,7 +17,6 @@ import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useForwardSlots } from "../../../composables/slots";
-import { useLazyRequest } from "../../../composables/request";
 import { FORM_FIELD_SLOTS } from "../../../constants/form";
 </script>
 
@@ -32,6 +31,7 @@ useHooks<Events<T>>(service.id, {
   "form:rejected": (event) => emit("rejected", event),
   "form:restored": (event) => emit("restored", event),
   "form:reset": (event) => emit("reset", event),
+  "form:failed": (event) => emit("failed", event),
 });
 
 const { submitting } = useFormView(service);
@@ -60,8 +60,6 @@ defineExpose({ ctx });
 
 const slots = defineSlots<FormWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, FORM_FIELD_SLOTS);
-
-useLazyRequest(`init-form-${service.id}`, () => service.initialize());
 </script>
 
 <template>

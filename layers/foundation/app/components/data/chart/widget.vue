@@ -17,7 +17,6 @@ import { useChartView } from "../../../composables/chart";
 import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
-import { useLazyRequest } from "../../../composables/request";
 import { useForwardSlots } from "../../../composables/slots";
 import {
   CHART_CONTROL_SLOTS,
@@ -62,8 +61,6 @@ const slots = defineSlots<ChartWidgetSlots<T>>();
 // Control slots relay to every control in both regions, filtered so each
 // control keeps its own defaults for any the consumer didn't supply.
 const controlSlots = useForwardSlots(slots, CHART_CONTROL_SLOTS);
-
-useLazyRequest(`init-chart-${service.id}`, () => service.init());
 </script>
 
 <template>

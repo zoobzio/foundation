@@ -10,7 +10,7 @@ import component from "../components/data/browser/widget.vue";
 import { rekey } from "objectively";
 import { accessBrowser } from "../stores/browser";
 import { toValue, useNuxtApp } from "#imports";
-import { BrowserService } from "../services/browser";
+import { BrowserService } from "@zoobzio/browser";
 import { merge } from "../utils/merge";
 
 /**
@@ -49,11 +49,13 @@ export type BrowserWiring<T, D extends BrowserDefinition<T>> = {
 /**
  * Instances a definition in the calling scope — call in setup: `id` is the
  * only thing the composable adds; shared state, hook scoping, wiring
- * identity all key on it. `T` infers from the definition's stamp (falling
- * back to the wiring's fetch for unstamped definitions), and the wiring is
- * checked against it here. Settings resolve wiring pt over definition pt
- * per key (widget recipes are the third layer, merged in the component);
- * the getter keeps a reactive wiring pt live.
+ * identity all key on it. The Nuxt wiring is here: the `useState` container
+ * via the store, and the service's events relayed onto the hook bus and the
+ * app logger — the machine itself is `@zoobzio/browser`. `T` infers from
+ * the definition's stamp (falling back to the wiring's fetch for unstamped
+ * definitions), and the wiring is checked against it here. Settings resolve
+ * wiring pt over definition pt per key (widget recipes are the third layer,
+ * merged in the component); the getter keeps a reactive wiring pt live.
  */
 export const useBrowser = <T, D extends BrowserDefinition<T>>(
   id: string,
@@ -61,8 +63,17 @@ export const useBrowser = <T, D extends BrowserDefinition<T>>(
   wiring: BrowserWiring<T, D>,
 ): Widget<BrowserWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
+  const log = nuxt.$logger(id);
   const state = accessBrowser<T>(id);
-  const service = new BrowserService(nuxt, id, definition, state, wiring);
+  const service = new BrowserService(id, definition, state, wiring);
+  service.on("updated", (event) => {
+    log.debug("Browser updated", event);
+    nuxt.callHook("browser:updated", event);
+  });
+  service.on("navigated", (event) => {
+    log.debug("Browser navigated", event);
+    nuxt.callHook("browser:navigated", event);
+  });
   return {
     service,
     component,

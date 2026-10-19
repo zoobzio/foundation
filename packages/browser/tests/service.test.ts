@@ -1,39 +1,28 @@
-// Constructor-injected seams in the services/table.test.ts mold —
-// hand-rolled State refs, a vi.fn() Actions fake, and the shim's NuxtApp.
-// No mounting; every test drives a state transition and asserts both the
-// new state and the side-channel contracts (fetch params, hook emission).
+// Constructor-injected seams — a plain state container, a vi.fn() Actions
+// fake, and vi.fn() listeners. Every test drives a state transition and
+// asserts both the new state and the side-channel contracts (fetch params,
+// events).
 import { describe, expect, it, vi } from "vitest";
-import { ref } from "vue";
-import { useNuxtApp } from "#imports";
-import { BrowserService } from "../../../app/services/browser";
+import { BrowserService } from "../src/service";
+import { createBrowserState } from "../src/state";
 import type {
   Actions,
-  BrowserCrumb,
   BrowserFetchResult,
+  Change,
   Config,
+  Options,
   State,
-} from "../../../app/types/data/browser";
-import type { SortDirection } from "../../../app/types/data/table";
+} from "../src/types";
 import {
   fakeBrowserBulkActions,
+  fakeConfig,
   fakeFileActions,
   fakeFileColumns,
   fakeFiles,
   fakeFolderActions,
   fakeFolders,
-} from "#test/data/browser";
-import type { FakeFile } from "#test/data/browser";
-
-const makeState = (): State<FakeFile> => ({
-  folders: ref([]),
-  files: ref<FakeFile[]>([]),
-  loading: ref(false),
-  initialized: ref(false),
-  path: ref<BrowserCrumb[]>([]),
-  sortField: ref<string | null>(null),
-  sortDirection: ref<SortDirection>("asc"),
-  selected: ref<Set<string>>(new Set()),
-});
+} from "./data";
+import type { FakeFile } from "./data";
 
 const makeActions = (): Actions<FakeFile> => ({
   fetch: vi.fn(async (): Promise<BrowserFetchResult<FakeFile>> => ({
@@ -52,31 +41,46 @@ const makeService = (
     state?: State<FakeFile>;
     actions?: Actions<FakeFile>;
     config?: Partial<Config<FakeFile>>;
+    options?: Options<FakeFile>;
   } = {},
 ) => {
-  const state = overrides.state ?? makeState();
+  const config = { ...fakeConfig, ...overrides.config };
+  const state = overrides.state ?? createBrowserState<FakeFile>();
   const actions = overrides.actions ?? makeActions();
-  const nuxt = useNuxtApp();
-  const emitSpy = vi.spyOn(nuxt, "callHook");
   const service = new BrowserService<FakeFile>(
-    nuxt,
     "test-browser",
-    { columns: fakeFileColumns, fileKey: "id", ...overrides.config },
+    config,
     state,
     actions,
+    overrides.options,
   );
-  return { service, state, actions, emitSpy };
+  const updated = vi.fn();
+  const navigated = vi.fn();
+  service.on("updated", updated);
+  service.on("navigated", navigated);
+  return { service, state, actions, updated, navigated };
 };
+
+describe("config", () => {
+  it("exposes the config surface", () => {
+    const { service } = makeService();
+    expect(service.columns).toBe(fakeFileColumns);
+    expect(service.fileKey).toBe("id");
+    expect(service.actions).toEqual([]);
+    expect(service.folderActions).toEqual([]);
+    expect(service.bulkActions).toEqual([]);
+  });
+});
 
 describe("fetch", () => {
   it("passes the path and sort params and applies the result", async () => {
     const { service, state, actions } = makeService();
-    state.path.value = [
+    state.path = [
       { key: "media", label: "Media" },
       { key: "2025", label: "2025" },
     ];
-    state.sortField.value = "size";
-    state.sortDirection.value = "desc";
+    state.sortField = "size";
+    state.sortDirection = "desc";
 
     await service.fetch();
 
@@ -120,11 +124,11 @@ describe("fetch", () => {
     const actions: Actions<FakeFile> = {
       fetch: vi.fn(async () => Promise.reject(new Error("boom"))),
     };
-    const { service, emitSpy } = makeService({ actions });
+    const { service, updated } = makeService({ actions });
 
     await expect(service.fetch()).rejects.toThrow("boom");
     expect(service.loading).toBe(false);
-    expect(emitSpy).toHaveBeenCalledWith("browser:updated", {
+    expect(updated).toHaveBeenCalledWith({
       id: "test-browser",
       path: [],
       folders: 0,
@@ -133,9 +137,9 @@ describe("fetch", () => {
   });
 
   it("emits updated with the path and section counts", async () => {
-    const { service, emitSpy } = makeService();
+    const { service, updated } = makeService();
     await service.fetch();
-    expect(emitSpy).toHaveBeenCalledWith("browser:updated", {
+    expect(updated).toHaveBeenCalledWith({
       id: "test-browser",
       path: [],
       folders: fakeFolders.length,
@@ -156,8 +160,8 @@ describe("init", () => {
 
 describe("navigation", () => {
   it("open descends: pushes the crumb, clears selection, refetches, emits", async () => {
-    const { service, state, actions, emitSpy } = makeService();
-    state.selected.value = new Set(["1"]);
+    const { service, state, actions, navigated } = makeService();
+    state.selected = new Set(["1"]);
 
     service.open({ key: "media", label: "Media" });
 
@@ -169,26 +173,26 @@ describe("navigation", () => {
       { path: ["media"], sortField: null, sortDirection: "asc" },
       service,
     );
-    expect(emitSpy).toHaveBeenCalledWith("browser:navigated", {
+    expect(navigated).toHaveBeenCalledWith({
       id: "test-browser",
       path: ["media"],
     });
   });
 
   it("navigate truncates the trail to the given index", async () => {
-    const { service, state, emitSpy } = makeService();
-    state.path.value = [
+    const { service, state, navigated } = makeService();
+    state.path = [
       { key: "media", label: "Media" },
       { key: "2025", label: "2025" },
       { key: "q1", label: "Q1" },
     ];
-    state.selected.value = new Set(["1"]);
+    state.selected = new Set(["1"]);
 
     service.navigate(1);
 
     expect(service.pathKeys).toEqual(["media"]);
     expect(service.selected).toEqual(new Set());
-    expect(emitSpy).toHaveBeenCalledWith("browser:navigated", {
+    expect(navigated).toHaveBeenCalledWith({
       id: "test-browser",
       path: ["media"],
     });
@@ -196,19 +200,20 @@ describe("navigation", () => {
 
   it("navigate to the root empties the trail", () => {
     const { service, state } = makeService();
-    state.path.value = [{ key: "media", label: "Media" }];
+    state.path = [{ key: "media", label: "Media" }];
     service.navigate(0);
     expect(service.pathKeys).toEqual([]);
   });
 
   it("navigate no-ops at the current position and out of range", () => {
-    const { service, state, actions } = makeService();
-    state.path.value = [{ key: "media", label: "Media" }];
+    const { service, state, actions, navigated } = makeService();
+    state.path = [{ key: "media", label: "Media" }];
     service.navigate(1);
     service.navigate(2);
     service.navigate(-1);
     expect(service.pathKeys).toEqual(["media"]);
     expect(actions.fetch).not.toHaveBeenCalled();
+    expect(navigated).not.toHaveBeenCalled();
   });
 });
 
@@ -256,6 +261,12 @@ describe("selection", () => {
     expect(service.selected).toEqual(new Set());
   });
 
+  it("isAllSelected is false with no files", () => {
+    const { service } = makeService();
+    expect(service.isAllSelected).toBe(false);
+    expect(service.isIndeterminate).toBe(false);
+  });
+
   it("keyOf resolves the configured fileKey", () => {
     const { service } = makeService();
     expect(service.keyOf(fixture(fakeFiles.at(0)))).toBe("1");
@@ -297,6 +308,16 @@ describe("action joins", () => {
     expect(purge).toHaveBeenCalledWith(new Set(["1"]));
   });
 
+  it("a descriptor without a handler is a no-op", () => {
+    const { service } = makeService({
+      config: { actions: fakeFileActions },
+    });
+    expect(service.actions.map((a) => a.label)).toEqual(["Download", "Delete"]);
+    expect(() =>
+      service.actions.at(0)?.action(fixture(fakeFiles.at(0))),
+    ).not.toThrow();
+  });
+
   it("counts the selection and actions columns into colSpan", () => {
     const { service } = makeService({
       config: {
@@ -318,5 +339,93 @@ describe("action joins", () => {
       actions: { ...makeActions(), folderActions: { rename: vi.fn() } },
     });
     expect(service.colSpan).toBe(fakeFileColumns.length + 1);
+  });
+});
+
+describe("middleware", () => {
+  it("get middleware shapes every read of its field", () => {
+    const { service, state } = makeService({
+      options: {
+        get: { state: { sortField: (field) => field?.toUpperCase() ?? null } },
+      },
+    });
+    state.sortField = "name";
+    expect(service.sortField).toBe("NAME");
+    expect(state.sortField).toBe("name");
+  });
+
+  it("set middleware shapes the stored value", () => {
+    const { service, state } = makeService({
+      options: {
+        set: { state: { sortField: (field) => field?.trim() ?? null } },
+      },
+    });
+    service.sortBy("  name  ");
+    expect(state.sortField).toBe("name");
+    expect(service.sortField).toBe("name");
+  });
+
+  it("a missing slot passes the value on", () => {
+    const { service, state } = makeService({ options: { get: {}, set: {} } });
+    service.toggleRow("1");
+    expect(state.selected).toEqual(new Set(["1"]));
+    expect(service.selected).toEqual(new Set(["1"]));
+  });
+});
+
+describe("events", () => {
+  it("emits change for every write, after the set middleware", () => {
+    const changes: Change<FakeFile>[] = [];
+    const { service } = makeService({
+      options: {
+        set: { state: { sortField: (field) => field?.trim() ?? null } },
+      },
+    });
+    service.on("change", (change) => changes.push(change));
+    service.sortBy(" name ");
+    expect(changes).toEqual([
+      { field: "sortField", before: null, after: "name" },
+      { field: "sortDirection", before: "asc", after: "asc" },
+      { field: "loading", before: false, after: true },
+    ]);
+  });
+
+  it("change narrows on field", () => {
+    const { service } = makeService();
+    const seen: string[][] = [];
+    service.on("change", (change) => {
+      if (change.field === "path") seen.push(change.after.map((c) => c.key));
+    });
+    service.open({ key: "media", label: "Media" });
+    expect(seen).toEqual([["media"]]);
+  });
+
+  it("calls listeners in subscription order and unsubscribes", async () => {
+    const { service } = makeService();
+    const order: string[] = [];
+    const off = service.on("updated", () => order.push("a"));
+    service.on("updated", () => order.push("b"));
+    await service.fetch();
+    off();
+    await service.fetch();
+    expect(order).toEqual(["a", "b", "b"]);
+  });
+
+  it("a listener can unsubscribe itself during the call", async () => {
+    const { service } = makeService();
+    const calls = vi.fn();
+    const off = service.on("updated", () => {
+      calls();
+      off();
+    });
+    await service.fetch();
+    await service.fetch();
+    expect(calls).toHaveBeenCalledOnce();
+  });
+
+  it("skips the change object when nothing listens", () => {
+    const { service, state } = makeService();
+    service.clearSelection();
+    expect(state.selected).toEqual(new Set());
   });
 });
