@@ -5,8 +5,9 @@ import type { Passthrough, PT } from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 /**
- * A single facet value with its result count. Canonical home for the facet
- * shapes — the data machines (table, deck) import these from here.
+ * A single facet value with its result count. The view-side home of the
+ * facet shapes; `@zoobzio/deck` carries a structurally identical pair for
+ * its fetch result, so a deck's groups bind straight to the control.
  */
 export type FacetItem = {
   value: string;

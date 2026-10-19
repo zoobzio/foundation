@@ -74,6 +74,7 @@ layers/foundation/
   tests/          — vitest suite mirroring app/ (see tests/README.md)
   nuxt.config.ts  — layer config (auto-import off)
 packages/
+  deck/           — @zoobzio/deck: headless deck service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
 example/          — playground app extending the layer
 ```

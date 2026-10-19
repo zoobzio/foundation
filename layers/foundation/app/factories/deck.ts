@@ -9,7 +9,7 @@ import component from "../components/data/deck/widget.vue";
 import { rekey } from "objectively";
 import { accessDeck } from "../stores/deck";
 import { toValue, useNuxtApp } from "#imports";
-import { DeckService } from "../services/deck";
+import { DeckService } from "@zoobzio/deck";
 import { merge } from "../utils/merge";
 
 /**
@@ -24,11 +24,13 @@ export type DeckWiring<T> = {
 /**
  * Instances a definition in the calling scope — call in setup: `id` is the
  * only thing the composable adds; shared state, hook scoping, wiring
- * identity all key on it. `T` infers from the definition's stamp (falling
- * back to the wiring's fetch for unstamped definitions). Settings resolve
- * wiring pt over definition pt per key (widget recipes are the third
- * layer, merged in the component); the getter keeps a reactive wiring pt
- * live.
+ * identity all key on it. The Nuxt wiring is here: the `useState` container
+ * via the store, and the service's events relayed onto the hook bus and the
+ * app logger — the machine itself is `@zoobzio/deck`. `T` infers from the
+ * definition's stamp (falling back to the wiring's fetch for unstamped
+ * definitions). Settings resolve wiring pt over definition pt per key
+ * (widget recipes are the third layer, merged in the component); the getter
+ * keeps a reactive wiring pt live.
  */
 export const useDeck = <T>(
   id: string,
@@ -36,8 +38,21 @@ export const useDeck = <T>(
   wiring: DeckWiring<T>,
 ): Widget<DeckWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
+  const log = nuxt.$logger(id);
   const state = accessDeck(id, definition);
-  const service = new DeckService(nuxt, id, definition, state, wiring);
+  const service = new DeckService(id, definition, state, wiring);
+  service.on("updated", (event) => {
+    log.debug("Deck updated", event);
+    nuxt.callHook("deck:updated", event);
+  });
+  service.on("polled", (event) => {
+    log.debug("Deck polled", event);
+    nuxt.callHook("deck:polled", event);
+  });
+  service.on("failed", (event) => {
+    log.warn("Deck poll failed", event);
+    nuxt.callHook("deck:failed", event);
+  });
   return {
     service,
     component,

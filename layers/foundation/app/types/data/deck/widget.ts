@@ -20,6 +20,7 @@ export type DeckWidgetProps<T> = {
 export type DeckWidgetEmits = {
   updated: Parameters<Events["deck:updated"]>;
   polled: Parameters<Events["deck:polled"]>;
+  failed: Parameters<Events["deck:failed"]>;
 };
 
 export type DeckWidgetContext<T> = {

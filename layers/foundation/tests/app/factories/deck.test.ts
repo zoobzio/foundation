@@ -3,6 +3,7 @@
 // views over shared keyed state, not re-tested service logic.
 import { describe, expect, it, vi } from "vitest";
 import { toValue } from "vue";
+import { useNuxtApp } from "#imports";
 import { defineEntity } from "../../../app/definitions/entity";
 import { useDeck } from "../../../app/factories/deck";
 import type { Actions } from "../../../app/types/data/deck";
@@ -121,6 +122,31 @@ describe("useDeck", () => {
     deck.showPending();
     expect(deck.items).toEqual([newer, ...fakeRows]);
     expect(deck.pendingCount).toBe(0);
+  });
+
+  it("routes service events onto the Nuxt hook bus", async () => {
+    const updated = vi.fn();
+    const polled = vi.fn();
+    const failed = vi.fn();
+    useNuxtApp().hooks.addHooks({
+      "deck:updated": updated,
+      "deck:polled": polled,
+      "deck:failed": failed,
+    });
+    const wiring = makeWiring();
+    const deck = useDeck("d1", definition, wiring).service;
+    await deck.init();
+    expect(updated).toHaveBeenCalledWith({ id: "d1", count: fakeRows.length });
+    wiring.fetch.mockResolvedValueOnce({
+      data: fakeRows.slice(0, 1),
+      hasMore: true,
+    });
+    await deck.poll();
+    expect(polled).toHaveBeenCalledWith({ id: "d1", count: 1 });
+    const cause = new Error("boom");
+    wiring.fetch.mockRejectedValueOnce(cause);
+    await deck.poll();
+    expect(failed).toHaveBeenCalledWith({ id: "d1", cause });
   });
 
   it("same id shares state across instances", async () => {

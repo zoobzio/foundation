@@ -1,42 +1,60 @@
-import type { NuxtApp } from "#app";
 import type {
   Actions,
   Config,
   DataDeckFetchParams,
+  DateFieldConfig,
+  Emitter,
+  Event,
+  Events,
+  FacetGroup,
+  Listener,
   MatchMode,
+  Options,
   Service,
   State,
-} from "../types/data/deck";
-import type { Logger } from "../types/log";
+} from "./types";
 
-import {
-  DECK_PAGE_SIZE,
-  DECK_POLL_INTERVAL,
-  SORT_LABELS,
-} from "../constants/deck";
+import { DECK_PAGE_SIZE, DECK_POLL_INTERVAL } from "./constants";
+import { makeEmitter } from "./emitter";
+import { makeProxy } from "./proxy";
+import { sortLabel } from "./util";
 
-const sortLabel = (field: string): string =>
-  SORT_LABELS[field] ?? field.charAt(0).toUpperCase() + field.slice(1);
-
+/**
+ * The headless deck machine. Owns the cursor feed, the pending buffer,
+ * sort, and the committed search (query, keywords, match, facets);
+ * delegates data loading to `actions.fetch`. Timers stay outside: `poll()`
+ * is a single pure step for a caller's interval.
+ *
+ * The service reads and writes the `state` container through the `options`
+ * middleware. The container can be a plain object or a reactive proxy; the
+ * service replaces each member as a whole. Each write emits `change`, and
+ * the domain methods emit `updated`, `polled`, and `failed`. `on`
+ * subscribes.
+ */
 export class DeckService<T> implements Service<T> {
-  private readonly log: Logger;
-  private readonly emit: NuxtApp["callHook"];
-
   readonly pollInterval: number;
   readonly pageSize: number;
 
+  private readonly state: State<T>;
+  private readonly emitter: Emitter<Events<T>> = makeEmitter();
+
   constructor(
-    nuxt: NuxtApp,
     public readonly id: string,
     public readonly config: Config<T>,
-    private readonly state: State<T>,
+    state: State<T>,
     private readonly actions: Actions<T>,
+    options: Options<T> = {},
   ) {
-    this.log = nuxt.$logger(this.id);
-    this.emit = nuxt.callHook;
+    this.state = makeProxy(state, options, this.emitter);
     this.pollInterval = config.pollInterval ?? DECK_POLL_INTERVAL;
     this.pageSize = config.pageSize ?? DECK_PAGE_SIZE;
   }
+
+  on<E extends Event<T>>(event: E, listener: Listener<T, E>): () => void {
+    return this.emitter.on(event, listener);
+  }
+
+  // --- config ----------------------------------------------------------
 
   get topic(): string {
     return this.config.topic;
@@ -44,61 +62,65 @@ export class DeckService<T> implements Service<T> {
   get rowKey(): keyof T {
     return this.config.rowKey;
   }
-  get dateFields() {
+  get dateFields(): DateFieldConfig<T>[] {
     return this.config.dateFields;
   }
 
+  // --- state -----------------------------------------------------------
+
   get items(): T[] {
-    return this.state.items.value;
+    return this.state.items;
   }
   get pending(): T[] {
-    return this.state.pending.value;
+    return this.state.pending;
   }
   get loading(): boolean {
-    return this.state.loading.value;
+    return this.state.loading;
   }
   get loadingMore(): boolean {
-    return this.state.loadingMore.value;
+    return this.state.loadingMore;
   }
   get hasMore(): boolean {
-    return this.state.hasMore.value;
+    return this.state.hasMore;
   }
   get initialized(): boolean {
-    return this.state.initialized.value;
+    return this.state.initialized;
   }
   get query(): string {
-    return this.state.query.value;
+    return this.state.query;
   }
   set query(query: string) {
     this.setQuery(query);
   }
   get keywords(): string {
-    return this.state.keywords.value;
+    return this.state.keywords;
   }
   set keywords(keywords: string) {
     this.setKeywords(keywords);
   }
   get match(): MatchMode {
-    return this.state.match.value;
+    return this.state.match;
   }
   set match(match: MatchMode) {
     this.setMatch(match);
   }
   get selectedFacets(): Set<string> {
-    return this.state.selectedFacets.value;
+    return this.state.selectedFacets;
   }
   set selectedFacets(facets: Set<string>) {
     this.setFacets(facets);
   }
-  get facetGroups() {
-    return this.state.facetGroups.value;
+  get facetGroups(): FacetGroup[] {
+    return this.state.facetGroups;
   }
   get sortField(): string {
-    return this.state.sortField.value;
+    return this.state.sortField;
   }
   set sortField(field: string) {
     this.setSortField(field);
   }
+
+  // --- derived ---------------------------------------------------------
 
   get title(): string {
     const field = this.config.dateFields.find(
@@ -130,25 +152,26 @@ export class DeckService<T> implements Service<T> {
     };
   }
 
+  // --- loading ---------------------------------------------------------
+
   async init(): Promise<boolean> {
-    if (this.state.initialized.value) return true;
-    this.state.initialized.value = true;
+    if (this.initialized) return true;
+    this.state.initialized = true;
     await this.fetch();
     return true;
   }
 
   async fetch(): Promise<void> {
-    this.state.loading.value = true;
+    this.state.loading = true;
     try {
       const result = await this.actions.fetch(this.baseParams(), this);
-      this.state.items.value = result.data;
-      this.state.hasMore.value = result.hasMore;
-      this.state.pending.value = [];
-      if (result.facets) this.state.facetGroups.value = result.facets;
+      this.state.items = result.data;
+      this.state.hasMore = result.hasMore;
+      this.state.pending = [];
+      if (result.facets) this.state.facetGroups = result.facets;
     } finally {
-      this.state.loading.value = false;
-      this.log.debug("Deck updated", { id: this.id, count: this.items.length });
-      this.emit("deck:updated", { id: this.id, count: this.items.length });
+      this.state.loading = false;
+      this.emitter.emit("updated", { id: this.id, count: this.items.length });
     }
   }
 
@@ -158,17 +181,17 @@ export class DeckService<T> implements Service<T> {
     const field = this.sortKey();
     if (!oldest || !field) return;
 
-    this.state.loadingMore.value = true;
+    this.state.loadingMore = true;
     try {
       const result = await this.actions.fetch(
         { ...this.baseParams(), before: String(oldest[field]) },
         this,
       );
-      this.state.items.value = [...this.items, ...result.data];
-      this.state.hasMore.value = result.hasMore;
-      if (result.facets) this.state.facetGroups.value = result.facets;
+      this.state.items = [...this.items, ...result.data];
+      this.state.hasMore = result.hasMore;
+      if (result.facets) this.state.facetGroups = result.facets;
     } finally {
-      this.state.loadingMore.value = false;
+      this.state.loadingMore = false;
     }
   }
 
@@ -184,47 +207,47 @@ export class DeckService<T> implements Service<T> {
         this,
       );
       if (result.data.length) {
-        this.state.pending.value = [...result.data, ...this.pending];
-        this.log.debug("Deck polled", {
-          id: this.id,
-          count: result.data.length,
-        });
-        this.emit("deck:polled", { id: this.id, count: result.data.length });
+        this.state.pending = [...result.data, ...this.pending];
+        this.emitter.emit("polled", { id: this.id, count: result.data.length });
       }
-      if (result.facets) this.state.facetGroups.value = result.facets;
-    } catch {
-      // Polling errors are silent — the next interval retries.
+      if (result.facets) this.state.facetGroups = result.facets;
+    } catch (cause) {
+      // A poll failure is reported, not thrown — the caller's interval
+      // survives and the next tick retries.
+      this.emitter.emit("failed", { id: this.id, cause });
     }
   }
 
   showPending(): void {
-    this.state.items.value = [...this.pending, ...this.items];
-    this.state.pending.value = [];
+    this.state.items = [...this.pending, ...this.items];
+    this.state.pending = [];
   }
+
+  // --- search ----------------------------------------------------------
 
   setSortField(field: string): void {
     if (!this.config.dateFields.some((f) => String(f.key) === field)) return;
-    this.state.sortField.value = field;
+    this.state.sortField = field;
     this.fetch();
   }
 
   setQuery(query: string): void {
-    this.state.query.value = query;
+    this.state.query = query;
     this.fetch();
   }
 
   setKeywords(keywords: string): void {
-    this.state.keywords.value = keywords;
+    this.state.keywords = keywords;
     this.fetch();
   }
 
   setMatch(match: MatchMode): void {
-    this.state.match.value = match;
+    this.state.match = match;
     this.fetch();
   }
 
   setFacets(facets: Set<string>): void {
-    this.state.selectedFacets.value = facets;
+    this.state.selectedFacets = facets;
     this.fetch();
   }
 }

@@ -34,27 +34,31 @@ const definition = rows.defineDeck({
 });
 
 const mountWidget = async (slots: Record<string, string> = {}) => {
+  const fetch = vi.fn<Actions<FakeRow>["fetch"]>(async () => ({
+    data: fakeRows,
+    hasMore: false,
+  }));
   const wrapper = mount(
     defineComponent({
       setup(_, { slots: forwarded }) {
-        const widget = useDeck("d1", definition, {
-          fetch: vi.fn<Actions<FakeRow>["fetch"]>(async () => ({
-            data: fakeRows,
-            hasMore: false,
-          })),
-        });
+        const widget = useDeck("d1", definition, { fetch });
         return () => h(DeckWidget, { service: widget.service }, forwarded);
       },
     }),
     { slots, global: { stubs: { Feed: createStub("Feed") } } },
   );
   await flushPromises();
-  return wrapper;
+  return { wrapper, fetch };
 };
 
 describe("data deck widget", () => {
+  it("does not init the service on mount — the caller drives init", async () => {
+    const { fetch } = await mountWidget();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
   it("labels the toolbar fabs and renders no sort glyph by default", async () => {
-    const wrapper = await mountWidget();
+    const { wrapper } = await mountWidget();
     expect(wrapper.get('button[aria-label="Search"]').text()).toBe("Search");
     expect(wrapper.get('button[aria-label="Refresh"]').text()).toBe("Refresh");
     expect(
@@ -63,7 +67,7 @@ describe("data deck widget", () => {
   });
 
   it("relays the toolbar icon slots through the widget", async () => {
-    const wrapper = await mountWidget({
+    const { wrapper } = await mountWidget({
       sortIcon: `<template #sortIcon="s"><i>{{ s.deck.id }}</i></template>`,
       searchIcon: `<template #searchIcon><b>search</b></template>`,
       refreshIcon: `<template #refreshIcon><b>refresh</b></template>`,

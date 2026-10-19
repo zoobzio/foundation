@@ -42,7 +42,7 @@ progression, generic over the consumer's data (`Form<T>` over the payload,
 | Type      | Meaning                                                                                                                          |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `Config`  | consumer-declared description: static config + **synchronous** resolvers                                                         |
-| `State`   | raw reactive state — `Ref`-wrapped values only, exactly what the store owns                                                      |
+| `State`   | the state container — plain values, exactly what the store owns; the service replaces each member as a whole                     |
 | `Service` | the machine contract: **unwrapped** state + deriveds + full method surface — the widget's `service` prop; actions receive it too |
 | `Actions` | optional consumer side effects, each `(payload, service: Service<T>) => …`                                                       |
 | `Events`  | hook map: `"<name>:<past-tense>"` → `(event: { id: string; … }) => void`                                                         |
@@ -61,54 +61,58 @@ component type files import them rather than redefining them.
 
 ## Store (`stores/<name>.ts`)
 
+Extracted machines (table, deck) back one `useState` record per id with the
+package's container factory; its value is a reactive proxy, so the service's
+whole-member writes are tracked and shared by id:
+
 ```ts
-export const accessForm = <T>(id: string, config: Config<T>): State<T> => {
-  const payload = useState<Partial<T>>(`form-${id}-payload`, () => ({
-    ...config.defaults,
-  }));
-  // … one useState per State key, keyed `<name>-${id}-<key>`
-  return { initialized, payload, errors, touched, submitting, submitted };
-};
+export const accessDeck = <T>(id: string, config: Config<T>): State<T> =>
+  useState<State<T>>(`deck-${id}`, () => createDeckState(config)).value;
 ```
 
-Defaults only — no logic, no deriveds. Two callers with the same `id` share
-state; that is the instancing model.
+Unextracted machines keep one `useState` per `State` key, keyed
+`<name>-${id}-<key>`, and return the `Ref` record. Defaults only — no logic,
+no deriveds. Two callers with the same `id` share state; that is the
+instancing model.
 
-## Service (`services/<name>.ts`)
+## Service (`packages/<name>/` · `services/<name>.ts`)
 
-A plain class, `implements Service<T>`, constructed with the Nuxt app:
+A plain class, `implements Service<T>`. The extracted machines live in
+`packages/` as headless packages (`@zoobzio/table`, `@zoobzio/deck`): no
+Nuxt, no Vue — the constructor takes the id, the config, the state
+container, the actions, and optional get/set middleware, and the class emits
+its domain events through its own `on`:
 
 ```ts
 export class DeckService<T> implements Service<T> {
-  private readonly log: Logger;
-  private readonly emit: NuxtApp["callHook"];
-
   constructor(
-    nuxt: NuxtApp,
     public readonly id: string,
     public readonly config: Config<T>,
-    private readonly state: State<T>,
+    state: State<T>,
     private readonly actions: Actions<T>,
+    options: Options<T> = {},
   ) {
-    this.log = nuxt.$logger(this.id);
-    this.emit = nuxt.callHook;
+    this.state = makeProxy(state, options, this.emitter);
   }
-  // getters unwrap state / derive from config resolvers …
-  // methods mutate state, log.debug, emit events …
+  // getters read the container / derive from config resolvers …
+  // methods write the container and emit events …
 }
 ```
 
+Unextracted machines (`services/<name>.ts`) are constructed with the Nuxt
+app and log/emit through it directly; they migrate to the package shape one
+by one.
+
 - **All feature logic lives here** — validation, derivation, selection
   bookkeeping, everything. The service is the unit under test.
-- Getters return plain values (`this.state.x.value`); deriveds call the
-  config resolvers. Keep derived getters cheap — the refs view's computeds
-  cache only the outermost call.
-- Mutating methods `log.debug` and emit the matching event **after** the
-  state change; dispatcher methods invoke the consumer action first, then
-  emit (`this.actions.select?.(item, this); this.emit("…:selected", …)`).
+- Getters return plain values; deriveds call the config resolvers. Keep
+  derived getters cheap — the refs view's computeds cache only the
+  outermost call.
+- Mutating methods emit the matching event **after** the state change;
+  dispatcher methods invoke the consumer action first, then emit.
 - **DOM-free**: no `window`, `document`, timers, or event objects beyond
-  what actions forward. Presentational timing (blur delays, scrolling) is
-  widget/composable territory.
+  what actions forward. Presentational timing (blur delays, scrolling,
+  poll intervals) is widget/composable territory.
 
 ## Definition + widget composable (`definitions/<name>.ts` · `factories/<name>.ts`)
 
@@ -129,7 +133,10 @@ export type DeckDefinition<T> = Config<T> &
 `use<Name>` is a composable — call it in setup — that instances a
 definition: `id` is the only thing it adds (shared state, hook scoping,
 wiring identity all key on it), and `wiring` attaches the behavior half —
-fetchers, lifecycle, reactive pt. Pure instancing, no logic:
+fetchers, lifecycle, reactive pt. For an extracted machine this is also
+where Nuxt meets the package: the store's container goes in, and the
+service's events are relayed onto the logger and the hook bus. Pure
+instancing, no logic:
 
 ```ts
 import component from "../components/data/deck/widget.vue";
@@ -140,8 +147,14 @@ export const useDeck = <T>(
   wiring: DeckWiring<T>,
 ): Widget<DeckWidgetProps<T>, Events> => {
   const nuxt = useNuxtApp();
+  const log = nuxt.$logger(id);
   const state = accessDeck(id, definition);
-  const service = new DeckService(nuxt, id, definition, state, wiring);
+  const service = new DeckService(id, definition, state, wiring);
+  service.on("updated", (event) => {
+    log.debug("Deck updated", event);
+    nuxt.callHook("deck:updated", event);
+  });
+  // … one relay per domain event
   return { service, component, settings: /* wiring pt merged over definition pt */ };
 };
 ```
@@ -281,8 +294,9 @@ One backbone: Nuxt runtime hooks.
    `"<name>:<past-tense>"`, payloads carry `id`.
 2. Register it in [`app.d.ts`](../../app.d.ts):
    `interface RuntimeNuxtHooks extends FormEvents<unknown>, DeckEvents {}`.
-3. The **service** emits via `nuxt.callHook` at each state transition /
-   dispatched action.
+3. The **service** emits at each state transition / dispatched action — an
+   extracted machine through its own `on`, relayed to `nuxt.callHook` by
+   the factory; an unextracted one through `nuxt.callHook` directly.
 4. The **widget** subscribes with
    [`useHooks`](../../composables/hook.ts)`(machine.id, { … })` — filtered by
    `id` — and re-emits each event under its unprefixed name.
@@ -416,7 +430,7 @@ Build order for a new feature in this tier:
 | Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                                                                                                                                |
 | Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                                                                                                                             |
 | Schema helpers      | [`utils/schema.ts`](../../utils/schema.ts) (`flatten` · `check`)                                                                                                                                                        |
-| Reference: machine  | [`services/form.ts`](../../services/form.ts) · [`services/deck.ts`](../../services/deck.ts)                                                                                                                             |
+| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) (extracted) · [`services/form.ts`](../../services/form.ts) (in-layer)                                                                                    |
 | Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                       |
 | Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                                    |
 | Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |

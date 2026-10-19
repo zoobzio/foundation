@@ -18,7 +18,6 @@ import { useHooks } from "../../../composables/hook";
 import { usePassthrough } from "../../../composables/passthrough";
 import { useContext } from "../../../composables/context";
 import { useForwardSlots } from "../../../composables/slots";
-import { useLazyRequest } from "../../../composables/request";
 import { DECK_FEED_SLOTS, DECK_TOOLBAR_SLOTS } from "../../../constants/deck";
 </script>
 
@@ -30,6 +29,7 @@ const emit = defineEmits<DeckWidgetEmits>();
 useHooks<Events>(service.id, {
   "deck:updated": (event) => emit("updated", event),
   "deck:polled": (event) => emit("polled", event),
+  "deck:failed": (event) => emit("failed", event),
 });
 
 const el = useTemplateRef<HTMLDivElement>("el");
@@ -57,8 +57,6 @@ defineExpose({ ctx });
 const slots = defineSlots<DeckWidgetSlots<T>>();
 const forwarded = useForwardSlots(slots, DECK_FEED_SLOTS);
 const toolbarSlots = useForwardSlots(slots, DECK_TOOLBAR_SLOTS);
-
-useLazyRequest(`init-deck-${service.id}`, () => service.init());
 </script>
 
 <template>
