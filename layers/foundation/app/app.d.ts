@@ -5,7 +5,6 @@ import type { Events as ChartEvents } from "./types/data/chart";
 import type { Events as DeckEvents } from "./types/data/deck";
 import type { Events as FormEvents } from "./types/data/form";
 import type { Events as PreviewEvents } from "./types/data/preview";
-import type { Events as TableEvents } from "./types/data/table";
 
 declare module "#app" {
   interface NuxtApp {
@@ -19,8 +18,7 @@ declare module "#app" {
       BrowserEvents,
       ChartEvents,
       DeckEvents,
-      PreviewEvents,
-      TableEvents {}
+      PreviewEvents {}
 }
 
 export {};

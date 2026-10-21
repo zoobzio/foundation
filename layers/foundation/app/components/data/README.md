@@ -1,6 +1,6 @@
 # Data components
 
-Stateful features one tier above [core](../core/README.md). Each data feature
+Stateful features one tier above [core](../../../../../integrations/vue/src/components/README.md). Each data feature
 is split into a **headless machine** — the service, a `@zoobzio/<name>`
 package, over a store-backed state container — and the **presentational
 components** that render it. The widget composable yields the canonical
@@ -15,8 +15,8 @@ system as core.
 
 [`form`](./form/) and [`chart`](./chart/) are the reference
 implementations: form shows async actions and config-keyed children,
-chart shows data-driven (iterated) children; [`table`](./table/) and
-[`deck`](./deck/) are the fullest machines.
+chart shows data-driven (iterated) children; [`deck`](./deck/) and
+[`browser`](./browser/) are the fullest machines.
 
 ## File anatomy
 
@@ -78,7 +78,7 @@ state; that is the instancing model.
 ## Service (`packages/<name>/`)
 
 A plain class, `implements Service<T>`. Every data machine lives in
-`packages/` as a headless package (`@zoobzio/table`, `@zoobzio/deck`,
+`packages/` as a headless package (`@zoobzio/deck`, `@zoobzio/browser`,
 `@zoobzio/form`, …): no Nuxt, no Vue — the constructor takes the id, the
 config, the state container, the actions, and optional get/set middleware,
 and the class emits its domain events through its own `on`:
@@ -238,10 +238,10 @@ The repeated unit is its **own sub-component** with its own type file,
 composable, ctx, and forwarded slots — never inlined in the widget. Two
 mechanisms, chosen by what keys the children:
 
-| Children keyed by                          | Mechanism                        | Shape                                                                                                                    |
-| ------------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| static config (form fields, table columns) | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
-| runtime data (chart controls, table rows)  | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
+| Children keyed by                            | Mechanism                        | Shape                                                                                                                    |
+| -------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| static config (form fields, browser columns) | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
+| runtime data (chart controls, browser rows)  | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
 
 For iterated children, define an **anchor type** — the slice of widget
 state the child renders (chart's `ChartControlAnchor`) — and reuse it as
@@ -324,7 +324,7 @@ same payloads.
   `submitting`). Widgets do not init on mount — the caller drives `init()`
   (`useLazyRequest` is one way to do it).
 - Constants live in `constants/<name>.ts`, `SCREAMING_SNAKE` with the
-  feature prefix (`TABLE_DEFAULT_PAGE_SIZE`).
+  feature prefix (`DECK_PAGE_SIZE`).
 - Store keys are `` `<name>-${id}` ``; ctx names are
   `data-<name>` / `data-<name>-<part>`.
 
@@ -426,7 +426,7 @@ Build order for a new feature in this tier:
 
 | Concern             | File                                                                                                                                                                                                                    |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Passthrough system  | [core README](../core/README.md#the-passthrough-system) — identical merge semantics                                                                                                                                     |
+| Passthrough system  | [core README](../../../../../integrations/vue/src/components/README.md#the-passthrough-system) — identical merge semantics                                                                                              |
 | Widget contract     | [`types/widget.ts`](../../types/widget.ts) (`Widget` · `WidgetSettings` · `AnyWidget` · `Widgets`)                                                                                                                      |
 | Refs view           | [`composables/refs.ts`](../../composables/refs.ts) (`useServiceRefs`) · [`types/refs.ts`](../../types/refs.ts)                                                                                                          |
 | Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                                                                                                                             |

@@ -7,7 +7,7 @@ import { useNuxtApp } from "#imports";
 import { defineEntity } from "../../../app/definitions/entity";
 import { useChart } from "../../../app/factories/chart";
 import type { Actions, BreakdownData } from "../../../app/types/data/chart";
-import type { FakeRow } from "#test/data/table";
+import type { FakeRow } from "#test/data/rows";
 
 const rows = defineEntity<FakeRow>();
 

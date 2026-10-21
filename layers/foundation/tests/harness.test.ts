@@ -1,12 +1,8 @@
-// Smoke tests for the harness itself: alias resolution, the #imports shim's
-// useState contract, and VTU stub matching against component import bindings.
-// Component behavior belongs in per-component suites, not here.
+// Smoke tests for the harness itself: alias resolution and the #imports
+// shim's useState contract. Component behavior belongs in per-component
+// suites, not here.
 import { describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
 import { useState } from "#imports";
-import Select from "../app/components/core/select.vue";
-import { createStub } from "#test/stubs/factories";
-import { fakeOptions } from "#test/data/options";
 
 describe("imports shim", () => {
   it("useState shares one ref per key", () => {
@@ -20,23 +16,5 @@ describe("imports shim", () => {
     // Same key as above — setup.ts's beforeEach must have reset it.
     const state = useState("harness-key", () => 2);
     expect(state.value).toBe(2);
-  });
-});
-
-describe("component mounting", () => {
-  it("mounts a core component raw — reka renders real DOM in happy-dom", () => {
-    const wrapper = mount(Select, { props: { options: fakeOptions } });
-    const trigger = wrapper.get("button.f-select-trigger");
-    expect(trigger.attributes("role")).toBe("combobox");
-    expect(trigger.text()).toContain("Select an option");
-  });
-
-  it("stubs match the component's import binding names", () => {
-    const wrapper = mount(Select, {
-      props: { options: fakeOptions },
-      global: { stubs: { SelectTrigger: createStub("SelectTrigger", "i") } },
-    });
-    expect(wrapper.find("i").exists()).toBe(true);
-    expect(wrapper.find("button.f-select-trigger").exists()).toBe(false);
   });
 });

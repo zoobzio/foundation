@@ -3,7 +3,7 @@
 // config-driven initialization, not the proxy plumbing.
 import { describe, expect, it } from "vitest";
 import { accessChart } from "../../../app/stores/chart";
-import type { FakeRow } from "#test/data/table";
+import type { FakeRow } from "#test/data/rows";
 
 const config = {
   topic: "contacts",

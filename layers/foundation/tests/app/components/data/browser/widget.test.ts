@@ -1,4 +1,4 @@
-// Data-widget test in the table widget.test.ts mold. The contract mock is
+// Data-widget test in the deck widget.test.ts mold. The contract mock is
 // the unit seam — browser state logic has its depth in
 // packages/browser/tests/service.test.ts. Sibling feature parts
 // (Folders/Files/BulkActions) are stubbed: their behavior belongs to their

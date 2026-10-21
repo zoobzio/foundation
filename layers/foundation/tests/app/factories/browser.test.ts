@@ -1,4 +1,4 @@
-// Widget-composable test in the factories/table.test.ts mold — asserts the
+// Widget-composable test in the factories/deck.test.ts mold — asserts the
 // composition of store + service through the shim's Nuxt seams: live
 // reactive views over shared keyed state, not re-tested service logic
 // (that depth lives in packages/browser/tests/service.test.ts).

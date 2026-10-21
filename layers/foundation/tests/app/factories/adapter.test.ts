@@ -8,11 +8,29 @@ import type {
   DirectoryItem,
 } from "../../../app/types/core/directory";
 
+import type { PropType } from "vue";
+
 import { defineComponent, h, ref, toValue } from "vue";
 import { useAdapter } from "../../../app/factories/adapter";
 import { defineAdapter } from "../../../app/definitions/adapter";
 import { defineDirectory } from "../../../app/definitions/directory";
-import Directory from "../../../app/components/core/directory.vue";
+
+// A stand-in for a composite with the directory contract: a required
+// `groups` prop and a `select` emit, so `defineDirectory` output slots in
+// as its settings.
+const FixtureDirectory = defineComponent({
+  name: "FixtureDirectory",
+  props: {
+    groups: {
+      type: Array as PropType<DirectoryGroup<DirectoryItem>[]>,
+      required: true,
+    },
+  },
+  emits: ["select"],
+  setup(props) {
+    return () => h("nav", { class: "fixture-directory" }, props.groups.length);
+  },
+});
 
 const FixtureLogo = defineComponent({
   name: "FixtureLogo",
@@ -89,12 +107,12 @@ describe("useAdapter", () => {
   it("a composite definition slots into the adapter as settings", () => {
     const nav = defineDirectory({ groups: [] });
     const adapter = defineAdapter({
-      component: Directory,
+      component: FixtureDirectory,
       emits: { select: true },
       settings: nav,
     });
     const widget = useAdapter("nav", adapter);
-    expect(widget.service.component).toBe(Directory);
+    expect(widget.service.component).toBe(FixtureDirectory);
     expect(widget.service.emits).toEqual(["select"]);
     expect(widget.settings).toBe(nav);
   });
@@ -103,7 +121,7 @@ describe("useAdapter", () => {
     const groups = ref<DirectoryGroup<DirectoryItem>[]>([]);
     const nav = defineDirectory(() => ({ groups: groups.value }));
     const adapter = defineAdapter({
-      component: Directory,
+      component: FixtureDirectory,
       emits: { select: true },
       settings: nav,
     });

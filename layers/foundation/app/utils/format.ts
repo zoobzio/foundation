@@ -1,4 +1,4 @@
-import type { ColumnType } from "../types/data/table";
+import type { ColumnType } from "../types/data/browser";
 
 export const date = (d: Date) => {
   const y = d.getUTCFullYear();

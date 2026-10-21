@@ -15,6 +15,7 @@ export type {
   BulkAction,
   Change,
   Changes,
+  ColumnType,
   Config,
   Event,
   FileAction,

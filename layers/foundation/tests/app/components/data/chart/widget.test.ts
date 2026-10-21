@@ -18,7 +18,7 @@ import type {
   BreakdownData,
 } from "../../../../../app/types/data/chart";
 import { chartStubs } from "#test/stubs/data";
-import type { FakeRow } from "#test/data/table";
+import type { FakeRow } from "#test/data/rows";
 
 // Generic SFCs don't instantiate through h()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates T for the harness.

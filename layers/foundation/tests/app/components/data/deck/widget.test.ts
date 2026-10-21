@@ -15,8 +15,8 @@ import type {
 } from "../../../../../app/types/data/deck/widget";
 import type { Actions } from "../../../../../app/types/data/deck";
 import { createStub } from "#test/stubs/factories";
-import { fakeRows } from "#test/data/table";
-import type { FakeRow } from "#test/data/table";
+import { fakeRows } from "#test/data/rows";
+import type { FakeRow } from "#test/data/rows";
 
 // Generic SFCs don't instantiate through h()'s types — assigning to a
 // concretely-typed FunctionalComponent instantiates T for the harness.

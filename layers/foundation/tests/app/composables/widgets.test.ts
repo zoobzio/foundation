@@ -32,15 +32,15 @@ describe("useWiring", () => {
     const handler = vi.fn();
 
     withSetup(() => {
-      useWiring({ alpha: { "table:updated": handler } }, widgets);
+      useWiring({ alpha: { "deck:updated": handler } }, widgets);
     });
 
     const nuxt = useNuxtApp();
-    await nuxt.callHook("table:updated", { id: "alpha-machine", total: 3 });
+    await nuxt.callHook("deck:updated", { id: "alpha-machine", count: 3 });
 
     expect(handler).toHaveBeenCalledOnce();
     expect(handler).toHaveBeenCalledWith(
-      { id: "alpha-machine", total: 3 },
+      { id: "alpha-machine", count: 3 },
       { alpha: alpha.service, beta: beta.service },
     );
   });
@@ -50,11 +50,11 @@ describe("useWiring", () => {
     const handler = vi.fn();
 
     withSetup(() => {
-      useWiring({ alpha: { "table:updated": handler } }, widgets);
+      useWiring({ alpha: { "deck:updated": handler } }, widgets);
     });
 
     const nuxt = useNuxtApp();
-    await nuxt.callHook("table:updated", { id: "other-machine", total: 9 });
+    await nuxt.callHook("deck:updated", { id: "other-machine", count: 9 });
 
     expect(handler).not.toHaveBeenCalled();
   });
@@ -64,12 +64,12 @@ describe("useWiring", () => {
     const handler = vi.fn();
 
     const { app } = withSetup(() => {
-      useWiring({ alpha: { "table:updated": handler } }, widgets);
+      useWiring({ alpha: { "deck:updated": handler } }, widgets);
     });
     app.unmount();
 
     const nuxt = useNuxtApp();
-    await nuxt.callHook("table:updated", { id: "alpha-machine", total: 1 });
+    await nuxt.callHook("deck:updated", { id: "alpha-machine", count: 1 });
 
     expect(handler).not.toHaveBeenCalled();
   });
@@ -79,7 +79,7 @@ describe("useWiring", () => {
 
     withSetup(() => {
       useWiring(undefined, widgets);
-      useWiring({ missing: { "table:updated": vi.fn() } }, widgets);
+      useWiring({ missing: { "deck:updated": vi.fn() } }, widgets);
     });
   });
 });

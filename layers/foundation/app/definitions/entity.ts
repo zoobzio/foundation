@@ -3,7 +3,6 @@ import type { ChartDefinition } from "./chart";
 import type { DeckDefinition } from "./deck";
 import type { FormDefinition } from "./form";
 import type { PreviewDefinition } from "./preview";
-import type { TableDefinition } from "./table";
 import type { Stamp } from "../types/definition";
 
 /**
@@ -18,24 +17,17 @@ import type { Stamp } from "../types/definition";
  */
 export const defineEntity = <T>() => ({
   /**
-   * Declares a table over the entity at module scope — pure serializable
+   * Declares a deck over the entity at module scope — pure serializable
    * data, storable in a constant. The identity function is the type
    * checkpoint: every field errors on the line it is written. The return
-   * carries the entity stamp so `useTable` infers `T` from the definition.
-   */
-  defineTable: <D extends TableDefinition<T>>(definition: D): D & Stamp<T> =>
-    definition,
-
-  /**
-   * Declares a deck over the entity at module scope — same checkpoint
-   * semantics as `defineTable`.
+   * carries the entity stamp so `useDeck` infers `T` from the definition.
    */
   defineDeck: <D extends DeckDefinition<T>>(definition: D): D & Stamp<T> =>
     definition,
 
   /**
    * Declares a browser over the entity at module scope — same checkpoint
-   * semantics as `defineTable`. The entity is the file row; folders are
+   * semantics as `defineDeck`. The entity is the file row; folders are
    * the fixed foundation shape.
    */
   defineBrowser: <D extends BrowserDefinition<T>>(
@@ -44,7 +36,7 @@ export const defineEntity = <T>() => ({
 
   /**
    * Declares a preview over the entity at module scope — same checkpoint
-   * semantics as `defineTable`.
+   * semantics as `defineDeck`.
    */
   definePreview: <D extends PreviewDefinition<T>>(
     definition: D,
@@ -52,14 +44,14 @@ export const defineEntity = <T>() => ({
 
   /**
    * Declares a chart over the entity at module scope — same checkpoint
-   * semantics as `defineTable`.
+   * semantics as `defineDeck`.
    */
   defineChart: <D extends ChartDefinition<T>>(definition: D): D & Stamp<T> =>
     definition,
 
   /**
    * Declares a form over the entity at module scope — same checkpoint
-   * semantics as `defineTable`. The Zod schema rides the definition: it is
+   * semantics as `defineDeck`. The Zod schema rides the definition: it is
    * the form's intrinsic contract, not wiring.
    */
   defineForm: <D extends FormDefinition<T>>(definition: D): D & Stamp<T> =>

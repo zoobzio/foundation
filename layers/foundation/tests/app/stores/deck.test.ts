@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { accessDeck } from "../../../app/stores/deck";
 import { DECK_DEFAULT_MATCH_MODE } from "../../../app/constants/deck";
-import type { FakeRow } from "#test/data/table";
+import type { FakeRow } from "#test/data/rows";
 
 const config = {
   topic: "contacts",

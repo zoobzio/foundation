@@ -7,16 +7,16 @@ async-data executes its handler). `#test/*` resolves to this directory.
 `setup.ts` clears shim state between tests automatically.
 
 Tests live here only, under `tests/app/`, mirroring `app/` path-for-path:
-one `.test.ts` per source file that has logic (`app/stores/table.ts` →
-`tests/app/stores/table.test.ts`). The machines themselves live in
-`packages/<name>/` and carry their own suites (`packages/table/tests/`). Types, constants, and config files
+one `.test.ts` per source file that has logic (`app/stores/deck.ts` →
+`tests/app/stores/deck.test.ts`). The machines themselves live in
+`packages/<name>/` and carry their own suites (`packages/deck/tests/`). Types, constants, and config files
 don't get test files — assertions about literals are theater.
 
 ## Layout
 
 - `app/` — the test files themselves, mirroring `app/` path-for-path.
 - `mocks/` — module shims (`imports.ts`) and per-feature contract mocks
-  (`table.ts`, …) typed against the real contracts so tsc catches drift.
+  (`browser.ts`, …) typed against the real contracts so tsc catches drift.
 - `stubs/` — component doubles: `factories.ts` plus per-tier maps. Stub keys
   match the **import binding name** in the consuming component (VTU resolves
   against the parent's setupState; kebab/Pascal variants of the key match).
@@ -61,15 +61,14 @@ asserted is not tested.
 
 Replicate the matching file for the tier you're testing:
 
-| Tier            | File                                             |
-| --------------- | ------------------------------------------------ |
-| utils           | `tests/app/utils/passthrough.test.ts`            |
-| composables     | `tests/app/composables/model.test.ts`            |
-| stores          | `tests/app/stores/table.test.ts`                 |
-| services        | `packages/table/tests/service.test.ts`           |
-| factories       | `tests/app/factories/table.test.ts`              |
-| components/core | `tests/app/components/core/select.test.ts`       |
-| components/data | `tests/app/components/data/table/widget.test.ts` |
+| Tier            | File                                            |
+| --------------- | ----------------------------------------------- |
+| utils           | `tests/app/utils/passthrough.test.ts`           |
+| composables     | `tests/app/composables/model.test.ts`           |
+| stores          | `tests/app/stores/deck.test.ts`                 |
+| services        | `packages/deck/tests/service.test.ts`           |
+| factories       | `tests/app/factories/deck.test.ts`              |
+| components/data | `tests/app/components/data/deck/widget.test.ts` |
 
 ## Conventions
 

@@ -3,7 +3,7 @@
 // not the proxy plumbing.
 import { describe, expect, it } from "vitest";
 import { accessPreview } from "../../../app/stores/preview";
-import type { FakeRow } from "#test/data/table";
+import type { FakeRow } from "#test/data/rows";
 
 describe("accessPreview", () => {
   it("initializes state with defaults", () => {

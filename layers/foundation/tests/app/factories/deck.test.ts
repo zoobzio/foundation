@@ -7,8 +7,8 @@ import { useNuxtApp } from "#imports";
 import { defineEntity } from "../../../app/definitions/entity";
 import { useDeck } from "../../../app/factories/deck";
 import type { Actions } from "../../../app/types/data/deck";
-import { fakeRows } from "#test/data/table";
-import type { FakeRow } from "#test/data/table";
+import { fakeRows } from "#test/data/rows";
+import type { FakeRow } from "#test/data/rows";
 
 const rows = defineEntity<FakeRow>();
 

@@ -5,7 +5,7 @@ structure is an arrangement strategy over widgets — the workspace arranges a
 grid of slots, the panel arranges three fixed regions (header / content /
 footer) — and a page implements exactly one. Structures are _not_
 widgets: a widget is what a widget composable yields; a structure is a
-component a page uses, on [core](../core/README.md)'s component contract
+component a page uses, on [core](../../../../../integrations/vue/src/components/README.md)'s component contract
 (props / pt / ctx / slots), with **no machine** — no store, no service, no
 events of its own.
 
@@ -35,14 +35,14 @@ alive (composables), and where it sits (template) stay separate:
 ```ts
 // constants/dashboard.ts — the whole page as inert typed data
 const contacts = defineEntity<Contact>();
-export const CONTACTS_TABLE = contacts.defineTable({ columns: …, rowKey: … });
+export const CONTACTS_DECK = contacts.defineDeck({ topic: …, rowKey: …, dateFields: … });
 export const CONTACT_FORM = contacts.defineForm({ title: …, fields: …, schema: … });
 
 export const DASHBOARD = defineWorkspace({
   columns: 3,
   rows: 2,
   slots: {
-    main: { position: [0, 0], span: [2, 2], widget: CONTACTS_TABLE },
+    main: { position: [0, 0], span: [2, 2], widget: CONTACTS_DECK },
     side: { position: [2, 0], span: [1, 2], widget: CONTACT_FORM },
   },
 });
@@ -51,12 +51,12 @@ export const DASHBOARD = defineWorkspace({
 ```ts
 // composables/dashboard.ts — instantiation + wiring, the only place anything runs
 export const useDashboard = () => {
-  const main = useTable("dash-contacts", DASHBOARD.slots.main.widget, { fetch: … });
+  const main = useDeck("dash-contacts", DASHBOARD.slots.main.widget, { fetch: … });
   const side = useForm("dash-form", DASHBOARD.slots.side.widget, { submit: … });
 
   return useWorkspace(DASHBOARD, { main, side }, {
     main: {
-      "table:updated": (event, services) => services.side.validate(),
+      "deck:updated": (event, services) => services.side.validate(),
     },
   });
 };
