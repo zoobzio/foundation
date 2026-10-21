@@ -2,7 +2,6 @@ import type { BrowserDefinition } from "./browser";
 import type { ChartDefinition } from "./chart";
 import type { DeckDefinition } from "./deck";
 import type { FormDefinition } from "./form";
-import type { PreviewDefinition } from "./preview";
 import type { Stamp } from "../types/definition";
 
 /**
@@ -31,14 +30,6 @@ export const defineEntity = <T>() => ({
    * the fixed foundation shape.
    */
   defineBrowser: <D extends BrowserDefinition<T>>(
-    definition: D,
-  ): D & Stamp<T> => definition,
-
-  /**
-   * Declares a preview over the entity at module scope — same checkpoint
-   * semantics as `defineDeck`.
-   */
-  definePreview: <D extends PreviewDefinition<T>>(
     definition: D,
   ): D & Stamp<T> => definition,
 

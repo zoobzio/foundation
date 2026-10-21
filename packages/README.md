@@ -13,7 +13,6 @@ types) live in [`@zoobzio/kit`](./kit/).
 | [`@zoobzio/chart`](./chart/)     | Chart service: variant, renderer, field and axis choice, bucket and range                            |
 | [`@zoobzio/deck`](./deck/)       | Deck service: cursor feed, load-more, polling, sort, search, facets                                  |
 | [`@zoobzio/form`](./form/)       | Form service: payload, per-key validation, touched tracking, submit lifecycle                        |
-| [`@zoobzio/preview`](./preview/) | Preview service: one record fetched and read by field                                                |
 | [`@zoobzio/table`](./table/)     | Table service: paging, sort, selection, column order, search filters                                 |
 
 Each package has its own README with usage, the state container contract,

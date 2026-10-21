@@ -99,9 +99,6 @@ importers:
       '@zoobzio/form':
         specifier: workspace:*
         version: link:../../packages/form
-      '@zoobzio/preview':
-        specifier: workspace:*
-        version: link:../../packages/preview
       chart.js:
         specifier: ^4.5.1
         version: 4.5.1
@@ -242,28 +239,6 @@ importers:
 
   packages/kit:
     dependencies:
-      objectively:
-        specifier: ^0.3.0
-        version: 0.3.0
-    devDependencies:
-      '@vitest/coverage-v8':
-        specifier: ^5.0.3
-        version: 5.0.3(vitest@5.0.3)
-      obuild:
-        specifier: ^0.4.44
-        version: 0.4.45(@volar/typescript@2.4.15)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magicast@0.5.5)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-      vitest:
-        specifier: ^5.0.3
-        version: 5.0.3(@types/node@26.1.1)(@vitest/coverage-v8@5.0.3)(happy-dom@20.10.6)(vite@7.3.6(@types/node@26.1.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))
-
-  packages/preview:
-    dependencies:
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
       objectively:
         specifier: ^0.3.0
         version: 0.3.0

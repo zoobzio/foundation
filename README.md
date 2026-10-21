@@ -23,7 +23,7 @@ Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsib
 | Tier       | Directory            | What it is                                                                                                                                                   |
 | ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Components | `components/core/`   | Stateless interactive components composing [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough. |
-| Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form, preview).                                                                   |
+| Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form).                                                                            |
 | System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                    |
 
 ### Data widgets
@@ -35,7 +35,6 @@ Each widget pairs a **definition** (`defineTable`, `defineForm`, …) — inert 
 - `DataForm` — programmatic form over `T` with zod validation
 - `DataChart` — configurable chart visualizations
 - `DataDeck` — infinite-scroll card feeds
-- `DataPreview` — code / markdown content viewer
 
 ## Imports
 
@@ -60,7 +59,7 @@ layers/foundation/
   app/
     components/
       core/       — interactive components (30)
-      data/       — data widgets: autocomplete, table, chart, deck, form, preview
+      data/       — data widgets: autocomplete, table, chart, deck, form
       system/     — app-shell composition (2)
     composables/  — usePassthrough, useContext, useModel, useHooks, …
     factories/    — widget composables: use*(id, definition) → Widget
@@ -79,7 +78,6 @@ packages/
   chart/          — @zoobzio/chart: headless chart service (pure TS, no framework)
   deck/           — @zoobzio/deck: headless deck service (pure TS, no framework)
   form/           — @zoobzio/form: headless form service (pure TS, no framework)
-  preview/        — @zoobzio/preview: headless preview service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
 example/          — playground app extending the layer
 ```

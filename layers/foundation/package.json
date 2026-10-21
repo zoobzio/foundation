@@ -55,7 +55,6 @@
     "@zoobzio/chart": "workspace:*",
     "@zoobzio/deck": "workspace:*",
     "@zoobzio/form": "workspace:*",
-    "@zoobzio/preview": "workspace:*",
     "chart.js": "^4.5.1",
     "defu": "^6.1.7",
     "ltrl-http": "^0.0.20",

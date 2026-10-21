@@ -1,6 +1,6 @@
 /**
- * A domain-neutral record fixture shared by the deck, chart, and preview
- * suites — the rows only; each feature's own fixtures carry its columns.
+ * A domain-neutral record fixture shared by the deck and chart suites —
+ * the rows only; each feature's own fixtures carry its columns.
  */
 export type FakeRow = {
   id: number;
