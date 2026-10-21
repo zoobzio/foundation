@@ -1,4 +1,10 @@
 <script lang="ts">
+/**
+ * A text input with stacked option panels: the `trail` panels, then `items`.
+ * Only the last panel is a listbox. Trail panels render plain buttons so
+ * keyboard navigation stays on the active panel. `more` emits once per
+ * scroll to the end of a panel.
+ */
 import type {
   AutocompleteProps,
   AutocompleteEmits,
@@ -58,8 +64,6 @@ const panels = computed(() => {
   return result;
 });
 
-// re-arms once the user scrolls away from the end, so `more` fires once per
-// crossing instead of per scroll tick
 let moreArmed = true;
 const onPanelScroll = (event: Event) => {
   const el = event.target;
@@ -93,7 +97,6 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
     input: {
       placeholder,
       disabled,
-      // an Enter reka did not claim for a highlighted item submits the text
       onKeydown: (event) => {
         if (event.key === "Backspace" && !$model.value && steps.length) {
           event.preventDefault();
@@ -112,7 +115,6 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
       disabled: anchor.option.disabled,
       textValue: anchor.option.label,
       onSelect: (event) => {
-        // preventDefault blocks reka's own model write + close
         event.preventDefault();
         if (!anchor.option.disabled) emit("select", anchor.option);
       },
@@ -172,7 +174,6 @@ defineSlots<AutocompleteSlots<M>>();
           <Scroller v-bind="settings.scroller">
             <template v-for="(option, i) in options" :key="option.value">
               <slot name="item" v-bind="{ ...ctx, option, index: i, panel: p }">
-                <!-- plain buttons: outside the listbox collection, so keyboard navigation stays on the active panel -->
                 <button
                   v-if="p < trail.length"
                   type="button"

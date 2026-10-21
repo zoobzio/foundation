@@ -1,5 +1,3 @@
-// Fab's own logic: the label doubles as the accessible name and as the
-// visible fallback when no icon slot is supplied, and the click re-emit.
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
 import Fab from "../../src/components/fab.vue";

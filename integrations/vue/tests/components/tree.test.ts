@@ -1,5 +1,3 @@
-// Core component test in the select.test.ts mold: reka renders real DOM,
-// interactions drive TreeRoot/TreeItem for real.
 import { afterEach, describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -8,8 +6,7 @@ import { fakeTreeNodes } from "#test/data/tree";
 import type { FakeTreeNode } from "#test/data/tree";
 import type { TreeEmits, TreeProps } from "../../src/types/core/tree";
 
-// Generic SFCs don't instantiate through mount()'s types — assigning to a
-// concretely-typed FunctionalComponent instantiates T for the harness.
+// A concrete FunctionalComponent type instantiates T for mount().
 const Tree: FunctionalComponent<
   TreeProps<FakeTreeNode>,
   TreeEmits<FakeTreeNode>
@@ -91,8 +88,6 @@ describe("tree", () => {
     await flushPromises();
     expect(wrapper.emitted("update:expanded")).toEqual([[["guides"]]]);
     expect(wrapper.emitted("toggle")).toEqual([[node("guides"), true]]);
-    // reka fires select on branch clicks too — part of the documented
-    // contract, so lazy-load consumers key off toggle.
     expect(wrapper.emitted("select")).toEqual([[node("guides")]]);
 
     await itemByText(wrapper, "Guides").trigger("click");

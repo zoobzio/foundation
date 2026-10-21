@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A floating action button with an optional badge.
+ */
 import type {
   FabProps,
   FabEmits,

@@ -3,6 +3,13 @@ import type { MaybeRefOrGetter, Ref } from "vue";
 
 import { computed, toValue } from "vue";
 
+/**
+ * Case-insensitive substring search over options.
+ *
+ * @param search - The search text.
+ * @param options - The options to filter.
+ * @param settings.keys - The option fields to search. Defaults to `label`.
+ */
 export const useSearch = <T extends Option>(
   search: Ref<string | undefined>,
   options: MaybeRefOrGetter<T[]>,

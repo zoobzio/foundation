@@ -20,16 +20,22 @@ import type {
 } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 
-// The share of the root's render-scope payload the core template forwards
-// into its slots.
+/**
+ * The part of the root's slot payload the template forwards to its slots.
+ */
 export type CalendarView = Pick<
   SlotProps<typeof CalendarRoot>,
   "weekDays" | "grid"
 >;
 
-// One month of the root's render-scope grid payload.
+/**
+ * One month of the calendar grid.
+ */
 export type CalendarMonth = CalendarView["grid"][number];
 
+/**
+ * The parts of the calendar that accept passthrough.
+ */
 export type CalendarPassthrough = {
   root: Passthrough<CalendarRootProps, CalendarRootEmits>;
   header: Passthrough<CalendarHeaderProps>;
@@ -48,19 +54,26 @@ export type CalendarPassthrough = {
   >;
 };
 
-// `modelValue` is required: the calendar uses the explicit model contract
-// (MIGRATION § explicit models) — presence on the vnode decides
-// controlled-ness, so consumers always provide it, `undefined` included.
+/**
+ * Props of the calendar. `modelValue` is required. Its presence on the vnode
+ * decides control, so pass `undefined` explicitly for an uncontrolled instance.
+ */
 export type CalendarProps = {
   modelValue: DateValue | undefined;
   maxValue?: DateValue;
   pt?: PT<CalendarPassthrough>;
 };
 
+/**
+ * Emits of the calendar.
+ */
 export type CalendarEmits = {
   "update:modelValue": [value: DateValue | undefined];
 };
 
+/**
+ * The calendar view model, served to `defineExpose` and the slots.
+ */
 export type CalendarContext = {
   maxValue?: DateValue;
   modelValue: Ref<DateValue | undefined>;
@@ -68,6 +81,10 @@ export type CalendarContext = {
   settings: CalendarPassthrough;
 };
 
+/**
+ * Slots of the calendar. Each slot receives the context. Grid slots also
+ * receive the view and the `month`.
+ */
 export type CalendarSlots = {
   header?: (props: CalendarContext & CalendarView) => VNode[];
   prev?: (props: CalendarContext & CalendarView) => VNode[];
@@ -94,7 +111,6 @@ export type CalendarSlots = {
 };
 
 /**
- * A calendar instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A calendar instance as data: props plus emit listeners.
  */
 export type CalendarDefinition = Definition<CalendarProps, CalendarEmits>;

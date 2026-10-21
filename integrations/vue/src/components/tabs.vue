@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * Tabs. A tab with a `link` renders as an anchor, and any link switches
+ * activation to manual.
+ */
 import type {
   TabsProps,
   TabsEmits,
@@ -45,7 +49,7 @@ const settings = usePassthrough<TabsPassthrough<T>>(() => ({
     trigger: (option) => ({
       value: option.value,
       disabled: option.disabled,
-      // as-child onto the anchor; `as` off "button" drops reka's type attr.
+      // `as: "a"` keeps reka from adding `type="button"` to the anchor.
       asChild: !!option.link,
       as: option.link ? "a" : undefined,
     }),

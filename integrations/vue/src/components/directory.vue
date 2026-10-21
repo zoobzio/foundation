@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A grouped navigation list.
+ */
 import type {
   DirectoryContext,
   DirectoryEmits,

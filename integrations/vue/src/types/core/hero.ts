@@ -2,6 +2,9 @@ import type { Link } from "../common";
 import type { Definition } from "../definition";
 import type { VNode } from "vue";
 
+/**
+ * Props of the hero.
+ */
 export type HeroProps = {
   tagline: string;
   taglineHighlight?: string;
@@ -9,8 +12,14 @@ export type HeroProps = {
   action?: Link;
 };
 
+/**
+ * The hero has no emits.
+ */
 export type HeroEmits = {};
 
+/**
+ * The hero view model, served to `defineExpose` and the slots.
+ */
 export type HeroContext = {
   tagline: string;
   taglineHighlight?: string;
@@ -19,6 +28,9 @@ export type HeroContext = {
   el: HTMLElement | null;
 };
 
+/**
+ * Slots of the hero. Each slot receives the context.
+ */
 export type HeroSlots = {
   content?: (props: HeroContext) => VNode[];
   tagline?: (props: HeroContext) => VNode[];
@@ -29,7 +41,6 @@ export type HeroSlots = {
 };
 
 /**
- * A hero instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A hero instance as data: props plus emit listeners.
  */
 export type HeroDefinition = Definition<HeroProps, HeroEmits>;

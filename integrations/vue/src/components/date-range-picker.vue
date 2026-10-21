@@ -1,4 +1,9 @@
 <script lang="ts">
+/**
+ * A segmented start and end date field with a two-month calendar popover.
+ * `modelValue` is required. Its presence on the vnode decides control, so
+ * pass `undefined` for an uncontrolled instance.
+ */
 import type {
   DateRangePickerProps,
   DateRangePickerEmits,

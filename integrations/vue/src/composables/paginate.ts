@@ -3,6 +3,12 @@ import type { MaybeRefOrGetter, Ref } from "vue";
 import { computed, toValue } from "vue";
 import { paginate } from "../utils/paginate";
 
+/**
+ * Page navigation over a page count. Moves outside `1..count` are ignored.
+ *
+ * @param page - The current page, 1-based.
+ * @param count - The total page count.
+ */
 export const usePaginate = (
   page: Ref<number>,
   count: MaybeRefOrGetter<number>,

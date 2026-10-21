@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A popover. With `reference`, the content anchors to that element and
+ * no trigger renders.
+ */
 import type {
   PopoverProps,
   PopoverEmits,

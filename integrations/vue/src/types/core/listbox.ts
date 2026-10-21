@@ -10,12 +10,19 @@ import type {
   ListboxItemEmits,
 } from "reka-ui";
 
+/**
+ * The parts of the listbox that accept passthrough.
+ */
 export type ListboxPassthrough<T extends Option = Option> = {
   root: Passthrough<ListboxRootProps, ListboxRootEmits>;
   content: Passthrough<ListboxContentProps>;
   item: PassthroughIter<T, ListboxItemProps, ListboxItemEmits>;
 };
 
+/**
+ * Props of the listbox. `modelValue` holds item values. With `multiple`
+ * it is an array.
+ */
 export type ListboxProps<T extends Option = Option> = {
   items: T[];
   modelValue?: string | string[];
@@ -24,10 +31,16 @@ export type ListboxProps<T extends Option = Option> = {
   pt?: PT<ListboxPassthrough<T>>;
 };
 
+/**
+ * Emits of the listbox.
+ */
 export type ListboxEmits = {
   "update:modelValue": [value: string | string[]];
 };
 
+/**
+ * The listbox view model, served to `defineExpose` and the slots.
+ */
 export type ListboxContext<T extends Option = Option> = {
   items: T[];
   multiple?: boolean;
@@ -37,14 +50,17 @@ export type ListboxContext<T extends Option = Option> = {
   settings: ListboxPassthrough<T>;
 };
 
+/**
+ * Slots of the listbox. Each slot receives the context.
+ * The item slot also receives the `item`.
+ */
 export type ListboxSlots<T extends Option = Option> = {
   content?: (props: ListboxContext<T>) => VNode[];
   item?: (props: ListboxContext<T> & { item: T }) => VNode[];
 };
 
 /**
- * A listbox instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A listbox instance as data: props plus emit listeners.
  */
 export type ListboxDefinition<T extends Option = Option> = Definition<
   ListboxProps<T>,

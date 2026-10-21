@@ -12,6 +12,9 @@ import type {
   SelectItemTextProps,
 } from "reka-ui";
 
+/**
+ * The parts of the select that accept passthrough.
+ */
 export type SelectPassthrough<T extends Option = Option> = {
   root: Passthrough<SelectRootProps, SelectRootEmits>;
   trigger: Passthrough<SelectTriggerProps>;
@@ -20,6 +23,9 @@ export type SelectPassthrough<T extends Option = Option> = {
   itemText: Passthrough<SelectItemTextProps>;
 };
 
+/**
+ * Props of the select. `modelValue` is the selected option object.
+ */
 export type SelectProps<T extends Option = Option> = {
   modelValue?: NoInfer<T>;
   open?: boolean;
@@ -31,11 +37,18 @@ export type SelectProps<T extends Option = Option> = {
   pt?: PT<SelectPassthrough<T>>;
 };
 
+/**
+ * Emits of the select.
+ */
 export type SelectEmits<T extends Option = Option> = {
   "update:modelValue": [value: T];
   "update:open": [value: boolean];
 };
 
+/**
+ * The select view model, served to `defineExpose` and the slots.
+ * `display` is the trigger text.
+ */
 export type SelectContext<T extends Option = Option> = {
   options: T[];
   placeholder: string;
@@ -49,6 +62,10 @@ export type SelectContext<T extends Option = Option> = {
   settings: SelectPassthrough<T>;
 };
 
+/**
+ * Slots of the select. Each slot receives the context.
+ * Item slots also receive the `option`.
+ */
 export type SelectSlots<T extends Option = Option> = {
   trigger?: (props: SelectContext<T>) => VNode[];
   triggerLabel?: (props: SelectContext<T>) => VNode[];
@@ -59,8 +76,7 @@ export type SelectSlots<T extends Option = Option> = {
 };
 
 /**
- * A select instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A select instance as data: props plus emit listeners.
  */
 export type SelectDefinition<T extends Option> = Definition<
   SelectProps<T>,

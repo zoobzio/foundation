@@ -1,5 +1,5 @@
 /**
- * Base type for selectable items (tabs, listbox, select, accordion)
+ * An item a component can select.
  */
 export interface Option {
   value: string;
@@ -8,7 +8,7 @@ export interface Option {
 }
 
 /**
- * Base type for navigation links
+ * A navigation link.
  */
 export interface Link {
   label: string;
@@ -19,20 +19,19 @@ export interface Link {
 }
 
 /**
- * The navigation half of a Link: what an item carries in its `link` field to
- * render as a real hyperlink instead of an emit-only control
+ * The navigation fields of a Link. An item with a `link` renders as an anchor.
  */
 export type LinkTarget = Pick<Link, "to" | "target">;
 
 /**
- * Mixin for hierarchical structures with children
+ * Adds optional children to a node type.
  */
 export interface Hierarchy<T> {
   children?: T[];
 }
 
 /**
- * Table of contents link with depth for indentation
+ * A table-of-contents entry. `depth` sets the indentation.
  */
 export interface TocLink extends Hierarchy<TocLink> {
   id: string;
@@ -41,6 +40,6 @@ export interface TocLink extends Hierarchy<TocLink> {
 }
 
 /**
- * Keyboard shortcut string (e.g., "meta+k", "ctrl+shift+p")
+ * A keyboard shortcut string, for example `meta+k`.
  */
 export type ButtonShortcut = string;

@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A modal dialog. The model is the open state.
+ */
 import type {
   DialogProps,
   DialogEmits,

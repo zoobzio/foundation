@@ -13,6 +13,9 @@ import type {
   SelectItemTextProps,
 } from "reka-ui";
 
+/**
+ * The parts of the multi-select that accept passthrough.
+ */
 export type MultiSelectPassthrough<T extends Option = Option> = {
   root: Passthrough<SelectRootProps, SelectRootEmits>;
   trigger: Passthrough<SelectTriggerProps>;
@@ -22,6 +25,10 @@ export type MultiSelectPassthrough<T extends Option = Option> = {
   itemText: Passthrough<SelectItemTextProps>;
 };
 
+/**
+ * Props of the multi-select. `modelValue` is the array of selected
+ * item objects.
+ */
 export type MultiSelectProps<T extends Option> = {
   modelValue?: NoInfer<T[] | undefined>;
   open?: boolean;
@@ -31,11 +38,18 @@ export type MultiSelectProps<T extends Option> = {
   pt?: PT<MultiSelectPassthrough<T>>;
 };
 
+/**
+ * Emits of the multi-select.
+ */
 export type MultiSelectEmits<T extends Option> = {
   "update:modelValue": [value: T[] | undefined];
   "update:open": [value: boolean];
 };
 
+/**
+ * The multi-select view model, served to `defineExpose` and the slots.
+ * `display` is the trigger text.
+ */
 export type MultiSelectContext<T extends Option> = {
   items: T[];
   placeholder: string;
@@ -47,6 +61,10 @@ export type MultiSelectContext<T extends Option> = {
   settings: MultiSelectPassthrough<T>;
 };
 
+/**
+ * Slots of the multi-select. Each slot receives the context.
+ * Item slots also receive the `item` and its `selected` state.
+ */
 export type MultiSelectSlots<T extends Option> = {
   trigger?: (props: MultiSelectContext<T>) => VNode[];
   triggerLabel?: (props: MultiSelectContext<T>) => VNode[];
@@ -62,8 +80,7 @@ export type MultiSelectSlots<T extends Option> = {
 };
 
 /**
- * A multi-select instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A multi-select instance as data: props plus emit listeners.
  */
 export type MultiSelectDefinition<T extends Option> = Definition<
   MultiSelectProps<T>,

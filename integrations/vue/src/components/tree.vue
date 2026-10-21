@@ -1,4 +1,9 @@
 <script lang="ts">
+/**
+ * A single-select tree. `modelValue` and `expanded` are explicit models:
+ * their presence on the vnode decides control, so pass `undefined`
+ * explicitly for an uncontrolled instance.
+ */
 import type {
   TreeContext,
   TreeEmits,
@@ -49,18 +54,12 @@ const settings = usePassthrough<TreePassthrough<T>>(() => ({
       getKey: (node) => node.key,
       getChildren: (node) => node.children,
       "onUpdate:modelValue": (v) => {
-        // multiple is false, so reka only ever sends a single node; the
-        // array branch exists for the wide emit type alone.
         $model.value = Array.isArray(v) ? v[0] : v;
       },
       "onUpdate:expanded": (v) => {
         $expanded.value = v;
       },
     },
-    // reka guards disabled nodes itself; `toggle` re-emits post-toggle
-    // state (the event detail carries the pre-toggle value) and only for
-    // branches — reka also dispatches toggle on leaf clicks, where it is
-    // a no-op.
     item: (flat) => ({
       ...flat.bind,
       disabled: flat.value.disabled,
@@ -69,6 +68,7 @@ const settings = usePassthrough<TreePassthrough<T>>(() => ({
       },
       onToggle: (event) => {
         if (!flat.hasChildren) return;
+        // `event.detail.isExpanded` is the state before the toggle.
         emit("toggle", flat.value, !event.detail.isExpanded);
       },
     }),

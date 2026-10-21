@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A single-select toggle group. When `required` is set, the active
+ * option cannot deselect. An option with a `link` renders as an anchor.
+ */
 import type {
   SegmentedControlProps,
   SegmentedControlEmits,
@@ -38,7 +42,6 @@ const settings = usePassthrough<SegmentedControlPassthrough<T>>(() => ({
       type: "single",
       disabled,
       "onUpdate:modelValue": (v) => {
-        // Single-select vocabulary; prevent deselection when required.
         const val = Array.isArray(v) ? v[0] : v;
         if (required && !val) return;
         if (typeof val === "string") $model.value = val;
@@ -47,7 +50,7 @@ const settings = usePassthrough<SegmentedControlPassthrough<T>>(() => ({
     item: (option) => ({
       value: option.value,
       disabled: option.disabled,
-      // as-child onto the anchor; `as` off "button" drops reka's type attr.
+      // `as: "a"` keeps reka from adding `type="button"` to the anchor.
       asChild: !!option.link,
       as: option.link ? "a" : undefined,
     }),

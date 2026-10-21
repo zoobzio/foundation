@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A popover of counted filter options grouped by facet. The model is the
+ * set of selected option values.
+ */
 import type {
   FacetItem,
   FacetsContext,
@@ -42,8 +46,6 @@ const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const activeCount = computed(() => selected?.size ?? 0);
 
-// FacetGroup → CommandGroup: a facet item is already a counted option, so
-// items pass through whole and the command's item passthrough sees `T`.
 const commandGroups = computed<CommandGroup<T>[]>(() =>
   groups.map((g) => ({
     key: g.key,
@@ -52,8 +54,6 @@ const commandGroups = computed<CommandGroup<T>[]>(() =>
   })),
 );
 
-// The command's model is the option objects; reconstruct them from the
-// selected value set on the way in, collapse back to a Set on the way out.
 const selectedOptions = computed<T[]>(() => {
   const set = selected ?? new Set<string>();
   return commandGroups.value

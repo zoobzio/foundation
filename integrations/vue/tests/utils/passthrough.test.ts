@@ -1,6 +1,3 @@
-// Gold standard: pure utils. No mounting, no harness — call the function and
-// assert every logic path (here: merge precedence, deep merge, array
-// replacement, function recipes riding through).
 import { describe, expect, it } from "vitest";
 import { passthrough } from "../../src/utils/passthrough";
 

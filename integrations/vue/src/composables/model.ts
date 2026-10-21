@@ -2,6 +2,15 @@ import type { WritableComputedRef } from "vue";
 
 import { computed, getCurrentInstance, shallowRef } from "vue";
 
+/**
+ * A writable model that falls back to local state when the prop is absent.
+ *
+ * @param prop - A getter for the model prop.
+ * @param emit - Emits the `update:*` event.
+ * @param options.default - The initial local value.
+ * @param options.explicit - The prop name. When set, presence of the prop on
+ * the vnode decides control, so an explicit `undefined` is a controlled value.
+ */
 export const useModel = <T>(
   prop: () => T | undefined,
   emit: (value: T) => void,

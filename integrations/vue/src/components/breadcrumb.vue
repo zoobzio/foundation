@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A navigation trail. The last item renders as the current page. Items with
+ * a `link` render as anchors, other items as buttons.
+ */
 import type {
   BreadcrumbContext,
   BreadcrumbEmits,

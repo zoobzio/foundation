@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A tags input. The model is the array of tag strings.
+ */
 import type {
   TagsInputProps,
   TagsInputEmits,

@@ -13,6 +13,9 @@ import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * The parts of the popover that accept passthrough.
+ */
 export type PopoverPassthrough = {
   root: Passthrough<PopoverRootProps, PopoverRootEmits>;
   anchor: Passthrough<PopoverAnchorProps>;
@@ -22,6 +25,10 @@ export type PopoverPassthrough = {
   close: Passthrough<PopoverCloseProps>;
 };
 
+/**
+ * Props of the popover. `reference` positions the content against an
+ * external element instead of the trigger.
+ */
 export type PopoverProps = {
   open?: boolean;
   defaultOpen?: boolean;
@@ -35,10 +42,16 @@ export type PopoverProps = {
   pt?: PT<PopoverPassthrough>;
 };
 
+/**
+ * Emits of the popover.
+ */
 export type PopoverEmits = {
   "update:open": [value: boolean];
 };
 
+/**
+ * The popover view model, served to `defineExpose` and the slots.
+ */
 export type PopoverContext = {
   defaultOpen: boolean;
   modal: boolean;
@@ -53,6 +66,9 @@ export type PopoverContext = {
   settings: PopoverPassthrough;
 };
 
+/**
+ * Slots of the popover. Each slot receives the context.
+ */
 export type PopoverSlots = {
   anchor?: (props: PopoverContext) => VNode[];
   trigger?: (props: PopoverContext) => VNode[];
@@ -62,7 +78,6 @@ export type PopoverSlots = {
 };
 
 /**
- * A popover instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A popover instance as data: props plus emit listeners.
  */
 export type PopoverDefinition = Definition<PopoverProps, PopoverEmits>;

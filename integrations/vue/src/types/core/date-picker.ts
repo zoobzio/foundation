@@ -25,31 +25,46 @@ import type {
 } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 
-// reka's DatePickerField and DatePickerCalendar declare no props — they are
-// pure render-scope payload providers, so their passthrough surface is empty.
+/**
+ * Empty. reka's `DatePickerField` declares no props.
+ */
 export type DatePickerFieldProps = Record<string, never>;
+/**
+ * Empty. reka's `DatePickerCalendar` declares no props.
+ */
 export type DatePickerCalendarProps = Record<string, never>;
 
-// The render-scope payload reka delivers through the field's default slot
-// (segments + a modelValue snapshot), derived from the imported component.
+/**
+ * The default-slot payload of reka's `DatePickerField`.
+ */
 export type DatePickerFieldSlotProps = SlotProps<typeof DatePickerField>;
 
-// One segment of the field's render-scope payload.
+/**
+ * One segment of the field.
+ */
 export type DatePickerSegment = DatePickerFieldSlotProps["segments"][number];
 
-// The share of the field's render-scope payload the core template forwards.
+/**
+ * The part of the field payload the template forwards to its slots.
+ */
 export type DatePickerSegments = Pick<DatePickerFieldSlotProps, "segments">;
 
-// The share of the calendar's render-scope payload the core template
-// forwards into its slots.
+/**
+ * The part of the calendar payload the template forwards to its slots.
+ */
 export type DatePickerView = Pick<
   SlotProps<typeof DatePickerCalendar>,
   "weekDays" | "grid"
 >;
 
-// One month of the calendar's render-scope grid payload.
+/**
+ * One month of the calendar grid.
+ */
 export type DatePickerMonth = DatePickerView["grid"][number];
 
+/**
+ * The parts of the date picker that accept passthrough.
+ */
 export type DatePickerPassthrough = {
   root: Passthrough<DatePickerRootProps, DatePickerRootEmits>;
   field: Passthrough<DatePickerFieldProps>;
@@ -73,9 +88,10 @@ export type DatePickerPassthrough = {
   >;
 };
 
-// `modelValue` is required: the picker uses the explicit model contract
-// (MIGRATION § explicit models) — presence on the vnode decides
-// controlled-ness, so consumers always provide it, `undefined` included.
+/**
+ * Props of the date picker. `modelValue` is required. Its presence on the vnode
+ * decides control, so pass `undefined` explicitly for an uncontrolled instance.
+ */
 export type DatePickerProps = {
   modelValue: DateValue | undefined;
   open?: boolean;
@@ -83,11 +99,17 @@ export type DatePickerProps = {
   pt?: PT<DatePickerPassthrough>;
 };
 
+/**
+ * Emits of the date picker.
+ */
 export type DatePickerEmits = {
   "update:modelValue": [value: DateValue | undefined];
   "update:open": [value: boolean];
 };
 
+/**
+ * The date picker view model, served to `defineExpose` and the slots.
+ */
 export type DatePickerContext = {
   disabled?: boolean;
   modelValue: Ref<DateValue | undefined>;
@@ -96,6 +118,10 @@ export type DatePickerContext = {
   settings: DatePickerPassthrough;
 };
 
+/**
+ * Slots of the date picker. Each slot receives the context. Grid slots also
+ * receive the view and the `month`.
+ */
 export type DatePickerSlots = {
   field?: (props: DatePickerContext & DatePickerSegments) => VNode[];
   input?: (
@@ -129,7 +155,6 @@ export type DatePickerSlots = {
 };
 
 /**
- * A date-picker instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A date picker instance as data: props plus emit listeners.
  */
 export type DatePickerDefinition = Definition<DatePickerProps, DatePickerEmits>;

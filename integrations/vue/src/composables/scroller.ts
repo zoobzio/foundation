@@ -2,6 +2,11 @@ import type { ComponentPublicInstance, MaybeRefOrGetter } from "vue";
 
 import { computed, onBeforeUnmount, onMounted, ref, toValue } from "vue";
 
+/**
+ * Tracks the scroll offset of a viewport component.
+ *
+ * @param viewport - The component instance whose root element scrolls.
+ */
 export const useScroller = (
   viewport: MaybeRefOrGetter<ComponentPublicInstance | null>,
 ) => {

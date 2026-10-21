@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A single-value select. The model is the selected option object, not its
+ * `value` string.
+ */
 import type {
   SelectProps,
   SelectEmits,

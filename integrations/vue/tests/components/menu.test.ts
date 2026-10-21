@@ -1,5 +1,3 @@
-// Core component test in the select.test.ts mold: the menu opens through a
-// real trigger click and its content teleports to document.body.
 import { afterEach, describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -7,8 +5,7 @@ import Core from "../../src/components/menu.vue";
 import { fakeLinkedMenuGroups } from "#test/data/menu";
 import type { MenuEmits, MenuItem, MenuProps } from "../../src/types/core/menu";
 
-// Generic SFCs don't instantiate through mount()'s types — assigning to a
-// concretely-typed FunctionalComponent instantiates T for the harness.
+// A concrete FunctionalComponent type instantiates T for mount().
 const Menu: FunctionalComponent<
   MenuProps<MenuItem>,
   MenuEmits<MenuItem>

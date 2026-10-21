@@ -3,10 +3,14 @@ import type {
   DirectoryItem,
 } from "../../src/types/core/directory";
 
-// Extends the base item so tests can assert consumer fields survive the
-// select emit round-trip.
+/**
+ * A directory item with a consumer field.
+ */
 export type FakeEntry = DirectoryItem & { section: string };
 
+/**
+ * Groups with linked, plain, and disabled items.
+ */
 export const fakeDirectoryGroups: DirectoryGroup<FakeEntry>[] = [
   {
     key: "workspace",

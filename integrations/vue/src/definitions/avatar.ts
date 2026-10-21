@@ -5,11 +5,8 @@ import type { ComputedRef } from "vue";
 import { define } from "../utils/definition";
 
 /**
- * Declares a avatar. A plain object is returned as is — pure data, storable at
- * module scope; a ref or getter yields a computed definition that tracks
- * its source, so a reactive instance needs no `computed` wrapper. Either
- * way the call is the type checkpoint: a mistyped field errors on the line
- * it is written.
+ * Creates an avatar definition. A plain object returns as is. A ref or
+ * getter returns a computed definition that tracks its source.
  */
 export function defineAvatar(definition: AvatarDefinition): AvatarDefinition;
 export function defineAvatar(

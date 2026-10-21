@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A single checkbox. The model is the checked state.
+ */
 import type {
   CheckboxProps,
   CheckboxEmits,

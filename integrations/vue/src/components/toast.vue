@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A single toast. Closing it emits `close` as well as `update:open`.
+ */
 import type {
   ToastProps,
   ToastEmits,

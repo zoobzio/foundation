@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * An image with a text fallback.
+ */
 import type {
   AvatarProps,
   AvatarPassthrough,

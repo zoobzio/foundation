@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A dropdown menu of grouped items. An item with a `link` renders as an
+ * anchor. Selecting any item emits `select`.
+ */
 import type {
   MenuProps,
   MenuEmits,

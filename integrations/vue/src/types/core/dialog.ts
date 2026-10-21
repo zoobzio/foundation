@@ -11,6 +11,9 @@ import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * The parts of the dialog that accept passthrough.
+ */
 export type DialogPassthrough = {
   root: Passthrough<DialogRootProps, DialogRootEmits>;
   overlay: Passthrough<DialogOverlayProps>;
@@ -19,6 +22,9 @@ export type DialogPassthrough = {
   description: Passthrough<DialogDescriptionProps>;
 };
 
+/**
+ * Props of the dialog.
+ */
 export type DialogProps = {
   title: string;
   description: string;
@@ -26,10 +32,16 @@ export type DialogProps = {
   pt?: PT<DialogPassthrough>;
 };
 
+/**
+ * Emits of the dialog.
+ */
 export type DialogEmits = {
   "update:open": [value: boolean];
 };
 
+/**
+ * The dialog view model, served to `defineExpose` and the slots.
+ */
 export type DialogContext = {
   title: string;
   description: string;
@@ -38,6 +50,9 @@ export type DialogContext = {
   settings: DialogPassthrough;
 };
 
+/**
+ * Slots of the dialog. Each slot receives the context.
+ */
 export type DialogSlots = {
   default?: (props: DialogContext) => VNode[];
   overlay?: (props: DialogContext) => VNode[];
@@ -47,7 +62,6 @@ export type DialogSlots = {
 };
 
 /**
- * A dialog instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A dialog instance as data: props plus emit listeners.
  */
 export type DialogDefinition = Definition<DialogProps, DialogEmits>;

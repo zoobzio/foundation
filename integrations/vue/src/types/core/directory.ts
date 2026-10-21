@@ -3,11 +3,9 @@ import type { Definition } from "../definition";
 import type { VNode } from "vue";
 
 /**
- * A directory entry: a labeled item that activates on click. `link` makes it
- * a real hyperlink rendered through Anchor — native navigation semantics
- * intact; without it the item renders as a Button and only the `select` emit
- * fires. Consumers extend the item with their own fields and receive them
- * back in the emit.
+ * A directory entry. An item with `link` renders as an anchor. An item without
+ * `link` renders as a button and only emits `select`. Extra fields pass through
+ * to the emit.
  */
 export type DirectoryItem = {
   key: string;
@@ -16,25 +14,40 @@ export type DirectoryItem = {
   link?: LinkTarget;
 };
 
+/**
+ * A group of directory items with an optional label.
+ */
 export type DirectoryGroup<T extends DirectoryItem = DirectoryItem> = {
   key: string;
   label?: string;
   items: T[];
 };
 
+/**
+ * Props of the directory.
+ */
 export type DirectoryProps<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
 };
 
+/**
+ * Emits of the directory.
+ */
 export type DirectoryEmits<T extends DirectoryItem> = {
   select: [item: T];
 };
 
+/**
+ * The directory view model, served to `defineExpose` and the slots.
+ */
 export type DirectoryContext<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
   el: HTMLElement | null;
 };
 
+/**
+ * Slots of the directory. Item slots also receive the `item`.
+ */
 export type DirectorySlots<T extends DirectoryItem> = {
   groupLabel?: (
     props: DirectoryContext<T> & { group: DirectoryGroup<T> },
@@ -45,8 +58,7 @@ export type DirectorySlots<T extends DirectoryItem> = {
 };
 
 /**
- * A directory instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A directory instance as data: props plus emit listeners.
  */
 export type DirectoryDefinition<T extends DirectoryItem> = Definition<
   DirectoryProps<T>,

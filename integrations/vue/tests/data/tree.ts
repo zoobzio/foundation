@@ -1,12 +1,16 @@
 import type { TreeNode } from "../../src/types/core/tree";
 
-/** Consumer node type: extends the base with an extra field and re-types
- *  children to itself, the pattern the component's generic supports. */
+/**
+ * A tree node with a consumer field. `children` re-types to itself.
+ */
 export type FakeTreeNode = TreeNode & {
   slug: string;
   children?: FakeTreeNode[];
 };
 
+/**
+ * Nested nodes with linked, branch, and disabled entries.
+ */
 export const fakeTreeNodes: FakeTreeNode[] = [
   {
     key: "guides",

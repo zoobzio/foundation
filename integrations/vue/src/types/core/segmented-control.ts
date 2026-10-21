@@ -9,15 +9,16 @@ import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 /**
- * A segment. `link` makes it a real hyperlink rendered as an anchor —
- * view switchers whose state lives in the URL; the press still updates the
- * model, so bind `modelValue` to the route to keep the pressed segment in
- * sync.
+ * A segment. With `link`, the segment renders as an anchor and navigates
+ * on press. The press still updates the model.
  */
 export type SegmentedControlOption = Option & {
   link?: LinkTarget;
 };
 
+/**
+ * The parts of the segmented control that accept passthrough.
+ */
 export type SegmentedControlPassthrough<
   T extends SegmentedControlOption = SegmentedControlOption,
 > = {
@@ -25,6 +26,10 @@ export type SegmentedControlPassthrough<
   item: PassthroughIter<T, ToggleGroupItemProps>;
 };
 
+/**
+ * Props of the segmented control. `modelValue` is the pressed option
+ * value. With `required`, the pressed segment cannot deselect.
+ */
 export type SegmentedControlProps<
   T extends SegmentedControlOption = SegmentedControlOption,
 > = {
@@ -35,10 +40,17 @@ export type SegmentedControlProps<
   pt?: PT<SegmentedControlPassthrough<T>>;
 };
 
+/**
+ * Emits of the segmented control.
+ */
 export type SegmentedControlEmits = {
   "update:modelValue": [value: string];
 };
 
+/**
+ * The segmented control view model, served to `defineExpose` and the
+ * slots.
+ */
 export type SegmentedControlContext<
   T extends SegmentedControlOption = SegmentedControlOption,
 > = {
@@ -50,6 +62,10 @@ export type SegmentedControlContext<
   settings: SegmentedControlPassthrough<T>;
 };
 
+/**
+ * Slots of the segmented control. Each slot receives the context and
+ * the `option`.
+ */
 export type SegmentedControlSlots<
   T extends SegmentedControlOption = SegmentedControlOption,
 > = {
@@ -59,8 +75,7 @@ export type SegmentedControlSlots<
 };
 
 /**
- * A segmented-control instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A segmented control instance as data: props plus emit listeners.
  */
 export type SegmentedControlDefinition<
   T extends SegmentedControlOption = SegmentedControlOption,

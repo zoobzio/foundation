@@ -5,12 +5,11 @@ import { computed, ref, watch } from "vue";
 import { parse, build } from "../utils/keywords";
 
 /**
- * The feature half of the keywords editor: bridges the serialized keyword
- * expression (`+term -"phrase" || …`) and the include/exclude tag lists +
- * match mode the UI edits. Parses on read, rebuilds and writes back through
- * the model on every edit, and owns the raw-input tag UX (quote handling,
- * space-to-commit, backspace-to-remove). The grammar itself lives in
- * `utils/keywords`; this keeps the component a thin coordinator.
+ * Edits a keyword expression (`+term -"phrase" || ...`) as include and
+ * exclude tag lists plus a match mode. Each edit rebuilds the expression and
+ * writes it to the model.
+ *
+ * @param model - The keyword expression.
  */
 export const useKeywords = (model: Ref<string | undefined>) => {
   const includeInput = ref("");
@@ -18,8 +17,7 @@ export const useKeywords = (model: Ref<string | undefined>) => {
 
   const parsed = computed(() => parse(model.value ?? ""));
 
-  // Mode is encoded in the string (`||` between include terms); track a local
-  // ref so it survives an empty include list, and re-sync when the string does.
+  // The mode must survive an empty include list, which encodes no mode.
   const isOrMode = computed(() => (model.value ?? "").includes("||"));
   const mode = ref<KeywordsMatchMode>(isOrMode.value ? "or" : "and");
   watch(isOrMode, (v) => {
@@ -33,7 +31,6 @@ export const useKeywords = (model: Ref<string | undefined>) => {
   const include = computed<string[]>({
     get: () => parsed.value.include,
     set: (val) => {
-      // A term can be include XOR exclude — dropping it from the other list.
       const kept = parsed.value.exclude.filter((t) => !val.includes(t));
       rebuild(val, kept);
     },
@@ -76,7 +73,6 @@ export const useKeywords = (model: Ref<string | undefined>) => {
     }
   };
 
-  // Commit on a trailing space or a closed quote; otherwise echo the raw input.
   const handleInput = (raw: string, target: "include" | "exclude"): string => {
     if (raw.startsWith('"')) {
       if (raw.endsWith('"') && raw.length > 2) {

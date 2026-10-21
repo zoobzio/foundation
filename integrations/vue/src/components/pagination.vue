@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * Page controls with first, previous, numbered, next, and last buttons
+ * and a page-size select. `page` and `size` are v-model props.
+ */
 import type {
   PaginationProps,
   PaginationEmits,
@@ -33,8 +37,6 @@ const $size = useModel(
   (v) => emit("update:size", v),
 );
 
-// useModel widens to `number | undefined`; page/size are required props, so
-// coerce to concrete `Ref<number>` for usePaginate and the ctx.
 const currentPage = computed<number>({
   get: () => $page.value ?? 1,
   set: (v) => {

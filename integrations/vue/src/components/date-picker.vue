@@ -1,4 +1,9 @@
 <script lang="ts">
+/**
+ * A segmented date field with a calendar popover. `modelValue` is
+ * required. Its presence on the vnode decides control, so pass `undefined`
+ * for an uncontrolled instance.
+ */
 import type {
   DatePickerProps,
   DatePickerEmits,

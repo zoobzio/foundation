@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A popover that edits a keyword expression as include and exclude tags
+ * plus a match mode. The model is the expression string.
+ */
 import type {
   KeywordsContext,
   KeywordsEmits,

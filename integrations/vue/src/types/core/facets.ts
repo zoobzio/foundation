@@ -6,9 +6,7 @@ import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 /**
- * A single facet value with its result count. The view-side home of the
- * facet shapes; `@zoobzio/deck` carries a structurally identical pair for
- * its fetch result, so a deck's groups bind straight to the control.
+ * A facet value with its result count.
  */
 export type FacetItem = {
   value: string;
@@ -16,18 +14,27 @@ export type FacetItem = {
   count: number;
 };
 
+/**
+ * A labeled group of facet items.
+ */
 export type FacetGroup<T extends FacetItem = FacetItem> = {
   key: string;
   label: string;
   items: T[];
 };
 
+/**
+ * The parts of the facets that accept passthrough.
+ */
 export type FacetsPassthrough<T extends FacetItem = FacetItem> = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
   command: Passthrough<CommandProps<T>, CommandEmits<T>>;
 };
 
+/**
+ * Props of the facets. `selected` holds the selected facet values.
+ */
 export type FacetsProps<T extends FacetItem = FacetItem> = {
   groups: FacetGroup<T>[];
   selected?: Set<string>;
@@ -36,11 +43,18 @@ export type FacetsProps<T extends FacetItem = FacetItem> = {
   pt?: PT<FacetsPassthrough<T>>;
 };
 
+/**
+ * Emits of the facets.
+ */
 export type FacetsEmits = {
   "update:selected": [value: Set<string>];
   "update:open": [value: boolean];
 };
 
+/**
+ * The facets view model, served to `defineExpose` and the slots. `activeCount`
+ * is the number of selected values.
+ */
 export type FacetsContext<T extends FacetItem = FacetItem> = {
   groups: FacetGroup<T>[];
   selected?: Set<string>;
@@ -50,6 +64,9 @@ export type FacetsContext<T extends FacetItem = FacetItem> = {
   settings: FacetsPassthrough<T>;
 };
 
+/**
+ * Slots of the facets. Each slot receives the context.
+ */
 export type FacetsSlots<T extends FacetItem = FacetItem> = {
   trigger?: (props: FacetsContext<T>) => VNode[];
   triggerIcon?: (props: FacetsContext<T>) => VNode[];
@@ -57,8 +74,7 @@ export type FacetsSlots<T extends FacetItem = FacetItem> = {
 };
 
 /**
- * A facets instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A facets instance as data: props plus emit listeners.
  */
 export type FacetsDefinition<T extends FacetItem = FacetItem> = Definition<
   FacetsProps<T>,

@@ -7,8 +7,14 @@ import type { PopoverProps, PopoverEmits } from "./popover";
 import type { RangeCalendarProps, RangeCalendarEmits } from "./range-calendar";
 import type { VNode } from "vue";
 
+/**
+ * How a date filter compares its field to its value.
+ */
 export type DateFilterOperator = "before" | "after" | "between";
 
+/**
+ * A date filter. `endValue` applies to the `between` operator.
+ */
 export type DateFilter = {
   field: string;
   operator: DateFilterOperator;
@@ -16,11 +22,17 @@ export type DateFilter = {
   endValue?: Date;
 };
 
+/**
+ * A date field that can be filtered.
+ */
 export type DateFieldConfig = {
   key: string;
   label: string;
 };
 
+/**
+ * The parts of the date filters that accept passthrough.
+ */
 export type DateFiltersPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
@@ -36,6 +48,9 @@ export type DateFiltersPassthrough = {
   rangeCalendar: Passthrough<RangeCalendarProps, RangeCalendarEmits>;
 };
 
+/**
+ * Props of the date filters. `addFilter` receives each applied filter.
+ */
 export type DateFiltersProps = {
   modelValue?: DateFilter[];
   fields: DateFieldConfig[];
@@ -43,8 +58,15 @@ export type DateFiltersProps = {
   pt?: PT<DateFiltersPassthrough>;
 };
 
+/**
+ * The date filters have no emits.
+ */
 export type DateFiltersEmits = {};
 
+/**
+ * The date filters view model, served to `defineExpose` and the slots.
+ * `activeCount` is the number of filters.
+ */
 export type DateFiltersContext = {
   fields: DateFieldConfig[];
   filters?: DateFilter[];
@@ -53,6 +75,9 @@ export type DateFiltersContext = {
   settings: DateFiltersPassthrough;
 };
 
+/**
+ * Slots of the date filters. Each slot receives the context.
+ */
 export type DateFiltersSlots = {
   popover?: (props: DateFiltersContext) => VNode[];
   trigger?: (props: DateFiltersContext) => VNode[];
@@ -69,8 +94,7 @@ export type DateFiltersSlots = {
 };
 
 /**
- * A date-filters instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A date filters instance as data: props plus emit listeners.
  */
 export type DateFiltersDefinition = Definition<
   DateFiltersProps,

@@ -1,5 +1,8 @@
 import type { MenuGroup } from "../../src/types/core/menu";
 
+/**
+ * Groups with and without a label.
+ */
 export const fakeMenuGroups: MenuGroup[] = [
   {
     key: "actions",
@@ -12,7 +15,9 @@ export const fakeMenuGroups: MenuGroup[] = [
   },
 ];
 
-/** Mixed group: linked entries navigate, the plain entry is an action. */
+/**
+ * One group with linked entries and one plain entry.
+ */
 export const fakeLinkedMenuGroups: MenuGroup[] = [
   {
     key: "mixed",

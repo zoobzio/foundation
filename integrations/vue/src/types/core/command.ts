@@ -16,16 +16,25 @@ import type {
   ListboxItemEmits,
 } from "reka-ui";
 
+/**
+ * An option with an optional result `count`.
+ */
 export type CommandOption = Option & {
   count?: number;
 };
 
+/**
+ * A labeled group of command options.
+ */
 export type CommandGroup<T extends CommandOption> = {
   key: string;
   label: string;
   options: T[];
 };
 
+/**
+ * The parts of the command that accept passthrough.
+ */
 export type CommandPassthrough<T extends CommandOption = CommandOption> = {
   root: Passthrough<ListboxRootProps, ListboxRootEmits>;
   filter: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
@@ -37,6 +46,9 @@ export type CommandPassthrough<T extends CommandOption = CommandOption> = {
   itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;
 };
 
+/**
+ * Props of the command. `modelValue` is the selected option objects.
+ */
 export type CommandProps<T extends CommandOption> = {
   groups: CommandGroup<T>[];
   modelValue?: NoInfer<T[] | undefined>;
@@ -47,11 +59,18 @@ export type CommandProps<T extends CommandOption> = {
   pt?: PT<CommandPassthrough<T>>;
 };
 
+/**
+ * Emits of the command.
+ */
 export type CommandEmits<T extends CommandOption> = {
   "update:modelValue": [value: T[] | undefined];
   "update:search": [value: string];
 };
 
+/**
+ * The command view model, served to `defineExpose` and the slots. `results` is
+ * `groups` filtered by `search`, without empty groups.
+ */
 export type CommandContext<T extends CommandOption> = {
   groups: CommandGroup<T>[];
   placeholder: string;
@@ -64,11 +83,18 @@ export type CommandContext<T extends CommandOption> = {
   settings: CommandPassthrough<T>;
 };
 
+/**
+ * The payload of an item slot: the context plus the `item` and its `selected`
+ * state.
+ */
 export type OptionContext<T extends CommandOption> = CommandContext<T> & {
   item: T;
   selected: boolean;
 };
 
+/**
+ * Slots of the command. Each slot receives the context.
+ */
 export type CommandSlots<T extends CommandOption> = {
   inputWrapper?: (props: CommandContext<T>) => VNode[];
   inputIcon?: (props: CommandContext<T>) => VNode[];
@@ -87,8 +113,7 @@ export type CommandSlots<T extends CommandOption> = {
 };
 
 /**
- * A command instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A command instance as data: props plus emit listeners.
  */
 export type CommandDefinition<T extends CommandOption> = Definition<
   CommandProps<T>,

@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A searchable list of grouped options. The model is the selected option
+ * objects. Options with a `count` of 0 hide unless selected.
+ */
 import type {
   CommandProps,
   CommandEmits,

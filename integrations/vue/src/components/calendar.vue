@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A single-date calendar. `modelValue` is required. Its presence on the
+ * vnode decides control, so pass `undefined` for an uncontrolled instance.
+ */
 import type {
   CalendarProps,
   CalendarEmits,

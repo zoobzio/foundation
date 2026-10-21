@@ -26,45 +26,60 @@ import type {
 } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 
-// reka's DateRangePickerField and DateRangePickerCalendar declare no props —
-// they are pure render-scope payload providers, so their passthrough surface
-// is empty.
+/**
+ * Empty. reka's `DateRangePickerField` declares no props.
+ */
 export type DateRangePickerFieldProps = Record<string, never>;
+/**
+ * Empty. reka's `DateRangePickerCalendar` declares no props.
+ */
 export type DateRangePickerCalendarProps = Record<string, never>;
 
-// The render-scope payload reka delivers through the field's default slot
-// (start/end segments + a modelValue snapshot), derived from the imported
-// component.
+/**
+ * The default-slot payload of reka's `DateRangePickerField`.
+ */
 export type DateRangePickerFieldSlotProps = SlotProps<
   typeof DateRangePickerField
 >;
 
-// One segment of either side of the field's render-scope payload.
+/**
+ * One segment of either side of the field.
+ */
 export type DateRangePickerSegment =
   DateRangePickerFieldSlotProps["segments"]["start"][number];
 
-// The share of the field's render-scope payload the core template forwards.
+/**
+ * The part of the field payload the template forwards to its slots.
+ */
 export type DateRangePickerSegments = Pick<
   DateRangePickerFieldSlotProps,
   "segments"
 >;
 
-// One input part of the field: a segment plus the side of the range it edits.
+/**
+ * A segment plus the side of the range it edits.
+ */
 export type DateRangePickerInputItem = {
   segment: DateRangePickerSegment;
   type: "start" | "end";
 };
 
-// The share of the calendar's render-scope payload the core template
-// forwards into its slots.
+/**
+ * The part of the calendar payload the template forwards to its slots.
+ */
 export type DateRangePickerView = Pick<
   SlotProps<typeof DateRangePickerCalendar>,
   "weekDays" | "grid"
 >;
 
-// One month of the calendar's render-scope grid payload.
+/**
+ * One month of the calendar grid.
+ */
 export type DateRangePickerMonth = DateRangePickerView["grid"][number];
 
+/**
+ * The parts of the date range picker that accept passthrough.
+ */
 export type DateRangePickerPassthrough = {
   root: Passthrough<DateRangePickerRootProps, DateRangePickerRootEmits>;
   field: Passthrough<DateRangePickerFieldProps>;
@@ -91,20 +106,28 @@ export type DateRangePickerPassthrough = {
   >;
 };
 
-// `modelValue` is required: the picker uses the explicit model contract
-// (MIGRATION § explicit models) — presence on the vnode decides
-// controlled-ness, so consumers always provide it, `undefined` included.
+/**
+ * Props of the date range picker. `modelValue` is required. Its presence on the
+ * vnode decides control, so pass `undefined` explicitly for an uncontrolled
+ * instance.
+ */
 export type DateRangePickerProps = {
   modelValue: DateRange | undefined;
   open?: boolean;
   pt?: PT<DateRangePickerPassthrough>;
 };
 
+/**
+ * Emits of the date range picker.
+ */
 export type DateRangePickerEmits = {
   "update:modelValue": [value: DateRange | undefined];
   "update:open": [value: boolean];
 };
 
+/**
+ * The date range picker view model, served to `defineExpose` and the slots.
+ */
 export type DateRangePickerContext = {
   modelValue: Ref<DateRange | undefined>;
   open: Ref<boolean | undefined>;
@@ -112,6 +135,10 @@ export type DateRangePickerContext = {
   settings: DateRangePickerPassthrough;
 };
 
+/**
+ * Slots of the date range picker. Each slot receives the context. Grid slots
+ * also receive the view and the `month`.
+ */
 export type DateRangePickerSlots = {
   field?: (props: DateRangePickerContext & DateRangePickerSegments) => VNode[];
   input?: (props: DateRangePickerContext & DateRangePickerInputItem) => VNode[];
@@ -153,8 +180,7 @@ export type DateRangePickerSlots = {
 };
 
 /**
- * A date-range-picker instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A date range picker instance as data: props plus emit listeners.
  */
 export type DateRangePickerDefinition = Definition<
   DateRangePickerProps,

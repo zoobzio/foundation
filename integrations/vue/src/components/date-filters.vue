@@ -1,4 +1,9 @@
 <script lang="ts">
+/**
+ * A popover that builds one date filter in three steps: field, operator,
+ * value. On open, the stepper resumes from the last filter in the model.
+ * `addFilter` receives the result.
+ */
 import type {
   DateFiltersProps,
   DateFiltersPassthrough,

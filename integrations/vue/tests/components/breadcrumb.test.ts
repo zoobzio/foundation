@@ -1,6 +1,3 @@
-// Mount depth follows the behavior under test: the terminal-vs-ancestor
-// branch, the link/button duality, the disabled guards, and the select emit
-// are the component's own logic.
 import { describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
@@ -12,8 +9,7 @@ import type {
   BreadcrumbProps,
 } from "../../src/types/core/breadcrumb";
 
-// Generic SFCs don't instantiate through mount()'s types — assigning to a
-// concretely-typed FunctionalComponent instantiates T for the harness.
+// A concrete FunctionalComponent type instantiates T for mount().
 const Breadcrumb: FunctionalComponent<
   BreadcrumbProps<FakeCrumb>,
   BreadcrumbEmits<FakeCrumb>
@@ -67,7 +63,6 @@ describe("breadcrumb", () => {
 
   it("renders no separator or icon unless the consumer supplies one", () => {
     const wrapper = mountBreadcrumb();
-    // Each item holds only its link/button/span — no glyph around it.
     expect(
       wrapper.findAll("li").map((li) => li.element.childElementCount),
     ).toEqual([1, 1, 1, 1]);

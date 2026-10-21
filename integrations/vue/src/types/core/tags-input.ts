@@ -10,6 +10,9 @@ import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * The parts of the tags input that accept passthrough.
+ */
 export type TagsInputPassthrough = {
   root: Passthrough<TagsInputRootProps, TagsInputRootEmits>;
   item: PassthroughIter<string, TagsInputItemProps>;
@@ -18,6 +21,9 @@ export type TagsInputPassthrough = {
   input: Passthrough<TagsInputInputProps>;
 };
 
+/**
+ * Props of the tags input. `delimiter` splits typed text into tags.
+ */
 export type TagsInputProps = {
   modelValue?: string[];
   placeholder?: string;
@@ -27,10 +33,16 @@ export type TagsInputProps = {
   pt?: PT<TagsInputPassthrough>;
 };
 
+/**
+ * Emits of the tags input.
+ */
 export type TagsInputEmits = {
   "update:modelValue": [value: string[]];
 };
 
+/**
+ * The tags input view model, served to `defineExpose` and the slots.
+ */
 export type TagsInputContext = {
   placeholder: string;
   disabled?: boolean;
@@ -41,6 +53,10 @@ export type TagsInputContext = {
   settings: TagsInputPassthrough;
 };
 
+/**
+ * Slots of the tags input. Each slot receives the context.
+ * Item slots also receive the `tag`.
+ */
 export type TagsInputSlots = {
   item?: (props: TagsInputContext & { tag: string }) => VNode[];
   itemText?: (props: TagsInputContext & { tag: string }) => VNode[];
@@ -50,7 +66,6 @@ export type TagsInputSlots = {
 };
 
 /**
- * A tags-input instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A tags input instance as data: props plus emit listeners.
  */
 export type TagsInputDefinition = Definition<TagsInputProps, TagsInputEmits>;

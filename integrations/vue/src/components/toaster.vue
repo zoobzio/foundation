@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * The toast provider and viewport. Render toasts in the `toasts` slot.
+ */
 import type {
   ToasterProps,
   ToasterPassthrough,

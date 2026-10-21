@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A listbox. The model is the selected `value` string, or an array of
+ * them when `multiple` is set.
+ */
 import type {
   ListboxProps,
   ListboxEmits,

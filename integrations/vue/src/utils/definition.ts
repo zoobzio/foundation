@@ -4,10 +4,8 @@ import type { ComputedRef } from "vue";
 import { computed, isRef, toValue } from "vue";
 
 /**
- * The runtime behind every composite `define*`: a plain definition passes
- * through untouched (identity — pure data, no Vue), a ref or getter becomes
- * a computed over its source. A definition is always an object, never a
- * function, so the source's shape discriminates the two.
+ * The runtime behind each `define*`. A plain definition returns as is.
+ * A ref or getter returns a computed over its source.
  */
 export const define = <D extends object>(
   definition: D | DefinitionSource<D>,

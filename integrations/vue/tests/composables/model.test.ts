@@ -1,6 +1,3 @@
-// Gold standard: composables. Pure reactive paths run through withSetup (a
-// real setup() scope, no template); the `explicit` path inspects the mounting
-// vnode, so it earns a harness component and one mount per detection path.
 import { describe, expect, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { mount } from "@vue/test-utils";
@@ -42,10 +39,6 @@ describe("useModel", () => {
 });
 
 describe("useModel explicit", () => {
-  // The explicit option switches controlled/uncontrolled on whether the parent
-  // actually passed the prop — observable only through a real mount. The
-  // harness renders the model value and toggles it on click so tests stay in
-  // the DOM.
   const Harness = defineComponent({
     props: {
       openValue: { type: Boolean, default: undefined },
@@ -77,7 +70,6 @@ describe("useModel explicit", () => {
   it("controlled when the prop is passed — reads the prop even after set", async () => {
     const wrapper = mount(Harness, { props: { openValue: false } });
     await wrapper.trigger("click");
-    // Parent never updated the prop, so the model still reports it.
     expect(wrapper.text()).toBe("false");
     expect(wrapper.emitted("update:openValue")).toEqual([[true]]);
   });

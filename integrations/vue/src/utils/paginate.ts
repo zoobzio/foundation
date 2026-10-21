@@ -1,3 +1,8 @@
+/**
+ * Builds the page list for a pager. Up to 7 pages list in full. Beyond that,
+ * the list keeps the first page, the last page, a window of one page around
+ * `page`, and `"..."` for each gap.
+ */
 export const paginate = (page: number, count: number): (number | "...")[] => {
   const pages: (number | "...")[] = [];
   if (count <= 7) {

@@ -11,18 +11,13 @@ import type {
 } from "reka-ui";
 
 /**
- * A tree node: a labeled item that may nest children. `link` makes it a
- * real hyperlink rendered as an anchor — native navigation semantics
- * intact; without it the label is plain text and only the emits fire.
- * Consumers extend the node with their own fields and receive them back in
- * the emits; a consumer type that redeclares `children` with its own node
- * type keeps the whole tree self-typed. Declared as a type alias (not an
- * interface) so it satisfies reka's `Record<string, any>` bound.
+ * A tree node. With `link`, the label renders as an anchor. Extra fields
+ * on a consumer node come back in the emits. A type alias, not an
+ * interface, to satisfy reka's `Record<string, any>` bound.
  *
- * Lazy loading rides the emit surface: declare a not-yet-loaded branch with
- * `children: []` (it renders expandable), then load and swap `items` on
- * `toggle`. Note reka fires `select` for branch clicks too, and keyboard
- * Enter on a link node triggers selection, not link navigation.
+ * For lazy loading, declare a branch with `children: []` and swap `items`
+ * on `toggle`. reka emits `select` for branch clicks too. Enter on a link
+ * node selects and does not navigate.
  */
 export type TreeNode = {
   key: string;
@@ -33,16 +28,19 @@ export type TreeNode = {
 };
 
 /**
- * The root's emits are typed with `M` left wide: reka's SFC types don't
- * narrow the multiple generic through a whole-object `v-bind`, so the
- * bound listener must accept the `T | T[]` union even though
- * `multiple: false` means only `T` ever arrives.
+ * The parts of the tree that accept passthrough. The root listener must
+ * accept `T | T[]`: reka does not narrow the multiple generic through a
+ * whole-object `v-bind`, so only `T` arrives at runtime.
  */
 export type TreePassthrough<T extends TreeNode> = {
   root: Passthrough<TreeRootProps<T, T, false>, TreeRootEmits<T, boolean>>;
   item: PassthroughIter<FlattenedItem<T>, TreeItemProps<T>, TreeItemEmits<T>>;
 };
 
+/**
+ * Props of the tree. `modelValue` is the selected node object.
+ * `expanded` holds the keys of open branches.
+ */
 export type TreeProps<T extends TreeNode> = {
   items: T[];
   modelValue?: NoInfer<T>;
@@ -51,6 +49,9 @@ export type TreeProps<T extends TreeNode> = {
   pt?: PT<TreePassthrough<T>>;
 };
 
+/**
+ * Emits of the tree. `toggle` carries the branch's new expanded state.
+ */
 export type TreeEmits<T extends TreeNode> = {
   "update:modelValue": [value: T | undefined];
   "update:expanded": [value: string[]];
@@ -58,6 +59,9 @@ export type TreeEmits<T extends TreeNode> = {
   toggle: [node: T, expanded: boolean];
 };
 
+/**
+ * The tree view model, served to `defineExpose` and the slots.
+ */
 export type TreeContext<T extends TreeNode> = {
   items: T[];
   disabled?: boolean;
@@ -73,6 +77,10 @@ type TreeItemScope<T extends TreeNode> = {
   isSelected: boolean;
 };
 
+/**
+ * Slots of the tree. Each slot receives the context, the flattened
+ * `item`, and its expanded and selected state.
+ */
 export type TreeSlots<T extends TreeNode> = {
   item?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
   itemToggle?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
@@ -81,8 +89,7 @@ export type TreeSlots<T extends TreeNode> = {
 };
 
 /**
- * A tree instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A tree instance as data: props plus emit listeners.
  */
 export type TreeDefinition<T extends TreeNode> = Definition<
   TreeProps<T>,

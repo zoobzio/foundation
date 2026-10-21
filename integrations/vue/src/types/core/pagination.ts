@@ -5,6 +5,9 @@ import type { Option } from "../common";
 import type { Definition } from "../definition";
 import type { Ref, VNode } from "vue";
 
+/**
+ * The parts of the pagination that accept passthrough.
+ */
 export type PaginationPassthrough = {
   first: Passthrough<FabProps, FabEmits>;
   prev: Passthrough<FabProps, FabEmits>;
@@ -13,6 +16,10 @@ export type PaginationPassthrough = {
   size: Passthrough<SelectProps<Option>, SelectEmits<Option>>;
 };
 
+/**
+ * Props of the pagination. `page` and `size` are models. `count` is the
+ * page count. `total` is the item count.
+ */
 export type PaginationProps = {
   page: number;
   size: number;
@@ -21,11 +28,18 @@ export type PaginationProps = {
   pt?: PT<PaginationPassthrough>;
 };
 
+/**
+ * Emits of the pagination.
+ */
 export type PaginationEmits = {
   "update:page": [value: number];
   "update:size": [value: number];
 };
 
+/**
+ * The pagination view model, served to `defineExpose` and the slots.
+ * `options` is the page list with `"..."` for gaps.
+ */
 export type PaginationContext = {
   page: Ref<number>;
   size: Ref<number>;
@@ -38,6 +52,10 @@ export type PaginationContext = {
   settings: PaginationPassthrough;
 };
 
+/**
+ * Slots of the pagination. Each slot receives the context.
+ * The option slot also receives the `option`.
+ */
 export type PaginationSlots = {
   info?: (props: PaginationContext) => VNode[];
   pages?: (props: PaginationContext) => VNode[];
@@ -55,7 +73,6 @@ export type PaginationSlots = {
 };
 
 /**
- * A pagination instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A pagination instance as data: props plus emit listeners.
  */
 export type PaginationDefinition = Definition<PaginationProps, PaginationEmits>;

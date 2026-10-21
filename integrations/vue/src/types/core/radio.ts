@@ -10,12 +10,18 @@ import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * The parts of the radio group that accept passthrough.
+ */
 export type RadioPassthrough<T extends Option = Option> = {
   root: Passthrough<RadioGroupRootProps, RadioGroupRootEmits>;
   item: PassthroughIter<T, RadioGroupItemProps, RadioGroupItemEmits>;
   indicator: Passthrough<RadioGroupIndicatorProps>;
 };
 
+/**
+ * Props of the radio group. `modelValue` is the selected option value.
+ */
 export type RadioProps<T extends Option = Option> = {
   modelValue?: string;
   options: T[];
@@ -26,10 +32,16 @@ export type RadioProps<T extends Option = Option> = {
   pt?: PT<RadioPassthrough<T>>;
 };
 
+/**
+ * Emits of the radio group.
+ */
 export type RadioEmits = {
   "update:modelValue": [value: string];
 };
 
+/**
+ * The radio group view model, served to `defineExpose` and the slots.
+ */
 export type RadioContext<T extends Option = Option> = {
   options: T[];
   disabled?: boolean;
@@ -41,6 +53,10 @@ export type RadioContext<T extends Option = Option> = {
   settings: RadioPassthrough<T>;
 };
 
+/**
+ * Slots of the radio group. Each slot receives the context and the
+ * `option`.
+ */
 export type RadioSlots<T extends Option = Option> = {
   option?: (props: RadioContext<T> & { option: T }) => VNode[];
   indicator?: (props: RadioContext<T> & { option: T }) => VNode[];
@@ -48,8 +64,7 @@ export type RadioSlots<T extends Option = Option> = {
 };
 
 /**
- * A radio instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A radio group instance as data: props plus emit listeners.
  */
 export type RadioDefinition<T extends Option = Option> = Definition<
   RadioProps<T>,

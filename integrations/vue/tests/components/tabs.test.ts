@@ -1,4 +1,3 @@
-// Core component test in the select.test.ts mold: reka renders real DOM.
 import { afterEach, describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -10,8 +9,7 @@ import type {
   TabsProps,
 } from "../../src/types/core/tabs";
 
-// Generic SFCs don't instantiate through mount()'s types — assigning to a
-// concretely-typed FunctionalComponent instantiates T for the harness.
+// A concrete FunctionalComponent type instantiates T for mount().
 const Tabs: FunctionalComponent<TabsProps<TabsOption>, TabsEmits> = Core;
 
 const mounted: { unmount: () => void }[] = [];

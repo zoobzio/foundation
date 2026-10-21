@@ -1,5 +1,8 @@
 import { createDefu } from "defu";
 
+/**
+ * Deep merge where `user` wins per key. An array replaces the local array.
+ */
 export const merge: (
   user: Record<string, unknown>,
   local: Record<string, unknown>,

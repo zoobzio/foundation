@@ -21,16 +21,23 @@ import type {
 } from "reka-ui";
 import type { DateValue } from "@internationalized/date";
 
-// The share of the root's render-scope payload the core template forwards
-// into its slots.
+/**
+ * The part of the root's slot payload that the slots receive.
+ * Derived from the reka component.
+ */
 export type RangeCalendarView = Pick<
   SlotProps<typeof RangeCalendarRoot>,
   "weekDays" | "grid"
 >;
 
-// One month of the root's render-scope grid payload.
+/**
+ * One month of the grid payload.
+ */
 export type RangeCalendarMonth = RangeCalendarView["grid"][number];
 
+/**
+ * The parts of the range calendar that accept passthrough.
+ */
 export type RangeCalendarPassthrough = {
   root: Passthrough<RangeCalendarRootProps, RangeCalendarRootEmits>;
   header: Passthrough<RangeCalendarHeaderProps>;
@@ -49,19 +56,27 @@ export type RangeCalendarPassthrough = {
   >;
 };
 
-// `modelValue` is required: the range calendar uses the explicit model contract
-// (MIGRATION § explicit models) — presence on the vnode decides
-// controlled-ness, so consumers always provide it, `undefined` included.
+/**
+ * Props of the range calendar. `modelValue` is required. Its presence on
+ * the vnode decides control, so pass `undefined` explicitly for an
+ * uncontrolled instance.
+ */
 export type RangeCalendarProps = {
   modelValue: DateRange | undefined;
   maxValue?: DateValue;
   pt?: PT<RangeCalendarPassthrough>;
 };
 
+/**
+ * Emits of the range calendar.
+ */
 export type RangeCalendarEmits = {
   "update:modelValue": [value: DateRange | undefined];
 };
 
+/**
+ * The range calendar view model, served to `defineExpose` and the slots.
+ */
 export type RangeCalendarContext = {
   maxValue?: DateValue;
   modelValue: Ref<DateRange | undefined>;
@@ -69,6 +84,11 @@ export type RangeCalendarContext = {
   settings: RangeCalendarPassthrough;
 };
 
+/**
+ * Slots of the range calendar. Each slot receives the context.
+ * Header and grid slots also receive the view. Cell slots also receive
+ * the `month` and `date`.
+ */
 export type RangeCalendarSlots = {
   header?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   prev?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
@@ -104,8 +124,7 @@ export type RangeCalendarSlots = {
 };
 
 /**
- * A range-calendar instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A range calendar instance as data: props plus emit listeners.
  */
 export type RangeCalendarDefinition = Definition<
   RangeCalendarProps,

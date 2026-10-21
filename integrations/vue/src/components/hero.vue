@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A page header with a tagline, a description, and an action.
+ */
 import type { HeroProps, HeroContext, HeroSlots } from "../types/core/hero";
 
 import { useTemplateRef } from "vue";

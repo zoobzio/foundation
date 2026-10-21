@@ -5,9 +5,8 @@ interface Box<T> {
 }
 
 /**
- * Runs a composable inside a real component setup() — for composables that
- * need an instance (getCurrentInstance, provide/inject, lifecycle) without a
- * template. Call `app.unmount()` when the test needs disposal to run.
+ * Runs a composable inside a real `setup()` without a template.
+ * Call `app.unmount()` to run disposal.
  */
 export const withSetup = <T>(composable: () => T): { result: T; app: App } => {
   let box: Box<T> | undefined;

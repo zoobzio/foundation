@@ -1,6 +1,3 @@
-// Mount depth follows the behavior under test: the item-kind branch (Anchor
-// vs Button), the disabled guards, and the select emit are the component's
-// own logic; the elements underneath have their own suites.
 import { describe, expect, it } from "vitest";
 import type { FunctionalComponent } from "vue";
 import { mount } from "@vue/test-utils";
@@ -12,8 +9,7 @@ import type {
   DirectoryProps,
 } from "../../src/types/core/directory";
 
-// Generic SFCs don't instantiate through mount()'s types — assigning to a
-// concretely-typed FunctionalComponent instantiates T for the harness.
+// A concrete FunctionalComponent type instantiates T for mount().
 const Directory: FunctionalComponent<
   DirectoryProps<FakeEntry>,
   DirectoryEmits<FakeEntry>

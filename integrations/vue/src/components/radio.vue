@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A radio group. The model is the selected option's `value` string.
+ */
 import type {
   RadioProps,
   RadioEmits,

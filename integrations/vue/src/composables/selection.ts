@@ -4,6 +4,14 @@ import type { MaybeRefOrGetter, Ref } from "vue";
 import { SELECT_TRUNCATE, SELECT_PLACEHOLDER } from "../constants/selection";
 import { computed, toValue } from "vue";
 
+/**
+ * Display text and toggle logic for a single or multiple selection.
+ *
+ * @param active - The selected option or options.
+ * @param settings.placeholder - The text shown when nothing is selected.
+ * @param settings.truncate - The maximum number of labels shown.
+ * @param settings.multiple - Whether `toggle` builds an array.
+ */
 export const useSelection = <T extends Option>(
   active: Ref<T | T[] | undefined>,
   settings?: MaybeRefOrGetter<{

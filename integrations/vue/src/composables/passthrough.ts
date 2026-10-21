@@ -6,14 +6,10 @@ import { passthrough } from "../utils/passthrough";
 
 /**
  * Resolves a component's part manifest into its reactive `settings`.
+ * The consumer's `pt` layer wins per key over the local recipes.
  *
- * A real composable: takes a single reactive source — the consumer's deep
- * partial `pt` layer plus the component's local `recipes` (which must satisfy
- * the full manifest) — and returns the computed the template binds part by
- * part. The user layer wins per key; `pt` may be omitted entirely.
- *
- * @param source - Reactive source of the `pt` layer and local recipes.
- * @returns The resolved part manifest, one entry per part.
+ * @param source - A reactive source of the `pt` layer and the local recipes.
+ * @returns The resolved manifest, one entry per part.
  */
 export const usePassthrough = <P, E = {}>(
   source: NoInfer<MaybeRefOrGetter<PassthroughSource<P, E>>>,

@@ -3,10 +3,16 @@ import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * The parts of the checkbox that accept passthrough.
+ */
 export type CheckboxPassthrough = {
   root: Passthrough<CheckboxRootProps, CheckboxRootEmits>;
 };
 
+/**
+ * Props of the checkbox. `modelValue` can be `"indeterminate"`.
+ */
 export type CheckboxProps = {
   modelValue?: boolean | "indeterminate";
   disabled?: boolean;
@@ -16,10 +22,16 @@ export type CheckboxProps = {
   pt?: PT<CheckboxPassthrough>;
 };
 
+/**
+ * Emits of the checkbox.
+ */
 export type CheckboxEmits = {
   "update:modelValue": [value: boolean | "indeterminate"];
 };
 
+/**
+ * The checkbox view model, served to `defineExpose` and the slots.
+ */
 export type CheckboxContext = {
   disabled?: boolean;
   name?: string;
@@ -30,13 +42,15 @@ export type CheckboxContext = {
   settings: CheckboxPassthrough;
 };
 
+/**
+ * Slots of the checkbox. Each slot receives the context.
+ */
 export type CheckboxSlots = {
   indicator?: (props: CheckboxContext) => VNode[];
   icon?: (props: CheckboxContext) => VNode[];
 };
 
 /**
- * A checkbox instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A checkbox instance as data: props plus emit listeners.
  */
 export type CheckboxDefinition = Definition<CheckboxProps, CheckboxEmits>;

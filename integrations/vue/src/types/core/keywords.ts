@@ -9,8 +9,14 @@ import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
+/**
+ * How include terms combine.
+ */
 export type KeywordsMatchMode = "and" | "or";
 
+/**
+ * The parts of the keywords that accept passthrough.
+ */
 export type KeywordsPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
   trigger: Passthrough<FabProps>;
@@ -19,17 +25,27 @@ export type KeywordsPassthrough = {
   matchControl: Passthrough<SegmentedControlProps, SegmentedControlEmits>;
 };
 
+/**
+ * Props of the keywords. `modelValue` is the keyword expression.
+ */
 export type KeywordsProps = {
   modelValue?: string;
   open?: boolean;
   pt?: PT<KeywordsPassthrough>;
 };
 
+/**
+ * Emits of the keywords.
+ */
 export type KeywordsEmits = {
   "update:modelValue": [value: string];
   "update:open": [value: boolean];
 };
 
+/**
+ * The keywords view model, served to `defineExpose` and the slots. `keywords`
+ * is the expression. `activeCount` is the number of terms.
+ */
 export type KeywordsContext = {
   keywords: string;
   include: string[];
@@ -41,6 +57,9 @@ export type KeywordsContext = {
   settings: KeywordsPassthrough;
 };
 
+/**
+ * Slots of the keywords. Each slot receives the context.
+ */
 export type KeywordsSlots = {
   trigger?: (props: KeywordsContext) => VNode[];
   triggerIcon?: (props: KeywordsContext) => VNode[];
@@ -57,7 +76,6 @@ export type KeywordsSlots = {
 };
 
 /**
- * A keywords instance as data: props plus emit listeners — the object a
- * template `v-bind`s and an adapter captures as settings.
+ * A keywords instance as data: props plus emit listeners.
  */
 export type KeywordsDefinition = Definition<KeywordsProps, KeywordsEmits>;

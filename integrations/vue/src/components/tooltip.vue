@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * A tooltip. The default slot is the trigger.
+ */
 import type {
   TooltipProps,
   TooltipEmits,

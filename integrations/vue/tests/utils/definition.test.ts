@@ -1,6 +1,3 @@
-// Pure util: the runtime behind every composite `define*`. Each source
-// shape is a logic path — plain passes through, ref and getter become a
-// computed that tracks the source.
 import { describe, expect, it } from "vitest";
 import { isRef, ref } from "vue";
 import { define } from "../../src/utils/definition";

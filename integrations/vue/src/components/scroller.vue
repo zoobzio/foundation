@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A scroll area with custom scrollbars and a back-to-top button that
+ * shows once the viewport scrolls.
+ */
 import type {
   ScrollerProps,
   ScrollerPassthrough,

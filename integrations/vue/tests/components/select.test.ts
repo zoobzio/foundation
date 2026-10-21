@@ -1,8 +1,3 @@
-// Gold standard: core components. Mount depth follows the behavior under
-// test: presentation axes read the trigger's real DOM; open/selection paths
-// drive reka through real interactions (content teleports to document.body);
-// pt and slot axes each earn one targeted mount. Nothing is stubbed — the
-// wrappers underneath have their own suites for their own logic.
 import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import Select from "../../src/components/select.vue";
@@ -60,7 +55,6 @@ describe("select", () => {
     expect(
       wrapper.get("button.f-select-trigger").attributes("data-state"),
     ).toBe("open");
-    // Content is portalled — options live under document.body, one per option.
     const items = document.querySelectorAll('[role="option"]');
     expect(items).toHaveLength(fakeOptions.length);
   });
@@ -71,7 +65,6 @@ describe("select", () => {
     const banana = document.querySelectorAll('[role="option"]').item(1);
     if (!banana) throw new Error("no rendered option to select");
     banana.dispatchEvent(new Event("pointerup", { bubbles: true }));
-    // Reka defers selection behind its own nextTick — flush the full chain.
     await flushPromises();
     const emitted = wrapper.emitted("update:modelValue");
     expect(emitted).toEqual([[fakeOptions.at(1)]]);

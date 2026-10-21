@@ -1,4 +1,8 @@
 <script lang="ts">
+/**
+ * A list of collapsible items. The model holds the open item value, or
+ * values when `type` is `multiple`.
+ */
 import type {
   AccordionProps,
   AccordionEmits,
