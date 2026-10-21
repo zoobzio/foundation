@@ -207,15 +207,80 @@ describe("selection", () => {
     const { service } = makeService();
     expect(service.isAllSelected).toBe(false);
   });
+
+  it("hasSelection follows the selected set", () => {
+    const { service } = makeService();
+    expect(service.hasSelection).toBe(false);
+    service.toggleRow("1");
+    expect(service.hasSelection).toBe(true);
+    service.clearSelection();
+    expect(service.hasSelection).toBe(false);
+  });
 });
 
 describe("columns", () => {
-  it("toggleColumn hides and re-shows, appending to the end", () => {
+  it("toggleColumn hides and re-shows at the definition slot", () => {
     const { service } = makeService();
     service.toggleColumn("name");
     expect(service.isColumnVisible("name")).toBe(false);
+    expect(service.columnOrder).toEqual(["id", "status", "created", "amount"]);
     service.toggleColumn("name");
-    expect(service.columnOrder.at(-1)).toBe("name");
+    expect(service.columnOrder).toEqual([
+      "id",
+      "name",
+      "status",
+      "created",
+      "amount",
+    ]);
+  });
+
+  it("toggleColumn places a re-shown column relative to the current order", () => {
+    const { service } = makeService();
+    service.reorderColumns(["amount", "id", "created"]);
+    service.toggleColumn("name");
+    expect(service.columnOrder).toEqual(["name", "amount", "id", "created"]);
+  });
+
+  it("setVisibleColumns keeps the current order and seats new columns", () => {
+    const { service } = makeService();
+    service.reorderColumns(["amount", "id"]);
+    service.setVisibleColumns(["status", "id", "amount"]);
+    expect(service.columnOrder).toEqual(["status", "amount", "id"]);
+  });
+
+  it("setVisibleColumns keeps pinned columns and drops unknown keys", () => {
+    const { service } = makeService({ config: { pinnedColumns: ["id"] } });
+    service.setVisibleColumns(["name", "ghost"]);
+    expect(service.columnOrder).toEqual(["id", "name"]);
+  });
+
+  it("moveColumn moves a column to another column's slot", () => {
+    const { service } = makeService();
+    service.moveColumn("id", "status");
+    expect(service.columnOrder).toEqual([
+      "name",
+      "status",
+      "id",
+      "created",
+      "amount",
+    ]);
+    service.moveColumn("amount", "name");
+    expect(service.columnOrder).toEqual([
+      "amount",
+      "name",
+      "status",
+      "id",
+      "created",
+    ]);
+  });
+
+  it("moveColumn ignores unknown and equal keys", () => {
+    const { service, state } = makeService();
+    const before = state.columnOrder;
+    service.moveColumn("id", "id");
+    service.moveColumn("id", "ghost");
+    service.moveColumn("ghost", "id");
+    expect(state.columnOrder).toBe(before);
   });
 
   it("toggleColumn refuses pinned columns", () => {
@@ -249,12 +314,103 @@ describe("columns", () => {
   });
 });
 
-describe("search", () => {
-  it("setQuery resets the page, refetches, and emits filtered", async () => {
+describe("actions", () => {
+  it("exposes each action under its config key", () => {
+    const { service } = makeService({
+      config: { actions: fakeActions, bulkActions: fakeBulkActions },
+    });
+    expect(service.actions.map((a) => a.key)).toEqual(["edit", "delete"]);
+    expect(service.bulkActions.map((a) => a.key)).toEqual(["deleteSelected"]);
+  });
+
+  it("hasActions and isSelectable follow the config", () => {
+    const bare = makeService().service;
+    expect(bare.hasActions).toBe(false);
+    expect(bare.isSelectable).toBe(false);
+    const { service } = makeService({
+      config: { actions: fakeActions, bulkActions: fakeBulkActions },
+    });
+    expect(service.hasActions).toBe(true);
+    expect(service.isSelectable).toBe(true);
+  });
+
+  it("runAction dispatches a row to the handler under the key", () => {
+    const edit = vi.fn();
+    const { service } = makeService({
+      config: { actions: fakeActions },
+      actions: { ...makeActions(), actions: { edit } },
+    });
+    const row = fakeRows[0]!;
+    service.runAction("edit", row);
+    service.runAction("ghost", row);
+    expect(edit).toHaveBeenCalledExactlyOnceWith(row);
+  });
+
+  it("runBulkAction dispatches the current selection", () => {
+    const deleteSelected = vi.fn();
+    const { service } = makeService({
+      config: { bulkActions: fakeBulkActions },
+      actions: { ...makeActions(), bulkActions: { deleteSelected } },
+    });
+    service.toggleRow("1");
+    service.toggleRow("2");
+    service.runBulkAction("deleteSelected");
+    expect(deleteSelected).toHaveBeenCalledExactlyOnceWith(new Set(["1", "2"]));
+  });
+
+  it("the live action closures call the handlers under their keys", () => {
+    const edit = vi.fn();
+    const deleteSelected = vi.fn();
+    const { service } = makeService({
+      config: { actions: fakeActions, bulkActions: fakeBulkActions },
+      actions: {
+        ...makeActions(),
+        actions: { edit },
+        bulkActions: { deleteSelected },
+      },
+    });
+    service.actions[0]!.action(fakeRows[0]!);
+    service.bulkActions[0]!.action(new Set(["9"]));
+    expect(edit).toHaveBeenCalledWith(fakeRows[0]);
+    expect(deleteSelected).toHaveBeenCalledWith(new Set(["9"]));
+  });
+});
+
+describe("query", () => {
+  it("fields mirror the filterable columns with operators, defaults, and values", () => {
+    const { service } = makeService();
+    expect(Object.keys(service.query.fields)).toEqual(
+      service.filterableColumns.map((c) => String(c.key)),
+    );
+    expect(service.query.fields.amount).toEqual({
+      label: "Amount",
+      operators: ["over", "under", "is"],
+      defaultOperator: "is",
+    });
+    expect(service.query.fields.created).toEqual({
+      label: "Created",
+      operators: ["before", "after", "on"],
+      defaultOperator: "on",
+    });
+    expect(service.query.fields.status).toEqual({
+      label: "Status",
+      values: ["Active", "Inactive", "Pending"],
+    });
+    expect(service.query.fields.name).toEqual({ label: "Name" });
+  });
+
+  it("holds its entries and draft in the table's container", () => {
+    const { service, state } = makeService();
+    service.query.add({ kind: "text", value: "acme" });
+    service.query.setDraft("Sta");
+    expect(state.entries).toEqual([{ kind: "text", value: "acme" }]);
+    expect(state.draft).toBe("Sta");
+  });
+
+  it("a change to the entries resets the page, refetches, and emits filtered", () => {
     const { service, state, actions, filtered } = makeService();
     state.page = 3;
-    service.setQuery("acme");
-    expect(service.query).toBe("acme");
+    service.query.add({ kind: "text", value: "acme" });
     expect(service.page).toBe(1);
     expect(actions.fetch).toHaveBeenCalledOnce();
     expect(filtered).toHaveBeenCalledWith({
@@ -262,77 +418,51 @@ describe("search", () => {
       query: "acme",
       filters: [],
     });
-  });
-
-  it("setQuery with the current value is a no-op", () => {
-    const { service, actions } = makeService();
-    service.setQuery("");
-    expect(actions.fetch).not.toHaveBeenCalled();
-  });
-
-  it("addFilter commits the pair, resets the page, and refetches", () => {
-    const { service, state, actions, filtered } = makeService();
     state.page = 2;
-    service.addFilter("status", "Active");
-    expect(service.filters).toEqual([{ key: "status", value: "Active" }]);
+    service.query.add({ kind: "filter", key: "status", value: "Active" });
     expect(service.page).toBe(1);
-    expect(actions.fetch).toHaveBeenCalledOnce();
-    expect(filtered).toHaveBeenCalledWith({
+    expect(actions.fetch).toHaveBeenCalledTimes(2);
+    expect(filtered).toHaveBeenLastCalledWith({
       id: "test-table",
-      query: "",
+      query: "acme",
       filters: [{ key: "status", value: "Active" }],
     });
+    service.query.remove(0);
+    expect(actions.fetch).toHaveBeenCalledTimes(3);
   });
 
-  it("addFilter replaces a same-key filter and moves it to the end", () => {
-    const { service } = makeService();
-    service.addFilter("status", "quoted");
-    service.addFilter("name", "Alice");
-    service.addFilter("status", "draft");
-    expect(service.filters).toEqual([
-      { key: "name", value: "Alice" },
-      { key: "status", value: "draft" },
-    ]);
-  });
-
-  it("addFilter keeps distinct operators on one key as a range, recency ordered", () => {
-    const { service } = makeService();
-    service.addFilter("created", "2026-01-01", "after");
-    service.addFilter("created", "2026-06-01", "before");
-    service.addFilter("created", "2026-02-01", "after");
-    expect(service.filters).toEqual([
-      { key: "created", op: "before", value: "2026-06-01" },
-      { key: "created", op: "after", value: "2026-02-01" },
-    ]);
-  });
-
-  it("addFilter stores the operator when given", () => {
-    const { service } = makeService();
-    service.addFilter("created", "2026-02-01", "before");
-    expect(service.filters).toEqual([
-      { key: "created", op: "before", value: "2026-02-01" },
-    ]);
-  });
-
-  it("removeFilter drops exactly the indexed filter", () => {
-    const { service } = makeService();
-    service.addFilter("status", "Active");
-    service.addFilter("name", "Alice");
-    service.removeFilter(0);
-    expect(service.filters).toEqual([{ key: "name", value: "Alice" }]);
-  });
-
-  it("removeFilter ignores out-of-bounds indices", () => {
+  it("a rejected or repeated entry does not refetch", () => {
     const { service, actions } = makeService();
-    service.removeFilter(0);
-    service.removeFilter(-1);
+    service.query.add({
+      kind: "filter",
+      key: "created",
+      op: "over",
+      value: "x",
+    });
+    service.query.remove(0);
     expect(actions.fetch).not.toHaveBeenCalled();
+    service.query.add({ kind: "text", value: "acme" });
+    service.query.add({ kind: "text", value: "acme" });
+    expect(actions.fetch).toHaveBeenCalledOnce();
   });
 
-  it("fetch params carry the committed query and filters", async () => {
+  it("a submitted draft commits through the column schema", () => {
+    const { service } = makeService();
+    service.query.setDraft("Amount: over: 40");
+    service.query.submit();
+    service.query.setDraft("Created: 2026-02-01");
+    service.query.submit();
+    expect(service.query.filters).toEqual([
+      { key: "amount", op: "over", value: "40" },
+      { key: "created", op: "on", value: "2026-02-01" },
+    ]);
+    expect(service.query.draft).toBe("");
+  });
+
+  it("fetch params carry the query's text and filters", async () => {
     const { service, actions } = makeService();
-    service.setQuery("acme");
-    service.addFilter("status", "Active");
+    service.query.add({ kind: "text", value: "acme" });
+    service.query.add({ kind: "filter", key: "status", value: "Active" });
     await service.fetch();
     expect(actions.fetch).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -343,11 +473,31 @@ describe("search", () => {
     );
   });
 
+  it("a query write reaches the table's change stream", () => {
+    const { service } = makeService();
+    const change = vi.fn();
+    service.on("change", change);
+    service.query.setDraft("x");
+    expect(change).toHaveBeenCalledWith(
+      expect.objectContaining({ field: "draft", before: "", after: "x" }),
+    );
+  });
+
   it("searchable defaults on and follows config off", () => {
     expect(makeService().service.searchable).toBe(true);
     expect(
       makeService({ config: { searchable: false } }).service.searchable,
     ).toBe(false);
+  });
+
+  it("locale and currency default and follow config", () => {
+    expect(makeService().service.locale).toBe("en-US");
+    expect(makeService().service.currency).toBe("USD");
+    const { service } = makeService({
+      config: { locale: "de-DE", currency: "EUR" },
+    });
+    expect(service.locale).toBe("de-DE");
+    expect(service.currency).toBe("EUR");
   });
 
   it("filterableColumns excludes action and image columns by default", () => {
@@ -363,7 +513,7 @@ describe("search", () => {
     const labels = service.filterableColumns.map((c) => c.label);
     expect(labels).not.toContain("Open");
     expect(labels).toContain("Avatar");
-    expect(labels).toContain("Status");
+    expect(labels).toContain("Name");
   });
 });
 
@@ -377,13 +527,13 @@ describe("middleware", () => {
     expect(state.page).toBe(2);
   });
 
-  it("set middleware shapes the stored value", () => {
+  it("set middleware shapes the stored value, the query's slice included", () => {
     const { service, state } = makeService({
-      options: { set: { state: { query: (query) => query.trim() } } },
+      options: { set: { state: { draft: (draft) => draft.trim() } } },
     });
-    service.setQuery("  acme  ");
-    expect(state.query).toBe("acme");
-    expect(service.query).toBe("acme");
+    service.query.setDraft("  acme  ");
+    expect(state.draft).toBe("acme");
+    expect(service.query.draft).toBe("acme");
   });
 
   it("a missing slot passes the value on", () => {
@@ -398,12 +548,12 @@ describe("events", () => {
   it("emits change for every write, after the set middleware", () => {
     const changes: Change<FakeRow>[] = [];
     const { service } = makeService({
-      options: { set: { state: { query: (query) => query.trim() } } },
+      options: { set: { state: { pageSize: (size) => Math.min(size, 50) } } },
     });
     service.on("change", (change) => changes.push(change));
-    service.setQuery(" acme ");
+    service.setPageSize(100);
     expect(changes).toEqual([
-      { field: "query", before: "", after: "acme" },
+      { field: "pageSize", before: 25, after: 50 },
       { field: "page", before: 1, after: 1 },
       { field: "loading", before: false, after: true },
     ]);

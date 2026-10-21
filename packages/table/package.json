@@ -1,7 +1,7 @@
 {
   "name": "@zoobzio/table",
   "version": "0.0.0",
-  "description": "Headless data table service: paging, sort, selection, column order, search filters. No framework dependency.",
+  "description": "Headless data table service: paging, sort, selection, column order, and a query over the columns. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@zoobzio/kit": "workspace:*",
+    "@zoobzio/query": "workspace:*",
     "objectively": "^0.3.0"
   },
   "devDependencies": {

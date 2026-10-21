@@ -40,6 +40,9 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.7.0",
+    "@zoobzio/kit": "workspace:*",
+    "@zoobzio/query": "workspace:*",
+    "@zoobzio/table": "workspace:*",
     "defu": "^6.1.7",
     "objectively": "^0.3.0",
     "reka-ui": "^2.6.0"

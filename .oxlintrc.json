@@ -15,7 +15,9 @@
     "**/.output/**",
     "**/dist/**",
     "**/.dist/**",
-    ".coverage/**"
+    ".coverage/**",
+    // Mid-migration to integrations/vue; excluded from checks until it lands
+    "layers/foundation/**"
   ],
   "rules": {
     // Composables deliberately define helpers inside their setup scope

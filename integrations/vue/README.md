@@ -10,7 +10,7 @@ interactive parts through one **passthrough** system: a part manifest
 (`XPassthrough`), the consumer's deep-partial `pt` prop, and the resolved
 `settings` the template binds. A single `ctx` view model serves both
 `defineExpose` and the ctx-scoped slots. The full contract is documented in
-the layer's [core README](../../layers/foundation/app/components/core/README.md);
+the [components README](./src/components/README.md);
 `select.vue` is the reference implementation there and the first component
 here.
 
@@ -42,14 +42,36 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (32)
-  composables/       — usePassthrough, useModel, useContext, useSelection, useSearch, useScroller, useKeywords, usePaginate, useAutocomplete
+  components/        — interactive components (32) plus the stateless table (table.vue and its table-* parts)
+  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits
   definitions/       — define<Name>(definition | source) constructors
-  types/             — common, events, passthrough, context, definition; per-component types in core/
-  utils/             — passthrough merge, define runtime, date, keywords, paginate
+  types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
+  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate
   constants/         — constants by domain: date, filter, pagination, popper, scroll, selection
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
 Items that can navigate carry an optional `link` (`LinkTarget`: `to`,
 `target`) and render as a plain anchor.
+
+## Data components
+
+`table.vue` renders a headless `@zoobzio/table` service. The component owns
+no feature state: it reads the service, calls its methods, and relays its
+`updated` and `filtered` events as emits. The service's state container
+must be reactive for the table to update.
+
+```ts
+import { reactive } from "vue";
+import { TableService, createTableState } from "@zoobzio/table";
+import Table from "@zoobzio/vue/components/table.vue";
+
+const config = { columns, rowKey: "id" };
+const state = reactive(createTableState(config));
+const service = new TableService("users", config, state, { fetch });
+service.init();
+```
+
+```vue
+<Table :service="service" @updated="onUpdated" />
+```

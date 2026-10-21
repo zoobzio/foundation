@@ -2,7 +2,8 @@
 
 Headless data table service. Pure TypeScript, no framework dependency.
 
-Owns: paging, sort, row selection, column order, committed search (query + filters).
+Owns: paging, sort, row selection, column order, and the query over its
+columns (`@zoobzio/query`).
 Delegates: data loading (`fetch`) and state storage (the container).
 
 ## Usage
@@ -18,15 +19,31 @@ const table = new TableService("users", config, createTableState(config), {
 
 await table.init();
 table.sortBy("name");
-table.addFilter("status", "active");
+table.query.add({ kind: "filter", key: "status", value: "active" });
+```
+
+## Query
+
+`table.query` is a query service over the filterable columns: one field per
+column, with the operators and default operator of its type and the values
+of an enum or boolean column. Any view drives it: `add`, `remove`, `clear`,
+or the draft a text view composes through. A change to its entries resets
+the page, refetches, and emits `filtered`. The fetch params carry its `text`
+as `query` and its `filters`.
+
+```ts
+table.query.add({ kind: "filter", key: "status", value: "Active" });
+table.query.setDraft("Amount: over: 40");
+table.query.submit();
+table.query.filters; // [{ key: "status", value: "Active" }, { key: "amount", op: "over", value: "40" }]
 ```
 
 ## The state container
 
 The service reads and writes the `state` container: paging, sort, selection,
-column order, and the committed search. The container can be a plain object or
-a reactive proxy. The service replaces each member as a whole, so a proxy
-tracks every change.
+column order, and the query's entries and draft. The container can be a
+plain object or a reactive proxy. The service replaces each member as a
+whole, so a proxy tracks every change.
 
 ```ts
 createTableState(config); // plain: tests, Node
@@ -53,7 +70,7 @@ the write lands. The return value removes the listener.
 
 - `change`: a field of the container was written. `{ field, before, after }`, narrowed by `field`.
 - `updated`: a fetch settled. `{ id, total }`.
-- `filtered`: the committed query or filters changed. `{ id, query, filters }`.
+- `filtered`: the query's entries changed. `{ id, query, filters }`.
 
 ```ts
 const off = table.on("change", (change) => {

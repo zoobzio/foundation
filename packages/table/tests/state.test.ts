@@ -21,8 +21,8 @@ describe("createTableState", () => {
       sortDirection: "asc",
       selected: new Set(),
       columnOrder: fakeColumns.map((c) => String(c.key)),
-      query: "",
-      filters: [],
+      entries: [],
+      draft: "",
     });
   });
 

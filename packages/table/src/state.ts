@@ -23,6 +23,6 @@ export const createTableState = <T>(config: Config<T>): State<T> => ({
   columnOrder: (
     config.defaultColumnOrder ?? config.columns.map((c) => c.key)
   ).map(String),
-  query: "",
-  filters: [],
+  entries: [],
+  draft: "",
 });

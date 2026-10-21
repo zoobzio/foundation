@@ -1,3 +1,4 @@
+import type { Entry, Filter, Service as Query } from "@zoobzio/query";
 import type {
   Change as KitChange,
   Changers as KitChangers,
@@ -39,15 +40,12 @@ export interface DataTableColumn<T> {
 }
 
 /**
- * A committed column filter. Keys are strings, matching the `sortField` /
- * `columnOrder` convention; `op` is present for operator-stage columns
- * (date/datetime: before/after/on, number/currency: over/under/is).
+ * A committed column filter, as the query holds it. Keys are strings,
+ * matching the `sortField` / `columnOrder` convention; `op` is present for
+ * operator columns (date/datetime: before/after/on, number/currency:
+ * over/under/is).
  */
-export interface TableFilter {
-  key: string;
-  op?: string;
-  value: string;
-}
+export type TableFilter = Filter;
 
 export type SortDirection = "asc" | "desc";
 
@@ -61,26 +59,30 @@ export interface ActionDescriptor {
 
 /**
  * Row action — the live shape the service exposes: descriptor joined with
- * its handler.
+ * its handler, under the config key. `runAction(key, row)` dispatches by
+ * key.
  */
 export interface RowAction<T> {
+  key: string;
   label: string;
   action: (row: T) => void;
 }
 
 /**
  * Bulk action — the live shape the service exposes: descriptor joined with
- * its handler.
+ * its handler, under the config key. `runBulkAction(key)` dispatches by key
+ * over the service's selection.
  */
 export interface BulkAction {
+  key: string;
   label: string;
   action: (selected: Set<string>) => void;
 }
 
 /**
- * Parameters passed to the fetch action. The table owns paging, sort, and
- * search: `query` is the committed free-text search, `filters` the committed
- * column filters.
+ * Parameters passed to the fetch action. The table owns paging and sort;
+ * its query owns the search: `query` is the committed free text, `filters`
+ * the committed column filters.
  */
 export interface DataTableFetchParams {
   page: number;
@@ -115,13 +117,22 @@ export type Config<T> = {
    * `filters`, mutators, fetch params) stays live for imperative use.
    */
   searchable?: boolean;
+  /**
+   * The BCP 47 locale cells format in. Defaults to `en-US`.
+   */
+  locale?: string;
+  /**
+   * The ISO 4217 code currency cells format in. Defaults to `USD`.
+   */
+  currency?: string;
 };
 
 /**
  * The state container the service reads and writes: paging, sort,
- * selection, column order, and the committed search. The container can be a
+ * selection, column order, and the query's slice. The container can be a
  * plain object or a reactive proxy. The service replaces each member as a
- * whole, so a proxy tracks every change.
+ * whole, so a proxy tracks every change. `entries` and `draft` belong to
+ * the table's `query` machine, its only writer.
  */
 export type State<T> = {
   data: T[];
@@ -135,8 +146,8 @@ export type State<T> = {
   sortDirection: SortDirection;
   selected: Set<string>;
   columnOrder: string[];
-  query: string;
-  filters: TableFilter[];
+  entries: Entry[];
+  draft: string;
 };
 
 export type StateKey = keyof State<unknown>;
@@ -171,7 +182,7 @@ export type Actions<T> = {
  *
  * - `change`: any field of the container was written.
  * - `updated`: a fetch settled, success or failure. `total` is the stored total.
- * - `filtered`: the committed query or filters changed.
+ * - `filtered`: the query's entries changed.
  */
 export type Events<T> = {
   change: [change: Change<T>];
@@ -192,6 +203,15 @@ export type Service<T> = {
   readonly bulkActions: BulkAction[];
   readonly pinnedColumns: (keyof T)[];
   readonly searchable: boolean;
+  readonly locale: string;
+  readonly currency: string;
+
+  /**
+   * The query machine over the filterable columns: one field per column,
+   * with the operators of its type and the values of an enum or boolean
+   * column. A change to its entries refetches from the first page.
+   */
+  readonly query: Query;
 
   readonly data: T[];
   readonly loading: boolean;
@@ -204,8 +224,6 @@ export type Service<T> = {
   readonly sortDirection: SortDirection;
   readonly selected: Set<string>;
   readonly columnOrder: string[];
-  readonly query: string;
-  readonly filters: TableFilter[];
 
   readonly visibleColumns: DataTableColumn<T>[];
   readonly filterableColumns: DataTableColumn<T>[];
@@ -213,6 +231,9 @@ export type Service<T> = {
   readonly isIndeterminate: boolean;
   readonly selectAllState: boolean | "indeterminate";
   readonly colSpan: number;
+  readonly hasSelection: boolean;
+  readonly isSelectable: boolean;
+  readonly hasActions: boolean;
 
   goToPage(page: number): void;
   setPageSize(size: number): void;
@@ -225,13 +246,14 @@ export type Service<T> = {
   clearSelection(): void;
   isRowSelected(row: T): boolean;
   toggleColumn(key: keyof T): void;
+  setVisibleColumns(keys: Iterable<string>): void;
+  moveColumn(key: string, toKey: string): void;
   reorderColumns(order: string[]): void;
   resetColumns(): void;
   isColumnPinned(key: keyof T): boolean;
   isColumnVisible(key: keyof T): boolean;
-  addFilter(key: string, value: string, op?: string): void;
-  removeFilter(index: number): void;
-  setQuery(value: string): void;
+  runAction(key: string, row: T): void;
+  runBulkAction(key: string): void;
   init(): Promise<boolean>;
   fetch(): Promise<void>;
 

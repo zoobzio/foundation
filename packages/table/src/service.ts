@@ -8,17 +8,23 @@ import type {
   Options,
   Service,
   State,
-  TableFilter,
 } from "./types";
+import type { Service as Query } from "@zoobzio/query";
 import type { Emitter } from "@zoobzio/kit";
 
 import { entries } from "objectively";
+import { QueryService } from "@zoobzio/query";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
-import { TABLE_STATE_FIELDS } from "./constants";
+import {
+  TABLE_DEFAULT_CURRENCY,
+  TABLE_DEFAULT_LOCALE,
+  TABLE_STATE_FIELDS,
+} from "./constants";
+import { fields } from "./util";
 
 /**
  * The headless table machine. Owns paging, sort, selection, column order,
- * and committed search; delegates data loading to `wiring.fetch`.
+ * and the query over its columns; delegates data loading to `wiring.fetch`.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy; the
@@ -31,11 +37,13 @@ export class TableService<T> implements Service<T> {
   readonly actions: Service<T>["actions"];
   readonly bulkActions: Service<T>["bulkActions"];
   readonly pinnedColumns: (keyof T)[];
+  readonly query: Query;
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
 
   private readonly columnMap: Map<string, DataTableColumn<T>>;
+  private readonly definitionIndex: Map<string, number>;
   private readonly pinnedSet: Set<string>;
   private readonly defaultColumnKeys: string[];
 
@@ -51,11 +59,13 @@ export class TableService<T> implements Service<T> {
     this.rowKey = config.rowKey;
     this.actions = entries(config.actions ?? {}).map(([key, descriptor]) => ({
       ...descriptor,
-      action: (row: T) => wiring.actions?.[key]?.(row),
+      key,
+      action: (row: T) => this.runAction(key, row),
     }));
     this.bulkActions = entries(config.bulkActions ?? {}).map(
       ([key, descriptor]) => ({
         ...descriptor,
+        key,
         action: (selected: Set<string>) =>
           wiring.bulkActions?.[key]?.(selected),
       }),
@@ -63,10 +73,20 @@ export class TableService<T> implements Service<T> {
     this.pinnedColumns = config.pinnedColumns ?? [];
 
     this.columnMap = new Map(config.columns.map((c) => [String(c.key), c]));
+    this.definitionIndex = new Map(
+      config.columns.map((c, i) => [String(c.key), i]),
+    );
     this.pinnedSet = new Set(this.pinnedColumns.map(String));
     this.defaultColumnKeys = (
       config.defaultColumnOrder ?? config.columns.map((c) => c.key)
     ).map(String);
+
+    this.query = new QueryService(
+      `${id}-query`,
+      { fields: fields(this.filterableColumns) },
+      this.state,
+    );
+    this.query.on("changed", () => this.refilter());
   }
 
   on<E extends Event<T>>(event: E, listener: Listener<T, E>): () => void {
@@ -111,11 +131,11 @@ export class TableService<T> implements Service<T> {
   get searchable(): boolean {
     return this.config.searchable ?? true;
   }
-  get query(): string {
-    return this.state.query;
+  get locale(): string {
+    return this.config.locale ?? TABLE_DEFAULT_LOCALE;
   }
-  get filters(): TableFilter[] {
-    return this.state.filters;
+  get currency(): string {
+    return this.config.currency ?? TABLE_DEFAULT_CURRENCY;
   }
 
   // --- derived ---------------------------------------------------------
@@ -150,9 +170,21 @@ export class TableService<T> implements Service<T> {
   get colSpan(): number {
     return (
       this.visibleColumns.length +
-      (this.actions.length ? 1 : 0) +
-      (this.bulkActions.length ? 1 : 0)
+      (this.hasActions ? 1 : 0) +
+      (this.isSelectable ? 1 : 0)
     );
+  }
+
+  get hasSelection(): boolean {
+    return this.selected.size > 0;
+  }
+
+  get isSelectable(): boolean {
+    return this.bulkActions.length > 0;
+  }
+
+  get hasActions(): boolean {
+    return this.actions.length > 0;
   }
 
   keyOf(row: T): string {
@@ -235,12 +267,54 @@ export class TableService<T> implements Service<T> {
     if (this.columnOrder.includes(k)) {
       this.state.columnOrder = this.columnOrder.filter((c) => c !== k);
     } else {
-      this.state.columnOrder = [...this.columnOrder, k];
+      this.state.columnOrder = this.insertAtDefinition(this.columnOrder, k);
     }
+  }
+
+  setVisibleColumns(keys: Iterable<string>): void {
+    const wanted = new Set(keys);
+    for (const k of this.pinnedSet) wanted.add(k);
+    let order = this.columnOrder.filter((k) => wanted.has(k));
+    for (const k of wanted) {
+      if (!this.columnMap.has(k) || order.includes(k)) continue;
+      order = this.insertAtDefinition(order, k);
+    }
+    this.state.columnOrder = order;
+  }
+
+  moveColumn(key: string, toKey: string): void {
+    if (key === toKey) return;
+    const order = [...this.columnOrder];
+    const from = order.indexOf(key);
+    const to = order.indexOf(toKey);
+    if (from === -1 || to === -1) return;
+    order.splice(from, 1);
+    order.splice(to, 0, key);
+    this.state.columnOrder = order;
   }
 
   reorderColumns(order: string[]): void {
     this.state.columnOrder = order;
+  }
+
+  private insertAtDefinition(order: string[], key: string): string[] {
+    const index = this.definitionIndex.get(key) ?? Infinity;
+    const at = order.findIndex(
+      (k) => (this.definitionIndex.get(k) ?? Infinity) > index,
+    );
+    const next = [...order];
+    next.splice(at === -1 ? next.length : at, 0, key);
+    return next;
+  }
+
+  // --- actions ---------------------------------------------------------
+
+  runAction(key: string, row: T): void {
+    this.wiring.actions?.[key]?.(row);
+  }
+
+  runBulkAction(key: string): void {
+    this.wiring.bulkActions?.[key]?.(this.selected);
   }
 
   resetColumns(): void {
@@ -249,41 +323,13 @@ export class TableService<T> implements Service<T> {
 
   // --- search ----------------------------------------------------------
 
-  /**
-   * Commits a filter; a filter with the same key and operator is replaced
-   * and moved to the end, so order tracks recency (the freshest filter is
-   * the first to unwrap) while distinct operators on one key (a date/number
-   * range) coexist.
-   */
-  addFilter(key: string, value: string, op?: string): void {
-    const next: TableFilter = op ? { key, op, value } : { key, value };
-    this.state.filters = [
-      ...this.filters.filter((f) => !(f.key === key && f.op === op)),
-      next,
-    ];
-    this.search();
-  }
-
-  removeFilter(index: number): void {
-    if (index < 0 || index >= this.filters.length) return;
-    this.state.filters = this.filters.filter((_, i) => i !== index);
-    this.search();
-  }
-
-  setQuery(value: string): void {
-    if (value === this.query) return;
-    this.state.query = value;
-    this.search();
-  }
-
-  /** First page, refetch, emit — the same reset discipline as `sortBy`. */
-  private search(): void {
+  private refilter(): void {
     this.state.page = 1;
     this.fetch();
     this.emitter.emit("filtered", {
       id: this.id,
-      query: this.query,
-      filters: this.filters,
+      query: this.query.text,
+      filters: this.query.filters,
     });
   }
 
@@ -305,8 +351,8 @@ export class TableService<T> implements Service<T> {
           pageSize: this.pageSize,
           sortField: this.sortField,
           sortDirection: this.sortDirection,
-          query: this.query,
-          filters: this.filters,
+          query: this.query.text,
+          filters: this.query.filters,
         },
         this,
       );

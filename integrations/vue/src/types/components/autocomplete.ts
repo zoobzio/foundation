@@ -1,8 +1,12 @@
 import type { ScrollerProps } from "./scroller";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
-import type { Option } from "../common";
 import type { Definition } from "../definition";
+import type {
+  Entry as QueryEntry,
+  Option as QueryOption,
+  Service as Query,
+} from "@zoobzio/query";
+import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type {
   AutocompleteRootProps,
   AutocompleteRootEmits,
@@ -13,142 +17,111 @@ import type {
   AutocompleteItemEmits,
 } from "reka-ui";
 
-/**
- * A suggestion, trail entry, or committed step. `active` marks the trail option
- * whose children form the current panel. `meta` carries consumer data through
- * unchanged.
- */
-export type AutocompleteOption<M = unknown> = Option & {
-  hasChildren?: boolean;
-  active?: boolean;
-  meta?: M;
-};
+export type { QueryEntry, QueryOption };
 
 /**
  * An item's render position: its panel and its index in that panel. The datum
  * of the iterated parts and the payload of the item slots.
  */
-export type AutocompleteAnchor<M = unknown> = {
-  option: AutocompleteOption<M>;
+export type AutocompleteAnchor = {
+  option: QueryOption;
   index: number;
   panel: number;
 };
 
 /**
- * A committed step's position in the chip row.
+ * A chip's position in the chip row: the committed entry and its index in
+ * the query's entries.
  */
-export type AutocompleteChipAnchor<M = unknown> = {
-  option: AutocompleteOption<M>;
+export type AutocompleteChipAnchor = {
+  entry: QueryEntry;
   index: number;
 };
 
 /**
  * The parts of the autocomplete that accept passthrough. `input` adds the
- * native `keydown` emit. `content` adds a capture-phase `scroll` emit, because
- * scroll does not bubble from the panel viewports.
+ * native `keydown` emit.
  */
-export type AutocompletePassthrough<M = unknown> = {
+export type AutocompletePassthrough = {
   root: Passthrough<AutocompleteRootProps, AutocompleteRootEmits>;
   input: Passthrough<
     AutocompleteInputProps,
     AutocompleteInputEmits & { keydown: [event: KeyboardEvent] }
   >;
-  content: Passthrough<
-    AutocompleteContentProps,
-    { scrollCapture: [event: Event] }
-  >;
+  content: Passthrough<AutocompleteContentProps>;
   scroller: Passthrough<ScrollerProps>;
   item: PassthroughIter<
-    AutocompleteAnchor<M>,
+    AutocompleteAnchor,
     AutocompleteItemProps,
     AutocompleteItemEmits
   >;
 };
 
 /**
- * Props of the autocomplete. The component owns only the input text and `open`.
- * `steps` are committed steps shown as chips. `items` is the active panel.
- * `trail` holds the ancestor panels shown left of `items`.
+ * Props of the autocomplete: the headless query service plus passthrough.
+ * The component owns only `open`. The query owns the entries, the draft,
+ * and the panels.
  */
-export type AutocompleteProps<M = unknown> = {
-  items: AutocompleteOption<M>[];
-  steps?: NoInfer<AutocompleteOption<M>[]>;
-  trail?: NoInfer<AutocompleteOption<M>[][]>;
-  modelValue?: string;
-  hint?: string;
+export type AutocompleteProps = {
+  service: Query;
   empty?: boolean;
   placeholder?: string;
   disabled?: boolean;
   open?: boolean;
-  pt?: PT<AutocompletePassthrough<M>>;
+  pt?: PT<AutocompletePassthrough>;
 };
 
 /**
  * Emits of the autocomplete.
  */
-export type AutocompleteEmits<M = unknown> = {
-  "update:modelValue": [value: string];
+export type AutocompleteEmits = {
   "update:open": [value: boolean];
-  select: [item: AutocompleteOption<M>];
-  submit: [value: string];
-  unwind: [index: number];
-  /** The active panel scrolled near its end. Extend `items` if more exist. */
-  more: [];
-  /** Backspace on an empty input with chips present. The consumer removes the
-   * last step. */
-  unwrap: [];
 };
 
 /**
- * The autocomplete view model, served to `defineExpose` and the slots. `panels`
- * is `trail` plus `items`.
+ * The autocomplete view model, served to `defineExpose` and the slots.
  */
-export type AutocompleteContext<M = unknown> = {
-  items: AutocompleteOption<M>[];
-  steps: AutocompleteOption<M>[];
-  trail: AutocompleteOption<M>[][];
-  hint: string;
+export type AutocompleteContext = {
+  service: Query;
   empty: boolean;
   placeholder: string;
   disabled?: boolean;
-  modelValue: Ref<string | undefined>;
   open: Ref<boolean>;
-  panels: AutocompleteOption<M>[][];
   el: ComponentPublicInstance | null;
-  settings: AutocompletePassthrough<M>;
+  settings: AutocompletePassthrough;
 };
 
 /**
  * The payload of an item slot: the context plus the item's anchor.
  */
-export type AutocompleteOptionContext<M = unknown> = AutocompleteContext<M> &
-  AutocompleteAnchor<M>;
+export type AutocompleteOptionContext = AutocompleteContext &
+  AutocompleteAnchor;
 
 /**
  * The payload of a chip slot: the context plus the chip's anchor.
  */
-export type AutocompleteChipContext<M = unknown> = AutocompleteContext<M> &
-  AutocompleteChipAnchor<M>;
+export type AutocompleteChipContext = AutocompleteContext &
+  AutocompleteChipAnchor;
 
 /**
  * Slots of the autocomplete. Each slot receives the context.
  */
-export type AutocompleteSlots<M = unknown> = {
-  chips?: (props: AutocompleteContext<M>) => VNode[];
-  chip?: (props: AutocompleteChipContext<M>) => VNode[];
-  hint?: (props: AutocompleteContext<M>) => VNode[];
-  input?: (props: AutocompleteContext<M>) => VNode[];
-  item?: (props: AutocompleteOptionContext<M>) => VNode[];
-  itemIcon?: (props: AutocompleteOptionContext<M>) => VNode[];
-  itemLabel?: (props: AutocompleteOptionContext<M>) => VNode[];
-  itemArrow?: (props: AutocompleteOptionContext<M>) => VNode[];
-  empty?: (props: AutocompleteContext<M>) => VNode[];
+export type AutocompleteSlots = {
+  chips?: (props: AutocompleteContext) => VNode[];
+  chip?: (props: AutocompleteChipContext) => VNode[];
+  hint?: (props: AutocompleteContext) => VNode[];
+  input?: (props: AutocompleteContext) => VNode[];
+  item?: (props: AutocompleteOptionContext) => VNode[];
+  itemIcon?: (props: AutocompleteOptionContext) => VNode[];
+  itemLabel?: (props: AutocompleteOptionContext) => VNode[];
+  itemArrow?: (props: AutocompleteOptionContext) => VNode[];
+  empty?: (props: AutocompleteContext) => VNode[];
 };
 
 /**
  * An autocomplete instance as data: props plus emit listeners.
  */
-export type AutocompleteDefinition<M = unknown> = Definition<
-  AutocompleteProps<M>,
-  AutocompleteEmits<M>
+export type AutocompleteDefinition = Definition<
+  AutocompleteProps,
+  AutocompleteEmits
 >;
