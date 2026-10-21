@@ -1,4 +1,4 @@
-import type { PaginationDefinition } from "../types/core/pagination";
+import type { PaginationDefinition } from "../types/components/pagination";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

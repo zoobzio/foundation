@@ -1,8 +1,4 @@
 <script lang="ts">
-/**
- * A single-select toggle group. When `required` is set, the active
- * option cannot deselect. An option with a `link` renders as an anchor.
- */
 import type {
   SegmentedControlProps,
   SegmentedControlEmits,
@@ -10,7 +6,7 @@ import type {
   SegmentedControlContext,
   SegmentedControlSlots,
   SegmentedControlOption,
-} from "../types/core/segmented-control";
+} from "../types/components/segmented-control";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToggleGroupRoot, ToggleGroupItem } from "reka-ui";

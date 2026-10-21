@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A tags input. The model is the array of tag strings.
- */
 import type {
   TagsInputProps,
   TagsInputEmits,
   TagsInputPassthrough,
   TagsInputContext,
   TagsInputSlots,
-} from "../types/core/tags-input";
+} from "../types/components/tags-input";
 import type { ComponentPublicInstance } from "vue";
 
 import {
@@ -19,7 +16,7 @@ import {
   TagsInputInput,
 } from "reka-ui";
 
-import { computed, useTemplateRef } from "vue";
+import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
@@ -44,8 +41,6 @@ const $model = useModel<string[]>(
   (v) => emit("update:modelValue", v),
   { default: [] },
 );
-
-const tags = computed(() => $model.value ?? []);
 
 const settings = usePassthrough<TagsInputPassthrough>(() => ({
   pt,
@@ -82,7 +77,7 @@ defineSlots<TagsInputSlots>();
 
 <template>
   <TagsInputRoot ref="el" class="f-tags-input-root" v-bind="settings.root">
-    <template v-for="tag in tags" :key="tag">
+    <template v-for="tag in $model" :key="tag">
       <slot name="item" v-bind="{ ...ctx, tag }">
         <TagsInputItem class="f-tags-input-item" v-bind="settings.item(tag)">
           <slot name="itemText" v-bind="{ ...ctx, tag }">

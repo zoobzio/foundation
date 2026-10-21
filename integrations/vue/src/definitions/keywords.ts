@@ -1,4 +1,4 @@
-import type { KeywordsDefinition } from "../types/core/keywords";
+import type { KeywordsDefinition } from "../types/components/keywords";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

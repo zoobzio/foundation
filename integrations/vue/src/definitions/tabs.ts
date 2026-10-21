@@ -1,4 +1,4 @@
-import type { TabsDefinition, TabsOption } from "../types/core/tabs";
+import type { TabsDefinition, TabsOption } from "../types/components/tabs";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

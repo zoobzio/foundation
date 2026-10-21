@@ -1,4 +1,4 @@
-import type { FabDefinition } from "../types/core/fab";
+import type { FabDefinition } from "../types/components/fab";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

@@ -1,7 +1,7 @@
 import type {
   DirectoryGroup,
   DirectoryItem,
-} from "../../src/types/core/directory";
+} from "../../src/types/components/directory";
 
 /**
  * A directory item with a consumer field.

@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A radio group. The model is the selected option's `value` string.
- */
 import type {
   RadioProps,
   RadioEmits,
   RadioPassthrough,
   RadioContext,
   RadioSlots,
-} from "../types/core/radio";
+} from "../types/components/radio";
 import type { Option } from "../types/common";
 import type { ComponentPublicInstance } from "vue";
 

@@ -1,15 +1,11 @@
 <script lang="ts">
-/**
- * A single-date calendar. `modelValue` is required. Its presence on the
- * vnode decides control, so pass `undefined` for an uncontrolled instance.
- */
 import type {
   CalendarProps,
   CalendarEmits,
   CalendarPassthrough,
   CalendarContext,
   CalendarSlots,
-} from "../types/core/calendar";
+} from "../types/components/calendar";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 

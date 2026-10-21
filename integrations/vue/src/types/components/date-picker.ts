@@ -113,7 +113,7 @@ export type DatePickerEmits = {
 export type DatePickerContext = {
   disabled?: boolean;
   modelValue: Ref<DateValue | undefined>;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: DatePickerPassthrough;
 };

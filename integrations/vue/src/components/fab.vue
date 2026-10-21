@@ -1,13 +1,10 @@
 <script lang="ts">
-/**
- * A floating action button with an optional badge.
- */
 import type {
   FabProps,
   FabEmits,
   FabContext,
   FabSlots,
-} from "../types/core/fab";
+} from "../types/components/fab";
 
 import { useTemplateRef } from "vue";
 import { useContext } from "../composables/context";

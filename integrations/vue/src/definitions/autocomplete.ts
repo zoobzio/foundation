@@ -1,4 +1,4 @@
-import type { AutocompleteDefinition } from "../types/core/autocomplete";
+import type { AutocompleteDefinition } from "../types/components/autocomplete";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

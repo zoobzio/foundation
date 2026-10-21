@@ -1,4 +1,4 @@
-import type { TreeNode } from "../../src/types/core/tree";
+import type { TreeNode } from "../../src/types/components/tree";
 
 /**
  * A tree node with a consumer field. `children` re-types to itself.

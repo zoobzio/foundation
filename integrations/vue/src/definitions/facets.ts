@@ -1,4 +1,4 @@
-import type { FacetsDefinition, FacetItem } from "../types/core/facets";
+import type { FacetsDefinition, FacetItem } from "../types/components/facets";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

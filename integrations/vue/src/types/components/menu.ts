@@ -79,7 +79,7 @@ export type MenuContext<T extends MenuItem = MenuItem> = {
   align: "start" | "center" | "end";
   sideOffset: number;
   alignOffset: number;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: MenuPassthrough<T>;
 };

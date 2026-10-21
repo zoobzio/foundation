@@ -58,7 +58,7 @@ export type FacetsEmits = {
 export type FacetsContext<T extends FacetItem = FacetItem> = {
   groups: FacetGroup<T>[];
   selected?: Set<string>;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   activeCount: number;
   el: ComponentPublicInstance | null;
   settings: FacetsPassthrough<T>;

@@ -1,4 +1,4 @@
-import type { KeywordsMatchMode } from "../types/core/keywords";
+import type { KeywordsMatchMode } from "../types/components/keywords";
 import type { Ref } from "vue";
 
 import { computed, ref, watch } from "vue";
@@ -11,14 +11,14 @@ import { parse, build } from "../utils/keywords";
  *
  * @param model - The keyword expression.
  */
-export const useKeywords = (model: Ref<string | undefined>) => {
+export const useKeywords = (model: Ref<string>) => {
   const includeInput = ref("");
   const excludeInput = ref("");
 
-  const parsed = computed(() => parse(model.value ?? ""));
+  const parsed = computed(() => parse(model.value));
 
   // The mode must survive an empty include list, which encodes no mode.
-  const isOrMode = computed(() => (model.value ?? "").includes("||"));
+  const isOrMode = computed(() => model.value.includes("||"));
   const mode = ref<KeywordsMatchMode>(isOrMode.value ? "or" : "and");
   watch(isOrMode, (v) => {
     mode.value = v ? "or" : "and";

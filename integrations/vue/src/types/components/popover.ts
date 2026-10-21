@@ -61,7 +61,7 @@ export type PopoverContext = {
   sideOffset: number;
   alignOffset: number;
   arrow: boolean;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: PopoverPassthrough;
 };

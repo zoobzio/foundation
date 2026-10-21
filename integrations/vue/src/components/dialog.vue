@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A modal dialog. The model is the open state.
- */
 import type {
   DialogProps,
   DialogEmits,
   DialogPassthrough,
   DialogContext,
   DialogSlots,
-} from "../types/core/dialog";
+} from "../types/components/dialog";
 import type { ComponentPublicInstance } from "vue";
 
 import {

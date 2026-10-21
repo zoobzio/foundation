@@ -1,4 +1,4 @@
-import type { TooltipDefinition } from "../types/core/tooltip";
+import type { TooltipDefinition } from "../types/components/tooltip";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

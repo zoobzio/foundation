@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A single toast. Closing it emits `close` as well as `update:open`.
- */
 import type {
   ToastProps,
   ToastEmits,
   ToastPassthrough,
   ToastContext,
   ToastSlots,
-} from "../types/core/toast";
+} from "../types/components/toast";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToastRoot, ToastTitle, ToastDescription, ToastClose } from "reka-ui";

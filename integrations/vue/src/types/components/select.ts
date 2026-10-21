@@ -57,7 +57,7 @@ export type SelectContext<T extends Option = Option> = {
   name?: string;
   modelValue: Ref<T | undefined>;
   display: string;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: SelectPassthrough<T>;
 };

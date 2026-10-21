@@ -1,4 +1,4 @@
-import type { TagsInputDefinition } from "../types/core/tags-input";
+import type { TagsInputDefinition } from "../types/components/tags-input";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

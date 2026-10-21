@@ -1,15 +1,11 @@
 <script lang="ts">
-/**
- * A popover. With `reference`, the content anchors to that element and
- * no trigger renders.
- */
 import type {
   PopoverProps,
   PopoverEmits,
   PopoverPassthrough,
   PopoverContext,
   PopoverSlots,
-} from "../types/core/popover";
+} from "../types/components/popover";
 import type { ComponentPublicInstance } from "vue";
 
 import {

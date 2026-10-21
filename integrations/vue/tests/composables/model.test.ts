@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, expectTypeOf, it, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { mount } from "@vue/test-utils";
 import { useModel } from "../../src/composables/model";
@@ -27,6 +27,28 @@ describe("useModel", () => {
     $model.value = "b";
     expect(emit).toHaveBeenCalledWith("b");
     expect($model.value).toBe("b");
+  });
+
+  it("types as never undefined when a default is given without explicit", () => {
+    const { result: $model } = withSetup(() =>
+      useModel<string[]>(() => undefined, vi.fn(), { default: [] }),
+    );
+    expectTypeOf($model.value).toEqualTypeOf<string[]>();
+    expect($model.value).toEqual([]);
+  });
+
+  it("stays optional without a default or with explicit", () => {
+    const { result: bare } = withSetup(() =>
+      useModel<string>(() => undefined, vi.fn()),
+    );
+    expectTypeOf(bare.value).toEqualTypeOf<string | undefined>();
+    const { result: explicit } = withSetup(() =>
+      useModel<string>(() => undefined, vi.fn(), {
+        default: "",
+        explicit: "modelValue",
+      }),
+    );
+    expectTypeOf(explicit.value).toEqualTypeOf<string | undefined>();
   });
 
   it("prop wins over a previously set internal value", () => {

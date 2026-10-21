@@ -130,7 +130,7 @@ export type DateRangePickerEmits = {
  */
 export type DateRangePickerContext = {
   modelValue: Ref<DateRange | undefined>;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: DateRangePickerPassthrough;
 };

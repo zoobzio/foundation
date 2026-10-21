@@ -1,16 +1,11 @@
 <script lang="ts">
-/**
- * A segmented date field with a calendar popover. `modelValue` is
- * required. Its presence on the vnode decides control, so pass `undefined`
- * for an uncontrolled instance.
- */
 import type {
   DatePickerProps,
   DatePickerEmits,
   DatePickerPassthrough,
   DatePickerContext,
   DatePickerSlots,
-} from "../types/core/date-picker";
+} from "../types/components/date-picker";
 import type { DateValue } from "@internationalized/date";
 import type { ComponentPublicInstance } from "vue";
 

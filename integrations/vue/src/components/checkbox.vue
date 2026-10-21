@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A single checkbox. The model is the checked state.
- */
 import type {
   CheckboxProps,
   CheckboxEmits,
   CheckboxPassthrough,
   CheckboxContext,
   CheckboxSlots,
-} from "../types/core/checkbox";
+} from "../types/components/checkbox";
 import type { ComponentPublicInstance } from "vue";
 
 import { CheckboxRoot } from "reka-ui";

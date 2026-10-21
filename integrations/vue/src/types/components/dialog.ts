@@ -45,7 +45,7 @@ export type DialogEmits = {
 export type DialogContext = {
   title: string;
   description: string;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: DialogPassthrough;
 };

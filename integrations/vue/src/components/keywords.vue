@@ -1,15 +1,11 @@
 <script lang="ts">
-/**
- * A popover that edits a keyword expression as include and exclude tags
- * plus a match mode. The model is the expression string.
- */
 import type {
   KeywordsContext,
   KeywordsEmits,
   KeywordsPassthrough,
   KeywordsProps,
   KeywordsSlots,
-} from "../types/core/keywords";
+} from "../types/components/keywords";
 import type { ComponentPublicInstance } from "vue";
 
 import Fab from "./fab.vue";

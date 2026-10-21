@@ -1,7 +1,7 @@
 import type {
   SegmentedControlDefinition,
   SegmentedControlOption,
-} from "../types/core/segmented-control";
+} from "../types/components/segmented-control";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

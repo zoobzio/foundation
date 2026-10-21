@@ -1,4 +1,4 @@
-import type { DialogDefinition } from "../types/core/dialog";
+import type { DialogDefinition } from "../types/components/dialog";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

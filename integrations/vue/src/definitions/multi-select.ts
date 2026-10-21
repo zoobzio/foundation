@@ -1,4 +1,4 @@
-import type { MultiSelectDefinition } from "../types/core/multi-select";
+import type { MultiSelectDefinition } from "../types/components/multi-select";
 import type { Option } from "../types/common";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";

@@ -52,7 +52,7 @@ export type ToastContext = {
   description?: string;
   variant?: ToastVariant;
   duration?: number;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: ToastPassthrough;
 };

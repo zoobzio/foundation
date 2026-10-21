@@ -1,8 +1,4 @@
 <script lang="ts">
-/**
- * A searchable list of grouped options. The model is the selected option
- * objects. Options with a `count` of 0 hide unless selected.
- */
 import type {
   CommandProps,
   CommandEmits,
@@ -10,7 +6,7 @@ import type {
   CommandContext,
   CommandSlots,
   CommandOption,
-} from "../types/core/command";
+} from "../types/components/command";
 import type { ComponentPublicInstance } from "vue";
 
 import {
@@ -24,7 +20,7 @@ import {
 import Checkbox from "./checkbox.vue";
 import Scroller from "./scroller.vue";
 
-import { computed, useTemplateRef } from "vue";
+import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
@@ -63,23 +59,14 @@ const { selected } = useSelection($model, () => ({
   multiple,
 }));
 
-const { match } = useSearch(
+const { results, hasResults } = useSearch(
   $search,
-  () => groups.flatMap((group) => group.options),
-  () => ({ keys: ["value", "label"] }),
+  () => groups,
+  () => ({
+    keys: ["value", "label"],
+    filter: (option) => option.count !== 0 || selected(option),
+  }),
 );
-
-const results = computed(() => {
-  const base = groups.map((group) => ({
-    ...group,
-    options: group.options.filter(
-      (option) => match(option) && (option.count !== 0 || selected(option)),
-    ),
-  }));
-  return base.filter((group) => group.options.length > 0);
-});
-
-const hasResults = computed(() => results.value.length > 0);
 
 const settings = usePassthrough<CommandPassthrough<T>>(() => ({
   pt,

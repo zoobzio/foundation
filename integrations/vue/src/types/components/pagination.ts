@@ -17,12 +17,13 @@ export type PaginationPassthrough = {
 };
 
 /**
- * Props of the pagination. `page` and `size` are models. `count` is the
- * page count. `total` is the item count.
+ * Props of the pagination. `page` and `size` are models, falling back to
+ * page 1 and the default page size. `count` is the page count. `total` is
+ * the item count.
  */
 export type PaginationProps = {
-  page: number;
-  size: number;
+  page?: number;
+  size?: number;
   count: number;
   total: number;
   pt?: PT<PaginationPassthrough>;

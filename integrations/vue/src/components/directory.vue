@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A grouped navigation list.
- */
 import type {
   DirectoryContext,
   DirectoryEmits,
   DirectoryItem,
   DirectoryProps,
   DirectorySlots,
-} from "../types/core/directory";
+} from "../types/components/directory";
 
 import { useTemplateRef } from "vue";
 import { useContext } from "../composables/context";

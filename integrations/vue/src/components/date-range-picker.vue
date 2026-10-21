@@ -1,16 +1,11 @@
 <script lang="ts">
-/**
- * A segmented start and end date field with a two-month calendar popover.
- * `modelValue` is required. Its presence on the vnode decides control, so
- * pass `undefined` for an uncontrolled instance.
- */
 import type {
   DateRangePickerProps,
   DateRangePickerEmits,
   DateRangePickerPassthrough,
   DateRangePickerContext,
   DateRangePickerSlots,
-} from "../types/core/date-range-picker";
+} from "../types/components/date-range-picker";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 

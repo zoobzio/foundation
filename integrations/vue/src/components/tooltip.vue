@@ -1,14 +1,11 @@
 <script lang="ts">
-/**
- * A tooltip. The default slot is the trigger.
- */
 import type {
   TooltipProps,
   TooltipEmits,
   TooltipPassthrough,
   TooltipContext,
   TooltipSlots,
-} from "../types/core/tooltip";
+} from "../types/components/tooltip";
 import type { ComponentPublicInstance } from "vue";
 
 import {

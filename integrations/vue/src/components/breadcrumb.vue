@@ -1,15 +1,11 @@
 <script lang="ts">
-/**
- * A navigation trail. The last item renders as the current page. Items with
- * a `link` render as anchors, other items as buttons.
- */
 import type {
   BreadcrumbContext,
   BreadcrumbEmits,
   BreadcrumbItem,
   BreadcrumbProps,
   BreadcrumbSlots,
-} from "../types/core/breadcrumb";
+} from "../types/components/breadcrumb";
 
 import { useTemplateRef } from "vue";
 import { useContext } from "../composables/context";

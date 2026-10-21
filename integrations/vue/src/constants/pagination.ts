@@ -9,6 +9,11 @@ export const PAGE_SIZE_OPTIONS = [
 ];
 
 /**
+ * Page size when none is provided.
+ */
+export const PAGE_SIZE_DEFAULT = 10;
+
+/**
  * Page count up to which the pager lists every page.
  */
 export const PAGINATION_SIMPLE_THRESHOLD = 7;

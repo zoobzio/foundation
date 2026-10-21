@@ -1,4 +1,4 @@
-import type { BreadcrumbItem } from "../../src/types/core/breadcrumb";
+import type { BreadcrumbItem } from "../../src/types/components/breadcrumb";
 
 /**
  * A breadcrumb item with a consumer field.

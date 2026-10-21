@@ -1,4 +1,4 @@
-import type { ScrollerDefinition } from "../types/core/scroller";
+import type { ScrollerDefinition } from "../types/components/scroller";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

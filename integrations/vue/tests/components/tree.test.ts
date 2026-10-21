@@ -4,7 +4,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import Core from "../../src/components/tree.vue";
 import { fakeTreeNodes } from "#test/data/tree";
 import type { FakeTreeNode } from "#test/data/tree";
-import type { TreeEmits, TreeProps } from "../../src/types/core/tree";
+import type { TreeEmits, TreeProps } from "../../src/types/components/tree";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Tree: FunctionalComponent<

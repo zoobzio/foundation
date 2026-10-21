@@ -19,7 +19,7 @@ here.
 ```ts
 import Select from "@zoobzio/vue/components/select.vue";
 import { defineSelect } from "@zoobzio/vue/definitions/select";
-import type { SelectProps } from "@zoobzio/vue/types/core/select";
+import type { SelectProps } from "@zoobzio/vue/types/components/select";
 ```
 
 ```vue
@@ -43,7 +43,7 @@ const picker = defineSelect({
 ```
 src/
   components/        — interactive components (32)
-  composables/       — usePassthrough, useModel, useContext, useSelection, useSearch, useScroller, useKeywords, usePaginate
+  composables/       — usePassthrough, useModel, useContext, useSelection, useSearch, useScroller, useKeywords, usePaginate, useAutocomplete
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough, context, definition; per-component types in core/
   utils/             — passthrough merge, define runtime, date, keywords, paginate

@@ -1,16 +1,11 @@
 <script lang="ts">
-/**
- * A calendar that selects a date range. `modelValue` is required. Its
- * presence on the vnode decides control, so pass `undefined` explicitly
- * for an uncontrolled instance.
- */
 import type {
   RangeCalendarProps,
   RangeCalendarEmits,
   RangeCalendarPassthrough,
   RangeCalendarContext,
   RangeCalendarSlots,
-} from "../types/core/range-calendar";
+} from "../types/components/range-calendar";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 

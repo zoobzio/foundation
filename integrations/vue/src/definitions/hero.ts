@@ -1,4 +1,4 @@
-import type { HeroDefinition } from "../types/core/hero";
+import type { HeroDefinition } from "../types/components/hero";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

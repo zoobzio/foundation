@@ -1,4 +1,4 @@
-import type { CheckboxDefinition } from "../types/core/checkbox";
+import type { CheckboxDefinition } from "../types/components/checkbox";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

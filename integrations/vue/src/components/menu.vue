@@ -1,8 +1,4 @@
 <script lang="ts">
-/**
- * A dropdown menu of grouped items. An item with a `link` renders as an
- * anchor. Selecting any item emits `select`.
- */
 import type {
   MenuProps,
   MenuEmits,
@@ -10,7 +6,7 @@ import type {
   MenuContext,
   MenuSlots,
   MenuItem,
-} from "../types/core/menu";
+} from "../types/components/menu";
 import type { ComponentPublicInstance } from "vue";
 
 import {

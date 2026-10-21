@@ -7,7 +7,7 @@ import type {
   SegmentedControlEmits,
   SegmentedControlOption,
   SegmentedControlProps,
-} from "../../src/types/core/segmented-control";
+} from "../../src/types/components/segmented-control";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const SegmentedControl: FunctionalComponent<

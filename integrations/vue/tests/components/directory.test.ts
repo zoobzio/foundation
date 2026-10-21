@@ -7,7 +7,7 @@ import type { FakeEntry } from "#test/data/directory";
 import type {
   DirectoryEmits,
   DirectoryProps,
-} from "../../src/types/core/directory";
+} from "../../src/types/components/directory";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Directory: FunctionalComponent<

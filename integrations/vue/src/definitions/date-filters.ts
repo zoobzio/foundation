@@ -1,4 +1,4 @@
-import type { DateFiltersDefinition } from "../types/core/date-filters";
+import type { DateFiltersDefinition } from "../types/components/date-filters";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

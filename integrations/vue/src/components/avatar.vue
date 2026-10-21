@@ -1,13 +1,10 @@
 <script lang="ts">
-/**
- * An image with a text fallback.
- */
 import type {
   AvatarProps,
   AvatarPassthrough,
   AvatarContext,
   AvatarSlots,
-} from "../types/core/avatar";
+} from "../types/components/avatar";
 import type { ComponentPublicInstance } from "vue";
 
 import { AvatarRoot, AvatarImage, AvatarFallback } from "reka-ui";

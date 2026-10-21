@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import Select from "../../src/components/select.vue";
 import { fakeOptions } from "#test/data/options";
-import type { SelectProps } from "../../src/types/core/select";
+import type { SelectProps } from "../../src/types/components/select";
 import type { Option } from "../../src/types/common";
 
 const mounted: { unmount: () => void }[] = [];

@@ -1,4 +1,4 @@
-import type { MenuGroup } from "../../src/types/core/menu";
+import type { MenuGroup } from "../../src/types/components/menu";
 
 /**
  * Groups with and without a label.

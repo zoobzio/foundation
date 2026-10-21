@@ -48,7 +48,7 @@ export type TagsInputContext = {
   disabled?: boolean;
   max?: number;
   delimiter?: string | RegExp;
-  modelValue: Ref<string[] | undefined>;
+  modelValue: Ref<string[]>;
   el: ComponentPublicInstance | null;
   settings: TagsInputPassthrough;
 };

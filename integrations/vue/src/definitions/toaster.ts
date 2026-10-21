@@ -1,4 +1,4 @@
-import type { ToasterDefinition } from "../types/core/toaster";
+import type { ToasterDefinition } from "../types/components/toaster";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

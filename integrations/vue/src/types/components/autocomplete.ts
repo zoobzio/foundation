@@ -112,7 +112,7 @@ export type AutocompleteContext<M = unknown> = {
   placeholder: string;
   disabled?: boolean;
   modelValue: Ref<string | undefined>;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   panels: AutocompleteOption<M>[][];
   el: ComponentPublicInstance | null;
   settings: AutocompletePassthrough<M>;

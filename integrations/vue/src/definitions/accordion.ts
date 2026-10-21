@@ -1,4 +1,4 @@
-import type { AccordionDefinition } from "../types/core/accordion";
+import type { AccordionDefinition } from "../types/components/accordion";
 import type { Option } from "../types/common";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";

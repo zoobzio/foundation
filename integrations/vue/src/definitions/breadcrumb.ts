@@ -1,7 +1,7 @@
 import type {
   BreadcrumbDefinition,
   BreadcrumbItem,
-} from "../types/core/breadcrumb";
+} from "../types/components/breadcrumb";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

@@ -1,4 +1,4 @@
-import type { RadioDefinition } from "../types/core/radio";
+import type { RadioDefinition } from "../types/components/radio";
 import type { Option } from "../types/common";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";

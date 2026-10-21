@@ -1,4 +1,4 @@
-import type { CommandDefinition, CommandOption } from "../types/core/command";
+import type { CommandDefinition, CommandOption } from "../types/components/command";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

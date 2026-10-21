@@ -1,4 +1,4 @@
-import type { DatePickerDefinition } from "../types/core/date-picker";
+import type { DatePickerDefinition } from "../types/components/date-picker";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

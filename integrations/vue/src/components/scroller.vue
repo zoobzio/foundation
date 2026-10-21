@@ -1,14 +1,10 @@
 <script lang="ts">
-/**
- * A scroll area with custom scrollbars and a back-to-top button that
- * shows once the viewport scrolls.
- */
 import type {
   ScrollerProps,
   ScrollerPassthrough,
   ScrollerContext,
   ScrollerSlots,
-} from "../types/core/scroller";
+} from "../types/components/scroller";
 import type { ComponentPublicInstance } from "vue";
 
 import {

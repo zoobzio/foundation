@@ -1,4 +1,4 @@
-import type { TreeDefinition, TreeNode } from "../types/core/tree";
+import type { TreeDefinition, TreeNode } from "../types/components/tree";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

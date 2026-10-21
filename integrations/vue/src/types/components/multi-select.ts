@@ -55,7 +55,7 @@ export type MultiSelectContext<T extends Option> = {
   placeholder: string;
   disabled?: boolean;
   modelValue: Ref<T[] | undefined>;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   display: string;
   el: ComponentPublicInstance | null;
   settings: MultiSelectPassthrough<T>;

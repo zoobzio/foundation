@@ -1,8 +1,4 @@
 <script lang="ts">
-/**
- * A popover of counted filter options grouped by facet. The model is the
- * set of selected option values.
- */
 import type {
   FacetItem,
   FacetsContext,
@@ -10,8 +6,8 @@ import type {
   FacetsPassthrough,
   FacetsProps,
   FacetsSlots,
-} from "../types/core/facets";
-import type { CommandGroup } from "../types/core/command";
+} from "../types/components/facets";
+import type { CommandGroup } from "../types/components/command";
 import type { ComponentPublicInstance } from "vue";
 
 import Command from "./command.vue";

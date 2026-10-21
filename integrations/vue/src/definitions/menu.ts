@@ -1,4 +1,4 @@
-import type { MenuDefinition, MenuItem } from "../types/core/menu";
+import type { MenuDefinition, MenuItem } from "../types/components/menu";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

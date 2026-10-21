@@ -1,4 +1,4 @@
-import type { CalendarDefinition } from "../types/core/calendar";
+import type { CalendarDefinition } from "../types/components/calendar";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

@@ -52,7 +52,7 @@ export type KeywordsContext = {
   exclude: string[];
   mode: KeywordsMatchMode;
   activeCount: number;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: KeywordsPassthrough;
 };

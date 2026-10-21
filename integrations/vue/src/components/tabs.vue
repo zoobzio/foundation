@@ -1,8 +1,4 @@
 <script lang="ts">
-/**
- * Tabs. A tab with a `link` renders as an anchor, and any link switches
- * activation to manual.
- */
 import type {
   TabsProps,
   TabsEmits,
@@ -10,7 +6,7 @@ import type {
   TabsContext,
   TabsSlots,
   TabsOption,
-} from "../types/core/tabs";
+} from "../types/components/tabs";
 import type { ComponentPublicInstance } from "vue";
 
 import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";

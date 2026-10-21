@@ -1,15 +1,11 @@
 <script lang="ts">
-/**
- * A multiple-value select. The model is the array of selected option
- * objects, not their `value` strings.
- */
 import type {
   MultiSelectProps,
   MultiSelectEmits,
   MultiSelectPassthrough,
   MultiSelectContext,
   MultiSelectSlots,
-} from "../types/core/multi-select";
+} from "../types/components/multi-select";
 import type { Option } from "../types/common";
 import type { ComponentPublicInstance } from "vue";
 

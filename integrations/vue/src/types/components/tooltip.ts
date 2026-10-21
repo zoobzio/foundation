@@ -47,7 +47,7 @@ export type TooltipContext = {
   side: "top" | "right" | "bottom" | "left";
   align: "start" | "center" | "end";
   sideOffset: number;
-  open: Ref<boolean | undefined>;
+  open: Ref<boolean>;
   el: ComponentPublicInstance | null;
   settings: TooltipPassthrough;
 };

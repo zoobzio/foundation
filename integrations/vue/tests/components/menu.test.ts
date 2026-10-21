@@ -3,7 +3,7 @@ import type { FunctionalComponent } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import Core from "../../src/components/menu.vue";
 import { fakeLinkedMenuGroups } from "#test/data/menu";
-import type { MenuEmits, MenuItem, MenuProps } from "../../src/types/core/menu";
+import type { MenuEmits, MenuItem, MenuProps } from "../../src/types/components/menu";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Menu: FunctionalComponent<

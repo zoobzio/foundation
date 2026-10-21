@@ -1,18 +1,11 @@
 <script lang="ts">
-/**
- * A text input with stacked option panels: the `trail` panels, then `items`.
- * Only the last panel is a listbox. Trail panels render plain buttons so
- * keyboard navigation stays on the active panel. `more` emits once per
- * scroll to the end of a panel.
- */
 import type {
   AutocompleteProps,
   AutocompleteEmits,
   AutocompletePassthrough,
   AutocompleteContext,
   AutocompleteSlots,
-  AutocompleteOption,
-} from "../types/core/autocomplete";
+} from "../types/components/autocomplete";
 import type { ComponentPublicInstance } from "vue";
 
 import {
@@ -23,10 +16,11 @@ import {
 } from "reka-ui";
 import Scroller from "./scroller.vue";
 
-import { computed, useTemplateRef } from "vue";
+import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+import { useAutocomplete } from "../composables/autocomplete";
 </script>
 
 <script setup lang="ts" generic="M">
@@ -58,24 +52,11 @@ const $open = useModel(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
-const panels = computed(() => {
-  const result: AutocompleteOption<M>[][] = [...trail];
-  if (items.length) result.push(items);
-  return result;
-});
-
-let moreArmed = true;
-const onPanelScroll = (event: Event) => {
-  const el = event.target;
-  if (!(el instanceof HTMLElement)) return;
-  const nearEnd = el.scrollTop + el.clientHeight >= el.scrollHeight - 48;
-  if (nearEnd && moreArmed) {
-    moreArmed = false;
-    emit("more");
-  } else if (!nearEnd) {
-    moreArmed = true;
-  }
-};
+const { panels, select, onInputKeydown, onPanelScroll } = useAutocomplete(
+  $model,
+  () => ({ items, trail, steps }),
+  emit,
+);
 
 const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
   pt,
@@ -97,16 +78,7 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
     input: {
       placeholder,
       disabled,
-      onKeydown: (event) => {
-        if (event.key === "Backspace" && !$model.value && steps.length) {
-          event.preventDefault();
-          emit("unwrap");
-          return;
-        }
-        if (event.key !== "Enter" || event.defaultPrevented) return;
-        event.preventDefault();
-        emit("submit", $model.value ?? "");
-      },
+      onKeydown: onInputKeydown,
     },
     content: { onScrollCapture: onPanelScroll },
     scroller: {},
@@ -115,8 +87,9 @@ const settings = usePassthrough<AutocompletePassthrough<M>>(() => ({
       disabled: anchor.option.disabled,
       textValue: anchor.option.label,
       onSelect: (event) => {
+        // preventDefault blocks reka's own model write + close
         event.preventDefault();
-        if (!anchor.option.disabled) emit("select", anchor.option);
+        select(anchor.option);
       },
     }),
   },
@@ -180,11 +153,7 @@ defineSlots<AutocompleteSlots<M>>();
                   class="f-button"
                   :disabled="option.disabled"
                   :aria-current="option.active ? true : undefined"
-                  @click="
-                    () => {
-                      if (!option.disabled) emit('select', option);
-                    }
-                  "
+                  @click="select(option)"
                 >
                   <slot
                     name="itemIcon"

@@ -7,7 +7,7 @@ import type { FakeCrumb } from "#test/data/breadcrumb";
 import type {
   BreadcrumbEmits,
   BreadcrumbProps,
-} from "../../src/types/core/breadcrumb";
+} from "../../src/types/components/breadcrumb";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Breadcrumb: FunctionalComponent<

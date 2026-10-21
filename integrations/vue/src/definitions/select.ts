@@ -1,4 +1,4 @@
-import type { SelectDefinition } from "../types/core/select";
+import type { SelectDefinition } from "../types/components/select";
 import type { Option } from "../types/common";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";

@@ -4,6 +4,7 @@ import { computed, getCurrentInstance, shallowRef } from "vue";
 
 /**
  * A writable model that falls back to local state when the prop is absent.
+ * With a `default` and no `explicit`, the value is never `undefined`.
  *
  * @param prop - A getter for the model prop.
  * @param emit - Emits the `update:*` event.
@@ -11,11 +12,21 @@ import { computed, getCurrentInstance, shallowRef } from "vue";
  * @param options.explicit - The prop name. When set, presence of the prop on
  * the vnode decides control, so an explicit `undefined` is a controlled value.
  */
-export const useModel = <T>(
+export function useModel<T>(
+  prop: () => T | undefined,
+  emit: (value: T) => void,
+  options: { default: T; explicit?: undefined },
+): WritableComputedRef<T, T>;
+export function useModel<T>(
   prop: () => T | undefined,
   emit: (value: T) => void,
   options?: { default?: T; explicit?: string },
-): WritableComputedRef<T | undefined, T> => {
+): WritableComputedRef<T | undefined, T>;
+export function useModel<T>(
+  prop: () => T | undefined,
+  emit: (value: T) => void,
+  options?: { default?: T; explicit?: string },
+): WritableComputedRef<T | undefined, T> {
   const internal = shallowRef<T>();
   internal.value = options?.default;
 
@@ -43,4 +54,4 @@ export const useModel = <T>(
       emit(value);
     },
   });
-};
+}

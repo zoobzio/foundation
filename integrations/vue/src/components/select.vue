@@ -1,15 +1,11 @@
 <script lang="ts">
-/**
- * A single-value select. The model is the selected option object, not its
- * `value` string.
- */
 import type {
   SelectProps,
   SelectEmits,
   SelectPassthrough,
   SelectContext,
   SelectSlots,
-} from "../types/core/select";
+} from "../types/components/select";
 import type { Option } from "../types/common";
 import type { ComponentPublicInstance } from "vue";
 

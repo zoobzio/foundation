@@ -1,24 +1,20 @@
 <script lang="ts">
-/**
- * Page controls with first, previous, numbered, next, and last buttons
- * and a page-size select. `page` and `size` are v-model props.
- */
 import type {
   PaginationProps,
   PaginationEmits,
   PaginationPassthrough,
   PaginationContext,
   PaginationSlots,
-} from "../types/core/pagination";
+} from "../types/components/pagination";
 
 import Fab from "./fab.vue";
 import Select from "./select.vue";
 
-import { computed, useTemplateRef } from "vue";
+import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
-import { PAGE_SIZE_OPTIONS } from "../constants/pagination";
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from "../constants/pagination";
 import { usePaginate } from "../composables/paginate";
 </script>
 
@@ -30,30 +26,19 @@ const emit = defineEmits<PaginationEmits>();
 const $page = useModel(
   () => page,
   (v) => emit("update:page", v),
+  { default: 1 },
 );
 
 const $size = useModel(
   () => size,
   (v) => emit("update:size", v),
+  { default: PAGE_SIZE_DEFAULT },
 );
-
-const currentPage = computed<number>({
-  get: () => $page.value ?? 1,
-  set: (v) => {
-    $page.value = v;
-  },
-});
-const currentSize = computed<number>({
-  get: () => $size.value ?? size,
-  set: (v) => {
-    $size.value = v;
-  },
-});
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
 const { hasPrev, hasNext, options, first, prev, next, last, goToPage } =
-  usePaginate(currentPage, () => count);
+  usePaginate($page, () => count);
 
 const settings = usePassthrough<PaginationPassthrough>(() => ({
   pt,
@@ -64,19 +49,19 @@ const settings = usePassthrough<PaginationPassthrough>(() => ({
     last: { label: "Last", disabled: !hasNext.value, onClick: last },
     size: {
       modelValue: PAGE_SIZE_OPTIONS.find(
-        (o) => o.value === String(currentSize.value),
+        (o) => o.value === String($size.value),
       ),
       options: PAGE_SIZE_OPTIONS,
       "onUpdate:modelValue": (v) => {
-        currentSize.value = Number(v.value);
+        $size.value = Number(v.value);
       },
     },
   },
 }));
 
 const ctx = useContext<PaginationContext>("pagination", () => ({
-  page: currentPage,
-  size: currentSize,
+  page: $page,
+  size: $size,
   count,
   total,
   hasPrev: hasPrev.value,

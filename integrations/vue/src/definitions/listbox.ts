@@ -1,4 +1,4 @@
-import type { ListboxDefinition } from "../types/core/listbox";
+import type { ListboxDefinition } from "../types/components/listbox";
 import type { Option } from "../types/common";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";

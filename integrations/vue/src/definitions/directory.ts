@@ -1,7 +1,7 @@
 import type {
   DirectoryDefinition,
   DirectoryItem,
-} from "../types/core/directory";
+} from "../types/components/directory";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

@@ -1,13 +1,10 @@
 <script lang="ts">
-/**
- * The toast provider and viewport. Render toasts in the `toasts` slot.
- */
 import type {
   ToasterProps,
   ToasterPassthrough,
   ToasterContext,
   ToasterSlots,
-} from "../types/core/toaster";
+} from "../types/components/toaster";
 import type { ComponentPublicInstance } from "vue";
 
 import { ToastProvider, ToastViewport } from "reka-ui";

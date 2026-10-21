@@ -76,7 +76,7 @@ export type CommandContext<T extends CommandOption> = {
   placeholder: string;
   disabled?: boolean;
   multiple: boolean;
-  search: Ref<string | undefined>;
+  search: Ref<string>;
   modelValue: Ref<T[] | undefined>;
   results: CommandGroup<T>[];
   el: ComponentPublicInstance | null;

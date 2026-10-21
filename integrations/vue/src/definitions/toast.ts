@@ -1,4 +1,4 @@
-import type { ToastDefinition } from "../types/core/toast";
+import type { ToastDefinition } from "../types/components/toast";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

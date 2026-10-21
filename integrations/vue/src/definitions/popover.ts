@@ -1,4 +1,4 @@
-import type { PopoverDefinition } from "../types/core/popover";
+import type { PopoverDefinition } from "../types/components/popover";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

@@ -1,4 +1,4 @@
-import type { AvatarDefinition } from "../types/core/avatar";
+import type { AvatarDefinition } from "../types/components/avatar";
 import type { DefinitionSource } from "../types/definition";
 import type { ComputedRef } from "vue";
 

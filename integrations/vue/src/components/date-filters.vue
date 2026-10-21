@@ -1,9 +1,4 @@
 <script lang="ts">
-/**
- * A popover that builds one date filter in three steps: field, operator,
- * value. On open, the stepper resumes from the last filter in the model.
- * `addFilter` receives the result.
- */
 import type {
   DateFiltersProps,
   DateFiltersPassthrough,
@@ -11,8 +6,8 @@ import type {
   DateFiltersSlots,
   DateFilter,
   DateFilterOperator,
-} from "../types/core/date-filters";
-import type { CommandOption } from "../types/core/command";
+} from "../types/components/date-filters";
+import type { CommandOption } from "../types/components/command";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
 

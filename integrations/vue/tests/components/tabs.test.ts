@@ -7,7 +7,7 @@ import type {
   TabsEmits,
   TabsOption,
   TabsProps,
-} from "../../src/types/core/tabs";
+} from "../../src/types/components/tabs";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Tabs: FunctionalComponent<TabsProps<TabsOption>, TabsEmits> = Core;

@@ -1,9 +1,4 @@
 <script lang="ts">
-/**
- * A single-select tree. `modelValue` and `expanded` are explicit models:
- * their presence on the vnode decides control, so pass `undefined`
- * explicitly for an uncontrolled instance.
- */
 import type {
   TreeContext,
   TreeEmits,
@@ -11,7 +6,7 @@ import type {
   TreePassthrough,
   TreeProps,
   TreeSlots,
-} from "../types/core/tree";
+} from "../types/components/tree";
 import type { ComponentPublicInstance } from "vue";
 
 import { TreeRoot, TreeItem } from "reka-ui";
