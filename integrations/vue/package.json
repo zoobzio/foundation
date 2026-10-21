@@ -1,0 +1,60 @@
+{
+  "name": "@zoobzio/vue",
+  "version": "0.0.0",
+  "description": "Vue 3 components for the foundation design system: unstyled interactive components composing reka-ui primitives and semantic HTML, exposed through passthrough and ctx-scoped slots. No Nuxt dependency.",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoobzio/foundation.git",
+    "directory": "integrations/vue"
+  },
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./components/*": "./src/components/*.vue",
+    "./components/*.vue": "./src/components/*.vue",
+    "./composables/*": "./src/composables/*.ts",
+    "./constants/*": "./src/constants/*.ts",
+    "./definitions/*": "./src/definitions/*.ts",
+    "./types/*": "./src/types/*.ts",
+    "./utils/*": "./src/utils/*.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.7.0",
+    "defu": "^6.1.7",
+    "objectively": "^0.3.0",
+    "reka-ui": "^2.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitest/coverage-v8": "^5.0.3",
+    "@vue/test-utils": "^2.4.8",
+    "happy-dom": "^20.9.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3",
+    "vue": "^3.5.24",
+    "vue-tsc": "^2.1.10"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}
