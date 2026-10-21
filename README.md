@@ -52,9 +52,8 @@ Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
 ## Project structure
 
 The repo is a pnpm workspace. The published layer lives in `layers/foundation/`;
-`services/` holds the headless services the layer wires into Nuxt,
-`packages/` holds what those services share, and `example/` is a playground
-app that extends the layer.
+`packages/` holds the headless services the layer wires into Nuxt and the kit
+they share, and `example/` is a playground app that extends the layer.
 
 ```
 layers/foundation/
@@ -65,7 +64,7 @@ layers/foundation/
       system/     — app-shell composition (2)
     composables/  — usePassthrough, useContext, useModel, useHooks, …
     factories/    — widget composables: use*(id, definition) → Widget
-    services/     — the adapter service (the data machines live in services/)
+    services/     — the adapter service (the data machines live in packages/)
     stores/       — useState-backed feature state
     plugins/      — log
     types/        — per-component prop/emit types
@@ -74,15 +73,14 @@ layers/foundation/
     app.vue · error.vue · app.d.ts
   tests/          — vitest suite mirroring app/ (see tests/README.md)
   nuxt.config.ts  — layer config (auto-import off)
-services/
+packages/
+  kit/            — @zoobzio/kit: the emitter, state proxy, and types the services share
   browser/        — @zoobzio/browser: headless browser service (pure TS, no framework)
   chart/          — @zoobzio/chart: headless chart service (pure TS, no framework)
   deck/           — @zoobzio/deck: headless deck service (pure TS, no framework)
   form/           — @zoobzio/form: headless form service (pure TS, no framework)
   preview/        — @zoobzio/preview: headless preview service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
-packages/
-  kit/            — @zoobzio/kit: the emitter, state proxy, and types the services share
 example/          — playground app extending the layer
 ```
 

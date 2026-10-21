@@ -1,7 +1,7 @@
 {
-  "name": "@zoobzio/preview",
+  "name": "@zoobzio/chart",
   "version": "0.0.0",
-  "description": "Headless data preview service: one record fetched and read by field. No framework dependency.",
+  "description": "Headless data chart service: variant, renderer, field and axis choice, bucket and range, fetch dispatch. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git",
-    "directory": "services/preview"
+    "directory": "packages/chart"
   },
   "files": [
     ".dist"

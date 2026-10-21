@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git",
-    "directory": "services/deck"
+    "directory": "packages/deck"
   },
   "files": [
     ".dist"
