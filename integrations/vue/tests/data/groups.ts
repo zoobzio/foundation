@@ -1,4 +1,7 @@
-import type { CommandGroup, CommandOption } from "../../src/types/components/command";
+import type {
+  CommandGroup,
+  CommandOption,
+} from "../../src/types/components/command";
 
 /**
  * Two groups of counted options. "Archived" has a count of 0.

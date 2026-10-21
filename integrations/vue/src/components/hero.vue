@@ -1,5 +1,9 @@
 <script lang="ts">
-import type { HeroProps, HeroContext, HeroSlots } from "../types/components/hero";
+import type {
+  HeroProps,
+  HeroContext,
+  HeroSlots,
+} from "../types/components/hero";
 
 import { useTemplateRef } from "vue";
 import { useContext } from "../composables/context";
