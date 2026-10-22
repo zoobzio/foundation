@@ -29,38 +29,33 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
+    "lint": "oxlint",
     "typecheck": "vue-tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@internationalized/date": "^3.7.0",
+    "@internationalized/date": "catalog:",
     "@zoobzio/browser": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",
     "@zoobzio/table": "workspace:*",
-    "defu": "^6.1.7",
-    "objectively": "^0.3.0",
-    "reka-ui": "^2.6.0"
+    "defu": "catalog:",
+    "objectively": "catalog:",
+    "reka-ui": "catalog:"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.6",
-    "@vitest/coverage-v8": "^5.0.3",
-    "@vue/test-utils": "^2.4.8",
-    "happy-dom": "^20.9.0",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.3",
-    "vue": "^3.5.24",
-    "vue-tsc": "^2.1.10",
-    "zod": "^3.23.0"
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
-    "vue": "^3.5.0"
+    "vue": "catalog:peers"
   }
 }

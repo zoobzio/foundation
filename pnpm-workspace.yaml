@@ -1,3 +1,31 @@
 packages:
-  - packages/*
-  - integrations/*
+  - "packages/*"
+  - "integrations/*"
+
+catalog:
+  "@changesets/changelog-github": "^0.7.0"
+  "@changesets/cli": "^2.31.0"
+  "@internationalized/date": "^3.7.0"
+  "@nuxt/kit": "^4.5.0"
+  "@vitejs/plugin-vue": "^6.0.6"
+  "@vitest/coverage-v8": "^5.0.3"
+  "@vue/test-utils": "^2.4.8"
+  "defu": "^6.1.7"
+  "happy-dom": "^20.9.0"
+  "ltrl-http": "^0.0.20"
+  "nuxt": "^4.5.0"
+  "objectively": "^0.3.0"
+  "obuild": "^0.4.44"
+  "oxfmt": "^0.71.0"
+  "oxlint": "^1.86.0"
+  "reka-ui": "^2.6.0"
+  "turbo": "^2.11.7"
+  "typescript": "^5.9.3"
+  "vitest": "^5.0.3"
+  "vue": "^3.5.24"
+  "vue-tsc": "^2.1.10"
+  "zod": "^3.23.0"
+
+catalogs:
+  peers:
+    "vue": "^3.5.0"

@@ -3,7 +3,8 @@ name: Release
 # Manual releases only — no auto Release PR. Trigger from the Actions tab
 # ("Run workflow") or `gh workflow run Release` when you want to cut a release.
 # The job applies any pending changesets (version bump + changelog), commits
-# that to the branch it ran on, publishes to npm via OIDC, and pushes the tags.
+# that to the branch it ran on, publishes to GitHub Packages, and pushes the
+# tags.
 on:
   workflow_dispatch:
 
@@ -14,7 +15,7 @@ concurrency:
 
 permissions:
   contents: write # push the version-bump commit and tags
-  id-token: write # OIDC trusted publishing + provenance attestation
+  packages: write # publish to GitHub Packages
 
 jobs:
   release:
@@ -30,26 +31,22 @@ jobs:
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
 
-      # registry-url wires npm at the registry so the OIDC token exchange has a
-      # target.
+      # registry-url + scope write an .npmrc that routes @zoobzio/* to GitHub
+      # Packages and reads the auth token from NODE_AUTH_TOKEN. Each package's
+      # publishConfig.registry points at the same registry, so `changeset
+      # publish` queries and publishes there.
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: pnpm
-          registry-url: "https://registry.npmjs.org"
-
-      # pnpm publish shells out to the npm CLI for the registry PUT, and OIDC
-      # trusted publishing requires npm >= 11.5.1; Node 22 bundles npm 10.x,
-      # which silently skips the token exchange and hits the registry
-      # unauthenticated (the E404-on-PUT failure mode).
-      - name: Update npm
-        run: npm install -g npm@latest
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@zoobzio"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      # Apply every pending changeset: bump the version, rewrite the changelog,
+      # Apply every pending changeset: bump the version, rewrite the changelogs,
       # and delete the consumed changeset files.
       # GITHUB_TOKEN lets @changesets/changelog-github resolve each changeset to
       # the commit/PR that introduced it. The default Actions token suffices.
@@ -60,7 +57,7 @@ jobs:
 
       # Commit the bump to the release branch. Skips cleanly when nothing was
       # pending — in that case Publish still ships any already-versioned commit
-      # whose version isn't yet on npm.
+      # whose version isn't yet on the registry.
       - name: Commit version bump
         run: |
           git config user.name "github-actions[bot]"
@@ -73,18 +70,16 @@ jobs:
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
-      # Publish every workspace package whose current version isn't yet on
-      # npm, via `pnpm -r publish` — pnpm rewrites `workspace:*` ranges to the
-      # real version at pack time, which `changeset publish` (npm under the
-      # hood) does not. Tokenless OIDC — no NPM_TOKEN; the npm CLI pnpm
-      # delegates to performs the trusted-publishing exchange. Provenance is
-      # emitted under trusted publishing. `changeset tag` then tags the
-      # released versions.
+      # Build, then publish every package whose version isn't yet on GitHub
+      # Packages. `changeset publish` detects pnpm and runs `pnpm publish`, so
+      # `workspace:*` ranges are rewritten to real versions at pack time. The
+      # workflow token authenticates: packages published from this repo are
+      # linked to it and inherit its visibility.
       - name: Publish
         run: pnpm ci:release
         env:
-          NPM_CONFIG_PROVENANCE: "true"
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Push the tags created for the released versions.
+      # Push the tags changeset publish created for the released versions.
       - name: Push tags
         run: git push --tags

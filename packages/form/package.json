@@ -28,26 +28,18 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "build": "obuild",
     "stub": "obuild --stub",
+    "lint": "oxlint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "vitest run"
   },
   "dependencies": {
     "@zoobzio/kit": "workspace:*",
-    "objectively": "^0.3.0",
-    "zod": "^3.23.0"
-  },
-  "devDependencies": {
-    "@vitest/coverage-v8": "^5.0.3",
-    "obuild": "^0.4.44",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.3"
+    "objectively": "catalog:",
+    "zod": "catalog:"
   }
 }

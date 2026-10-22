@@ -7,6 +7,21 @@ components built on semantic HTML up to stateful, generic data widgets.
 
 ## Usage
 
+The packages are published to **GitHub Packages** under the `@zoobzio` scope.
+Point the scope at the registry in your project's `.npmrc`, with a personal
+access token that has the `read:packages` scope:
+
+```ini
+@zoobzio:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+Then install as usual:
+
+```sh
+pnpm add @zoobzio/nuxt
+```
+
 Extend the Nuxt layer from your app's `nuxt.config`:
 
 ```ts
@@ -22,9 +37,8 @@ import Select from "@zoobzio/vue/components/select.vue";
 import { defineSelect } from "@zoobzio/vue/definitions/select";
 ```
 
-> Pre-1.0 — published to npm as an early alpha under the `alpha` dist-tag, so
-> install packages explicitly: `pnpm add @zoobzio/nuxt@alpha`. A `0.x` release
-> is the running alpha; expect breaking changes between minors until 1.0.
+> Pre-1.0 — a `0.x` release is the running alpha; expect breaking changes
+> between minors until 1.0.
 
 ## Architecture
 
@@ -65,34 +79,42 @@ integrations/
 
 ## Development
 
-```bash
+```sh
 pnpm install
+pnpm build        # build every package to its .dist (turbo)
+pnpm -r prepare   # nuxi prepare: generate the layer's tsconfig and types
 pnpm dev          # run the Nuxt layer in a dev server
-pnpm test         # run the vitest suite in every workspace package
-pnpm typecheck    # type-check every workspace package
-pnpm lint         # oxlint (lint:fix to auto-fix)
-pnpm format       # oxfmt (format:check to verify)
+pnpm test         # run the vitest suite in every workspace package (turbo)
+pnpm coverage     # one aggregated coverage pass through the root vitest config
+pnpm typecheck    # type-check every workspace package (turbo)
+pnpm lint         # oxlint
+pnpm format       # oxfmt (inspect to verify)
 ```
 
-Lint and format run from the root and walk the whole tree. `typecheck`,
-`test`, `build`, and `prepare` fan out through turbo; run them inside a
-package directory to target that package alone.
+Lint and format run from the root and walk the whole tree. `build`, `stub`,
+`typecheck`, and `test` fan out through turbo; run them inside a package
+directory to target that package alone. Shared dependency versions live in the
+[pnpm catalog](./pnpm-workspace.yaml); packages reference them as `catalog:`.
 
 Or via `make` (`make help` lists all targets):
 
-| Command             | Description                      |
-| ------------------- | -------------------------------- |
-| `make install`      | Install dependencies             |
-| `make dev`          | Start the Nuxt dev server        |
-| `make lint`         | Run oxlint                       |
-| `make lint-fix`     | Run oxlint with auto-fix         |
-| `make format`       | Format code with oxfmt           |
-| `make format-check` | Check formatting with oxfmt      |
-| `make typecheck`    | Type-check every package         |
-| `make test`         | Run all tests                    |
-| `make coverage`     | Run tests with coverage          |
-| `make check`        | Lint + format + typecheck + test |
-| `make clean`        | Remove generated files           |
+| Command          | Description                                          |
+| ---------------- | ---------------------------------------------------- |
+| `make install`   | Install dependencies                                 |
+| `make stub`      | Link the packages to their source for development    |
+| `make build`     | Build every package to its `.dist`                   |
+| `make prepare`   | Run the workspace prepare hooks (after build)        |
+| `make dev`       | Start the Nuxt dev server                            |
+| `make typecheck` | Type-check every package                             |
+| `make test`      | Run all tests                                        |
+| `make coverage`  | Run all tests with an aggregated coverage report     |
+| `make lint`      | Run oxlint                                           |
+| `make format`    | Format code with oxfmt                               |
+| `make inspect`   | Check formatting with oxfmt                          |
+| `make check`     | Lint + typecheck + test on the existing build output |
+| `make verify`    | Clean, install, build, prepare, typecheck, and test  |
+| `make ci`        | Build, prepare, typecheck, test, lint, and inspect   |
+| `make clean`     | Remove build output and the Nuxt caches              |
 
 ## Testing
 
@@ -106,23 +128,34 @@ real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in its
 
 - Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`
 - Tests required for all new code
-- `make check` (lint + typecheck + test) must pass before opening a PR
+- `make ci` (build + prepare + typecheck + test + lint + inspect) must pass
+  before opening a PR
 - Add a changeset (`pnpm changeset`) in any PR that should ship a release
-- Node 22, pnpm 10.27.0
+- Node 22, 24, or 25 (CI tests all three; `.nvmrc` pins the dev version),
+  pnpm 10.27.0
+
+CI runs on every PR and push to `main`: a build job warms the turbo cache, then
+lint, format, typecheck, a test matrix across the supported Node versions, and
+an aggregated coverage upload to Codecov. A separate Security workflow runs
+CodeQL on every push and a dependency review on every PR.
 
 ## Releasing
 
-Versioning runs on [changesets](https://github.com/changesets/changesets). Each
-PR that changes published behavior carries a changeset (`pnpm changeset`, then
-commit the generated file); pre-1.0, `minor` = feature, `patch` = fix.
+Versioning runs on [changesets](https://github.com/changesets/changesets) with
+**fixed** versioning: every `@zoobzio/*` package shares one version and
+releases together. Each PR that changes published behavior carries a changeset
+(`pnpm changeset`, then commit the generated file); pre-1.0, `minor` = feature,
+`patch` = fix.
 
 Releases are cut manually via the **Release** workflow (Actions tab → Run
 workflow, or `gh workflow run Release`). It applies every pending changeset —
-bumping versions, rewriting each package's `CHANGELOG.md`, committing the bump,
-publishing to npm, and pushing the tags. Publishing uses npm **OIDC trusted
-publishing** (no `NPM_TOKEN`; provenance is attested), so each package must have
-a trusted publisher configured on npmjs pointing at this repo's `Release`
-workflow.
+bumping the version, rewriting each package's `CHANGELOG.md`, committing the
+bump, building, publishing to **GitHub Packages**, and pushing the tags.
+
+Publishing authenticates with the workflow's `GITHUB_TOKEN` (`packages: write`),
+so no secrets need configuring. Each package's `publishConfig.registry` points
+at `https://npm.pkg.github.com`, and the `repository` field links it to this
+repo, so a published package inherits the repo's visibility and permissions.
 
 ## License
 

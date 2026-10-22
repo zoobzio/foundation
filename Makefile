@@ -1,47 +1,59 @@
-.PHONY: help install install-hooks dev lint lint-fix format format-check typecheck test test-watch coverage check ci clean
+# foundation monorepo orchestration.
+#
+# The targets run the pnpm workspace scripts. Some targets act on the whole
+# repo. These targets clean build output and the Nuxt caches, and run the
+# aggregate checks for CI.
 
-help: ## Show available commands
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+# The default target shows this help.
+.DEFAULT_GOAL := help
 
-install: ## Install dependencies
+.PHONY: help install stub build prepare dev typecheck test coverage lint format inspect clean check verify ci
+
+help: ## List available targets
+	@grep -hE '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) \
+		| sort \
+		| awk 'BEGIN {FS = ":.*?## "} {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+
+install: ## Install workspace dependencies
 	pnpm install
 
-install-hooks: ## Install git pre-commit hook
-	git config core.hooksPath .githooks
+stub: ## Link the packages to their source for development
+	pnpm stub
+
+build: ## Build every package to its .dist
+	pnpm build
+
+prepare: ## Run the workspace prepare hooks. Run build first
+	pnpm -r prepare
 
 dev: ## Start the Nuxt dev server
 	pnpm dev
 
-lint: ## Run oxlint
-	pnpm lint
-
-lint-fix: ## Run oxlint with auto-fix
-	pnpm lint:fix
-
-format: ## Format code with oxfmt
-	pnpm format
-
-format-check: ## Check formatting with oxfmt
-	pnpm format:check
-
-typecheck: ## Run type checking
+typecheck: ## Check the types of every package
 	pnpm typecheck
 
-test: ## Run all tests
+test: ## Run the test suite
 	pnpm test
 
-test-watch: ## Run tests in watch mode
-	pnpm test:watch
+coverage: ## Run the test suite with an aggregated coverage report
+	pnpm coverage
 
-coverage: ## Run tests with coverage report
-	pnpm test:coverage
+lint: ## Lint with oxlint
+	pnpm lint
 
-check: lint format-check typecheck test ## Run lint, format check, typecheck, and tests
+format: ## Format the repo with oxfmt
+	pnpm format
 
-ci: clean install check coverage ## Full CI simulation
+inspect: ## Check the formatting with oxfmt
+	pnpm inspect
 
-clean: ## Remove generated files
-	rm -rf node_modules/.cache
-	find . -name '.coverage' -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null || true
-	find . -name '.nuxt' -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null || true
-	find . -name '.output' -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null || true
+clean: ## Remove the build output and the Nuxt caches
+	rm -rf .coverage
+	find packages integrations -maxdepth 2 \( -name .dist -o -name .coverage \) -type d -prune -exec rm -rf {} +
+	find integrations -maxdepth 2 \( -name .nuxt -o -name .output \) -type d -prune -exec rm -rf {} +
+
+check: lint typecheck test ## Run lint, typecheck, and test on the existing build output
+
+verify: clean install build prepare typecheck test ## Clean, install, build, prepare, typecheck, and test
+
+ci: build prepare typecheck test lint inspect ## Build, prepare, typecheck, test, lint, and inspect

@@ -2,13 +2,25 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": [
     "@changesets/changelog-github",
-    { "repo": "zoobzio/foundation" }
+    {
+      "repo": "zoobzio/foundation"
+    }
   ],
   "commit": false,
   "access": "public",
   "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "fixed": [],
+  "fixed": [
+    [
+      "@zoobzio/kit",
+      "@zoobzio/query",
+      "@zoobzio/browser",
+      "@zoobzio/form",
+      "@zoobzio/table",
+      "@zoobzio/vue",
+      "@zoobzio/nuxt"
+    ]
+  ],
   "linked": [],
+  "updateInternalDependencies": "patch",
   "ignore": []
 }

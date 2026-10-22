@@ -4,10 +4,14 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".output/**", ".nuxt/**", ".dist/**"]
+      "outputs": [".dist/**"]
     },
-    "prepare": {
-      "dependsOn": ["^prepare"],
+    "@zoobzio/nuxt#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".output/**", ".nuxt/**"]
+    },
+    "stub": {
+      "dependsOn": ["^stub"],
       "cache": false
     },
     "typecheck": {
@@ -15,10 +19,6 @@
     },
     "test": {
       "dependsOn": ["^build"]
-    },
-    "test:coverage": {
-      "dependsOn": ["^build"],
-      "outputs": [".coverage/**"]
     }
   }
 }

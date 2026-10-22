@@ -3,12 +3,7 @@ dist
 .dist
 .nuxt
 .output
-.env
-.data
-node-compile-cache
 .coverage
-.githooks
-.rosetta
-.untheme
-
+*.log
+.idea
 .turbo

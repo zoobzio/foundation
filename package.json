@@ -1,29 +1,30 @@
 {
-  "name": "@zoobzio/foundation-workspace",
+  "name": "@zoobzio/foundation",
   "private": true,
-  "type": "module",
+  "packageManager": "pnpm@10.27.0",
   "scripts": {
     "dev": "pnpm --filter @zoobzio/nuxt dev",
     "build": "turbo run build",
-    "prepare": "pnpm -r prepare",
+    "stub": "turbo run stub",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
     "format": "oxfmt",
-    "format:check": "oxfmt --check",
+    "inspect": "oxfmt --check",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "test:watch": "pnpm -r --parallel test:watch",
-    "test:coverage": "turbo run test:coverage",
+    "coverage": "vitest run --coverage",
     "changeset": "changeset",
     "ci:version": "changeset version",
-    "ci:release": "pnpm -r publish --no-git-checks && changeset tag"
+    "ci:release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.31.0",
-    "oxfmt": "^0.71.0",
-    "oxlint": "^1.86.0",
-    "turbo": "^2.11.7"
-  },
-  "packageManager": "pnpm@10.27.0"
+    "@changesets/changelog-github": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "obuild": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
 }

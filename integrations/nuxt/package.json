@@ -36,38 +36,33 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
     "prepare": "nuxi prepare",
+    "lint": "oxlint",
     "typecheck": "nuxi typecheck",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage --passWithNoTests"
+    "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@nuxt/kit": "^4.5.0",
+    "@nuxt/kit": "catalog:",
     "@zoobzio/browser": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/vue": "workspace:*",
-    "ltrl-http": "^0.0.20",
-    "objectively": "^0.3.0",
-    "reka-ui": "^2.6.0"
+    "ltrl-http": "catalog:",
+    "objectively": "catalog:",
+    "reka-ui": "catalog:"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.6",
-    "@vitest/coverage-v8": "^5.0.3",
-    "@vue/test-utils": "^2.4.8",
-    "happy-dom": "^20.9.0",
-    "nuxt": "^4.2.1",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.3",
-    "vue": "^3.5.24",
-    "vue-tsc": "^2.1.10",
-    "zod": "^3.23.0"
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "happy-dom": "catalog:",
+    "nuxt": "catalog:",
+    "vue": "catalog:",
+    "vue-tsc": "catalog:",
+    "zod": "catalog:"
   }
 }

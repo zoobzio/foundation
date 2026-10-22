@@ -10,8 +10,6 @@ types) live in [`@zoobzio/kit`](./kit/).
 | [`@zoobzio/kit`](./kit/)         | Shared kit: typed event emitter, state container proxy, and their types                              |
 | [`@zoobzio/query`](./query/)     | Query service: committed text and field filters over a field schema, plus a draft that composes them |
 | [`@zoobzio/browser`](./browser/) | Browser service: folder trail navigation, file sort, selection, action joins                         |
-| [`@zoobzio/chart`](./chart/)     | Chart service: variant, renderer, field and axis choice, bucket and range                            |
-| [`@zoobzio/deck`](./deck/)       | Deck service: cursor feed, load-more, polling, sort, search, facets                                  |
 | [`@zoobzio/form`](./form/)       | Form service: payload, per-key validation, touched tracking, submit lifecycle                        |
 | [`@zoobzio/table`](./table/)     | Table service: paging, sort, selection, column order, search filters                                 |
 
