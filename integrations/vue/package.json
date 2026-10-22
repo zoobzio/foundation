@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/vue",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Vue 3 components for the foundation design system: unstyled interactive components composing reka-ui primitives and semantic HTML, exposed through passthrough and ctx-scoped slots. No Nuxt dependency.",
   "license": "MIT",
   "author": {
