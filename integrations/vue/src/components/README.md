@@ -266,7 +266,7 @@ const picker = defineSelect({ options, "onUpdate:modelValue": (v) => {} });
 A plain definition is pure data at module scope (the call is the type
 checkpoint, the object comes back untouched), declared as a named const and
 composed by reference. The same object is what an
-[adapter](../../../../layers/foundation/app/components/data/README.md#the-adapter) captures as `settings` when a
+adapter captures as `settings` when a
 composite becomes page furniture.
 
 A definition that depends on reactive state is authored the same way, with a

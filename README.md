@@ -1,102 +1,82 @@
-# @zoobzio/foundation
+# foundation
 
-A design system for Vue 3 + Nuxt, delivered as a **single Nuxt layer**. Foundation spans the full range from unstyled interactive components built on semantic HTML up to stateful, generic data widgets — consumed by extending one layer.
+A design system for Vue 3 + Nuxt, built as a pnpm workspace: framework-free
+headless services in `packages/`, and the framework bindings over them in
+`integrations/`. Foundation spans the full range from unstyled interactive
+components built on semantic HTML up to stateful, generic data widgets.
 
 ## Usage
 
-Extend Foundation from your app's `nuxt.config`:
+Extend the Nuxt layer from your app's `nuxt.config`:
 
 ```ts
 export default defineNuxtConfig({
-  extends: ["@zoobzio/foundation"],
+  extends: ["@zoobzio/nuxt"],
 });
 ```
 
+Or use the Vue components directly, without Nuxt:
+
+```ts
+import Select from "@zoobzio/vue/components/select.vue";
+import { defineSelect } from "@zoobzio/vue/definitions/select";
+```
+
 > Pre-1.0 — published to npm as an early alpha under the `alpha` dist-tag, so
-> install it explicitly: `pnpm add @zoobzio/foundation@alpha`. A `0.x` release is
-> the running alpha; expect breaking changes between minors until 1.0.
+> install packages explicitly: `pnpm add @zoobzio/nuxt@alpha`. A `0.x` release
+> is the running alpha; expect breaking changes between minors until 1.0.
 
 ## Architecture
 
-Foundation is one Nuxt layer rooted at `app/`, organized into tiers by responsibility:
+| Tier       | Where                | What it is                                                                                                                                         |
+| ---------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Services   | `packages/*`         | Headless data machines (query, browser, form, table) in pure TypeScript, sharing the emitter and state proxy in [`@zoobzio/kit`](./packages/kit/). |
+| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.           |
+| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                              |
 
-| Tier       | Directory            | What it is                                                                                                                                                   |
-| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Components | `components/core/`   | Stateless interactive components composing [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough. |
-| Widgets    | `components/data/`   | Definition-driven, generic data widgets (autocomplete, table, chart, deck, form).                                                                            |
-| System     | `components/system/` | App-shell composition (workspace layout).                                                                                                                    |
-
-### Data widgets
-
-Each widget pairs a **definition** (`defineTable`, `defineForm`, …) — inert typed config, storable in a constant — with a **widget composable** (`useTable`, `useForm`, …) that instances it in setup, and a **component** that renders it:
-
-- `DataAutocomplete` — stepped, suggestion-driven autocomplete input
-- `DataTable` — paginated, sortable, filterable data grid
-- `DataForm` — programmatic form over `T` with zod validation
-- `DataChart` — configurable chart visualizations
-- `DataDeck` — infinite-scroll card feeds
+Each data component pairs a **definition** (`defineTable`, `defineForm`, …) —
+inert typed config, storable in a constant — with a headless **service** that
+owns the data machine, and a **component** that renders it. The Nuxt layer adds
+the stores and factories that instance a service in setup.
 
 ## Imports
 
-Auto-import is **disabled** — everything is imported explicitly. Inside the layer, modules import each other by relative path; a consumer app imports Foundation modules through the package's subpath exports:
+Auto-import is **disabled** — everything is imported explicitly. Each package
+ships its source through subpath exports; see the package READMEs for the
+import surface:
 
-```ts
-import Select from "@zoobzio/foundation/components/core/select.vue";
-import { useTable } from "@zoobzio/foundation/factories/table";
-import type { SelectProps } from "@zoobzio/foundation/types/core/select";
-```
-
-Framework symbols (Vue, Nuxt, VueUse) come from Nuxt's virtual `#imports`.
+- [`packages/README.md`](./packages/README.md) — the headless services
+- [`integrations/vue/README.md`](./integrations/vue/README.md) — the Vue components
+- [`integrations/nuxt/README.md`](./integrations/nuxt/README.md) — the Nuxt layer
 
 ## Project structure
 
-The repo is a pnpm workspace. The published layer lives in `layers/foundation/`;
-`packages/` holds the headless services the layer wires into Nuxt and the kit
-they share, and `example/` is a playground app that extends the layer.
-
 ```
-layers/foundation/
-  app/
-    components/
-      core/       — interactive components (30)
-      data/       — data widgets: autocomplete, table, chart, deck, form
-      system/     — app-shell composition (2)
-    composables/  — usePassthrough, useContext, useModel, useHooks, …
-    factories/    — widget composables: use*(id, definition) → Widget
-    services/     — the adapter service (the data machines live in packages/)
-    stores/       — useState-backed feature state
-    plugins/      — log
-    types/        — per-component prop/emit types
-    utils/        — pure helpers (dates, formatting, passthrough merge, …)
-    constants/    — shared constants
-    app.vue · error.vue · app.d.ts
-  tests/          — vitest suite mirroring app/ (see tests/README.md)
-  nuxt.config.ts  — layer config (auto-import off)
 packages/
   kit/            — @zoobzio/kit: the emitter, state proxy, and types the services share
+  query/          — @zoobzio/query: headless query service (pure TS, no framework)
   browser/        — @zoobzio/browser: headless browser service (pure TS, no framework)
-  chart/          — @zoobzio/chart: headless chart service (pure TS, no framework)
-  deck/           — @zoobzio/deck: headless deck service (pure TS, no framework)
   form/           — @zoobzio/form: headless form service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
-example/          — playground app extending the layer
+integrations/
+  vue/            — @zoobzio/vue: Vue 3 components, definitions, and types
+  nuxt/           — @zoobzio/nuxt: the Nuxt layer (stores, factories, app shell)
 ```
 
 ## Development
 
 ```bash
 pnpm install
-pnpm dev          # run the layer in a Nuxt dev server
-pnpm dev:example  # run the example app
+pnpm dev          # run the Nuxt layer in a dev server
 pnpm test         # run the vitest suite in every workspace package
-pnpm typecheck    # nuxi typecheck in every workspace package
+pnpm typecheck    # type-check every workspace package
 pnpm lint         # oxlint (lint:fix to auto-fix)
 pnpm format       # oxfmt (format:check to verify)
 ```
 
 Lint and format run from the root and walk the whole tree. `typecheck`,
-`test`, `build`, and `prepare` fan out with `pnpm -r`; run them inside
-`layers/foundation/` to target the layer alone.
+`test`, `build`, and `prepare` fan out through turbo; run them inside a
+package directory to target that package alone.
 
 Or via `make` (`make help` lists all targets):
 
@@ -108,7 +88,7 @@ Or via `make` (`make help` lists all targets):
 | `make lint-fix`     | Run oxlint with auto-fix         |
 | `make format`       | Format code with oxfmt           |
 | `make format-check` | Check formatting with oxfmt      |
-| `make typecheck`    | Type-check (`nuxi typecheck`)    |
+| `make typecheck`    | Type-check every package         |
 | `make test`         | Run all tests                    |
 | `make coverage`     | Run tests with coverage          |
 | `make check`        | Lint + format + typecheck + test |
@@ -116,7 +96,11 @@ Or via `make` (`make help` lists all targets):
 
 ## Testing
 
-Tests run under **vitest** (happy-dom). Because the layer uses explicit imports, Nuxt's virtual `#imports` is shimmed for the test environment (`tests/mocks/imports.ts` — real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in `vitest.config.ts`. Component tests mount with `@vue/test-utils` using the shared stubs in `tests/stubs/` (`coreStubs` / per-feature data maps).
+Tests run under **vitest** in every package (happy-dom where components mount).
+Because the Nuxt layer uses explicit imports, Nuxt's virtual `#imports` is
+shimmed for its test environment (`integrations/nuxt/tests/mocks/imports.ts` —
+real Vue/VueUse + stubbed Nuxt composables), and `#test` is aliased in its
+`vitest.config.ts`. Component tests mount with `@vue/test-utils`.
 
 ## Contributing
 
@@ -134,10 +118,11 @@ commit the generated file); pre-1.0, `minor` = feature, `patch` = fix.
 
 Releases are cut manually via the **Release** workflow (Actions tab → Run
 workflow, or `gh workflow run Release`). It applies every pending changeset —
-bumping the version, rewriting `CHANGELOG.md`, committing the bump, publishing to
-npm, and pushing the tag. Publishing uses npm **OIDC trusted publishing** (no
-`NPM_TOKEN`; provenance is attested), so the package must have a trusted
-publisher configured on npmjs pointing at this repo's `Release` workflow.
+bumping versions, rewriting each package's `CHANGELOG.md`, committing the bump,
+publishing to npm, and pushing the tags. Publishing uses npm **OIDC trusted
+publishing** (no `NPM_TOKEN`; provenance is attested), so each package must have
+a trusted publisher configured on npmjs pointing at this repo's `Release`
+workflow.
 
 ## License
 

@@ -1,5 +1,3 @@
 packages:
-  - layers/*
   - packages/*
   - integrations/*
-  - example

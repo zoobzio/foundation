@@ -6,6 +6,3 @@ Framework bindings over the headless services and the shared componentry.
 | -------------------------- | ------------------------------------------------------------------------- |
 | [`@zoobzio/vue`](./vue/)   | Vue 3 components: unstyled reka-ui composites with passthrough            |
 | [`@zoobzio/nuxt`](./nuxt/) | Nuxt layer: the Nuxt wiring over `@zoobzio/vue` and the headless services |
-
-The Nuxt layer in `layers/foundation/` extends these with Nuxt-only wiring
-(`useState` stores, hook-bus factories, router links).

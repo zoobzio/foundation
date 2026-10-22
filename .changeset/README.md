@@ -5,8 +5,8 @@ Markdown file per change, declaring the semver bump and the release note.
 
 Add one with `pnpm changeset` and commit it alongside your PR.
 
-Foundation is a single package, so each changeset bumps `@zoobzio/foundation`.
-While pre-1.0, `minor` covers features and `patch` covers fixes — a `0.x`
+Each changeset names the workspace packages it bumps (`@zoobzio/kit`,
+`@zoobzio/vue`, `@zoobzio/nuxt`, …). While pre-1.0, `minor` covers features and `patch` covers fixes — a `0.x`
 release is the running alpha.
 
 Releases are cut manually: the [Release](../.github/workflows/release.yml)
