@@ -35,6 +35,7 @@ form.check("email"); // one key → errors
 form.validate(); // whole schema → errors + touched
 await form.submit(); // validate → action → submitted
 form.reset(); // back to defaults
+form.field("email"); // { value, error, touched } — error only once touched
 ```
 
 ## The state container

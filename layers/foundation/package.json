@@ -54,13 +54,11 @@
     "@zoobzio/browser": "workspace:*",
     "@zoobzio/chart": "workspace:*",
     "@zoobzio/deck": "workspace:*",
-    "@zoobzio/form": "workspace:*",
     "chart.js": "^4.5.1",
     "defu": "^6.1.7",
     "ltrl-http": "^0.0.20",
     "objectively": "^0.3.0",
-    "reka-ui": "^2.6.0",
-    "zod": "^3.23.0"
+    "reka-ui": "^2.6.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",

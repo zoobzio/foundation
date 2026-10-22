@@ -1,32 +1,29 @@
-import type { Controls, ResolvedControl } from "../types/data/controls";
 import type {
+  FormFieldPassthrough,
+  FormFieldResolved,
+} from "../types/components/form-field";
+import type {
+  Field,
   CheckboxField,
   DateField,
-  Field,
   MultiSelectField,
   NumberField,
   RadioField,
   SelectField,
+  Service,
   TagsInputField,
   TextField,
   TextareaField,
-  Service,
-} from "../types/data/form";
+} from "@zoobzio/form";
 
-import { serialize, deserialize } from "./date";
+import { deserialize, serialize } from "./date";
 
-/**
- * The natural-language mapping between the form's field config and each
- * control's own contract: one recipe per field variant, fed to `passthrough`
- * as the local layer under the consumer's `pt`.
- */
-
-export const input = <T>(
+const input = <T>(
   form: Service<T>,
   field: TextField<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,
-): Controls["input"] => ({
+): FormFieldPassthrough["input"] => ({
   value: typeof value === "string" ? value : undefined,
   type: field.type,
   placeholder: field.placeholder,
@@ -44,12 +41,12 @@ export const input = <T>(
   },
 });
 
-export const number = <T>(
+const number = <T>(
   form: Service<T>,
   field: NumberField<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,
-): Controls["input"] => ({
+): FormFieldPassthrough["input"] => ({
   value: typeof value === "number" ? value : undefined,
   type: "number",
   placeholder: field.placeholder,
@@ -71,12 +68,12 @@ export const number = <T>(
   },
 });
 
-export const textarea = <T>(
+const textarea = <T>(
   form: Service<T>,
   field: TextareaField<T>,
   value: T[keyof T] | undefined,
   error: string | undefined,
-): Controls["textarea"] => ({
+): FormFieldPassthrough["textarea"] => ({
   value: typeof value === "string" ? value : undefined,
   placeholder: field.placeholder,
   disabled: field.disabled,
@@ -94,11 +91,11 @@ export const textarea = <T>(
   },
 });
 
-export const select = <T>(
+const select = <T>(
   form: Service<T>,
   field: SelectField<T>,
   value: T[keyof T] | undefined,
-): Controls["select"] => ({
+): FormFieldPassthrough["select"] => ({
   modelValue: field.options.find((o) => o.value === value),
   options: field.options,
   placeholder: field.placeholder,
@@ -111,11 +108,11 @@ export const select = <T>(
   },
 });
 
-export const multiselect = <T>(
+const multiselect = <T>(
   form: Service<T>,
   field: MultiSelectField<T>,
   value: T[keyof T] | undefined,
-): Controls["multiSelect"] => ({
+): FormFieldPassthrough["multiSelect"] => ({
   modelValue: Array.isArray(value)
     ? field.options.filter((o) => value.includes(o.value))
     : [],
@@ -132,11 +129,11 @@ export const multiselect = <T>(
   },
 });
 
-export const checkbox = <T>(
+const checkbox = <T>(
   form: Service<T>,
   field: CheckboxField<T>,
   value: T[keyof T] | undefined,
-): Controls["checkbox"] => ({
+): FormFieldPassthrough["checkbox"] => ({
   modelValue: !!value,
   disabled: field.disabled,
   "onUpdate:modelValue": (v) => {
@@ -146,11 +143,11 @@ export const checkbox = <T>(
   },
 });
 
-export const radio = <T>(
+const radio = <T>(
   form: Service<T>,
   field: RadioField<T>,
   value: T[keyof T] | undefined,
-): Controls["radio"] => ({
+): FormFieldPassthrough["radio"] => ({
   modelValue: field.options.find((o) => o.value === value)?.value,
   options: field.options,
   disabled: field.disabled,
@@ -163,11 +160,11 @@ export const radio = <T>(
   },
 });
 
-export const date = <T>(
+const date = <T>(
   form: Service<T>,
   field: DateField<T>,
   value: T[keyof T] | undefined,
-): Controls["datePicker"] => ({
+): FormFieldPassthrough["datePicker"] => ({
   modelValue: value instanceof Date ? deserialize(value) : undefined,
   disabled: field.disabled,
   "onUpdate:modelValue": (v) => {
@@ -177,11 +174,11 @@ export const date = <T>(
   },
 });
 
-export const tags = <T>(
+const tags = <T>(
   form: Service<T>,
   field: TagsInputField<T>,
   value: T[keyof T] | undefined,
-): Controls["tagsInput"] => ({
+): FormFieldPassthrough["tagsInput"] => ({
   modelValue: Array.isArray(value) ? value : [],
   placeholder: field.placeholder,
   disabled: field.disabled,
@@ -194,7 +191,7 @@ export const tags = <T>(
   },
 });
 
-const blank = (): Controls => ({
+const blank = (): FormFieldPassthrough => ({
   input: {},
   textarea: {},
   select: { options: [] },
@@ -205,17 +202,11 @@ const blank = (): Controls => ({
   tagsInput: {},
 });
 
-/**
- * Resolves a field to its control: seats the variant's recipe in an
- * otherwise-blank manifest so the field's single `usePassthrough` covers
- * every entry and `settings` stays the source of truth.
- */
-export const resolve = <T>(
+export const fielder = <T>(
   form: Service<T>,
   field: Field<T>,
-  value: T[keyof T] | undefined,
-  error: string | undefined,
-): ResolvedControl => {
+): FormFieldResolved => {
+  const { value, error } = form.field(field.key);
   switch (field.type) {
     case "text":
     case "email":

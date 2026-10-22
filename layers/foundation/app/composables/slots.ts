@@ -7,7 +7,7 @@ import { computed } from "#imports";
  * provided, for relaying to a child.
  *
  * The slot half of a renderer widget: a parent that dispatches config to a
- * child (form → field, table → cell) relays its own slots so consumers can
+ * child (browser → folders) relays its own slots so consumers can
  * override the child's internals from the top. Only provided slots may be
  * forwarded — defining every child slot unconditionally would override the
  * child's defaults with nothing.

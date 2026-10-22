@@ -1,7 +1,6 @@
 import type { BrowserDefinition } from "./browser";
 import type { ChartDefinition } from "./chart";
 import type { DeckDefinition } from "./deck";
-import type { FormDefinition } from "./form";
 import type { Stamp } from "../types/definition";
 
 /**
@@ -38,13 +37,5 @@ export const defineEntity = <T>() => ({
    * semantics as `defineDeck`.
    */
   defineChart: <D extends ChartDefinition<T>>(definition: D): D & Stamp<T> =>
-    definition,
-
-  /**
-   * Declares a form over the entity at module scope — same checkpoint
-   * semantics as `defineDeck`. The Zod schema rides the definition: it is
-   * the form's intrinsic contract, not wiring.
-   */
-  defineForm: <D extends FormDefinition<T>>(definition: D): D & Stamp<T> =>
     definition,
 });

@@ -3,7 +3,6 @@ import type { AnyEvents as AdapterEvents } from "./types/data/adapter";
 import type { Events as BrowserEvents } from "./types/data/browser";
 import type { Events as ChartEvents } from "./types/data/chart";
 import type { Events as DeckEvents } from "./types/data/deck";
-import type { Events as FormEvents } from "./types/data/form";
 
 declare module "#app" {
   interface NuxtApp {
@@ -12,7 +11,6 @@ declare module "#app" {
   }
   interface RuntimeNuxtHooks
     extends
-      FormEvents<unknown>,
       AdapterEvents,
       BrowserEvents,
       ChartEvents,

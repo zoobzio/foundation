@@ -13,10 +13,12 @@ Components build their reactivity through the feature composable
 Everything presentational conforms to the same passthrough / context / slots
 system as core.
 
-[`form`](./form/) and [`chart`](./chart/) are the reference
-implementations: form shows async actions and config-keyed children,
+[`browser`](./browser/) and [`chart`](./chart/) are the reference
+implementations: browser shows async actions and config-keyed children,
 chart shows data-driven (iterated) children; [`deck`](./deck/) and
-[`browser`](./browser/) are the fullest machines.
+[`browser`](./browser/) are the fullest machines. The form renders through
+[`@zoobzio/vue`](../../../../../integrations/vue/) (`form.vue` and
+`form-field.vue`), as the table does.
 
 ## File anatomy
 
@@ -172,38 +174,38 @@ site.
 Script skeleton, in order:
 
 ```ts
-const { service, pt } = defineProps<FormWidgetProps<T>>(); // generic="T"
-const emit = defineEmits<FormWidgetEmits<T>>();
+const { service, pt } = defineProps<BrowserWidgetProps<T>>(); // generic="T"
+const emit = defineEmits<BrowserWidgetEmits>();
 
-useHooks<Events<T>>(service.id, {
+useHooks<Events>(service.id, {
   // hook → emit, 1:1
-  "form:submitted": (event) => emit("submitted", event),
+  "browser:updated": (event) => emit("updated", event),
   /* … every event … */
 });
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+const el = useTemplateRef<HTMLDivElement>("el");
 
 // One feature composable per feature — refs + shared deriveds in one call
-const { submitting } = useFormView(service);
+const { hasSelection, crumbItems, onCrumbSelect } = useBrowserView(service);
 
-const settings = usePassthrough<FormWidgetPassthrough>(() => ({
+const settings = usePassthrough<BrowserWidgetPassthrough>(() => ({
   pt,
   recipes: {
-    root: {},
+    scroller: {},
     /* … blank parts … */
-    submit: { type: "button", disabled: submitting.value, onClick: onSubmit },
+    breadcrumb: { items: crumbItems.value, onSelect: onCrumbSelect },
   },
 }));
 
-const ctx = useContext<FormWidgetContext<T>>("data-form", () => ({
-  form: service,
+const ctx = useContext<BrowserWidgetContext<T>>("data-browser", () => ({
+  browser: service,
   el: el.value,
   settings: settings.value,
 }));
 
 defineExpose({ ctx });
-const slots = defineSlots<FormWidgetSlots<T>>();
-const forwarded = useForwardSlots(slots, FORM_FIELD_SLOTS);
+const slots = defineSlots<BrowserWidgetSlots<T>>();
+const folderSlots = useForwardSlots(slots, BROWSER_FOLDER_SLOTS);
 ```
 
 Two hard rules the collapse introduced:
@@ -216,7 +218,7 @@ Two hard rules the collapse introduced:
   call: `useLazyRequest(key, service.init)` detaches and throws. Always
   close over the machine — `() => service.init()`.
 
-Component type files are **prefixed** (`FormWidgetProps`,
+Component type files are **prefixed** (`BrowserWidgetProps`,
 `ChartControlContext`, …) and follow core's progression —
 `XPassthrough` / `XProps` / `XEmits` / `XContext` / `XSlots` — with two
 data-tier differences:
@@ -225,7 +227,7 @@ data-tier differences:
   plus passthrough, nothing else. Feature options belong in `Config`, not
   props.
 - `XEmits` is **derived from the domain events**, never authored:
-  `submitted: Parameters<Events<T>["form:submitted"]>`.
+  `updated: Parameters<Events["browser:updated"]>`.
 
 Template contract is core's (one `v-bind` per part, one ctx-scoped slot per
 overridable region, no `.value`), except classes: **data widgets own their
@@ -240,7 +242,7 @@ mechanisms, chosen by what keys the children:
 
 | Children keyed by                            | Mechanism                        | Shape                                                                                                                    |
 | -------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| static config (form fields, browser columns) | keyed `pt` record                | `pt?: PT<…> & { fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>> }`, bound as `:pt="pt?.fields?.[field.key]"` |
+| static config (browser folder columns)       | keyed `pt` record                | `pt?: PT<…> & { folders?: PT<BrowserFoldersPassthrough> }`, bound as `:pt="pt?.folders"`                             |
 | runtime data (chart controls, browser rows)  | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
 
 For iterated children, define an **anchor type** — the slice of widget
@@ -276,7 +278,7 @@ feature's whole view surface:
   DOM, timers, and browser APIs stop at this layer — they never reach the
   service.
 - **Anchored scopes** for repeated/positioned children, returned as
-  closures: `useField(field)`, `useControl(source)`,
+  closures: `useControl(source)`,
   `useCanvas(canvasEl)`. Each takes a `MaybeRefOrGetter` anchor (child props
   are reactive per-render, so pass a getter, not values) and returns the
   child's deriveds plus its feature recipes. Annotate the recipes computed
@@ -293,7 +295,7 @@ One backbone: Nuxt runtime hooks.
 1. Declare the map in the domain contract — names are
    `"<name>:<past-tense>"`, payloads carry `id`.
 2. Register it in [`app.d.ts`](../../app.d.ts):
-   `interface RuntimeNuxtHooks extends FormEvents<unknown>, DeckEvents {}`.
+   `interface RuntimeNuxtHooks extends BrowserEvents, DeckEvents {}`.
 3. The **service** emits at each state transition / dispatched action — an
    extracted machine through its own `on`, relayed to `nuxt.callHook` by
    the factory; an unextracted one through `nuxt.callHook` directly.
@@ -315,13 +317,13 @@ same payloads.
   scope for data-driven required props (a `NuxtLink` whose target comes
   from item data binds `:to="item.link.to"` inside `v-if="item.link"`).
 - **Native controls type against native attributes**: manifest entries the
-  widget binds to a native tag (form's `input`/`textarea`) are typed on
+  widget binds to a native tag (an `input` or `textarea` entry) are typed on
   Vue's HTML attribute types, widened with the fields the feature drives —
   `Passthrough<InputHTMLAttributes & { value?: string; min?: number }>` —
   and the bindings land directly on the element.
 - **Config resolvers are synchronous.** Async belongs in `Actions`
-  (form's `init`/`submit`), guarded by service state (`initialized`,
-  `submitting`). Widgets do not init on mount — the caller drives `init()`
+  (browser's `fetch`), guarded by service state (`initialized`,
+  `loading`). Widgets do not init on mount — the caller drives `init()`
   (`useLazyRequest` is one way to do it).
 - Constants live in `constants/<name>.ts`, `SCREAMING_SNAKE` with the
   feature prefix (`DECK_PAGE_SIZE`).
@@ -432,8 +434,7 @@ Build order for a new feature in this tier:
 | Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                                                                                                                             |
 | Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                                                                                                                                |
 | Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                                                                                                                             |
-| Schema helpers      | [`packages/form`](../../../../../packages/form/src/util.ts) (`flatten` · `check`)                                                                                                                                       |
-| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) · [`packages/form`](../../../../../packages/form/src/service.ts)                                                                                         |
-| Reference: widget   | [`form/widget.vue`](./form/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                       |
-| Reference: children | [`form/field.vue`](./form/field.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                                    |
+| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) · [`packages/browser`](../../../../../packages/browser/src/service.ts)                                                                                   |
+| Reference: widget   | [`browser/widget.vue`](./browser/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                 |
+| Reference: children | [`browser/folders.vue`](./browser/folders.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                          |
 | Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |

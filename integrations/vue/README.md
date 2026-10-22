@@ -42,7 +42,7 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (32) plus the stateless table (table.vue and its table-* parts)
+  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts) and the form (form.vue and form-field.vue)
   composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
@@ -74,4 +74,30 @@ service.init();
 
 ```vue
 <Table :service="service" @updated="onUpdated" />
+```
+
+`form.vue` renders a headless `@zoobzio/form` service the same way: one
+`form-field.vue` per config field, each resolved to the control its `type`
+names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,
+`datePicker`, `tagsInput`), with the lifecycle events (`initialized`,
+`submitted`, `rejected`, `restored`, `reset`, `failed`) relayed as emits.
+Field passthrough is keyed by payload key under `pt.fields`; a field slot
+given to the form overrides that region in every field.
+
+```ts
+import { reactive } from "vue";
+import { FormService, createFormState } from "@zoobzio/form";
+import Form from "@zoobzio/vue/components/form.vue";
+
+const config = { title, fields, schema, defaults };
+const state = reactive(createFormState(config));
+const service = new FormService("profile", config, state, { submit });
+```
+
+```vue
+<Form
+  :service="service"
+  :pt="{ fields: { name: { input: { autofocus: true } } } }"
+  @submitted="onSubmitted"
+/>
 ```

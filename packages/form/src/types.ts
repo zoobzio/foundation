@@ -183,6 +183,16 @@ export type Change<T, K extends StateKey = StateKey> = KitChange<State<T>, K>;
 export type Changers<T> = KitChangers<State<T>>;
 
 /**
+ * One field's slice of the state: its payload value, its error once the
+ * field is touched, and whether it has been touched.
+ */
+export type FieldState<V> = {
+  value: V | undefined;
+  error: string | undefined;
+  touched: boolean;
+};
+
+/**
  * The consumer-supplied behavior: the optional init/submit lifecycle and
  * per-key value middleware applied on `set`.
  */
@@ -246,6 +256,12 @@ export type Service<T> = {
   readonly submitting: boolean;
   readonly submitted: boolean;
   readonly valid: boolean;
+
+  /**
+   * One field's slice of the state. `error` is gated on `touched`: an
+   * untouched field reports no error even when `errors` holds one.
+   */
+  field<K extends keyof T>(key: K): FieldState<T[K]>;
 
   initialize(): Promise<boolean>;
   check(key: keyof T): boolean;

@@ -29,6 +29,21 @@ describe("forward", () => {
     expect(mount(Host).text()).toBe("one: <one>");
   });
 
+  it("maps a datum to the props of a per-datum forward", () => {
+    const Host = defineComponent({
+      render: () =>
+        forward(
+          {
+            component: Child,
+            props: ({ name }: { name: string }) => ({ label: name }),
+            slots: {},
+          },
+          { name: "two" },
+        ),
+    });
+    expect(mount(Host).text()).toBe("two: default");
+  });
+
   it("keeps the child's slot defaults when the record is empty", () => {
     const Host = defineComponent({
       render: () =>

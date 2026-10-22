@@ -3,6 +3,7 @@ import type {
   Config,
   Event,
   Events,
+  FieldState,
   Keys,
   Listener,
   Options,
@@ -73,6 +74,16 @@ export class FormService<T> implements Service<T> {
 
   get valid(): boolean {
     return this.config.schema.safeParse(this.payload).success;
+  }
+
+  field<K extends keyof T>(key: K): FieldState<T[K]> {
+    const k = String(key);
+    const touched = this.touched.has(k);
+    return {
+      value: this.payload[key],
+      error: touched ? this.errors[k] : undefined,
+      touched,
+    };
   }
 
   // --- lifecycle -------------------------------------------------------

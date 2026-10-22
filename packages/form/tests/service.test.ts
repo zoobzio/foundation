@@ -373,6 +373,35 @@ describe("valid", () => {
   });
 });
 
+describe("field", () => {
+  it("slices the payload value for a key", () => {
+    const { service } = makeService();
+    expect(service.field("name")).toEqual({
+      value: "Alice",
+      error: undefined,
+      touched: false,
+    });
+    expect(service.field("email").value).toBeUndefined();
+  });
+
+  it("gates the error on touched", () => {
+    const { service } = makeService();
+    service.set("email", "nope");
+    service.check("email");
+    expect(service.field("email")).toEqual({
+      value: "nope",
+      error: undefined,
+      touched: false,
+    });
+    service.touch("email");
+    expect(service.field("email")).toEqual({
+      value: "nope",
+      error: "Invalid email",
+      touched: true,
+    });
+  });
+});
+
 describe("middleware", () => {
   it("get middleware shapes every read of its field", () => {
     const { service, state } = makeService({

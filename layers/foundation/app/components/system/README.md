@@ -36,14 +36,14 @@ alive (composables), and where it sits (template) stay separate:
 // constants/dashboard.ts — the whole page as inert typed data
 const contacts = defineEntity<Contact>();
 export const CONTACTS_DECK = contacts.defineDeck({ topic: …, rowKey: …, dateFields: … });
-export const CONTACT_FORM = contacts.defineForm({ title: …, fields: …, schema: … });
+export const CONTACT_FILES = contacts.defineBrowser({ columns: …, rowKey: … });
 
 export const DASHBOARD = defineWorkspace({
   columns: 3,
   rows: 2,
   slots: {
     main: { position: [0, 0], span: [2, 2], widget: CONTACTS_DECK },
-    side: { position: [2, 0], span: [1, 2], widget: CONTACT_FORM },
+    side: { position: [2, 0], span: [1, 2], widget: CONTACT_FILES },
   },
 });
 ```
@@ -52,11 +52,11 @@ export const DASHBOARD = defineWorkspace({
 // composables/dashboard.ts — instantiation + wiring, the only place anything runs
 export const useDashboard = () => {
   const main = useDeck("dash-contacts", DASHBOARD.slots.main.widget, { fetch: … });
-  const side = useForm("dash-form", DASHBOARD.slots.side.widget, { submit: … });
+  const side = useBrowser("dash-files", DASHBOARD.slots.side.widget, { fetch: … });
 
   return useWorkspace(DASHBOARD, { main, side }, {
     main: {
-      "deck:updated": (event, services) => services.side.validate(),
+      "deck:updated": (event, services) => services.side.fetch(),
     },
   });
 };
@@ -126,7 +126,7 @@ work identically.
 ## Wiring semantics
 
 Typing flows through the widget entity, not the global hook registry: the
-registry erases feature generics (`FormEvents<unknown>` in `app.d.ts`), so
+registry erases feature generics (the `RuntimeNuxtHooks` interface in `app.d.ts`), so
 `Widget<Props, E>` carries an `events?: E` **phantom** that each widget
 composable annotates at its concrete generics. `Wiring<R>`
 ([`types/definition.ts`](../../types/definition.ts)) recovers per-key payloads from it

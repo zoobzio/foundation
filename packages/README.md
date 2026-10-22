@@ -18,4 +18,4 @@ types) live in [`@zoobzio/kit`](./kit/).
 Each package has its own README with usage, the state container contract,
 middleware, and events. The layer's Nuxt wiring for each service lives in
 `layers/foundation/app/stores/<name>.ts` and `factories/<name>.ts`; the table
-renders through [`@zoobzio/vue`](../integrations/vue/).
+and the form render through [`@zoobzio/vue`](../integrations/vue/).
