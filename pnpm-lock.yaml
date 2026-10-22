@@ -44,6 +44,9 @@ importers:
       objectively:
         specifier: ^0.3.0
         version: 0.3.0
+      reka-ui:
+        specifier: ^2.6.0
+        version: 2.10.1(vue@3.5.39(typescript@5.9.3))
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6

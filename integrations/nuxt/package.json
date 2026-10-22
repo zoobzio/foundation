@@ -54,7 +54,8 @@
     "@zoobzio/form": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/vue": "workspace:*",
-    "objectively": "^0.3.0"
+    "objectively": "^0.3.0",
+    "reka-ui": "^2.6.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",

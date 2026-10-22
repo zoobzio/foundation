@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
@@ -9,6 +10,8 @@ export default defineNuxtConfig({
     dirs: [],
     transform: { exclude: [/./] },
   },
+
+  css: [fileURLToPath(new URL("./app/assets/css/reset.css", import.meta.url))],
 
   build: {
     transpile: ["@zoobzio/vue"],

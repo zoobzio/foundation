@@ -110,16 +110,54 @@ The hook names and payloads are declared on `RuntimeNuxtHooks` in
 `app/app.d.ts`; the option, initial-state, and hook types live in
 `types/<name>`.
 
+## App shell
+
+`app.vue` is the layer's root: reka's `ConfigProvider` (ids from Nuxt's
+`useId`, so they match across hydration) and `TooltipProvider` around the
+loading indicator, the page inside its layout, and the `Toaster`. An
+`error.vue` renders the status code and a message, with a control that
+clears the error home. An app that extends the layer gets both unless it
+provides its own.
+
+Notifications are the one piece of app state the layer owns: a `useState`
+list behind `accessNotifications`, and `useNotifications` over it with
+`push` (the id is assigned) and `remove`. The shell renders the list as
+toasts and dismisses each on close.
+
+```ts
+import { useNotifications } from "@zoobzio/nuxt/composables/notification";
+
+const { push } = useNotifications();
+push({ variant: "success", title: "Saved" });
+```
+
+The layer loads one stylesheet, `app/assets/css/reset.css`: a
+Preflight-style reset inside `@layer reset`, so any unlayered stylesheet
+(the system's own semantic classes, the app's CSS) wins every
+equal-specificity conflict. It uses no tokens, so it applies before and
+independently of any theme.
+
+The shell also wraps the page in a `NuxtErrorBoundary`. An error thrown
+under it is toasted rather than replacing the page: when the error's `data`
+carries a `notification` (`AppError` in `types/error`), that notification
+is pushed as is; otherwise the error's message is pushed under the `error`
+variant.
+
 ## Layout
 
 ```
 app/
+  app.vue         — the root: reka providers, loading indicator, error boundary, toaster
+  error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events
+  assets/css/     — reset.css, loaded by the layer config
+  composables/    — useNotifications
+  constants/      — error page status codes
   factories/      — create<Name>(id, options) → use<Name>(): Service
-  stores/         — access<Name>(id, …) → the id's shared state container
-  types/          — per-feature options, initial state, and hook maps
+  stores/         — access<Name>(id, …) → the id's shared state container; accessNotifications
+  types/          — per-feature options, initial state, and hook maps; notification, error
   utils/          — split (actions → descriptors + handlers), seed (state)
 modules/          — local Nuxt modules: imports/ fills the #imports / #components registries
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
-nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution)
+nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset)
 ```

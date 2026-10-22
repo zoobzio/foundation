@@ -8,6 +8,7 @@
 // shim, so the loose types here never leak.
 
 import { ref, type Ref } from "vue";
+import { vi } from "vitest";
 
 export * from "vue";
 
@@ -60,3 +61,9 @@ export const useNuxtApp = () => ({
   hook,
   hooks: { addHooks, hook },
 });
+
+// --- app shell ---------------------------------------------------------
+
+export const useHead = () => {};
+
+export const clearError = vi.fn();

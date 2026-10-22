@@ -10,6 +10,7 @@ export default defineConfig({
     alias: {
       // Nuxt's virtual module — shimmed for the no-Nuxt vitest environment.
       "#imports": r("./tests/mocks/imports.ts"),
+      "#components": r("./tests/mocks/components.ts"),
       // Test-only support (mocks, stubs, data, mount factories).
       "#test": r("./tests"),
     },
