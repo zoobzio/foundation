@@ -97,18 +97,47 @@ options is a second, independent state.
 | `createForm`    | `accessForm`    | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed` |
 | `createBrowser` | `accessBrowser` | `browser:updated`, `browser:navigated`                                                              |
 
-Every relayed payload carries the service's `id`, so a listener filters by
-instance:
+Every relayed payload carries the service's `id`. `useHooks` subscribes
+for one instance: each listener fires for events with that id only, and
+the subscriptions leave with the calling scope, so call it in setup.
 
 ```ts
-useNuxtApp().hook("table:updated", ({ id, total }) => {
-  if (id === "users") console.log(total);
+import { useHooks } from "@zoobzio/nuxt/composables/hook";
+
+useHooks("users", {
+  "table:updated": ({ total }) => console.log(total),
+  "table:filtered": ({ query }) => console.log(query),
 });
 ```
+
+Each relay is also logged at `debug` under the service's id (see
+[Logging](#logging)).
 
 The hook names and payloads are declared on `RuntimeNuxtHooks` in
 `app/app.d.ts`; the option, initial-state, and hook types live in
 `types/<name>`.
+
+## Logging
+
+The layer keeps a log in state: the current level under `log:level`
+(default `info`) and the kept lines under `log:backlog`, behind
+`accessLogs`. `useLogger(name?)` is a named logger over them with one emit
+per level (`trace`, `debug`, `info`, `warn`, `error`); a line is kept when
+its level is at or above the current level and dropped otherwise. The level
+and the backlog are the shared refs, so any logger may read or change them.
+
+```ts
+import { useLogger } from "@zoobzio/nuxt/composables/log";
+
+const log = useLogger("checkout");
+log.level.value = "debug";
+log.info("Order placed", { id: order.id });
+```
+
+`plugins/log` provides the root logger as `nuxt.$log` and the constructor
+as `nuxt.$logger`, so code holding the app instance logs without setup
+scope. The factories use it: every relayed event is logged at `debug` under
+the service's id.
 
 ## App shell
 
@@ -151,11 +180,12 @@ app/
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events
   assets/css/     — reset.css, loaded by the layer config
-  composables/    — useNotifications
-  constants/      — error page status codes
+  composables/    — useHooks, useLogger, useNotifications
+  constants/      — error page status codes, log levels
   factories/      — create<Name>(id, options) → use<Name>(): Service
-  stores/         — access<Name>(id, …) → the id's shared state container; accessNotifications
-  types/          — per-feature options, initial state, and hook maps; notification, error
+  plugins/        — log: provides $log and $logger
+  stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
+  types/          — per-feature options, initial state, and hook maps; hook, log, notification, error
   utils/          — split (actions → descriptors + handlers), seed (state)
 modules/          — local Nuxt modules: imports/ fills the #imports / #components registries
 tests/            — vitest + happy-dom, mirroring app/ path-for-path

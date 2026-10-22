@@ -56,11 +56,43 @@ const callHook = async (name: string, ...args: unknown[]) => {
   }
 };
 
+// --- logger --------------------------------------------------------------
+
+// The plugin's injections, as spies: one recorded logger per name, so a
+// test can assert what a factory logged. Cleared between tests by
+// tests/setup.ts.
+const makeSpyLogger = () => ({
+  level: ref("info"),
+  backlog: ref([]),
+  trace: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+});
+
+const loggers = new Map<string, ReturnType<typeof makeSpyLogger>>();
+
+export const clearNuxtLoggers = () => loggers.clear();
+
+const $logger = (name = "app") => {
+  const existing = loggers.get(name);
+  if (existing) return existing;
+  const logger = makeSpyLogger();
+  loggers.set(name, logger);
+  return logger;
+};
+
 export const useNuxtApp = () => ({
   callHook,
   hook,
   hooks: { addHooks, hook },
+  $log: $logger(),
+  $logger,
 });
+
+// A plugin is its setup function; a test calls it with a fake app.
+export const defineNuxtPlugin = <P>(plugin: P): P => plugin;
 
 // --- app shell ---------------------------------------------------------
 

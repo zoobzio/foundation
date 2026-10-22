@@ -11,7 +11,7 @@ import { split } from "../utils/actions";
  * the options split once into the headless config (the descriptors) and
  * the wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
- * the id's shared store and relays its domain events onto the Nuxt hook
+ * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
  * bus as `browser:updated` and `browser:navigated`. The machine itself is
  * `@zoobzio/browser`; the Vue browser renders it through its `service`
  * prop.
@@ -39,12 +39,17 @@ export const createBrowser = <T>(
   };
   return (): Service<T> => {
     const nuxt = useNuxtApp();
+    const log = nuxt.$logger(id);
     const state = accessBrowser<T>(id, initial);
     const service = new BrowserService(id, config, state, wiring);
-    service.on("updated", (event) => nuxt.callHook("browser:updated", event));
-    service.on("navigated", (event) =>
-      nuxt.callHook("browser:navigated", event),
-    );
+    service.on("updated", (event) => {
+      log.debug("Browser updated", event);
+      nuxt.callHook("browser:updated", event);
+    });
+    service.on("navigated", (event) => {
+      log.debug("Browser navigated", event);
+      nuxt.callHook("browser:navigated", event);
+    });
     return service;
   };
 };

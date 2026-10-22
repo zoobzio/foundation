@@ -110,6 +110,16 @@ describe("createTable", () => {
     });
   });
 
+  it("logs each relayed event under the service id", async () => {
+    const users = createTable("users", makeOptions())();
+    await users.init();
+    users.query.add({ kind: "text", value: "ali" });
+    expect(useNuxtApp().$logger("users").debug.mock.calls).toEqual([
+      ["Table updated", { id: "users", total: 3 }],
+      ["Table filtered", { id: "users", query: "ali", filters: [] }],
+    ]);
+  });
+
   it("every call of one composable shares the id's state", async () => {
     const useUsers = createTable("users", makeOptions());
     const a = useUsers();

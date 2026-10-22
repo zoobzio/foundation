@@ -11,7 +11,7 @@ import { split } from "../utils/actions";
  * options split once into the headless config (the descriptors) and the
  * wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
- * the id's shared store and relays its domain events onto the Nuxt hook
+ * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
  * bus as `table:updated` and `table:filtered`. The machine itself is
  * `@zoobzio/table`; the Vue table renders it through its `service` prop.
  */
@@ -34,10 +34,17 @@ export const createTable = <T>(
   };
   return (): Service<T> => {
     const nuxt = useNuxtApp();
+    const log = nuxt.$logger(id);
     const state = accessTable(id, config, initial);
     const service = new TableService(id, config, state, wiring);
-    service.on("updated", (event) => nuxt.callHook("table:updated", event));
-    service.on("filtered", (event) => nuxt.callHook("table:filtered", event));
+    service.on("updated", (event) => {
+      log.debug("Table updated", event);
+      nuxt.callHook("table:updated", event);
+    });
+    service.on("filtered", (event) => {
+      log.debug("Table filtered", event);
+      nuxt.callHook("table:filtered", event);
+    });
     return service;
   };
 };
