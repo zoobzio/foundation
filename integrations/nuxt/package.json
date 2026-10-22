@@ -35,9 +35,6 @@
     "./utils/*": "./app/utils/*.ts",
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",

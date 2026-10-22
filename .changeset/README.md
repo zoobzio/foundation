@@ -13,4 +13,4 @@ releases together, so a changeset for any of them bumps them all.
 Releases are cut manually: the [Release](../.github/workflows/release.yml)
 workflow (Actions tab → Run workflow, or `gh workflow run Release`) applies
 every pending changeset — bumping the version, rewriting the changelogs, and
-publishing to GitHub Packages.
+publishing to npm.

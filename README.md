@@ -7,16 +7,7 @@ components built on semantic HTML up to stateful, generic data widgets.
 
 ## Usage
 
-The packages are published to **GitHub Packages** under the `@zoobzio` scope.
-Point the scope at the registry in your project's `.npmrc`, with a personal
-access token that has the `read:packages` scope:
-
-```ini
-@zoobzio:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-Then install as usual:
+The packages are published to npm under the `@zoobzio` scope:
 
 ```sh
 pnpm add @zoobzio/nuxt
@@ -150,12 +141,12 @@ releases together. Each PR that changes published behavior carries a changeset
 Releases are cut manually via the **Release** workflow (Actions tab → Run
 workflow, or `gh workflow run Release`). It applies every pending changeset —
 bumping the version, rewriting each package's `CHANGELOG.md`, committing the
-bump, building, publishing to **GitHub Packages**, and pushing the tags.
+bump, building, publishing to npm, and pushing the tags.
 
-Publishing authenticates with the workflow's `GITHUB_TOKEN` (`packages: write`),
-so no secrets need configuring. Each package's `publishConfig.registry` points
-at `https://npm.pkg.github.com`, and the `repository` field links it to this
-repo, so a published package inherits the repo's visibility and permissions.
+Publishing authenticates with npm [trusted publishing](https://docs.npmjs.com/trusted-publishers)
+over OIDC (`id-token: write`), so no `NPM_TOKEN` secret is configured. Each
+package lists this repo and the Release workflow as its trusted publisher on
+npm, and every publish carries a provenance attestation.
 
 ## License
 

@@ -27,9 +27,6 @@
     },
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "build": "obuild",
     "stub": "obuild --stub",

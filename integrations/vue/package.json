@@ -28,9 +28,6 @@
     "./utils/*": "./src/utils/*.ts",
     "./package.json": "./package.json"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
     "lint": "oxlint",
     "typecheck": "vue-tsc --noEmit",
