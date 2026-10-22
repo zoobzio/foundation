@@ -16,6 +16,7 @@ types) live in [`@zoobzio/kit`](./kit/).
 | [`@zoobzio/table`](./table/)     | Table service: paging, sort, selection, column order, search filters                                 |
 
 Each package has its own README with usage, the state container contract,
-middleware, and events. The layer's Nuxt wiring for each service lives in
-`layers/foundation/app/stores/<name>.ts` and `factories/<name>.ts`; the table,
-the form, and the browser render through [`@zoobzio/vue`](../integrations/vue/).
+middleware, and events. The table, the form, and the browser render through
+[`@zoobzio/vue`](../integrations/vue/), and their Nuxt wiring lives in
+[`@zoobzio/nuxt`](../integrations/nuxt/) as `stores/<name>.ts` and
+`factories/<name>.ts`.

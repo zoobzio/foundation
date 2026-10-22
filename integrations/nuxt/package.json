@@ -1,0 +1,71 @@
+{
+  "name": "@zoobzio/nuxt",
+  "version": "0.0.0",
+  "description": "Nuxt layer for the foundation design system: the Nuxt wiring over @zoobzio/vue and the headless services (useState stores, hook-bus factories, app shell).",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoobzio/foundation.git",
+    "directory": "integrations/nuxt"
+  },
+  "files": [
+    "app",
+    "modules",
+    "nuxt.config.ts"
+  ],
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./components/*": "./app/components/*.vue",
+    "./components/*.vue": "./app/components/*.vue",
+    "./composables/*": "./app/composables/*.ts",
+    "./constants/*": "./app/constants/*.ts",
+    "./definitions/*": "./app/definitions/*.ts",
+    "./factories/*": "./app/factories/*.ts",
+    "./plugins/*": "./app/plugins/*.ts",
+    "./services/*": "./app/services/*.ts",
+    "./stores/*": "./app/stores/*.ts",
+    "./types/*": "./app/types/*.ts",
+    "./utils/*": "./app/utils/*.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "prepare": "nuxi prepare",
+    "typecheck": "nuxi typecheck",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage --passWithNoTests"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^4.5.0",
+    "@zoobzio/browser": "workspace:*",
+    "@zoobzio/form": "workspace:*",
+    "@zoobzio/table": "workspace:*",
+    "@zoobzio/vue": "workspace:*",
+    "objectively": "^0.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vitest/coverage-v8": "^5.0.3",
+    "@vue/test-utils": "^2.4.8",
+    "happy-dom": "^20.9.0",
+    "nuxt": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3",
+    "vue": "^3.5.24",
+    "vue-tsc": "^2.1.10",
+    "zod": "^3.23.0"
+  }
+}
