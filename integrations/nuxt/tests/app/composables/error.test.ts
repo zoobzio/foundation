@@ -1,11 +1,11 @@
 // The error builder: the code's status text, the stamp, and the options
 // carried through onto the Nuxt error.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useError } from "../../../app/composables/error";
+import { useAppError } from "../../../app/composables/error";
 
 const NOW = "2026-10-22T12:00:00.000Z";
 
-describe("useError", () => {
+describe("useAppError", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(NOW));
@@ -16,7 +16,7 @@ describe("useError", () => {
   });
 
   it("builds a stamped error with the code's status text", () => {
-    const err = useError(404, "No such order");
+    const err = useAppError(404, "No such order");
     expect(err).toBeInstanceOf(Error);
     expect(err.message).toBe("No such order");
     expect(err.statusCode).toBe(404);
@@ -27,7 +27,7 @@ describe("useError", () => {
 
   it("carries the notification, cause, and fatal flag", () => {
     const cause = new Error("upstream");
-    const err = useError(502, "Unavailable", {
+    const err = useAppError(502, "Unavailable", {
       notification: { variant: "warning", title: "Try again" },
       cause,
       fatal: true,

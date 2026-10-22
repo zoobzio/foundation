@@ -5,7 +5,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { toValue, useAsyncData, useLazyAsyncData, watch } from "#imports";
 import { status } from "ltrl-http";
 import { useLogger } from "./log";
-import { useError } from "./error";
+import { useAppError } from "./error";
 
 /**
  * Builds a request composable over one of Nuxt's async-data composables.
@@ -46,7 +46,7 @@ const make = (
             id,
             error: results.error.value,
           });
-          throw useError(
+          throw useAppError(
             errOpts?.status ?? status.INTERNAL_SERVER_ERROR,
             errOpts?.message ?? "Request failed",
             {

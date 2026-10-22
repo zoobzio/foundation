@@ -81,3 +81,66 @@ export const DEFINITIONS = [
   "tooltip",
   "tree",
 ] as const;
+
+// The layer's own consumer surface, keyed by the `app/` subpath that
+// exports it. `imports.scan` is off, so nothing is discovered: each name
+// here is what a consumer may import from `#imports`, and nothing else.
+// `utils/` is plumbing the factories use and is not registered.
+export const LAYER = {
+  "composables/error": ["useAppError"],
+  "composables/hook": ["useHooks"],
+  "composables/log": ["useLogger"],
+  "composables/notification": ["useNotifications"],
+  "composables/request": ["useRequest", "useLazyRequest"],
+  "constants/error": [
+    "ERROR_DEFAULT_STATUS_CODE",
+    "ERROR_NOT_FOUND_STATUS_CODE",
+  ],
+  "constants/log": ["LOG_ROOT_NAME", "LOG_LEVELS"],
+  "factories/browser": ["createBrowser"],
+  "factories/form": ["createForm"],
+  "factories/table": ["createTable"],
+  "stores/browser": ["accessBrowser"],
+  "stores/form": ["accessForm"],
+  "stores/log": ["accessLogs"],
+  "stores/notification": ["accessNotifications"],
+  "stores/table": ["accessTable"],
+} as const satisfies Record<string, readonly string[]>;
+
+// Type-only exports, registered the same way so `import type { TableOptions }
+// from "#imports"` resolves. They are re-exported from the virtual module
+// only, never declared global, so the DOM `Notification` and lib
+// `ErrorOptions` are untouched.
+export const LAYER_TYPES = {
+  "types/actions": ["Bound"],
+  "types/browser": [
+    "BrowserAction",
+    "BrowserFolderAction",
+    "BrowserBulkAction",
+    "BrowserInitial",
+    "BrowserOptions",
+    "BrowserHooks",
+    "UseBrowser",
+  ],
+  "types/error": ["ErrorData", "ErrorOptions", "AppError"],
+  "types/form": ["FormInitial", "FormOptions", "FormHooks", "UseForm"],
+  "types/hook": [
+    "ScopedEvent",
+    "ScopedHookKey",
+    "HookListener",
+    "ErasedHookListener",
+    "HookListeners",
+  ],
+  "types/hooks": ["Hooks"],
+  "types/log": ["LogLevel", "LogLine", "LogEmit", "Logger"],
+  "types/notification": ["Notification"],
+  "types/request": ["RequestOptions"],
+  "types/table": [
+    "TableAction",
+    "TableBulkAction",
+    "TableInitial",
+    "TableOptions",
+    "TableHooks",
+    "UseTable",
+  ],
+} as const satisfies Record<string, readonly string[]>;

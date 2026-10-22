@@ -11,7 +11,7 @@ export type ErrorData = {
 };
 
 /**
- * What `useError` takes beyond the code and the message: the notification
+ * What `useAppError` takes beyond the code and the message: the notification
  * to toast, the underlying cause, and whether the error is fatal (renders
  * the error page rather than toasting).
  */

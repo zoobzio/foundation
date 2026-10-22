@@ -17,18 +17,27 @@ export default defineNuxtConfig({
 Nothing is injected implicitly: no directory is scanned for components
 or composables, and bare component tags do not resolve. The registries
 behind Nuxt's two virtual modules stay live, filled only by
-`modules/imports/` with the components and `define*` constructors of
-`@zoobzio/vue`, so a consumer imports from them explicitly and never
-depends on `@zoobzio/vue` itself. The package's composables are not
-registered; they build the components and are not a consumer surface.
+`modules/imports/`, so a consumer imports from them explicitly:
+
+- `#components` carries the components of `@zoobzio/vue`.
+- `#imports` carries the `define*` constructors of `@zoobzio/vue` and the
+  layer's own surface: the composables, factories, stores, and constants
+  as values, and everything under `types/` as types.
+
+A consumer never depends on `@zoobzio/vue` itself. The package's
+composables are not registered; they build the components and are not a
+consumer surface. Nor are the layer's `utils/`, which are the factories'
+plumbing.
 
 ```ts
-import { Autocomplete, Select } from "#components";
+import { Autocomplete, Select, Table } from "#components";
 import { defineAutocomplete, defineSelect } from "#imports";
+import { createTable, useHooks, useLogger } from "#imports";
+import type { TableOptions } from "#imports";
 ```
 
-The layer's own modules ship through subpath exports, the same way
-`@zoobzio/vue` ships `src/`:
+The same files also ship through subpath exports, the same way
+`@zoobzio/vue` ships `src/`, for code outside the Nuxt build:
 
 ```ts
 import { createTable } from "@zoobzio/nuxt/factories/table";
@@ -141,15 +150,15 @@ the service's id.
 
 ## Requests and errors
 
-`useError(code, message, options?)` builds an app error: a Nuxt error with
+`useAppError(code, message, options?)` builds an app error: a Nuxt error with
 the code's status text, stamped with when it was built, and carrying the
 notification the shell toasts for it. `options` takes the `notification`,
 the `cause`, and `fatal`; a fatal error renders the error page instead.
 
 ```ts
-import { useError } from "@zoobzio/nuxt/composables/error";
+import { useAppError } from "@zoobzio/nuxt/composables/error";
 
-throw useError(404, "No such order", {
+throw useAppError(404, "No such order", {
   notification: { variant: "warning", title: "Order not found" },
 });
 ```
@@ -210,14 +219,14 @@ app/
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events
   assets/css/     — reset.css, loaded by the layer config
-  composables/    — useError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
+  composables/    — useAppError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   constants/      — error page status codes, log levels
   factories/      — create<Name>(id, options) → use<Name>(): Service
   plugins/        — log: provides $log and $logger
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
   types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request
   utils/          — split (actions → descriptors + handlers), seed (state)
-modules/          — local Nuxt modules: imports/ fills the #imports / #components registries
+modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue surface and the layer's own)
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
 nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset)
 ```

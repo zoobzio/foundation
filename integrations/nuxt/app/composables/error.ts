@@ -13,7 +13,7 @@ import { useHTTPCode } from "ltrl-http";
  * @param message - The error's message.
  * @param options - The notification, the cause, and whether it is fatal.
  */
-export const useError = (
+export const useAppError = (
   code: HTTPCode,
   message: string,
   options: ErrorOptions = {},
