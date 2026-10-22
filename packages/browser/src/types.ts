@@ -48,18 +48,22 @@ export interface ActionDescriptor {
 
 /**
  * File action — the live shape the service exposes: descriptor joined with
- * its handler.
+ * its handler, under the config key. `runAction(key, row)` dispatches by
+ * key.
  */
 export interface FileAction<T> {
+  key: string;
   label: string;
   action: (row: T) => void;
 }
 
 /**
  * Bulk action over the selected files — the live shape the service exposes:
- * descriptor joined with its handler.
+ * descriptor joined with its handler, under the config key.
+ * `runBulkAction(key)` dispatches by key over the service's selection.
  */
 export interface BulkAction {
+  key: string;
   label: string;
   action: (selected: Set<string>) => void;
 }
@@ -104,9 +108,11 @@ export interface BrowserFetchResult<T> {
 
 /**
  * Folder action — rendered per-folder in an actions menu. The live shape
- * the service exposes: descriptor joined with its handler.
+ * the service exposes: descriptor joined with its handler, under the config
+ * key. `runFolderAction(key, folder)` dispatches by key.
  */
 export type FolderAction = {
+  key: string;
   label: string;
   action: (folder: BrowserFolder) => void;
 };
@@ -120,10 +126,21 @@ export type FolderAction = {
 export type Config<T> = {
   columns: BrowserColumn<T>[];
   fileKey: keyof T;
+  /**
+   * The label of the root crumb. Defaults to `Home`.
+   */
   rootLabel?: string;
   actions?: Record<string, ActionDescriptor>;
   folderActions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;
+  /**
+   * The BCP 47 locale cells format in. Defaults to `en-US`.
+   */
+  locale?: string;
+  /**
+   * The ISO 4217 code currency cells format in. Defaults to `USD`.
+   */
+  currency?: string;
 };
 
 /**
@@ -204,6 +221,9 @@ export type Service<T> = {
   readonly actions: FileAction<T>[];
   readonly folderActions: FolderAction[];
   readonly bulkActions: BulkAction[];
+  readonly rootLabel: string;
+  readonly locale: string;
+  readonly currency: string;
 
   readonly folders: BrowserFolder[];
   readonly files: T[];
@@ -216,10 +236,26 @@ export type Service<T> = {
 
   readonly pathKeys: string[];
   readonly depth: number;
+  /**
+   * The breadcrumb trail: the root crumb, then one crumb per trail step.
+   * Each crumb's key is its joined path prefix, unique even when one folder
+   * key recurs at several depths; its index is what `navigate` takes.
+   */
+  readonly trail: BrowserCrumb[];
   readonly isAllSelected: boolean;
   readonly isIndeterminate: boolean;
   readonly selectAllState: boolean | "indeterminate";
   readonly colSpan: number;
+  readonly hasSelection: boolean;
+  readonly isSelectable: boolean;
+  readonly hasActions: boolean;
+  readonly hasFolderActions: boolean;
+  /**
+   * Whether the current folder has settled with neither folders nor files.
+   * Gated on `initialized` and `loading`, so a view shows the listing, not
+   * the empty state, until the first fetch resolves.
+   */
+  readonly isEmpty: boolean;
 
   open(folder: BrowserFolder): void;
   navigate(index: number): void;
@@ -231,6 +267,9 @@ export type Service<T> = {
   toggleAll(): void;
   clearSelection(): void;
   isRowSelected(row: T): boolean;
+  runAction(key: string, row: T): void;
+  runFolderAction(key: string, folder: BrowserFolder): void;
+  runBulkAction(key: string): void;
   init(): Promise<boolean>;
   fetch(): Promise<void>;
 

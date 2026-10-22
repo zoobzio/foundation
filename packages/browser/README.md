@@ -32,7 +32,20 @@ browser.open({ key: "media", label: "Media" }); // descend, refetch
 browser.navigate(0); // back to the root
 browser.sortBy("name"); // asc, then desc on repeat
 browser.toggleRow("1");
-browser.actions[0].action(file); // the joined handler
+browser.runAction("download", file); // dispatch a file action by key
+browser.runBulkAction("purge"); // a bulk action over the selection
+```
+
+## The trail
+
+`trail` is the breadcrumb from the root: the root crumb (`rootLabel`,
+default `Home`) followed by one crumb per step of `path`. Each crumb's key
+is its joined path prefix, so keys stay unique when one folder key recurs
+at several depths, and a crumb's index in `trail` is what `navigate` takes.
+
+```ts
+browser.trail; // [{ key: "", label: "Home" }, { key: "media", label: "Media" }]
+browser.navigate(browser.trail.findIndex((c) => c.key === "media"));
 ```
 
 ## The state container

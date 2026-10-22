@@ -36,14 +36,14 @@ alive (composables), and where it sits (template) stay separate:
 // constants/dashboard.ts — the whole page as inert typed data
 const contacts = defineEntity<Contact>();
 export const CONTACTS_DECK = contacts.defineDeck({ topic: …, rowKey: …, dateFields: … });
-export const CONTACT_FILES = contacts.defineBrowser({ columns: …, rowKey: … });
+export const CONTACT_CHART = contacts.defineChart({ breakdown: …, renderers: … });
 
 export const DASHBOARD = defineWorkspace({
   columns: 3,
   rows: 2,
   slots: {
     main: { position: [0, 0], span: [2, 2], widget: CONTACTS_DECK },
-    side: { position: [2, 0], span: [1, 2], widget: CONTACT_FILES },
+    side: { position: [2, 0], span: [1, 2], widget: CONTACT_CHART },
   },
 });
 ```
@@ -52,11 +52,11 @@ export const DASHBOARD = defineWorkspace({
 // composables/dashboard.ts — instantiation + wiring, the only place anything runs
 export const useDashboard = () => {
   const main = useDeck("dash-contacts", DASHBOARD.slots.main.widget, { fetch: … });
-  const side = useBrowser("dash-files", DASHBOARD.slots.side.widget, { fetch: … });
+  const side = useChart("dash-chart", DASHBOARD.slots.side.widget, { breakdown: … });
 
   return useWorkspace(DASHBOARD, { main, side }, {
     main: {
-      "deck:updated": (event, services) => services.side.fetch(),
+      "deck:updated": (event, services) => services.side.setVariant("breakdown"),
     },
   });
 };

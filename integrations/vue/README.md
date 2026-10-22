@@ -42,11 +42,11 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts) and the form (form.vue and form-field.vue)
+  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), and the browser (browser.vue and its browser-* parts)
   composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
-  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate
+  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate, table, browser
   constants/         — constants by domain: date, filter, pagination, popper, scroll, selection
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
@@ -100,4 +100,43 @@ const service = new FormService("profile", config, state, { submit });
   :pt="{ fields: { name: { input: { autofocus: true } } } }"
   @submitted="onSubmitted"
 />
+```
+
+`browser.vue` renders a headless `@zoobzio/browser` service: a breadcrumb
+over the service's `trail`, then one headerless table with the folder rows
+(`browser-folders.vue`) above the file rows (`browser-files.vue`), each a
+`tbody` of its own so the columns line up. Folder clicks `open`, crumb
+clicks `navigate`, row and folder menus dispatch by key through `runAction`
+and `runFolderAction`, and the bulk actions bar runs `runBulkAction` over
+the selection. The `updated` and `navigated` events relay as emits. Cell
+slots cascade as the table's do (`cell:<key>`, `cell:<type>`, `cell`);
+`noFiles` fills the empty file section, `empty` replaces the whole body once
+a folder settles with neither folders nor files.
+
+```ts
+import { reactive } from "vue";
+import { BrowserService, createBrowserState } from "@zoobzio/browser";
+import Browser from "@zoobzio/vue/components/browser.vue";
+
+const config = {
+  columns,
+  fileKey: "id",
+  actions: { download: { label: "Download" } },
+};
+const state = reactive(createBrowserState());
+const service = new BrowserService("assets", config, state, {
+  fetch,
+  actions: { download: (file) => save(file) },
+});
+service.init();
+```
+
+```vue
+<Browser
+  :service="service"
+  :pt="{ files: { actionsTrigger: { label: 'More' } } }"
+  @navigated="onNavigated"
+>
+  <template #folderIcon><FolderGlyph /></template>
+</Browser>
 ```

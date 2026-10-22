@@ -8,12 +8,6 @@ export const deckStubs = {
   Feed: createAllSlotsStub("Feed"),
 } as const;
 
-export const browserStubs = {
-  Folders: createStub("Folders", "tbody"),
-  Files: createAllSlotsStub("Files", "tbody"),
-  BulkActions: createStub("BulkActions"),
-} as const;
-
 export const chartStubs = {
   Canvas: createStub("Canvas"),
   Control: createStub("Control"),

@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.7.0",
+    "@zoobzio/browser": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",

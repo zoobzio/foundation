@@ -4,52 +4,52 @@ import type {
   BrowserFoldersPassthrough,
   BrowserFoldersProps,
   BrowserFoldersSlots,
-} from "../../../types/data/browser/folders";
+} from "../types/components/browser-folders";
 
-import Fab from "../../core/fab.vue";
-import Menu from "../../core/menu.vue";
+import Fab from "./fab.vue";
+import Menu from "./menu.vue";
 
-import { useTemplateRef } from "#imports";
-import { useBrowserView } from "../../../composables/browser";
-import { usePassthrough } from "../../../composables/passthrough";
-import { useContext } from "../../../composables/context";
-import { BROWSER_ACTIONS_LABEL } from "../../../constants/browser";
+import { useTemplateRef } from "vue";
+import { useRefs } from "../composables/ref";
+import { usePassthrough } from "../composables/passthrough";
+import { useContext } from "../composables/context";
+import { BROWSER_ACTIONS_LABEL } from "../constants/browser";
 </script>
 
 <script setup lang="ts" generic="T">
-const { browser, pt } = defineProps<BrowserFoldersProps<T>>();
+const { service, pt } = defineProps<BrowserFoldersProps<T>>();
 
 const el = useTemplateRef<HTMLTableSectionElement>("el");
 
 const {
   folders,
   columns,
+  folderActions,
   isSelectable,
   hasActions,
   hasFolderActions,
-  folderActionGroups,
-  onFolderActionSelect,
-} = useBrowserView(browser);
+} = useRefs(service);
 
 const settings = usePassthrough<BrowserFoldersPassthrough>(() => ({
   pt,
   recipes: {
-    actionsMenu: { groups: folderActionGroups.value, align: "end" },
+    actionsMenu: {
+      groups: [{ key: "folder-actions", items: folderActions.value }],
+      align: "end",
+    },
     actionsTrigger: { label: BROWSER_ACTIONS_LABEL },
   },
 }));
 
-const ctx = useContext<BrowserFoldersContext<T>>(
-  "data-browser-folders",
-  () => ({
-    browser,
-    el: el.value,
-    settings: settings.value,
-  }),
-);
+const ctx = useContext<BrowserFoldersContext<T>>("browser-folders", () => ({
+  browser: service,
+  el: el.value,
+  settings: settings.value,
+}));
 
 defineExpose({ ctx });
-defineSlots<BrowserFoldersSlots<T>>();
+
+const slots = defineSlots<BrowserFoldersSlots<T>>();
 </script>
 
 <template>
@@ -66,7 +66,7 @@ defineSlots<BrowserFoldersSlots<T>>();
           <button
             type="button"
             class="f-button f-data-browser-folder-btn"
-            @click="browser.open(folder)"
+            @click="service.open(folder)"
           >
             <slot name="folderIcon" v-bind="{ ...ctx, folder }" />
             <slot name="folderLabel" v-bind="{ ...ctx, folder }">
@@ -88,14 +88,14 @@ defineSlots<BrowserFoldersSlots<T>>();
         <Menu
           v-if="hasFolderActions"
           v-bind="settings.actionsMenu"
-          @select="onFolderActionSelect(folder, $event)"
+          @select="service.runFolderAction($event.key, folder)"
         >
           <Fab v-bind="settings.actionsTrigger">
-            <template v-if="$slots.folderActionsIcon" #icon>
+            <template v-if="slots.folderActionsIcon" #icon>
               <slot name="folderActionsIcon" v-bind="{ ...ctx, folder }" />
             </template>
           </Fab>
-          <template v-if="$slots.folderActionIcon" #itemIcon="{ item }">
+          <template v-if="slots.folderActionIcon" #itemIcon="{ item }">
             <slot name="folderActionIcon" v-bind="{ ...ctx, folder, item }" />
           </template>
         </Menu>

@@ -1,4 +1,3 @@
-import type { BrowserDefinition } from "./browser";
 import type { ChartDefinition } from "./chart";
 import type { DeckDefinition } from "./deck";
 import type { Stamp } from "../types/definition";
@@ -22,15 +21,6 @@ export const defineEntity = <T>() => ({
    */
   defineDeck: <D extends DeckDefinition<T>>(definition: D): D & Stamp<T> =>
     definition,
-
-  /**
-   * Declares a browser over the entity at module scope — same checkpoint
-   * semantics as `defineDeck`. The entity is the file row; folders are
-   * the fixed foundation shape.
-   */
-  defineBrowser: <D extends BrowserDefinition<T>>(
-    definition: D,
-  ): D & Stamp<T> => definition,
 
   /**
    * Declares a chart over the entity at module scope — same checkpoint

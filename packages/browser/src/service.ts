@@ -1,15 +1,11 @@
 import type {
-  ActionDescriptor,
   Actions,
   BrowserColumn,
   BrowserCrumb,
   BrowserFolder,
-  BulkAction,
   Config,
   Event,
   Events,
-  FileAction,
-  FolderAction,
   Listener,
   Options,
   Service,
@@ -20,13 +16,19 @@ import type { Emitter } from "@zoobzio/kit";
 
 import { entries } from "objectively";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
-import { BROWSER_STATE_FIELDS } from "./constants";
+import {
+  BROWSER_DEFAULT_CURRENCY,
+  BROWSER_DEFAULT_LOCALE,
+  BROWSER_DEFAULT_ROOT_LABEL,
+  BROWSER_ROOT_KEY,
+  BROWSER_STATE_FIELDS,
+} from "./constants";
 import { sortFolders } from "./util";
 
 /**
  * The headless browser machine. Owns the folder trail, the file sort, and
- * the file selection; delegates data loading to `actions.fetch` and joins
- * the config's action descriptors to the handlers in `actions`.
+ * the file selection; delegates data loading to `wiring.fetch` and joins
+ * the config's action descriptors to the handlers in `wiring`.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy; the
@@ -36,9 +38,9 @@ import { sortFolders } from "./util";
 export class BrowserService<T> implements Service<T> {
   readonly columns: BrowserColumn<T>[];
   readonly fileKey: keyof T;
-  readonly actions: FileAction<T>[];
-  readonly folderActions: FolderAction[];
-  readonly bulkActions: BulkAction[];
+  readonly actions: Service<T>["actions"];
+  readonly folderActions: Service<T>["folderActions"];
+  readonly bulkActions: Service<T>["bulkActions"];
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
@@ -54,22 +56,22 @@ export class BrowserService<T> implements Service<T> {
 
     this.columns = config.columns;
     this.fileKey = config.fileKey;
-    this.actions = entries(config.actions ?? {}).map(
-      ([key, descriptor]: [string, ActionDescriptor]) => ({
-        ...descriptor,
-        action: (row: T) => wiring.actions?.[key]?.(row),
-      }),
-    );
+    this.actions = entries(config.actions ?? {}).map(([key, descriptor]) => ({
+      ...descriptor,
+      key,
+      action: (row: T) => this.runAction(key, row),
+    }));
     this.folderActions = entries(config.folderActions ?? {}).map(
-      ([key, descriptor]: [string, ActionDescriptor]) => ({
+      ([key, descriptor]) => ({
         ...descriptor,
-        action: (folder: BrowserFolder) =>
-          wiring.folderActions?.[key]?.(folder),
+        key,
+        action: (folder: BrowserFolder) => this.runFolderAction(key, folder),
       }),
     );
     this.bulkActions = entries(config.bulkActions ?? {}).map(
-      ([key, descriptor]: [string, ActionDescriptor]) => ({
+      ([key, descriptor]) => ({
         ...descriptor,
+        key,
         action: (selected: Set<string>) =>
           wiring.bulkActions?.[key]?.(selected),
       }),
@@ -106,6 +108,15 @@ export class BrowserService<T> implements Service<T> {
   get selected(): Set<string> {
     return this.state.selected;
   }
+  get rootLabel(): string {
+    return this.config.rootLabel ?? BROWSER_DEFAULT_ROOT_LABEL;
+  }
+  get locale(): string {
+    return this.config.locale ?? BROWSER_DEFAULT_LOCALE;
+  }
+  get currency(): string {
+    return this.config.currency ?? BROWSER_DEFAULT_CURRENCY;
+  }
 
   // --- derived ---------------------------------------------------------
 
@@ -115,6 +126,17 @@ export class BrowserService<T> implements Service<T> {
 
   get depth(): number {
     return this.path.length;
+  }
+
+  get trail(): BrowserCrumb[] {
+    const keys = this.pathKeys;
+    return [
+      { key: BROWSER_ROOT_KEY, label: this.rootLabel },
+      ...this.path.map((crumb, index) => ({
+        key: keys.slice(0, index + 1).join("/"),
+        label: crumb.label,
+      })),
+    ];
   }
 
   get isAllSelected(): boolean {
@@ -135,8 +157,33 @@ export class BrowserService<T> implements Service<T> {
   get colSpan(): number {
     return (
       this.columns.length +
-      (this.actions.length || this.folderActions.length ? 1 : 0) +
-      (this.bulkActions.length ? 1 : 0)
+      (this.hasActions || this.hasFolderActions ? 1 : 0) +
+      (this.isSelectable ? 1 : 0)
+    );
+  }
+
+  get hasSelection(): boolean {
+    return this.selected.size > 0;
+  }
+
+  get isSelectable(): boolean {
+    return this.bulkActions.length > 0;
+  }
+
+  get hasActions(): boolean {
+    return this.actions.length > 0;
+  }
+
+  get hasFolderActions(): boolean {
+    return this.folderActions.length > 0;
+  }
+
+  get isEmpty(): boolean {
+    return (
+      this.initialized &&
+      !this.loading &&
+      !this.folders.length &&
+      !this.files.length
     );
   }
 
@@ -209,6 +256,20 @@ export class BrowserService<T> implements Service<T> {
 
   isRowSelected(row: T): boolean {
     return this.selected.has(this.keyOf(row));
+  }
+
+  // --- actions ---------------------------------------------------------
+
+  runAction(key: string, row: T): void {
+    this.wiring.actions?.[key]?.(row);
+  }
+
+  runFolderAction(key: string, folder: BrowserFolder): void {
+    this.wiring.folderActions?.[key]?.(folder);
+  }
+
+  runBulkAction(key: string): void {
+    this.wiring.bulkActions?.[key]?.(this.selected);
   }
 
   // --- loading ---------------------------------------------------------

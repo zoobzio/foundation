@@ -3,23 +3,24 @@ import type {
   BrowserBulkActionsContext,
   BrowserBulkActionsProps,
   BrowserBulkActionsSlots,
-} from "../../../types/data/browser/bulk-actions";
+} from "../types/components/browser-bulk-actions";
 
-import { useTemplateRef } from "#imports";
-import { useBrowserView } from "../../../composables/browser";
-import { useContext } from "../../../composables/context";
+import { useTemplateRef } from "vue";
+import { useRefs } from "../composables/ref";
+import { useContext } from "../composables/context";
+import { BROWSER_CLEAR_SELECTION_LABEL } from "../constants/browser";
 </script>
 
 <script setup lang="ts" generic="T">
-const { browser } = defineProps<BrowserBulkActionsProps<T>>();
+const { service } = defineProps<BrowserBulkActionsProps<T>>();
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const { bulkActions, selected } = useBrowserView(browser);
+const { bulkActions, selected } = useRefs(service);
 
 const ctx = useContext<BrowserBulkActionsContext<T>>(
-  "data-browser-bulk-actions",
-  () => ({ browser, el: el.value }),
+  "browser-bulk-actions",
+  () => ({ browser: service, el: el.value }),
 );
 
 defineExpose({ ctx });
@@ -33,10 +34,10 @@ defineSlots<BrowserBulkActionsSlots<T>>();
     </span>
     <button
       v-for="bulk in bulkActions"
-      :key="bulk.label"
+      :key="bulk.key"
       type="button"
       class="f-button f-data-browser-bulk-action"
-      @click="bulk.action(selected)"
+      @click="service.runBulkAction(bulk.key)"
     >
       <slot name="bulkActionIcon" v-bind="{ ...ctx, action: bulk }" />
       {{ bulk.label }}
@@ -44,9 +45,9 @@ defineSlots<BrowserBulkActionsSlots<T>>();
     <button
       type="button"
       class="f-button f-data-browser-bulk-action-clear"
-      @click="browser.clearSelection()"
+      @click="service.clearSelection()"
     >
-      Clear
+      {{ BROWSER_CLEAR_SELECTION_LABEL }}
     </button>
   </div>
 </template>

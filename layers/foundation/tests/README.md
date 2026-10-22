@@ -16,7 +16,7 @@ don't get test files — assertions about literals are theater.
 
 - `app/` — the test files themselves, mirroring `app/` path-for-path.
 - `mocks/` — module shims (`imports.ts`) and per-feature contract mocks
-  (`browser.ts`, …) typed against the real contracts so tsc catches drift.
+  typed against the real contracts so tsc catches drift.
 - `stubs/` — component doubles: `factories.ts` plus per-tier maps. Stub keys
   match the **import binding name** in the consuming component (VTU resolves
   against the parent's setupState; kebab/Pascal variants of the key match).

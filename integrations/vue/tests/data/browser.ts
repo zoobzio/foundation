@@ -2,7 +2,7 @@ import type {
   ActionDescriptor,
   BrowserColumn,
   BrowserFolder,
-} from "../../app/types/data/browser";
+} from "@zoobzio/browser";
 
 export type FakeFile = {
   id: number;
@@ -25,7 +25,7 @@ export const fakeFiles: FakeFile[] = [
   { id: 3, name: "notes.md", size: 512, modified: "2025-03-10T12:00:00" },
 ];
 
-/** Deliberately unsorted — the service re-sorts alphabetically. */
+/** Deliberately unsorted: the service re-sorts alphabetically. */
 export const fakeFolders: BrowserFolder[] = [
   { key: "media", label: "Media", count: 12 },
   { key: "archive", label: "Archive" },
@@ -34,7 +34,7 @@ export const fakeFolders: BrowserFolder[] = [
 
 export const fakeFileActions: Record<string, ActionDescriptor> = {
   download: { label: "Download" },
-  delete: { label: "Delete" },
+  remove: { label: "Delete" },
 };
 
 export const fakeFolderActions: Record<string, ActionDescriptor> = {
@@ -42,5 +42,5 @@ export const fakeFolderActions: Record<string, ActionDescriptor> = {
 };
 
 export const fakeBrowserBulkActions: Record<string, ActionDescriptor> = {
-  deleteSelected: { label: "Delete Selected" },
+  purge: { label: "Purge" },
 };

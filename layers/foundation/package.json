@@ -51,7 +51,6 @@
     "@nuxt/kit": "^4.5.0",
     "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "^14.1.0",
-    "@zoobzio/browser": "workspace:*",
     "@zoobzio/chart": "workspace:*",
     "@zoobzio/deck": "workspace:*",
     "chart.js": "^4.5.1",

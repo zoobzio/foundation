@@ -429,3 +429,161 @@ describe("events", () => {
     expect(state.selected).toEqual(new Set());
   });
 });
+
+describe("config defaults", () => {
+  it("falls back to the default root label, locale, and currency", () => {
+    const { service } = makeService();
+    expect(service.rootLabel).toBe("Home");
+    expect(service.locale).toBe("en-US");
+    expect(service.currency).toBe("USD");
+  });
+
+  it("reads the configured root label, locale, and currency", () => {
+    const { service } = makeService({
+      config: { rootLabel: "Assets", locale: "de-DE", currency: "EUR" },
+    });
+    expect(service.rootLabel).toBe("Assets");
+    expect(service.locale).toBe("de-DE");
+    expect(service.currency).toBe("EUR");
+  });
+
+  it("carries the config key on every joined action", () => {
+    const { service } = makeService({
+      config: {
+        actions: fakeFileActions,
+        folderActions: fakeFolderActions,
+        bulkActions: fakeBrowserBulkActions,
+      },
+    });
+    expect(service.actions.map((a) => a.key)).toEqual(["download", "delete"]);
+    expect(service.folderActions.map((a) => a.key)).toEqual(["rename"]);
+    expect(service.bulkActions.map((a) => a.key)).toEqual(["deleteSelected"]);
+  });
+});
+
+describe("trail", () => {
+  it("starts at the root crumb", () => {
+    const { service } = makeService();
+    expect(service.trail).toEqual([{ key: "", label: "Home" }]);
+  });
+
+  it("keys each crumb by its joined path prefix", () => {
+    const { service, state } = makeService({ config: { rootLabel: "Files" } });
+    state.path = [
+      { key: "media", label: "Media" },
+      { key: "2025", label: "2025" },
+      { key: "media", label: "Media" },
+    ];
+    expect(service.trail).toEqual([
+      { key: "", label: "Files" },
+      { key: "media", label: "Media" },
+      { key: "media/2025", label: "2025" },
+      { key: "media/2025/media", label: "Media" },
+    ]);
+  });
+
+  it("indexes line up with navigate", () => {
+    const { service, state } = makeService();
+    state.path = [
+      { key: "media", label: "Media" },
+      { key: "2025", label: "2025" },
+    ];
+    const index = service.trail.findIndex((c) => c.key === "media");
+    service.navigate(index);
+    expect(service.pathKeys).toEqual(["media"]);
+  });
+});
+
+describe("view deriveds", () => {
+  it("reports the action and selection surfaces from the config", () => {
+    const bare = makeService().service;
+    expect(bare.hasActions).toBe(false);
+    expect(bare.hasFolderActions).toBe(false);
+    expect(bare.isSelectable).toBe(false);
+
+    const { service } = makeService({
+      config: {
+        actions: fakeFileActions,
+        folderActions: fakeFolderActions,
+        bulkActions: fakeBrowserBulkActions,
+      },
+    });
+    expect(service.hasActions).toBe(true);
+    expect(service.hasFolderActions).toBe(true);
+    expect(service.isSelectable).toBe(true);
+  });
+
+  it("tracks hasSelection with the selection", () => {
+    const { service } = makeService();
+    expect(service.hasSelection).toBe(false);
+    service.toggleRow("1");
+    expect(service.hasSelection).toBe(true);
+    service.clearSelection();
+    expect(service.hasSelection).toBe(false);
+  });
+
+  it("isEmpty waits for the first fetch to settle", async () => {
+    const actions: Actions<FakeFile> = {
+      fetch: vi.fn(async () => ({ folders: [], files: [] })),
+    };
+    const { service } = makeService({ actions });
+    expect(service.isEmpty).toBe(false);
+    const flight = service.init();
+    expect(service.isEmpty).toBe(false);
+    await flight;
+    expect(service.isEmpty).toBe(true);
+  });
+
+  it("isEmpty is false while either section has rows", async () => {
+    const { service } = makeService();
+    await service.init();
+    expect(service.isEmpty).toBe(false);
+  });
+});
+
+describe("action dispatch", () => {
+  it("runs file, folder, and bulk handlers by key", () => {
+    const download = vi.fn();
+    const rename = vi.fn();
+    const purge = vi.fn();
+    const { service } = makeService({
+      config: {
+        actions: fakeFileActions,
+        folderActions: fakeFolderActions,
+        bulkActions: fakeBrowserBulkActions,
+      },
+      actions: {
+        ...makeActions(),
+        actions: { download },
+        folderActions: { rename },
+        bulkActions: { deleteSelected: purge },
+      },
+    });
+
+    const row = fixture(fakeFiles.at(0));
+    service.runAction("download", row);
+    expect(download).toHaveBeenCalledWith(row);
+
+    const folder = fixture(fakeFolders.at(0));
+    service.runFolderAction("rename", folder);
+    expect(rename).toHaveBeenCalledWith(folder);
+
+    service.toggleRow("1");
+    service.toggleRow("3");
+    service.runBulkAction("deleteSelected");
+    expect(purge).toHaveBeenCalledWith(new Set(["1", "3"]));
+  });
+
+  it("an unknown or unhandled key is a no-op", () => {
+    const { service } = makeService({
+      config: { actions: fakeFileActions },
+    });
+    expect(() =>
+      service.runAction("missing", fixture(fakeFiles.at(0))),
+    ).not.toThrow();
+    expect(() =>
+      service.runFolderAction("rename", fixture(fakeFolders.at(0))),
+    ).not.toThrow();
+    expect(() => service.runBulkAction("deleteSelected")).not.toThrow();
+  });
+});

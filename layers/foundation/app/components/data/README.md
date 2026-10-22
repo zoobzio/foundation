@@ -13,12 +13,12 @@ Components build their reactivity through the feature composable
 Everything presentational conforms to the same passthrough / context / slots
 system as core.
 
-[`browser`](./browser/) and [`chart`](./chart/) are the reference
-implementations: browser shows async actions and config-keyed children,
-chart shows data-driven (iterated) children; [`deck`](./deck/) and
-[`browser`](./browser/) are the fullest machines. The form renders through
-[`@zoobzio/vue`](../../../../../integrations/vue/) (`form.vue` and
-`form-field.vue`), as the table does.
+[`deck`](./deck/) and [`chart`](./chart/) are the reference
+implementations: deck shows async actions and config-keyed children,
+chart shows data-driven (iterated) children. The table, the form, and the
+browser render through [`@zoobzio/vue`](../../../../../integrations/vue/)
+(`table.vue`, `form.vue`, `browser.vue` and their parts), as stateless
+components over their headless services.
 
 ## File anatomy
 
@@ -80,8 +80,8 @@ state; that is the instancing model.
 ## Service (`packages/<name>/`)
 
 A plain class, `implements Service<T>`. Every data machine lives in
-`packages/` as a headless package (`@zoobzio/deck`, `@zoobzio/browser`,
-`@zoobzio/form`, …): no Nuxt, no Vue — the constructor takes the id, the
+`packages/` as a headless package (`@zoobzio/deck`, `@zoobzio/chart`,
+`@zoobzio/browser`, …): no Nuxt, no Vue — the constructor takes the id, the
 config, the state container, the actions, and optional get/set middleware,
 and the class emits its domain events through its own `on`:
 
@@ -174,38 +174,37 @@ site.
 Script skeleton, in order:
 
 ```ts
-const { service, pt } = defineProps<BrowserWidgetProps<T>>(); // generic="T"
-const emit = defineEmits<BrowserWidgetEmits>();
+const { service, pt } = defineProps<DeckWidgetProps<T>>(); // generic="T"
+const emit = defineEmits<DeckWidgetEmits>();
 
 useHooks<Events>(service.id, {
   // hook → emit, 1:1
-  "browser:updated": (event) => emit("updated", event),
+  "deck:updated": (event) => emit("updated", event),
   /* … every event … */
 });
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
 // One feature composable per feature — refs + shared deriveds in one call
-const { hasSelection, crumbItems, onCrumbSelect } = useBrowserView(service);
+const { pendingCount, showPending } = useDeckView(service, el);
 
-const settings = usePassthrough<BrowserWidgetPassthrough>(() => ({
+const settings = usePassthrough<DeckWidgetPassthrough>(() => ({
   pt,
   recipes: {
-    scroller: {},
     /* … blank parts … */
-    breadcrumb: { items: crumbItems.value, onSelect: onCrumbSelect },
+    pending: { label: `${pendingCount.value} new`, onClick: showPending },
   },
 }));
 
-const ctx = useContext<BrowserWidgetContext<T>>("data-browser", () => ({
-  browser: service,
+const ctx = useContext<DeckWidgetContext<T>>("data-deck", () => ({
+  deck: service,
   el: el.value,
   settings: settings.value,
 }));
 
 defineExpose({ ctx });
-const slots = defineSlots<BrowserWidgetSlots<T>>();
-const folderSlots = useForwardSlots(slots, BROWSER_FOLDER_SLOTS);
+const slots = defineSlots<DeckWidgetSlots<T>>();
+const feedSlots = useForwardSlots(slots, DECK_FEED_SLOTS);
 ```
 
 Two hard rules the collapse introduced:
@@ -218,7 +217,7 @@ Two hard rules the collapse introduced:
   call: `useLazyRequest(key, service.init)` detaches and throws. Always
   close over the machine — `() => service.init()`.
 
-Component type files are **prefixed** (`BrowserWidgetProps`,
+Component type files are **prefixed** (`DeckWidgetProps`,
 `ChartControlContext`, …) and follow core's progression —
 `XPassthrough` / `XProps` / `XEmits` / `XContext` / `XSlots` — with two
 data-tier differences:
@@ -227,7 +226,7 @@ data-tier differences:
   plus passthrough, nothing else. Feature options belong in `Config`, not
   props.
 - `XEmits` is **derived from the domain events**, never authored:
-  `updated: Parameters<Events["browser:updated"]>`.
+  `updated: Parameters<Events["deck:updated"]>`.
 
 Template contract is core's (one `v-bind` per part, one ctx-scoped slot per
 overridable region, no `.value`), except classes: **data widgets own their
@@ -242,8 +241,8 @@ mechanisms, chosen by what keys the children:
 
 | Children keyed by                            | Mechanism                        | Shape                                                                                                                    |
 | -------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| static config (browser folder columns)       | keyed `pt` record                | `pt?: PT<…> & { folders?: PT<BrowserFoldersPassthrough> }`, bound as `:pt="pt?.folders"`                             |
-| runtime data (chart controls, browser rows)  | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
+| static config (deck toolbar, deck feed)      | keyed `pt` record                | `pt?: PT<…> & { feed?: PT<DeckFeedPassthrough> }`, bound as `:pt="pt?.feed"`                                        |
+| runtime data (chart controls, deck cards)    | `PassthroughIter` manifest entry | `control: PassthroughIter<ChartControlAnchor, ChartControlProps<T>>`, bound as `v-bind="settings.control(anchor)"`       |
 
 For iterated children, define an **anchor type** — the slice of widget
 state the child renders (chart's `ChartControlAnchor`) — and reuse it as
@@ -295,7 +294,7 @@ One backbone: Nuxt runtime hooks.
 1. Declare the map in the domain contract — names are
    `"<name>:<past-tense>"`, payloads carry `id`.
 2. Register it in [`app.d.ts`](../../app.d.ts):
-   `interface RuntimeNuxtHooks extends BrowserEvents, DeckEvents {}`.
+   `interface RuntimeNuxtHooks extends ChartEvents, DeckEvents {}`.
 3. The **service** emits at each state transition / dispatched action — an
    extracted machine through its own `on`, relayed to `nuxt.callHook` by
    the factory; an unextracted one through `nuxt.callHook` directly.
@@ -322,7 +321,7 @@ same payloads.
   `Passthrough<InputHTMLAttributes & { value?: string; min?: number }>` —
   and the bindings land directly on the element.
 - **Config resolvers are synchronous.** Async belongs in `Actions`
-  (browser's `fetch`), guarded by service state (`initialized`,
+  (deck's `fetch`), guarded by service state (`initialized`,
   `loading`). Widgets do not init on mount — the caller drives `init()`
   (`useLazyRequest` is one way to do it).
 - Constants live in `constants/<name>.ts`, `SCREAMING_SNAKE` with the
@@ -434,7 +433,7 @@ Build order for a new feature in this tier:
 | Hook subscription   | [`composables/hook.ts`](../../composables/hook.ts) · [`types/hook.ts`](../../types/hook.ts)                                                                                                                             |
 | Slot forwarding     | [`composables/slots.ts`](../../composables/slots.ts) (`useForwardSlots`)                                                                                                                                                |
 | Lazy init           | [`composables/request.ts`](../../composables/request.ts) (`useLazyRequest`)                                                                                                                                             |
-| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) · [`packages/browser`](../../../../../packages/browser/src/service.ts)                                                                                   |
-| Reference: widget   | [`browser/widget.vue`](./browser/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                 |
-| Reference: children | [`browser/folders.vue`](./browser/folders.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                          |
+| Reference: machine  | [`packages/deck`](../../../../../packages/deck/src/service.ts) · [`packages/chart`](../../../../../packages/chart/src/service.ts)                                                                                       |
+| Reference: widget   | [`deck/widget.vue`](./deck/widget.vue) · [`chart/widget.vue`](./chart/widget.vue)                                                                                                                                       |
+| Reference: children | [`deck/feed.vue`](./deck/feed.vue) (keyed) · [`chart/control.vue`](./chart/control.vue) (iterated)                                                                                                                      |
 | Adapter             | [`definitions/adapter.ts`](../../definitions/adapter.ts) · [`factories/adapter.ts`](../../factories/adapter.ts) · [`types/data/adapter.ts`](../../types/data/adapter.ts) · [`adapter/widget.vue`](./adapter/widget.vue) |
