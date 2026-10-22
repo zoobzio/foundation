@@ -54,6 +54,7 @@
     "@zoobzio/form": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/vue": "workspace:*",
+    "ltrl-http": "^0.0.20",
     "objectively": "^0.3.0",
     "reka-ui": "^2.6.0"
   },

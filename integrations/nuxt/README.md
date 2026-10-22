@@ -139,6 +139,36 @@ as `nuxt.$logger`, so code holding the app instance logs without setup
 scope. The factories use it: every relayed event is logged at `debug` under
 the service's id.
 
+## Requests and errors
+
+`useError(code, message, options?)` builds an app error: a Nuxt error with
+the code's status text, stamped with when it was built, and carrying the
+notification the shell toasts for it. `options` takes the `notification`,
+the `cause`, and `fatal`; a fatal error renders the error page instead.
+
+```ts
+import { useError } from "@zoobzio/nuxt/composables/error";
+
+throw useError(404, "No such order", {
+  notification: { variant: "warning", title: "Order not found" },
+});
+```
+
+`useRequest` and `useLazyRequest` wrap `useAsyncData` and
+`useLazyAsyncData`: the same arguments, with the request logged under its
+key and a failure thrown as an app error rather than left on `error`. The
+blocking one runs during SSR and fails fatal by default; the lazy one runs
+on the client and fails non-fatal, so the shell toasts it. The `error`
+option sets the status, message, and notification of the error thrown.
+
+```ts
+import { useLazyRequest } from "@zoobzio/nuxt/composables/request";
+
+const { data } = useLazyRequest("orders", () => $fetch("/api/orders"), {
+  error: { status: 502, message: "Orders are unavailable" },
+});
+```
+
 ## App shell
 
 `app.vue` is the layer's root: reka's `ConfigProvider` (ids from Nuxt's
@@ -180,12 +210,12 @@ app/
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events
   assets/css/     — reset.css, loaded by the layer config
-  composables/    — useHooks, useLogger, useNotifications
+  composables/    — useError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   constants/      — error page status codes, log levels
   factories/      — create<Name>(id, options) → use<Name>(): Service
   plugins/        — log: provides $log and $logger
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
-  types/          — per-feature options, initial state, and hook maps; hook, log, notification, error
+  types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request
   utils/          — split (actions → descriptors + handlers), seed (state)
 modules/          — local Nuxt modules: imports/ fills the #imports / #components registries
 tests/            — vitest + happy-dom, mirroring app/ path-for-path

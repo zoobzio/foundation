@@ -99,3 +99,71 @@ export const defineNuxtPlugin = <P>(plugin: P): P => plugin;
 export const useHead = () => {};
 
 export const clearError = vi.fn();
+
+// --- errors --------------------------------------------------------------
+
+// Nuxt's createError, reduced to the fields the layer reads back.
+export const createError = (input: string | Record<string, unknown>) => {
+  const err = new Error(
+    typeof input === "string" ? input : String(input.message ?? ""),
+  ) as Error & Record<string, unknown>;
+  if (typeof input === "object") {
+    err.statusCode = input.statusCode;
+    err.statusText = input.statusText;
+    err.fatal = input.fatal;
+    err.data = input.data;
+    err.cause = input.cause;
+  }
+  return err;
+};
+
+// --- async data ----------------------------------------------------------
+
+// Executes the handler at once (client-side semantics) so request wiring
+// can be exercised for real; await `promise` before asserting.
+const makeAsyncData = (
+  handler: () => Promise<unknown>,
+  options: Record<string, unknown> = {},
+) => {
+  const data = ref<unknown>(null);
+  const error = ref<unknown>(null);
+  const status = ref("idle");
+  const pending = ref(false);
+  const execute = async () => {
+    status.value = "pending";
+    pending.value = true;
+    try {
+      data.value = await handler();
+      error.value = null;
+      status.value = "success";
+    } catch (caught) {
+      error.value = caught;
+      status.value = "error";
+    } finally {
+      pending.value = false;
+    }
+  };
+  const promise = execute();
+  return {
+    data,
+    error,
+    status,
+    pending,
+    promise,
+    options,
+    execute: () => execute(),
+    refresh: () => execute(),
+  };
+};
+
+export const useAsyncData = (
+  _key: unknown,
+  handler: () => Promise<unknown>,
+  options?: Record<string, unknown>,
+) => makeAsyncData(handler, options);
+
+export const useLazyAsyncData = (
+  _key: unknown,
+  handler: () => Promise<unknown>,
+  options?: Record<string, unknown>,
+) => makeAsyncData(handler, options);
