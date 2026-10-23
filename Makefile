@@ -52,7 +52,7 @@ clean: ## Remove the build output and the Nuxt caches
 	find packages integrations -maxdepth 2 \( -name .dist -o -name .coverage \) -type d -prune -exec rm -rf {} +
 	find integrations -maxdepth 2 \( -name .nuxt -o -name .output \) -type d -prune -exec rm -rf {} +
 
-check: lint typecheck test ## Run lint, typecheck, and test on the existing build output
+check: lint inspect typecheck test ## Run lint, inspect, typecheck, and test on the existing build output
 
 verify: clean install build prepare typecheck test ## Clean, install, build, prepare, typecheck, and test
 

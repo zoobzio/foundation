@@ -24,7 +24,11 @@ export default defineNuxtModule({
     const resolve = (subpath: string): string =>
       require.resolve(`@zoobzio/vue/${subpath}`);
     const dist = (subpath: string): string =>
-      join(dirname(require.resolve("@zoobzio/vue/package.json")), ".dist", subpath);
+      join(
+        dirname(require.resolve("@zoobzio/vue/package.json")),
+        ".dist",
+        subpath,
+      );
 
     const resolver = createResolver(import.meta.url);
     const app = (subpath: string): string =>
