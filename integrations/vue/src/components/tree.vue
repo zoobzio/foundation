@@ -9,12 +9,13 @@ import type {
 } from "../types/components/tree";
 import type { ComponentPublicInstance } from "vue";
 
-import { TreeRoot, TreeItem } from "reka-ui";
+import { Primitive, TreeRoot, TreeItem } from "reka-ui";
 
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 </script>
 
 <script setup lang="ts" generic="T extends TreeNode & { children?: T[] }">
@@ -67,6 +68,7 @@ const settings = usePassthrough<TreePassthrough<T>>(() => ({
         emit("toggle", flat.value, !event.detail.isExpanded);
       },
     }),
+    link: (node) => anchor(node.link, node.disabled),
   },
 }));
 
@@ -110,14 +112,13 @@ defineSlots<TreeSlots<T>>();
           name="itemLabel"
           v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
         >
-          <a
+          <Primitive
             v-if="flat.value.link"
-            :href="flat.value.disabled ? undefined : flat.value.link.to"
-            :target="flat.value.link.target"
             class="f-anchor"
+            v-bind="settings.link(flat.value)"
           >
             {{ flat.value.label }}
-          </a>
+          </Primitive>
           <span v-else class="f-span">{{ flat.value.label }}</span>
         </slot>
       </slot>

@@ -34,7 +34,7 @@ export type TableProps<T> = {
   service: Service<T>;
   pt?: PT<TablePassthrough> & {
     head?: PT<TableHeadPassthrough>;
-    body?: PT<TableBodyPassthrough>;
+    body?: PT<TableBodyPassthrough<T>>;
     columns?: PT<TableColumnsPassthrough>;
   };
 };

@@ -8,6 +8,7 @@ import type {
   BreadcrumbEmits,
   BreadcrumbProps,
 } from "../../src/types/components/breadcrumb";
+import { RouterLink } from "#test/mount/link";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Breadcrumb: FunctionalComponent<
@@ -149,5 +150,18 @@ describe("breadcrumb", () => {
       "sep:2",
     ]);
     expect(wrapper.findAll("li").at(3)?.find("output").exists()).toBe(false);
+  });
+});
+
+describe("breadcrumb link part", () => {
+  it("pt.link swaps the anchor for a component that keeps its attributes", async () => {
+    const wrapper = mountBreadcrumb({
+      pt: { link: () => ({ as: RouterLink }) },
+    });
+    const link = wrapper.get("a[data-router]");
+    expect(link.attributes("href")).toBe("/");
+    expect(link.classes()).toContain("f-anchor");
+    await link.trigger("click");
+    expect(wrapper.emitted("select")?.[0]).toEqual([crumb("root")]);
   });
 });

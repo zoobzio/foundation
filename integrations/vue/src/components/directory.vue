@@ -3,24 +3,42 @@ import type {
   DirectoryContext,
   DirectoryEmits,
   DirectoryItem,
+  DirectoryPassthrough,
   DirectoryProps,
   DirectorySlots,
 } from "../types/components/directory";
 
+import { Primitive } from "reka-ui";
+
 import { useTemplateRef } from "vue";
+import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 </script>
 
 <script setup lang="ts" generic="T extends DirectoryItem">
-const { groups } = defineProps<DirectoryProps<T>>();
+const { groups, pt } = defineProps<DirectoryProps<T>>();
 
 const emit = defineEmits<DirectoryEmits<T>>();
 
 const el = useTemplateRef<HTMLElement>("el");
 
+const settings = usePassthrough<DirectoryPassthrough<T>>(() => ({
+  pt,
+  recipes: {
+    link: (item) => ({
+      ...anchor(item.link, item.disabled),
+      onClick: () => {
+        if (!item.disabled) emit("select", item);
+      },
+    }),
+  },
+}));
+
 const ctx = useContext<DirectoryContext<T>>("directory", () => ({
   groups,
   el: el.value,
+  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -38,18 +56,16 @@ defineSlots<DirectorySlots<T>>();
       <ul class="f-ul">
         <li v-for="item in group.items" :key="item.key" class="f-li">
           <slot name="item" v-bind="{ ...ctx, item }">
-            <a
+            <Primitive
               v-if="item.link"
-              :href="item.disabled ? undefined : item.link.to"
-              :target="item.link.target"
               class="f-anchor"
-              @click="!item.disabled && emit('select', item)"
+              v-bind="settings.link(item)"
             >
               <slot name="itemIcon" v-bind="{ ...ctx, item }" />
               <slot name="itemLabel" v-bind="{ ...ctx, item }">
                 <span class="f-span">{{ item.label }}</span>
               </slot>
-            </a>
+            </Primitive>
             <button
               v-else
               type="button"

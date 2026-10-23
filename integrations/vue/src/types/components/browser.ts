@@ -47,7 +47,7 @@ export type BrowserProps<T> = {
   service: Service<T>;
   pt?: PT<BrowserPassthrough> & {
     folders?: PT<BrowserFoldersPassthrough>;
-    files?: PT<BrowserFilesPassthrough>;
+    files?: PT<BrowserFilesPassthrough<T>>;
   };
 };
 

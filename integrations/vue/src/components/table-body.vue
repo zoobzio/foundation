@@ -10,6 +10,8 @@ import Checkbox from "./checkbox.vue";
 import Fab from "./fab.vue";
 import Menu from "./menu.vue";
 
+import { Primitive } from "reka-ui";
+
 import { useSlots, useTemplateRef } from "vue";
 import { useRefs } from "../composables/ref";
 import { usePassthrough } from "../composables/passthrough";
@@ -28,7 +30,7 @@ const slots = useSlots();
 const { data, visibleColumns, colSpan, actions, isSelectable, hasActions } =
   useRefs(service);
 
-const settings = usePassthrough<TableBodyPassthrough>(() => ({
+const settings = usePassthrough<TableBodyPassthrough<T>>(() => ({
   pt,
   recipes: {
     rowCheckbox: {},
@@ -37,6 +39,12 @@ const settings = usePassthrough<TableBodyPassthrough>(() => ({
       groups: [{ key: "actions", items: actions.value }],
       align: "end",
     },
+    link: ({ value }) => ({
+      as: "a",
+      href: String(value),
+      target: "_blank",
+      rel: "noopener",
+    }),
   },
 }));
 
@@ -91,15 +99,13 @@ defineSlots<TableBodySlots<T>>();
             v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
           >
             <!-- 4. Default rendering by type -->
-            <a
+            <Primitive
               v-if="col.type === 'url'"
               class="f-anchor"
-              :href="String(row[col.key])"
-              target="_blank"
-              rel="noopener"
+              v-bind="settings.link({ row, column: col, value: row[col.key] })"
             >
               {{ row[col.key] }}
-            </a>
+            </Primitive>
             <img
               v-else-if="col.type === 'image'"
               class="f-img"

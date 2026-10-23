@@ -3,7 +3,7 @@ import type {
   ToggleGroupRootEmits,
   ToggleGroupItemProps,
 } from "reka-ui";
-import type { LinkTarget, Option } from "../common";
+import type { LinkProps, LinkTarget, Option } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
@@ -17,13 +17,15 @@ export type SegmentedControlOption = Option & {
 };
 
 /**
- * The parts of the segmented control that accept passthrough.
+ * The parts of the segmented control that accept passthrough. `link` is
+ * the anchor a linked item renders as child, built per option.
  */
 export type SegmentedControlPassthrough<
   T extends SegmentedControlOption = SegmentedControlOption,
 > = {
   root: Passthrough<ToggleGroupRootProps, ToggleGroupRootEmits>;
   item: PassthroughIter<T, ToggleGroupItemProps>;
+  link: PassthroughIter<T, LinkProps>;
 };
 
 /**

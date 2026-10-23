@@ -1,3 +1,6 @@
+import type { PrimitiveProps } from "reka-ui";
+import type { AnchorHTMLAttributes } from "vue";
+
 /**
  * An item a component can select.
  */
@@ -22,6 +25,14 @@ export interface Link {
  * The navigation fields of a Link. An item with a `link` renders as an anchor.
  */
 export type LinkTarget = Pick<Link, "to" | "target">;
+
+/**
+ * The props of a link part: reka's `Primitive` (`as`, `asChild`) plus the
+ * anchor attributes. The local recipe renders a plain anchor; a consumer's
+ * `pt` swaps the element through `as`, a tag or a component such as a
+ * router link, which receives the same attributes.
+ */
+export type LinkProps = PrimitiveProps & AnchorHTMLAttributes;
 
 /**
  * Adds optional children to a node type.

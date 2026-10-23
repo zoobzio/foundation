@@ -1,7 +1,8 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { FabProps } from "./fab";
 import type { MenuEmits, MenuItem, MenuProps } from "./menu";
-import type { Passthrough, PT } from "../passthrough";
+import type { LinkProps } from "../common";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { DataTableColumn, Service } from "@zoobzio/table";
 import type { VNode } from "vue";
 
@@ -12,15 +13,26 @@ import type { VNode } from "vue";
 export type TableActionItem = MenuItem & { key: string };
 
 /**
- * The parts of the table body that accept passthrough.
+ * One cell: the row, the column, and the cell value.
  */
-export type TableBodyPassthrough = {
+export type TableCell<T> = {
+  row: T;
+  column: DataTableColumn<T>;
+  value: unknown;
+};
+
+/**
+ * The parts of the table body that accept passthrough. `link` is the
+ * anchor of a `url` cell, built per cell.
+ */
+export type TableBodyPassthrough<T> = {
   rowCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
   actionsMenu: Passthrough<
     MenuProps<TableActionItem>,
     MenuEmits<TableActionItem>
   >;
   actionsTrigger: Passthrough<FabProps>;
+  link: PassthroughIter<TableCell<T>, LinkProps>;
 };
 
 /**
@@ -28,7 +40,7 @@ export type TableBodyPassthrough = {
  */
 export type TableBodyProps<T> = {
   service: Service<T>;
-  pt?: PT<TableBodyPassthrough>;
+  pt?: PT<TableBodyPassthrough<T>>;
 };
 
 /**
@@ -37,18 +49,13 @@ export type TableBodyProps<T> = {
 export type TableBodyContext<T> = {
   table: Service<T>;
   el: HTMLTableSectionElement | null;
-  settings: TableBodyPassthrough;
+  settings: TableBodyPassthrough<T>;
 };
 
 /**
- * The payload of a cell slot: the body context plus the row, the column,
- * and the cell value.
+ * The payload of a cell slot: the body context plus the cell.
  */
-export type TableCellContext<T> = TableBodyContext<T> & {
-  row: T;
-  column: DataTableColumn<T>;
-  value: unknown;
-};
+export type TableCellContext<T> = TableBodyContext<T> & TableCell<T>;
 
 /**
  * Slots of the table body. Cell overrides cascade: `cell:<key>` for one

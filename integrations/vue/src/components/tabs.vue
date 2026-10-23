@@ -9,12 +9,19 @@ import type {
 } from "../types/components/tabs";
 import type { ComponentPublicInstance } from "vue";
 
-import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "reka-ui";
+import {
+  Primitive,
+  TabsRoot,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "reka-ui";
 
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 </script>
 
 <script setup lang="ts" generic="T extends TabsOption">
@@ -49,6 +56,7 @@ const settings = usePassthrough<TabsPassthrough<T>>(() => ({
       asChild: !!option.link,
       as: option.link ? "a" : undefined,
     }),
+    link: (option) => anchor(option.link, option.disabled),
     content: (option) => ({
       value: option.value,
     }),
@@ -72,16 +80,12 @@ defineSlots<TabsSlots<T>>();
       <TabsList class="f-tabs-list" v-bind="settings.list">
         <template v-for="option in tabs" :key="option.value">
           <TabsTrigger class="f-tabs-trigger" v-bind="settings.trigger(option)">
-            <a
-              v-if="option.link"
-              :href="option.disabled ? undefined : option.link.to"
-              :target="option.link.target"
-            >
+            <Primitive v-if="option.link" v-bind="settings.link(option)">
               <slot name="trigger" v-bind="{ ...ctx, option }">
                 <slot name="triggerIcon" v-bind="{ ...ctx, option }" />
                 {{ option.label }}
               </slot>
-            </a>
+            </Primitive>
             <slot v-else name="trigger" v-bind="{ ...ctx, option }">
               <slot name="triggerIcon" v-bind="{ ...ctx, option }" />
               {{ option.label }}

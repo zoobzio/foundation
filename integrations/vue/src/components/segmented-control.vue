@@ -9,12 +9,13 @@ import type {
 } from "../types/components/segmented-control";
 import type { ComponentPublicInstance } from "vue";
 
-import { ToggleGroupRoot, ToggleGroupItem } from "reka-ui";
+import { Primitive, ToggleGroupRoot, ToggleGroupItem } from "reka-ui";
 
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 </script>
 
 <script setup lang="ts" generic="T extends SegmentedControlOption">
@@ -50,6 +51,7 @@ const settings = usePassthrough<SegmentedControlPassthrough<T>>(() => ({
       asChild: !!option.link,
       as: option.link ? "a" : undefined,
     }),
+    link: (option) => anchor(option.link, option.disabled),
   },
 }));
 
@@ -74,16 +76,12 @@ defineSlots<SegmentedControlSlots<T>>();
           class="f-toggle-group-item"
           v-bind="settings.item(option)"
         >
-          <a
-            v-if="option.link"
-            :href="option.disabled ? undefined : option.link.to"
-            :target="option.link.target"
-          >
+          <Primitive v-if="option.link" v-bind="settings.link(option)">
             <slot name="itemIcon" v-bind="{ ...ctx, option }" />
             <slot name="itemLabel" v-bind="{ ...ctx, option }">
               <span v-if="option.label" class="f-span">{{ option.label }}</span>
             </slot>
-          </a>
+          </Primitive>
           <template v-else>
             <slot name="itemIcon" v-bind="{ ...ctx, option }" />
             <slot name="itemLabel" v-bind="{ ...ctx, option }">

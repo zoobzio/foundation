@@ -11,6 +11,8 @@ import {
   fakeFolderActions,
   fakeFolders,
 } from "#test/data/browser";
+import { RouterLink } from "#test/mount/link";
+import { fakeFileColumns } from "#test/data/browser";
 
 const mounted: { unmount: () => void }[] = [];
 
@@ -129,5 +131,26 @@ describe("browser-files", () => {
       "filesize=1048576",
       "filesize=512",
     ]);
+  });
+});
+
+describe("browser-files link part", () => {
+  it("renders url cells as anchors and pt.link swaps them for a component", async () => {
+    const { service } = makeBrowser({
+      columns: [
+        ...fakeFileColumns,
+        { key: "name", label: "Open", type: "url" },
+      ],
+    });
+    await service.init();
+    const wrapper = mountFiles({
+      service,
+      pt: { link: ({ value }) => ({ as: RouterLink, title: String(value) }) },
+    });
+    const anchor = wrapper.get("a[data-router]");
+    expect(anchor.attributes("href")).toBe("logo.svg");
+    expect(anchor.attributes("title")).toBe("logo.svg");
+    expect(anchor.attributes("target")).toBe("_blank");
+    expect(anchor.classes()).toContain("f-anchor");
   });
 });

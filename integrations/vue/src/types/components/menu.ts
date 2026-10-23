@@ -10,7 +10,7 @@ import type {
   DropdownMenuItemEmits,
   DropdownMenuSeparatorProps,
 } from "reka-ui";
-import type { LinkTarget } from "../common";
+import type { LinkProps, LinkTarget } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
@@ -35,7 +35,8 @@ export type MenuGroup<T extends MenuItem = MenuItem> = {
 };
 
 /**
- * The parts of the menu that accept passthrough.
+ * The parts of the menu that accept passthrough. `link` is the anchor a
+ * linked item renders as child, built per item.
  */
 export type MenuPassthrough<T extends MenuItem = MenuItem> = {
   root: Passthrough<DropdownMenuRootProps, DropdownMenuRootEmits>;
@@ -44,6 +45,7 @@ export type MenuPassthrough<T extends MenuItem = MenuItem> = {
   group: Passthrough<DropdownMenuGroupProps>;
   label: Passthrough<DropdownMenuLabelProps>;
   item: PassthroughIter<T, DropdownMenuItemProps, DropdownMenuItemEmits>;
+  link: PassthroughIter<T, LinkProps>;
   separator: Passthrough<DropdownMenuSeparatorProps>;
 };
 

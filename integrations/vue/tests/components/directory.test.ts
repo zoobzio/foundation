@@ -8,6 +8,7 @@ import type {
   DirectoryEmits,
   DirectoryProps,
 } from "../../src/types/components/directory";
+import { RouterLink } from "#test/mount/link";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Directory: FunctionalComponent<
@@ -103,5 +104,31 @@ describe("directory", () => {
     ]);
     expect(wrapper.findAll("a")).toHaveLength(0);
     expect(wrapper.findAll("button")).toHaveLength(0);
+  });
+});
+
+describe("directory link part", () => {
+  it("pt.link swaps the anchor for a component that keeps its attributes", async () => {
+    const wrapper = mountDirectory({
+      pt: { link: () => ({ as: RouterLink }) },
+    });
+    const links = wrapper.findAll("a[data-router]");
+    expect(links.map((a) => a.attributes("href"))).toEqual([
+      "/",
+      "/contacts",
+      undefined,
+    ]);
+    expect(links[0]?.classes()).toContain("f-anchor");
+    await wrapper.get('a[data-router][href="/"]').trigger("click");
+    expect(wrapper.emitted("select")?.[0]).toEqual([item("home")]);
+  });
+
+  it("pt.link merges over the recipe per item", () => {
+    const wrapper = mountDirectory({
+      pt: { link: (entry) => ({ title: entry.key }) },
+    });
+    const home = wrapper.get('a[href="/"]');
+    expect(home.attributes("title")).toBe("home");
+    expect(home.attributes("data-router")).toBeUndefined();
   });
 });

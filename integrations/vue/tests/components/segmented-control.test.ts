@@ -8,6 +8,7 @@ import type {
   SegmentedControlOption,
   SegmentedControlProps,
 } from "../../src/types/components/segmented-control";
+import { RouterLink } from "#test/mount/link";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const SegmentedControl: FunctionalComponent<
@@ -72,5 +73,15 @@ describe("segmented-control", () => {
     await segmentByText(wrapper, "Activity").trigger("click");
     await flushPromises();
     expect(wrapper.emitted("update:modelValue")).toEqual([["activity"]]);
+  });
+});
+
+describe("segmented control link part", () => {
+  it("pt.link swaps the item anchor and keeps the toggle state on it", () => {
+    const wrapper = mountControl({ pt: { link: () => ({ as: RouterLink }) } });
+    const overview = wrapper.get("a[data-router]");
+    expect(overview.attributes("href")).toBe("/overview");
+    expect(overview.classes()).toContain("f-toggle-group-item");
+    expect(overview.attributes("data-state")).toBe("on");
   });
 });

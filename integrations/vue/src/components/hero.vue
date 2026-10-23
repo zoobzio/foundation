@@ -1,19 +1,31 @@
 <script lang="ts">
 import type {
+  HeroPassthrough,
   HeroProps,
   HeroContext,
   HeroSlots,
 } from "../types/components/hero";
 
+import { Primitive } from "reka-ui";
+
 import { useTemplateRef } from "vue";
+import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 </script>
 
 <script setup lang="ts">
-const { tagline, taglineHighlight, description, action } =
+const { tagline, taglineHighlight, description, action, pt } =
   defineProps<HeroProps>();
 
 const el = useTemplateRef<HTMLElement>("el");
+
+const settings = usePassthrough<HeroPassthrough>(() => ({
+  pt,
+  recipes: {
+    link: anchor(action, action?.disabled),
+  },
+}));
 
 const ctx = useContext<HeroContext>("hero", () => ({
   tagline,
@@ -21,6 +33,7 @@ const ctx = useContext<HeroContext>("hero", () => ({
   description,
   action,
   el: el.value,
+  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -46,10 +59,10 @@ defineSlots<HeroSlots>();
             {{ description }}
           </p>
         </slot>
-        <slot name="button" v-bind="ctx">
-          <button v-if="action" type="button" class="f-button">
+        <slot name="action" v-bind="ctx">
+          <Primitive v-if="action" class="f-anchor" v-bind="settings.link">
             {{ action.label }}
-          </button>
+          </Primitive>
         </slot>
       </div>
     </slot>

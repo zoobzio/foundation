@@ -8,6 +8,7 @@ import type {
   TabsOption,
   TabsProps,
 } from "../../src/types/components/tabs";
+import { RouterLink } from "#test/mount/link";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Tabs: FunctionalComponent<TabsProps<TabsOption>, TabsEmits> = Core;
@@ -81,5 +82,19 @@ describe("tabs", () => {
     await tabByText(wrapper, "Banana").trigger("focus");
     await flushPromises();
     expect(wrapper.emitted("update:modelValue")).toEqual([["banana"]]);
+  });
+});
+
+describe("tabs link part", () => {
+  it("pt.link swaps the trigger anchor and keeps the tab role on it", () => {
+    const wrapper = mountTabs({ pt: { link: () => ({ as: RouterLink }) } });
+    const overview = tabByText(wrapper, "Overview");
+    expect(overview.attributes("data-router")).toBe("");
+    expect(overview.attributes("href")).toBe("/overview");
+    expect(overview.classes()).toContain("f-tabs-trigger");
+    expect(overview.attributes("aria-selected")).toBe("true");
+    expect(
+      tabByText(wrapper, "Local").attributes("data-router"),
+    ).toBeUndefined();
   });
 });

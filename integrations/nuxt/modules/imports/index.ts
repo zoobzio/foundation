@@ -11,8 +11,7 @@ import { pascal } from "./util";
 
 export default defineNuxtModule({
   meta: { name: "@zoobzio/nuxt/imports" },
-  setup() {
-    // @zoobzio/vue: components into #components, define* into #imports.
+  setup(_, nuxt) {
     const require = createRequire(import.meta.url);
     const resolve = (subpath: string): string =>
       require.resolve(`@zoobzio/vue/${subpath}`);
@@ -32,7 +31,6 @@ export default defineNuxtModule({
       })),
     );
 
-    // The layer's own app/ files into #imports, values and types alike.
     const resolver = createResolver(import.meta.url);
     const app = (subpath: string): string =>
       resolver.resolve("../../app", `${subpath}.ts`);
@@ -48,5 +46,9 @@ export default defineNuxtModule({
         names.map((name) => ({ name, from: app(subpath), type: true })),
       ),
     );
+
+    nuxt.hook("prepare:types", ({ references }) => {
+      references.push({ path: resolver.resolve("../../app/app.d.ts") });
+    });
   },
 });

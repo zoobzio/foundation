@@ -1,4 +1,5 @@
-import type { LinkTarget } from "../common";
+import type { LinkProps, LinkTarget } from "../common";
+import type { PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { VNode } from "vue";
 
@@ -24,10 +25,19 @@ export type DirectoryGroup<T extends DirectoryItem = DirectoryItem> = {
 };
 
 /**
+ * The parts of the directory that accept passthrough. `link` is the
+ * anchor of an item with `link`, built per item.
+ */
+export type DirectoryPassthrough<T extends DirectoryItem> = {
+  link: PassthroughIter<T, LinkProps>;
+};
+
+/**
  * Props of the directory.
  */
 export type DirectoryProps<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
+  pt?: PT<DirectoryPassthrough<T>>;
 };
 
 /**
@@ -43,6 +53,7 @@ export type DirectoryEmits<T extends DirectoryItem> = {
 export type DirectoryContext<T extends DirectoryItem> = {
   groups: DirectoryGroup<T>[];
   el: HTMLElement | null;
+  settings: DirectoryPassthrough<T>;
 };
 
 /**

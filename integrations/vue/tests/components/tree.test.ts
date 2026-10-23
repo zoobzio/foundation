@@ -5,6 +5,7 @@ import Core from "../../src/components/tree.vue";
 import { fakeTreeNodes } from "#test/data/tree";
 import type { FakeTreeNode } from "#test/data/tree";
 import type { TreeEmits, TreeProps } from "../../src/types/components/tree";
+import { RouterLink } from "#test/mount/link";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Tree: FunctionalComponent<
@@ -194,5 +195,17 @@ describe("tree", () => {
       "reference:1:false:3",
       "archive:1:false:3",
     ]);
+  });
+});
+
+describe("tree link part", () => {
+  it("pt.link swaps the label anchor for a component", () => {
+    const wrapper = mountTree({
+      expanded: ["guides"],
+      pt: { link: () => ({ as: RouterLink }) },
+    });
+    const reference = itemByText(wrapper, "Reference").get("a[data-router]");
+    expect(reference.attributes("href")).toBe("/reference");
+    expect(reference.classes()).toContain("f-anchor");
   });
 });

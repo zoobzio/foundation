@@ -6,6 +6,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import Table from "../../src/components/table.vue";
 import { makeTable } from "#test/mount/table";
 import { fakeActions, fakeBulkActions } from "#test/data/table";
+import { RouterLink } from "#test/mount/link";
 
 const mounted: { unmount: () => void }[] = [];
 
@@ -240,5 +241,23 @@ describe("table", () => {
       .findAll("button")
       .find((b) => b.attributes("aria-label") === "Reload");
     expect(refresh).toBeDefined();
+  });
+});
+
+describe("table link part", () => {
+  it("pt.body.link swaps the url cell anchor for a component", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({
+      service,
+      pt: { body: { link: () => ({ as: RouterLink }) } },
+    });
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    const anchor = first.get("td:last-child a[data-router]");
+    expect(anchor.attributes("href")).toBe("https://a.example");
+    expect(anchor.attributes("target")).toBe("_blank");
+    expect(anchor.attributes("rel")).toBe("noopener");
+    expect(anchor.classes()).toContain("f-anchor");
   });
 });

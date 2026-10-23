@@ -5,7 +5,7 @@ import type {
   TabsTriggerProps,
   TabsContentProps,
 } from "reka-ui";
-import type { LinkTarget, Option } from "../common";
+import type { LinkProps, LinkTarget, Option } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
@@ -20,12 +20,14 @@ export type TabsOption = Option & {
 };
 
 /**
- * The parts of the tabs that accept passthrough.
+ * The parts of the tabs that accept passthrough. `link` is the anchor a
+ * linked trigger renders as child, built per tab.
  */
 export type TabsPassthrough<T extends TabsOption = TabsOption> = {
   root: Passthrough<TabsRootProps, TabsRootEmits>;
   list: Passthrough<TabsListProps>;
   trigger: PassthroughIter<T, TabsTriggerProps>;
+  link: PassthroughIter<T, LinkProps>;
   content: PassthroughIter<T, TabsContentProps>;
 };
 

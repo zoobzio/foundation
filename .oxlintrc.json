@@ -19,7 +19,10 @@
   ],
   "rules": {
     // Forbid type assertions (`as T`, `<T>x`); `as const` is still allowed
-    "typescript/consistent-type-assertions": ["error", { "assertionStyle": "never" }],
+    "typescript/consistent-type-assertions": [
+      "error",
+      { "assertionStyle": "never" }
+    ],
     // Composables deliberately define helpers inside their setup scope
     "unicorn/consistent-function-scoping": "off",
     // `export {}` is required to make .d.ts files module augmentations

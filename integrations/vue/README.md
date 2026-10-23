@@ -52,7 +52,14 @@ tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
 Items that can navigate carry an optional `link` (`LinkTarget`: `to`,
-`target`) and render as a plain anchor.
+`target`) and render through a `link` part: a reka `Primitive` whose
+recipe is a plain anchor. The part takes `LinkProps` (`as`, `asChild`, and
+the anchor attributes), so `pt.link` swaps the element for a component
+such as a router link, which receives the same `href` and `target`.
+
+```vue
+<Menu :groups="groups" :pt="{ link: () => ({ as: NuxtLink }) }" />
+```
 
 ## Data components
 

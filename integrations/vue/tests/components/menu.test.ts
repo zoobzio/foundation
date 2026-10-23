@@ -8,6 +8,7 @@ import type {
   MenuItem,
   MenuProps,
 } from "../../src/types/components/menu";
+import { RouterLink } from "#test/mount/link";
 
 // A concrete FunctionalComponent type instantiates T for mount().
 const Menu: FunctionalComponent<
@@ -84,5 +85,16 @@ describe("menu", () => {
     itemByText("Profile").click();
     await flushPromises();
     expect(wrapper.emitted("select")).toEqual([[item("Profile")]]);
+  });
+});
+
+describe("menu link part", () => {
+  it("pt.link swaps the item anchor and keeps the menuitem role on it", async () => {
+    await mountMenu({ pt: { link: () => ({ as: RouterLink }) } });
+    const profile = itemByText("Profile");
+    expect(profile.hasAttribute("data-router")).toBe(true);
+    expect(profile.getAttribute("href")).toBe("/profile");
+    expect(profile.classList).toContain("f-dropdown-menu-item");
+    expect(itemByText("Sign out").hasAttribute("data-router")).toBe(false);
   });
 });

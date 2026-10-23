@@ -1,7 +1,8 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { FabProps } from "./fab";
 import type { MenuEmits, MenuItem, MenuProps } from "./menu";
-import type { Passthrough, PT } from "../passthrough";
+import type { LinkProps } from "../common";
+import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { BrowserColumn, Service } from "@zoobzio/browser";
 import type { VNode } from "vue";
 
@@ -12,15 +13,26 @@ import type { VNode } from "vue";
 export type BrowserActionItem = MenuItem & { key: string };
 
 /**
- * The parts of the file rows that accept passthrough.
+ * One file cell: the row, the column, and the cell value.
  */
-export type BrowserFilesPassthrough = {
+export type BrowserFileCell<T> = {
+  row: T;
+  column: BrowserColumn<T>;
+  value: unknown;
+};
+
+/**
+ * The parts of the file rows that accept passthrough. `link` is the
+ * anchor of a `url` cell, built per cell.
+ */
+export type BrowserFilesPassthrough<T> = {
   rowCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
   actionsMenu: Passthrough<
     MenuProps<BrowserActionItem>,
     MenuEmits<BrowserActionItem>
   >;
   actionsTrigger: Passthrough<FabProps>;
+  link: PassthroughIter<BrowserFileCell<T>, LinkProps>;
 };
 
 /**
@@ -28,7 +40,7 @@ export type BrowserFilesPassthrough = {
  */
 export type BrowserFilesProps<T> = {
   service: Service<T>;
-  pt?: PT<BrowserFilesPassthrough>;
+  pt?: PT<BrowserFilesPassthrough<T>>;
 };
 
 /**
@@ -37,18 +49,14 @@ export type BrowserFilesProps<T> = {
 export type BrowserFilesContext<T> = {
   browser: Service<T>;
   el: HTMLTableSectionElement | null;
-  settings: BrowserFilesPassthrough;
+  settings: BrowserFilesPassthrough<T>;
 };
 
 /**
- * The payload of a cell slot: the files context plus the row, the column,
- * and the cell value.
+ * The payload of a cell slot: the files context plus the cell.
  */
-export type BrowserFileCellContext<T> = BrowserFilesContext<T> & {
-  row: T;
-  column: BrowserColumn<T>;
-  value: unknown;
-};
+export type BrowserFileCellContext<T> = BrowserFilesContext<T> &
+  BrowserFileCell<T>;
 
 /**
  * Slots of the file rows. Cell overrides cascade: `cell:<key>` for one

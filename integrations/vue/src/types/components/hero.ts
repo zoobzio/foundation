@@ -1,15 +1,25 @@
-import type { Link } from "../common";
+import type { Link, LinkProps } from "../common";
+import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { VNode } from "vue";
 
 /**
- * Props of the hero.
+ * The parts of the hero that accept passthrough. `link` is the anchor
+ * the `action` renders as.
+ */
+export type HeroPassthrough = {
+  link: Passthrough<LinkProps>;
+};
+
+/**
+ * Props of the hero. `action` is a call to action that navigates.
  */
 export type HeroProps = {
   tagline: string;
   taglineHighlight?: string;
   description?: string;
   action?: Link;
+  pt?: PT<HeroPassthrough>;
 };
 
 /**
@@ -26,6 +36,7 @@ export type HeroContext = {
   description?: string;
   action?: Link;
   el: HTMLElement | null;
+  settings: HeroPassthrough;
 };
 
 /**
@@ -36,7 +47,7 @@ export type HeroSlots = {
   tagline?: (props: HeroContext) => VNode[];
   taglineHighlight?: (props: HeroContext) => VNode[];
   description?: (props: HeroContext) => VNode[];
-  button?: (props: HeroContext) => VNode[];
+  action?: (props: HeroContext) => VNode[];
   showcase?: (props: HeroContext) => VNode[];
 };
 

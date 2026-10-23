@@ -1,4 +1,5 @@
-import type { LinkTarget } from "../common";
+import type { LinkProps, LinkTarget } from "../common";
+import type { PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { VNode } from "vue";
 
@@ -16,10 +17,19 @@ export type BreadcrumbItem = {
 };
 
 /**
+ * The parts of the breadcrumb that accept passthrough. `link` is the
+ * anchor of an ancestor with `link`, built per item.
+ */
+export type BreadcrumbPassthrough<T extends BreadcrumbItem> = {
+  link: PassthroughIter<T, LinkProps>;
+};
+
+/**
  * Props of the breadcrumb.
  */
 export type BreadcrumbProps<T extends BreadcrumbItem> = {
   items: T[];
+  pt?: PT<BreadcrumbPassthrough<T>>;
 };
 
 /**
@@ -35,6 +45,7 @@ export type BreadcrumbEmits<T extends BreadcrumbItem> = {
 export type BreadcrumbContext<T extends BreadcrumbItem> = {
   items: T[];
   el: HTMLElement | null;
+  settings: BreadcrumbPassthrough<T>;
 };
 
 /**

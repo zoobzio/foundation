@@ -18,12 +18,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  Primitive,
 } from "reka-ui";
 
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 import { MENU_SIDE_OFFSET } from "../constants/popper";
 </script>
 
@@ -69,6 +71,7 @@ const settings = usePassthrough<MenuPassthrough<T>>(() => ({
         emit("select", item);
       },
     }),
+    link: (item) => anchor(item.link, item.disabled),
     separator: {},
   },
 }));
@@ -136,16 +139,12 @@ defineSlots<MenuSlots<T>>();
                     class="f-dropdown-menu-item"
                     v-bind="settings.item(item)"
                   >
-                    <a
-                      v-if="item.link"
-                      :href="item.disabled ? undefined : item.link.to"
-                      :target="item.link.target"
-                    >
+                    <Primitive v-if="item.link" v-bind="settings.link(item)">
                       <slot name="itemIcon" v-bind="{ ...ctx, item }" />
                       <slot name="itemLabel" v-bind="{ ...ctx, item }">
                         <span class="f-span">{{ item.label }}</span>
                       </slot>
-                    </a>
+                    </Primitive>
                     <template v-else>
                       <slot name="itemIcon" v-bind="{ ...ctx, item }" />
                       <slot name="itemLabel" v-bind="{ ...ctx, item }">

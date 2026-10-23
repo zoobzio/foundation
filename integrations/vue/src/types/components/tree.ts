@@ -1,4 +1,4 @@
-import type { LinkTarget } from "../common";
+import type { LinkProps, LinkTarget } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
@@ -30,11 +30,13 @@ export type TreeNode = {
 /**
  * The parts of the tree that accept passthrough. The root listener must
  * accept `T | T[]`: reka does not narrow the multiple generic through a
- * whole-object `v-bind`, so only `T` arrives at runtime.
+ * whole-object `v-bind`, so only `T` arrives at runtime. `link` is the
+ * label anchor of a node with `link`, built per node.
  */
 export type TreePassthrough<T extends TreeNode> = {
   root: Passthrough<TreeRootProps<T, T, false>, TreeRootEmits<T, boolean>>;
   item: PassthroughIter<FlattenedItem<T>, TreeItemProps<T>, TreeItemEmits<T>>;
+  link: PassthroughIter<T, LinkProps>;
 };
 
 /**

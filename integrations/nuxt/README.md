@@ -226,7 +226,7 @@ app/
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
   types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request
   utils/          — split (actions → descriptors + handlers), seed (state)
-modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue surface and the layer's own)
+modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue surface and the layer's own) and references app.d.ts for consumers
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
 nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset)
 ```

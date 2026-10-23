@@ -3,24 +3,42 @@ import type {
   BreadcrumbContext,
   BreadcrumbEmits,
   BreadcrumbItem,
+  BreadcrumbPassthrough,
   BreadcrumbProps,
   BreadcrumbSlots,
 } from "../types/components/breadcrumb";
 
+import { Primitive } from "reka-ui";
+
 import { useTemplateRef } from "vue";
+import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { anchor } from "../utils/link";
 </script>
 
 <script setup lang="ts" generic="T extends BreadcrumbItem">
-const { items } = defineProps<BreadcrumbProps<T>>();
+const { items, pt } = defineProps<BreadcrumbProps<T>>();
 
 const emit = defineEmits<BreadcrumbEmits<T>>();
 
 const el = useTemplateRef<HTMLElement>("el");
 
+const settings = usePassthrough<BreadcrumbPassthrough<T>>(() => ({
+  pt,
+  recipes: {
+    link: (item) => ({
+      ...anchor(item.link, item.disabled),
+      onClick: () => {
+        if (!item.disabled) emit("select", item);
+      },
+    }),
+  },
+}));
+
 const ctx = useContext<BreadcrumbContext<T>>("breadcrumb", () => ({
   items,
   el: el.value,
+  settings: settings.value,
 }));
 
 defineExpose({ ctx });
@@ -48,12 +66,10 @@ defineSlots<BreadcrumbSlots<T>>();
               {{ item.label }}
             </slot>
           </span>
-          <a
+          <Primitive
             v-else-if="item.link"
-            :href="item.disabled ? undefined : item.link.to"
-            :target="item.link.target"
             class="f-anchor"
-            @click="!item.disabled && emit('select', item)"
+            v-bind="settings.link(item)"
           >
             <slot
               name="itemIcon"
@@ -65,7 +81,7 @@ defineSlots<BreadcrumbSlots<T>>();
             >
               <span class="f-span">{{ item.label }}</span>
             </slot>
-          </a>
+          </Primitive>
           <button
             v-else
             type="button"
