@@ -50,6 +50,31 @@
     },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "*": {
+      "components/*.vue": [
+        ".dist/components/*.vue.d.ts"
+      ],
+      "components/*": [
+        ".dist/components/*.vue.d.ts"
+      ],
+      "composables/*": [
+        ".dist/composables/*.d.ts"
+      ],
+      "constants/*": [
+        ".dist/constants/*.d.ts"
+      ],
+      "definitions/*": [
+        ".dist/definitions/*.d.ts"
+      ],
+      "types/*": [
+        ".dist/types/*.d.ts"
+      ],
+      "utils/*": [
+        ".dist/utils/*.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "build": "vue-tsc -p tsconfig.build.json",
     "lint": "oxlint",
