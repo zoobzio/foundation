@@ -1,5 +1,16 @@
 # @zoobzio/vue
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.0.3
+  - @zoobzio/query@0.0.3
+  - @zoobzio/browser@0.0.3
+  - @zoobzio/form@0.0.3
+  - @zoobzio/table@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes

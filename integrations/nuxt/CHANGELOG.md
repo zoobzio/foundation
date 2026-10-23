@@ -1,5 +1,17 @@
 # @zoobzio/nuxt
 
+## 0.0.3
+
+### Patch Changes
+
+- [`ad41dec`](https://github.com/zoobzio/foundation/commit/ad41dec4af4ca8a5bf6b9722dcd09c41277a415c) Thanks [@zoobzio](https://github.com/zoobzio)! - The imports module registers `@zoobzio/vue` components, `define*` functions, and types with their `.dist` declarations as the type source (`declarationPath` / `typeFrom`), while runtime still resolves to source. Generated `#components` and `#imports` declarations no longer pull `@zoobzio/vue` source into a consumer's typecheck.
+
+- Updated dependencies []:
+  - @zoobzio/browser@0.0.3
+  - @zoobzio/form@0.0.3
+  - @zoobzio/table@0.0.3
+  - @zoobzio/vue@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes

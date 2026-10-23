@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/table",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Headless data table service: paging, sort, selection, column order, and a query over the columns. No framework dependency.",
   "license": "MIT",
   "author": {
