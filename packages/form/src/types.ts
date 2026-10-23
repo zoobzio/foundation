@@ -7,7 +7,7 @@ import type {
   Options as KitOptions,
 } from "@zoobzio/kit";
 
-import type { ZodObject, ZodRawShape, ZodTypeAny, UnknownKeysParam } from "zod";
+import type { ZodType } from "zod";
 
 /**
  * A selectable item of a select, multi-select, or radio field. Structurally
@@ -151,7 +151,7 @@ export type Field<T> =
 export type Config<T> = {
   title: string;
   fields: Field<T>[];
-  schema: ZodObject<ZodRawShape, UnknownKeysParam, ZodTypeAny, T>;
+  schema: ZodType<T> & { shape: Record<string, ZodType> };
   defaults?: Partial<T>;
 };
 

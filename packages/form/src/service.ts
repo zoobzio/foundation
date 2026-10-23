@@ -29,16 +29,25 @@ import { check, flatten } from "./util";
  * `restored`, `reset`, and `failed`. `on` subscribes.
  */
 export class FormService<T> implements Service<T> {
+  /**
+   * The config, shallow-frozen. A frozen object is never wrapped by a
+   * reactive proxy (Vue's `reactive` skips non-extensible targets), so the
+   * schema stays raw however the consumer holds the service. Zod defines
+   * `_zod` on every schema as non-configurable, and a proxy that wraps the
+   * schema trips the Proxy `get` invariant on the first parse.
+   */
+  public readonly config: Config<T>;
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
 
   constructor(
     public readonly id: string,
-    public readonly config: Config<T>,
+    config: Config<T>,
     state: State<T>,
     private readonly actions: Actions<T> = {},
     options: Options<T> = {},
   ) {
+    this.config = Object.freeze({ ...config });
     this.state = makeProxy(state, FORM_STATE_FIELDS, options, this.emitter);
   }
 

@@ -148,8 +148,8 @@ describe("validate", () => {
     const { service } = makeService();
     expect(service.validate()).toBe(false);
     expect(service.errors).toEqual({
-      email: "Required",
-      amount: "Required",
+      email: "Invalid input: expected string, received undefined",
+      amount: "Invalid input: expected number, received undefined",
     });
     expect(service.touched).toEqual(
       new Set(["name", "email", "amount", "active"]),
@@ -291,7 +291,10 @@ describe("submit", () => {
     expect(rejected).toHaveBeenCalledWith({
       id: "test-form",
       data: defaults,
-      errors: { email: "Required", amount: "Required" },
+      errors: {
+        email: "Invalid input: expected string, received undefined",
+        amount: "Invalid input: expected number, received undefined",
+      },
     });
   });
 

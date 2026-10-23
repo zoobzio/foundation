@@ -1,4 +1,4 @@
-import type { ZodError, ZodRawShape } from "zod";
+import type { ZodError, ZodType } from "zod";
 
 /**
  * Collapses a ZodError into a `path -> message` record, keeping the first
@@ -21,7 +21,7 @@ export const flatten = (error: ZodError): Record<string, string> => {
  * no schema entry.
  */
 export const check = (
-  schema: { shape: ZodRawShape },
+  schema: { shape: Record<string, ZodType> },
   key: string,
   value: unknown,
 ): string | undefined => {

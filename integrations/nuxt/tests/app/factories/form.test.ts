@@ -107,7 +107,7 @@ describe("createForm", () => {
     expect(rejected).toHaveBeenCalledWith({
       id: "contact",
       data: { name: "Alice" },
-      errors: { amount: "Required" },
+      errors: { amount: "Invalid input: expected number, received undefined" },
     });
 
     contact.set("amount", 10);
