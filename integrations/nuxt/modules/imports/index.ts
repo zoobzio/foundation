@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import {
   addComponent,
   addImports,
@@ -22,6 +23,8 @@ export default defineNuxtModule({
     const require = createRequire(import.meta.url);
     const resolve = (subpath: string): string =>
       require.resolve(`@zoobzio/vue/${subpath}`);
+    const dist = (subpath: string): string =>
+      join(dirname(require.resolve("@zoobzio/vue/package.json")), ".dist", subpath);
 
     const resolver = createResolver(import.meta.url);
     const app = (subpath: string): string =>
@@ -33,6 +36,9 @@ export default defineNuxtModule({
         filePath: wrapped(name, WRAPPED)
           ? app(`components/${name}.vue`)
           : resolve(`components/${name}.vue`),
+        declarationPath: wrapped(name, WRAPPED)
+          ? undefined
+          : dist(`components/${name}.vue`),
         export: "default",
       });
     }
@@ -41,6 +47,7 @@ export default defineNuxtModule({
       DEFINITIONS.map((name) => ({
         name: `define${pascal(name)}`,
         from: resolve(`definitions/${name}`),
+        typeFrom: dist(`definitions/${name}.d.ts`),
       })),
     );
 
@@ -49,6 +56,7 @@ export default defineNuxtModule({
         names.map((name) => ({
           name,
           from: resolve(`types/${subpath}`),
+          typeFrom: dist(`types/${subpath}.d.ts`),
           type: true,
         })),
       ),
