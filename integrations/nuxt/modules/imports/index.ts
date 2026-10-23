@@ -6,7 +6,13 @@ import {
   defineNuxtModule,
 } from "@nuxt/kit";
 
-import { COMPONENTS, DEFINITIONS, LAYER, LAYER_TYPES } from "./constant";
+import {
+  COMPONENTS,
+  DEFINITIONS,
+  LAYER,
+  LAYER_TYPES,
+  VUE_TYPES,
+} from "./constant";
 import { pascal } from "./util";
 
 export default defineNuxtModule({
@@ -29,6 +35,16 @@ export default defineNuxtModule({
         name: `define${pascal(name)}`,
         from: resolve(`definitions/${name}`),
       })),
+    );
+
+    addImports(
+      Object.entries(VUE_TYPES).flatMap(([subpath, names]) =>
+        names.map((name) => ({
+          name,
+          from: resolve(`types/${subpath}`),
+          type: true,
+        })),
+      ),
     );
 
     const resolver = createResolver(import.meta.url);

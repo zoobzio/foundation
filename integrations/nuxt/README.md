@@ -22,18 +22,24 @@ behind Nuxt's two virtual modules stay live, filled only by
 - `#components` carries the components of `@zoobzio/vue`.
 - `#imports` carries the `define*` constructors of `@zoobzio/vue` and the
   layer's own surface: the composables, factories, stores, and constants
-  as values, and everything under `types/` as types.
+  as values, and everything under `types/` as types. It also carries the
+  types of `@zoobzio/vue` a consumer writes against: the component
+  contracts (`SelectProps`, `TableSlots`, `MenuItem`, …), the shared item
+  types (`Option`, `Link`, …), and the `define*` and `pt` vocabulary
+  (`Definition`, `PT`, …).
 
 A consumer never depends on `@zoobzio/vue` itself. The package's
-composables are not registered; they build the components and are not a
-consumer surface. Nor are the layer's `utils/`, which are the factories'
-plumbing.
+composables are not registered, nor are the types behind them (`forward`,
+`refs`, `service`, `events`, `slots`, `context`); they build the
+components and are not a consumer surface. Nor are the layer's `utils/`,
+which are the factories' plumbing.
 
 ```ts
 import { Autocomplete, Select, Table } from "#components";
 import { defineAutocomplete, defineSelect } from "#imports";
 import { createTable, useHooks, useLogger } from "#imports";
 import type { TableOptions } from "#imports";
+import type { Option, SelectProps } from "#imports";
 ```
 
 The same files also ship through subpath exports, the same way
@@ -226,7 +232,7 @@ app/
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
   types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request
   utils/          — split (actions → descriptors + handlers), seed (state)
-modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue surface and the layer's own) and references app.d.ts for consumers
+modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue components, definitions, and types, and the layer's own surface) and references app.d.ts for consumers
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
 nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset)
 ```
