@@ -102,11 +102,18 @@ export const clearError = vi.fn();
 
 // --- errors --------------------------------------------------------------
 
+// Nuxt marks its errors with this non-enumerable flag; isNuxtError reads it.
+const NUXT_ERROR_SIGNATURE = "__nuxt_error";
+
+export const isNuxtError = (error: unknown) =>
+  !!error && typeof error === "object" && NUXT_ERROR_SIGNATURE in error;
+
 // Nuxt's createError, reduced to the fields the layer reads back.
 export const createError = (input: string | Record<string, unknown>) => {
   const err = new Error(
     typeof input === "string" ? input : String(input.message ?? ""),
   ) as Error & Record<string, unknown>;
+  Object.defineProperty(err, NUXT_ERROR_SIGNATURE, { value: true });
   if (typeof input === "object") {
     err.statusCode = input.statusCode;
     err.statusText = input.statusText;

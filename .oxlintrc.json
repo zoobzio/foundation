@@ -18,6 +18,8 @@
     ".coverage/**"
   ],
   "rules": {
+    // Forbid type assertions (`as T`, `<T>x`); `as const` is still allowed
+    "typescript/consistent-type-assertions": ["error", { "assertionStyle": "never" }],
     // Composables deliberately define helpers inside their setup scope
     "unicorn/consistent-function-scoping": "off",
     // `export {}` is required to make .d.ts files module augmentations
@@ -29,5 +31,14 @@
     "vitest/require-mock-type-parameters": "off",
     // Some tests only assert that setup doesn't throw
     "vitest/expect-expect": "off"
-  }
+  },
+  "overrides": [
+    {
+      // Tests build partial fixtures and mocks; casts are fine there
+      "files": ["**/tests/**", "**/*.test.ts"],
+      "rules": {
+        "typescript/consistent-type-assertions": "off"
+      }
+    }
+  ]
 }

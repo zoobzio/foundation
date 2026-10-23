@@ -54,3 +54,80 @@ describe("passthrough", () => {
     expect(result.item(3)).toEqual({ id: 6 });
   });
 });
+
+describe("passthrough function parts", () => {
+  it("merges the user function's result over the local one per argument", () => {
+    const result = passthrough<Parts>(
+      { item: () => ({ id: 0 }) },
+      { root: {}, item: (n) => ({ id: n }), list: {} },
+    );
+    expect(result.item(3)).toEqual({ id: 0 });
+  });
+
+  it("keeps local keys the user function leaves out", () => {
+    interface Iter {
+      item: (n: number) => {
+        id: number;
+        label?: string;
+        nested?: { a?: number; b?: number };
+      };
+    }
+    const result = passthrough<Iter>(
+      { item: (n) => ({ label: `#${n}`, nested: { a: 10 } }) },
+      { item: (n) => ({ id: n, nested: { a: 1, b: 2 } }) },
+    );
+    expect(result.item(4)).toEqual({
+      id: 4,
+      label: "#4",
+      nested: { a: 10, b: 2 },
+    });
+  });
+
+  it("passes the same argument to both functions", () => {
+    const seen: number[] = [];
+    const result = passthrough<Parts>(
+      {
+        item: (n) => {
+          seen.push(n);
+          return {};
+        },
+      },
+      {
+        root: {},
+        item: (n) => {
+          seen.push(n);
+          return { id: n };
+        },
+        list: {},
+      },
+    );
+    result.item(7);
+    expect(seen).toEqual([7, 7]);
+  });
+});
+
+describe("passthrough listeners", () => {
+  it("replaces a listener inside a static part instead of composing", () => {
+    interface Static {
+      root: { onClick?: () => string };
+    }
+    const result = passthrough<Static>(
+      { root: { onClick: () => "user" } },
+      { root: { onClick: () => "local" } },
+    );
+    expect(result.root.onClick?.()).toBe("user");
+  });
+
+  it("replaces a listener inside a function part's result", () => {
+    interface Iter {
+      item: (n: number) => { id: number; onSelect?: () => string };
+    }
+    const result = passthrough<Iter>(
+      { item: () => ({ onSelect: () => "user" }) },
+      { item: (n) => ({ id: n, onSelect: () => "local" }) },
+    );
+    const part = result.item(1);
+    expect(part.id).toBe(1);
+    expect(part.onSelect?.()).toBe("user");
+  });
+});

@@ -77,8 +77,12 @@ const onFieldSelect = (value: string) => {
   step.value = 2;
 };
 
+const isDateFilterOperator = (value: string): value is DateFilterOperator =>
+  value === "after" || value === "before" || value === "between";
+
 const onOperatorSelect = (value: string) => {
-  selectedOperator.value = value as DateFilterOperator;
+  if (!isDateFilterOperator(value)) return;
+  selectedOperator.value = value;
   selectedDate.value = undefined;
   selectedRange.value = undefined;
   step.value = 3;

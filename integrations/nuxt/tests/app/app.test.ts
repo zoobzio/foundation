@@ -4,6 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import { mount } from "@vue/test-utils";
+import { createError } from "#imports";
 import { useNotifications } from "../../app/composables/notification";
 import App from "../../app/app.vue";
 
@@ -71,7 +72,8 @@ describe("app.vue", () => {
 
   it("toasts an error's own notification when it carries one", async () => {
     const wrapper = mountApp();
-    const err = Object.assign(new Error("raw"), {
+    const err = createError({
+      message: "raw",
       data: { notification: { variant: "warning", title: "Careful" } },
     });
     await raise(wrapper, err);

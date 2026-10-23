@@ -15,10 +15,11 @@ export type PassthroughIter<T, Props, Emits = {}> = (
 ) => Passthrough<Props, Emits>;
 
 /**
- * A deep partial of a part manifest. Functions and arrays stay whole.
+ * A deep partial of a part manifest. A function part keeps its arguments
+ * and returns a deep partial of its result; arrays stay whole.
  */
 export type PT<T> = T extends (...args: never[]) => unknown
-  ? T
+  ? (...args: Parameters<T>) => PT<ReturnType<T>>
   : T extends readonly unknown[]
     ? T
     : T extends object

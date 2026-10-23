@@ -11,7 +11,7 @@ import {
 } from "#components";
 
 import { ConfigProvider, TooltipProvider } from "reka-ui";
-import { useHead, useId } from "#imports";
+import { isNuxtError, useHead, useId } from "#imports";
 import { useNotifications } from "./composables/notification";
 </script>
 
@@ -27,10 +27,7 @@ useHead({
 const { notifications, push, remove } = useNotifications();
 
 const onError = (err: unknown) => {
-  const data =
-    err instanceof Error && "data" in err
-      ? (err.data as ErrorData | undefined)
-      : undefined;
+  const data = isNuxtError<ErrorData>(err) ? err.data : undefined;
 
   if (data?.notification) {
     push(data.notification);
