@@ -1,7 +1,7 @@
 import type { FormOptions, UseForm } from "../types/form";
 import type { Actions, Service } from "@zoobzio/form";
 
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { FormService } from "@zoobzio/form";
 import { accessForm } from "../stores/form";
 

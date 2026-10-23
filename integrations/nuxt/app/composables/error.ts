@@ -1,7 +1,7 @@
 import type { AppError, ErrorData, ErrorOptions } from "../types/error";
 import type { HTTPCode } from "ltrl-http";
 
-import { createError } from "#imports";
+import { createError } from "#app";
 import { useHTTPCode } from "ltrl-http";
 
 /**

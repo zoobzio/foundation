@@ -7,13 +7,20 @@ const r = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 export default defineConfig({
   plugins: [vue()],
   resolve: {
-    alias: {
-      // Nuxt's virtual module — shimmed for the no-Nuxt vitest environment.
-      "#imports": r("./tests/mocks/imports.ts"),
-      "#components": r("./tests/mocks/components.ts"),
+    alias: [
+      // Nuxt's entry and virtual modules — shimmed for the no-Nuxt vitest
+      // environment. Exact matches: a bare "#app" prefix would also catch
+      // the NuxtLink path, which has its own shim.
+      { find: /^#app$/, replacement: r("./tests/mocks/app.ts") },
+      {
+        find: /^#app\/components\/nuxt-link$/,
+        replacement: r("./tests/mocks/nuxt-link.ts"),
+      },
+      // Only app.vue uses `#components`: the shell built-ins it renders.
+      { find: /^#components$/, replacement: r("./tests/mocks/components.ts") },
       // Test-only support (mocks, stubs, data, mount factories).
-      "#test": r("./tests"),
-    },
+      { find: /^#test/, replacement: r("./tests") },
+    ],
   },
   test: {
     environment: "happy-dom",

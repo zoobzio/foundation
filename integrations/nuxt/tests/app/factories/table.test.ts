@@ -6,7 +6,7 @@ import type { TableOptions } from "../../../app/types/table";
 import type { FakeRow } from "#test/data/table";
 
 import { describe, expect, it, vi } from "vitest";
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { createTable } from "../../../app/factories/table";
 import { fakeColumns, fakeRows } from "#test/data/table";
 

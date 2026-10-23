@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { defineComponent, h } from "vue";
 import { mount } from "@vue/test-utils";
-import { createError } from "#imports";
+import { createError } from "#app";
 import { useNotifications } from "../../app/composables/notification";
 import App from "../../app/app.vue";
 

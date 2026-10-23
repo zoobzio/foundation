@@ -1,7 +1,7 @@
 import type { BrowserOptions, UseBrowser } from "../types/browser";
 import type { Actions, Config, Service } from "@zoobzio/browser";
 
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { BrowserService } from "@zoobzio/browser";
 import { accessBrowser } from "../stores/browser";
 import { split } from "../utils/actions";

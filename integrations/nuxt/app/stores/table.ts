@@ -1,7 +1,7 @@
 import type { TableInitial } from "../types/table";
 import type { Config, State } from "@zoobzio/table";
 
-import { useState } from "#imports";
+import { useState } from "#app";
 import { createTableState } from "@zoobzio/table";
 import { seed } from "../utils/state";
 

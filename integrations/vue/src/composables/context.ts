@@ -10,12 +10,29 @@ import { computed, toValue } from "vue";
  * @param source - A reactive source of the view model.
  * @returns The computed context for `defineExpose` and the ctx-scoped slots.
  */
-export const useContext = <Ctx extends object>(
+export function useContext<Ctx extends object>(
   name: string,
   source: NoInfer<MaybeRefOrGetter<Ctx>>,
-): ComputedRef<Context<Ctx>> => {
-  return computed(() => ({
-    id: name,
-    ...toValue(source),
-  }));
-};
+): ComputedRef<Context<Ctx>>;
+/**
+ * Forwards a wrapped component's context unchanged, for a wrapper's
+ * `defineExpose`. It is `undefined` until the wrapped component mounts.
+ *
+ * @param source - A reactive source of the wrapped component's context.
+ * @returns The computed context, as the wrapped component serves it.
+ */
+export function useContext<Ctx extends object>(
+  source: MaybeRefOrGetter<Context<Ctx> | undefined>,
+): ComputedRef<Context<Ctx> | undefined>;
+export function useContext<Ctx extends object>(
+  ...args:
+    | [name: string, source: MaybeRefOrGetter<Ctx>]
+    | [source: MaybeRefOrGetter<Context<Ctx> | undefined>]
+): ComputedRef<Context<Ctx> | undefined> {
+  if (args.length === 2) {
+    const [name, source] = args;
+    return computed(() => ({ id: name, ...toValue(source) }));
+  }
+  const [source] = args;
+  return computed(() => toValue(source));
+}

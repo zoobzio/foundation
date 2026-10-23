@@ -1,6 +1,6 @@
 import type { Notification } from "../types/notification";
 
-import { useState } from "#imports";
+import { useState } from "#app";
 
 /**
  * The Nuxt backing for the app's notifications: one `useState` record,

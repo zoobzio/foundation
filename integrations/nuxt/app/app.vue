@@ -11,7 +11,8 @@ import {
 } from "#components";
 
 import { ConfigProvider, TooltipProvider } from "reka-ui";
-import { isNuxtError, useHead, useId } from "#imports";
+import { isNuxtError, useHead } from "#app";
+import { useId } from "vue";
 import { useNotifications } from "./composables/notification";
 </script>
 

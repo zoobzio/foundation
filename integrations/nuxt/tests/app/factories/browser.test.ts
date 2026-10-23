@@ -6,7 +6,7 @@ import type { BrowserOptions } from "../../../app/types/browser";
 import type { FakeFile } from "#test/data/browser";
 
 import { describe, expect, it, vi } from "vitest";
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { createBrowser } from "../../../app/factories/browser";
 import { fakeFileColumns, fakeFiles, fakeFolders } from "#test/data/browser";
 

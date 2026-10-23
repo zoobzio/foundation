@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from "#imports";
+import { defineNuxtPlugin } from "#app";
 import { useLogger } from "../composables/log";
 import { LOG_ROOT_NAME } from "../constants/log";
 

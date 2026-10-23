@@ -4,7 +4,8 @@ import type {
   ScopedEvent,
 } from "../types/hook";
 
-import { onScopeDispose, useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
+import { onScopeDispose } from "vue";
 import { entries } from "objectively";
 
 /**

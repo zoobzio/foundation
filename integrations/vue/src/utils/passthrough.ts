@@ -17,3 +17,20 @@ export const passthrough = <P, E = {}>(
     (key, value) => [key, value],
   );
 };
+
+/**
+ * Merges the consumer's `pt` layer over a wrapper's partial layer. The
+ * consumer wins per key and a function part composes, so `pt.link = () =>
+ * ({ class })` keeps the layer's `as`. Only top-level parts compose: a
+ * nested manifest is layered on its own. Both guards narrow the deep
+ * partials and stand in for an empty layer.
+ */
+export const layer = <P, E = {}>(
+  userPT: PT<Passthrough<P, E>> | undefined,
+  localPT: PT<Passthrough<P, E>>,
+): PT<Passthrough<P, E>> => {
+  return rekey<Record<string, unknown>, PT<Passthrough<P, E>>>(
+    merge(record(userPT) ? userPT : {}, record(localPT) ? localPT : {}),
+    (key, value) => [key, value],
+  );
+};

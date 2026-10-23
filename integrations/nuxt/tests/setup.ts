@@ -3,9 +3,9 @@ import {
   clearNuxtHooks,
   clearNuxtLoggers,
   clearNuxtStateRegistry,
-} from "#test/mocks/imports";
+} from "#test/mocks/app";
 
-// Shared useState refs and hook listeners (see mocks/imports.ts) must not
+// Shared useState refs and hook listeners (see mocks/app.ts) must not
 // leak between tests.
 beforeEach(() => {
   clearNuxtStateRegistry();

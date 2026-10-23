@@ -12,8 +12,9 @@ import {
   LAYER,
   LAYER_TYPES,
   VUE_TYPES,
+  WRAPPED,
 } from "./constant";
-import { pascal } from "./util";
+import { pascal, wrapped } from "./util";
 
 export default defineNuxtModule({
   meta: { name: "@zoobzio/nuxt/imports" },
@@ -22,10 +23,16 @@ export default defineNuxtModule({
     const resolve = (subpath: string): string =>
       require.resolve(`@zoobzio/vue/${subpath}`);
 
+    const resolver = createResolver(import.meta.url);
+    const app = (subpath: string): string =>
+      resolver.resolve("../../app", subpath);
+
     for (const name of COMPONENTS) {
       addComponent({
         name: pascal(name),
-        filePath: resolve(`components/${name}.vue`),
+        filePath: wrapped(name, WRAPPED)
+          ? app(`components/${name}.vue`)
+          : resolve(`components/${name}.vue`),
         export: "default",
       });
     }
@@ -47,19 +54,19 @@ export default defineNuxtModule({
       ),
     );
 
-    const resolver = createResolver(import.meta.url);
-    const app = (subpath: string): string =>
-      resolver.resolve("../../app", `${subpath}.ts`);
-
     addImports(
       Object.entries(LAYER).flatMap(([subpath, names]) =>
-        names.map((name) => ({ name, from: app(subpath) })),
+        names.map((name) => ({ name, from: app(`${subpath}.ts`) })),
       ),
     );
 
     addImports(
       Object.entries(LAYER_TYPES).flatMap(([subpath, names]) =>
-        names.map((name) => ({ name, from: app(subpath), type: true })),
+        names.map((name) => ({
+          name,
+          from: app(`${subpath}.ts`),
+          type: true,
+        })),
       ),
     );
 

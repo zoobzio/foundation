@@ -2,7 +2,8 @@ import type { AppError } from "../types/error";
 import type { RequestOptions } from "../types/request";
 import type { MaybeRefOrGetter } from "vue";
 
-import { toValue, useAsyncData, useLazyAsyncData, watch } from "#imports";
+import { useAsyncData, useLazyAsyncData } from "#app";
+import { toValue, watch } from "vue";
 import { status } from "ltrl-http";
 import { useLogger } from "./log";
 import { useAppError } from "./error";

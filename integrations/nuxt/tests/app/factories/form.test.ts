@@ -7,7 +7,7 @@ import type { Service } from "@zoobzio/form";
 import type { FakePayload } from "#test/data/form";
 
 import { describe, expect, it, vi } from "vitest";
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { createForm } from "../../../app/factories/form";
 import { fakeDefaults, fakeFields, fakeSchema } from "#test/data/form";
 

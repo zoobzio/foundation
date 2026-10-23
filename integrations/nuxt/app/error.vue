@@ -1,7 +1,8 @@
 <script lang="ts">
 import type { NuxtError } from "#app";
 
-import { clearError, computed } from "#imports";
+import { clearError } from "#app";
+import { computed } from "vue";
 import {
   ERROR_DEFAULT_STATUS_CODE,
   ERROR_NOT_FOUND_STATUS_CODE,

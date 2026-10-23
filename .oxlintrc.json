@@ -42,6 +42,361 @@
       "rules": {
         "typescript/consistent-type-assertions": "off"
       }
+    },
+
+    // ------------------------------------------------------------------
+    // Layer graph. Each integration is a DAG of directories:
+    //
+    //   vue:   types > constants > utils > { definitions, composables } > components
+    //   nuxt:  types > constants > utils > stores > composables > factories
+    //          > components > plugins
+    //
+    // A file may import from its own layer or any layer below it, never
+    // above. Each override below names the layers that sit above the
+    // matched directory and refuses relative imports into them. `types`
+    // may import constants as types only (`keyof typeof LOG_LEVELS`), which
+    // leaves no runtime edge. Tests and the Nuxt module are not layers.
+    // ------------------------------------------------------------------
+
+    // --- @zoobzio/vue ---------------------------------------------------
+    {
+      // `types/components/` is a types subfolder, so a `./components/...`
+      // import stays inside the layer and only `../` imports leave it.
+      "files": ["integrations/vue/src/types/*.ts"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^(\\.\\./)+(utils|definitions|composables|components)(/|$)",
+                "message": "types is the bottom layer; it imports nothing above it"
+              },
+              {
+                "regex": "^(\\.\\./)+constants(/|$)",
+                "allowTypeImports": true,
+                "message": "types may import constants as types only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // From `types/components/`, one `../` is still inside `types/`.
+      "files": ["integrations/vue/src/types/components/*.ts"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^(\\.\\./){2,}(utils|definitions|composables|components)(/|$)",
+                "message": "types is the bottom layer; it imports nothing above it"
+              },
+              {
+                "regex": "^(\\.\\./){2,}constants(/|$)",
+                "allowTypeImports": true,
+                "message": "types may import constants as types only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/vue/src/constants/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^(\\.\\./)+(utils|definitions|composables|components)(/|$)",
+                "message": "constants may import types only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/vue/src/utils/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^(\\.\\./)+(definitions|composables|components)(/|$)",
+                "message": "utils may import types and constants only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/vue/src/definitions/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^(\\.\\./)+(composables|components)(/|$)",
+                "message": "definitions may import types, constants, and utils only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/vue/src/composables/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^(\\.\\./)+(definitions|components)(/|$)",
+                "message": "composables may import types, constants, and utils only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    // --- @zoobzio/nuxt --------------------------------------------------
+    // The layer also consumes @zoobzio/vue, whose layers map onto the same
+    // graph (stores sit between vue utils and vue composables).
+    //
+    // `#imports` and `#components` are the consumer's build artifacts: the
+    // module in modules/imports fills them, and the layer's own code never
+    // reads from them. Nuxt APIs come from `#app`, Vue APIs from `vue`, and
+    // NuxtLink from `#app/components/nuxt-link`. The one exception is
+    // app.vue, below: NuxtPage resolves to a different module depending on
+    // whether the consumer has pages, so only `#components` can name it.
+    {
+      "files": ["integrations/nuxt/app/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/types/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+(utils|stores|composables|factories|components|plugins)(/|$)",
+                "message": "types is the bottom layer; it imports nothing above it"
+              },
+              {
+                "regex": "^(\\.\\./)+constants(/|$)",
+                "allowTypeImports": true,
+                "message": "types may import constants as types only"
+              },
+              {
+                "regex": "^@zoobzio/vue/(utils|definitions|composables|components)(/|$)",
+                "message": "types may import @zoobzio/vue types only"
+              },
+              {
+                "regex": "^@zoobzio/vue/constants(/|$)",
+                "allowTypeImports": true,
+                "message": "types may import @zoobzio/vue constants as types only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/constants/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+(utils|stores|composables|factories|components|plugins)(/|$)",
+                "message": "constants may import types only"
+              },
+              {
+                "regex": "^@zoobzio/vue/(utils|definitions|composables|components)(/|$)",
+                "message": "constants may import @zoobzio/vue types and constants only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/utils/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+(stores|composables|factories|components|plugins)(/|$)",
+                "message": "utils may import types and constants only"
+              },
+              {
+                "regex": "^@zoobzio/vue/(definitions|composables|components)(/|$)",
+                "message": "utils may import @zoobzio/vue types, constants, and utils only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/stores/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+(composables|factories|components|plugins)(/|$)",
+                "message": "stores may import types, constants, and utils only"
+              },
+              {
+                "regex": "^@zoobzio/vue/(definitions|composables|components)(/|$)",
+                "message": "stores may import @zoobzio/vue types, constants, and utils only"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/composables/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+(factories|components|plugins)(/|$)",
+                "message": "composables may import types, constants, utils, and stores only"
+              },
+              {
+                "regex": "^@zoobzio/vue/components(/|$)",
+                "message": "composables may not import @zoobzio/vue components"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/factories/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+(components|plugins)(/|$)",
+                "message": "factories may import types, constants, utils, stores, and composables only"
+              },
+              {
+                "regex": "^@zoobzio/vue/components(/|$)",
+                "message": "factories may not import @zoobzio/vue components"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["integrations/nuxt/app/components/**"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#(imports|components)$",
+                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+              },
+              {
+                "regex": "^(\\.\\./)+plugins(/|$)",
+                "message": "components may not import plugins"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // The app shell renders NuxtPage, NuxtLayout, NuxtErrorBoundary, and
+      // NuxtLoadingIndicator; `#components` is the only module that resolves
+      // NuxtPage correctly for the consumer. `#imports` stays forbidden.
+      "files": ["integrations/nuxt/app/app.vue"],
+      "rules": {
+        "eslint/no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "regex": "^#imports$",
+                "message": "#imports is the consumer's build artifact; use #app, vue, or a relative path"
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    // --- Cycles -----------------------------------------------------------
+    // The layer rules allow any import within a layer, so this catches a
+    // cycle the graph alone would not: two composables importing each other.
+    {
+      "files": ["integrations/vue/**", "integrations/nuxt/**"],
+      "rules": {
+        "import/no-cycle": "error"
+      }
     }
   ]
 }

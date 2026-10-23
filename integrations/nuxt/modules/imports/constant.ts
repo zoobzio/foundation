@@ -44,6 +44,22 @@ export const COMPONENTS = [
   "tree",
 ] as const;
 
+// The components the layer wraps: each holds a `link` part, and the layer's
+// own component of the same name lays `NuxtLink` under it. These resolve to
+// `app/components/` instead of @zoobzio/vue, so `#components` serves the
+// Nuxt version only.
+export const WRAPPED = [
+  "breadcrumb",
+  "browser",
+  "directory",
+  "hero",
+  "menu",
+  "segmented-control",
+  "table",
+  "tabs",
+  "tree",
+] as const satisfies readonly (typeof COMPONENTS)[number][];
+
 export const DEFINITIONS = [
   "accordion",
   "autocomplete",

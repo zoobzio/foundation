@@ -1,7 +1,7 @@
 import type { BrowserInitial } from "../types/browser";
 import type { State } from "@zoobzio/browser";
 
-import { useState } from "#imports";
+import { useState } from "#app";
 import { createBrowserState } from "@zoobzio/browser";
 import { seed } from "../utils/state";
 

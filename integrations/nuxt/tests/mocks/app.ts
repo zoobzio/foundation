@@ -1,16 +1,14 @@
-// Vitest shim for Nuxt's virtual `#imports` module.
+// Vitest shim for Nuxt's `#app` entry.
 //
-// The layer imports every framework symbol explicitly from "#imports". There
-// is no Nuxt runtime in the vitest environment, so this re-exports the real
-// Vue API and stubs the Nuxt composables the layer uses, with real
-// semantics: `useState` dedupes by key and the hook bus dispatches. Typecheck
-// resolves the layer's `#imports` against Nuxt's generated types, not this
-// shim, so the loose types here never leak.
+// The layer imports every Nuxt symbol explicitly from "#app" (Vue's own API
+// comes from "vue"). There is no Nuxt runtime in the vitest environment, so
+// this stubs the Nuxt composables the layer uses, with real semantics:
+// `useState` dedupes by key and the hook bus dispatches. Typecheck resolves
+// the layer's `#app` against Nuxt's own types, not this shim, so the loose
+// types here never leak.
 
 import { ref, type Ref } from "vue";
 import { vi } from "vitest";
-
-export * from "vue";
 
 // --- useState ----------------------------------------------------------
 

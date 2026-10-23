@@ -3,6 +3,8 @@
 // without a shim of its own. The reference must point at the real file.
 import { access } from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
+import { addComponent } from "@nuxt/kit";
+import { COMPONENTS, WRAPPED } from "../../../modules/imports/constant";
 
 vi.mock("@nuxt/kit", async (importActual) => {
   const kit = await importActual<typeof import("@nuxt/kit")>();
@@ -34,7 +36,30 @@ const setup = async () => {
   return hooks;
 };
 
+const registered = () =>
+  vi
+    .mocked(addComponent)
+    .mock.calls.map(([options]) => options)
+    .filter(
+      (options): options is { name: string; filePath: string } =>
+        typeof options === "object" && "filePath" in options,
+    );
+
 describe("imports module", () => {
+  it("registers every component once, wrapped ones from the layer", async () => {
+    vi.mocked(addComponent).mockClear();
+    await setup();
+    const components = registered();
+    expect(components).toHaveLength(COMPONENTS.length);
+    for (const name of COMPONENTS) {
+      const entry = components.find((c) => c.filePath.endsWith(`/${name}.vue`));
+      const isWrapped = WRAPPED.some((w) => w === name);
+      expect(entry?.filePath.includes("/app/components/")).toBe(isWrapped);
+      expect(entry?.filePath.includes("/vue/src/components/")).toBe(!isWrapped);
+      await expect(access(entry!.filePath)).resolves.toBeUndefined();
+    }
+  });
+
   it("references app.d.ts in prepare:types", async () => {
     const hooks = await setup();
     const references: { path: string }[] = [];

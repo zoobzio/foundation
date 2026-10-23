@@ -19,7 +19,9 @@ or composables, and bare component tags do not resolve. The registries
 behind Nuxt's two virtual modules stay live, filled only by
 `modules/imports/`, so a consumer imports from them explicitly:
 
-- `#components` carries the components of `@zoobzio/vue`.
+- `#components` carries the components of `@zoobzio/vue`. The ones that
+  hold links come as the layer's own wrappers, which render every link
+  through `NuxtLink` (see [Components](#components)).
 - `#imports` carries the `define*` constructors of `@zoobzio/vue` and the
   layer's own surface: the composables, factories, stores, and constants
   as values, and everything under `types/` as types. It also carries the
@@ -48,6 +50,43 @@ The same files also ship through subpath exports, the same way
 ```ts
 import { createTable } from "@zoobzio/nuxt/factories/table";
 ```
+
+## Components
+
+The components of `@zoobzio/vue` render links through a `link` passthrough
+part whose recipe is a plain anchor. The layer wraps each component that
+holds one (`Breadcrumb`, `Browser`, `Directory`, `Hero`, `Menu`,
+`SegmentedControl`, `Table`, `Tabs`, `Tree`) in `app/components/`, and the
+wrapper lays `NuxtLink` under that part, so navigation goes through the
+router with no setup. `#components` serves the wrapper under the vue
+component's name; the vue component itself is not registered.
+
+A wrapper is the vue component's contract: the same props, emits, slots,
+and `ctx`, typed from the same `@zoobzio/vue` types that `#imports`
+carries. A consumer's `pt.link` composes with the layer's, so an override
+keeps `NuxtLink` unless it sets `as` itself. A disabled item has no
+`href`, and `NuxtLink` renders it as an inert anchor.
+
+```vue
+<script setup lang="ts">
+import { Breadcrumb } from "#components";
+import type { BreadcrumbItem } from "#imports";
+
+const items: BreadcrumbItem[] = [
+  { key: "home", label: "Home", link: { to: "/" } },
+  { key: "docs", label: "Docs" },
+];
+</script>
+
+<template>
+  <!-- "Home" renders as <NuxtLink href="/">; `pt.link` adds a class -->
+  <Breadcrumb :items="items" :pt="{ link: () => ({ class: 'crumb' }) }" />
+</template>
+```
+
+`Table` and `Browser` lay the part under their nested manifests (`pt.body`,
+`pt.files`, and the browser's `pt.breadcrumb.pt`), so a consumer's part at
+the same path composes the same way.
 
 ## Stores and factories
 

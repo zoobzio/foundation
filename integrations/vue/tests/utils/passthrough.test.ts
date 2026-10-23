@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { passthrough } from "../../src/utils/passthrough";
+import { layer, passthrough } from "../../src/utils/passthrough";
 
 interface Parts {
   root: { size?: number; open?: boolean; nested?: { a?: number; b?: number } };
@@ -129,5 +129,43 @@ describe("passthrough listeners", () => {
     const part = result.item(1);
     expect(part.id).toBe(1);
     expect(part.onSelect?.()).toBe("user");
+  });
+});
+
+describe("layer", () => {
+  type Parts = {
+    link: (item: { id: string }) => { as?: string; class?: string };
+    root: { class?: string };
+  };
+
+  it("serves the wrapper's layer when no user layer is given", () => {
+    const out = layer<Parts>(undefined, { link: () => ({ as: "span" }) });
+    expect(out.link?.({ id: "a" })).toEqual({ as: "span" });
+  });
+
+  it("composes a user function part over the wrapper's", () => {
+    const out = layer<Parts>(
+      { link: () => ({ class: "x" }) },
+      { link: () => ({ as: "span" }) },
+    );
+    expect(out.link?.({ id: "a" })).toEqual({ as: "span", class: "x" });
+  });
+
+  it("lets the user replace the wrapper's key", () => {
+    const out = layer<Parts>(
+      { link: () => ({ as: "a" }) },
+      { link: () => ({ as: "span" }) },
+    );
+    expect(out.link?.({ id: "a" })).toEqual({ as: "a" });
+  });
+
+  it("keeps the user's other parts and leaves both inputs intact", () => {
+    const user = { root: { class: "r" } };
+    const local = { link: () => ({ as: "span" }) };
+    const out = layer<Parts>(user, local);
+    expect(out.root).toEqual({ class: "r" });
+    expect(out.link?.({ id: "a" })).toEqual({ as: "span" });
+    expect(user).toEqual({ root: { class: "r" } });
+    expect(Object.keys(local)).toEqual(["link"]);
   });
 });

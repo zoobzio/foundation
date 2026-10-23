@@ -1,7 +1,7 @@
 import type { TableOptions, UseTable } from "../types/table";
 import type { Actions, Config, Service } from "@zoobzio/table";
 
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { TableService } from "@zoobzio/table";
 import { accessTable } from "../stores/table";
 import { split } from "../utils/actions";

@@ -1,6 +1,6 @@
 import type { LogLevel, LogLine } from "../types/log";
 
-import { useState } from "#imports";
+import { useState } from "#app";
 
 /**
  * The Nuxt backing for the app's logs: the current level under `log:level`

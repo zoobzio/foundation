@@ -14,21 +14,44 @@
     "directory": "integrations/vue"
   },
   "files": [
-    "src"
+    "src",
+    ".dist"
   ],
   "type": "module",
   "sideEffects": false,
   "exports": {
-    "./components/*": "./src/components/*.vue",
-    "./components/*.vue": "./src/components/*.vue",
-    "./composables/*": "./src/composables/*.ts",
-    "./constants/*": "./src/constants/*.ts",
-    "./definitions/*": "./src/definitions/*.ts",
-    "./types/*": "./src/types/*.ts",
-    "./utils/*": "./src/utils/*.ts",
+    "./components/*": {
+      "types": "./.dist/components/*.vue.d.ts",
+      "default": "./src/components/*.vue"
+    },
+    "./components/*.vue": {
+      "types": "./.dist/components/*.vue.d.ts",
+      "default": "./src/components/*.vue"
+    },
+    "./composables/*": {
+      "types": "./.dist/composables/*.d.ts",
+      "default": "./src/composables/*.ts"
+    },
+    "./constants/*": {
+      "types": "./.dist/constants/*.d.ts",
+      "default": "./src/constants/*.ts"
+    },
+    "./definitions/*": {
+      "types": "./.dist/definitions/*.d.ts",
+      "default": "./src/definitions/*.ts"
+    },
+    "./types/*": {
+      "types": "./.dist/types/*.d.ts",
+      "default": "./src/types/*.ts"
+    },
+    "./utils/*": {
+      "types": "./.dist/utils/*.d.ts",
+      "default": "./src/utils/*.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
+    "build": "vue-tsc -p tsconfig.build.json",
     "lint": "oxlint",
     "typecheck": "vue-tsc --noEmit",
     "test": "vitest run"

@@ -1,6 +1,7 @@
 import type { WritableComputedRef } from "vue";
 
 import { computed, getCurrentInstance, shallowRef } from "vue";
+import { isExplicit } from "../utils/explicit";
 
 /**
  * A writable model that falls back to local state when the prop is absent.
@@ -32,14 +33,10 @@ export function useModel<T>(
 
   if (options?.explicit) {
     const key = options.explicit;
-    const kebab = key.replace(/([A-Z])/g, "-$1").toLowerCase();
     const instance = getCurrentInstance();
-    const provided = () => {
-      const vnodeProps = instance?.vnode.props;
-      return !!vnodeProps && (key in vnodeProps || kebab in vnodeProps);
-    };
+    const explicit = () => isExplicit(key, instance?.vnode.props ?? null);
     return computed({
-      get: () => (provided() ? prop() : internal.value),
+      get: () => (explicit() ? prop() : internal.value),
       set: (value: T) => {
         internal.value = value;
         emit(value);

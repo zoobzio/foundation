@@ -4,7 +4,7 @@ import type { NuxtError } from "#app";
 
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import { clearError } from "#imports";
+import { clearError } from "#app";
 import ErrorPage from "../../app/error.vue";
 
 const makeError = (overrides: Partial<NuxtError> = {}): NuxtError =>

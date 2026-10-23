@@ -2,7 +2,7 @@
 // events only, and every subscription leaves with the scope.
 import { describe, expect, it, vi } from "vitest";
 import { effectScope } from "vue";
-import { useNuxtApp } from "#imports";
+import { useNuxtApp } from "#app";
 import { useHooks } from "../../../app/composables/hook";
 
 describe("useHooks", () => {
