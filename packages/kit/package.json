@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/kit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "The mechanisms the headless services share: a typed event emitter, a state container proxy with per-field middleware and change events, and the types that describe them. No framework dependency.",
   "license": "MIT",
   "author": {

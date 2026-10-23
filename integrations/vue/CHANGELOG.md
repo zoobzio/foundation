@@ -1,5 +1,18 @@
 # @zoobzio/vue
 
+## 0.0.4
+
+### Patch Changes
+
+- [`0b68b05`](https://github.com/zoobzio/foundation/commit/0b68b05c8c0798ebb23944a5b90d2bb1a233bf51) Thanks [@zoobzio](https://github.com/zoobzio)! - Add `typesVersions` mirroring the `exports` map so `@zoobzio/vue/*` subpaths resolve under TypeScript's legacy node10 module resolution. `@vue/compiler-sfc` falls back to node10 when it finds no `tsconfig.json` near a compiled SFC, which made `nuxi build` fail in consumers of `@zoobzio/nuxt` with `Failed to resolve import source "@zoobzio/vue/types/..."`.
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.0.4
+  - @zoobzio/query@0.0.4
+  - @zoobzio/browser@0.0.4
+  - @zoobzio/form@0.0.4
+  - @zoobzio/table@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes
