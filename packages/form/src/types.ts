@@ -47,10 +47,10 @@ export type FieldBase<T, V> = {
 };
 
 /**
- * Text-like inputs (text, email, password).
+ * Text-like inputs (text, email, password, tel, url).
  */
 export type TextField<T> = FieldBase<T, string> & {
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "password" | "tel" | "url";
   placeholder?: string;
   maxLength?: number;
 };
@@ -121,6 +121,21 @@ export type DateField<T> = FieldBase<T, Date> & {
 };
 
 /**
+ * Native date and time inputs. The value is the input's string form:
+ * `HH:mm` for `time`, `YYYY-MM-DDTHH:mm` for `datetime-local`, and
+ * `YYYY-MM-DD` for `date-input`, which renders `<input type="date">`.
+ * `min` and `max` take the same string form. `step` is in seconds, or in
+ * days for `date-input`, as the native attribute reads it. For a `Date`
+ * value and a calendar, use `date`.
+ */
+export type TemporalField<T> = FieldBase<T, string> & {
+  type: "time" | "datetime-local" | "date-input";
+  min?: string;
+  max?: string;
+  step?: number;
+};
+
+/**
  * Tags input.
  */
 export type TagsInputField<T> = FieldBase<T, string[]> & {
@@ -142,6 +157,7 @@ export type Field<T> =
   | CheckboxField<T>
   | RadioField<T>
   | DateField<T>
+  | TemporalField<T>
   | TagsInputField<T>;
 
 /**

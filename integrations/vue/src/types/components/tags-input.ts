@@ -28,6 +28,7 @@ export type TagsInputProps = {
   modelValue?: string[];
   placeholder?: string;
   disabled?: boolean;
+  required?: boolean;
   max?: number;
   delimiter?: string | RegExp;
   pt?: PT<TagsInputPassthrough>;
@@ -46,6 +47,7 @@ export type TagsInputEmits = {
 export type TagsInputContext = {
   placeholder: string;
   disabled?: boolean;
+  required?: boolean;
   max?: number;
   delimiter?: string | RegExp;
   modelValue: Ref<string[]>;

@@ -12,6 +12,11 @@ export type FakePayload = {
   plan: string;
   starts: Date;
   tags: string[];
+  phone: string;
+  site: string;
+  alarm: string;
+  meeting: string;
+  birthday: string;
 };
 
 export const fakeRoles: Option[] = [
@@ -39,6 +44,11 @@ export const fakeSchema = z.object({
   plan: z.string(),
   starts: z.date(),
   tags: z.array(z.string()),
+  phone: z.string(),
+  site: z.string(),
+  alarm: z.string(),
+  meeting: z.string(),
+  birthday: z.string().min(1, "Birthday is required"),
 });
 
 /**
@@ -50,6 +60,7 @@ export const fakeFields: Field<FakePayload>[] = [
     key: "name",
     label: "Name",
     placeholder: "Your name",
+    maxLength: 40,
     colspan: 6,
   },
   { type: "number", key: "age", label: "Age", min: 0, max: 120, colspan: 6 },
@@ -60,6 +71,24 @@ export const fakeFields: Field<FakePayload>[] = [
   { type: "radio", key: "plan", label: "Plan", options: fakePlans },
   { type: "date", key: "starts", label: "Starts" },
   { type: "tags-input", key: "tags", label: "Tags" },
+  { type: "tel", key: "phone", label: "Phone", placeholder: "+1 555 0100" },
+  { type: "url", key: "site", label: "Site" },
+  {
+    type: "time",
+    key: "alarm",
+    label: "Alarm",
+    min: "06:00",
+    max: "22:00",
+    step: 900,
+  },
+  { type: "datetime-local", key: "meeting", label: "Meeting" },
+  {
+    type: "date-input",
+    key: "birthday",
+    label: "Birthday",
+    min: "1900-01-01",
+    max: "2025-12-31",
+  },
 ];
 
 /**
@@ -75,6 +104,11 @@ export const fakeDefaults: Partial<FakePayload> = {
   plan: "free",
   starts: new Date(Date.UTC(2025, 0, 15)),
   tags: ["one"],
+  phone: "+1 555 0100",
+  site: "https://example.com",
+  alarm: "07:30",
+  meeting: "2025-03-04T09:00",
+  birthday: "1990-05-20",
 };
 
 /**
@@ -90,6 +124,11 @@ export const fakeRecord: FakePayload = {
   plan: "pro",
   starts: new Date(Date.UTC(2026, 5, 1)),
   tags: [],
+  phone: "",
+  site: "",
+  alarm: "18:00",
+  meeting: "2026-06-01T14:30",
+  birthday: "1984-11-02",
 };
 
 /**

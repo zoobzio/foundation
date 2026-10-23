@@ -42,7 +42,15 @@ describe("form", () => {
     const { service } = makeForm();
     const wrapper = mountForm({ service });
     const inputs = wrapper.findAll<HTMLInputElement>("input.f-data-form-input");
-    expect(inputs.map((input) => input.element.value)).toEqual(["Alice", "30"]);
+    expect(inputs.map((input) => input.element.value)).toEqual([
+      "Alice",
+      "30",
+      "+1 555 0100",
+      "https://example.com",
+      "07:30",
+      "2025-03-04T09:00",
+      "1990-05-20",
+    ]);
   });
 
   it("writes typed input to the payload through the service", async () => {

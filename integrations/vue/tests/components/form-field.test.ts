@@ -51,6 +51,44 @@ describe("form-field", () => {
     expect(service.payload.age).toBeUndefined();
   });
 
+  it("renders tel and url inputs by type", () => {
+    const { service } = makeForm();
+    const phone = mountField({ service, field: fakeField("phone") });
+    const tel = phone.get<HTMLInputElement>("input.f-data-form-input");
+    expect(tel.attributes("type")).toBe("tel");
+    expect(tel.element.value).toBe("+1 555 0100");
+    const site = mountField({ service, field: fakeField("site") });
+    expect(site.get("input.f-data-form-input").attributes("type")).toBe("url");
+  });
+
+  it("renders native date and time inputs and writes strings", async () => {
+    const { service } = makeForm();
+    const alarm = mountField({ service, field: fakeField("alarm") });
+    const time = alarm.get<HTMLInputElement>("input.f-data-form-input");
+    expect(time.attributes("type")).toBe("time");
+    expect(time.attributes("min")).toBe("06:00");
+    expect(time.attributes("step")).toBe("900");
+    expect(time.element.value).toBe("07:30");
+    await time.setValue("08:15");
+    expect(service.payload.alarm).toBe("08:15");
+    const meeting = mountField({ service, field: fakeField("meeting") });
+    expect(meeting.get("input.f-data-form-input").attributes("type")).toBe(
+      "datetime-local",
+    );
+    const birthday = mountField({ service, field: fakeField("birthday") });
+    const date = birthday.get<HTMLInputElement>("input.f-data-form-input");
+    expect(date.attributes("type")).toBe("date");
+    expect(date.attributes("max")).toBe("2025-12-31");
+    await date.setValue("2000-01-01");
+    expect(service.payload.birthday).toBe("2000-01-01");
+  });
+
+  it("renders a text input's max length", () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("name") });
+    expect(wrapper.get("input").attributes("maxlength")).toBe("40");
+  });
+
   it("renders a textarea and writes through it", async () => {
     const { service } = makeForm();
     const wrapper = mountField({ service, field: fakeField("bio") });

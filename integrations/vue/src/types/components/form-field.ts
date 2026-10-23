@@ -17,13 +17,15 @@ import type { InputHTMLAttributes, TextareaHTMLAttributes, VNode } from "vue";
  * The `input` and `textarea` entries type against native HTML attributes
  * and bind directly to the rendered `<input>`/`<textarea>` tags, widened
  * with the field bindings the form drives (`value`, `min`, `max`, `step`).
+ * `min` and `max` are numbers for a number field and strings for a native
+ * date or time field.
  */
 export type FormFieldPassthrough = {
   input: Passthrough<
     InputHTMLAttributes & {
       value?: string | number;
-      min?: number;
-      max?: number;
+      min?: number | string;
+      max?: number | string;
       step?: number;
     }
   >;

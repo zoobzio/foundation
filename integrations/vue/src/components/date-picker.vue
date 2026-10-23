@@ -41,6 +41,9 @@ const {
   modelValue,
   open = undefined,
   disabled,
+  required,
+  minValue,
+  maxValue,
   pt,
 } = defineProps<DatePickerProps>();
 
@@ -67,6 +70,9 @@ const settings = usePassthrough<DatePickerPassthrough>(() => ({
       modelValue: $model.value,
       open: $open.value,
       disabled,
+      required,
+      minValue,
+      maxValue,
       "onUpdate:modelValue": (v) => {
         $model.value = v;
       },
@@ -95,6 +101,9 @@ const settings = usePassthrough<DatePickerPassthrough>(() => ({
 
 const ctx = useContext<DatePickerContext>("date-picker", () => ({
   disabled,
+  required,
+  minValue,
+  maxValue,
   modelValue: $model,
   open: $open,
   el: el.value,

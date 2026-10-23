@@ -38,6 +38,11 @@ describe("fielder", () => {
       "radio",
       "datePicker",
       "tagsInput",
+      "input",
+      "input",
+      "input",
+      "input",
+      "input",
     ]);
   });
 
@@ -48,6 +53,7 @@ describe("fielder", () => {
       value: "Alice",
       type: "text",
       placeholder: "Your name",
+      maxlength: 40,
     });
     expect(recipes.textarea).toEqual({});
     expect(recipes.select).toEqual({ options: [] });
@@ -139,6 +145,98 @@ describe("fielder", () => {
     expect(service.payload.starts).toEqual(new Date(Date.UTC(2026, 5, 1)));
     recipes.datePicker["onUpdate:modelValue"]?.(undefined);
     expect(service.payload.starts).toBeUndefined();
+  });
+
+  it("tel and url render native inputs of their type", () => {
+    const { service } = makeForm();
+    const phone = fielder(service, fakeField("phone"));
+    expect(phone.control).toBe("input");
+    expect(phone.recipes.input).toMatchObject({
+      type: "tel",
+      value: "+1 555 0100",
+      placeholder: "+1 555 0100",
+    });
+    typeInto("input", phone.recipes.input.onInput, "555 0199", "tel");
+    expect(service.payload.phone).toBe("555 0199");
+    const site = fielder(service, fakeField("site"));
+    expect(site.recipes.input).toMatchObject({
+      type: "url",
+      value: "https://example.com",
+    });
+  });
+
+  it("temporal fields map to native types and carry string bounds", () => {
+    const { service } = makeForm();
+    const alarm = fielder(service, fakeField("alarm")).recipes.input;
+    expect(alarm).toMatchObject({
+      type: "time",
+      value: "07:30",
+      min: "06:00",
+      max: "22:00",
+      step: 900,
+    });
+    const meeting = fielder(service, fakeField("meeting")).recipes.input;
+    expect(meeting).toMatchObject({
+      type: "datetime-local",
+      value: "2025-03-04T09:00",
+    });
+    const birthday = fielder(service, fakeField("birthday")).recipes.input;
+    expect(birthday).toMatchObject({
+      type: "date",
+      value: "1990-05-20",
+      min: "1900-01-01",
+      max: "2025-12-31",
+    });
+  });
+
+  it("temporal input writes the string and clears on empty", () => {
+    const { service } = makeForm();
+    const { recipes } = fielder(service, fakeField("birthday"));
+    typeInto("input", recipes.input.onInput, "2001-02-03", "date");
+    expect(service.payload.birthday).toBe("2001-02-03");
+    typeInto("input", recipes.input.onInput, "", "date");
+    expect(service.payload.birthday).toBeUndefined();
+    recipes.input.onBlur?.(new FocusEvent("blur"));
+    expect(service.touched.has("birthday")).toBe(true);
+    expect(service.errors.birthday).toBeDefined();
+  });
+
+  it("textarea forwards its max length", () => {
+    const { service } = makeForm();
+    const { recipes } = fielder(service, {
+      type: "textarea",
+      key: "bio",
+      label: "Bio",
+      maxLength: 200,
+    });
+    expect(recipes.textarea.maxlength).toBe(200);
+  });
+
+  it("date forwards its bounds as calendar values", () => {
+    const { service } = makeForm();
+    const { recipes } = fielder(service, {
+      type: "date",
+      key: "starts",
+      label: "Starts",
+      required: true,
+      minDate: new Date(Date.UTC(2025, 0, 1)),
+      maxDate: new Date(Date.UTC(2025, 11, 31)),
+    });
+    expect(recipes.datePicker.minValue?.toString()).toBe("2025-01-01");
+    expect(recipes.datePicker.maxValue?.toString()).toBe("2025-12-31");
+    expect(recipes.datePicker.required).toBe(true);
+    const bare = fielder(service, fakeField("starts")).recipes.datePicker;
+    expect(bare.minValue).toBeUndefined();
+    expect(bare.maxValue).toBeUndefined();
+  });
+
+  it("checkbox, multi-select, and tags forward required", () => {
+    const { service } = makeForm();
+    const required = (key: "active" | "teams" | "tags") =>
+      fielder(service, { ...fakeField(key), required: true }).recipes;
+    expect(required("active").checkbox.required).toBe(true);
+    expect(required("teams").multiSelect.required).toBe(true);
+    expect(required("tags").tagsInput.required).toBe(true);
   });
 
   it("radio and tags write their values", () => {

@@ -12,10 +12,12 @@ import type {
   SelectField,
   Service,
   TagsInputField,
+  TemporalField,
   TextField,
   TextareaField,
 } from "@zoobzio/form";
 
+import { FORM_TEMPORAL_TYPES } from "../constants/form";
 import { deserialize, serialize } from "./date";
 
 const input = <T>(
@@ -29,6 +31,7 @@ const input = <T>(
   placeholder: field.placeholder,
   disabled: field.disabled,
   required: field.required,
+  maxlength: field.maxLength,
   "aria-invalid": error ? true : undefined,
   onInput: (event) => {
     if (event.target instanceof HTMLInputElement) {
@@ -68,6 +71,32 @@ const number = <T>(
   },
 });
 
+const temporal = <T>(
+  form: Service<T>,
+  field: TemporalField<T>,
+  value: T[keyof T] | undefined,
+  error: string | undefined,
+): FormFieldPassthrough["input"] => ({
+  value: typeof value === "string" ? value : undefined,
+  type: FORM_TEMPORAL_TYPES[field.type],
+  disabled: field.disabled,
+  required: field.required,
+  min: field.min,
+  max: field.max,
+  step: field.step,
+  "aria-invalid": error ? true : undefined,
+  onInput: (event) => {
+    if (event.target instanceof HTMLInputElement) {
+      const { value } = event.target;
+      form.set(field.key, value === "" ? undefined : value);
+    }
+  },
+  onBlur: () => {
+    form.touch(field.key);
+    form.check(field.key);
+  },
+});
+
 const textarea = <T>(
   form: Service<T>,
   field: TextareaField<T>,
@@ -79,6 +108,7 @@ const textarea = <T>(
   disabled: field.disabled,
   required: field.required,
   rows: field.rows,
+  maxlength: field.maxLength,
   "aria-invalid": error ? true : undefined,
   onInput: (event) => {
     if (event.target instanceof HTMLTextAreaElement) {
@@ -119,6 +149,7 @@ const multiselect = <T>(
   items: field.options,
   placeholder: field.placeholder,
   disabled: field.disabled,
+  required: field.required,
   "onUpdate:modelValue": (options) => {
     form.set(
       field.key,
@@ -136,6 +167,7 @@ const checkbox = <T>(
 ): FormFieldPassthrough["checkbox"] => ({
   modelValue: !!value,
   disabled: field.disabled,
+  required: field.required,
   "onUpdate:modelValue": (v) => {
     form.set(field.key, v === true);
     form.touch(field.key);
@@ -167,6 +199,9 @@ const date = <T>(
 ): FormFieldPassthrough["datePicker"] => ({
   modelValue: value instanceof Date ? deserialize(value) : undefined,
   disabled: field.disabled,
+  required: field.required,
+  minValue: field.minDate ? deserialize(field.minDate) : undefined,
+  maxValue: field.maxDate ? deserialize(field.maxDate) : undefined,
   "onUpdate:modelValue": (v) => {
     form.set(field.key, v ? serialize(v) : undefined);
     form.touch(field.key);
@@ -182,6 +217,7 @@ const tags = <T>(
   modelValue: Array.isArray(value) ? value : [],
   placeholder: field.placeholder,
   disabled: field.disabled,
+  required: field.required,
   max: field.max,
   delimiter: field.delimiter,
   "onUpdate:modelValue": (v) => {
@@ -211,6 +247,8 @@ export const fielder = <T>(
     case "text":
     case "email":
     case "password":
+    case "tel":
+    case "url":
       return {
         control: "input",
         recipes: { ...blank(), input: input(form, field, value, error) },
@@ -219,6 +257,13 @@ export const fielder = <T>(
       return {
         control: "input",
         recipes: { ...blank(), input: number(form, field, value, error) },
+      };
+    case "time":
+    case "datetime-local":
+    case "date-input":
+      return {
+        control: "input",
+        recipes: { ...blank(), input: temporal(form, field, value, error) },
       };
     case "textarea":
       return {

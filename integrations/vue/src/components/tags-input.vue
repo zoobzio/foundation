@@ -27,6 +27,7 @@ const {
   modelValue,
   placeholder = "Add tags...",
   disabled,
+  required,
   max,
   delimiter,
   pt,
@@ -48,6 +49,7 @@ const settings = usePassthrough<TagsInputPassthrough>(() => ({
     root: {
       modelValue: $model.value,
       disabled,
+      required,
       max,
       delimiter,
       "onUpdate:modelValue": (v) => {
@@ -64,6 +66,7 @@ const settings = usePassthrough<TagsInputPassthrough>(() => ({
 const ctx = useContext<TagsInputContext>("tags-input", () => ({
   placeholder,
   disabled,
+  required,
   max,
   delimiter,
   modelValue: $model,

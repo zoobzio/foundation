@@ -34,6 +34,7 @@ const {
   items,
   placeholder = "Select options",
   disabled,
+  required,
   pt,
 } = defineProps<MultiSelectProps<T>>();
 
@@ -65,6 +66,7 @@ const settings = usePassthrough<MultiSelectPassthrough<T>>(() => ({
       multiple: true,
       open: $open.value,
       disabled,
+      required,
       "onUpdate:modelValue": (v) => {
         const keys = Array.isArray(v) ? v : [v];
         $model.value = items.filter((o) => keys.includes(o.value));
@@ -92,6 +94,7 @@ const ctx = useContext<MultiSelectContext<T>>("multiSelect", () => ({
   items,
   placeholder,
   disabled,
+  required,
   modelValue: $model,
   open: $open,
   display: display.value,

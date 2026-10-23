@@ -91,11 +91,15 @@ export type DatePickerPassthrough = {
 /**
  * Props of the date picker. `modelValue` is required. Its presence on the vnode
  * decides control, so pass `undefined` explicitly for an uncontrolled instance.
+ * `minValue` and `maxValue` bound the selectable dates.
  */
 export type DatePickerProps = {
   modelValue: DateValue | undefined;
   open?: boolean;
   disabled?: boolean;
+  required?: boolean;
+  minValue?: DateValue;
+  maxValue?: DateValue;
   pt?: PT<DatePickerPassthrough>;
 };
 
@@ -112,6 +116,9 @@ export type DatePickerEmits = {
  */
 export type DatePickerContext = {
   disabled?: boolean;
+  required?: boolean;
+  minValue?: DateValue;
+  maxValue?: DateValue;
   modelValue: Ref<DateValue | undefined>;
   open: Ref<boolean>;
   el: ComponentPublicInstance | null;

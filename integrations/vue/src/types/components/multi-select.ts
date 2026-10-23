@@ -35,6 +35,7 @@ export type MultiSelectProps<T extends Option> = {
   items: T[];
   placeholder?: string;
   disabled?: boolean;
+  required?: boolean;
   pt?: PT<MultiSelectPassthrough<T>>;
 };
 
@@ -54,6 +55,7 @@ export type MultiSelectContext<T extends Option> = {
   items: T[];
   placeholder: string;
   disabled?: boolean;
+  required?: boolean;
   modelValue: Ref<T[] | undefined>;
   open: Ref<boolean>;
   display: string;
