@@ -46,6 +46,7 @@
   "dependencies": {
     "@nuxt/kit": "catalog:",
     "@zoobzio/browser": "workspace:*",
+    "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/vue": "workspace:*",

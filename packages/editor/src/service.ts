@@ -69,6 +69,12 @@ export class EditorService<I, O> implements Service<I, O> {
     this.context = { schema: this.editor.schema, extensions };
     this.attach();
 
+    // A non-extensible object is never wrapped by a reactive proxy (Vue
+    // skips non-extensible targets), so the editor stays raw however the
+    // consumer holds the service. ProseMirror and the DOM observers it owns
+    // use private fields, which a proxy cannot reach.
+    Object.preventExtensions(this);
+
     this.editor.on("update", () => {
       this.state.revision = this.revision + 1;
       this.state.empty = this.editor.isEmpty;
@@ -200,8 +206,14 @@ export class EditorService<I, O> implements Service<I, O> {
     return this.editor.commands.focus(position);
   }
 
+  /**
+   * Takes the element over: the element itself becomes the editor's DOM,
+   * and whatever it holds is reconciled to the document rather than
+   * appended to. A host that already shows the document's HTML, say from
+   * the server, turns editable in place with no visible change.
+   */
   mount(element: HTMLElement): void {
-    this.editor.mount(element);
+    this.editor.mount({ mount: element });
     this.state.mounted = true;
     this.emitter.emit("mounted", { id: this.id });
   }

@@ -32,7 +32,7 @@ editor.undo();
 editor.document; // a hast root, through the writer
 editor.json; // the editor's own form
 
-editor.mount(element); // in a browser
+editor.mount(element); // in a browser: the element becomes the editor's DOM
 editor.focus();
 editor.unmount();
 ```
@@ -116,6 +116,13 @@ Each service holds its own editor. Two services over one container share
 the revision and nothing else, so one mounted editor per id. `load` must
 run where the editor runs: a revision carried across SSR says nothing about
 the document on the other side.
+
+`mount` takes its element over rather than appending to it: the element
+becomes the editor's DOM and its children are reconciled to the document.
+An element that already holds the document's HTML (rendered on the server
+through the `html` codec, say) turns editable in place, with no change a
+reader can see. A view can therefore show the document static and mount
+only when the user interacts.
 
 ## Middleware
 

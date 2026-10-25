@@ -72,6 +72,11 @@ describe("config", () => {
     expect(Object.isFrozen(service.config)).toBe(true);
   });
 
+  it("is not extensible, so a reactive proxy leaves it raw", () => {
+    const { service } = makeService();
+    expect(Object.isExtensible(service)).toBe(false);
+  });
+
   it("exposes the schema and extensions as the context", () => {
     const { service } = makeService();
     expect(service.context.schema.nodes.paragraph).toBeDefined();

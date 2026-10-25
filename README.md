@@ -39,7 +39,8 @@ import { defineSelect } from "@zoobzio/vue/definitions/select";
 | Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.                   |
 | Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                                      |
 
-Each data component pairs a **definition** (`defineTable`, `defineForm`, …) —
+Each data component pairs a **definition** (`defineTable`, `defineForm`,
+`defineEditor`, …) —
 inert typed config, storable in a constant — with a headless **service** that
 owns the data machine, and a **component** that renders it. The Nuxt layer adds
 the stores and factories that instance a service in setup.

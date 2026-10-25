@@ -42,12 +42,12 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), and the browser (browser.vue and its browser-* parts)
-  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits
+  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), and the editor (editor.vue)
+  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
-  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate, table, browser
-  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection
+  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate, table, browser, editor
+  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
@@ -146,4 +146,47 @@ service.init();
 >
   <template #folderIcon><FolderGlyph /></template>
 </Browser>
+```
+
+`editor.vue` renders a headless `@zoobzio/editor` service: a toolbar with
+one button per mark and node the service's schema holds (bold, italic,
+headings by level, lists, quote, code block, rule, then undo and redo),
+over a host `div` that shows the document as static HTML. The editor is
+off until the user interacts: a pointer or keyboard focus on the host, or
+a toolbar click, mounts the service's editor over the host in place, so
+the content is readable from the first paint (server-rendered and hydrated
+untouched) and turns editable with no visible change. The static copy
+follows `load` while the editor is off. Each button runs the tool's
+command and reports `aria-pressed` from the service's `active`. The
+`loaded`, `updated`, `mounted`, and `unmounted` events relay as emits;
+`data-mounted` on the root says the editor is on. `pt.tool` is built per
+tool; the `tool` and `toolIcon` slots receive their tool; `toolbar`
+replaces the whole bar, and its context carries `activate` for a custom
+bar to turn the editor on.
+
+`useEditor(service, host)` is the component's view model on its own, for a
+consumer that renders the editor its own way: `markup`, the document as
+static HTML that follows `load` while the editor is off and freezes at
+mount; `tools`, the toolbar as data; and `activate`, which mounts the
+editor over the host in place. Bind `markup` to the host's `innerHTML`,
+`activate` to its `pointerdown` and `focus`, and give the host a
+`tabindex`. The editor unmounts with the scope.
+
+```ts
+import { reactive } from "vue";
+import { EditorService, createEditorState, hast } from "@zoobzio/editor";
+import Editor from "@zoobzio/vue/components/editor.vue";
+
+const config = { headings: [1, 2, 3] };
+const state = reactive(createEditorState());
+const service = new EditorService("body", config, state, hast);
+service.load(tree);
+```
+
+```vue
+<Editor
+  :service="service"
+  :pt="{ tool: (tool) => ({ title: tool.label }) }"
+  @updated="onUpdated"
+/>
 ```

@@ -90,14 +90,19 @@ the same path composes the same way.
 
 ## Stores and factories
 
-The data components of `@zoobzio/vue` (`Table`, `Form`, `Browser`) render a
-headless service through their `service` prop and own no state of their
-own. The layer carries that state for Nuxt, split in two tiers:
+The data components of `@zoobzio/vue` (`Table`, `Form`, `Browser`,
+`Editor`) render a headless service through their `service` prop and own no
+state of their own. The layer carries that state for Nuxt, split in two tiers:
 
 - **Stores** (`stores/`, `access<Name>`) back one service's state container
   with a `useState` record keyed by id (`table-<id>`). The record's value is
   a reactive proxy, so the service's writes are tracked; every instance
   under the same id shares it, and it survives SSR hydration.
+  The editor's record holds its revision and flags, never the document:
+  `load` the document on both sides, in setup, so the server's static copy
+  and the client's editor hold the same document. The editor component
+  renders that copy as HTML on the server and mounts the editor over it
+  only when the user interacts, so no `ClientOnly` is needed.
 - **Factories** (`factories/`, `create<Name>`) take an id and the options
   and return an id-scoped composable. Call the factory at module scope and
   the composable in setup: each call builds a service over the id's store
@@ -150,6 +155,7 @@ options is a second, independent state.
 | `createTable`   | `accessTable`   | `table:updated`, `table:filtered`                                                                   |
 | `createForm`    | `accessForm`    | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed` |
 | `createBrowser` | `accessBrowser` | `browser:updated`, `browser:navigated`                                                              |
+| `createEditor`  | `accessEditor`  | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                             |
 
 Every relayed payload carries the service's `id`. `useHooks` subscribes
 for one instance: each listener fires for events with that id only, and

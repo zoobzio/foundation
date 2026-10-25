@@ -84,6 +84,7 @@
   "dependencies": {
     "@internationalized/date": "catalog:",
     "@zoobzio/browser": "workspace:*",
+    "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",

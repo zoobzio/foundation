@@ -134,6 +134,9 @@ importers:
       '@zoobzio/browser':
         specifier: workspace:*
         version: link:../../packages/browser
+      '@zoobzio/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
       '@zoobzio/form':
         specifier: workspace:*
         version: link:../../packages/form
@@ -183,6 +186,9 @@ importers:
       '@zoobzio/browser':
         specifier: workspace:*
         version: link:../../packages/browser
+      '@zoobzio/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
       '@zoobzio/form':
         specifier: workspace:*
         version: link:../../packages/form

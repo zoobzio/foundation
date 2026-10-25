@@ -14,6 +14,12 @@ import type { ChainedCommands, Extensions, JSONContent } from "@tiptap/core";
 import type { Schema } from "@tiptap/pm/model";
 
 /**
+ * The editor's own form: tiptap's JSON document. What a reader produces and
+ * a writer consumes.
+ */
+export type Doc = JSONContent;
+
+/**
  * A heading level the editor offers.
  */
 export type Level = 1 | 2 | 3 | 4 | 5 | 6;
@@ -78,18 +84,18 @@ export type Context = {
  * document. Synchronous. A reader that must fetch or parse asynchronously
  * does so before `load`.
  */
-export type Reader<I> = Step<I, JSONContent, Context>;
+export type Reader<I> = Step<I, Doc, Context>;
 
 /**
  * Consumption: the editor's document as the consumer's form `O`.
  */
-export type Writer<O> = Step<JSONContent, O, Context>;
+export type Writer<O> = Step<Doc, O, Context>;
 
 /**
  * The kit's codec bound to the editor's document: a reader and a writer
  * over one form, or over two when ingestion and consumption differ.
  */
-export type Codec<I, O = I> = KitCodec<I, JSONContent, O, Context>;
+export type Codec<I, O = I> = KitCodec<I, Doc, O, Context>;
 
 /**
  * The consumer-supplied behavior: the reader and writer, and any tiptap
@@ -138,7 +144,7 @@ export type Service<I, O> = {
    * The document in the editor's own form. Reads the revision, so a
    * reactive container recomputes it on every change.
    */
-  readonly json: JSONContent;
+  readonly json: Doc;
 
   /**
    * The document in the consumer's form, through the writer. Written on
@@ -152,13 +158,14 @@ export type Service<I, O> = {
   block(node: string, attrs?: Record<string, unknown>): boolean;
   wrap(node: string, attrs?: Record<string, unknown>): boolean;
   list(node: string): boolean;
-  insert(content: JSONContent | JSONContent[]): boolean;
+  insert(content: Doc | Doc[]): boolean;
   undo(): boolean;
   redo(): boolean;
   run(commands: (chain: ChainedCommands) => ChainedCommands): boolean;
   isActive(name: string, attrs?: Record<string, unknown>): boolean;
 
   focus(position?: "start" | "end" | "all" | number): boolean;
+  /** Takes the element over as the editor's DOM; its content is replaced by the document's. */
   mount(element: HTMLElement): void;
   unmount(): void;
   destroy(): void;
