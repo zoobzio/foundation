@@ -12,13 +12,22 @@ dependency.
   emits `change` with `{ field, before, after }`. A key outside `fields` goes
   straight to the container.
 - `change(field, before, after)`: builds one change object.
+- `compose(a, b, …)`: chains steps into one. Each step takes the value and
+  the service's context; a step that needs no context takes one argument.
 - The types the above are described in: `Middleware<S>`, `Options<S>`,
   `Fields<S>`, `Changes<S>`, `Change<S, K>`, `Changers<S>`, `ChangeEvents<S>`,
-  `EventMap`, `Emitter<M>`, `Listener<M, E>`, `Listeners<M>`.
+  `EventMap`, `Emitter<M>`, `Listener<M, E>`, `Listeners<M>`, `Step<A, B, C>`,
+  `Codec<I, D, O, C>`.
 
 Everything is generic over the container shape `S`. A service binds them to
 its own `State<T>` and re-exports the bound aliases, so a consumer of
 `@zoobzio/table` never imports from the kit directly.
+
+A `Codec<I, D, O, C>` is the seam a service opens at its boundary: `read`
+takes a source in the consumer's form `I` to the service's own form `D`,
+`write` takes `D` to the consumer's form `O`, and each step receives the
+service's context `C`. A service binds `D` and `C` and ships its codecs;
+`compose` chains a consumer's own steps before or after one.
 
 ## Usage
 

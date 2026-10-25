@@ -91,3 +91,22 @@ export type Listener<M extends EventMap, E extends keyof M> = (
 export type Listeners<M extends EventMap> = {
   [E in keyof M]?: Set<(...args: M[E]) => void>;
 };
+
+/**
+ * One step of a transform: a value in one form to a value in another,
+ * given a context `C` the service provides. A step that needs no context
+ * takes one argument.
+ */
+export type Step<A, B, C> = (value: A, context: C) => B;
+
+/**
+ * A reader and a writer around a service's own form `D`: `read` takes a
+ * source in the consumer's form `I` to it; `write` takes it to the
+ * consumer's form `O`. Ingestion and consumption may differ in form. Each
+ * step receives the service's context `C`, so a transform asks the service
+ * what it models and never guesses.
+ */
+export type Codec<I, D, O, C> = {
+  read: Step<I, D, C>;
+  write: Step<D, O, C>;
+};

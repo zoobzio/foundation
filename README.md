@@ -33,11 +33,11 @@ import { defineSelect } from "@zoobzio/vue/definitions/select";
 
 ## Architecture
 
-| Tier       | Where                | What it is                                                                                                                                         |
-| ---------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Services   | `packages/*`         | Headless data machines (query, browser, form, table) in pure TypeScript, sharing the emitter and state proxy in [`@zoobzio/kit`](./packages/kit/). |
-| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.           |
-| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                              |
+| Tier       | Where                | What it is                                                                                                                                                 |
+| ---------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Services   | `packages/*`         | Headless data machines (query, browser, form, table, editor) in pure TypeScript, sharing the emitter and state proxy in [`@zoobzio/kit`](./packages/kit/). |
+| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.                   |
+| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                                      |
 
 Each data component pairs a **definition** (`defineTable`, `defineForm`, …) —
 inert typed config, storable in a constant — with a headless **service** that
@@ -63,6 +63,7 @@ packages/
   browser/        — @zoobzio/browser: headless browser service (pure TS, no framework)
   form/           — @zoobzio/form: headless form service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
+  editor/         — @zoobzio/editor: headless rich text editor service over tiptap, with json/html/hast codecs (pure TS, no framework)
 integrations/
   vue/            — @zoobzio/vue: Vue 3 components, definitions, and types
   nuxt/           — @zoobzio/nuxt: the Nuxt layer (stores, factories, app shell)
