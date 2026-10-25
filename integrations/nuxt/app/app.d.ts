@@ -1,4 +1,5 @@
 import type { BrowserHooks } from "./types/browser";
+import type { CodeHooks } from "./types/code";
 import type { EditorHooks } from "./types/editor";
 import type { FormHooks } from "./types/form";
 import type { Logger } from "./types/log";
@@ -10,7 +11,7 @@ declare module "#app" {
     $logger: (name?: string) => Logger;
   }
   interface RuntimeNuxtHooks
-    extends BrowserHooks, EditorHooks, FormHooks, TableHooks {}
+    extends BrowserHooks, CodeHooks, EditorHooks, FormHooks, TableHooks {}
 }
 
 export {};

@@ -13,11 +13,14 @@ types) live in [`@zoobzio/kit`](./kit/).
 | [`@zoobzio/form`](./form/)       | Form service: payload, per-key validation, touched tracking, submit lifecycle                        |
 | [`@zoobzio/table`](./table/)     | Table service: paging, sort, selection, column order, search filters                                 |
 | [`@zoobzio/editor`](./editor/)   | Editor service: one rich text document over tiptap, a feature set, commands, json/html/hast codecs   |
+| [`@zoobzio/code`](./code/)       | Code service: one text document over CodeMirror, history, the consumer's extensions, text codec      |
 
 Each package has its own README with usage, the state container contract,
-middleware, and events. The editor is the one service backed by a
-dependency: it owns a tiptap editor with no DOM, and its codecs turn the
-documents a consumer holds into the editor's and back. The table, the form, and the browser render through
+middleware, and events. The editor and the code service are the two backed
+by a dependency: the editor owns a tiptap editor with no DOM, and its codecs
+turn the documents a consumer holds into the editor's and back; the code
+service owns a CodeMirror state with no view, and the consumer's own
+CodeMirror extensions decide language, theme, and keymaps. The table, the form, and the browser render through
 [`@zoobzio/vue`](../integrations/vue/), and their Nuxt wiring lives in
 [`@zoobzio/nuxt`](../integrations/nuxt/) as `stores/<name>.ts` and
 `factories/<name>.ts`.

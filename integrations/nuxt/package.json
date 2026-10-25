@@ -46,6 +46,7 @@
   "dependencies": {
     "@nuxt/kit": "catalog:",
     "@zoobzio/browser": "workspace:*",
+    "@zoobzio/code": "workspace:*",
     "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/table": "workspace:*",
@@ -55,6 +56,7 @@
     "reka-ui": "catalog:"
   },
   "devDependencies": {
+    "@codemirror/state": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
     "happy-dom": "catalog:",

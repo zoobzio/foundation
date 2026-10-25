@@ -42,12 +42,12 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), and the editor (editor.vue)
-  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor
+  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), and the code editor (code.vue)
+  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
-  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate, table, browser, editor
-  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor
+  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate, table, browser, editor, code
+  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
@@ -187,6 +187,50 @@ service.load(tree);
 <Editor
   :service="service"
   :pt="{ tool: (tool) => ({ title: tool.label }) }"
+  @updated="onUpdated"
+/>
+```
+
+`code.vue` renders a headless `@zoobzio/code` service: a host `div` that
+shows the text static in a `pre`, and a status line that reports the
+cursor as a line and a column. The editor is off until the user interacts:
+a pointer or keyboard focus on the host mounts the service's CodeMirror
+view in the host, in place of the static copy, so the text is readable
+from the first paint (server-rendered and hydrated untouched) and turns
+editable with the same text under a different DOM. A pointer places the
+caret where it pressed; keyboard focus starts at the top. The static copy
+follows `load` while the editor is off. The component decides nothing
+about the look of the code: the language, the theme, the highlight style,
+and the gutters are the service's extensions, the consumer's own. The
+`loaded`, `updated`, `mounted`, and `unmounted` events relay as emits;
+`data-mounted` on the root says the editor is on. The `status` slot
+replaces the status line, and its context carries `activate`.
+
+`useCode(service, host)` is the component's view model on its own, for a
+consumer that renders the editor its own way: `markup`, the text in a
+`pre` that follows `load` while the editor is off and freezes at mount;
+and `activate`, which mounts the view in the host. Bind `markup` to the
+host's `innerHTML`, `activate` to its `pointerdown` and `focus`, and give
+the host a `tabindex`. The editor unmounts with the scope.
+
+```ts
+import { reactive } from "vue";
+import { CodeService, createCodeState, text } from "@zoobzio/code";
+import { markdown } from "@codemirror/lang-markdown";
+import Code from "@zoobzio/vue/components/code.vue";
+
+const state = reactive(createCodeState());
+const service = new CodeService("readme", {}, state, {
+  ...text,
+  extensions: [markdown(), myTheme],
+});
+service.load(source);
+```
+
+```vue
+<Code
+  :service="service"
+  :pt="{ status: { hidden: true } }"
   @updated="onUpdated"
 />
 ```

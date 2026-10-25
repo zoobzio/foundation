@@ -17,6 +17,7 @@
       "@zoobzio/form",
       "@zoobzio/table",
       "@zoobzio/editor",
+      "@zoobzio/code",
       "@zoobzio/vue",
       "@zoobzio/nuxt"
     ]
