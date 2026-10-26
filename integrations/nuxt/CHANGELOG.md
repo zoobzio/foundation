@@ -1,5 +1,19 @@
 # @zoobzio/nuxt
 
+## 0.0.6
+
+### Patch Changes
+
+- [`f1920da`](https://github.com/zoobzio/foundation/commit/f1920da6a5260824a324d716e331a773d0b16abb) Thanks [@zoobzio](https://github.com/zoobzio)! - fix: raise the catalog `vue` range to `^3.5.44` and dedupe the lockfile so the workspace resolves a single Vue. Nuxt 4.6 requires `^3.5.44` while the catalog still resolved `3.5.39`, leaving two copies of `vue` and `@vue/*` installed. Nitro writes every multi-version package into `.output/server/node_modules/.nitro/<pkg>@<version>` with nested `node_modules` symlinks between parent and child; because `vue` depends on `@vue/server-renderer` and `@vue/server-renderer` has `vue` as a peer, those links formed a cycle and the post-build size scan failed with `ELOOP: too many symbolic links encountered`. With one Vue version Nitro links the packages flat and `nuxi build` completes.
+
+- Updated dependencies []:
+  - @zoobzio/browser@0.0.6
+  - @zoobzio/form@0.0.6
+  - @zoobzio/table@0.0.6
+  - @zoobzio/editor@0.0.6
+  - @zoobzio/code@0.0.6
+  - @zoobzio/vue@0.0.6
+
 ## 0.0.5
 
 ### Patch Changes
