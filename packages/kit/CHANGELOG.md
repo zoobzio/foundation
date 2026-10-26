@@ -1,5 +1,11 @@
 # @zoobzio/kit
 
+## 0.0.5
+
+### Patch Changes
+
+- [`8834379`](https://github.com/zoobzio/foundation/commit/8834379594010041bc4bb272c4a87add3ba97265) Thanks [@zoobzio](https://github.com/zoobzio)! - feat: headless rich text editor service over tiptap with json, html, and hast codecs; codec and compose in the kit
+
 ## 0.0.4
 
 ## 0.0.3

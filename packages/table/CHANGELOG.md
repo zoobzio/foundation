@@ -1,5 +1,13 @@
 # @zoobzio/table
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies [[`8834379`](https://github.com/zoobzio/foundation/commit/8834379594010041bc4bb272c4a87add3ba97265)]:
+  - @zoobzio/kit@0.0.5
+  - @zoobzio/query@0.0.5
+
 ## 0.0.4
 
 ### Patch Changes

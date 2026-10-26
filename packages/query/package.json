@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/query",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Headless query service: committed text and field filters over a field schema, plus a staged draft that composes them. No framework dependency.",
   "license": "MIT",
   "author": {
