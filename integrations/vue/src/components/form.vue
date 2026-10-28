@@ -9,7 +9,6 @@ import type {
 import type { Field } from "@zoobzio/form";
 
 import FormField from "./form-field.vue";
-import Scroller from "./scroller.vue";
 
 import { useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
@@ -39,7 +38,6 @@ const { submitting } = useRefs(service);
 const settings = usePassthrough<FormPassthrough>(() => ({
   pt,
   recipes: {
-    scroller: {},
     form: {
       onSubmit: (e) => {
         e.preventDefault();
@@ -85,15 +83,13 @@ const FField = useForward({
         </span>
       </div>
     </slot>
-    <Scroller v-bind="settings.scroller">
-      <div class="f-group f-data-form-grid">
-        <FField
-          v-for="field in service.config.fields"
-          :key="String(field.key)"
-          :field="field"
-        />
-      </div>
-    </Scroller>
+    <div class="f-group f-data-form-grid">
+      <FField
+        v-for="field in service.config.fields"
+        :key="String(field.key)"
+        :field="field"
+      />
+    </div>
     <slot name="footer" v-bind="ctx">
       <div class="f-group f-data-form-footer">
         <button class="f-button f-data-form-reset" v-bind="settings.reset">

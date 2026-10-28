@@ -1,4 +1,3 @@
-import type { ScrollerEmits, ScrollerProps } from "./scroller";
 import type { FormFieldPassthrough, FormFieldSlots } from "./form-field";
 import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
@@ -11,7 +10,6 @@ import type { ButtonHTMLAttributes, FormHTMLAttributes, VNode } from "vue";
  * native HTML attributes and bind directly to their tags.
  */
 export type FormPassthrough = {
-  scroller: Passthrough<ScrollerProps, ScrollerEmits>;
   form: Passthrough<FormHTMLAttributes>;
   reset: Passthrough<ButtonHTMLAttributes>;
   submit: Passthrough<ButtonHTMLAttributes>;

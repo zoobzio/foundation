@@ -14,7 +14,6 @@ import TableHead from "./table-head.vue";
 import Autocomplete from "./autocomplete.vue";
 import Fab from "./fab.vue";
 import Pagination from "./pagination.vue";
-import Scroller from "./scroller.vue";
 
 import { useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
@@ -44,7 +43,6 @@ const settings = usePassthrough<TablePassthrough>(() => ({
   pt,
   recipes: {
     search: { service: service.query, placeholder: TABLE_SEARCH_PLACEHOLDER },
-    scroller: {},
     refresh: { label: TABLE_REFRESH_LABEL, onClick: () => service.fetch() },
     pagination: {
       page: page.value,
@@ -111,12 +109,10 @@ const { THead, TBody } = useForward({
       </template>
     </TableBulkActions>
 
-    <Scroller v-bind="settings.scroller">
-      <table class="f-table">
-        <THead />
-        <TBody />
-      </table>
-    </Scroller>
+    <table class="f-table">
+      <THead />
+      <TBody />
+    </table>
 
     <slot name="pagination" v-bind="ctx">
       <Pagination v-bind="settings.pagination" />

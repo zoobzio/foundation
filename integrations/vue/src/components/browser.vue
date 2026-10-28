@@ -12,7 +12,6 @@ import BrowserFiles from "./browser-files.vue";
 import BrowserFolders from "./browser-folders.vue";
 import Breadcrumb from "./breadcrumb.vue";
 import Fab from "./fab.vue";
-import Scroller from "./scroller.vue";
 
 import { useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
@@ -47,7 +46,6 @@ const settings = usePassthrough<BrowserPassthrough>(() => ({
       onSelect: (item) => service.navigate(item.index),
     },
     refresh: { label: BROWSER_REFRESH_LABEL, onClick: () => service.fetch() },
-    scroller: {},
   },
 }));
 
@@ -106,11 +104,9 @@ const { Folders, Files } = useForward({
     <slot v-if="isEmpty" name="empty" v-bind="ctx">
       <div class="f-group f-data-browser-empty">{{ BROWSER_EMPTY_TEXT }}</div>
     </slot>
-    <Scroller v-else v-bind="settings.scroller">
-      <table class="f-table">
-        <Folders v-if="folders.length" />
-        <Files />
-      </table>
-    </Scroller>
+    <table v-else class="f-table">
+      <Folders v-if="folders.length" />
+      <Files />
+    </table>
   </div>
 </template>

@@ -4,7 +4,6 @@ import type {
   BreadcrumbProps,
 } from "./breadcrumb";
 import type { FabEmits, FabProps } from "./fab";
-import type { ScrollerEmits, ScrollerProps } from "./scroller";
 import type {
   BrowserFoldersPassthrough,
   BrowserFoldersSlots,
@@ -35,7 +34,6 @@ export type BrowserPassthrough = {
     BreadcrumbEmits<BrowserCrumbItem>
   >;
   refresh: Passthrough<FabProps, FabEmits>;
-  scroller: Passthrough<ScrollerProps, ScrollerEmits>;
 };
 
 /**

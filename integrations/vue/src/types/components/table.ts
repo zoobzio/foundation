@@ -1,7 +1,6 @@
 import type { AutocompleteEmits, AutocompleteProps } from "./autocomplete";
 import type { FabEmits, FabProps } from "./fab";
 import type { PaginationEmits, PaginationProps } from "./pagination";
-import type { ScrollerEmits, ScrollerProps } from "./scroller";
 import type { TableHeadPassthrough, TableHeadSlots } from "./table-head";
 import type { TableBodyPassthrough, TableBodySlots } from "./table-body";
 import type {
@@ -21,7 +20,6 @@ import type { VNode } from "vue";
 export type TablePassthrough = {
   search: Passthrough<AutocompleteProps, AutocompleteEmits>;
   refresh: Passthrough<FabProps, FabEmits>;
-  scroller: Passthrough<ScrollerProps, ScrollerEmits>;
   pagination: Passthrough<PaginationProps, PaginationEmits>;
 };
 
