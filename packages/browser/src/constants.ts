@@ -15,6 +15,9 @@ export const BROWSER_DEFAULT_LOCALE = "en-US";
 /** The currency code currency cells format in when the config names none. */
 export const BROWSER_DEFAULT_CURRENCY = "USD";
 
+/** The IANA time zone date cells format in when the config names none. */
+export const BROWSER_DEFAULT_TIME_ZONE = "UTC";
+
 /**
  * The fields of the container, for key-driven iteration independent of a
  * container's runtime keys.

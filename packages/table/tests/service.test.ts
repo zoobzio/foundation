@@ -490,14 +490,16 @@ describe("query", () => {
     ).toBe(false);
   });
 
-  it("locale and currency default and follow config", () => {
+  it("locale, currency, and time zone default and follow config", () => {
     expect(makeService().service.locale).toBe("en-US");
     expect(makeService().service.currency).toBe("USD");
+    expect(makeService().service.timeZone).toBe("UTC");
     const { service } = makeService({
-      config: { locale: "de-DE", currency: "EUR" },
+      config: { locale: "de-DE", currency: "EUR", timeZone: "Europe/Berlin" },
     });
     expect(service.locale).toBe("de-DE");
     expect(service.currency).toBe("EUR");
+    expect(service.timeZone).toBe("Europe/Berlin");
   });
 
   it("filterableColumns excludes action and image columns by default", () => {

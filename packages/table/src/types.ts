@@ -125,6 +125,11 @@ export type Config<T> = {
    * The ISO 4217 code currency cells format in. Defaults to `USD`.
    */
   currency?: string;
+  /**
+   * The IANA time zone date and datetime cells format in. Defaults to
+   * `UTC`, so a server and a browser render the same text.
+   */
+  timeZone?: string;
 };
 
 /**
@@ -205,6 +210,7 @@ export type Service<T> = {
   readonly searchable: boolean;
   readonly locale: string;
   readonly currency: string;
+  readonly timeZone: string;
 
   /**
    * The query machine over the filterable columns: one field per column,

@@ -4,6 +4,7 @@ export const TABLE_DEFAULT_PAGE_SIZE = 25;
 export const TABLE_DEFAULT_SORT_DIRECTION: SortDirection = "asc";
 export const TABLE_DEFAULT_LOCALE = "en-US";
 export const TABLE_DEFAULT_CURRENCY = "USD";
+export const TABLE_DEFAULT_TIME_ZONE = "UTC";
 
 export const TABLE_DATE_OPERATORS = ["before", "after", "on"] as const;
 export const TABLE_NUMBER_OPERATORS = ["over", "under", "is"] as const;

@@ -124,7 +124,13 @@ defineSlots<BrowserFilesSlots<T>>();
             />
             <span v-else class="f-span">
               {{
-                cell(row[col.key], col.type, service.locale, service.currency)
+                cell(
+                  row[col.key],
+                  col.type,
+                  service.locale,
+                  service.currency,
+                  service.timeZone,
+                )
               }}
             </span>
           </slot>

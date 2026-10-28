@@ -20,6 +20,7 @@ import {
   BROWSER_DEFAULT_CURRENCY,
   BROWSER_DEFAULT_LOCALE,
   BROWSER_DEFAULT_ROOT_LABEL,
+  BROWSER_DEFAULT_TIME_ZONE,
   BROWSER_ROOT_KEY,
   BROWSER_STATE_FIELDS,
 } from "./constants";
@@ -116,6 +117,9 @@ export class BrowserService<T> implements Service<T> {
   }
   get currency(): string {
     return this.config.currency ?? BROWSER_DEFAULT_CURRENCY;
+  }
+  get timeZone(): string {
+    return this.config.timeZone ?? BROWSER_DEFAULT_TIME_ZONE;
   }
 
   // --- derived ---------------------------------------------------------

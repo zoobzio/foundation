@@ -431,20 +431,27 @@ describe("events", () => {
 });
 
 describe("config defaults", () => {
-  it("falls back to the default root label, locale, and currency", () => {
+  it("falls back to the default root label, locale, currency, and time zone", () => {
     const { service } = makeService();
     expect(service.rootLabel).toBe("Home");
     expect(service.locale).toBe("en-US");
     expect(service.currency).toBe("USD");
+    expect(service.timeZone).toBe("UTC");
   });
 
-  it("reads the configured root label, locale, and currency", () => {
+  it("reads the configured root label, locale, currency, and time zone", () => {
     const { service } = makeService({
-      config: { rootLabel: "Assets", locale: "de-DE", currency: "EUR" },
+      config: {
+        rootLabel: "Assets",
+        locale: "de-DE",
+        currency: "EUR",
+        timeZone: "Europe/Berlin",
+      },
     });
     expect(service.rootLabel).toBe("Assets");
     expect(service.locale).toBe("de-DE");
     expect(service.currency).toBe("EUR");
+    expect(service.timeZone).toBe("Europe/Berlin");
   });
 
   it("carries the config key on every joined action", () => {

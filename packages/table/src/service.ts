@@ -18,6 +18,7 @@ import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   TABLE_DEFAULT_CURRENCY,
   TABLE_DEFAULT_LOCALE,
+  TABLE_DEFAULT_TIME_ZONE,
   TABLE_STATE_FIELDS,
 } from "./constants";
 import { fields } from "./util";
@@ -136,6 +137,9 @@ export class TableService<T> implements Service<T> {
   }
   get currency(): string {
     return this.config.currency ?? TABLE_DEFAULT_CURRENCY;
+  }
+  get timeZone(): string {
+    return this.config.timeZone ?? TABLE_DEFAULT_TIME_ZONE;
   }
 
   // --- derived ---------------------------------------------------------
