@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/code",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Headless code editor service over CodeMirror: one text document, the snapshot a view reads, reader/writer seams for the document form a consumer ingests and consumes, and the consumer's own CodeMirror extensions for language, theme, and keymaps. No framework dependency.",
   "license": "MIT",
   "author": {
