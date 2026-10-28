@@ -92,6 +92,14 @@ events (`initialized`, `submitted`, `rejected`, `restored`, `reset`,
 `pt.fields`; a field slot given to the form overrides that region in every
 field.
 
+Each field renders its label, its control, its `hint` when the config sets
+one, and its error once the field is touched and invalid, wired together by
+ids derived from the form id and the field key (`ctx.ids`): the label's
+`for` targets the control, a grouped control (radio, date picker, rich text)
+names the label through `aria-labelledby`, and the control lists the hint
+and the error in `aria-describedby` while each renders. A `label`, `hint`,
+or `error` slot override keeps the association by reusing the ids.
+
 A `file` or `multi-file` field renders `file-input.vue`: a native file
 input with the picked files listed beneath it, each with a remove button.
 The model is the list of files; a pick replaces it, as the native input

@@ -48,13 +48,29 @@ export type FormFieldPassthrough = {
 export type FormFieldControl = keyof FormFieldPassthrough;
 
 /**
+ * The element ids of a field's parts, derived from the form id and the
+ * field key, so they are stable across renders and the server. The label
+ * targets `control` through `for`; a grouped control (radio, date picker,
+ * rich text) points back at `label` through `aria-labelledby`; the control
+ * lists `hint` and `error` in `aria-describedby` while each renders.
+ */
+export type FormFieldIds = {
+  control: string;
+  label: string;
+  hint: string;
+  error: string;
+};
+
+/**
  * A field resolved to its control: `control` names the entry the template
  * renders, `recipes` is the full manifest with the active entry carrying
- * the field's wiring and the rest blank.
+ * the field's wiring and the rest blank, and `ids` are the element ids the
+ * wiring refers to.
  */
 export type FormFieldResolved = {
   control: FormFieldControl;
   recipes: FormFieldPassthrough;
+  ids: FormFieldIds;
 };
 
 /**
@@ -70,7 +86,9 @@ export type FormFieldProps<T> = {
 /**
  * The form field view model, served to `defineExpose` and the slots.
  * `value`, `error`, and `touched` are the service's slice for the field:
- * `error` reports only once the field is touched.
+ * `error` reports only once the field is touched. `ids` are the element
+ * ids the control's wiring refers to, so a slot override keeps the
+ * label, hint, and error associated with the control.
  */
 export type FormFieldContext<T> = {
   form: Service<T>;
@@ -79,13 +97,15 @@ export type FormFieldContext<T> = {
   error: string | undefined;
   touched: boolean;
   control: FormFieldControl;
+  ids: FormFieldIds;
   el: HTMLDivElement | null;
   settings: FormFieldPassthrough;
 };
 
 /**
  * Slots of a form field. Each slot receives the context. One control slot
- * renders per field, chosen by the resolved `control`.
+ * renders per field, chosen by the resolved `control`. `hint` renders when
+ * the field config sets one; `error` once the field is touched and invalid.
  */
 export type FormFieldSlots<T> = {
   label?: (props: FormFieldContext<T>) => VNode[];
@@ -99,5 +119,6 @@ export type FormFieldSlots<T> = {
   tagsInput?: (props: FormFieldContext<T>) => VNode[];
   fileInput?: (props: FormFieldContext<T>) => VNode[];
   richText?: (props: FormFieldContext<T>) => VNode[];
+  hint?: (props: FormFieldContext<T>) => VNode[];
   error?: (props: FormFieldContext<T>) => VNode[];
 };

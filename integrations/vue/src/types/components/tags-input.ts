@@ -8,17 +8,19 @@ import type {
 } from "reka-ui";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { ComponentPublicInstance, HTMLAttributes, Ref, VNode } from "vue";
 
 /**
- * The parts of the tags input that accept passthrough.
+ * The parts of the tags input that accept passthrough. `input` is the
+ * rendered text input, so it also takes HTML attributes: a form lays its
+ * `aria-describedby` there; the `id` is the root's, which reka hands on.
  */
 export type TagsInputPassthrough = {
   root: Passthrough<TagsInputRootProps, TagsInputRootEmits>;
   item: PassthroughIter<string, TagsInputItemProps>;
   itemText: Passthrough<TagsInputItemTextProps>;
   itemDelete: Passthrough<TagsInputItemDeleteProps>;
-  input: Passthrough<TagsInputInputProps>;
+  input: Passthrough<TagsInputInputProps & HTMLAttributes>;
 };
 
 /**

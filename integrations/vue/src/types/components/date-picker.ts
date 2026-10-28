@@ -1,7 +1,7 @@
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { SlotProps } from "../slots";
 import type { Definition } from "../definition";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { ComponentPublicInstance, HTMLAttributes, Ref, VNode } from "vue";
 import type {
   DatePickerField,
   DatePickerCalendar,
@@ -26,9 +26,11 @@ import type {
 import type { DateValue } from "@internationalized/date";
 
 /**
- * Empty. reka's `DatePickerField` declares no props.
+ * reka's `DatePickerField` declares no props of its own; it renders the
+ * date field's group element, which takes HTML attributes. A form lays its
+ * `aria-labelledby` and `aria-describedby` there; the `id` is the root's.
  */
-export type DatePickerFieldProps = Record<string, never>;
+export type DatePickerFieldProps = HTMLAttributes;
 /**
  * Empty. reka's `DatePickerCalendar` declares no props.
  */

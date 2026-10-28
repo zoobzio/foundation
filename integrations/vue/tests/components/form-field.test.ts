@@ -218,6 +218,102 @@ describe("form-field", () => {
     );
   });
 
+  it("labels the control and describes it with the hint", () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("name") });
+    const label = wrapper.get("label.f-data-form-field-label");
+    expect(label.attributes("id")).toBe("test-form-name-label");
+    expect(label.attributes("for")).toBe("test-form-name");
+    const hint = wrapper.get(".f-data-form-field-hint");
+    expect(hint.text()).toBe("Shown on your profile");
+    expect(hint.attributes("id")).toBe("test-form-name-hint");
+    const input = wrapper.get("input.f-data-form-input");
+    expect(input.attributes("id")).toBe("test-form-name");
+    expect(input.attributes("aria-describedby")).toBe("test-form-name-hint");
+  });
+
+  it("adds the error to the description while it shows", async () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("name") });
+    service.set("name", "");
+    service.touch("name");
+    service.check("name");
+    await flushPromises();
+    const error = wrapper.get(".f-data-form-field-error");
+    expect(error.attributes("id")).toBe("test-form-name-error");
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe(
+      "test-form-name-hint test-form-name-error",
+    );
+    service.set("name", "Bob");
+    service.check("name");
+    await flushPromises();
+    expect(wrapper.get("input").attributes("aria-describedby")).toBe(
+      "test-form-name-hint",
+    );
+  });
+
+  it("renders no hint and no description without one", () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("age") });
+    expect(wrapper.find(".f-data-form-field-hint").exists()).toBe(false);
+    const input = wrapper.get("input.f-data-form-input");
+    expect(input.attributes("id")).toBe("test-form-age");
+    expect(input.attributes("aria-describedby")).toBeUndefined();
+  });
+
+  it("wires every control to its label and hint", () => {
+    const { service } = makeForm();
+    const role = mountField({ service, field: fakeField("role") });
+    const trigger = role.get("button.f-select-trigger");
+    expect(trigger.attributes("id")).toBe("test-form-role");
+    expect(trigger.attributes("aria-describedby")).toBe("test-form-role-hint");
+    const active = mountField({ service, field: fakeField("active") });
+    const box = active.get('[role="checkbox"]');
+    expect(box.attributes("id")).toBe("test-form-active");
+    expect(box.attributes("aria-describedby")).toBe("test-form-active-hint");
+    const plan = mountField({ service, field: fakeField("plan") });
+    const group = plan.get('[role="radiogroup"]');
+    expect(group.attributes("id")).toBe("test-form-plan");
+    expect(group.attributes("aria-labelledby")).toBe("test-form-plan-label");
+    expect(group.attributes("aria-describedby")).toBe("test-form-plan-hint");
+    const starts = mountField({ service, field: fakeField("starts") });
+    const field = starts.get(".f-date-picker-field");
+    expect(field.attributes("aria-labelledby")).toBe("test-form-starts-label");
+    expect(field.attributes("aria-describedby")).toBe("test-form-starts-hint");
+    expect(starts.find("#test-form-starts").exists()).toBe(true);
+    const tags = mountField({ service, field: fakeField("tags") });
+    const tagsInput = tags.get("input.f-tags-input-input");
+    expect(tagsInput.attributes("id")).toBe("test-form-tags");
+    expect(tagsInput.attributes("aria-describedby")).toBe(
+      "test-form-tags-hint",
+    );
+    const avatar = mountField({ service, field: fakeField("avatar") });
+    const file = avatar.get("input.f-file-input-input");
+    expect(file.attributes("id")).toBe("test-form-avatar");
+    expect(file.attributes("aria-describedby")).toBe("test-form-avatar-hint");
+    const body = mountField({ service, field: fakeField("body") });
+    const host = body.get(".f-data-editor-content");
+    expect(host.attributes("id")).toBe("test-form-body");
+    expect(host.attributes("aria-labelledby")).toBe("test-form-body-label");
+    expect(host.attributes("aria-describedby")).toBe("test-form-body-hint");
+  });
+
+  it("serves ctx to the hint slot", () => {
+    const { service } = makeForm();
+    const wrapper = mountField(
+      { service, field: fakeField("name") },
+      {
+        hint: `<template #hint="{ ids, field }">
+          <output :id="ids.hint">{{ field.hint }}!</output>
+        </template>`,
+      },
+    );
+    const out = wrapper.get("output");
+    expect(out.text()).toBe("Shown on your profile!");
+    expect(out.attributes("id")).toBe("test-form-name-hint");
+    expect(wrapper.find(".f-data-form-field-hint").exists()).toBe(false);
+  });
+
   it("serves ctx to slot overrides", () => {
     const { service } = makeForm();
     const wrapper = mountField(

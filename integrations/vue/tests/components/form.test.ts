@@ -186,6 +186,20 @@ describe("form", () => {
     expect(wrapper.find(".f-data-form-field-label").exists()).toBe(false);
   });
 
+  it("relays the hint slot to the fields with a hint", () => {
+    const { service } = makeForm();
+    const wrapper = mountForm(
+      { service },
+      {
+        hint: `<template #hint="{ field }"><i>{{ field.hint }}</i></template>`,
+      },
+    );
+    expect(
+      wrapper.findAll(".f-data-form-field i").map((i) => i.text()),
+    ).toEqual(fakeFields.flatMap((field) => (field.hint ? [field.hint] : [])));
+    expect(wrapper.find(".f-data-form-field-hint").exists()).toBe(false);
+  });
+
   it("serves ctx to the toolbar and footer slots", () => {
     const { service } = makeForm();
     const wrapper = mountForm(

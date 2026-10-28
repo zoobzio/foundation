@@ -2,7 +2,7 @@ import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { Option } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { ComponentPublicInstance, HTMLAttributes, Ref, VNode } from "vue";
 import type {
   SelectRootProps,
   SelectRootEmits,
@@ -14,11 +14,13 @@ import type {
 } from "reka-ui";
 
 /**
- * The parts of the multi-select that accept passthrough.
+ * The parts of the multi-select that accept passthrough. `trigger` is the
+ * rendered button, so it also takes HTML attributes: a form lays its `id`
+ * and `aria-describedby` there.
  */
 export type MultiSelectPassthrough<T extends Option = Option> = {
   root: Passthrough<SelectRootProps, SelectRootEmits>;
-  trigger: Passthrough<SelectTriggerProps>;
+  trigger: Passthrough<SelectTriggerProps & HTMLAttributes>;
   content: Passthrough<SelectContentProps, SelectContentEmits>;
   item: PassthroughIter<T, SelectItemProps>;
   itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;

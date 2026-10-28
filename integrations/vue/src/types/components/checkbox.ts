@@ -1,13 +1,15 @@
 import type { CheckboxRootProps, CheckboxRootEmits } from "reka-ui";
 import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { ComponentPublicInstance, HTMLAttributes, Ref, VNode } from "vue";
 
 /**
- * The parts of the checkbox that accept passthrough.
+ * The parts of the checkbox that accept passthrough. `root` is the
+ * rendered button, so it also takes HTML attributes: a form lays its
+ * `id` and `aria-describedby` there.
  */
 export type CheckboxPassthrough = {
-  root: Passthrough<CheckboxRootProps, CheckboxRootEmits>;
+  root: Passthrough<CheckboxRootProps & HTMLAttributes, CheckboxRootEmits>;
 };
 
 /**

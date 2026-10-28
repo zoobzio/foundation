@@ -37,10 +37,13 @@ export type Keys<T, V> = {
 /**
  * Shared base for all field variants. `V` is the value type the variant's
  * control writes; `key` may only point at a payload property that accepts it.
+ * `hint` is help text shown with the control and announced as its
+ * description; it is display-only, so the schema stays the contract.
  */
 export type FieldBase<T, V> = {
   key: Keys<T, V>;
   label: string;
+  hint?: string;
   disabled?: boolean;
   required?: boolean;
   colspan?: Colspan;

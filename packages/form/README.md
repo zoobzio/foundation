@@ -17,7 +17,7 @@ const config = {
   title: "Contact",
   fields: [
     { type: "text", key: "name", label: "Name" },
-    { type: "email", key: "email", label: "Email" },
+    { type: "email", key: "email", label: "Email", hint: "Never shared" },
   ],
   schema: z.object({ name: z.string().min(1), email: z.string().email() }),
   defaults: { name: "" },

@@ -39,6 +39,7 @@ const ctx = useContext<FormFieldContext<T>>("form-field", () => ({
   field,
   ...service.field(field.key),
   control: resolved.value.control,
+  ids: resolved.value.ids,
   el: el.value,
   settings: settings.value,
 }));
@@ -54,7 +55,11 @@ defineSlots<FormFieldSlots<T>>();
     :style="{ gridColumn: `span ${field.colspan ?? FORM_FIELD_COLSPAN}` }"
   >
     <slot name="label" v-bind="ctx">
-      <label class="f-label f-data-form-field-label">
+      <label
+        :id="ctx.ids.label"
+        :for="ctx.ids.control"
+        class="f-label f-data-form-field-label"
+      >
         {{ field.label }}
       </label>
     </slot>
@@ -102,8 +107,13 @@ defineSlots<FormFieldSlots<T>>();
     <slot v-else-if="ctx.control === 'richText'" name="richText" v-bind="ctx">
       <RichText v-bind="settings.richText" class="f-data-form-rich-text" />
     </slot>
+    <slot v-if="field.hint" name="hint" v-bind="ctx">
+      <div :id="ctx.ids.hint" class="f-caption f-data-form-field-hint">
+        {{ field.hint }}
+      </div>
+    </slot>
     <slot v-if="ctx.error" name="error" v-bind="ctx">
-      <div class="f-caption f-data-form-field-error">
+      <div :id="ctx.ids.error" class="f-caption f-data-form-field-error">
         {{ ctx.error }}
       </div>
     </slot>

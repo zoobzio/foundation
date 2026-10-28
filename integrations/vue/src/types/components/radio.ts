@@ -8,13 +8,15 @@ import type {
 import type { Option } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { ComponentPublicInstance, HTMLAttributes, Ref, VNode } from "vue";
 
 /**
- * The parts of the radio group that accept passthrough.
+ * The parts of the radio group that accept passthrough. `root` is the
+ * rendered group element, so it also takes HTML attributes: a form lays
+ * its `id`, `aria-labelledby`, and `aria-describedby` there.
  */
 export type RadioPassthrough<T extends Option = Option> = {
-  root: Passthrough<RadioGroupRootProps, RadioGroupRootEmits>;
+  root: Passthrough<RadioGroupRootProps & HTMLAttributes, RadioGroupRootEmits>;
   item: PassthroughIter<T, RadioGroupItemProps, RadioGroupItemEmits>;
   indicator: Passthrough<RadioGroupIndicatorProps>;
 };
