@@ -8,8 +8,10 @@ import type {
 
 import Checkbox from "./checkbox.vue";
 import DatePicker from "./date-picker.vue";
+import FileInput from "./file-input.vue";
 import MultiSelect from "./multi-select.vue";
 import Radio from "./radio.vue";
+import RichText from "./rich-text.vue";
 import Select from "./select.vue";
 import TagsInput from "./tags-input.vue";
 
@@ -93,6 +95,12 @@ defineSlots<FormFieldSlots<T>>();
     </slot>
     <slot v-else-if="ctx.control === 'tagsInput'" name="tagsInput" v-bind="ctx">
       <TagsInput v-bind="settings.tagsInput" class="f-data-form-tags-input" />
+    </slot>
+    <slot v-else-if="ctx.control === 'fileInput'" name="fileInput" v-bind="ctx">
+      <FileInput v-bind="settings.fileInput" class="f-data-form-file-input" />
+    </slot>
+    <slot v-else-if="ctx.control === 'richText'" name="richText" v-bind="ctx">
+      <RichText v-bind="settings.richText" class="f-data-form-rich-text" />
     </slot>
     <slot v-if="ctx.error" name="error" v-bind="ctx">
       <div class="f-caption f-data-form-field-error">

@@ -17,6 +17,9 @@ export type FakePayload = {
   alarm: string;
   meeting: string;
   birthday: string;
+  avatar: File;
+  attachments: File[];
+  body: string;
 };
 
 export const fakeRoles: Option[] = [
@@ -49,7 +52,16 @@ export const fakeSchema = z.object({
   alarm: z.string(),
   meeting: z.string(),
   birthday: z.string().min(1, "Birthday is required"),
+  avatar: z.file().mime(["image/png"], "PNG only"),
+  attachments: z.array(z.file()).max(2, "Two at most"),
+  body: z.string().min(1, "Body is required"),
 });
+
+/**
+ * A picked file, as the file input yields one.
+ */
+export const fakeFile = (name = "avatar.png", type = "image/png"): File =>
+  new File(["x"], name, { type });
 
 /**
  * One field per variant, in the order the form renders them.
@@ -89,6 +101,14 @@ export const fakeFields: Field<FakePayload>[] = [
     min: "1900-01-01",
     max: "2025-12-31",
   },
+  { type: "file", key: "avatar", label: "Avatar", accept: "image/*" },
+  { type: "multi-file", key: "attachments", label: "Attachments" },
+  {
+    type: "richtext",
+    key: "body",
+    label: "Body",
+    features: { headings: [2], lists: false },
+  },
 ];
 
 /**
@@ -109,6 +129,9 @@ export const fakeDefaults: Partial<FakePayload> = {
   alarm: "07:30",
   meeting: "2025-03-04T09:00",
   birthday: "1990-05-20",
+  avatar: fakeFile(),
+  attachments: [],
+  body: "<p>Hello</p>",
 };
 
 /**
@@ -129,6 +152,9 @@ export const fakeRecord: FakePayload = {
   alarm: "18:00",
   meeting: "2026-06-01T14:30",
   birthday: "1984-11-02",
+  avatar: fakeFile("carol.png"),
+  attachments: [fakeFile("notes.txt", "text/plain")],
+  body: "<h2>Carol</h2>",
 };
 
 /**

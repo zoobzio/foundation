@@ -6,9 +6,12 @@ import type {
   Field,
   CheckboxField,
   DateField,
+  FileField,
+  MultiFileField,
   MultiSelectField,
   NumberField,
   RadioField,
+  RichTextField,
   SelectField,
   Service,
   TagsInputField,
@@ -227,6 +230,68 @@ const tags = <T>(
   },
 });
 
+const file = <T>(
+  form: Service<T>,
+  field: FileField<T>,
+  value: T[keyof T] | undefined,
+): FormFieldPassthrough["fileInput"] => ({
+  modelValue: value instanceof File ? [value] : [],
+  multiple: false,
+  accept: field.accept,
+  capture: field.capture,
+  disabled: field.disabled,
+  required: field.required,
+  "onUpdate:modelValue": (files) => {
+    form.set(field.key, files[0]);
+    form.touch(field.key);
+    form.check(field.key);
+  },
+});
+
+const files = <T>(
+  form: Service<T>,
+  field: MultiFileField<T>,
+  value: T[keyof T] | undefined,
+): FormFieldPassthrough["fileInput"] => ({
+  modelValue: Array.isArray(value) ? value : [],
+  multiple: true,
+  accept: field.accept,
+  capture: field.capture,
+  disabled: field.disabled,
+  required: field.required,
+  "onUpdate:modelValue": (v) => {
+    form.set(field.key, v);
+    form.touch(field.key);
+    form.check(field.key);
+  },
+});
+
+/**
+ * The rich text writes on every edit and validates on blur, as a textarea
+ * does. The field's features are the editor's config: the two are
+ * structurally one type, and this assignment is where that is checked.
+ */
+const richtext = <T>(
+  form: Service<T>,
+  field: RichTextField<T>,
+  value: T[keyof T] | undefined,
+  error: string | undefined,
+): FormFieldPassthrough["richText"] => ({
+  modelValue: typeof value === "string" ? value : "",
+  id: String(field.key),
+  features: field.features,
+  disabled: field.disabled,
+  required: field.required,
+  pt: { content: { "aria-invalid": error ? true : undefined } },
+  "onUpdate:modelValue": (v) => {
+    form.set(field.key, v);
+  },
+  onBlur: () => {
+    form.touch(field.key);
+    form.check(field.key);
+  },
+});
+
 const blank = (): FormFieldPassthrough => ({
   input: {},
   textarea: {},
@@ -236,6 +301,8 @@ const blank = (): FormFieldPassthrough => ({
   radio: { options: [] },
   datePicker: { modelValue: undefined },
   tagsInput: {},
+  fileInput: {},
+  richText: {},
 });
 
 export const fielder = <T>(
@@ -299,6 +366,21 @@ export const fielder = <T>(
       return {
         control: "tagsInput",
         recipes: { ...blank(), tagsInput: tags(form, field, value) },
+      };
+    case "file":
+      return {
+        control: "fileInput",
+        recipes: { ...blank(), fileInput: file(form, field, value) },
+      };
+    case "multi-file":
+      return {
+        control: "fileInput",
+        recipes: { ...blank(), fileInput: files(form, field, value) },
+      };
+    case "richtext":
+      return {
+        control: "richText",
+        recipes: { ...blank(), richText: richtext(form, field, value, error) },
       };
   }
 };

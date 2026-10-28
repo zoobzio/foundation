@@ -146,6 +146,62 @@ export type TagsInputField<T> = FieldBase<T, string[]> & {
 };
 
 /**
+ * Single file upload. The value is the picked `File`, or undefined once
+ * cleared. `accept` and `capture` read as the native attributes do. Size
+ * and type limits belong to the schema (`z.file().max(...).mime(...)`).
+ */
+export type FileField<T> = FieldBase<T, File> & {
+  type: "file";
+  accept?: string;
+  capture?: "user" | "environment";
+};
+
+/**
+ * Multiple file upload. The value is the picked files; a new pick replaces
+ * the list, and an empty list stands for no pick. `accept` and `capture`
+ * read as the native attributes do. A count limit belongs to the schema
+ * (`z.array(z.file()).max(...)`).
+ */
+export type MultiFileField<T> = FieldBase<T, File[]> & {
+  type: "multi-file";
+  accept?: string;
+  capture?: "user" | "environment";
+};
+
+/**
+ * A heading level a rich text field offers.
+ */
+export type RichTextLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+/**
+ * The feature set of a rich text field: which nodes and marks its editor
+ * offers. Every feature is on unless turned off; `headings` lists the
+ * levels offered, and `false` removes headings. Structurally identical to
+ * the editor service's config, so a field's features bind straight to the
+ * editor without a dependency on it.
+ */
+export type RichTextFeatures = {
+  headings?: RichTextLevel[] | false;
+  lists?: boolean;
+  links?: boolean;
+  code?: boolean;
+  blockquote?: boolean;
+  rule?: boolean;
+  history?: boolean;
+};
+
+/**
+ * Rich text, edited in a WYSIWYG editor. The value is the document as an
+ * HTML string, so the schema validates a string (`z.string()`) and the
+ * payload stays serializable; an empty document writes `""`, so `min(1)`
+ * marks a required field. `features` narrows what the editor offers.
+ */
+export type RichTextField<T> = FieldBase<T, string> & {
+  type: "richtext";
+  features?: RichTextFeatures;
+};
+
+/**
  * Discriminated union of all field types.
  */
 export type Field<T> =
@@ -158,7 +214,10 @@ export type Field<T> =
   | RadioField<T>
   | DateField<T>
   | TemporalField<T>
-  | TagsInputField<T>;
+  | TagsInputField<T>
+  | FileField<T>
+  | MultiFileField<T>
+  | RichTextField<T>;
 
 /**
  * Config the consumer provides — the fields, the Zod schema (the form's

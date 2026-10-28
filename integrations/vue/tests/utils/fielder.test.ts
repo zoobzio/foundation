@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { toRaw } from "vue";
 import { CalendarDate } from "@internationalized/date";
 import { fielder } from "../../src/utils/fielder";
 import { makeForm } from "#test/mount/form";
-import { fakeField, fakeFields } from "#test/data/form";
+import { fakeField, fakeFields, fakeFile } from "#test/data/form";
 
 /**
  * Fires a native `input` event through the recipe's listener, so the
@@ -43,6 +44,9 @@ describe("fielder", () => {
       "input",
       "input",
       "input",
+      "fileInput",
+      "fileInput",
+      "richText",
     ]);
   });
 
@@ -58,6 +62,8 @@ describe("fielder", () => {
     expect(recipes.textarea).toEqual({});
     expect(recipes.select).toEqual({ options: [] });
     expect(recipes.datePicker).toEqual({ modelValue: undefined });
+    expect(recipes.fileInput).toEqual({});
+    expect(recipes.richText).toEqual({});
   });
 
   it("text input writes on input and validates on blur", () => {
@@ -237,6 +243,94 @@ describe("fielder", () => {
     expect(required("active").checkbox.required).toBe(true);
     expect(required("teams").multiSelect.required).toBe(true);
     expect(required("tags").tagsInput.required).toBe(true);
+  });
+
+  it("file wraps the one file as a list and writes the first pick", () => {
+    const { service } = makeForm();
+    const { control, recipes } = fielder(service, fakeField("avatar"));
+    expect(control).toBe("fileInput");
+    expect(recipes.fileInput).toMatchObject({
+      multiple: false,
+      accept: "image/*",
+    });
+    expect(recipes.fileInput.modelValue?.map((f) => f.name)).toEqual([
+      "avatar.png",
+    ]);
+    const next = fakeFile("next.png");
+    recipes.fileInput["onUpdate:modelValue"]?.([next]);
+    // happy-dom's File lacks the `[object File]` tag browsers give it, so
+    // the reactive container proxies it here and nowhere else.
+    expect(toRaw(service.payload.avatar)).toBe(next);
+    expect(service.touched.has("avatar")).toBe(true);
+    recipes.fileInput["onUpdate:modelValue"]?.([]);
+    expect(service.payload.avatar).toBeUndefined();
+    expect(service.errors.avatar).toBeDefined();
+  });
+
+  it("file checks the pick against the schema", () => {
+    const { service } = makeForm();
+    const { recipes } = fielder(service, fakeField("avatar"));
+    recipes.fileInput["onUpdate:modelValue"]?.([
+      fakeFile("doc.pdf", "application/pdf"),
+    ]);
+    expect(service.errors.avatar).toBe("PNG only");
+  });
+
+  it("multi-file passes the list both ways", () => {
+    const { service } = makeForm();
+    const { control, recipes } = fielder(service, fakeField("attachments"));
+    expect(control).toBe("fileInput");
+    expect(recipes.fileInput).toMatchObject({ multiple: true, modelValue: [] });
+    const picked = [fakeFile("a.txt"), fakeFile("b.txt"), fakeFile("c.txt")];
+    recipes.fileInput["onUpdate:modelValue"]?.(picked);
+    expect(service.payload.attachments).toEqual(picked);
+    expect(service.errors.attachments).toBe("Two at most");
+    expect(
+      fielder(service, fakeField("attachments")).recipes.fileInput.modelValue,
+    ).toEqual(picked);
+  });
+
+  it("richtext seats the HTML, the features, and the field's id", () => {
+    const { service } = makeForm();
+    const { control, recipes } = fielder(service, fakeField("body"));
+    expect(control).toBe("richText");
+    expect(recipes.richText).toMatchObject({
+      modelValue: "<p>Hello</p>",
+      id: "body",
+      features: { headings: [2], lists: false },
+    });
+    expect(recipes.richText.pt?.content?.["aria-invalid"]).toBeUndefined();
+  });
+
+  it("richtext writes on update and validates on blur", () => {
+    const { service } = makeForm();
+    const { recipes } = fielder(service, fakeField("body"));
+    recipes.richText["onUpdate:modelValue"]?.("<p>Edited</p>");
+    expect(service.payload.body).toBe("<p>Edited</p>");
+    expect(service.touched.has("body")).toBe(false);
+    recipes.richText["onUpdate:modelValue"]?.("");
+    recipes.richText.onBlur?.(new FocusEvent("blur"));
+    expect(service.touched.has("body")).toBe(true);
+    expect(service.errors.body).toBe("Body is required");
+    const invalid = fielder(service, fakeField("body")).recipes.richText;
+    expect(invalid.modelValue).toBe("");
+    expect(invalid.pt?.content?.["aria-invalid"]).toBe(true);
+  });
+
+  it("file and richtext forward disabled and required", () => {
+    const { service } = makeForm();
+    const avatar = fielder(service, {
+      ...fakeField("avatar"),
+      disabled: true,
+      required: true,
+    }).recipes.fileInput;
+    expect(avatar).toMatchObject({ disabled: true, required: true });
+    const body = fielder(service, {
+      ...fakeField("body"),
+      disabled: true,
+      required: true,
+    }).recipes.richText;
+    expect(body).toMatchObject({ disabled: true, required: true });
   });
 
   it("radio and tags write their values", () => {

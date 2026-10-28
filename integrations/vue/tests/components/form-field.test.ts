@@ -3,9 +3,10 @@ import type { FakePayload } from "#test/data/form";
 
 import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
+import { toRaw } from "vue";
 import FormField from "../../src/components/form-field.vue";
 import { makeForm } from "#test/mount/form";
-import { fakeField } from "#test/data/form";
+import { fakeField, fakeFile } from "#test/data/form";
 
 const mounted: { unmount: () => void }[] = [];
 
@@ -149,6 +150,58 @@ describe("form-field", () => {
     expect(
       tags.findAll(".f-tags-input-item-text").map((tag) => tag.text()),
     ).toEqual(["one"]);
+  });
+
+  it("renders a file input seeded from the payload and writes a pick", async () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("avatar") });
+    const input = wrapper.get<HTMLInputElement>("input.f-file-input-input");
+    expect(input.attributes("type")).toBe("file");
+    expect(input.attributes("accept")).toBe("image/*");
+    expect(input.attributes("multiple")).toBeUndefined();
+    expect(wrapper.get(".f-file-input-item-name").text()).toBe("avatar.png");
+    const next = fakeFile("next.png");
+    Object.defineProperty(input.element, "files", { value: [next] });
+    await input.trigger("change");
+    // happy-dom's File lacks the `[object File]` tag browsers give it, so
+    // the reactive container proxies it here and nowhere else.
+    expect(toRaw(service.payload.avatar)).toBe(next);
+    expect(wrapper.get(".f-file-input-item-name").text()).toBe("next.png");
+    await wrapper.get(".f-file-input-item-remove").trigger("click");
+    expect(service.payload.avatar).toBeUndefined();
+    expect(wrapper.find(".f-file-input-item").exists()).toBe(false);
+  });
+
+  it("renders a multiple file input", () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("attachments") });
+    const input = wrapper.get("input.f-file-input-input");
+    expect(input.attributes("multiple")).toBeDefined();
+    expect(wrapper.findAll(".f-file-input-item")).toHaveLength(0);
+  });
+
+  it("renders a rich text editor over the payload HTML and writes edits", async () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("body") });
+    const host = wrapper.get(".f-data-editor-content");
+    expect(host.html()).toContain("<p>Hello</p>");
+    const tools = wrapper
+      .findAll(".f-data-editor-tool")
+      .map((b) => b.attributes("data-tool"));
+    expect(tools).toContain("heading-2");
+    expect(tools).not.toContain("heading-1");
+    expect(tools).not.toContain("bulletList");
+    await host.trigger("pointerdown");
+    expect(host.attributes("contenteditable")).toBe("true");
+    service.set("body", "");
+    await flushPromises();
+    expect(host.text()).toBe("");
+    await host.trigger("blur");
+    expect(service.touched.has("body")).toBe(true);
+    expect(wrapper.get(".f-data-form-field-error").text()).toBe(
+      "Body is required",
+    );
+    expect(host.attributes("aria-invalid")).toBe("true");
   });
 
   it("shows the error only once the field is touched", async () => {

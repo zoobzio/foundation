@@ -38,6 +38,52 @@ form.reset(); // back to defaults
 form.field("email"); // { value, error, touched } — error only once touched
 ```
 
+## Fields
+
+`config.fields` is pure data: each entry names a payload key, the control
+its `type` renders, and the control's own settings. `key` may only point
+at a payload property that accepts the control's value.
+
+| Type                                      | Value      | Settings                                   |
+| ----------------------------------------- | ---------- | ------------------------------------------ |
+| `text`, `email`, `password`, `tel`, `url` | `string`   | `placeholder`, `maxLength`                 |
+| `number`                                  | `number`   | `placeholder`, `min`, `max`, `step`        |
+| `textarea`                                | `string`   | `placeholder`, `rows`, `maxLength`         |
+| `select`, `radio`                         | `string`   | `options` (+ `placeholder`, `orientation`) |
+| `multi-select`                            | `string[]` | `options`, `placeholder`                   |
+| `checkbox`                                | `boolean`  |                                            |
+| `date`                                    | `Date`     | `placeholder`, `minDate`, `maxDate`        |
+| `time`, `datetime-local`, `date-input`    | `string`   | `min`, `max`, `step`                       |
+| `tags-input`                              | `string[]` | `placeholder`, `max`, `delimiter`          |
+| `file`                                    | `File`     | `accept`, `capture`                        |
+| `multi-file`                              | `File[]`   | `accept`, `capture`                        |
+| `richtext`                                | `string`   | `features`                                 |
+
+A `file` field holds the picked `File` and a `multi-file` field the picked
+files; limits on size, type, and count belong to the schema (`z.file()`,
+`z.array(z.file())`). A `richtext` field holds the document as an HTML
+string, so the schema validates a string and the payload stays
+serializable; an empty document writes `""`, so `z.string().min(1)` marks
+it required. `features` is the editor's feature set (`headings`, `lists`,
+`links`, `code`, `blockquote`, `rule`, `history`), each on unless turned
+off.
+
+```ts
+const fields: Field<Post>[] = [
+  { type: "file", key: "cover", label: "Cover", accept: "image/*" },
+  {
+    type: "richtext",
+    key: "body",
+    label: "Body",
+    features: { headings: [2, 3] },
+  },
+];
+const schema = z.object({
+  cover: z.file().max(5_000_000).mime(["image/png", "image/jpeg"]),
+  body: z.string().min(1, "Body is required"),
+});
+```
+
 ## The state container
 
 The service reads and writes the `state` container: the payload, the

@@ -42,11 +42,11 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (32) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), and the code editor (code.vue)
+  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), and the code editor (code.vue)
   composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
-  utils/             — passthrough merge, forward render, define runtime, date, keywords, paginate, table, browser, editor, code
+  utils/             — passthrough merge, forward render, define runtime, date, file, keywords, paginate, table, browser, editor, code
   constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
@@ -86,10 +86,23 @@ service.init();
 `form.vue` renders a headless `@zoobzio/form` service the same way: one
 `form-field.vue` per config field, each resolved to the control its `type`
 names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,
-`datePicker`, `tagsInput`), with the lifecycle events (`initialized`,
-`submitted`, `rejected`, `restored`, `reset`, `failed`) relayed as emits.
-Field passthrough is keyed by payload key under `pt.fields`; a field slot
-given to the form overrides that region in every field.
+`datePicker`, `tagsInput`, `fileInput`, `richText`), with the lifecycle
+events (`initialized`, `submitted`, `rejected`, `restored`, `reset`,
+`failed`) relayed as emits. Field passthrough is keyed by payload key under
+`pt.fields`; a field slot given to the form overrides that region in every
+field.
+
+A `file` or `multi-file` field renders `file-input.vue`: a native file
+input with the picked files listed beneath it, each with a remove button.
+The model is the list of files; a pick replaces it, as the native input
+does, and a form reset clears the native list too. A `richtext` field
+renders `rich-text.vue`: a v-model over the document as an HTML string,
+with an `@zoobzio/editor` service the component owns behind it, rendered
+through `editor.vue`. The field's `features` are the editor's config, an
+edit writes the document through the `html` codec (`""` when empty), and a
+model write from outside (a reset, a restore) replaces the document. Its
+`pt` is the editor's manifest, laid under the component's own layer, and
+the editor's slots relay.
 
 ```ts
 import { reactive } from "vue";

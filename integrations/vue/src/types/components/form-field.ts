@@ -1,7 +1,9 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { DatePickerEmits, DatePickerProps } from "./date-picker";
+import type { FileInputEmits, FileInputProps } from "./file-input";
 import type { MultiSelectEmits, MultiSelectProps } from "./multi-select";
 import type { RadioEmits, RadioProps } from "./radio";
+import type { RichTextEmits, RichTextProps } from "./rich-text";
 import type { SelectEmits, SelectProps } from "./select";
 import type { TagsInputEmits, TagsInputProps } from "./tags-input";
 import type { Option } from "../common";
@@ -36,6 +38,8 @@ export type FormFieldPassthrough = {
   radio: Passthrough<RadioProps, RadioEmits>;
   datePicker: Passthrough<DatePickerProps, DatePickerEmits>;
   tagsInput: Passthrough<TagsInputProps, TagsInputEmits>;
+  fileInput: Passthrough<FileInputProps, FileInputEmits>;
+  richText: Passthrough<RichTextProps, RichTextEmits>;
 };
 
 /**
@@ -93,5 +97,7 @@ export type FormFieldSlots<T> = {
   radio?: (props: FormFieldContext<T>) => VNode[];
   datePicker?: (props: FormFieldContext<T>) => VNode[];
   tagsInput?: (props: FormFieldContext<T>) => VNode[];
+  fileInput?: (props: FormFieldContext<T>) => VNode[];
+  richText?: (props: FormFieldContext<T>) => VNode[];
   error?: (props: FormFieldContext<T>) => VNode[];
 };
