@@ -52,6 +52,18 @@ query.items; // the value panel
 query.submit(); // add({ kind: "filter", key: "amount", op: "over", value: "4" })
 ```
 
+A field's `values` is a list the term narrows, or a provider the term is
+given to, so the list can be built from what is typed. A provider's result
+stands as is.
+
+```ts
+const config = {
+  fields: {
+    owner: { label: "Owner", values: (term) => users.search(term) },
+  },
+};
+```
+
 ## The state container
 
 The service reads and writes the `state` container: the entries and the

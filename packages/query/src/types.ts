@@ -9,6 +9,13 @@ import type {
 } from "@zoobzio/kit";
 
 /**
+ * The values a field's value stage suggests: a list the term narrows, or a
+ * provider that builds the list from the term. A provider's result is used
+ * as given: it owns the narrowing.
+ */
+export type Values = readonly string[] | ((term: string) => readonly string[]);
+
+/**
  * A field the query can filter on. With `operators`, a filter on the field
  * carries an operator; `defaultOperator` fills one in when the caller names
  * none. With `values`, the value stage suggests them; without, the value is
@@ -18,12 +25,12 @@ export type Field = {
   label: string;
   operators?: readonly string[];
   defaultOperator?: string;
-  values?: readonly string[];
+  values?: Values;
 };
 
 /**
- * Config the consumer provides — pure serializable data. Fields are keyed
- * by the identity a filter carries.
+ * Config the consumer provides. Plain data, except that a field's `values`
+ * may be a provider. Fields are keyed by the identity a filter carries.
  */
 export type Config = {
   fields: Record<string, Field>;

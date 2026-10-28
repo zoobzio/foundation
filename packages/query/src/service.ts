@@ -184,7 +184,10 @@ export class QueryService implements Service {
     return "value";
   }
 
-  /** The options of the active panel, narrowed by the term. */
+  /**
+   * The options of the active panel, narrowed by the term. A value provider
+   * is given the term and its result stands as is.
+   */
   get items(): Option[] {
     const { field, term } = this.parse;
     const q = term.trim().toLowerCase();
@@ -198,10 +201,14 @@ export class QueryService implements Service {
         return (field?.operators ?? [])
           .filter(matches)
           .map((o) => ({ stage: "op", value: o, label: o }));
-      default:
-        return (field?.values ?? [])
-          .filter(matches)
-          .map((v) => ({ stage: "value", value: v, label: v }));
+      default: {
+        const values = field?.values ?? [];
+        const list =
+          typeof values === "function"
+            ? values(term.trim())
+            : values.filter(matches);
+        return list.map((v) => ({ stage: "value", value: v, label: v }));
+      }
     }
   }
 

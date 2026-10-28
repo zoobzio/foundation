@@ -209,6 +209,29 @@ describe("panels", () => {
     expect(service.items).toEqual([]);
   });
 
+  it("asks a values provider for the term, and takes its result as is", () => {
+    const values = vi.fn((term: string) =>
+      term ? [`${term}@zoobz.io`, `${term}@example.com`] : [],
+    );
+    const { service } = makeService({
+      fields: { email: { label: "Email", values } },
+    });
+    service.setDraft("Email: ");
+    expect(service.items).toEqual([]);
+    expect(values).toHaveBeenLastCalledWith("");
+    service.setDraft("Email: alice");
+    expect(service.items).toEqual([
+      { stage: "value", value: "alice@zoobz.io", label: "alice@zoobz.io" },
+      {
+        stage: "value",
+        value: "alice@example.com",
+        label: "alice@example.com",
+      },
+    ]);
+    expect(values).toHaveBeenLastCalledWith("alice");
+    expect(service.hint).toBe("@zoobz.io");
+  });
+
   it("builds the trail from the path taken, and the panels from the trail plus the items", () => {
     const { service } = makeService();
     expect(service.trail).toEqual([]);
