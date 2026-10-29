@@ -1,7 +1,7 @@
 import type { CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverProps, PopoverEmits } from "./popover";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Passthrough, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -28,8 +28,8 @@ export type FacetGroup<T extends FacetItem = FacetItem> = {
  */
 export type FacetsPassthrough<T extends FacetItem = FacetItem> = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
-  trigger: Passthrough<FabProps>;
-  command: Passthrough<CommandProps<T>, CommandEmits<T>>;
+  trigger: Rendered<FabProps>;
+  command: Rendered<CommandProps<T>, CommandEmits<T>>;
 };
 
 /**

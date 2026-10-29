@@ -1,5 +1,5 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Rendered } from "../passthrough";
 import type { DataTableColumn, Service } from "@zoobzio/table";
 import type { VNode } from "vue";
 
@@ -7,7 +7,7 @@ import type { VNode } from "vue";
  * The parts of the table head that accept passthrough.
  */
 export type TableHeadPassthrough = {
-  selectAllCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
+  selectAllCheckbox: Rendered<CheckboxProps, CheckboxEmits>;
 };
 
 /**

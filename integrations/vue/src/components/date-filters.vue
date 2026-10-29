@@ -17,6 +17,8 @@ import Fab from "./fab.vue";
 import Popover from "./popover.vue";
 import RangeCalendar from "./range-calendar.vue";
 
+import Primitive from "./primitive.vue";
+
 import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { usePassthrough } from "../composables/passthrough";
@@ -198,6 +200,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
   pt,
   recipes: {
     popover: {
+      as: Popover,
       open: open.value,
       align: "end",
       "onUpdate:open": (v) => {
@@ -205,10 +208,12 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     trigger: {
+      as: Fab,
       label: "Dates",
       badge: activeCount.value > 0 ? "" : undefined,
     },
     fieldCommand: {
+      as: Command,
       groups: fieldGroups.value,
       placeholder: "Search fields...",
       "onUpdate:modelValue": (v) => {
@@ -217,6 +222,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     operatorCommand: {
+      as: Command,
       groups: operatorGroups,
       placeholder: "Search operators...",
       "onUpdate:modelValue": (v) => {
@@ -225,6 +231,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     calendar: {
+      as: Calendar,
       modelValue: selectedDate.value,
       maxValue: today(getLocalTimeZone()),
       "onUpdate:modelValue": (v) => {
@@ -232,6 +239,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     rangeCalendar: {
+      as: RangeCalendar,
       modelValue: selectedRange.value,
       maxValue: today(getLocalTimeZone()),
       "onUpdate:modelValue": (v) => {
@@ -255,17 +263,17 @@ defineSlots<DateFiltersSlots>();
 
 <template>
   <slot name="popover" v-bind="ctx">
-    <Popover v-bind="settings.popover">
+    <Primitive v-bind="settings.popover">
       <template #trigger>
         <slot name="trigger" v-bind="ctx">
-          <Fab v-bind="settings.trigger">
+          <Primitive v-bind="settings.trigger">
             <template v-if="$slots.triggerPrepend" #prepend>
               <slot name="triggerPrepend" v-bind="ctx" />
             </template>
             <template v-if="$slots.triggerAppend" #append>
               <slot name="triggerAppend" v-bind="ctx" />
             </template>
-          </Fab>
+          </Primitive>
         </slot>
       </template>
       <template #content>
@@ -323,21 +331,21 @@ defineSlots<DateFiltersSlots>();
             </slot>
 
             <slot name="fieldCommand" v-bind="ctx">
-              <Command v-if="step === 1" v-bind="settings.fieldCommand" />
+              <Primitive v-if="step === 1" v-bind="settings.fieldCommand" />
             </slot>
 
             <slot name="operatorCommand" v-bind="ctx">
-              <Command v-if="step === 2" v-bind="settings.operatorCommand" />
+              <Primitive v-if="step === 2" v-bind="settings.operatorCommand" />
             </slot>
 
             <slot name="calendarWrapper" v-bind="ctx">
               <div v-if="step === 3" class="f-group f-date-filters-calendar">
                 <slot name="calendar" v-bind="ctx">
-                  <RangeCalendar
+                  <Primitive
                     v-if="selectedOperator === 'between'"
                     v-bind="settings.rangeCalendar"
                   />
-                  <Calendar v-else v-bind="settings.calendar" />
+                  <Primitive v-else v-bind="settings.calendar" />
                 </slot>
                 <slot name="actions" v-bind="ctx">
                   <div class="f-group f-date-filters-actions">
@@ -358,6 +366,6 @@ defineSlots<DateFiltersSlots>();
           </div>
         </slot>
       </template>
-    </Popover>
+    </Primitive>
   </slot>
 </template>

@@ -1,3 +1,5 @@
+import type { PrimitiveProps } from "./components/primitive";
+
 /**
  * Props plus emit listeners in `on*` form.
  */
@@ -8,11 +10,33 @@ export type Passthrough<Props, Emits = {}> = Props & {
 };
 
 /**
+ * The passthrough of a part that renders a component through the
+ * package's `Primitive`: the component's props and listeners, plus `as`,
+ * the component rendered. The recipe names the component the part renders
+ * by default; a consumer's or a layer's `pt` renders another in its place
+ * with the same props, such as a framework layer's wrapper of the
+ * component.
+ */
+export type Rendered<Props, Emits = {}> = Passthrough<
+  Props & PrimitiveProps,
+  Emits
+>;
+
+/**
  * Builds the passthrough of one part for one item.
  */
 export type PassthroughIter<T, Props, Emits = {}> = (
   obj: T,
 ) => Passthrough<Props, Emits>;
+
+/**
+ * Builds the passthrough of one rendered-component part for one item.
+ */
+export type RenderedIter<T, Props, Emits = {}> = PassthroughIter<
+  T,
+  Props & PrimitiveProps,
+  Emits
+>;
 
 /**
  * A deep partial of a part manifest. A function part keeps its arguments

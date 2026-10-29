@@ -20,6 +20,8 @@ import {
 import Checkbox from "./checkbox.vue";
 import Scroller from "./scroller.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
@@ -91,16 +93,14 @@ const settings = usePassthrough<CommandPassthrough<T>>(() => ({
       },
     },
     content: {},
-    viewport: {},
+    viewport: { as: Scroller },
     group: {},
     groupLabel: {},
     item: (item) => ({
       value: item.value,
       disabled: item.disabled,
     }),
-    itemCheckbox: (item) => ({
-      modelValue: selected(item),
-    }),
+    itemCheckbox: (item) => ({ as: Checkbox, modelValue: selected(item) }),
   },
 }));
 
@@ -134,7 +134,7 @@ defineSlots<CommandSlots<T>>();
     <slot name="content" v-bind="ctx">
       <ListboxContent class="f-listbox-content" v-bind="settings.content">
         <slot name="viewport" v-bind="ctx">
-          <Scroller v-bind="settings.viewport">
+          <Primitive v-bind="settings.viewport">
             <div v-if="!hasResults" class="f-group">
               <slot name="empty" v-bind="ctx">No results found</slot>
             </div>
@@ -167,7 +167,7 @@ defineSlots<CommandSlots<T>>();
                       name="itemCheckbox"
                       v-bind="{ ...ctx, item, selected: selected(item) }"
                     >
-                      <Checkbox
+                      <Primitive
                         v-if="multiple"
                         v-bind="settings.itemCheckbox(item)"
                       />
@@ -186,7 +186,7 @@ defineSlots<CommandSlots<T>>();
                 </slot>
               </template>
             </ListboxGroup>
-          </Scroller>
+          </Primitive>
         </slot>
       </ListboxContent>
     </slot>

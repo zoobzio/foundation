@@ -8,7 +8,7 @@ import type {
   TableColumnsSlots,
 } from "./table-columns";
 import type { TableBulkActionsSlots } from "./table-bulk-actions";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
 import type { Events, Service } from "@zoobzio/table";
 import type { VNode } from "vue";
@@ -18,9 +18,9 @@ import type { VNode } from "vue";
  * autocomplete over the table's search machine.
  */
 export type TablePassthrough = {
-  search: Passthrough<AutocompleteProps, AutocompleteEmits>;
-  refresh: Passthrough<FabProps, FabEmits>;
-  pagination: Passthrough<PaginationProps, PaginationEmits>;
+  search: Rendered<AutocompleteProps, AutocompleteEmits>;
+  refresh: Rendered<FabProps, FabEmits>;
+  pagination: Rendered<PaginationProps, PaginationEmits>;
 };
 
 /**

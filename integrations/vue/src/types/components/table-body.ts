@@ -2,7 +2,7 @@ import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { FabProps } from "./fab";
 import type { MenuEmits, MenuItem, MenuProps } from "./menu";
 import type { LinkProps } from "../common";
-import type { Passthrough, PassthroughIter, PT } from "../passthrough";
+import type { PT, PassthroughIter, Rendered } from "../passthrough";
 import type { DataTableColumn, Service } from "@zoobzio/table";
 import type { VNode } from "vue";
 
@@ -28,12 +28,9 @@ export type TableCell<T> = {
  * anchor of a `url` cell, built per cell.
  */
 export type TableBodyPassthrough<T> = {
-  rowCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
-  actionsMenu: Passthrough<
-    MenuProps<TableActionItem>,
-    MenuEmits<TableActionItem>
-  >;
-  actionsTrigger: Passthrough<FabProps>;
+  rowCheckbox: Rendered<CheckboxProps, CheckboxEmits>;
+  actionsMenu: Rendered<MenuProps<TableActionItem>, MenuEmits<TableActionItem>>;
+  actionsTrigger: Rendered<FabProps>;
   link: PassthroughIter<TableCell<T>, LinkProps>;
 };
 

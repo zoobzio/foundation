@@ -13,6 +13,8 @@ import Popover from "./popover.vue";
 import SegmentedControl from "./segmented-control.vue";
 import TagsInput from "./tags-input.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
@@ -70,10 +72,12 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
       },
     },
     trigger: {
+      as: Fab,
       label: KEYWORDS_TRIGGER_LABEL,
       badge: activeCount.value > 0 ? activeCount.value : undefined,
     },
     includeInput: {
+      as: TagsInput,
       modelValue: include.value,
       delimiter: "",
       "onUpdate:modelValue": (v) => {
@@ -81,6 +85,7 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
       },
     },
     excludeInput: {
+      as: TagsInput,
       modelValue: exclude.value,
       delimiter: "",
       "onUpdate:modelValue": (v) => {
@@ -88,6 +93,7 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
       },
     },
     matchControl: {
+      as: SegmentedControl,
       modelValue: mode.value,
       options: MATCH_OPTIONS,
       "onUpdate:modelValue": setMode,
@@ -114,14 +120,14 @@ defineSlots<KeywordsSlots>();
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
       <slot name="trigger" v-bind="ctx">
-        <Fab v-bind="settings.trigger">
+        <Primitive v-bind="settings.trigger">
           <template v-if="$slots.triggerPrepend" #prepend>
             <slot name="triggerPrepend" v-bind="ctx" />
           </template>
           <template v-if="$slots.triggerAppend" #append>
             <slot name="triggerAppend" v-bind="ctx" />
           </template>
-        </Fab>
+        </Primitive>
       </slot>
     </template>
     <template #content>
@@ -133,10 +139,7 @@ defineSlots<KeywordsSlots>();
                 <div class="f-caption f-keywords-label">Include</div>
               </slot>
               <slot name="includeInput" v-bind="ctx">
-                <TagsInput
-                  v-bind="settings.includeInput"
-                  class="f-keywords-tags"
-                >
+                <Primitive v-bind="settings.includeInput" class="f-keywords-tags">
                   <template #input>
                     <input
                       :value="includeInput"
@@ -146,7 +149,7 @@ defineSlots<KeywordsSlots>();
                       @keydown="onIncludeKeydown"
                     />
                   </template>
-                </TagsInput>
+                </Primitive>
               </slot>
             </div>
           </slot>
@@ -156,10 +159,7 @@ defineSlots<KeywordsSlots>();
                 <div class="f-caption f-keywords-label">Exclude</div>
               </slot>
               <slot name="excludeInput" v-bind="ctx">
-                <TagsInput
-                  v-bind="settings.excludeInput"
-                  class="f-keywords-tags"
-                >
+                <Primitive v-bind="settings.excludeInput" class="f-keywords-tags">
                   <template #input>
                     <input
                       :value="excludeInput"
@@ -169,7 +169,7 @@ defineSlots<KeywordsSlots>();
                       @keydown="onExcludeKeydown"
                     />
                   </template>
-                </TagsInput>
+                </Primitive>
               </slot>
             </div>
           </slot>
@@ -179,7 +179,7 @@ defineSlots<KeywordsSlots>();
                 <div class="f-caption f-keywords-label">Match</div>
               </slot>
               <slot name="matchControl" v-bind="ctx">
-                <SegmentedControl v-bind="settings.matchControl" />
+                <Primitive v-bind="settings.matchControl" />
               </slot>
             </div>
           </slot>

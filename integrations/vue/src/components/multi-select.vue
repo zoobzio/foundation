@@ -19,6 +19,8 @@ import {
 } from "reka-ui";
 import Checkbox from "./checkbox.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
@@ -83,6 +85,7 @@ const settings = usePassthrough<MultiSelectPassthrough<T>>(() => ({
       disabled: option.disabled,
     }),
     itemCheckbox: (option) => ({
+      as: Checkbox,
       modelValue: selected(option),
       disabled: option.disabled,
     }),
@@ -132,7 +135,7 @@ defineSlots<MultiSelectSlots<T>>();
                   name="itemCheckbox"
                   v-bind="{ ...ctx, item, selected: selected(item) }"
                 >
-                  <Checkbox v-bind="settings.itemCheckbox(item)" />
+                  <Primitive v-bind="settings.itemCheckbox(item)" />
                 </slot>
                 <slot name="itemText" v-bind="{ ...ctx, item }">
                   <SelectItemText

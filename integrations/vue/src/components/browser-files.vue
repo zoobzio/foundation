@@ -10,7 +10,9 @@ import Checkbox from "./checkbox.vue";
 import Fab from "./fab.vue";
 import Menu from "./menu.vue";
 
-import { Primitive } from "reka-ui";
+import Primitive from "./primitive.vue";
+
+import { Primitive as RekaPrimitive } from "reka-ui";
 
 import { useSlots, useTemplateRef } from "vue";
 import { useRefs } from "../composables/ref";
@@ -43,9 +45,10 @@ const {
 const settings = usePassthrough<BrowserFilesPassthrough<T>>(() => ({
   pt,
   recipes: {
-    rowCheckbox: {},
-    actionsTrigger: { label: BROWSER_ACTIONS_LABEL },
+    rowCheckbox: { as: Checkbox },
+    actionsTrigger: { as: Fab, label: BROWSER_ACTIONS_LABEL },
     actionsMenu: {
+      as: Menu,
       groups: [{ key: "actions", items: actions.value }],
       align: "end",
     },
@@ -83,7 +86,7 @@ defineSlots<BrowserFilesSlots<T>>();
         :class="{ 'f-data-browser-selected': service.isRowSelected(row) }"
       >
         <td v-if="isSelectable" class="f-td f-data-browser-select">
-          <Checkbox
+          <Primitive
             v-bind="settings.rowCheckbox"
             :model-value="service.isRowSelected(row)"
             @update:model-value="service.toggleRow(service.keyOf(row))"
@@ -109,13 +112,13 @@ defineSlots<BrowserFilesSlots<T>>();
             v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
           >
             <!-- 4. Default rendering by type -->
-            <Primitive
+            <RekaPrimitive
               v-if="col.type === 'url'"
               class="f-anchor"
               v-bind="settings.link({ row, column: col, value: row[col.key] })"
             >
               {{ row[col.key] }}
-            </Primitive>
+            </RekaPrimitive>
             <img
               v-else-if="col.type === 'image'"
               class="f-img"
@@ -141,26 +144,26 @@ defineSlots<BrowserFilesSlots<T>>();
           v-if="hasActions || hasFolderActions"
           class="f-td f-data-browser-actions"
         >
-          <Menu
+          <Primitive
             v-if="hasActions"
             v-bind="settings.actionsMenu"
             @select="service.runAction($event.key, row)"
           >
-            <Fab v-bind="settings.actionsTrigger">
+            <Primitive v-bind="settings.actionsTrigger">
               <template v-if="slots.actionsPrepend" #prepend>
                 <slot name="actionsPrepend" v-bind="{ ...ctx, row }" />
               </template>
               <template v-if="slots.actionsAppend" #append>
                 <slot name="actionsAppend" v-bind="{ ...ctx, row }" />
               </template>
-            </Fab>
+            </Primitive>
             <template v-if="slots.actionPrepend" #itemPrepend="{ item }">
               <slot name="actionPrepend" v-bind="{ ...ctx, row, item }" />
             </template>
             <template v-if="slots.actionAppend" #itemAppend="{ item }">
               <slot name="actionAppend" v-bind="{ ...ctx, row, item }" />
             </template>
-          </Menu>
+          </Primitive>
         </td>
       </tr>
     </template>

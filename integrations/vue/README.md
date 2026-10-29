@@ -45,8 +45,8 @@ src/
   components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), and the code editor (code.vue)
   composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode
   definitions/       — define<Name>(definition | source) constructors
-  types/             — common, events, passthrough, forward, slots, context, definition, wrap; per-component types in core/
-  utils/             — passthrough merge, forward render, wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code
+  types/             — common, events, passthrough (Passthrough, Rendered, PT), forward, slots, context, definition, wrap; per-component types in core/
+  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code
   constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
@@ -60,6 +60,19 @@ such as a router link, which receives the same `href` and `target`.
 ```vue
 <Menu :groups="groups" :pt="{ link: () => ({ as: NuxtLink }) }" />
 ```
+
+A part that renders one of the package's own components (the table's
+`pagination`, a form field's `select`, a row's `actionsMenu`, a pagination
+control's `first`) is typed `Rendered` (`RenderedIter` per item): the
+component's props, plus `as`, the component rendered. The recipe names
+the component, and the template renders the part through the package's
+own `Primitive` (`components/primitive.vue`), which hands the parent's
+slots on whole, named ones included, where reka's `Primitive` would
+forward the default alone. So
+`pt` reaches into a nested component the same way it reaches an anchor:
+`pt.pagination.pt.first` is the pagination's own part, and
+`pt.pagination.as` renders another pagination in its place, such as a
+framework layer's wrapper of it.
 
 A framework layer that wants that on every instance wraps the component
 with `wrap` (`utils/wrap`): a `pt` layer laid under the consumer's, and

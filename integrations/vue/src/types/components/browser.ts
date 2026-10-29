@@ -13,7 +13,7 @@ import type {
   BrowserFilesSlots,
 } from "./browser-files";
 import type { BrowserBulkActionsSlots } from "./browser-bulk-actions";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
 import type { Events, Service } from "@zoobzio/browser";
 import type { VNode } from "vue";
@@ -31,11 +31,11 @@ export interface BrowserCrumbItem extends BreadcrumbItem {
  * trail from the root; `refresh` refetches the current folder.
  */
 export type BrowserPassthrough = {
-  breadcrumb: Passthrough<
+  breadcrumb: Rendered<
     BreadcrumbProps<BrowserCrumbItem>,
     BreadcrumbEmits<BrowserCrumbItem>
   >;
-  refresh: Passthrough<FabProps, FabEmits>;
+  refresh: Rendered<FabProps, FabEmits>;
 };
 
 /**

@@ -10,6 +10,8 @@ import type {
 import Fab from "./fab.vue";
 import Select from "./select.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
@@ -43,11 +45,22 @@ const { hasPrev, hasNext, options, first, prev, next, last, goToPage } =
 const settings = usePassthrough<PaginationPassthrough>(() => ({
   pt,
   recipes: {
-    first: { label: "First", disabled: !hasPrev.value, onClick: first },
-    prev: { label: "Previous", disabled: !hasPrev.value, onClick: prev },
-    next: { label: "Next", disabled: !hasNext.value, onClick: next },
-    last: { label: "Last", disabled: !hasNext.value, onClick: last },
+    first: {
+      as: Fab,
+      label: "First",
+      disabled: !hasPrev.value,
+      onClick: first,
+    },
+    prev: {
+      as: Fab,
+      label: "Previous",
+      disabled: !hasPrev.value,
+      onClick: prev,
+    },
+    next: { as: Fab, label: "Next", disabled: !hasNext.value, onClick: next },
+    last: { as: Fab, label: "Last", disabled: !hasNext.value, onClick: last },
     size: {
+      as: Select,
       modelValue: PAGE_SIZE_OPTIONS.find(
         (o) => o.value === String($size.value),
       ),
@@ -85,24 +98,24 @@ defineSlots<PaginationSlots>();
     <slot name="pages" v-bind="ctx">
       <div class="f-group">
         <slot name="first" v-bind="ctx">
-          <Fab v-bind="settings.first">
+          <Primitive v-bind="settings.first">
             <template v-if="$slots.firstPrepend" #prepend>
               <slot name="firstPrepend" v-bind="ctx" />
             </template>
             <template v-if="$slots.firstAppend" #append>
               <slot name="firstAppend" v-bind="ctx" />
             </template>
-          </Fab>
+          </Primitive>
         </slot>
         <slot name="prev" v-bind="ctx">
-          <Fab v-bind="settings.prev">
+          <Primitive v-bind="settings.prev">
             <template v-if="$slots.prevPrepend" #prepend>
               <slot name="prevPrepend" v-bind="ctx" />
             </template>
             <template v-if="$slots.prevAppend" #append>
               <slot name="prevAppend" v-bind="ctx" />
             </template>
-          </Fab>
+          </Primitive>
         </slot>
         <slot name="options" v-bind="ctx">
           <div class="f-group">
@@ -122,29 +135,29 @@ defineSlots<PaginationSlots>();
           </div>
         </slot>
         <slot name="next" v-bind="ctx">
-          <Fab v-bind="settings.next">
+          <Primitive v-bind="settings.next">
             <template v-if="$slots.nextPrepend" #prepend>
               <slot name="nextPrepend" v-bind="ctx" />
             </template>
             <template v-if="$slots.nextAppend" #append>
               <slot name="nextAppend" v-bind="ctx" />
             </template>
-          </Fab>
+          </Primitive>
         </slot>
         <slot name="last" v-bind="ctx">
-          <Fab v-bind="settings.last">
+          <Primitive v-bind="settings.last">
             <template v-if="$slots.lastPrepend" #prepend>
               <slot name="lastPrepend" v-bind="ctx" />
             </template>
             <template v-if="$slots.lastAppend" #append>
               <slot name="lastAppend" v-bind="ctx" />
             </template>
-          </Fab>
+          </Primitive>
         </slot>
       </div>
     </slot>
     <slot name="size" v-bind="ctx">
-      <Select v-bind="settings.size" />
+      <Primitive v-bind="settings.size" />
     </slot>
   </div>
 </template>

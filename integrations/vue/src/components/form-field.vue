@@ -15,6 +15,8 @@ import RichText from "./rich-text.vue";
 import Select from "./select.vue";
 import TagsInput from "./tags-input.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
@@ -29,10 +31,25 @@ const el = useTemplateRef<HTMLDivElement>("el");
 
 const resolved = useFielder<T>(() => ({ form: service, field }));
 
-const settings = usePassthrough<FormFieldPassthrough>(() => ({
-  pt,
-  recipes: resolved.value.recipes,
-}));
+// The fielder's recipes carry the field's wiring; the component each
+// control part renders is added here, where the components are in scope.
+const settings = usePassthrough<FormFieldPassthrough>(() => {
+  const { recipes } = resolved.value;
+  return {
+    pt,
+    recipes: {
+      ...recipes,
+      select: { as: Select, ...recipes.select },
+      multiSelect: { as: MultiSelect, ...recipes.multiSelect },
+      checkbox: { as: Checkbox, ...recipes.checkbox },
+      radio: { as: Radio, ...recipes.radio },
+      datePicker: { as: DatePicker, ...recipes.datePicker },
+      tagsInput: { as: TagsInput, ...recipes.tagsInput },
+      fileInput: { as: FileInput, ...recipes.fileInput },
+      richText: { as: RichText, ...recipes.richText },
+    },
+  };
+});
 
 const ctx = useContext<FormFieldContext<T>>("form-field", () => ({
   form: service,
@@ -73,39 +90,36 @@ defineSlots<FormFieldSlots<T>>();
       />
     </slot>
     <slot v-else-if="ctx.control === 'select'" name="select" v-bind="ctx">
-      <Select v-bind="settings.select" class="f-data-form-select" />
+      <Primitive v-bind="settings.select" class="f-data-form-select" />
     </slot>
     <slot
       v-else-if="ctx.control === 'multiSelect'"
       name="multiSelect"
       v-bind="ctx"
     >
-      <MultiSelect
-        v-bind="settings.multiSelect"
-        class="f-data-form-multi-select"
-      />
+      <Primitive v-bind="settings.multiSelect" class="f-data-form-multi-select" />
     </slot>
     <slot v-else-if="ctx.control === 'checkbox'" name="checkbox" v-bind="ctx">
-      <Checkbox v-bind="settings.checkbox" class="f-data-form-checkbox" />
+      <Primitive v-bind="settings.checkbox" class="f-data-form-checkbox" />
     </slot>
     <slot v-else-if="ctx.control === 'radio'" name="radio" v-bind="ctx">
-      <Radio v-bind="settings.radio" class="f-data-form-radio" />
+      <Primitive v-bind="settings.radio" class="f-data-form-radio" />
     </slot>
     <slot
       v-else-if="ctx.control === 'datePicker'"
       name="datePicker"
       v-bind="ctx"
     >
-      <DatePicker v-bind="settings.datePicker" class="f-data-form-date" />
+      <Primitive v-bind="settings.datePicker" class="f-data-form-date" />
     </slot>
     <slot v-else-if="ctx.control === 'tagsInput'" name="tagsInput" v-bind="ctx">
-      <TagsInput v-bind="settings.tagsInput" class="f-data-form-tags-input" />
+      <Primitive v-bind="settings.tagsInput" class="f-data-form-tags-input" />
     </slot>
     <slot v-else-if="ctx.control === 'fileInput'" name="fileInput" v-bind="ctx">
-      <FileInput v-bind="settings.fileInput" class="f-data-form-file-input" />
+      <Primitive v-bind="settings.fileInput" class="f-data-form-file-input" />
     </slot>
     <slot v-else-if="ctx.control === 'richText'" name="richText" v-bind="ctx">
-      <RichText v-bind="settings.richText" class="f-data-form-rich-text" />
+      <Primitive v-bind="settings.richText" class="f-data-form-rich-text" />
     </slot>
     <slot v-if="field.hint" name="hint" v-bind="ctx">
       <div :id="ctx.ids.hint" class="f-caption f-data-form-field-hint">

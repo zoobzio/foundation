@@ -7,7 +7,7 @@ import type { RichTextEmits, RichTextProps } from "./rich-text";
 import type { SelectEmits, SelectProps } from "./select";
 import type { TagsInputEmits, TagsInputProps } from "./tags-input";
 import type { Option } from "../common";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Passthrough, Rendered } from "../passthrough";
 import type { Field, Service } from "@zoobzio/form";
 import type { InputHTMLAttributes, TextareaHTMLAttributes, VNode } from "vue";
 
@@ -32,14 +32,22 @@ export type FormFieldPassthrough = {
     }
   >;
   textarea: Passthrough<TextareaHTMLAttributes & { value?: string }>;
-  select: Passthrough<SelectProps<Option>, SelectEmits<Option>>;
-  multiSelect: Passthrough<MultiSelectProps<Option>, MultiSelectEmits<Option>>;
-  checkbox: Passthrough<CheckboxProps, CheckboxEmits>;
-  radio: Passthrough<RadioProps, RadioEmits>;
-  datePicker: Passthrough<DatePickerProps, DatePickerEmits>;
-  tagsInput: Passthrough<TagsInputProps, TagsInputEmits>;
-  fileInput: Passthrough<FileInputProps, FileInputEmits>;
-  richText: Passthrough<RichTextProps, RichTextEmits>;
+  select: Rendered<SelectProps<Option>, SelectEmits<Option>>;
+  multiSelect: Rendered<MultiSelectProps<Option>, MultiSelectEmits<Option>>;
+  checkbox: Rendered<CheckboxProps, CheckboxEmits>;
+  radio: Rendered<RadioProps, RadioEmits>;
+  datePicker: Rendered<DatePickerProps, DatePickerEmits>;
+  tagsInput: Rendered<TagsInputProps, TagsInputEmits>;
+  fileInput: Rendered<FileInputProps, FileInputEmits>;
+  richText: Rendered<RichTextProps, RichTextEmits>;
+};
+
+/**
+ * The manifest as the fielder builds it: every part's wiring, without the
+ * component each control part renders, which the component adds.
+ */
+export type FormFieldRecipes = {
+  [K in keyof FormFieldPassthrough]: Omit<FormFieldPassthrough[K], "as">;
 };
 
 /**
@@ -69,7 +77,7 @@ export type FormFieldIds = {
  */
 export type FormFieldResolved = {
   control: FormFieldControl;
-  recipes: FormFieldPassthrough;
+  recipes: FormFieldRecipes;
   ids: FormFieldIds;
 };
 

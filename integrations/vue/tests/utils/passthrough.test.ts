@@ -169,3 +169,39 @@ describe("layer", () => {
     expect(Object.keys(local)).toEqual(["link"]);
   });
 });
+
+// A component under `as` is an object (a compiled SFC, a `defineComponent`
+// result) and must replace the local one rather than merge into it.
+describe("passthrough `as`", () => {
+  const Local = {
+    name: "Local",
+    props: { a: String },
+    setup: () => () => null,
+  };
+  const Mine = { name: "Mine", setup: () => () => null };
+
+  it("replaces the local component under `as` in a static part", () => {
+    const out = passthrough<{ part: { as: object; x?: number } }>(
+      { part: { as: Mine } },
+      { part: { as: Local, x: 1 } },
+    );
+    expect(out.part.as).toBe(Mine);
+    expect(out.part.x).toBe(1);
+  });
+
+  it("replaces it in a function part's result too", () => {
+    const out = passthrough<{ part: (n: number) => { as: object; x: number } }>(
+      { part: () => ({ as: Mine }) },
+      { part: (n) => ({ as: Local, x: n }) },
+    );
+    expect(out.part(2)).toEqual({ as: Mine, x: 2 });
+  });
+
+  it("keeps the local component when the user's `as` is undefined", () => {
+    const out = passthrough<{ part: { as: object } }>(
+      { part: { as: undefined } },
+      { part: { as: Local } },
+    );
+    expect(out.part.as).toBe(Local);
+  });
+});

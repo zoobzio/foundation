@@ -1,6 +1,6 @@
 import type {
   FormFieldIds,
-  FormFieldPassthrough,
+  FormFieldRecipes,
   FormFieldResolved,
 } from "../types/components/form-field";
 import type {
@@ -69,7 +69,7 @@ const input = <T>(
   value: T[keyof T] | undefined,
   error: string | undefined,
   wire: Wiring,
-): FormFieldPassthrough["input"] => ({
+): FormFieldRecipes["input"] => ({
   ...wire,
   value: typeof value === "string" ? value : undefined,
   type: field.type,
@@ -95,7 +95,7 @@ const number = <T>(
   value: T[keyof T] | undefined,
   error: string | undefined,
   wire: Wiring,
-): FormFieldPassthrough["input"] => ({
+): FormFieldRecipes["input"] => ({
   ...wire,
   value: typeof value === "number" ? value : undefined,
   type: "number",
@@ -124,7 +124,7 @@ const temporal = <T>(
   value: T[keyof T] | undefined,
   error: string | undefined,
   wire: Wiring,
-): FormFieldPassthrough["input"] => ({
+): FormFieldRecipes["input"] => ({
   ...wire,
   value: typeof value === "string" ? value : undefined,
   type: FORM_TEMPORAL_TYPES[field.type],
@@ -152,7 +152,7 @@ const textarea = <T>(
   value: T[keyof T] | undefined,
   error: string | undefined,
   wire: Wiring,
-): FormFieldPassthrough["textarea"] => ({
+): FormFieldRecipes["textarea"] => ({
   ...wire,
   value: typeof value === "string" ? value : undefined,
   placeholder: field.placeholder,
@@ -192,7 +192,7 @@ const select = <T, V extends string>(
   field: SelectField<T, V>,
   value: T[keyof T] | undefined,
   wire: Wiring,
-): FormFieldPassthrough["select"] => ({
+): FormFieldRecipes["select"] => ({
   modelValue: field.options.find((o) => o.value === value),
   options: field.options,
   placeholder: field.placeholder,
@@ -211,7 +211,7 @@ const multiselect = <T, V extends string>(
   field: MultiSelectField<T, V>,
   value: T[keyof T] | undefined,
   wire: Wiring,
-): FormFieldPassthrough["multiSelect"] => ({
+): FormFieldRecipes["multiSelect"] => ({
   modelValue: Array.isArray(value)
     ? field.options.filter((o) => value.includes(o.value))
     : [],
@@ -237,7 +237,7 @@ const checkbox = <T>(
   field: CheckboxField<T>,
   value: T[keyof T] | undefined,
   wire: Wiring,
-): FormFieldPassthrough["checkbox"] => ({
+): FormFieldRecipes["checkbox"] => ({
   modelValue: !!value,
   disabled: field.disabled,
   required: field.required,
@@ -255,7 +255,7 @@ const radio = <T, V extends string>(
   value: T[keyof T] | undefined,
   wire: Wiring,
   ids: FormFieldIds,
-): FormFieldPassthrough["radio"] => ({
+): FormFieldRecipes["radio"] => ({
   modelValue: field.options.find((o) => o.value === value)?.value,
   options: field.options,
   disabled: field.disabled,
@@ -280,7 +280,7 @@ const date = <T>(
   value: T[keyof T] | undefined,
   wire: Wiring,
   ids: FormFieldIds,
-): FormFieldPassthrough["datePicker"] => ({
+): FormFieldRecipes["datePicker"] => ({
   modelValue: value instanceof Date ? deserialize(value) : undefined,
   disabled: field.disabled,
   required: field.required,
@@ -308,7 +308,7 @@ const tags = <T>(
   field: TagsInputField<T>,
   value: T[keyof T] | undefined,
   wire: Wiring,
-): FormFieldPassthrough["tagsInput"] => ({
+): FormFieldRecipes["tagsInput"] => ({
   modelValue: Array.isArray(value) ? value : [],
   placeholder: field.placeholder,
   disabled: field.disabled,
@@ -331,7 +331,7 @@ const file = <T>(
   field: FileField<T>,
   value: T[keyof T] | undefined,
   wire: Wiring,
-): FormFieldPassthrough["fileInput"] => ({
+): FormFieldRecipes["fileInput"] => ({
   modelValue: value instanceof File ? [value] : [],
   multiple: false,
   accept: field.accept,
@@ -351,7 +351,7 @@ const files = <T>(
   field: MultiFileField<T>,
   value: T[keyof T] | undefined,
   wire: Wiring,
-): FormFieldPassthrough["fileInput"] => ({
+): FormFieldRecipes["fileInput"] => ({
   modelValue: Array.isArray(value) ? value : [],
   multiple: true,
   accept: field.accept,
@@ -380,7 +380,7 @@ const richtext = <T>(
   error: string | undefined,
   wire: Wiring,
   ids: FormFieldIds,
-): FormFieldPassthrough["richText"] => ({
+): FormFieldRecipes["richText"] => ({
   modelValue: typeof value === "string" ? value : "",
   id: String(field.key),
   features: field.features,
@@ -402,7 +402,7 @@ const richtext = <T>(
   },
 });
 
-const blank = (): FormFieldPassthrough => ({
+const blank = (): FormFieldRecipes => ({
   input: {},
   textarea: {},
   select: { options: [] },
@@ -424,7 +424,7 @@ export const fielder = <T>(
   const wire = wiring($ids, field, error);
   const resolve = (
     control: FormFieldResolved["control"],
-    recipe: Partial<FormFieldPassthrough>,
+    recipe: Partial<FormFieldRecipes>,
   ): FormFieldResolved => ({
     control,
     recipes: { ...blank(), ...recipe },

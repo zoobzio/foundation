@@ -1,5 +1,5 @@
 import type { FabEmits, FabProps } from "./fab";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Rendered } from "../passthrough";
 import type { SelectEmits, SelectProps } from "./select";
 import type { Option } from "../common";
 import type { Definition } from "../definition";
@@ -9,11 +9,11 @@ import type { Ref, VNode } from "vue";
  * The parts of the pagination that accept passthrough.
  */
 export type PaginationPassthrough = {
-  first: Passthrough<FabProps, FabEmits>;
-  prev: Passthrough<FabProps, FabEmits>;
-  next: Passthrough<FabProps, FabEmits>;
-  last: Passthrough<FabProps, FabEmits>;
-  size: Passthrough<SelectProps<Option>, SelectEmits<Option>>;
+  first: Rendered<FabProps, FabEmits>;
+  prev: Rendered<FabProps, FabEmits>;
+  next: Rendered<FabProps, FabEmits>;
+  last: Rendered<FabProps, FabEmits>;
+  size: Rendered<SelectProps<Option>, SelectEmits<Option>>;
 };
 
 /**

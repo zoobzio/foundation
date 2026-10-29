@@ -8,6 +8,8 @@ import type {
 
 import Checkbox from "./checkbox.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { useRefs } from "../composables/ref";
 import { useDrag } from "../composables/drag";
@@ -33,6 +35,7 @@ const settings = usePassthrough<TableHeadPassthrough>(() => ({
   pt,
   recipes: {
     selectAllCheckbox: {
+      as: Checkbox,
       modelValue: selectAllState.value,
       "onUpdate:modelValue": () => service.toggleAll(),
     },
@@ -53,7 +56,7 @@ defineSlots<TableHeadSlots<T>>();
   <thead ref="el" class="f-thead f-data-table-head">
     <tr class="f-tr">
       <th v-if="isSelectable" class="f-th f-data-table-select">
-        <Checkbox v-bind="settings.selectAllCheckbox" />
+        <Primitive v-bind="settings.selectAllCheckbox" />
       </th>
       <th
         v-for="col in visibleColumns"

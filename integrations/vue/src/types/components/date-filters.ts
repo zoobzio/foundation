@@ -1,7 +1,7 @@
 import type { CalendarProps, CalendarEmits } from "./calendar";
 import type { CommandOption, CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
 import type { PopoverProps, PopoverEmits } from "./popover";
 import type { RangeCalendarProps, RangeCalendarEmits } from "./range-calendar";
@@ -34,18 +34,18 @@ export type DateFieldConfig = {
  * The parts of the date filters that accept passthrough.
  */
 export type DateFiltersPassthrough = {
-  popover: Passthrough<PopoverProps, PopoverEmits>;
-  trigger: Passthrough<FabProps>;
-  fieldCommand: Passthrough<
+  popover: Rendered<PopoverProps, PopoverEmits>;
+  trigger: Rendered<FabProps>;
+  fieldCommand: Rendered<
     CommandProps<CommandOption>,
     CommandEmits<CommandOption>
   >;
-  operatorCommand: Passthrough<
+  operatorCommand: Rendered<
     CommandProps<CommandOption>,
     CommandEmits<CommandOption>
   >;
-  calendar: Passthrough<CalendarProps, CalendarEmits>;
-  rangeCalendar: Passthrough<RangeCalendarProps, RangeCalendarEmits>;
+  calendar: Rendered<CalendarProps, CalendarEmits>;
+  rangeCalendar: Rendered<RangeCalendarProps, RangeCalendarEmits>;
 };
 
 /**

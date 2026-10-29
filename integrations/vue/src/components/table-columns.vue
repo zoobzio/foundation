@@ -12,6 +12,8 @@ import Command from "./command.vue";
 import Fab from "./fab.vue";
 import Popover from "./popover.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { useModel } from "../composables/model";
 import { usePassthrough } from "../composables/passthrough";
@@ -50,8 +52,9 @@ const settings = usePassthrough<TableColumnsPassthrough>(() => {
           $open.value = v;
         },
       },
-      trigger: { label: TABLE_COLUMNS_LABEL },
+      trigger: { as: Fab, label: TABLE_COLUMNS_LABEL },
       command: {
+        as: Command,
         groups: [{ key: "columns", label: TABLE_COLUMNS_GROUP_LABEL, options }],
         modelValue: options.filter((o) => visible.has(o.value)),
         multiple: true,
@@ -78,17 +81,17 @@ defineSlots<TableColumnsSlots<T>>();
 <template>
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
-      <Fab v-bind="settings.trigger">
+      <Primitive v-bind="settings.trigger">
         <template v-if="$slots.columnsPrepend" #prepend>
           <slot name="columnsPrepend" v-bind="ctx" />
         </template>
         <template v-if="$slots.columnsAppend" #append>
           <slot name="columnsAppend" v-bind="ctx" />
         </template>
-      </Fab>
+      </Primitive>
     </template>
     <template #content>
-      <Command v-bind="settings.command" />
+      <Primitive v-bind="settings.command" />
     </template>
   </Popover>
 </template>

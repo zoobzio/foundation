@@ -1,7 +1,7 @@
 import type { CommandEmits, CommandOption, CommandProps } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverEmits, PopoverProps } from "./popover";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Passthrough, Rendered } from "../passthrough";
 import type { Service } from "@zoobzio/table";
 import type { ComponentPublicInstance, Ref } from "vue";
 import type { VNode } from "vue";
@@ -11,11 +11,8 @@ import type { VNode } from "vue";
  */
 export type TableColumnsPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
-  trigger: Passthrough<FabProps>;
-  command: Passthrough<
-    CommandProps<CommandOption>,
-    CommandEmits<CommandOption>
-  >;
+  trigger: Rendered<FabProps>;
+  command: Rendered<CommandProps<CommandOption>, CommandEmits<CommandOption>>;
 };
 
 /**

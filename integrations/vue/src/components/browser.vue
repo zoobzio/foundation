@@ -13,6 +13,8 @@ import BrowserFolders from "./browser-folders.vue";
 import Breadcrumb from "./breadcrumb.vue";
 import Fab from "./fab.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
 import { useForward } from "../composables/forward";
@@ -42,10 +44,15 @@ const settings = usePassthrough<BrowserPassthrough>(() => ({
   pt,
   recipes: {
     breadcrumb: {
+      as: Breadcrumb,
       items: crumbItems(service),
       onSelect: (item) => service.navigate(item.index),
     },
-    refresh: { label: BROWSER_REFRESH_LABEL, onClick: () => service.fetch() },
+    refresh: {
+      as: Fab,
+      label: BROWSER_REFRESH_LABEL,
+      onClick: () => service.fetch(),
+    },
   },
 }));
 
@@ -82,19 +89,19 @@ const { Folders, Files } = useForward({
     <slot name="toolbar" v-bind="ctx">
       <div class="f-group f-data-browser-toolbar">
         <slot name="breadcrumb" v-bind="ctx">
-          <Breadcrumb
+          <Primitive
             v-bind="settings.breadcrumb"
             class="f-data-browser-breadcrumb"
           />
         </slot>
-        <Fab v-bind="settings.refresh">
+        <Primitive v-bind="settings.refresh">
           <template v-if="slots.refreshPrepend" #prepend>
             <slot name="refreshPrepend" v-bind="ctx" />
           </template>
           <template v-if="slots.refreshAppend" #append>
             <slot name="refreshAppend" v-bind="ctx" />
           </template>
-        </Fab>
+        </Primitive>
       </div>
     </slot>
 

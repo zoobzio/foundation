@@ -29,6 +29,7 @@ export const COMPONENTS = [
   "multi-select",
   "pagination",
   "popover",
+  "primitive",
   "radio",
   "range-calendar",
   "rich-text",
@@ -200,7 +201,13 @@ export const VUE_TYPES = {
     "ButtonShortcut",
   ],
   definition: ["Definition", "DefinitionSource"],
-  passthrough: ["Passthrough", "PassthroughIter", "PT"],
+  passthrough: [
+    "Passthrough",
+    "PassthroughIter",
+    "Rendered",
+    "RenderedIter",
+    "PT",
+  ],
   "components/accordion": [
     "AccordionPassthrough",
     "AccordionProps",
@@ -465,6 +472,7 @@ export const VUE_TYPES = {
     "PaginationSlots",
     "PaginationDefinition",
   ],
+  "components/primitive": ["PrimitiveProps"],
   "components/popover": [
     "PopoverPassthrough",
     "PopoverProps",

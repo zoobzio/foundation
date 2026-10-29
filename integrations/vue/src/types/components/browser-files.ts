@@ -2,7 +2,7 @@ import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { FabProps } from "./fab";
 import type { MenuEmits, MenuItem, MenuProps } from "./menu";
 import type { LinkProps } from "../common";
-import type { Passthrough, PassthroughIter, PT } from "../passthrough";
+import type { PT, PassthroughIter, Rendered } from "../passthrough";
 import type { BrowserColumn, Service } from "@zoobzio/browser";
 import type { VNode } from "vue";
 
@@ -28,12 +28,12 @@ export type BrowserFileCell<T> = {
  * anchor of a `url` cell, built per cell.
  */
 export type BrowserFilesPassthrough<T> = {
-  rowCheckbox: Passthrough<CheckboxProps, CheckboxEmits>;
-  actionsMenu: Passthrough<
+  rowCheckbox: Rendered<CheckboxProps, CheckboxEmits>;
+  actionsMenu: Rendered<
     MenuProps<BrowserActionItem>,
     MenuEmits<BrowserActionItem>
   >;
-  actionsTrigger: Passthrough<FabProps>;
+  actionsTrigger: Rendered<FabProps>;
   link: PassthroughIter<BrowserFileCell<T>, LinkProps>;
 };
 

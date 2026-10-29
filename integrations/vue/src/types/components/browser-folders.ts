@@ -1,7 +1,7 @@
 import type { BrowserActionItem } from "./browser-files";
 import type { FabProps } from "./fab";
 import type { MenuEmits, MenuProps } from "./menu";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Rendered } from "../passthrough";
 import type { BrowserFolder, Service } from "@zoobzio/browser";
 import type { VNode } from "vue";
 
@@ -9,11 +9,11 @@ import type { VNode } from "vue";
  * The parts of the folder rows that accept passthrough.
  */
 export type BrowserFoldersPassthrough = {
-  actionsMenu: Passthrough<
+  actionsMenu: Rendered<
     MenuProps<BrowserActionItem>,
     MenuEmits<BrowserActionItem>
   >;
-  actionsTrigger: Passthrough<FabProps>;
+  actionsTrigger: Rendered<FabProps>;
 };
 
 /**

@@ -5,7 +5,7 @@ import type {
   SegmentedControlEmits,
 } from "./segmented-control";
 import type { TagsInputProps, TagsInputEmits } from "./tags-input";
-import type { Passthrough, PT } from "../passthrough";
+import type { PT, Passthrough, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
@@ -19,10 +19,10 @@ export type KeywordsMatchMode = "and" | "or";
  */
 export type KeywordsPassthrough = {
   popover: Passthrough<PopoverProps, PopoverEmits>;
-  trigger: Passthrough<FabProps>;
-  includeInput: Passthrough<TagsInputProps, TagsInputEmits>;
-  excludeInput: Passthrough<TagsInputProps, TagsInputEmits>;
-  matchControl: Passthrough<SegmentedControlProps, SegmentedControlEmits>;
+  trigger: Rendered<FabProps>;
+  includeInput: Rendered<TagsInputProps, TagsInputEmits>;
+  excludeInput: Rendered<TagsInputProps, TagsInputEmits>;
+  matchControl: Rendered<SegmentedControlProps, SegmentedControlEmits>;
 };
 
 /**

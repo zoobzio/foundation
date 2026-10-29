@@ -14,6 +14,8 @@ import Command from "./command.vue";
 import Fab from "./fab.vue";
 import Popover from "./popover.vue";
 
+import Primitive from "./primitive.vue";
+
 import { computed, useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
@@ -68,10 +70,12 @@ const settings = usePassthrough<FacetsPassthrough<T>>(() => ({
       },
     },
     trigger: {
+      as: Fab,
       label: FACETS_TRIGGER_LABEL,
       badge: activeCount.value > 0 ? activeCount.value : undefined,
     },
     command: {
+      as: Command,
       groups: commandGroups.value,
       modelValue: selectedOptions.value,
       multiple: true,
@@ -100,19 +104,19 @@ defineSlots<FacetsSlots<T>>();
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
       <slot name="trigger" v-bind="ctx">
-        <Fab v-bind="settings.trigger">
+        <Primitive v-bind="settings.trigger">
           <template v-if="$slots.triggerPrepend" #prepend>
             <slot name="triggerPrepend" v-bind="ctx" />
           </template>
           <template v-if="$slots.triggerAppend" #append>
             <slot name="triggerAppend" v-bind="ctx" />
           </template>
-        </Fab>
+        </Primitive>
       </slot>
     </template>
     <template #content>
       <slot name="command" v-bind="ctx">
-        <Command v-bind="settings.command" />
+        <Primitive v-bind="settings.command" />
       </slot>
     </template>
   </Popover>

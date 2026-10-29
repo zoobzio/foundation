@@ -89,9 +89,14 @@ const items: BreadcrumbItem[] = [
 </template>
 ```
 
-`Table` and `Browser` lay the part under their nested manifests (`pt.body`,
-`pt.files`, and the browser's `pt.breadcrumb.pt`), so a consumer's part at
-the same path composes the same way.
+`Table` and `Browser` lay the part under their nested manifests (`pt.body`
+and `pt.files`), so a consumer's part at the same path composes the same
+way. Where a vue component renders another of its own as a part, the
+wrapper names the layer's wrapped component through the part's `as`: the
+table's row actions and the browser's file and folder actions render
+through the layer's `Menu`, and the browser's trail through its
+`Breadcrumb`, so nested components navigate through `NuxtLink` and draw
+their icons without the consumer reaching in.
 
 ## Icons
 

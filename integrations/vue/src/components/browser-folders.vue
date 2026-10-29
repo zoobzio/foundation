@@ -9,6 +9,8 @@ import type {
 import Fab from "./fab.vue";
 import Menu from "./menu.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { useRefs } from "../composables/ref";
 import { usePassthrough } from "../composables/passthrough";
@@ -34,10 +36,11 @@ const settings = usePassthrough<BrowserFoldersPassthrough>(() => ({
   pt,
   recipes: {
     actionsMenu: {
+      as: Menu,
       groups: [{ key: "folder-actions", items: folderActions.value }],
       align: "end",
     },
-    actionsTrigger: { label: BROWSER_ACTIONS_LABEL },
+    actionsTrigger: { as: Fab, label: BROWSER_ACTIONS_LABEL },
   },
 }));
 
@@ -86,19 +89,19 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
         v-if="hasActions || hasFolderActions"
         class="f-td f-data-browser-actions"
       >
-        <Menu
+        <Primitive
           v-if="hasFolderActions"
           v-bind="settings.actionsMenu"
           @select="service.runFolderAction($event.key, folder)"
         >
-          <Fab v-bind="settings.actionsTrigger">
+          <Primitive v-bind="settings.actionsTrigger">
             <template v-if="slots.folderActionsPrepend" #prepend>
               <slot name="folderActionsPrepend" v-bind="{ ...ctx, folder }" />
             </template>
             <template v-if="slots.folderActionsAppend" #append>
               <slot name="folderActionsAppend" v-bind="{ ...ctx, folder }" />
             </template>
-          </Fab>
+          </Primitive>
           <template v-if="slots.folderActionPrepend" #itemPrepend="{ item }">
             <slot
               name="folderActionPrepend"
@@ -108,7 +111,7 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
           <template v-if="slots.folderActionAppend" #itemAppend="{ item }">
             <slot name="folderActionAppend" v-bind="{ ...ctx, folder, item }" />
           </template>
-        </Menu>
+        </Primitive>
       </td>
     </tr>
   </tbody>

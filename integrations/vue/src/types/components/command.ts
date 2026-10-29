@@ -1,6 +1,12 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { ScrollerProps } from "./scroller";
-import type { Passthrough, PassthroughIter, PT } from "../passthrough";
+import type {
+  PT,
+  Passthrough,
+  PassthroughIter,
+  Rendered,
+  RenderedIter,
+} from "../passthrough";
 import type { ComponentPublicInstance, Ref, VNode } from "vue";
 import type { Option } from "../common";
 import type { Definition } from "../definition";
@@ -39,11 +45,11 @@ export type CommandPassthrough<T extends CommandOption = CommandOption> = {
   root: Passthrough<ListboxRootProps, ListboxRootEmits>;
   filter: Passthrough<ListboxFilterProps, ListboxFilterEmits>;
   content: Passthrough<ListboxContentProps>;
-  viewport: Passthrough<ScrollerProps>;
+  viewport: Rendered<ScrollerProps>;
   group: Passthrough<ListboxGroupProps>;
   groupLabel: Passthrough<ListboxGroupLabelProps>;
   item: PassthroughIter<T, ListboxItemProps, ListboxItemEmits>;
-  itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;
+  itemCheckbox: RenderedIter<T, CheckboxProps, CheckboxEmits>;
 };
 
 /**

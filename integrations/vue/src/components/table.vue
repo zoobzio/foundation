@@ -15,6 +15,8 @@ import Autocomplete from "./autocomplete.vue";
 import Fab from "./fab.vue";
 import Pagination from "./pagination.vue";
 
+import Primitive from "./primitive.vue";
+
 import { useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
 import { useForward } from "../composables/forward";
@@ -42,9 +44,18 @@ const { page, pageSize, pageCount, total, hasSelection } = useRefs(service);
 const settings = usePassthrough<TablePassthrough>(() => ({
   pt,
   recipes: {
-    search: { service: service.query, placeholder: TABLE_SEARCH_PLACEHOLDER },
-    refresh: { label: TABLE_REFRESH_LABEL, onClick: () => service.fetch() },
+    search: {
+      as: Autocomplete,
+      service: service.query,
+      placeholder: TABLE_SEARCH_PLACEHOLDER,
+    },
+    refresh: {
+      as: Fab,
+      label: TABLE_REFRESH_LABEL,
+      onClick: () => service.fetch(),
+    },
     pagination: {
+      as: Pagination,
       page: page.value,
       size: pageSize.value,
       count: pageCount.value,
@@ -88,7 +99,7 @@ const { THead, TBody } = useForward({
     <slot name="toolbar" v-bind="ctx">
       <div class="f-group f-data-table-toolbar">
         <slot v-if="service.searchable" name="search" v-bind="ctx">
-          <Autocomplete v-bind="settings.search" class="f-data-table-search" />
+          <Primitive v-bind="settings.search" class="f-data-table-search" />
         </slot>
         <TableColumns :service="service" :pt="pt?.columns">
           <template v-if="slots.columnsPrepend" #columnsPrepend="slotProps">
@@ -98,14 +109,14 @@ const { THead, TBody } = useForward({
             <slot name="columnsAppend" v-bind="slotProps" />
           </template>
         </TableColumns>
-        <Fab v-bind="settings.refresh">
+        <Primitive v-bind="settings.refresh">
           <template v-if="slots.refreshPrepend" #prepend>
             <slot name="refreshPrepend" v-bind="ctx" />
           </template>
           <template v-if="slots.refreshAppend" #append>
             <slot name="refreshAppend" v-bind="ctx" />
           </template>
-        </Fab>
+        </Primitive>
       </div>
     </slot>
 
@@ -124,7 +135,7 @@ const { THead, TBody } = useForward({
     </table>
 
     <slot name="pagination" v-bind="ctx">
-      <Pagination v-bind="settings.pagination" />
+      <Primitive v-bind="settings.pagination" />
     </slot>
   </div>
 </template>

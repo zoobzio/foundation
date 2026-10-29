@@ -1,6 +1,11 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { Option } from "../common";
-import type { Passthrough, PassthroughIter, PT } from "../passthrough";
+import type {
+  PT,
+  Passthrough,
+  PassthroughIter,
+  RenderedIter,
+} from "../passthrough";
 import type { Definition } from "../definition";
 import type { ComponentPublicInstance, HTMLAttributes, Ref, VNode } from "vue";
 import type {
@@ -23,7 +28,7 @@ export type MultiSelectPassthrough<T extends Option = Option> = {
   trigger: Passthrough<SelectTriggerProps & HTMLAttributes>;
   content: Passthrough<SelectContentProps, SelectContentEmits>;
   item: PassthroughIter<T, SelectItemProps>;
-  itemCheckbox: PassthroughIter<T, CheckboxProps, CheckboxEmits>;
+  itemCheckbox: RenderedIter<T, CheckboxProps, CheckboxEmits>;
   itemText: Passthrough<SelectItemTextProps>;
 };
 

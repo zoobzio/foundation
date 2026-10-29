@@ -11,10 +11,17 @@ const callable = (value: unknown): value is (...args: unknown[]) => unknown =>
   typeof value === "function";
 
 /**
- * Replaces the local array with the user's. Listeners and other functions
- * fall through to defu, where the user's value wins.
+ * Replaces the local value with the user's where the two must not merge:
+ * an array, and the component under `as`, which is an object as a
+ * compiled SFC or a `defineComponent` result and would otherwise be merged
+ * option by option into the local one. Listeners and other functions fall
+ * through to defu, where the user's value wins.
  */
-const arrays = (object: Manifest, key: PropertyKey, value: unknown) => {
+const whole = (object: Manifest, key: PropertyKey, value: unknown) => {
+  if (key === "as" && value !== undefined) {
+    object[key] = value;
+    return true;
+  }
   if (Array.isArray(object[key]) && Array.isArray(value)) {
     object[key] = value;
     return true;
@@ -24,20 +31,21 @@ const arrays = (object: Manifest, key: PropertyKey, value: unknown) => {
 
 /**
  * Deep merge of one part's props where `user` wins per key. An array
- * replaces the local array; a listener replaces the local listener.
+ * replaces the local array; a listener replaces the local listener; a
+ * component under `as` replaces the local component.
  */
-const props = createDefu(arrays);
+const props = createDefu(whole);
 
 /**
  * Deep merge of a part manifest where `user` wins per key. A static part
- * merges its props. A function part composes: the merged part calls both
+ * merges its props, its `as` replacing whole. A function part composes: the merged part calls both
  * with the same arguments and merges the user's result over the local one,
  * so a per-item part takes a partial override like a static part does.
  * Only top-level parts compose; a listener inside a part still replaces.
  */
 export const merge: (user: Manifest, local: Manifest) => Manifest = createDefu(
   (object: Manifest, key: PropertyKey, value: unknown, namespace: string) => {
-    if (arrays(object, key, value)) return true;
+    if (whole(object, key, value)) return true;
     const local = object[key];
     if (namespace === "" && callable(local) && callable(value)) {
       object[key] = (...args: unknown[]) => {
