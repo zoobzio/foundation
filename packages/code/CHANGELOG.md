@@ -1,5 +1,12 @@
 # @zoobzio/code
 
+## 0.0.13
+
+### Patch Changes
+
+- Updated dependencies [[`bf27e77`](https://github.com/zoobzio/foundation/commit/bf27e77fa3b8344d7999acd2f1a4f9ee53cad802)]:
+  - @zoobzio/kit@0.0.13
+
 ## 0.0.12
 
 ### Patch Changes
