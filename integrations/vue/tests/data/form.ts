@@ -2,14 +2,22 @@ import type { Field, Option } from "@zoobzio/form";
 
 import { z } from "zod";
 
+export type FakeRole = "admin" | "member";
+export type FakeTeam = "core" | "design";
+export type FakePlan = "free" | "pro";
+
+/**
+ * The choice properties (`role`, `teams`, `plan`) are literal unions, so
+ * the select, multi-select, and radio fields type their options by them.
+ */
 export type FakePayload = {
   name: string;
   age: number;
   bio: string;
-  role: string;
-  teams: string[];
+  role: FakeRole;
+  teams: FakeTeam[];
   active: boolean;
-  plan: string;
+  plan: FakePlan;
   starts: Date;
   tags: string[];
   phone: string;
@@ -22,17 +30,17 @@ export type FakePayload = {
   body: string;
 };
 
-export const fakeRoles: Option[] = [
+export const fakeRoles: Option<FakeRole>[] = [
   { value: "admin", label: "Admin" },
   { value: "member", label: "Member" },
 ];
 
-export const fakeTeams: Option[] = [
+export const fakeTeams: Option<FakeTeam>[] = [
   { value: "core", label: "Core" },
   { value: "design", label: "Design" },
 ];
 
-export const fakePlans: Option[] = [
+export const fakePlans: Option<FakePlan>[] = [
   { value: "free", label: "Free" },
   { value: "pro", label: "Pro" },
 ];
@@ -41,10 +49,10 @@ export const fakeSchema = z.object({
   name: z.string().min(1, "Name is required"),
   age: z.number().min(18, "Must be 18 or older"),
   bio: z.string(),
-  role: z.string(),
-  teams: z.array(z.string()),
+  role: z.enum(["admin", "member"]),
+  teams: z.array(z.enum(["core", "design"])),
   active: z.boolean(),
-  plan: z.string(),
+  plan: z.enum(["free", "pro"]),
   starts: z.date(),
   tags: z.array(z.string()),
   phone: z.string(),

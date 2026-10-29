@@ -39,9 +39,12 @@ const settings = usePassthrough<FormPassthrough>(() => ({
   pt,
   recipes: {
     form: {
+      // The service emits `failed` and then rethrows, so an async caller has
+      // a signal. The recipe is not one: the emit is the channel here, and
+      // a rejection left unhandled would surface as a console error.
       onSubmit: (e) => {
         e.preventDefault();
-        service.submit();
+        service.submit().catch(() => {});
       },
       onReset: (e) => {
         e.preventDefault();

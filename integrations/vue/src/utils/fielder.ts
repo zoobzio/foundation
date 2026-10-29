@@ -11,6 +11,7 @@ import type {
   MultiFileField,
   MultiSelectField,
   NumberField,
+  Option,
   RadioField,
   RichTextField,
   SelectField,
@@ -171,9 +172,24 @@ const textarea = <T>(
   },
 });
 
-const select = <T>(
+/**
+ * Whether `value` is the value of one of `options`. The choice controls
+ * type their options as `Option<string>`, so what they hand back is one of
+ * `field.options` with its value widened; the guard restores the `V` the
+ * field declared, and `set` checks the pair against the payload.
+ */
+const choice = <V extends string>(
+  options: Option<V>[],
+  value: string,
+): value is V => options.some((o) => o.value === value);
+
+/**
+ * The choice controls are generic over the option value `V`, as the field
+ * is.
+ */
+const select = <T, V extends string>(
   form: Service<T>,
-  field: SelectField<T>,
+  field: SelectField<T, V>,
   value: T[keyof T] | undefined,
   wire: Wiring,
 ): FormFieldPassthrough["select"] => ({
@@ -184,15 +200,15 @@ const select = <T>(
   required: field.required,
   pt: { trigger: wire },
   "onUpdate:modelValue": (option) => {
-    form.set(field.key, option.value);
+    if (choice(field.options, option.value)) form.set(field.key, option.value);
     form.touch(field.key);
     form.check(field.key);
   },
 });
 
-const multiselect = <T>(
+const multiselect = <T, V extends string>(
   form: Service<T>,
-  field: MultiSelectField<T>,
+  field: MultiSelectField<T, V>,
   value: T[keyof T] | undefined,
   wire: Wiring,
 ): FormFieldPassthrough["multiSelect"] => ({
@@ -207,7 +223,9 @@ const multiselect = <T>(
   "onUpdate:modelValue": (options) => {
     form.set(
       field.key,
-      (options ?? []).map((o) => o.value),
+      (options ?? [])
+        .map((o) => o.value)
+        .filter((v): v is V => choice(field.options, v)),
     );
     form.touch(field.key);
     form.check(field.key);
@@ -231,9 +249,9 @@ const checkbox = <T>(
   },
 });
 
-const radio = <T>(
+const radio = <T, V extends string>(
   form: Service<T>,
-  field: RadioField<T>,
+  field: RadioField<T, V>,
   value: T[keyof T] | undefined,
   wire: Wiring,
   ids: FormFieldIds,
@@ -245,7 +263,7 @@ const radio = <T>(
   orientation: field.orientation,
   pt: { root: { ...wire, "aria-labelledby": ids.label } },
   "onUpdate:modelValue": (v) => {
-    form.set(field.key, v);
+    if (choice(field.options, v)) form.set(field.key, v);
     form.touch(field.key);
     form.check(field.key);
   },

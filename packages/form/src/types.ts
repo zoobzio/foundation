@@ -10,12 +10,14 @@ import type {
 import type { ZodType } from "zod";
 
 /**
- * A selectable item of a select, multi-select, or radio field. Structurally
- * identical to the view-side option shape, so a field's options bind
- * straight to the control.
+ * A selectable item of a select, multi-select, or radio field. `V` is the
+ * value type: `string` by default, or the literal union of a payload
+ * property, so the options of a field over `role: "admin" | "member"` are
+ * checked against that union. Structurally identical to the view-side
+ * option shape, so a field's options bind straight to the control.
  */
-export interface Option {
-  value: string;
+export interface Option<V extends string = string> {
+  value: V;
   label: string;
   disabled?: boolean;
 }
@@ -33,6 +35,23 @@ export type Colspan = 2 | 3 | 4 | 6 | 8 | 9 | 10 | 12;
 export type Keys<T, V> = {
   [K in keyof T]-?: [V] extends [T[K]] ? K : never;
 }[keyof T];
+
+/**
+ * The value a single-choice control (select, radio) over property `K`
+ * writes: the property's own type when it is a string literal union, else
+ * `string`. Null and undefined are set aside, so an optional or nullable
+ * property narrows by its defined type.
+ */
+export type Choice<T, K extends keyof T> =
+  NonNullable<T[K]> extends infer S extends string ? S : string;
+
+/**
+ * The item a multi-choice control (multi-select) over property `K`
+ * writes: the element type when the property is an array of string
+ * literals, else `string`.
+ */
+export type ChoiceItem<T, K extends keyof T> =
+  NonNullable<T[K]> extends readonly (infer S extends string)[] ? S : string;
 
 /**
  * Shared base for all field variants. `V` is the value type the variant's
@@ -80,21 +99,29 @@ export type TextareaField<T> = FieldBase<T, string> & {
 };
 
 /**
- * Single select.
+ * Single select. `V` is the value the control writes and the options
+ * carry: `string`, or the literal union of the payload property it keys.
+ * In `Field<T>` the variant is instantiated once per payload property with
+ * `Choice<T, K>`, so a select over a union-typed property infers `V` from
+ * the payload and its options are checked against it.
  */
-export type SelectField<T> = FieldBase<T, string> & {
+export type SelectField<T, V extends string = string> = FieldBase<T, V> & {
   type: "select";
   placeholder?: string;
-  options: Option[];
+  options: Option<V>[];
 };
 
 /**
- * Multi select.
+ * Multi select. `V` is the item type, as `ChoiceItem<T, K>` resolves it
+ * for the property the field keys.
  */
-export type MultiSelectField<T> = FieldBase<T, string[]> & {
+export type MultiSelectField<T, V extends string = string> = FieldBase<
+  T,
+  V[]
+> & {
   type: "multi-select";
   placeholder?: string;
-  options: Option[];
+  options: Option<V>[];
 };
 
 /**
@@ -105,11 +132,12 @@ export type CheckboxField<T> = FieldBase<T, boolean> & {
 };
 
 /**
- * Radio group.
+ * Radio group. `V` is the value the control writes, as `Choice<T, K>`
+ * resolves it for the property the field keys.
  */
-export type RadioField<T> = FieldBase<T, string> & {
+export type RadioField<T, V extends string = string> = FieldBase<T, V> & {
   type: "radio";
-  options: Option[];
+  options: Option<V>[];
   orientation?: "horizontal" | "vertical";
 };
 
@@ -205,16 +233,20 @@ export type RichTextField<T> = FieldBase<T, string> & {
 };
 
 /**
- * Discriminated union of all field types.
+ * Discriminated union of all field types. The choice variants (select,
+ * multi-select, radio) are instantiated once per payload property, with
+ * the property's own string type as the option value, so a field over
+ * `role: "admin" | "member"` keys the property and types its options by
+ * the union, while a field over a `string` property keeps `Option<string>`.
  */
 export type Field<T> =
   | TextField<T>
   | NumberField<T>
   | TextareaField<T>
-  | SelectField<T>
-  | MultiSelectField<T>
+  | { [K in keyof T]-?: SelectField<T, Choice<T, K>> }[keyof T]
+  | { [K in keyof T]-?: MultiSelectField<T, ChoiceItem<T, K>> }[keyof T]
   | CheckboxField<T>
-  | RadioField<T>
+  | { [K in keyof T]-?: RadioField<T, Choice<T, K>> }[keyof T]
   | DateField<T>
   | TemporalField<T>
   | TagsInputField<T>

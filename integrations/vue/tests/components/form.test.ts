@@ -172,6 +172,29 @@ describe("form", () => {
     ]);
   });
 
+  it("keeps a failed submit from the button on the failed emit", async () => {
+    const cause = new Error("boom");
+    const submit = vi.fn(async () => {
+      throw cause;
+    });
+    const { service } = makeForm({}, { submit });
+    const wrapper = mountForm({ service });
+    const unhandled = vi.fn();
+    process.on("unhandledRejection", unhandled);
+    try {
+      await wrapper.get(".f-data-form-submit").trigger("click");
+      await flushPromises();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    } finally {
+      process.off("unhandledRejection", unhandled);
+    }
+    expect(unhandled).not.toHaveBeenCalled();
+    expect(service.submitting).toBe(false);
+    expect(wrapper.emitted("failed")?.at(0)).toEqual([
+      { id: "test-form", stage: "submit", cause },
+    ]);
+  });
+
   it("relays a field slot to every field", () => {
     const { service } = makeForm();
     const wrapper = mountForm(

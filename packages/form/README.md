@@ -44,20 +44,41 @@ form.field("email"); // { value, error, touched } — error only once touched
 its `type` renders, and the control's own settings. `key` may only point
 at a payload property that accepts the control's value.
 
-| Type                                      | Value      | Settings                                   |
-| ----------------------------------------- | ---------- | ------------------------------------------ |
-| `text`, `email`, `password`, `tel`, `url` | `string`   | `placeholder`, `maxLength`                 |
-| `number`                                  | `number`   | `placeholder`, `min`, `max`, `step`        |
-| `textarea`                                | `string`   | `placeholder`, `rows`, `maxLength`         |
-| `select`, `radio`                         | `string`   | `options` (+ `placeholder`, `orientation`) |
-| `multi-select`                            | `string[]` | `options`, `placeholder`                   |
-| `checkbox`                                | `boolean`  |                                            |
-| `date`                                    | `Date`     | `placeholder`, `minDate`, `maxDate`        |
-| `time`, `datetime-local`, `date-input`    | `string`   | `min`, `max`, `step`                       |
-| `tags-input`                              | `string[]` | `placeholder`, `max`, `delimiter`          |
-| `file`                                    | `File`     | `accept`, `capture`                        |
-| `multi-file`                              | `File[]`   | `accept`, `capture`                        |
-| `richtext`                                | `string`   | `features`                                 |
+| Type                                      | Value       | Settings                                   |
+| ----------------------------------------- | ----------- | ------------------------------------------ |
+| `text`, `email`, `password`, `tel`, `url` | `string`    | `placeholder`, `maxLength`                 |
+| `number`                                  | `number`    | `placeholder`, `min`, `max`, `step`        |
+| `textarea`                                | `string`    | `placeholder`, `rows`, `maxLength`         |
+| `select`, `radio`                         | `string`¹   | `options` (+ `placeholder`, `orientation`) |
+| `multi-select`                            | `string[]`¹ | `options`, `placeholder`                   |
+| `checkbox`                                | `boolean`   |                                            |
+| `date`                                    | `Date`      | `placeholder`, `minDate`, `maxDate`        |
+| `time`, `datetime-local`, `date-input`    | `string`    | `min`, `max`, `step`                       |
+| `tags-input`                              | `string[]`  | `placeholder`, `max`, `delimiter`          |
+| `file`                                    | `File`      | `accept`, `capture`                        |
+| `multi-file`                              | `File[]`    | `accept`, `capture`                        |
+| `richtext`                                | `string`    | `features`                                 |
+
+¹ Or the property's own string literal union. A choice field (`select`,
+`radio`, `multi-select`) over `role: "admin" | "member"` keys that property
+and its `options` are `Option<"admin" | "member">[]`, so a value outside the
+union is a type error and the config can take the schema's output type as
+`T` directly. Over a plain `string` property the options stay
+`Option<string>[]`. `Option<V>` is the option shape with `V` as the value.
+
+```ts
+const schema = z.object({ role: z.enum(["admin", "member"]) });
+type Payload = z.output<typeof schema>;
+const roles: Option<Payload["role"]>[] = [
+  { value: "admin", label: "Admin" },
+  { value: "member", label: "Member" },
+];
+const config: Config<Payload> = {
+  title: "Member",
+  schema,
+  fields: [{ type: "select", key: "role", label: "Role", options: roles }],
+};
+```
 
 A `file` field holds the picked `File` and a `multi-file` field the picked
 files; limits on size, type, and count belong to the schema (`z.file()`,
@@ -121,7 +142,7 @@ the write lands. The return value removes the listener.
 - `rejected`: submit stopped on validation. `{ id, data, errors }`.
 - `restored`: a record passed the schema and replaced the payload. `{ id, data }`.
 - `reset`: the payload returned to the defaults. `{ id, data }`.
-- `failed`: the init action, a restore, or the submit action threw; the error is rethrown after the event. `{ id, stage, cause }` — `stage` is `"init" | "restore" | "submit"`.
+- `failed`: the init action, a restore, or the submit action threw; the error is rethrown after the event, so an `await` on the method sees it. `{ id, stage, cause }` — `stage` is `"init" | "restore" | "submit"`. A caller with no use for the rejection, a submit handler for one, catches it; the event is the channel.
 
 ```ts
 const off = form.on("rejected", ({ errors }) => focusFirst(errors));

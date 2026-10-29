@@ -88,9 +88,11 @@ service.init();
 names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,
 `datePicker`, `tagsInput`, `fileInput`, `richText`), with the lifecycle
 events (`initialized`, `submitted`, `rejected`, `restored`, `reset`,
-`failed`) relayed as emits. Field passthrough is keyed by payload key under
-`pt.fields`; a field slot given to the form overrides that region in every
-field.
+`failed`) relayed as emits. The form's own submit recipe catches the
+service's rejection, so a failed submit action reaches the consumer as the
+`failed` emit and never as an unhandled rejection. Field passthrough is
+keyed by payload key under `pt.fields`; a field slot given to the form
+overrides that region in every field.
 
 Each field renders its label, its control, its `hint` when the config sets
 one, and its error once the field is touched and invalid, wired together by
