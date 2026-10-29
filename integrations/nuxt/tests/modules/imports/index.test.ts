@@ -52,10 +52,12 @@ describe("imports module", () => {
     const components = registered();
     expect(components).toHaveLength(COMPONENTS.length);
     for (const name of COMPONENTS) {
-      const entry = components.find((c) => c.filePath.endsWith(`/${name}.vue`));
       const isWrapped = WRAPPED.some((w) => w === name);
-      expect(entry?.filePath.includes("/app/components/")).toBe(isWrapped);
-      expect(entry?.filePath.includes("/vue/src/components/")).toBe(!isWrapped);
+      const file = isWrapped
+        ? `/app/components/${name}.ts`
+        : `/vue/src/components/${name}.vue`;
+      const entry = components.find((c) => c.filePath.endsWith(file));
+      expect(entry).toBeDefined();
       await expect(access(entry!.filePath)).resolves.toBeUndefined();
     }
   });

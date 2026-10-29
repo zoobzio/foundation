@@ -176,9 +176,10 @@
     // `#imports` and `#components` are the consumer's build artifacts: the
     // module in modules/imports fills them, and the layer's own code never
     // reads from them. Nuxt APIs come from `#app`, Vue APIs from `vue`, and
-    // NuxtLink from `#app/components/nuxt-link`. The one exception is
-    // app.vue, below: NuxtPage resolves to a different module depending on
-    // whether the consumer has pages, so only `#components` can name it.
+    // NuxtLink from `#app/components/nuxt-link`. The exceptions are app.vue
+    // and the wrappers, below: NuxtPage resolves to a different module
+    // depending on whether the consumer has pages, and Icon is registered
+    // by @icon-sheets/nuxt, so only `#components` can name them.
     {
       "files": ["integrations/nuxt/app/**"],
       "rules": {
@@ -350,6 +351,9 @@
       }
     },
     {
+      // The wrappers draw icons through `Icon`, which @icon-sheets/nuxt (a
+      // module the layer itself loads) registers only on `#components`, so
+      // that one module is allowed here. `#imports` stays forbidden.
       "files": ["integrations/nuxt/app/components/**"],
       "rules": {
         "eslint/no-restricted-imports": [
@@ -357,8 +361,8 @@
           {
             "patterns": [
               {
-                "regex": "^#(imports|components)$",
-                "message": "#imports and #components are the consumer's build artifacts; use #app, vue, or a relative path"
+                "regex": "^#imports$",
+                "message": "#imports is the consumer's build artifact; use #app, vue, or a relative path"
               },
               {
                 "regex": "^(\\.\\./)+plugins(/|$)",

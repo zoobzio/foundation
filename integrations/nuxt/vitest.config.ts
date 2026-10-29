@@ -16,7 +16,7 @@ export default defineConfig({
         find: /^#app\/components\/nuxt-link$/,
         replacement: r("./tests/mocks/nuxt-link.ts"),
       },
-      // Only app.vue uses `#components`: the shell built-ins it renders.
+      // The shell built-ins app.vue renders, and the Icon the wrappers draw.
       { find: /^#components$/, replacement: r("./tests/mocks/components.ts") },
       // Test-only support (mocks, stubs, data, mount factories).
       { find: /^#test/, replacement: r("./tests") },

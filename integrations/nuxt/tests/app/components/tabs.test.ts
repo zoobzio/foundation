@@ -3,7 +3,7 @@ import type { TabsOption } from "@zoobzio/vue/types/components/tabs";
 
 import { afterEach, describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import Tabs from "../../../app/components/tabs.vue";
+import Tabs from "../../../app/components/tabs";
 
 const tabs: TabsOption[] = [
   { value: "overview", label: "Overview", link: { to: "/overview" } },

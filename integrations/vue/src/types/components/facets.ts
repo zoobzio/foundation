@@ -8,11 +8,11 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
 /**
  * A facet value with its result count.
  */
-export type FacetItem = {
+export interface FacetItem {
   value: string;
   label: string;
   count: number;
-};
+}
 
 /**
  * A labeled group of facet items.

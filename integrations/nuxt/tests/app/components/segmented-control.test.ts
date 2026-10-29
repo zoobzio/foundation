@@ -4,7 +4,7 @@ import type { SegmentedControlOption } from "@zoobzio/vue/types/components/segme
 
 import { afterEach, describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import SegmentedControl from "../../../app/components/segmented-control.vue";
+import SegmentedControl from "../../../app/components/segmented-control";
 
 const options: SegmentedControlOption[] = [
   { value: "overview", label: "Overview", link: { to: "/overview" } },

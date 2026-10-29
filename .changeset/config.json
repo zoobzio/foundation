@@ -18,6 +18,7 @@
       "@zoobzio/table",
       "@zoobzio/editor",
       "@zoobzio/code",
+      "@zoobzio/icons",
       "@zoobzio/vue",
       "@zoobzio/nuxt"
     ]

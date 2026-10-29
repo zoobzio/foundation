@@ -8,12 +8,12 @@ import type { VNode } from "vue";
  * `link` renders as a button and only emits `select`. Extra fields pass through
  * to the emit.
  */
-export type DirectoryItem = {
+export interface DirectoryItem {
   key: string;
   label: string;
   disabled?: boolean;
   link?: LinkTarget;
-};
+}
 
 /**
  * A group of directory items with an optional label.

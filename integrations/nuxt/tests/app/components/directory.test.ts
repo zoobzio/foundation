@@ -6,7 +6,7 @@ import type {
 
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import Directory from "../../../app/components/directory.vue";
+import Directory from "../../../app/components/directory";
 
 type Entry = DirectoryItem & { section: string };
 

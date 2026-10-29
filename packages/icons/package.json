@@ -1,0 +1,52 @@
+{
+  "name": "@zoobzio/icons",
+  "version": "0.0.10",
+  "description": "The foundation design system's icon contract: the aliases its components draw by default, authored as an icon-sheets config and built by @icon-sheets/kit into a typed alias union, a resolved contract, and SVG sprites.",
+  "license": "MIT",
+  "author": {
+    "name": "Alex Thorwaldson",
+    "email": "alex@zoobz.io",
+    "url": "https://zoobz.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoobzio/foundation.git",
+    "directory": "packages/icons"
+  },
+  "files": [
+    ".output"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./.output/index.mjs",
+  "types": "./.output/index.d.mts",
+  "exports": {
+    ".": {
+      "types": "./.output/index.d.mts",
+      "import": "./.output/index.mjs"
+    },
+    "./*.svg": "./.output/*.svg",
+    "./*": {
+      "types": "./.output/*.d.mts",
+      "import": "./.output/*.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "icon-sheets build",
+    "stub": "icon-sheets build",
+    "prepare": "icon-sheets build",
+    "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "icon-sheets": "catalog:"
+  },
+  "devDependencies": {
+    "@icon-sheets/kit": "catalog:",
+    "@iconify-json/lucide": "catalog:",
+    "@types/node": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -22,7 +22,9 @@ import type { VNode } from "vue";
  * A trail crumb as a breadcrumb item: the service's crumb plus its trail
  * index, which `navigate` takes when the crumb is selected.
  */
-export type BrowserCrumbItem = BreadcrumbItem & { index: number };
+export interface BrowserCrumbItem extends BreadcrumbItem {
+  index: number;
+}
 
 /**
  * The parts of the browser that accept passthrough. `breadcrumb` is the

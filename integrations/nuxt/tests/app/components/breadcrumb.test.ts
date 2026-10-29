@@ -4,7 +4,7 @@ import type { BreadcrumbItem } from "@zoobzio/vue/types/components/breadcrumb";
 
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import Breadcrumb from "../../../app/components/breadcrumb.vue";
+import Breadcrumb from "../../../app/components/breadcrumb";
 
 type Crumb = BreadcrumbItem & { depth: number };
 

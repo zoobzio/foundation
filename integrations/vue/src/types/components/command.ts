@@ -19,9 +19,9 @@ import type {
 /**
  * An option with an optional result `count`.
  */
-export type CommandOption = Option & {
+export interface CommandOption extends Option {
   count?: number;
-};
+}
 
 /**
  * A labeled group of command options.

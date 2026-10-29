@@ -38,7 +38,7 @@ export default defineNuxtModule({
       addComponent({
         name: pascal(name),
         filePath: wrapped(name, WRAPPED)
-          ? app(`components/${name}.vue`)
+          ? app(`components/${name}.ts`)
           : resolve(`components/${name}.vue`),
         declarationPath: wrapped(name, WRAPPED)
           ? undefined

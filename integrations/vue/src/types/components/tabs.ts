@@ -15,9 +15,9 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
  * activation. A linked tab switches the root to manual activation: arrow
  * keys move focus only, and click or Enter changes the active tab.
  */
-export type TabsOption = Option & {
+export interface TabsOption extends Option {
   link?: LinkTarget;
-};
+}
 
 /**
  * The parts of the tabs that accept passthrough. `link` is the anchor a

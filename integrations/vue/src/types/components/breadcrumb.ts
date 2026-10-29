@@ -9,12 +9,12 @@ import type { VNode } from "vue";
  * the current page and renders as inert text. Extra fields pass through to the
  * emit.
  */
-export type BreadcrumbItem = {
+export interface BreadcrumbItem {
   key: string;
   label: string;
   disabled?: boolean;
   link?: LinkTarget;
-};
+}
 
 /**
  * The parts of the breadcrumb that accept passthrough. `link` is the

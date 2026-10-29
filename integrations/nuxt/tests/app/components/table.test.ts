@@ -4,7 +4,7 @@ import type { LinkedRow } from "#test/mount/table";
 
 import { afterEach, describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import Table from "../../../app/components/table.vue";
+import Table from "../../../app/components/table";
 import { makeTable } from "#test/mount/table";
 
 const mounted: { unmount: () => void }[] = [];

@@ -17,13 +17,14 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
 
 /**
  * A menu entry. With `link`, the item renders as an anchor and navigates
- * on activation. `select` still emits and the menu still closes.
+ * on activation. `select` still emits and the menu still closes. An
+ * interface, so a framework layer may widen it by declaration merging.
  */
-export type MenuItem = {
+export interface MenuItem {
   label: string;
   disabled?: boolean;
   link?: LinkTarget;
-};
+}
 
 /**
  * A labeled group of menu items.

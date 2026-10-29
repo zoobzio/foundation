@@ -10,7 +10,9 @@ import type { VNode } from "vue";
  * A file or folder action as a menu item: the config key the service
  * dispatches by, plus the label.
  */
-export type BrowserActionItem = MenuItem & { key: string };
+export interface BrowserActionItem extends MenuItem {
+  key: string;
+}
 
 /**
  * One file cell: the row, the column, and the cell value.

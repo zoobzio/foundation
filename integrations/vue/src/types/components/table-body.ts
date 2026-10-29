@@ -10,7 +10,9 @@ import type { VNode } from "vue";
  * A row action as a menu item: the config key the service dispatches by,
  * plus the label.
  */
-export type TableActionItem = MenuItem & { key: string };
+export interface TableActionItem extends MenuItem {
+  key: string;
+}
 
 /**
  * One cell: the row, the column, and the cell value.

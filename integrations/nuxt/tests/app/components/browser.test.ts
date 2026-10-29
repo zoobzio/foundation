@@ -4,7 +4,7 @@ import type { LinkedFile } from "#test/mount/browser";
 
 import { afterEach, describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import Browser from "../../../app/components/browser.vue";
+import Browser from "../../../app/components/browser";
 import { makeBrowser } from "#test/mount/browser";
 
 const mounted: { unmount: () => void }[] = [];

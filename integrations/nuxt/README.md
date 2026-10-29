@@ -21,14 +21,17 @@ behind Nuxt's two virtual modules stay live, filled only by
 
 - `#components` carries the components of `@zoobzio/vue`. The ones that
   hold links come as the layer's own wrappers, which render every link
-  through `NuxtLink` (see [Components](#components)).
+  through `NuxtLink` (see [Components](#components)). It also carries
+  `Icon`, from `@icon-sheets/nuxt` (see [Icons](#icons)).
 - `#imports` carries the `define*` constructors of `@zoobzio/vue` and the
   layer's own surface: the composables, factories, stores, and constants
   as values, and everything under `types/` as types. It also carries the
   types of `@zoobzio/vue` a consumer writes against: the component
-  contracts (`SelectProps`, `TableSlots`, `MenuItem`, …), the shared item
-  types (`Option`, `Link`, …), and the `define*` and `pt` vocabulary
-  (`Definition`, `PT`, …).
+  contracts (`SelectProps`, `TableSlots`, …), the shared item types
+  (`Option`, `Link`, …), and the `define*` and `pt` vocabulary
+  (`Definition`, `PT`, …). Where the layer widens a vue item type, as
+  `MenuItem` with its `icon`, `#imports` serves the layer's under the
+  vue name.
 
 A consumer never depends on `@zoobzio/vue` itself. The package's
 composables are not registered, nor are the types behind them (`forward`,
@@ -61,11 +64,13 @@ wrapper lays `NuxtLink` under that part, so navigation goes through the
 router with no setup. `#components` serves the wrapper under the vue
 component's name; the vue component itself is not registered.
 
-A wrapper is the vue component's contract: the same props, emits, slots,
-and `ctx`, typed from the same `@zoobzio/vue` types that `#imports`
-carries. A consumer's `pt.link` composes with the layer's, so an override
-keeps `NuxtLink` unless it sets `as` itself. A disabled item has no
-`href`, and `NuxtLink` renders it as an inert anchor.
+A wrapper is one call to `wrap` of `@zoobzio/vue`: the vue component, a
+`pt` layer, and the slot defaults of [Icons](#icons). It is typed as the
+vue component itself, so it is the same contract (props, emits, slots,
+and `ctx`) the `@zoobzio/vue` types on `#imports` describe. A consumer's
+`pt.link` composes with the layer's, so an override keeps `NuxtLink`
+unless it sets `as` itself. A disabled item has no `href`, and `NuxtLink`
+renders it as an inert anchor.
 
 ```vue
 <script setup lang="ts">
@@ -87,6 +92,60 @@ const items: BreadcrumbItem[] = [
 `Table` and `Browser` lay the part under their nested manifests (`pt.body`,
 `pt.files`, and the browser's `pt.breadcrumb.pt`), so a consumer's part at
 the same path composes the same way.
+
+## Icons
+
+The components of `@zoobzio/vue` draw no icons: each leaves its icons to
+`*Icon` slots (`prevIcon`, `closeIcon`, `itemIcon`, …) that render nothing
+by default. The layer loads [`@icon-sheets/nuxt`](https://github.com/zoobzio/icon-sheets)
+with the foundation contract from [`@zoobzio/icons`](../../packages/icons/)
+as its default `iconSheets` option, so an app that extends the layer gets
+the sprite inlined on every page and `<Icon name="…" />` on `#components`
+with no setup. `IconAlias` on `#imports` is the alias union the app
+compiles against.
+
+An app with its own icons package passes it the usual way, and Nuxt
+merges it over the layer's: the app's aliases join the foundation's, and
+an alias the app declares again is rebound. See the icons package for the
+contract and the merge.
+
+```ts
+export default defineNuxtConfig({
+  extends: ["@zoobzio/nuxt"],
+  iconSheets: { ...config, sets, prefix },
+});
+```
+
+A wrapper fills a component's icon slots from the contract by default, the
+same way it lays `NuxtLink` under the `link` part: the consumer's slot
+wins whenever it renders one, and the wrapper's default fills in while it
+does not. The `Menu` is the first. The vue item types are interfaces, and
+`app/app.d.ts` widens `MenuItem` with an optional `icon: IconAlias` by
+declaration merging, so the one `MenuItem` the vue package, the layer, and
+the app share carries the field, and the wrapper draws it in the
+`itemIcon` slot.
+
+```vue
+<script setup lang="ts">
+import { Menu } from "#components";
+import type { MenuGroup } from "#imports";
+
+const groups: MenuGroup[] = [
+  {
+    key: "account",
+    items: [
+      { label: "Profile", link: { to: "/profile" }, icon: "next" },
+      { label: "Sign out", icon: "close" },
+    ],
+  },
+];
+</script>
+
+<template>
+  <!-- each item renders <Icon :name="item.icon" /> before its label -->
+  <Menu label="Account" :groups="groups" />
+</template>
+```
 
 ## Stores and factories
 
@@ -271,17 +330,18 @@ variant.
 ```
 app/
   app.vue         — the root: reka providers, loading indicator, error boundary, toaster
+  components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts and icons in icon slots
   error.vue       — the error page
-  app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events
+  app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types widened with `icon`
   assets/css/     — reset.css, loaded by the layer config
   composables/    — useAppError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   constants/      — error page status codes, log levels
   factories/      — create<Name>(id, options) → use<Name>(): Service
   plugins/        — log: provides $log and $logger
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
-  types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request
+  types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request; icon (IconAlias)
   utils/          — split (actions → descriptors + handlers), seed (state)
 modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue components, definitions, and types, and the layer's own surface) and references app.d.ts for consumers
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
-nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset)
+nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset and @icon-sheets/nuxt with the foundation contract)
 ```

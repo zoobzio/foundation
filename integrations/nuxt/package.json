@@ -44,11 +44,13 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@icon-sheets/nuxt": "catalog:",
     "@nuxt/kit": "catalog:",
     "@zoobzio/browser": "workspace:*",
     "@zoobzio/code": "workspace:*",
     "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",
+    "@zoobzio/icons": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/vue": "workspace:*",
     "ltrl-http": "catalog:",

@@ -66,6 +66,7 @@ packages/
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
   editor/         — @zoobzio/editor: headless rich text editor service over tiptap, with json/html/hast codecs (pure TS, no framework)
   code/           — @zoobzio/code: headless code editor service over CodeMirror, the consumer's extensions for language and theme (pure TS, no framework)
+  icons/          — @zoobzio/icons: the icon contract the Nuxt layer draws by default, built by icon-sheets (generated, no source)
 integrations/
   vue/            — @zoobzio/vue: Vue 3 components, definitions, and types
   nuxt/           — @zoobzio/nuxt: the Nuxt layer (stores, factories, app shell)

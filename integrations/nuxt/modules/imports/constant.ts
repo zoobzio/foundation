@@ -48,10 +48,12 @@ export const COMPONENTS = [
   "tree",
 ] as const;
 
-// The components the layer wraps: each holds a `link` part, and the layer's
-// own component of the same name lays `NuxtLink` under it. These resolve to
-// `app/components/` instead of @zoobzio/vue, so `#components` serves the
-// Nuxt version only.
+// The components the layer wraps through `wrap` of @zoobzio/vue: each holds
+// a `link` part the layer lays `NuxtLink` under, and some draw icons in
+// their slots by default. These resolve to `app/components/<name>.ts`
+// instead of @zoobzio/vue, so `#components` serves the Nuxt version only;
+// a wrapper is typed as the vue component, so no separate declaration
+// is needed.
 export const WRAPPED = [
   "breadcrumb",
   "browser",
@@ -138,7 +140,9 @@ export const LAYER = {
 // Type-only exports, registered the same way so `import type { TableOptions }
 // from "#imports"` resolves. They are re-exported from the virtual module
 // only, never declared global, so the DOM `Notification` and lib
-// `ErrorOptions` are untouched.
+// `ErrorOptions` are untouched. Where the layer widens a vue item type
+// (`MenuItem` with its `icon`), it does so by declaration merging in
+// app.d.ts, so the vue type registered below already carries the field.
 export const LAYER_TYPES = {
   "types/actions": ["Bound"],
   "types/browser": [
@@ -162,6 +166,7 @@ export const LAYER_TYPES = {
     "HookListeners",
   ],
   "types/hooks": ["Hooks"],
+  "types/icon": ["IconAlias"],
   "types/log": ["LogLevel", "LogLine", "LogEmit", "Logger"],
   "types/notification": ["Notification"],
   "types/request": ["RequestOptions"],

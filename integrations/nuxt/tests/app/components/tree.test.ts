@@ -3,7 +3,7 @@ import type { TreeNode } from "@zoobzio/vue/types/components/tree";
 
 import { afterEach, describe, expect, it } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
-import Tree from "../../../app/components/tree.vue";
+import Tree from "../../../app/components/tree";
 
 type Node = TreeNode & { slug: string; children?: Node[] };
 

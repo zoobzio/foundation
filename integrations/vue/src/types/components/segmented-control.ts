@@ -12,9 +12,9 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
  * A segment. With `link`, the segment renders as an anchor and navigates
  * on press. The press still updates the model.
  */
-export type SegmentedControlOption = Option & {
+export interface SegmentedControlOption extends Option {
   link?: LinkTarget;
-};
+}
 
 /**
  * The parts of the segmented control that accept passthrough. `link` is

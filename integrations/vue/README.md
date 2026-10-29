@@ -45,8 +45,8 @@ src/
   components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), and the code editor (code.vue)
   composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode
   definitions/       — define<Name>(definition | source) constructors
-  types/             — common, events, passthrough, forward, slots, context, definition; per-component types in core/
-  utils/             — passthrough merge, forward render, define runtime, date, file, keywords, paginate, table, browser, editor, code
+  types/             — common, events, passthrough, forward, slots, context, definition, wrap; per-component types in core/
+  utils/             — passthrough merge, forward render, wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code
   constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
@@ -60,6 +60,32 @@ such as a router link, which receives the same `href` and `target`.
 ```vue
 <Menu :groups="groups" :pt="{ link: () => ({ as: NuxtLink }) }" />
 ```
+
+A framework layer that wants that on every instance wraps the component
+with `wrap` (`utils/wrap`): a `pt` layer laid under the consumer's, and
+slot defaults that fill in where the consumer renders no slot of that
+name. The result is typed as the component itself, with its props, emits,
+slots, and `ctx`, so it stands in for the component wherever the
+component's name is served. The consumer's `pt` composes with the layer's
+per key as `usePassthrough` lays a layer; a nested manifest is laid where
+it sits by passing `pt` as a function of the consumer's. The option types
+are read from the component, so a default takes the slot's own scope.
+
+```ts
+import Menu from "@zoobzio/vue/components/menu.vue";
+import { wrap } from "@zoobzio/vue/utils/wrap";
+
+export default wrap(Menu, {
+  pt: { link: () => ({ as: RouterLink }) },
+  slots: { itemIcon: ({ item }) => [h(Glyph, { name: item.label })] },
+});
+```
+
+The item types a component takes (`MenuItem`, `TabsOption`,
+`BreadcrumbItem`, `DirectoryItem`, `CommandOption`, …) are interfaces, so
+a layer may widen one by declaration merging, and the widened field then
+reaches the layer's slot defaults through the slot's scope. `TreeNode` is
+the exception: it stays a type alias to satisfy reka's record bound.
 
 ## Data components
 

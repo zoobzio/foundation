@@ -13,7 +13,8 @@ import type {
 /**
  * A tree node. With `link`, the label renders as an anchor. Extra fields
  * on a consumer node come back in the emits. A type alias, not an
- * interface, to satisfy reka's `Record<string, any>` bound.
+ * interface, to satisfy reka's `Record<string, any>` bound; it is the one
+ * item type a framework layer cannot widen by declaration merging.
  *
  * For lazy loading, declare a branch with `children: []` and swap `items`
  * on `toggle`. reka emits `select` for branch clicks too. Enter on a link

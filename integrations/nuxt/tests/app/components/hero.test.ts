@@ -1,7 +1,7 @@
 // The hero wrapper: NuxtLink under the action's `link` part.
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import Hero from "../../../app/components/hero.vue";
+import Hero from "../../../app/components/hero";
 
 describe("hero wrapper", () => {
   it("renders the action through NuxtLink with the recipe's href", () => {
