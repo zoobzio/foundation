@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/nuxt",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Nuxt layer for the foundation design system: the Nuxt wiring over @zoobzio/vue and the headless services (useState stores, hook-bus factories, app shell).",
   "license": "MIT",
   "author": {

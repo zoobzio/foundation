@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/editor",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Headless rich text editor service over tiptap: one document, a feature set, the snapshot a view reads, reader/writer seams for the document form a consumer ingests and consumes, and the json, html, and hast codecs. No framework dependency.",
   "license": "MIT",
   "author": {

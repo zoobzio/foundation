@@ -1,5 +1,14 @@
 # @zoobzio/query
 
+## 0.0.10
+
+### Patch Changes
+
+- [`8145080`](https://github.com/zoobzio/foundation/commit/81450806518eccb6131f2c7e02bb0a87bc85128a) Thanks [@zoobzio](https://github.com/zoobzio)! - A field's `values` may be a provider, `(term) => string[]`, beside a list: the value stage gives it the term, so the suggestions can be built from what is typed. A provider's result stands as is, where a list is narrowed to the entries containing the term.
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.0.10
+
 ## 0.0.9
 
 ### Patch Changes

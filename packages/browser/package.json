@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/browser",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Headless data browser service: folder trail navigation, file sort, selection, action joins. No framework dependency.",
   "license": "MIT",
   "author": {
