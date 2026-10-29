@@ -1,5 +1,14 @@
 # @zoobzio/form
 
+## 0.0.11
+
+### Patch Changes
+
+- [`6c5542d`](https://github.com/zoobzio/foundation/commit/6c5542de47e8e472c50f14bb0f2dd473eab31a4a) Thanks [@zoobzio](https://github.com/zoobzio)! - The form no longer carries a title. `title` is gone from the form's `Config`, and the form component no longer renders a toolbar: the `toolbar` slot and its default markup (`.f-data-form-toolbar` with the title in `.f-data-form-title`) are gone from the form and from `FormSlots`. A consumer that wants a heading renders it outside the form.
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.0.11
+
 ## 0.0.10
 
 ### Patch Changes
