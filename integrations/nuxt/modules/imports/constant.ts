@@ -57,6 +57,7 @@ export const COMPONENTS = [
 // vue component, so no separate declaration is needed.
 export const WRAPPED = [
   "accordion",
+  "autocomplete",
   "breadcrumb",
   "browser",
   "calendar",

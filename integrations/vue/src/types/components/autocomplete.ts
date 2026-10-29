@@ -1,4 +1,10 @@
-import type { Passthrough, PassthroughIter, PT } from "../passthrough";
+import type { ScrollerProps } from "./scroller";
+import type {
+  Passthrough,
+  PassthroughIter,
+  PT,
+  Rendered,
+} from "../passthrough";
 import type { Definition } from "../definition";
 import type {
   Entry as QueryEntry,
@@ -12,7 +18,6 @@ import type {
   AutocompleteInputProps,
   AutocompleteInputEmits,
   AutocompleteContentProps,
-  AutocompleteViewportProps,
   AutocompleteVirtualizerProps,
   AutocompleteItemProps,
   AutocompleteItemEmits,
@@ -31,15 +36,6 @@ export type AutocompleteAnchor = {
 };
 
 /**
- * A function ref that reports an item's rendered size to the virtualizer.
- * It takes the item's root element, or the component instance whose `$el`
- * is that element, and `null` when the item unmounts.
- */
-export type AutocompleteMeasure = (
-  target: Element | ComponentPublicInstance | null,
-) => void;
-
-/**
  * A chip's position in the chip row: the committed entry and its index in
  * the query's entries.
  */
@@ -50,10 +46,13 @@ export type AutocompleteChipAnchor = {
 
 /**
  * The parts of the autocomplete that accept passthrough. `input` adds the
- * native `keydown` emit. `viewport` is the scroll container of the active
- * panel and `virtualizer` windows its options: only the rows in view, plus
- * `overscan` either side, are in the DOM. `estimateSize` seeds a row's
- * height before it is measured.
+ * native `keydown` emit. `viewport` is the scroll area of the active panel,
+ * the package's scroller by default, and `virtualizer` windows its options
+ * within it: only the rows in view, plus `overscan` either side, are in
+ * the DOM. `estimateSize` seeds a row's height before it is measured. The
+ * virtualizer scrolls with its parent element, so the scroller's viewport
+ * renders it as its own child; a `viewport` override keeps that `pt`
+ * unless it sets its own.
  */
 export type AutocompletePassthrough = {
   root: Passthrough<AutocompleteRootProps, AutocompleteRootEmits>;
@@ -62,7 +61,7 @@ export type AutocompletePassthrough = {
     AutocompleteInputEmits & { keydown: [event: KeyboardEvent] }
   >;
   content: Passthrough<AutocompleteContentProps>;
-  viewport: Passthrough<AutocompleteViewportProps>;
+  viewport: Rendered<ScrollerProps>;
   virtualizer: Passthrough<AutocompleteVirtualizerProps<QueryOption>>;
   item: PassthroughIter<
     AutocompleteAnchor,
@@ -107,13 +106,12 @@ export type AutocompleteContext = {
 
 /**
  * The payload of an item slot: the context plus the item's anchor. An item
- * of the active panel is virtualized: it also receives `measure`, a ref to
- * put on its root element so the virtualizer sizes the row from the DOM. A
- * virtualized item must render exactly one root element. A trail item has
- * no `measure`.
+ * of the active panel renders within a row the component owns: the
+ * virtualizer positions and measures that row, so the item may render any
+ * content and need not report its size.
  */
 export type AutocompleteOptionContext = AutocompleteContext &
-  AutocompleteAnchor & { measure?: AutocompleteMeasure };
+  AutocompleteAnchor;
 
 /**
  * The payload of a chip slot: the context plus the chip's anchor.

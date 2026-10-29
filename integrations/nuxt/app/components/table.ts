@@ -1,7 +1,8 @@
 // The vue table with the layer's parts behind its own: NuxtLink under the
 // body's `link`, the layer's Menu for row actions (so an action's `icon`
 // draws), the layer's Checkbox for the row and select-all checkboxes, the
-// layer's Command behind the column manager, and the layer's Pagination.
+// layer's Command behind the column manager, the layer's Autocomplete as
+// the search, and the layer's Pagination.
 // Its Fab slots draw the `refresh`, `columns`, and `actions` icons; the
 // head draws `drag` on each handle and `sort-asc` or `sort-desc` after a
 // sorted header; a bulk action draws its own `icon`.
@@ -14,6 +15,7 @@ import Core from "@zoobzio/vue/components/table.vue";
 import NuxtLink from "#app/components/nuxt-link";
 import { layer } from "@zoobzio/vue/utils/passthrough";
 import { wrap } from "@zoobzio/vue/utils/wrap";
+import Autocomplete from "./autocomplete";
 import Checkbox from "./checkbox";
 import Command from "./command";
 import Menu from "./menu";
@@ -23,6 +25,7 @@ import { icon, iconOf, iconPart } from "./icon";
 export default wrap(Core, {
   pt: (pt) => ({
     ...pt,
+    search: { as: Autocomplete, ...pt?.search },
     pagination: { as: Pagination, ...pt?.pagination },
     head: layer<TableHeadPassthrough>(pt?.head, {
       selectAllCheckbox: { as: Checkbox },

@@ -35,8 +35,8 @@ const mountAutocomplete = (props: AutocompleteProps) => {
 
 /**
  * happy-dom lays nothing out, and the virtualizer renders no rows into a
- * viewport of no height. Give the viewport ten rows of room and each row
- * its height, so the window is a real one.
+ * viewport of no height. Give the scroll area's viewport ten rows of room
+ * and each row its height, so the window is a real one.
  */
 const VIEWPORT = 280;
 const ROW = 28;
@@ -44,12 +44,36 @@ const ROW = 28;
 beforeEach(() => {
   vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(
     function (this: HTMLElement) {
-      if (this.hasAttribute("data-reka-combobox-viewport")) return VIEWPORT;
+      if (this.hasAttribute("data-reka-scroll-area-viewport")) return VIEWPORT;
       if (this.hasAttribute("data-index")) return ROW;
       return 0;
     },
   );
 });
+
+/**
+ * The virtualizer measures a row by its bounding rect. Give each row its
+ * height there too, so a measurement can differ from the estimate.
+ */
+const measureRows = () => {
+  const rect = (height: number): DOMRect =>
+    ({
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: height,
+      width: 0,
+      height,
+      toJSON: () => ({}),
+    }) as DOMRect;
+  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
+    function (this: HTMLElement) {
+      return rect(this.hasAttribute("data-index") ? ROW : 0);
+    },
+  );
+};
 
 afterEach(() => {
   while (mounted.length) mounted.pop()?.unmount();
@@ -140,21 +164,67 @@ describe("autocomplete", () => {
     expect(wrapper.find(".f-autocomplete-viewport").exists()).toBe(true);
   });
 
+  it("scrolls the active panel in the scroller, the virtualizer its child", async () => {
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({ service });
+    await wrapper.get("input").setValue("Status: ");
+    await flushPromises();
+    const viewport = wrapper.get(".f-autocomplete-viewport");
+    expect(viewport.classes()).toContain("f-scroll-area-root");
+    const virtualizer = viewport.get("[data-reka-virtualizer]");
+    expect(
+      virtualizer.element.parentElement?.hasAttribute(
+        "data-reka-scroll-area-viewport",
+      ),
+    ).toBe(true);
+  });
+
+  it("pt overrides reach the scroller", async () => {
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({
+      service,
+      pt: { viewport: { type: "always" } },
+    });
+    await wrapper.get("input").setValue("Status: ");
+    await flushPromises();
+    expect(wrapper.find(".f-scroll-area-scrollbar").exists()).toBe(true);
+    expect(wrapper.get("[data-reka-virtualizer]").element.parentElement).toBe(
+      wrapper.get("[data-reka-scroll-area-viewport]").element,
+    );
+  });
+
   it("virtualizes the active panel", async () => {
     const service = makeQuery();
     const wrapper = mountAutocomplete({ service });
     await wrapper.get("input").setValue("Many: ");
     await flushPromises();
-    const items = wrapper.findAll(".f-autocomplete-item");
-    expect(items.length).toBeGreaterThan(0);
-    expect(items.length).toBeLessThan(MANY.length);
-    const first = items[0]!;
-    expect(first.attributes("aria-setsize")).toBe(String(MANY.length));
+    const rows = wrapper.findAll(".f-autocomplete-row");
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.length).toBeLessThan(MANY.length);
+    const first = rows[0]!;
     expect(first.attributes("data-index")).toBeDefined();
-    expect(first.attributes("aria-posinset")).toBe(
-      String(Number(first.attributes("data-index")) + 1),
+    expect(first.attributes("style")).toContain("position: absolute");
+    const index = Number(first.attributes("data-index"));
+    const item = first.get(".f-autocomplete-item");
+    expect(item.attributes("aria-setsize")).toBe(String(MANY.length));
+    expect(item.attributes("aria-posinset")).toBe(String(index + 1));
+    expect(item.text()).toBe(MANY[index]);
+  });
+
+  it("moves a row to its measured position", async () => {
+    measureRows();
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({
+      service,
+      pt: { virtualizer: { estimateSize: 10 } },
+    });
+    await wrapper.get("input").setValue("Many: ");
+    await flushPromises();
+    const second = wrapper.get('.f-autocomplete-row[data-index="1"]');
+    expect(second.attributes("style")).toContain(`translateY(${ROW}px)`);
+    expect(second.get(".f-autocomplete-item").attributes("style")).toBe(
+      undefined,
     );
-    expect(first.text()).toBe(MANY[Number(first.attributes("data-index"))]);
   });
 
   it("selects a virtualized item by click", async () => {
@@ -178,31 +248,33 @@ describe("autocomplete", () => {
     });
     await wrapper.get("input").setValue("Many: ");
     await flushPromises();
-    expect(wrapper.findAll(".f-autocomplete-item")).toHaveLength(
-      VIEWPORT / ROW,
-    );
+    expect(wrapper.findAll(".f-autocomplete-row")).toHaveLength(VIEWPORT / ROW);
   });
 
-  it("virtualizes a consumer's item slot by its one root", async () => {
+  it("virtualizes a consumer's item slot within the row", async () => {
     const service = makeQuery();
     const wrapper = mount(Autocomplete, {
       props: { service },
       slots: {
         item: (p) =>
-          p.measure
-            ? h("div", { class: "my-row", ref: p.measure }, p.option.label)
-            : h("span", { class: "my-trail" }, p.option.label),
+          p.panel < p.service.trail.length
+            ? h("span", { class: "my-trail" }, p.option.label)
+            : [
+                h("span", { class: "my-item" }, p.option.label),
+                h("span", { class: "my-item-hint" }, String(p.index)),
+              ],
       },
       attachTo: document.body,
     });
     mounted.push(wrapper);
     await wrapper.get("input").setValue("Many: ");
     await flushPromises();
-    const rows = wrapper.findAll(".my-row");
+    const rows = wrapper.findAll(".f-autocomplete-row");
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.length).toBeLessThan(MANY.length);
     expect(rows[0]!.attributes("data-index")).toBe("0");
-    expect(rows[0]!.attributes("aria-setsize")).toBe(String(MANY.length));
+    expect(rows[0]!.find(".my-item").text()).toBe(MANY[0]);
+    expect(rows[0]!.find(".my-item-hint").text()).toBe("0");
     expect(wrapper.findAll(".my-trail").map((t) => t.text())).toEqual(["Many"]);
   });
 });
