@@ -1,5 +1,18 @@
 # @zoobzio/nuxt
 
+## 0.0.12
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @zoobzio/vue@0.0.12
+  - @zoobzio/browser@0.0.12
+  - @zoobzio/code@0.0.12
+  - @zoobzio/editor@0.0.12
+  - @zoobzio/form@0.0.12
+  - @zoobzio/table@0.0.12
+  - @zoobzio/icons@0.0.12
+
 ## 0.0.11
 
 ### Patch Changes

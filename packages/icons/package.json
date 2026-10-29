@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/icons",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "The foundation design system's icon contract: the aliases its components draw by default, authored as an icon-sheets config and built by @icon-sheets/kit into a typed alias union, a resolved contract, and SVG sprites.",
   "license": "MIT",
   "author": {
