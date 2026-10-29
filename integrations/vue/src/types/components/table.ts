@@ -67,8 +67,7 @@ export type TableSlots<T> = TableHeadSlots<T> &
     toolbar?: (props: TableContext<T>) => VNode[];
     search?: (props: TableContext<T>) => VNode[];
     pagination?: (props: TableContext<T>) => VNode[];
-    refreshPrepend?: (props: TableContext<T>) => VNode[];
-    refreshAppend?: (props: TableContext<T>) => VNode[];
+    refresh?: (props: TableContext<T>) => VNode[];
   };
 
 /**

@@ -94,14 +94,9 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
           v-bind="settings.actionsMenu"
           @select="service.runFolderAction($event.key, folder)"
         >
-          <Primitive v-bind="settings.actionsTrigger">
-            <template v-if="slots.folderActionsPrepend" #prepend>
-              <slot name="folderActionsPrepend" v-bind="{ ...ctx, folder }" />
-            </template>
-            <template v-if="slots.folderActionsAppend" #append>
-              <slot name="folderActionsAppend" v-bind="{ ...ctx, folder }" />
-            </template>
-          </Primitive>
+          <slot name="folderActions" v-bind="{ ...ctx, folder }">
+            <Primitive v-bind="settings.actionsTrigger" />
+          </slot>
           <template v-if="slots.folderActionPrepend" #itemPrepend="{ item }">
             <slot
               name="folderActionPrepend"

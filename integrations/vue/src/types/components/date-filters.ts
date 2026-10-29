@@ -90,8 +90,6 @@ export type DateFiltersSlots = {
   calendar?: (props: DateFiltersContext) => VNode[];
   actions?: (props: DateFiltersContext) => VNode[];
   applyButton?: (props: DateFiltersContext) => VNode[];
-  triggerPrepend?: (props: DateFiltersContext) => VNode[];
-  triggerAppend?: (props: DateFiltersContext) => VNode[];
 };
 
 /**

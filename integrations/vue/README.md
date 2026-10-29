@@ -94,14 +94,17 @@ export default wrap(Menu, {
 });
 ```
 
-Where an icon belongs, a component has a `prepend` and an `append` slot
-around the content rather than an icon slot: `itemPrepend` and
+Where an icon belongs beside content, a component has a `prepend` and an
+`append` slot around it rather than an icon slot: `itemPrepend` and
 `itemAppend` around a menu item's label, `triggerPrepend` and
 `triggerAppend` around a select's display, `prevPrepend` and `prevAppend`
 around a calendar's previous control, and so on. Each receives the scope
-of the content it sits beside. A component that renders another's
-control forwards the pair under its own name, so a table's `refreshPrepend`
-reaches the refresh button's `prepend`.
+of the content it sits beside. The Fab is one item, so it has one default
+slot in place of its label text, and a component that renders a Fab as a
+part has one slot that replaces the part (a table's `refresh`, a row's
+`actions`, the column manager's `columns`, the pagination's `first`); the
+slot's scope carries `settings`, so a replacement renders the part's
+props through `Primitive` with its own content.
 
 The item types a component takes (`MenuItem`, `TabsOption`,
 `BreadcrumbItem`, `DirectoryItem`, `CommandOption`, …) are interfaces, so

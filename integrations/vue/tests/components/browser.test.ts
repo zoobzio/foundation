@@ -266,7 +266,7 @@ describe("browser", () => {
     ]);
   });
 
-  it("relays folder, file, and bulk action prepend slots from the top", async () => {
+  it("relays the folder, bulk action, and refresh slots from the top", async () => {
     const { service } = makeBrowser(
       { bulkActions: fakeBrowserBulkActions },
       { bulkActions: { purge: vi.fn() } },
@@ -278,7 +278,7 @@ describe("browser", () => {
       {
         folderPrepend: `<template #folderPrepend="s"><i>{{ s.folder.key }}</i></template>`,
         bulkActionPrepend: `<template #bulkActionPrepend="s"><b>{{ s.action.label }}</b></template>`,
-        refreshAppend: `<template #refreshAppend><u>refresh</u></template>`,
+        refresh: `<template #refresh><u>refresh</u></template>`,
       },
     );
     await flushPromises();
@@ -287,6 +287,7 @@ describe("browser", () => {
     ).toEqual(["archive", "drafts", "media"]);
     expect(wrapper.get(".f-data-browser-bulk-action b").text()).toBe("Purge");
     expect(wrapper.get("u").text()).toBe("refresh");
+    expect(wrapper.find('button[aria-label="Refresh"]').exists()).toBe(false);
   });
 
   it("serves the files context to the noFiles slot", async () => {

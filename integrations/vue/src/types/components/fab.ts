@@ -29,13 +29,12 @@ export type FabContext = {
 };
 
 /**
- * Slots of the fab. Each slot receives the context.
+ * Slots of the fab. The default slot is the button's one content, in
+ * place of the label text; `badge` is the badge. Each receives the context.
  */
 export type FabSlots = {
-  icon?: (props: FabContext) => VNode[];
+  default?: (props: FabContext) => VNode[];
   badge?: (props: FabContext) => VNode[];
-  prepend?: (props: FabContext) => VNode[];
-  append?: (props: FabContext) => VNode[];
 };
 
 /**

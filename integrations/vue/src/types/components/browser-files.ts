@@ -74,8 +74,7 @@ export type BrowserFilesSlots<T> = {
   [name: `cell:${string}`]:
     | ((props: BrowserFileCellContext<T>) => VNode[])
     | undefined;
-  actionsPrepend?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
-  actionsAppend?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
+  actions?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
   actionPrepend?: (
     props: BrowserFilesContext<T> & { row: T; item: BrowserActionItem },
   ) => VNode[];

@@ -8,13 +8,13 @@ import type { ButtonHTMLAttributes, HTMLAttributes, VNode } from "vue";
  * names the mark, node, or action (`bold`, `heading-2`, `bulletList`,
  * `undo`); `active` follows the selection.
  */
-export type EditorTool = {
+export interface EditorTool {
   key: string;
   label: string;
   active: boolean;
   disabled: boolean;
   run: () => void;
-};
+}
 
 /**
  * The parts of the editor that accept passthrough. `toolbar` and `content`

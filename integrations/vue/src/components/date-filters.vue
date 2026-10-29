@@ -266,14 +266,7 @@ defineSlots<DateFiltersSlots>();
     <Primitive v-bind="settings.popover">
       <template #trigger>
         <slot name="trigger" v-bind="ctx">
-          <Primitive v-bind="settings.trigger">
-            <template v-if="$slots.triggerPrepend" #prepend>
-              <slot name="triggerPrepend" v-bind="ctx" />
-            </template>
-            <template v-if="$slots.triggerAppend" #append>
-              <slot name="triggerAppend" v-bind="ctx" />
-            </template>
-          </Primitive>
+          <Primitive v-bind="settings.trigger" />
         </slot>
       </template>
       <template #content>

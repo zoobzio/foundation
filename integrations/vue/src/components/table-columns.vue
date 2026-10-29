@@ -81,14 +81,9 @@ defineSlots<TableColumnsSlots<T>>();
 <template>
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
-      <Primitive v-bind="settings.trigger">
-        <template v-if="$slots.columnsPrepend" #prepend>
-          <slot name="columnsPrepend" v-bind="ctx" />
-        </template>
-        <template v-if="$slots.columnsAppend" #append>
-          <slot name="columnsAppend" v-bind="ctx" />
-        </template>
-      </Primitive>
+      <slot name="columns" v-bind="ctx">
+        <Primitive v-bind="settings.trigger" />
+      </slot>
     </template>
     <template #content>
       <Primitive v-bind="settings.command" />

@@ -97,7 +97,10 @@ defineSlots<FormFieldSlots<T>>();
       name="multiSelect"
       v-bind="ctx"
     >
-      <Primitive v-bind="settings.multiSelect" class="f-data-form-multi-select" />
+      <Primitive
+        v-bind="settings.multiSelect"
+        class="f-data-form-multi-select"
+      />
     </slot>
     <slot v-else-if="ctx.control === 'checkbox'" name="checkbox" v-bind="ctx">
       <Primitive v-bind="settings.checkbox" class="f-data-form-checkbox" />

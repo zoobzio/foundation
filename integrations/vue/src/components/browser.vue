@@ -94,14 +94,9 @@ const { Folders, Files } = useForward({
             class="f-data-browser-breadcrumb"
           />
         </slot>
-        <Primitive v-bind="settings.refresh">
-          <template v-if="slots.refreshPrepend" #prepend>
-            <slot name="refreshPrepend" v-bind="ctx" />
-          </template>
-          <template v-if="slots.refreshAppend" #append>
-            <slot name="refreshAppend" v-bind="ctx" />
-          </template>
-        </Primitive>
+        <slot name="refresh" v-bind="ctx">
+          <Primitive v-bind="settings.refresh" />
+        </slot>
       </div>
     </slot>
 

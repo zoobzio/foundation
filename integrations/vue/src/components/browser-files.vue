@@ -149,14 +149,9 @@ defineSlots<BrowserFilesSlots<T>>();
             v-bind="settings.actionsMenu"
             @select="service.runAction($event.key, row)"
           >
-            <Primitive v-bind="settings.actionsTrigger">
-              <template v-if="slots.actionsPrepend" #prepend>
-                <slot name="actionsPrepend" v-bind="{ ...ctx, row }" />
-              </template>
-              <template v-if="slots.actionsAppend" #append>
-                <slot name="actionsAppend" v-bind="{ ...ctx, row }" />
-              </template>
-            </Primitive>
+            <slot name="actions" v-bind="{ ...ctx, row }">
+              <Primitive v-bind="settings.actionsTrigger" />
+            </slot>
             <template v-if="slots.actionPrepend" #itemPrepend="{ item }">
               <slot name="actionPrepend" v-bind="{ ...ctx, row, item }" />
             </template>

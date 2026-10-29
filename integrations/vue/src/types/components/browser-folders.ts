@@ -50,10 +50,7 @@ export type BrowserFoldersSlots<T> = {
   folderAppend?: (
     props: BrowserFoldersContext<T> & { folder: BrowserFolder },
   ) => VNode[];
-  folderActionsPrepend?: (
-    props: BrowserFoldersContext<T> & { folder: BrowserFolder },
-  ) => VNode[];
-  folderActionsAppend?: (
+  folderActions?: (
     props: BrowserFoldersContext<T> & { folder: BrowserFolder },
   ) => VNode[];
   folderActionPrepend?: (

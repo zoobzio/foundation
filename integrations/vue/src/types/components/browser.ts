@@ -82,8 +82,7 @@ export type BrowserSlots<T> = BrowserFoldersSlots<T> &
     toolbar?: (props: BrowserContext<T>) => VNode[];
     breadcrumb?: (props: BrowserContext<T>) => VNode[];
     empty?: (props: BrowserContext<T>) => VNode[];
-    refreshPrepend?: (props: BrowserContext<T>) => VNode[];
-    refreshAppend?: (props: BrowserContext<T>) => VNode[];
+    refresh?: (props: BrowserContext<T>) => VNode[];
   };
 
 /**

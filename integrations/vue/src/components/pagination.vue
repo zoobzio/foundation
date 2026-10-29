@@ -98,24 +98,10 @@ defineSlots<PaginationSlots>();
     <slot name="pages" v-bind="ctx">
       <div class="f-group">
         <slot name="first" v-bind="ctx">
-          <Primitive v-bind="settings.first">
-            <template v-if="$slots.firstPrepend" #prepend>
-              <slot name="firstPrepend" v-bind="ctx" />
-            </template>
-            <template v-if="$slots.firstAppend" #append>
-              <slot name="firstAppend" v-bind="ctx" />
-            </template>
-          </Primitive>
+          <Primitive v-bind="settings.first" />
         </slot>
         <slot name="prev" v-bind="ctx">
-          <Primitive v-bind="settings.prev">
-            <template v-if="$slots.prevPrepend" #prepend>
-              <slot name="prevPrepend" v-bind="ctx" />
-            </template>
-            <template v-if="$slots.prevAppend" #append>
-              <slot name="prevAppend" v-bind="ctx" />
-            </template>
-          </Primitive>
+          <Primitive v-bind="settings.prev" />
         </slot>
         <slot name="options" v-bind="ctx">
           <div class="f-group">
@@ -135,24 +121,10 @@ defineSlots<PaginationSlots>();
           </div>
         </slot>
         <slot name="next" v-bind="ctx">
-          <Primitive v-bind="settings.next">
-            <template v-if="$slots.nextPrepend" #prepend>
-              <slot name="nextPrepend" v-bind="ctx" />
-            </template>
-            <template v-if="$slots.nextAppend" #append>
-              <slot name="nextAppend" v-bind="ctx" />
-            </template>
-          </Primitive>
+          <Primitive v-bind="settings.next" />
         </slot>
         <slot name="last" v-bind="ctx">
-          <Primitive v-bind="settings.last">
-            <template v-if="$slots.lastPrepend" #prepend>
-              <slot name="lastPrepend" v-bind="ctx" />
-            </template>
-            <template v-if="$slots.lastAppend" #append>
-              <slot name="lastAppend" v-bind="ctx" />
-            </template>
-          </Primitive>
+          <Primitive v-bind="settings.last" />
         </slot>
       </div>
     </slot>

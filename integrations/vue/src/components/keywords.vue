@@ -120,14 +120,7 @@ defineSlots<KeywordsSlots>();
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
       <slot name="trigger" v-bind="ctx">
-        <Primitive v-bind="settings.trigger">
-          <template v-if="$slots.triggerPrepend" #prepend>
-            <slot name="triggerPrepend" v-bind="ctx" />
-          </template>
-          <template v-if="$slots.triggerAppend" #append>
-            <slot name="triggerAppend" v-bind="ctx" />
-          </template>
-        </Primitive>
+        <Primitive v-bind="settings.trigger" />
       </slot>
     </template>
     <template #content>
@@ -139,7 +132,10 @@ defineSlots<KeywordsSlots>();
                 <div class="f-caption f-keywords-label">Include</div>
               </slot>
               <slot name="includeInput" v-bind="ctx">
-                <Primitive v-bind="settings.includeInput" class="f-keywords-tags">
+                <Primitive
+                  v-bind="settings.includeInput"
+                  class="f-keywords-tags"
+                >
                   <template #input>
                     <input
                       :value="includeInput"
@@ -159,7 +155,10 @@ defineSlots<KeywordsSlots>();
                 <div class="f-caption f-keywords-label">Exclude</div>
               </slot>
               <slot name="excludeInput" v-bind="ctx">
-                <Primitive v-bind="settings.excludeInput" class="f-keywords-tags">
+                <Primitive
+                  v-bind="settings.excludeInput"
+                  class="f-keywords-tags"
+                >
                   <template #input>
                     <input
                       :value="excludeInput"

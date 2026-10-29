@@ -102,21 +102,13 @@ const { THead, TBody } = useForward({
           <Primitive v-bind="settings.search" class="f-data-table-search" />
         </slot>
         <TableColumns :service="service" :pt="pt?.columns">
-          <template v-if="slots.columnsPrepend" #columnsPrepend="slotProps">
-            <slot name="columnsPrepend" v-bind="slotProps" />
-          </template>
-          <template v-if="slots.columnsAppend" #columnsAppend="slotProps">
-            <slot name="columnsAppend" v-bind="slotProps" />
+          <template v-if="slots.columns" #columns="slotProps">
+            <slot name="columns" v-bind="slotProps" />
           </template>
         </TableColumns>
-        <Primitive v-bind="settings.refresh">
-          <template v-if="slots.refreshPrepend" #prepend>
-            <slot name="refreshPrepend" v-bind="ctx" />
-          </template>
-          <template v-if="slots.refreshAppend" #append>
-            <slot name="refreshAppend" v-bind="ctx" />
-          </template>
-        </Primitive>
+        <slot name="refresh" v-bind="ctx">
+          <Primitive v-bind="settings.refresh" />
+        </slot>
       </div>
     </slot>
 

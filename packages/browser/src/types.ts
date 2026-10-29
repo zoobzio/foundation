@@ -51,9 +51,8 @@ export interface ActionDescriptor {
  * its handler, under the config key. `runAction(key, row)` dispatches by
  * key.
  */
-export interface FileAction<T> {
+export interface FileAction<T> extends ActionDescriptor {
   key: string;
-  label: string;
   action: (row: T) => void;
 }
 
@@ -62,9 +61,8 @@ export interface FileAction<T> {
  * descriptor joined with its handler, under the config key.
  * `runBulkAction(key)` dispatches by key over the service's selection.
  */
-export interface BulkAction {
+export interface BulkAction extends ActionDescriptor {
   key: string;
-  label: string;
   action: (selected: Set<string>) => void;
 }
 
@@ -111,11 +109,10 @@ export interface BrowserFetchResult<T> {
  * the service exposes: descriptor joined with its handler, under the config
  * key. `runFolderAction(key, folder)` dispatches by key.
  */
-export type FolderAction = {
+export interface FolderAction extends ActionDescriptor {
   key: string;
-  label: string;
   action: (folder: BrowserFolder) => void;
-};
+}
 
 /**
  * Config the consumer provides — pure serializable data. Actions are

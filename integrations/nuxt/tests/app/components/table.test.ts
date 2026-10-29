@@ -1,9 +1,9 @@
-// The table wrapper: NuxtLink under the body's `link` part, the service
-// events relayed.
+// The table wrapper: NuxtLink under the body's `link` part, row actions
+// through the layer's Menu with their icons, the service events relayed.
 import type { LinkedRow } from "#test/mount/table";
 
-import { afterEach, describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
 import Table from "../../../app/components/table";
 import { makeTable } from "#test/mount/table";
 
@@ -49,6 +49,35 @@ describe("table wrapper", () => {
     const link = wrapper.get("tbody a[data-nuxt]");
     expect(link.classes()).toContain("custom");
     expect(link.attributes("href")).toBe("https://a.example");
+  });
+
+  it("draws a row action's icon through the layer's Menu", async () => {
+    const { service } = makeTable(
+      {
+        actions: {
+          edit: { label: "Edit", icon: "next" },
+          remove: { label: "Remove" },
+        },
+      },
+      { actions: { edit: vi.fn(), remove: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    await wrapper
+      .get('button[aria-label="Actions"]')
+      .trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    expect(items.map((el) => el.textContent?.trim())).toEqual([
+      "Edit",
+      "Remove",
+    ]);
+    expect(
+      items[0]?.querySelector("svg[data-icon]")?.getAttribute("data-icon"),
+    ).toBe("next");
+    expect(items[1]?.querySelector("svg")).toBeNull();
   });
 
   it("relays the service's domain events", async () => {

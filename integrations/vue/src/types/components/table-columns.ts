@@ -43,9 +43,8 @@ export type TableColumnsContext<T> = {
 };
 
 /**
- * Slots of the column manager, around its trigger's label.
+ * Slots of the column manager: `columns` replaces its trigger.
  */
 export type TableColumnsSlots<T> = {
-  columnsPrepend?: (props: TableColumnsContext<T>) => VNode[];
-  columnsAppend?: (props: TableColumnsContext<T>) => VNode[];
+  columns?: (props: TableColumnsContext<T>) => VNode[];
 };

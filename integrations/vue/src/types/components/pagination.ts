@@ -67,14 +67,6 @@ export type PaginationSlots = {
   next?: (props: PaginationContext) => VNode[];
   last?: (props: PaginationContext) => VNode[];
   size?: (props: PaginationContext) => VNode[];
-  firstPrepend?: (props: PaginationContext) => VNode[];
-  firstAppend?: (props: PaginationContext) => VNode[];
-  prevPrepend?: (props: PaginationContext) => VNode[];
-  prevAppend?: (props: PaginationContext) => VNode[];
-  nextPrepend?: (props: PaginationContext) => VNode[];
-  nextAppend?: (props: PaginationContext) => VNode[];
-  lastPrepend?: (props: PaginationContext) => VNode[];
-  lastAppend?: (props: PaginationContext) => VNode[];
 };
 
 /**

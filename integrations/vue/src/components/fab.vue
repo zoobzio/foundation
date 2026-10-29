@@ -38,11 +38,9 @@ defineSlots<FabSlots>();
     class="f-button"
     @click="emit('click', $event)"
   >
-    <slot name="prepend" v-bind="ctx" />
-    <slot name="icon" v-bind="ctx">
+    <slot v-bind="ctx">
       <span v-if="label" class="f-span">{{ label }}</span>
     </slot>
-    <slot name="append" v-bind="ctx" />
     <slot name="badge" v-bind="ctx">
       <div v-if="badge !== undefined" class="f-group">
         {{ badge }}

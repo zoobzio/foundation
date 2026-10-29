@@ -3,18 +3,18 @@ import { mount } from "@vue/test-utils";
 import Fab from "../../src/components/fab.vue";
 
 describe("fab", () => {
-  it("renders its label as visible text when no icon slot is supplied", () => {
+  it("renders its label as visible text when no content is supplied", () => {
     const wrapper = mount(Fab, { props: { label: "Refresh" } });
     const button = wrapper.get("button");
     expect(button.attributes("aria-label")).toBe("Refresh");
     expect(button.get(".f-span").text()).toBe("Refresh");
   });
 
-  it("a supplied icon slot replaces the label text, keeping the aria-label", () => {
+  it("the default slot replaces the label text, keeping the aria-label", () => {
     const wrapper = mount(Fab, {
       props: { label: "Refresh" },
       slots: {
-        icon: `<template #icon="ctx"><i>{{ ctx.label }}</i></template>`,
+        default: `<template #default="ctx"><i>{{ ctx.label }}</i></template>`,
       },
     });
     const button = wrapper.get("button");

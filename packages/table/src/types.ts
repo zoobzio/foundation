@@ -62,9 +62,8 @@ export interface ActionDescriptor {
  * its handler, under the config key. `runAction(key, row)` dispatches by
  * key.
  */
-export interface RowAction<T> {
+export interface RowAction<T> extends ActionDescriptor {
   key: string;
-  label: string;
   action: (row: T) => void;
 }
 
@@ -73,9 +72,8 @@ export interface RowAction<T> {
  * its handler, under the config key. `runBulkAction(key)` dispatches by key
  * over the service's selection.
  */
-export interface BulkAction {
+export interface BulkAction extends ActionDescriptor {
   key: string;
-  label: string;
   action: (selected: Set<string>) => void;
 }
 

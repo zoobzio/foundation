@@ -72,8 +72,6 @@ export type KeywordsSlots = {
   match?: (props: KeywordsContext) => VNode[];
   matchLabel?: (props: KeywordsContext) => VNode[];
   matchControl?: (props: KeywordsContext) => VNode[];
-  triggerPrepend?: (props: KeywordsContext) => VNode[];
-  triggerAppend?: (props: KeywordsContext) => VNode[];
 };
 
 /**

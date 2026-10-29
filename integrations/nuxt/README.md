@@ -126,10 +126,14 @@ export default defineNuxtConfig({
 A wrapper fills those slots from the contract by default through the
 `slots` option of `wrap`: the consumer's slot wins whenever it renders
 one, and the wrapper's default fills in while it does not. The `Menu` is
-the first. The vue item types are interfaces, and `app/app.d.ts` widens
-`MenuItem` with an optional `icon: IconAlias` by declaration merging, so
-the one `MenuItem` the vue package, the layer, and the app share carries
-the field, and the wrapper draws it in `itemPrepend`.
+the first. The vue item types and the action descriptors of
+`@zoobzio/table` and `@zoobzio/browser` are interfaces, and `app/app.d.ts`
+widens `MenuItem` and both `ActionDescriptor`s with an optional
+`icon: IconAlias` by declaration merging, so the one type the package, the
+layer, and the app share carries the field. A menu item draws it in
+`itemPrepend`, and a row, file, or folder action given to `createTable` or
+`createBrowser` with an `icon` draws it the same way, since the layer's
+`Menu` renders those actions.
 
 ```vue
 <script setup lang="ts">
@@ -338,7 +342,7 @@ app/
   app.vue         — the root: reka providers, loading indicator, error boundary, toaster
   components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts and icons in prepend/append slots
   error.vue       — the error page
-  app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types widened with `icon`
+  app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
   assets/css/     — reset.css, loaded by the layer config
   composables/    — useAppError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   constants/      — error page status codes, log levels

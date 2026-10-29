@@ -68,8 +68,7 @@ export type TableBodySlots<T> = {
   [name: `cell:${string}`]:
     | ((props: TableCellContext<T>) => VNode[])
     | undefined;
-  actionsPrepend?: (props: TableBodyContext<T> & { row: T }) => VNode[];
-  actionsAppend?: (props: TableBodyContext<T> & { row: T }) => VNode[];
+  actions?: (props: TableBodyContext<T> & { row: T }) => VNode[];
   actionPrepend?: (
     props: TableBodyContext<T> & { row: T; item: TableActionItem },
   ) => VNode[];
