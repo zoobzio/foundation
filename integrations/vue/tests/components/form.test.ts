@@ -28,10 +28,9 @@ afterEach(() => {
 });
 
 describe("form", () => {
-  it("renders the title and one field per config entry", () => {
+  it("renders one field per config entry", () => {
     const { service } = makeForm();
     const wrapper = mountForm({ service });
-    expect(wrapper.get(".f-data-form-title").text()).toBe("Profile");
     const labels = wrapper
       .findAll(".f-data-form-field-label")
       .map((label) => label.text());
@@ -223,18 +222,15 @@ describe("form", () => {
     expect(wrapper.find(".f-data-form-field-hint").exists()).toBe(false);
   });
 
-  it("serves ctx to the toolbar and footer slots", () => {
+  it("serves ctx to the footer slot", () => {
     const { service } = makeForm();
     const wrapper = mountForm(
       { service },
       {
-        toolbar: `<template #toolbar="{ form }"><h1>{{ form.config.title }}</h1></template>`,
         footer: `<template #footer="{ form }"><output>{{ form.valid }}</output></template>`,
       },
     );
-    expect(wrapper.get("h1").text()).toBe("Profile");
     expect(wrapper.get("output").text()).toBe("true");
-    expect(wrapper.find(".f-data-form-title").exists()).toBe(false);
     expect(wrapper.find(".f-data-form-submit").exists()).toBe(false);
   });
 

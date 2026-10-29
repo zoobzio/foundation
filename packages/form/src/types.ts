@@ -259,7 +259,6 @@ export type Field<T> =
  * intrinsic contract), and the default payload.
  */
 export type Config<T> = {
-  title: string;
   fields: Field<T>[];
   schema: ZodType<T> & { shape: Record<string, ZodType> };
   defaults?: Partial<T>;

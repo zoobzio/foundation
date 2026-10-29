@@ -26,7 +26,6 @@ export const fields: Field<Payload>[] = [
 export const defaults: Partial<Payload> = { name: "Alice", active: true };
 
 export const fakeConfig: Config<Payload> = {
-  title: "Contact",
   fields,
   schema,
   defaults,

@@ -14,7 +14,6 @@ import { FormService, createFormState } from "@zoobzio/form";
 import { z } from "zod";
 
 const config = {
-  title: "Contact",
   fields: [
     { type: "text", key: "name", label: "Name" },
     { type: "email", key: "email", label: "Email", hint: "Never shared" },
@@ -74,7 +73,6 @@ const roles: Option<Payload["role"]>[] = [
   { value: "member", label: "Member" },
 ];
 const config: Config<Payload> = {
-  title: "Member",
   schema,
   fields: [{ type: "select", key: "role", label: "Role", options: roles }],
 };

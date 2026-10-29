@@ -14,7 +14,6 @@ export const makeForm = (
   wiring: Actions<FakePayload> = {},
 ) => {
   const full: Config<FakePayload> = {
-    title: "Profile",
     fields: fakeFields,
     schema: fakeSchema,
     defaults: fakeDefaults,

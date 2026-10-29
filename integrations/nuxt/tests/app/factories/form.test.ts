@@ -14,7 +14,6 @@ import { fakeDefaults, fakeFields, fakeSchema } from "#test/data/form";
 const makeOptions = (
   overrides: Partial<FormOptions<FakePayload>> = {},
 ): FormOptions<FakePayload> => ({
-  title: "Contact",
   fields: fakeFields,
   schema: fakeSchema,
   defaults: fakeDefaults,
@@ -26,7 +25,6 @@ describe("createForm", () => {
     const useContact = createForm("contact", makeOptions());
     const contact = useContact();
     expect(contact.id).toBe("contact");
-    expect(contact.config.title).toBe("Contact");
     expect(contact.payload).toEqual({ name: "Alice" });
     expect(contact.initialized).toBe(false);
     expect(contact.submitted).toBe(false);

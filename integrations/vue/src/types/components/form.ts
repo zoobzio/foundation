@@ -57,7 +57,6 @@ export type FormContext<T> = {
  * each field.
  */
 export type FormSlots<T> = FormFieldSlots<T> & {
-  toolbar?: (props: FormContext<T>) => VNode[];
   footer?: (props: FormContext<T>) => VNode[];
 };
 

@@ -79,13 +79,6 @@ const FField = useForward({
 
 <template>
   <form ref="el" class="f-form f-data-form" v-bind="settings.form">
-    <slot name="toolbar" v-bind="ctx">
-      <div class="f-group f-data-form-toolbar">
-        <span class="f-span f-data-form-title">
-          {{ service.config.title }}
-        </span>
-      </div>
-    </slot>
     <div class="f-group f-data-form-grid">
       <FField
         v-for="field in service.config.fields"

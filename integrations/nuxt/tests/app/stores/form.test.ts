@@ -9,7 +9,6 @@ import { accessForm } from "../../../app/stores/form";
 import { fakeDefaults, fakeFields, fakeSchema } from "#test/data/form";
 
 const config: Config<FakePayload> = {
-  title: "Contact",
   fields: fakeFields,
   schema: fakeSchema,
   defaults: fakeDefaults,

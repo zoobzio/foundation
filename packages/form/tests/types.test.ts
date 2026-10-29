@@ -29,7 +29,6 @@ const roles: Option<Role>[] = [
 ];
 
 const config: Config<Payload> = {
-  title: "Member",
   schema,
   fields: [
     { type: "text", key: "name", label: "Name" },
