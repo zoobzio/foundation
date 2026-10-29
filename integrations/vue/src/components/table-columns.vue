@@ -79,8 +79,11 @@ defineSlots<TableColumnsSlots<T>>();
   <Popover ref="el" v-bind="settings.popover">
     <template #trigger>
       <Fab v-bind="settings.trigger">
-        <template v-if="$slots.columnsIcon" #icon>
-          <slot name="columnsIcon" v-bind="ctx" />
+        <template v-if="$slots.columnsPrepend" #prepend>
+          <slot name="columnsPrepend" v-bind="ctx" />
+        </template>
+        <template v-if="$slots.columnsAppend" #append>
+          <slot name="columnsAppend" v-bind="ctx" />
         </template>
       </Fab>
     </template>

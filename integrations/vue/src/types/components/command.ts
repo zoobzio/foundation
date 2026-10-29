@@ -97,7 +97,6 @@ export type OptionContext<T extends CommandOption> = CommandContext<T> & {
  */
 export type CommandSlots<T extends CommandOption> = {
   inputWrapper?: (props: CommandContext<T>) => VNode[];
-  inputIcon?: (props: CommandContext<T>) => VNode[];
   filter?: (props: CommandContext<T>) => VNode[];
   content?: (props: CommandContext<T>) => VNode[];
   viewport?: (props: CommandContext<T>) => VNode[];
@@ -107,9 +106,12 @@ export type CommandSlots<T extends CommandOption> = {
   ) => VNode[];
   item?: (props: OptionContext<T>) => VNode[];
   itemCheckbox?: (props: OptionContext<T>) => VNode[];
-  itemIcon?: (props: CommandContext<T> & { item: T }) => VNode[];
   itemLabel?: (props: CommandContext<T> & { item: T }) => VNode[];
   itemCount?: (props: CommandContext<T> & { item: T }) => VNode[];
+  inputPrepend?: (props: CommandContext<T>) => VNode[];
+  inputAppend?: (props: CommandContext<T>) => VNode[];
+  itemPrepend?: (props: CommandContext<T> & { item: T }) => VNode[];
+  itemAppend?: (props: CommandContext<T> & { item: T }) => VNode[];
 };
 
 /**

@@ -64,8 +64,9 @@ export type TabsContext<T extends TabsOption = TabsOption> = {
 export type TabsSlots<T extends TabsOption = TabsOption> = {
   list?: (props: TabsContext<T>) => VNode[];
   trigger?: (props: TabsContext<T> & { option: T }) => VNode[];
-  triggerIcon?: (props: TabsContext<T> & { option: T }) => VNode[];
   content?: (props: TabsContext<T> & { option: T }) => VNode[];
+  triggerPrepend?: (props: TabsContext<T> & { option: T }) => VNode[];
+  triggerAppend?: (props: TabsContext<T> & { option: T }) => VNode[];
 };
 
 /**

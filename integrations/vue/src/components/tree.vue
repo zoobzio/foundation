@@ -105,7 +105,7 @@ defineSlots<TreeSlots<T>>();
           v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
         />
         <slot
-          name="itemIcon"
+          name="itemPrepend"
           v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
         />
         <slot
@@ -121,6 +121,10 @@ defineSlots<TreeSlots<T>>();
           </Primitive>
           <span v-else class="f-span">{{ flat.value.label }}</span>
         </slot>
+        <slot
+          name="itemAppend"
+          v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
+        />
       </slot>
     </TreeItem>
   </TreeRoot>

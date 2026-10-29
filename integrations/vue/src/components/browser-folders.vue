@@ -68,10 +68,11 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
             class="f-button f-data-browser-folder-btn"
             @click="service.open(folder)"
           >
-            <slot name="folderIcon" v-bind="{ ...ctx, folder }" />
+            <slot name="folderPrepend" v-bind="{ ...ctx, folder }" />
             <slot name="folderLabel" v-bind="{ ...ctx, folder }">
               <span class="f-span">{{ folder.label }}</span>
             </slot>
+            <slot name="folderAppend" v-bind="{ ...ctx, folder }" />
             <span
               v-if="folder.count != null"
               class="f-caption f-data-browser-folder-count"
@@ -91,12 +92,21 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
           @select="service.runFolderAction($event.key, folder)"
         >
           <Fab v-bind="settings.actionsTrigger">
-            <template v-if="slots.folderActionsIcon" #icon>
-              <slot name="folderActionsIcon" v-bind="{ ...ctx, folder }" />
+            <template v-if="slots.folderActionsPrepend" #prepend>
+              <slot name="folderActionsPrepend" v-bind="{ ...ctx, folder }" />
+            </template>
+            <template v-if="slots.folderActionsAppend" #append>
+              <slot name="folderActionsAppend" v-bind="{ ...ctx, folder }" />
             </template>
           </Fab>
-          <template v-if="slots.folderActionIcon" #itemIcon="{ item }">
-            <slot name="folderActionIcon" v-bind="{ ...ctx, folder, item }" />
+          <template v-if="slots.folderActionPrepend" #itemPrepend="{ item }">
+            <slot
+              name="folderActionPrepend"
+              v-bind="{ ...ctx, folder, item }"
+            />
+          </template>
+          <template v-if="slots.folderActionAppend" #itemAppend="{ item }">
+            <slot name="folderActionAppend" v-bind="{ ...ctx, folder, item }" />
           </template>
         </Menu>
       </td>

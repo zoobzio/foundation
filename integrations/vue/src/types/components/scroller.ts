@@ -76,7 +76,8 @@ export type ScrollerSlots = {
   thumb?: (props: ScrollerContext) => VNode[];
   corner?: (props: ScrollerContext) => VNode[];
   backToTop?: (props: ScrollerContext) => VNode[];
-  backToTopIcon?: (props: ScrollerContext) => VNode[];
+  backToTopPrepend?: (props: ScrollerContext) => VNode[];
+  backToTopAppend?: (props: ScrollerContext) => VNode[];
 };
 
 /**

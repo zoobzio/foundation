@@ -62,7 +62,6 @@ export type KeywordsContext = {
  */
 export type KeywordsSlots = {
   trigger?: (props: KeywordsContext) => VNode[];
-  triggerIcon?: (props: KeywordsContext) => VNode[];
   root?: (props: KeywordsContext) => VNode[];
   include?: (props: KeywordsContext) => VNode[];
   includeLabel?: (props: KeywordsContext) => VNode[];
@@ -73,6 +72,8 @@ export type KeywordsSlots = {
   match?: (props: KeywordsContext) => VNode[];
   matchLabel?: (props: KeywordsContext) => VNode[];
   matchControl?: (props: KeywordsContext) => VNode[];
+  triggerPrepend?: (props: KeywordsContext) => VNode[];
+  triggerAppend?: (props: KeywordsContext) => VNode[];
 };
 
 /**

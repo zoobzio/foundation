@@ -118,8 +118,9 @@ defineSlots<ScrollerSlots>();
         class="f-button"
         @click="scrollToTop"
       >
-        <slot name="backToTopIcon" v-bind="ctx" />
+        <slot name="backToTopPrepend" v-bind="ctx" />
         <span class="f-span">Back to top</span>
+        <slot name="backToTopAppend" v-bind="ctx" />
       </button>
     </slot>
   </ScrollAreaRoot>

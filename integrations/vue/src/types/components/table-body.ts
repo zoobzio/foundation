@@ -67,12 +67,16 @@ export type TableCellContext<T> = TableBodyContext<T> & TableCell<T>;
 export type TableBodySlots<T> = {
   empty?: (props: TableBodyContext<T>) => VNode[];
   cell?: (props: TableCellContext<T>) => VNode[];
-  actionsIcon?: (props: TableBodyContext<T> & { row: T }) => VNode[];
-  actionIcon?: (
-    props: TableBodyContext<T> & { row: T; item: TableActionItem },
-  ) => VNode[];
 } & {
   [name: `cell:${string}`]:
     | ((props: TableCellContext<T>) => VNode[])
     | undefined;
+  actionsPrepend?: (props: TableBodyContext<T> & { row: T }) => VNode[];
+  actionsAppend?: (props: TableBodyContext<T> & { row: T }) => VNode[];
+  actionPrepend?: (
+    props: TableBodyContext<T> & { row: T; item: TableActionItem },
+  ) => VNode[];
+  actionAppend?: (
+    props: TableBodyContext<T> & { row: T; item: TableActionItem },
+  ) => VNode[];
 };

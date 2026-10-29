@@ -144,14 +144,11 @@ export type DateRangePickerSlots = {
   input?: (props: DateRangePickerContext & DateRangePickerInputItem) => VNode[];
   separator?: (props: DateRangePickerContext) => VNode[];
   trigger?: (props: DateRangePickerContext) => VNode[];
-  triggerIcon?: (props: DateRangePickerContext) => VNode[];
   content?: (props: DateRangePickerContext) => VNode[];
   header?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
   prev?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
-  prevIcon?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
   heading?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
   next?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
-  nextIcon?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
   grid?: (
     props: DateRangePickerContext &
       DateRangePickerView & { month: DateRangePickerMonth },
@@ -177,6 +174,16 @@ export type DateRangePickerSlots = {
       date: DateValue;
     },
   ) => VNode[];
+  triggerPrepend?: (props: DateRangePickerContext) => VNode[];
+  triggerAppend?: (props: DateRangePickerContext) => VNode[];
+  prevPrepend?: (
+    props: DateRangePickerContext & DateRangePickerView,
+  ) => VNode[];
+  prevAppend?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
+  nextPrepend?: (
+    props: DateRangePickerContext & DateRangePickerView,
+  ) => VNode[];
+  nextAppend?: (props: DateRangePickerContext & DateRangePickerView) => VNode[];
 };
 
 /**

@@ -134,9 +134,9 @@ defineSlots<DatePickerSlots>();
               class="f-date-picker-trigger"
               v-bind="settings.trigger"
             >
-              <slot name="triggerIcon" v-bind="ctx">
-                <span class="f-span">Calendar</span>
-              </slot>
+              <slot name="triggerPrepend" v-bind="ctx" />
+              <span class="f-span">Calendar</span>
+              <slot name="triggerAppend" v-bind="ctx" />
             </DatePickerTrigger>
           </slot>
         </slot>
@@ -162,9 +162,15 @@ defineSlots<DatePickerSlots>();
                     class="f-date-picker-prev"
                     v-bind="settings.prev"
                   >
-                    <slot name="prevIcon" v-bind="{ ...ctx, weekDays, grid }">
-                      <span class="f-span">Previous</span>
-                    </slot>
+                    <slot
+                      name="prevPrepend"
+                      v-bind="{ ...ctx, weekDays, grid }"
+                    />
+                    <span class="f-span">Previous</span>
+                    <slot
+                      name="prevAppend"
+                      v-bind="{ ...ctx, weekDays, grid }"
+                    />
                   </DatePickerPrev>
                 </slot>
                 <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
@@ -178,9 +184,15 @@ defineSlots<DatePickerSlots>();
                     class="f-date-picker-next"
                     v-bind="settings.next"
                   >
-                    <slot name="nextIcon" v-bind="{ ...ctx, weekDays, grid }">
-                      <span class="f-span">Next</span>
-                    </slot>
+                    <slot
+                      name="nextPrepend"
+                      v-bind="{ ...ctx, weekDays, grid }"
+                    />
+                    <span class="f-span">Next</span>
+                    <slot
+                      name="nextAppend"
+                      v-bind="{ ...ctx, weekDays, grid }"
+                    />
                   </DatePickerNext>
                 </slot>
               </DatePickerHeader>

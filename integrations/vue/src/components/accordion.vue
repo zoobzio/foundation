@@ -95,10 +95,14 @@ defineSlots<AccordionSlots<T>>();
                   <slot name="triggerContent" v-bind="{ ...ctx, item, open }">
                     <div class="f-group">
                       <slot
-                        name="triggerIcon"
+                        name="triggerPrepend"
                         v-bind="{ ...ctx, item, open }"
                       />
                       {{ item.label }}
+                      <slot
+                        name="triggerAppend"
+                        v-bind="{ ...ctx, item, open }"
+                      />
                     </div>
                   </slot>
                   <slot name="chevron" v-bind="{ ...ctx, item, open }" />

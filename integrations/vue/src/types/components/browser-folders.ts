@@ -35,22 +35,34 @@ export type BrowserFoldersContext<T> = {
 
 /**
  * Slots of the folder rows. Each slot receives the context and its
- * `folder`; the action icon slot also receives its `item`.
+ * `folder`.
  */
 export type BrowserFoldersSlots<T> = {
   folder?: (
     props: BrowserFoldersContext<T> & { folder: BrowserFolder },
   ) => VNode[];
-  folderIcon?: (
-    props: BrowserFoldersContext<T> & { folder: BrowserFolder },
-  ) => VNode[];
   folderLabel?: (
     props: BrowserFoldersContext<T> & { folder: BrowserFolder },
   ) => VNode[];
-  folderActionsIcon?: (
+  folderPrepend?: (
     props: BrowserFoldersContext<T> & { folder: BrowserFolder },
   ) => VNode[];
-  folderActionIcon?: (
+  folderAppend?: (
+    props: BrowserFoldersContext<T> & { folder: BrowserFolder },
+  ) => VNode[];
+  folderActionsPrepend?: (
+    props: BrowserFoldersContext<T> & { folder: BrowserFolder },
+  ) => VNode[];
+  folderActionsAppend?: (
+    props: BrowserFoldersContext<T> & { folder: BrowserFolder },
+  ) => VNode[];
+  folderActionPrepend?: (
+    props: BrowserFoldersContext<T> & {
+      folder: BrowserFolder;
+      item: BrowserActionItem;
+    },
+  ) => VNode[];
+  folderActionAppend?: (
     props: BrowserFoldersContext<T> & {
       folder: BrowserFolder;
       item: BrowserActionItem;

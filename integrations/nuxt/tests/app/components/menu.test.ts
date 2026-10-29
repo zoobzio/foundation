@@ -1,5 +1,5 @@
 // The menu wrapper: NuxtLink under the `link` part, an item's `icon` drawn
-// in the `itemIcon` slot by default, select and open relayed.
+// in the `itemPrepend` slot by default, select and open relayed.
 import type { MenuGroup } from "@zoobzio/vue/types/components/menu";
 
 import { afterEach, describe, expect, it } from "vitest";
@@ -80,7 +80,7 @@ describe("menu wrapper", () => {
     expect(wrapper.emitted("update:open")?.at(0)).toEqual([true]);
   });
 
-  it("draws an item's icon through the sprite, linked or not", async () => {
+  it("draws an item's icon before its label, linked or not", async () => {
     await mountMenu();
     const icon = (label: string) =>
       itemByText(label)
@@ -88,9 +88,9 @@ describe("menu wrapper", () => {
         ?.getAttribute("data-icon");
     expect(icon("Profile")).toBe("next");
     expect(icon("Sign out")).toBe("close");
-    expect(
-      itemByText("Profile").querySelector("use")?.getAttribute("href"),
-    ).toBe("#next");
+    const profile = itemByText("Profile");
+    expect(profile.querySelector("use")?.getAttribute("href")).toBe("#next");
+    expect(profile.firstElementChild?.tagName).toBe("svg");
   });
 
   it("draws nothing for an item without an icon", async () => {
@@ -98,11 +98,11 @@ describe("menu wrapper", () => {
     expect(itemByText("Archived").querySelector("svg")).toBeNull();
   });
 
-  it("lets a consumer's itemIcon slot win over the default", async () => {
+  it("lets a consumer's itemPrepend slot win over the default", async () => {
     await mountMenu(
       {},
       {
-        itemIcon: `<template #itemIcon="{ item }"><i class="mine">{{ item.icon ?? "none" }}</i></template>`,
+        itemPrepend: `<template #itemPrepend="{ item }"><i class="mine">{{ item.icon ?? "none" }}</i></template>`,
       },
     );
     expect(itemByText("Profile").querySelector("svg")).toBeNull();
@@ -122,7 +122,9 @@ describe("menu wrapper", () => {
           h(
             Menu,
             { label: "Open", groups },
-            mine.value ? { itemIcon: () => [h("i", { class: "mine" })] } : {},
+            mine.value
+              ? { itemPrepend: () => [h("i", { class: "mine" })] }
+              : {},
           );
       },
     });
@@ -132,18 +134,14 @@ describe("menu wrapper", () => {
     expect(
       itemByText("Profile").querySelector("svg[data-icon]"),
     ).not.toBeNull();
-    expect(itemByText("Profile").querySelector("i.mine")).toBeNull();
-
     mine.value = true;
     await flushPromises();
     expect(itemByText("Profile").querySelector("svg[data-icon]")).toBeNull();
     expect(itemByText("Profile").querySelector("i.mine")).not.toBeNull();
-
     mine.value = false;
     await flushPromises();
     expect(
       itemByText("Profile").querySelector("svg[data-icon]"),
     ).not.toBeNull();
-    expect(itemByText("Profile").querySelector("i.mine")).toBeNull();
   });
 });

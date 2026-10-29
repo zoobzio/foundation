@@ -17,10 +17,14 @@ export type TableBulkActionsContext<T> = {
 };
 
 /**
- * Slots of the bulk actions bar. The icon slot receives its `action`.
+ * Slots of the bulk actions bar, around each action's label. Each slot
+ * receives its `action`.
  */
 export type TableBulkActionsSlots<T> = {
-  bulkActionIcon?: (
+  bulkActionPrepend?: (
+    props: TableBulkActionsContext<T> & { action: BulkAction },
+  ) => VNode[];
+  bulkActionAppend?: (
     props: TableBulkActionsContext<T> & { action: BulkAction },
   ) => VNode[];
 };

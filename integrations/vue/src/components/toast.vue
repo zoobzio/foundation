@@ -90,9 +90,9 @@ defineSlots<ToastSlots>();
     </slot>
     <slot name="close" v-bind="ctx">
       <ToastClose class="f-toast-close" v-bind="settings.close">
-        <slot name="closeIcon" v-bind="ctx">
-          <span class="f-span">Close</span>
-        </slot>
+        <slot name="closePrepend" v-bind="ctx" />
+        <span class="f-span">Close</span>
+        <slot name="closeAppend" v-bind="ctx" />
       </ToastClose>
     </slot>
   </ToastRoot>

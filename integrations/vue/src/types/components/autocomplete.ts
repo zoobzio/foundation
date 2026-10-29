@@ -130,10 +130,11 @@ export type AutocompleteSlots = {
   hint?: (props: AutocompleteContext) => VNode[];
   input?: (props: AutocompleteContext) => VNode[];
   item?: (props: AutocompleteOptionContext) => VNode[];
-  itemIcon?: (props: AutocompleteOptionContext) => VNode[];
   itemLabel?: (props: AutocompleteOptionContext) => VNode[];
   itemArrow?: (props: AutocompleteOptionContext) => VNode[];
   empty?: (props: AutocompleteContext) => VNode[];
+  itemPrepend?: (props: AutocompleteOptionContext) => VNode[];
+  itemAppend?: (props: AutocompleteOptionContext) => VNode[];
 };
 
 /**

@@ -172,7 +172,7 @@ describe("WrapOptions", () => {
   it("types the layer and the defaults from the component", () => {
     const menu: WrapOptions<typeof Menu> = {
       pt: { link: () => ({ as: "span" }) },
-      slots: { itemIcon: ({ item }) => [h("i", item.label)] },
+      slots: { itemLabel: ({ item }) => [h("i", item.label)] },
     };
     const hero: WrapOptions<typeof Hero> = {
       pt: { link: { as: "span" } },

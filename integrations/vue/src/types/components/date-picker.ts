@@ -137,14 +137,11 @@ export type DatePickerSlots = {
     props: DatePickerContext & { segment: DatePickerSegment },
   ) => VNode[];
   trigger?: (props: DatePickerContext) => VNode[];
-  triggerIcon?: (props: DatePickerContext) => VNode[];
   content?: (props: DatePickerContext) => VNode[];
   header?: (props: DatePickerContext & DatePickerView) => VNode[];
   prev?: (props: DatePickerContext & DatePickerView) => VNode[];
-  prevIcon?: (props: DatePickerContext & DatePickerView) => VNode[];
   heading?: (props: DatePickerContext & DatePickerView) => VNode[];
   next?: (props: DatePickerContext & DatePickerView) => VNode[];
-  nextIcon?: (props: DatePickerContext & DatePickerView) => VNode[];
   grid?: (
     props: DatePickerContext & DatePickerView & { month: DatePickerMonth },
   ) => VNode[];
@@ -161,6 +158,12 @@ export type DatePickerSlots = {
   cellTrigger?: (
     props: DatePickerContext & { month: DatePickerMonth; date: DateValue },
   ) => VNode[];
+  triggerPrepend?: (props: DatePickerContext) => VNode[];
+  triggerAppend?: (props: DatePickerContext) => VNode[];
+  prevPrepend?: (props: DatePickerContext & DatePickerView) => VNode[];
+  prevAppend?: (props: DatePickerContext & DatePickerView) => VNode[];
+  nextPrepend?: (props: DatePickerContext & DatePickerView) => VNode[];
+  nextAppend?: (props: DatePickerContext & DatePickerView) => VNode[];
 };
 
 /**

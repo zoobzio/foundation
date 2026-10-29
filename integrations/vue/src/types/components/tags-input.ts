@@ -65,8 +65,9 @@ export type TagsInputSlots = {
   item?: (props: TagsInputContext & { tag: string }) => VNode[];
   itemText?: (props: TagsInputContext & { tag: string }) => VNode[];
   itemDelete?: (props: TagsInputContext & { tag: string }) => VNode[];
-  itemDeleteIcon?: (props: TagsInputContext & { tag: string }) => VNode[];
   input?: (props: TagsInputContext) => VNode[];
+  itemDeletePrepend?: (props: TagsInputContext & { tag: string }) => VNode[];
+  itemDeleteAppend?: (props: TagsInputContext & { tag: string }) => VNode[];
 };
 
 /**

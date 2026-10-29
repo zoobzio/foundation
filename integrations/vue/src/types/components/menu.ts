@@ -97,8 +97,9 @@ export type MenuSlots<T extends MenuItem = MenuItem> = {
   content?: (props: MenuContext<T>) => VNode[];
   groupLabel?: (props: MenuContext<T> & { group: MenuGroup<T> }) => VNode[];
   item?: (props: MenuContext<T> & { item: T }) => VNode[];
-  itemIcon?: (props: MenuContext<T> & { item: T }) => VNode[];
   itemLabel?: (props: MenuContext<T> & { item: T }) => VNode[];
+  itemPrepend?: (props: MenuContext<T> & { item: T }) => VNode[];
+  itemAppend?: (props: MenuContext<T> & { item: T }) => VNode[];
 };
 
 /**

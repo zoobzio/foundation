@@ -34,6 +34,8 @@ export type FabContext = {
 export type FabSlots = {
   icon?: (props: FabContext) => VNode[];
   badge?: (props: FabContext) => VNode[];
+  prepend?: (props: FabContext) => VNode[];
+  append?: (props: FabContext) => VNode[];
 };
 
 /**

@@ -95,9 +95,9 @@ defineSlots<RangeCalendarSlots>();
               class="f-range-calendar-prev"
               v-bind="settings.prev"
             >
-              <slot name="prevIcon" v-bind="{ ...ctx, weekDays, grid }">
-                <span class="f-span">Previous</span>
-              </slot>
+              <slot name="prevPrepend" v-bind="{ ...ctx, weekDays, grid }" />
+              <span class="f-span">Previous</span>
+              <slot name="prevAppend" v-bind="{ ...ctx, weekDays, grid }" />
             </RangeCalendarPrev>
           </slot>
           <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
@@ -111,9 +111,9 @@ defineSlots<RangeCalendarSlots>();
               class="f-range-calendar-next"
               v-bind="settings.next"
             >
-              <slot name="nextIcon" v-bind="{ ...ctx, weekDays, grid }">
-                <span class="f-span">Next</span>
-              </slot>
+              <slot name="nextPrepend" v-bind="{ ...ctx, weekDays, grid }" />
+              <span class="f-span">Next</span>
+              <slot name="nextAppend" v-bind="{ ...ctx, weekDays, grid }" />
             </RangeCalendarNext>
           </slot>
         </RangeCalendarHeader>

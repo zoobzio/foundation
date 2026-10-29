@@ -70,12 +70,16 @@ export type BrowserFileCellContext<T> = BrowserFilesContext<T> &
 export type BrowserFilesSlots<T> = {
   noFiles?: (props: BrowserFilesContext<T>) => VNode[];
   cell?: (props: BrowserFileCellContext<T>) => VNode[];
-  actionsIcon?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
-  actionIcon?: (
-    props: BrowserFilesContext<T> & { row: T; item: BrowserActionItem },
-  ) => VNode[];
 } & {
   [name: `cell:${string}`]:
     | ((props: BrowserFileCellContext<T>) => VNode[])
     | undefined;
+  actionsPrepend?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
+  actionsAppend?: (props: BrowserFilesContext<T> & { row: T }) => VNode[];
+  actionPrepend?: (
+    props: BrowserFilesContext<T> & { row: T; item: BrowserActionItem },
+  ) => VNode[];
+  actionAppend?: (
+    props: BrowserFilesContext<T> & { row: T; item: BrowserActionItem },
+  ) => VNode[];
 };

@@ -64,8 +64,9 @@ export type DirectorySlots<T extends DirectoryItem> = {
     props: DirectoryContext<T> & { group: DirectoryGroup<T> },
   ) => VNode[];
   item?: (props: DirectoryContext<T> & { item: T }) => VNode[];
-  itemIcon?: (props: DirectoryContext<T> & { item: T }) => VNode[];
   itemLabel?: (props: DirectoryContext<T> & { item: T }) => VNode[];
+  itemPrepend?: (props: DirectoryContext<T> & { item: T }) => VNode[];
+  itemAppend?: (props: DirectoryContext<T> & { item: T }) => VNode[];
 };
 
 /**

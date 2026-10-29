@@ -77,9 +77,18 @@ import { wrap } from "@zoobzio/vue/utils/wrap";
 
 export default wrap(Menu, {
   pt: { link: () => ({ as: RouterLink }) },
-  slots: { itemIcon: ({ item }) => [h(Glyph, { name: item.label })] },
+  slots: { itemLabel: ({ item }) => [h("b", item.label)] },
 });
 ```
+
+Where an icon belongs, a component has a `prepend` and an `append` slot
+around the content rather than an icon slot: `itemPrepend` and
+`itemAppend` around a menu item's label, `triggerPrepend` and
+`triggerAppend` around a select's display, `prevPrepend` and `prevAppend`
+around a calendar's previous control, and so on. Each receives the scope
+of the content it sits beside. A component that renders another's
+control forwards the pair under its own name, so a table's `refreshPrepend`
+reaches the refresh button's `prepend`.
 
 The item types a component takes (`MenuItem`, `TabsOption`,
 `BreadcrumbItem`, `DirectoryItem`, `CommandOption`, …) are interfaces, so
@@ -193,7 +202,7 @@ service.init();
   :pt="{ files: { actionsTrigger: { label: 'More' } } }"
   @navigated="onNavigated"
 >
-  <template #folderIcon><FolderGlyph /></template>
+  <template #folderLabel="{ folder }"><b>{{ folder.label }}</b></template>
 </Browser>
 ```
 
@@ -209,7 +218,7 @@ follows `load` while the editor is off. Each button runs the tool's
 command and reports `aria-pressed` from the service's `active`. The
 `loaded`, `updated`, `mounted`, and `unmounted` events relay as emits;
 `data-mounted` on the root says the editor is on. `pt.tool` is built per
-tool; the `tool` and `toolIcon` slots receive their tool; `toolbar`
+tool; the `tool` slot receives its tool; `toolbar`
 replaces the whole bar, and its context carries `activate` for a custom
 bar to turn the editor on.
 

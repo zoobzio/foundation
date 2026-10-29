@@ -64,12 +64,13 @@ export type EditorContext<I, O> = {
 
 /**
  * Slots of the editor. `toolbar` replaces the whole toolbar; `tool`
- * replaces one button and `toolIcon` fills its icon, each given the tool.
+ * replaces one button, given the tool.
  */
 export type EditorSlots<I, O> = {
   toolbar?: (props: EditorContext<I, O>) => VNode[];
   tool?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
-  toolIcon?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
+  toolPrepend?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
+  toolAppend?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
 };
 
 /**

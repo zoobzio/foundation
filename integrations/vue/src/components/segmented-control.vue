@@ -77,16 +77,18 @@ defineSlots<SegmentedControlSlots<T>>();
           v-bind="settings.item(option)"
         >
           <Primitive v-if="option.link" v-bind="settings.link(option)">
-            <slot name="itemIcon" v-bind="{ ...ctx, option }" />
+            <slot name="itemPrepend" v-bind="{ ...ctx, option }" />
             <slot name="itemLabel" v-bind="{ ...ctx, option }">
               <span v-if="option.label" class="f-span">{{ option.label }}</span>
             </slot>
+            <slot name="itemAppend" v-bind="{ ...ctx, option }" />
           </Primitive>
           <template v-else>
-            <slot name="itemIcon" v-bind="{ ...ctx, option }" />
+            <slot name="itemPrepend" v-bind="{ ...ctx, option }" />
             <slot name="itemLabel" v-bind="{ ...ctx, option }">
               <span v-if="option.label" class="f-span">{{ option.label }}</span>
             </slot>
+            <slot name="itemAppend" v-bind="{ ...ctx, option }" />
           </template>
         </ToggleGroupItem>
       </slot>

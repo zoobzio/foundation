@@ -17,10 +17,14 @@ export type BrowserBulkActionsContext<T> = {
 };
 
 /**
- * Slots of the bulk actions bar. The icon slot receives its `action`.
+ * Slots of the bulk actions bar, around each action's label. Each slot
+ * receives its `action`.
  */
 export type BrowserBulkActionsSlots<T> = {
-  bulkActionIcon?: (
+  bulkActionPrepend?: (
+    props: BrowserBulkActionsContext<T> & { action: BulkAction },
+  ) => VNode[];
+  bulkActionAppend?: (
     props: BrowserBulkActionsContext<T> & { action: BulkAction },
   ) => VNode[];
 };

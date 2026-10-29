@@ -140,16 +140,18 @@ defineSlots<MenuSlots<T>>();
                     v-bind="settings.item(item)"
                   >
                     <Primitive v-if="item.link" v-bind="settings.link(item)">
-                      <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+                      <slot name="itemPrepend" v-bind="{ ...ctx, item }" />
                       <slot name="itemLabel" v-bind="{ ...ctx, item }">
                         <span class="f-span">{{ item.label }}</span>
                       </slot>
+                      <slot name="itemAppend" v-bind="{ ...ctx, item }" />
                     </Primitive>
                     <template v-else>
-                      <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+                      <slot name="itemPrepend" v-bind="{ ...ctx, item }" />
                       <slot name="itemLabel" v-bind="{ ...ctx, item }">
                         <span class="f-span">{{ item.label }}</span>
                       </slot>
+                      <slot name="itemAppend" v-bind="{ ...ctx, item }" />
                     </template>
                   </DropdownMenuItem>
                 </slot>

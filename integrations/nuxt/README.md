@@ -95,12 +95,14 @@ the same path composes the same way.
 
 ## Icons
 
-The components of `@zoobzio/vue` draw no icons: each leaves its icons to
-`*Icon` slots (`prevIcon`, `closeIcon`, `itemIcon`, …) that render nothing
-by default. The layer loads [`@icon-sheets/nuxt`](https://github.com/zoobzio/icon-sheets)
-with the foundation contract from [`@zoobzio/icons`](../../packages/icons/)
-as its default `iconSheets` option, so an app that extends the layer gets
-the sprite inlined on every page and `<Icon name="…" />` on `#components`
+The components of `@zoobzio/vue` draw no icons. Where one belongs, the
+component has a `prepend` and an `append` slot around the content
+(`itemPrepend`, `triggerAppend`, `prevPrepend`, …), so an icon can lead,
+trail, or both. The layer loads
+[`@icon-sheets/nuxt`](https://github.com/zoobzio/icon-sheets) with the
+foundation contract from [`@zoobzio/icons`](../../packages/icons/) as its
+default `iconSheets` option, so an app that extends the layer gets the
+sprite inlined on every page and `<Icon name="…" />` on `#components`
 with no setup. `IconAlias` on `#imports` is the alias union the app
 compiles against.
 
@@ -116,14 +118,13 @@ export default defineNuxtConfig({
 });
 ```
 
-A wrapper fills a component's icon slots from the contract by default, the
-same way it lays `NuxtLink` under the `link` part: the consumer's slot
-wins whenever it renders one, and the wrapper's default fills in while it
-does not. The `Menu` is the first. The vue item types are interfaces, and
-`app/app.d.ts` widens `MenuItem` with an optional `icon: IconAlias` by
-declaration merging, so the one `MenuItem` the vue package, the layer, and
-the app share carries the field, and the wrapper draws it in the
-`itemIcon` slot.
+A wrapper fills those slots from the contract by default through the
+`slots` option of `wrap`: the consumer's slot wins whenever it renders
+one, and the wrapper's default fills in while it does not. The `Menu` is
+the first. The vue item types are interfaces, and `app/app.d.ts` widens
+`MenuItem` with an optional `icon: IconAlias` by declaration merging, so
+the one `MenuItem` the vue package, the layer, and the app share carries
+the field, and the wrapper draws it in `itemPrepend`.
 
 ```vue
 <script setup lang="ts">
@@ -330,7 +331,7 @@ variant.
 ```
 app/
   app.vue         — the root: reka providers, loading indicator, error boundary, toaster
-  components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts and icons in icon slots
+  components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts and icons in prepend/append slots
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types widened with `icon`
   assets/css/     — reset.css, loaded by the layer config

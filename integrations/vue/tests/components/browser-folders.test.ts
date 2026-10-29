@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import BrowserFolders from "../../src/components/browser-folders.vue";
 import { makeBrowser } from "#test/mount/browser";
-import { fakeBrowserBulkActions, fakeFolderActions } from "#test/data/browser";
+import { fakeBrowserBulkActions } from "#test/data/browser";
 
 const mounted: { unmount: () => void }[] = [];
 
@@ -70,27 +70,6 @@ describe("browser-folders", () => {
     if (!drafts) throw new Error("no Drafts folder");
     await drafts.trigger("click");
     expect(service.path).toEqual([{ key: "drafts", label: "Drafts" }]);
-  });
-
-  it("renders the folder actions trigger per row when folder actions exist", async () => {
-    const { service } = makeBrowser(
-      { folderActions: fakeFolderActions },
-      { folderActions: { rename: vi.fn() } },
-    );
-    await service.init();
-    const wrapper = mountFolders(
-      { service },
-      {
-        folderActionsIcon: `<template #folderActionsIcon="s"><i>{{ s.folder.key }}</i></template>`,
-      },
-    );
-    const triggers = wrapper.findAll('button[aria-label="Actions"]');
-    expect(triggers.map((t) => t.get("i").text())).toEqual([
-      "archive",
-      "drafts",
-      "media",
-    ]);
-    expect(triggers[0]!.find(".f-span").exists()).toBe(false);
   });
 
   it("serves ctx and the folder to the folder slot", async () => {

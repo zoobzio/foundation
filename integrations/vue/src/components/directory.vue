@@ -61,10 +61,11 @@ defineSlots<DirectorySlots<T>>();
               class="f-anchor"
               v-bind="settings.link(item)"
             >
-              <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+              <slot name="itemPrepend" v-bind="{ ...ctx, item }" />
               <slot name="itemLabel" v-bind="{ ...ctx, item }">
                 <span class="f-span">{{ item.label }}</span>
               </slot>
+              <slot name="itemAppend" v-bind="{ ...ctx, item }" />
             </Primitive>
             <button
               v-else
@@ -73,10 +74,11 @@ defineSlots<DirectorySlots<T>>();
               :disabled="item.disabled"
               @click="emit('select', item)"
             >
-              <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+              <slot name="itemPrepend" v-bind="{ ...ctx, item }" />
               <slot name="itemLabel" v-bind="{ ...ctx, item }">
                 <span class="f-span">{{ item.label }}</span>
               </slot>
+              <slot name="itemAppend" v-bind="{ ...ctx, item }" />
             </button>
           </slot>
         </li>

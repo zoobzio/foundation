@@ -59,12 +59,16 @@ defineSlots<BreadcrumbSlots<T>>();
             aria-current="page"
           >
             <slot
-              name="itemIcon"
+              name="itemPrepend"
               v-bind="{ ...ctx, item, index, last: true }"
             />
             <slot name="itemLabel" v-bind="{ ...ctx, item, index, last: true }">
               {{ item.label }}
             </slot>
+            <slot
+              name="itemAppend"
+              v-bind="{ ...ctx, item, index, last: true }"
+            />
           </span>
           <Primitive
             v-else-if="item.link"
@@ -72,7 +76,7 @@ defineSlots<BreadcrumbSlots<T>>();
             v-bind="settings.link(item)"
           >
             <slot
-              name="itemIcon"
+              name="itemPrepend"
               v-bind="{ ...ctx, item, index, last: false }"
             />
             <slot
@@ -81,6 +85,10 @@ defineSlots<BreadcrumbSlots<T>>();
             >
               <span class="f-span">{{ item.label }}</span>
             </slot>
+            <slot
+              name="itemAppend"
+              v-bind="{ ...ctx, item, index, last: false }"
+            />
           </Primitive>
           <button
             v-else
@@ -90,7 +98,7 @@ defineSlots<BreadcrumbSlots<T>>();
             @click="emit('select', item)"
           >
             <slot
-              name="itemIcon"
+              name="itemPrepend"
               v-bind="{ ...ctx, item, index, last: false }"
             />
             <slot
@@ -99,6 +107,10 @@ defineSlots<BreadcrumbSlots<T>>();
             >
               <span class="f-span">{{ item.label }}</span>
             </slot>
+            <slot
+              name="itemAppend"
+              v-bind="{ ...ctx, item, index, last: false }"
+            />
           </button>
         </slot>
         <slot

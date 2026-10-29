@@ -72,8 +72,9 @@ export type SegmentedControlSlots<
   T extends SegmentedControlOption = SegmentedControlOption,
 > = {
   item?: (props: SegmentedControlContext<T> & { option: T }) => VNode[];
-  itemIcon?: (props: SegmentedControlContext<T> & { option: T }) => VNode[];
   itemLabel?: (props: SegmentedControlContext<T> & { option: T }) => VNode[];
+  itemPrepend?: (props: SegmentedControlContext<T> & { option: T }) => VNode[];
+  itemAppend?: (props: SegmentedControlContext<T> & { option: T }) => VNode[];
 };
 
 /**

@@ -75,21 +75,27 @@ describe("breadcrumb", () => {
     ]);
   });
 
-  it("renders the itemIcon slot inside each item, before the label", () => {
+  it("renders itemPrepend and itemAppend around each label, with the item's scope", () => {
     const wrapper = mountBreadcrumb(
       {},
       {
-        itemIcon: `<template #itemIcon="s">
-          <i>{{ s.item.key }}:{{ s.last }}</i>
-        </template>`,
+        itemPrepend: `<template #itemPrepend="s"><i>{{ s.item.key }}:{{ s.last }}</i></template>`,
+        itemAppend: `<template #itemAppend="s"><b>{{ s.index }}</b></template>`,
       },
     );
     expect(wrapper.get("a").element.firstElementChild?.tagName).toBe("I");
+    expect(wrapper.get("a").element.lastElementChild?.tagName).toBe("B");
     expect(wrapper.findAll("i").map((i) => i.text())).toEqual([
       "root:false",
       "docs:false",
       "legacy:false",
       "current:true",
+    ]);
+    expect(wrapper.findAll("b").map((b) => b.text())).toEqual([
+      "0",
+      "1",
+      "2",
+      "3",
     ]);
   });
 

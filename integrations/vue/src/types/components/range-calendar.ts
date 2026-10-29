@@ -92,10 +92,8 @@ export type RangeCalendarContext = {
 export type RangeCalendarSlots = {
   header?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   prev?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  prevIcon?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   heading?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   next?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  nextIcon?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
   grid?: (
     props: RangeCalendarContext &
       RangeCalendarView & { month: RangeCalendarMonth },
@@ -121,6 +119,10 @@ export type RangeCalendarSlots = {
       date: DateValue;
     },
   ) => VNode[];
+  prevPrepend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
+  prevAppend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
+  nextPrepend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
+  nextAppend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
 };
 
 /**

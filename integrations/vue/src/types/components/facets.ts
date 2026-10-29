@@ -69,8 +69,9 @@ export type FacetsContext<T extends FacetItem = FacetItem> = {
  */
 export type FacetsSlots<T extends FacetItem = FacetItem> = {
   trigger?: (props: FacetsContext<T>) => VNode[];
-  triggerIcon?: (props: FacetsContext<T>) => VNode[];
   command?: (props: FacetsContext<T>) => VNode[];
+  triggerPrepend?: (props: FacetsContext<T>) => VNode[];
+  triggerAppend?: (props: FacetsContext<T>) => VNode[];
 };
 
 /**

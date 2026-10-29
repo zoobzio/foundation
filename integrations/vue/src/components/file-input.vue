@@ -116,9 +116,9 @@ defineSlots<FileInputSlots>();
               class="f-button f-file-input-item-remove"
               v-bind="settings.itemRemove(file)"
             >
-              <slot name="itemRemoveIcon" v-bind="{ ...ctx, file }">
-                <span class="f-span">Remove</span>
-              </slot>
+              <slot name="itemRemovePrepend" v-bind="{ ...ctx, file }" />
+              <span class="f-span">Remove</span>
+              <slot name="itemRemoveAppend" v-bind="{ ...ctx, file }" />
             </button>
           </slot>
         </div>

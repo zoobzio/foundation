@@ -147,12 +147,18 @@ defineSlots<BrowserFilesSlots<T>>();
             @select="service.runAction($event.key, row)"
           >
             <Fab v-bind="settings.actionsTrigger">
-              <template v-if="slots.actionsIcon" #icon>
-                <slot name="actionsIcon" v-bind="{ ...ctx, row }" />
+              <template v-if="slots.actionsPrepend" #prepend>
+                <slot name="actionsPrepend" v-bind="{ ...ctx, row }" />
+              </template>
+              <template v-if="slots.actionsAppend" #append>
+                <slot name="actionsAppend" v-bind="{ ...ctx, row }" />
               </template>
             </Fab>
-            <template v-if="slots.actionIcon" #itemIcon="{ item }">
-              <slot name="actionIcon" v-bind="{ ...ctx, row, item }" />
+            <template v-if="slots.actionPrepend" #itemPrepend="{ item }">
+              <slot name="actionPrepend" v-bind="{ ...ctx, row, item }" />
+            </template>
+            <template v-if="slots.actionAppend" #itemAppend="{ item }">
+              <slot name="actionAppend" v-bind="{ ...ctx, row, item }" />
             </template>
           </Menu>
         </td>

@@ -39,8 +39,9 @@ defineSlots<TableBulkActionsSlots<T>>();
       class="f-button f-data-table-bulk-action"
       @click="service.runBulkAction(bulk.key)"
     >
-      <slot name="bulkActionIcon" v-bind="{ ...ctx, action: bulk }" />
+      <slot name="bulkActionPrepend" v-bind="{ ...ctx, action: bulk }" />
       {{ bulk.label }}
+      <slot name="bulkActionAppend" v-bind="{ ...ctx, action: bulk }" />
     </button>
     <button
       type="button"

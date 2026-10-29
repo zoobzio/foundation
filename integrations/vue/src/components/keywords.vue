@@ -115,8 +115,11 @@ defineSlots<KeywordsSlots>();
     <template #trigger>
       <slot name="trigger" v-bind="ctx">
         <Fab v-bind="settings.trigger">
-          <template v-if="$slots.triggerIcon" #icon>
-            <slot name="triggerIcon" v-bind="ctx" />
+          <template v-if="$slots.triggerPrepend" #prepend>
+            <slot name="triggerPrepend" v-bind="ctx" />
+          </template>
+          <template v-if="$slots.triggerAppend" #append>
+            <slot name="triggerAppend" v-bind="ctx" />
           </template>
         </Fab>
       </slot>

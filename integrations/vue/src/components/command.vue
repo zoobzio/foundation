@@ -124,10 +124,11 @@ defineSlots<CommandSlots<T>>();
   <ListboxRoot ref="el" class="f-listbox-root" v-bind="settings.root">
     <slot name="inputWrapper" v-bind="ctx">
       <div class="f-group">
-        <slot name="inputIcon" v-bind="ctx" />
+        <slot name="inputPrepend" v-bind="ctx" />
         <slot name="filter" v-bind="ctx">
           <ListboxFilter class="f-listbox-filter" v-bind="settings.filter" />
         </slot>
+        <slot name="inputAppend" v-bind="ctx" />
       </div>
     </slot>
     <slot name="content" v-bind="ctx">
@@ -171,10 +172,11 @@ defineSlots<CommandSlots<T>>();
                         v-bind="settings.itemCheckbox(item)"
                       />
                     </slot>
-                    <slot name="itemIcon" v-bind="{ ...ctx, item }" />
+                    <slot name="itemPrepend" v-bind="{ ...ctx, item }" />
                     <slot name="itemLabel" v-bind="{ ...ctx, item }">
                       <span class="f-span">{{ item.label }}</span>
                     </slot>
+                    <slot name="itemAppend" v-bind="{ ...ctx, item }" />
                     <slot name="itemCount" v-bind="{ ...ctx, item }">
                       <kbd v-if="item.count !== undefined" class="f-kbd">
                         {{ item.count }}

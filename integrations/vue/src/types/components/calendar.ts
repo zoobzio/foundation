@@ -88,10 +88,8 @@ export type CalendarContext = {
 export type CalendarSlots = {
   header?: (props: CalendarContext & CalendarView) => VNode[];
   prev?: (props: CalendarContext & CalendarView) => VNode[];
-  prevIcon?: (props: CalendarContext & CalendarView) => VNode[];
   heading?: (props: CalendarContext & CalendarView) => VNode[];
   next?: (props: CalendarContext & CalendarView) => VNode[];
-  nextIcon?: (props: CalendarContext & CalendarView) => VNode[];
   grid?: (
     props: CalendarContext & CalendarView & { month: CalendarMonth },
   ) => VNode[];
@@ -108,6 +106,10 @@ export type CalendarSlots = {
   cellTrigger?: (
     props: CalendarContext & { month: CalendarMonth; date: DateValue },
   ) => VNode[];
+  prevPrepend?: (props: CalendarContext & CalendarView) => VNode[];
+  prevAppend?: (props: CalendarContext & CalendarView) => VNode[];
+  nextPrepend?: (props: CalendarContext & CalendarView) => VNode[];
+  nextAppend?: (props: CalendarContext & CalendarView) => VNode[];
 };
 
 /**

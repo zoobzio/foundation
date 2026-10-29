@@ -72,7 +72,6 @@ export type MultiSelectContext<T extends Option> = {
 export type MultiSelectSlots<T extends Option> = {
   trigger?: (props: MultiSelectContext<T>) => VNode[];
   triggerLabel?: (props: MultiSelectContext<T>) => VNode[];
-  triggerIcon?: (props: MultiSelectContext<T>) => VNode[];
   content?: (props: MultiSelectContext<T>) => VNode[];
   item?: (
     props: MultiSelectContext<T> & { item: T; selected: boolean },
@@ -81,6 +80,8 @@ export type MultiSelectSlots<T extends Option> = {
     props: MultiSelectContext<T> & { item: T; selected: boolean },
   ) => VNode[];
   itemText?: (props: MultiSelectContext<T> & { item: T }) => VNode[];
+  triggerPrepend?: (props: MultiSelectContext<T>) => VNode[];
+  triggerAppend?: (props: MultiSelectContext<T>) => VNode[];
 };
 
 /**

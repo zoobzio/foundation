@@ -67,7 +67,8 @@ export type FileInputSlots = {
   item?: (props: FileInputContext & { file: File }) => VNode[];
   itemName?: (props: FileInputContext & { file: File }) => VNode[];
   itemRemove?: (props: FileInputContext & { file: File }) => VNode[];
-  itemRemoveIcon?: (props: FileInputContext & { file: File }) => VNode[];
+  itemRemovePrepend?: (props: FileInputContext & { file: File }) => VNode[];
+  itemRemoveAppend?: (props: FileInputContext & { file: File }) => VNode[];
 };
 
 /**

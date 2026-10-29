@@ -87,8 +87,9 @@ type TreeItemScope<T extends TreeNode> = {
 export type TreeSlots<T extends TreeNode> = {
   item?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
   itemToggle?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
-  itemIcon?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
   itemLabel?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
+  itemPrepend?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
+  itemAppend?: (props: TreeContext<T> & TreeItemScope<T>) => VNode[];
 };
 
 /**

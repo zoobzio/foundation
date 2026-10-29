@@ -106,10 +106,11 @@ defineSlots<SelectSlots<T>>();
   <SelectRoot ref="el" class="f-select-root" v-bind="settings.root">
     <slot name="trigger" v-bind="ctx">
       <SelectTrigger class="f-select-trigger" v-bind="settings.trigger">
+        <slot name="triggerPrepend" v-bind="ctx" />
         <slot name="triggerLabel" v-bind="ctx">
           <span class="f-span">{{ display }}</span>
         </slot>
-        <slot name="triggerIcon" v-bind="ctx" />
+        <slot name="triggerAppend" v-bind="ctx" />
       </SelectTrigger>
     </slot>
     <SelectPortal>

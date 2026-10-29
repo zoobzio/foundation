@@ -91,21 +91,30 @@ const { THead, TBody } = useForward({
           <Autocomplete v-bind="settings.search" class="f-data-table-search" />
         </slot>
         <TableColumns :service="service" :pt="pt?.columns">
-          <template v-if="slots.columnsIcon" #columnsIcon="slotProps">
-            <slot name="columnsIcon" v-bind="slotProps" />
+          <template v-if="slots.columnsPrepend" #columnsPrepend="slotProps">
+            <slot name="columnsPrepend" v-bind="slotProps" />
+          </template>
+          <template v-if="slots.columnsAppend" #columnsAppend="slotProps">
+            <slot name="columnsAppend" v-bind="slotProps" />
           </template>
         </TableColumns>
         <Fab v-bind="settings.refresh">
-          <template v-if="slots.refreshIcon" #icon>
-            <slot name="refreshIcon" v-bind="ctx" />
+          <template v-if="slots.refreshPrepend" #prepend>
+            <slot name="refreshPrepend" v-bind="ctx" />
+          </template>
+          <template v-if="slots.refreshAppend" #append>
+            <slot name="refreshAppend" v-bind="ctx" />
           </template>
         </Fab>
       </div>
     </slot>
 
     <TableBulkActions v-if="hasSelection" :service="service">
-      <template v-if="slots.bulkActionIcon" #bulkActionIcon="slotProps">
-        <slot name="bulkActionIcon" v-bind="slotProps" />
+      <template v-if="slots.bulkActionPrepend" #bulkActionPrepend="slotProps">
+        <slot name="bulkActionPrepend" v-bind="slotProps" />
+      </template>
+      <template v-if="slots.bulkActionAppend" #bulkActionAppend="slotProps">
+        <slot name="bulkActionAppend" v-bind="slotProps" />
       </template>
     </TableBulkActions>
 

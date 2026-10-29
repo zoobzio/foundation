@@ -81,7 +81,6 @@ export type DateFiltersContext = {
 export type DateFiltersSlots = {
   popover?: (props: DateFiltersContext) => VNode[];
   trigger?: (props: DateFiltersContext) => VNode[];
-  triggerIcon?: (props: DateFiltersContext) => VNode[];
   root?: (props: DateFiltersContext) => VNode[];
   stepper?: (props: DateFiltersContext) => VNode[];
   stepSeparator?: (props: DateFiltersContext) => VNode[];
@@ -91,6 +90,8 @@ export type DateFiltersSlots = {
   calendar?: (props: DateFiltersContext) => VNode[];
   actions?: (props: DateFiltersContext) => VNode[];
   applyButton?: (props: DateFiltersContext) => VNode[];
+  triggerPrepend?: (props: DateFiltersContext) => VNode[];
+  triggerAppend?: (props: DateFiltersContext) => VNode[];
 };
 
 /**

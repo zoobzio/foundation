@@ -179,7 +179,7 @@ const row = (payload: AutocompleteOptionContext): VNode | undefined => {
                 @click="service.select(option)"
               >
                 <slot
-                  name="itemIcon"
+                  name="itemPrepend"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
                 />
                 <slot
@@ -188,6 +188,10 @@ const row = (payload: AutocompleteOptionContext): VNode | undefined => {
                 >
                   <span class="f-span">{{ option.label }}</span>
                 </slot>
+                <slot
+                  name="itemAppend"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                />
                 <slot
                   name="itemArrow"
                   v-bind="{ ...ctx, option, index: i, panel: p }"
@@ -230,7 +234,7 @@ const row = (payload: AutocompleteOptionContext): VNode | undefined => {
               "
             >
               <slot
-                name="itemIcon"
+                name="itemPrepend"
                 v-bind="{
                   ...ctx,
                   option,
@@ -249,6 +253,15 @@ const row = (payload: AutocompleteOptionContext): VNode | undefined => {
               >
                 <span class="f-span">{{ option.label }}</span>
               </slot>
+              <slot
+                name="itemAppend"
+                v-bind="{
+                  ...ctx,
+                  option,
+                  index: virtualItem.index,
+                  panel: depth,
+                }"
+              />
               <slot
                 name="itemArrow"
                 v-bind="{

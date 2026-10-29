@@ -80,18 +80,21 @@ describe("select", () => {
     ).toBeDefined();
   });
 
-  it("renders the triggerIcon slot inside the trigger, scoped with the open state", async () => {
+  it("renders triggerPrepend and triggerAppend around the display, scoped with the open state", async () => {
     const wrapper = mountSelect(
       {},
       {
-        triggerIcon: `<template #triggerIcon="{ open }">
-          <i>{{ open.value ? "up" : "down" }}</i>
-        </template>`,
+        triggerPrepend: `<template #triggerPrepend="{ open }"><i>{{ open.value ? "up" : "down" }}</i></template>`,
+        triggerAppend: `<template #triggerAppend><b>after</b></template>`,
       },
     );
-    expect(wrapper.get("button.f-select-trigger i").text()).toBe("down");
+    const trigger = wrapper.get("button.f-select-trigger");
+    expect(
+      Array.from(trigger.element.children).map((el) => el.tagName),
+    ).toEqual(["I", "SPAN", "B"]);
+    expect(trigger.get("i").text()).toBe("down");
     await openSelect(wrapper);
-    expect(wrapper.get("button.f-select-trigger i").text()).toBe("up");
+    expect(trigger.get("i").text()).toBe("up");
   });
 
   it("serves ctx to slot overrides", () => {

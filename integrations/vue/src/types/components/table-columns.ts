@@ -3,7 +3,8 @@ import type { FabProps } from "./fab";
 import type { PopoverEmits, PopoverProps } from "./popover";
 import type { Passthrough, PT } from "../passthrough";
 import type { Service } from "@zoobzio/table";
-import type { ComponentPublicInstance, Ref, VNode } from "vue";
+import type { ComponentPublicInstance, Ref } from "vue";
+import type { VNode } from "vue";
 
 /**
  * The parts of the column manager that accept passthrough.
@@ -45,8 +46,9 @@ export type TableColumnsContext<T> = {
 };
 
 /**
- * Slots of the column manager.
+ * Slots of the column manager, around its trigger's label.
  */
 export type TableColumnsSlots<T> = {
-  columnsIcon?: (props: TableColumnsContext<T>) => VNode[];
+  columnsPrepend?: (props: TableColumnsContext<T>) => VNode[];
+  columnsAppend?: (props: TableColumnsContext<T>) => VNode[];
 };

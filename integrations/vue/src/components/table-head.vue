@@ -78,21 +78,21 @@ defineSlots<TableHeadSlots<T>>();
               class="f-button f-data-table-header-btn"
               @click="service.sortBy(service.sortFieldFor(col))"
             >
+              <slot name="headerPrepend" v-bind="{ ...ctx, column: col }" />
               {{ col.label }}
-              <slot
-                v-if="service.isSorted(col)"
-                name="sortIcon"
-                v-bind="{ ...ctx, column: col }"
-              />
+              <slot name="headerAppend" v-bind="{ ...ctx, column: col }" />
             </button>
             <span v-else class="f-span f-data-table-header">
+              <slot name="headerPrepend" v-bind="{ ...ctx, column: col }" />
               {{ col.label }}
+              <slot name="headerAppend" v-bind="{ ...ctx, column: col }" />
             </span>
             <span
               class="f-span f-data-table-drag-handle"
               v-bind="drag.handleAttrs(String(col.key))"
             >
-              <slot name="dragIcon" v-bind="{ ...ctx, column: col }" />
+              <slot name="dragPrepend" v-bind="{ ...ctx, column: col }" />
+              <slot name="dragAppend" v-bind="{ ...ctx, column: col }" />
             </span>
           </div>
         </slot>

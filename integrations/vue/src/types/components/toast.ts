@@ -64,7 +64,8 @@ export type ToastSlots = {
   title?: (props: ToastContext) => VNode[];
   description?: (props: ToastContext) => VNode[];
   close?: (props: ToastContext) => VNode[];
-  closeIcon?: (props: ToastContext) => VNode[];
+  closePrepend?: (props: ToastContext) => VNode[];
+  closeAppend?: (props: ToastContext) => VNode[];
 };
 
 /**

@@ -145,17 +145,18 @@ describe("tree", () => {
         itemToggle: `<template #itemToggle="s">
           <i v-if="s.item.hasChildren">{{ s.isExpanded ? "open" : "closed" }}</i>
         </template>`,
-        itemIcon: `<template #itemIcon="s"><b>{{ s.item.value.slug }}</b></template>`,
+        itemPrepend: `<template #itemPrepend="s"><b>{{ s.item.value.slug }}</b></template>`,
+        itemAppend: `<template #itemAppend><u /></template>`,
       },
     );
     const tags = () =>
       Array.from(itemByText(wrapper, "Guides").element.children).map(
         (el) => el.tagName,
       );
-    expect(tags()).toEqual(["I", "B", "SPAN"]);
+    expect(tags()).toEqual(["I", "B", "SPAN", "U"]);
+    expect(itemByText(wrapper, "Reference").get("b").text()).toBe("reference");
     expect(itemByText(wrapper, "Guides").get("i").text()).toBe("closed");
     expect(itemByText(wrapper, "Reference").find("i").exists()).toBe(false);
-    expect(itemByText(wrapper, "Reference").get("b").text()).toBe("reference");
     await itemByText(wrapper, "Guides").trigger("click");
     await flushPromises();
     expect(itemByText(wrapper, "Guides").get("i").text()).toBe("open");

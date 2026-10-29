@@ -88,16 +88,22 @@ const { Folders, Files } = useForward({
           />
         </slot>
         <Fab v-bind="settings.refresh">
-          <template v-if="slots.refreshIcon" #icon>
-            <slot name="refreshIcon" v-bind="ctx" />
+          <template v-if="slots.refreshPrepend" #prepend>
+            <slot name="refreshPrepend" v-bind="ctx" />
+          </template>
+          <template v-if="slots.refreshAppend" #append>
+            <slot name="refreshAppend" v-bind="ctx" />
           </template>
         </Fab>
       </div>
     </slot>
 
     <BrowserBulkActions v-if="hasSelection" :service="service">
-      <template v-if="slots.bulkActionIcon" #bulkActionIcon="slotProps">
-        <slot name="bulkActionIcon" v-bind="slotProps" />
+      <template v-if="slots.bulkActionPrepend" #bulkActionPrepend="slotProps">
+        <slot name="bulkActionPrepend" v-bind="slotProps" />
+      </template>
+      <template v-if="slots.bulkActionAppend" #bulkActionAppend="slotProps">
+        <slot name="bulkActionAppend" v-bind="slotProps" />
       </template>
     </BrowserBulkActions>
 

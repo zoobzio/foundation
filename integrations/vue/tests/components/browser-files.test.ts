@@ -97,7 +97,7 @@ describe("browser-files", () => {
     expect(trailing[0]!.find("button").exists()).toBe(false);
   });
 
-  it("fills the actions trigger from the row-scoped icon slot", async () => {
+  it("fills the actions trigger around its label from the row-scoped slots", async () => {
     const { service } = makeBrowser(
       { actions: fakeFileActions },
       { actions: { download: vi.fn(), remove: vi.fn() } },
@@ -106,15 +106,17 @@ describe("browser-files", () => {
     const wrapper = mountFiles(
       { service },
       {
-        actionsIcon: `<template #actionsIcon="s"><i>{{ s.row.name }}</i></template>`,
+        actionsPrepend: `<template #actionsPrepend="s"><i>{{ s.row.name }}</i></template>`,
+        actionsAppend: `<template #actionsAppend><b>!</b></template>`,
       },
     );
     const triggers = wrapper.findAll('button[aria-label="Actions"]');
-    expect(triggers.map((t) => t.text())).toEqual([
+    expect(triggers.map((t) => t.get("i").text())).toEqual([
       "logo.svg",
       "hero.png",
       "notes.md",
     ]);
+    expect(triggers[0]!.element.lastElementChild?.tagName).toBe("B");
   });
 
   it("serves the typed cell context to a cell slot", async () => {

@@ -56,14 +56,17 @@ export type BreadcrumbSlots<T extends BreadcrumbItem> = {
   item?: (
     props: BreadcrumbContext<T> & { item: T; index: number; last: boolean },
   ) => VNode[];
-  itemIcon?: (
-    props: BreadcrumbContext<T> & { item: T; index: number; last: boolean },
-  ) => VNode[];
   itemLabel?: (
     props: BreadcrumbContext<T> & { item: T; index: number; last: boolean },
   ) => VNode[];
   separator?: (
     props: BreadcrumbContext<T> & { item: T; index: number },
+  ) => VNode[];
+  itemPrepend?: (
+    props: BreadcrumbContext<T> & { item: T; index: number; last: boolean },
+  ) => VNode[];
+  itemAppend?: (
+    props: BreadcrumbContext<T> & { item: T; index: number; last: boolean },
   ) => VNode[];
 };
 
