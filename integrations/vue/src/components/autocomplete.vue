@@ -5,21 +5,37 @@ import type {
   AutocompletePassthrough,
   AutocompleteContext,
   AutocompleteSlots,
+  AutocompleteMeasure,
+  AutocompleteOptionContext,
 } from "../types/components/autocomplete";
-import type { ComponentPublicInstance } from "vue";
+import type { ComponentPublicInstance, VNode } from "vue";
 
 import {
   AutocompleteRoot,
   AutocompleteInput,
   AutocompleteContent,
+  AutocompleteViewport,
+  AutocompleteVirtualizer,
   AutocompleteItem,
 } from "reka-ui";
-import Scroller from "./scroller.vue";
 
-import { useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+
+/**
+ * Builds the `measure` ref of a virtualized row. The virtualizer measures
+ * elements; a component ref resolves to its root element first.
+ */
+const measurer = (virtualizer: {
+  measureElement: (el: Element | null) => void;
+}): AutocompleteMeasure => {
+  return (target) => {
+    const el = target instanceof Element ? target : target?.$el;
+    virtualizer.measureElement(el instanceof Element ? el : null);
+  };
+};
 </script>
 
 <script setup lang="ts">
@@ -41,6 +57,9 @@ const $open = useModel(
 );
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
+
+/** The index of the active panel: the one after the trail. */
+const depth = computed(() => service.trail.length);
 
 const settings = usePassthrough<AutocompletePassthrough>(() => ({
   pt,
@@ -78,7 +97,11 @@ const settings = usePassthrough<AutocompletePassthrough>(() => ({
       },
     },
     content: {},
-    scroller: {},
+    viewport: {},
+    virtualizer: {
+      options: service.items,
+      textContent: (option) => option.label,
+    },
     item: (anchor) => ({
       value: anchor.option.value,
       textValue: anchor.option.label,
@@ -101,7 +124,17 @@ const ctx = useContext<AutocompleteContext>("autocomplete", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<AutocompleteSlots>();
+const slots = defineSlots<AutocompleteSlots>();
+
+/**
+ * The consumer's item as one vnode. The virtualizer positions a row by its
+ * root, so the active panel renders the `item` slot through `component :is`
+ * rather than a `<slot>`, whose fragment would hide the root from it.
+ */
+const row = (payload: AutocompleteOptionContext): VNode | undefined => {
+  const nodes = slots.item?.(payload) ?? [];
+  return nodes.find((node) => typeof node.type !== "symbol") ?? nodes[0];
+};
 </script>
 
 <template>
@@ -136,56 +169,98 @@ defineSlots<AutocompleteSlots>();
         class="f-autocomplete-content"
         v-bind="settings.content"
       >
-        <div v-for="(options, p) in service.panels" :key="p" class="f-group">
-          <Scroller v-bind="settings.scroller">
-            <template v-for="(option, i) in options" :key="option.value">
-              <slot name="item" v-bind="{ ...ctx, option, index: i, panel: p }">
-                <button
-                  v-if="p < service.trail.length"
-                  type="button"
-                  class="f-button"
-                  :aria-current="option.active ? true : undefined"
-                  @click="service.select(option)"
+        <div v-for="(options, p) in service.trail" :key="p" class="f-group">
+          <template v-for="(option, i) in options" :key="option.value">
+            <slot name="item" v-bind="{ ...ctx, option, index: i, panel: p }">
+              <button
+                type="button"
+                class="f-button"
+                :aria-current="option.active ? true : undefined"
+                @click="service.select(option)"
+              >
+                <slot
+                  name="itemIcon"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                />
+                <slot
+                  name="itemLabel"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
                 >
-                  <slot
-                    name="itemIcon"
-                    v-bind="{ ...ctx, option, index: i, panel: p }"
-                  />
-                  <slot
-                    name="itemLabel"
-                    v-bind="{ ...ctx, option, index: i, panel: p }"
-                  >
-                    <span class="f-span">{{ option.label }}</span>
-                  </slot>
-                  <slot
-                    name="itemArrow"
-                    v-bind="{ ...ctx, option, index: i, panel: p }"
-                  />
-                </button>
-                <AutocompleteItem
-                  v-else
-                  class="f-autocomplete-item"
-                  v-bind="settings.item({ option, index: i, panel: p })"
-                >
-                  <slot
-                    name="itemIcon"
-                    v-bind="{ ...ctx, option, index: i, panel: p }"
-                  />
-                  <slot
-                    name="itemLabel"
-                    v-bind="{ ...ctx, option, index: i, panel: p }"
-                  >
-                    <span class="f-span">{{ option.label }}</span>
-                  </slot>
-                  <slot
-                    name="itemArrow"
-                    v-bind="{ ...ctx, option, index: i, panel: p }"
-                  />
-                </AutocompleteItem>
-              </slot>
-            </template>
-          </Scroller>
+                  <span class="f-span">{{ option.label }}</span>
+                </slot>
+                <slot
+                  name="itemArrow"
+                  v-bind="{ ...ctx, option, index: i, panel: p }"
+                />
+              </button>
+            </slot>
+          </template>
         </div>
+        <AutocompleteViewport
+          v-if="service.items.length"
+          class="f-autocomplete-viewport"
+          v-bind="settings.viewport"
+        >
+          <AutocompleteVirtualizer
+            v-slot="{ option, virtualItem, virtualizer }"
+            v-bind="settings.virtualizer"
+          >
+            <component
+              :is="
+                row({
+                  ...ctx,
+                  option,
+                  index: virtualItem.index,
+                  panel: depth,
+                  measure: measurer(virtualizer),
+                })
+              "
+              v-if="$slots.item"
+            />
+            <AutocompleteItem
+              v-else
+              :ref="measurer(virtualizer)"
+              class="f-autocomplete-item"
+              v-bind="
+                settings.item({
+                  option,
+                  index: virtualItem.index,
+                  panel: depth,
+                })
+              "
+            >
+              <slot
+                name="itemIcon"
+                v-bind="{
+                  ...ctx,
+                  option,
+                  index: virtualItem.index,
+                  panel: depth,
+                }"
+              />
+              <slot
+                name="itemLabel"
+                v-bind="{
+                  ...ctx,
+                  option,
+                  index: virtualItem.index,
+                  panel: depth,
+                }"
+              >
+                <span class="f-span">{{ option.label }}</span>
+              </slot>
+              <slot
+                name="itemArrow"
+                v-bind="{
+                  ...ctx,
+                  option,
+                  index: virtualItem.index,
+                  panel: depth,
+                }"
+              />
+            </AutocompleteItem>
+          </AutocompleteVirtualizer>
+        </AutocompleteViewport>
         <slot name="empty" v-bind="ctx">
           <div v-if="empty" class="f-group">
             <span class="f-span">No matches</span>

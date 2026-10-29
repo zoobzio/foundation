@@ -1,4 +1,3 @@
-import type { ScrollerProps } from "./scroller";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type {
@@ -13,6 +12,8 @@ import type {
   AutocompleteInputProps,
   AutocompleteInputEmits,
   AutocompleteContentProps,
+  AutocompleteViewportProps,
+  AutocompleteVirtualizerProps,
   AutocompleteItemProps,
   AutocompleteItemEmits,
 } from "reka-ui";
@@ -30,6 +31,15 @@ export type AutocompleteAnchor = {
 };
 
 /**
+ * A function ref that reports an item's rendered size to the virtualizer.
+ * It takes the item's root element, or the component instance whose `$el`
+ * is that element, and `null` when the item unmounts.
+ */
+export type AutocompleteMeasure = (
+  target: Element | ComponentPublicInstance | null,
+) => void;
+
+/**
  * A chip's position in the chip row: the committed entry and its index in
  * the query's entries.
  */
@@ -40,7 +50,10 @@ export type AutocompleteChipAnchor = {
 
 /**
  * The parts of the autocomplete that accept passthrough. `input` adds the
- * native `keydown` emit.
+ * native `keydown` emit. `viewport` is the scroll container of the active
+ * panel and `virtualizer` windows its options: only the rows in view, plus
+ * `overscan` either side, are in the DOM. `estimateSize` seeds a row's
+ * height before it is measured.
  */
 export type AutocompletePassthrough = {
   root: Passthrough<AutocompleteRootProps, AutocompleteRootEmits>;
@@ -49,7 +62,8 @@ export type AutocompletePassthrough = {
     AutocompleteInputEmits & { keydown: [event: KeyboardEvent] }
   >;
   content: Passthrough<AutocompleteContentProps>;
-  scroller: Passthrough<ScrollerProps>;
+  viewport: Passthrough<AutocompleteViewportProps>;
+  virtualizer: Passthrough<AutocompleteVirtualizerProps<QueryOption>>;
   item: PassthroughIter<
     AutocompleteAnchor,
     AutocompleteItemProps,
@@ -92,10 +106,14 @@ export type AutocompleteContext = {
 };
 
 /**
- * The payload of an item slot: the context plus the item's anchor.
+ * The payload of an item slot: the context plus the item's anchor. An item
+ * of the active panel is virtualized: it also receives `measure`, a ref to
+ * put on its root element so the virtualizer sizes the row from the DOM. A
+ * virtualized item must render exactly one root element. A trail item has
+ * no `measure`.
  */
 export type AutocompleteOptionContext = AutocompleteContext &
-  AutocompleteAnchor;
+  AutocompleteAnchor & { measure?: AutocompleteMeasure };
 
 /**
  * The payload of a chip slot: the context plus the chip's anchor.
