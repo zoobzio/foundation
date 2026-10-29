@@ -5,6 +5,8 @@ import type {
   ForwardedIter,
   ForwardGetter,
   ForwardIter,
+  ForwardPart,
+  ForwardPartGetter,
   Forwards,
   ForwardsIter,
 } from "../types/forward";
@@ -18,8 +20,7 @@ import { forward } from "../utils/forward";
  */
 const isForward = (
   value: AnyForward | Record<string, AnyForward>,
-): value is AnyForward =>
-  "component" in value && typeof value.props === "function";
+): value is AnyForward => "slots" in value && typeof value.props === "function";
 
 /**
  * Renders children with the parent's slots passed whole. A template cannot
@@ -31,7 +32,10 @@ const isForward = (
  * record of components by key. Either way an entry is one of two kinds.
  * With a zero-argument props getter it renders as `<Child />`. With a
  * getter that takes a datum, the datum is the rendered component's props:
- * `<Child :field="field" />` reaches the getter as `{ field }`.
+ * `<Child :field="field" />` reaches the getter as `{ field }`. An entry
+ * with no component is a part forward: its getter returns a rendered
+ * part, whose `as` is the component and the rest its props, so `pt` swaps
+ * the component rendered.
  *
  * @param forwards - One child or the children by key: component, props
  * getter, slots.
@@ -40,6 +44,9 @@ const isForward = (
 export function useForward<P extends object>(forward: Forward<P>): () => VNode;
 export function useForward<G extends ForwardGetter>(
   forward: ForwardIter<G>,
+): (props: Parameters<G>[0]) => VNode;
+export function useForward<G extends ForwardPartGetter>(
+  forward: ForwardPart<G>,
 ): (props: Parameters<G>[0]) => VNode;
 export function useForward<P extends Record<string, object>>(
   forwards: Forwards<P>,

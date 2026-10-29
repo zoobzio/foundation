@@ -74,6 +74,39 @@ describe("useForward", () => {
     expect(wrapper.text()).toBe("a: <a>b: <b>");
   });
 
+  it("renders a part forward through the component under its `as`", async () => {
+    const Other = defineComponent({
+      props: { label: { type: String, required: true } },
+      setup(props, { slots }) {
+        return () =>
+          h("i", [props.label, "/", slots.body?.({ label: props.label })]);
+      },
+    });
+    const Part = defineComponent({
+      props: { swap: { type: Boolean, default: false } },
+      setup(props, { slots }) {
+        const Item = useForward({
+          props: ({ name }: { name: string }) => ({
+            as: props.swap ? Other : Child,
+            label: name,
+          }),
+          slots,
+        });
+        return { Item };
+      },
+      render() {
+        return h("div", [h(this.Item, { name: "a" })]);
+      },
+    });
+    const wrapper = mount(Part, {
+      slots: { body: ({ label }: { label: string }) => `<${label}>` },
+    });
+    expect(wrapper.get("p").text()).toBe("a: <a>");
+    await wrapper.setProps({ swap: true });
+    expect(wrapper.find("p").exists()).toBe(false);
+    expect(wrapper.get("i").text()).toBe("a/<a>");
+  });
+
   it("renders a single entry without a record", async () => {
     const Single = defineComponent({
       setup(_, { slots }) {

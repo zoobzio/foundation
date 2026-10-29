@@ -62,17 +62,19 @@ such as a router link, which receives the same `href` and `target`.
 ```
 
 A part that renders one of the package's own components (the table's
-`pagination`, a form field's `select`, a row's `actionsMenu`, a pagination
-control's `first`) is typed `Rendered` (`RenderedIter` per item): the
-component's props, plus `as`, the component rendered. The recipe names
-the component, and the template renders the part through the package's
-own `Primitive` (`components/primitive.vue`), which hands the parent's
-slots on whole, named ones included, where reka's `Primitive` would
-forward the default alone. So
-`pt` reaches into a nested component the same way it reaches an anchor:
-`pt.pagination.pt.first` is the pagination's own part, and
-`pt.pagination.as` renders another pagination in its place, such as a
-framework layer's wrapper of it.
+`pagination`, a form's `field` and a form field's `select`, a row's
+`actionsMenu`, a pagination control's `first`) is typed `Rendered`
+(`RenderedIter` per item): the component's props, plus `as`, the
+component rendered. The recipe names the component, and the template
+renders the part through the package's own `Primitive`
+(`components/primitive.vue`), which hands the parent's slots on whole,
+named ones included, where reka's `Primitive` would forward the default
+alone. A part the parent must hand its own slot record to (the form's
+`field`) renders through `useForward` instead, whose part form takes the
+component from the getter's `as`. Either way `pt` reaches into a nested
+component the same way it reaches an anchor: `pt.pagination.pt.first` is
+the pagination's own part, and `pt.pagination.as` renders another
+pagination in its place, such as a framework layer's wrapper of it.
 
 A framework layer that wants that on every instance wraps the component
 with `wrap` (`utils/wrap`): a `pt` layer laid under the consumer's, and

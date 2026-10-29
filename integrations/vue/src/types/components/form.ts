@@ -1,18 +1,26 @@
-import type { FormFieldPassthrough, FormFieldSlots } from "./form-field";
-import type { Passthrough, PT } from "../passthrough";
+import type {
+  FormFieldPassthrough,
+  FormFieldProps,
+  FormFieldSlots,
+} from "./form-field";
+import type { Passthrough, PT, RenderedIter } from "../passthrough";
 import type { Definition } from "../definition";
-import type { Events, Service } from "@zoobzio/form";
+import type { Events, Field, Service } from "@zoobzio/form";
 import type { ButtonHTMLAttributes, FormHTMLAttributes, VNode } from "vue";
 
 /**
  * The parts of the form that accept passthrough. `form` is the root
  * `<form>` element; it and the `reset` and `submit` buttons type against
- * native HTML attributes and bind directly to their tags.
+ * native HTML attributes and bind directly to their tags. `field` is the
+ * field component, built per field: its recipe hands the field its
+ * service, its config, and its `pt.fields` entry, and a layer swaps the
+ * component through `as`.
  */
-export type FormPassthrough = {
+export type FormPassthrough<T> = {
   form: Passthrough<FormHTMLAttributes>;
   reset: Passthrough<ButtonHTMLAttributes>;
   submit: Passthrough<ButtonHTMLAttributes>;
+  field: RenderedIter<Field<T>, FormFieldProps<T>>;
 };
 
 /**
@@ -23,7 +31,7 @@ export type FormPassthrough = {
  */
 export type FormProps<T> = {
   service: Service<T>;
-  pt?: PT<FormPassthrough> & {
+  pt?: PT<FormPassthrough<T>> & {
     fields?: Partial<Record<keyof T, PT<FormFieldPassthrough>>>;
   };
 };
@@ -49,7 +57,7 @@ export type FormEmits<T> = {
 export type FormContext<T> = {
   form: Service<T>;
   el: HTMLFormElement | null;
-  settings: FormPassthrough;
+  settings: FormPassthrough<T>;
 };
 
 /**

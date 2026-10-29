@@ -1,4 +1,5 @@
-// The tree wrapper: NuxtLink under the `link` part, the four emits relayed.
+// The tree wrapper: NuxtLink under the `link` part, `expand` as each
+// branch's toggle, the four emits relayed.
 import type { TreeNode } from "@zoobzio/vue/types/components/tree";
 
 import { afterEach, describe, expect, it } from "vitest";
@@ -61,6 +62,17 @@ const itemByText = (wrapper: ReturnType<typeof mountTree>, label: string) => {
 };
 
 describe("tree wrapper", () => {
+  it("draws expand as a branch's toggle and nothing on a leaf", () => {
+    const wrapper = mountTree();
+    const items = wrapper.findAll(".f-tree-item");
+    const guides = items.find((i) => i.text().includes("Guides"));
+    const reference = items.find((i) => i.text().includes("Reference"));
+    expect(guides?.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "expand",
+    );
+    expect(reference?.find("svg").exists()).toBe(false);
+  });
+
   it("renders linked nodes through NuxtLink, a disabled one without an href", () => {
     const wrapper = mountTree({ expanded: ["guides"] });
     const intro = itemByText(wrapper, "Introduction").get("a");

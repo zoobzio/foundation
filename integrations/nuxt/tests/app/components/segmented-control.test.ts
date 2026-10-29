@@ -14,7 +14,7 @@ const options: SegmentedControlOption[] = [
     disabled: true,
     link: { to: "/billing" },
   },
-  { value: "local", label: "Local" },
+  { value: "local", label: "Local", icon: "folder" },
 ];
 
 const mounted: { unmount: () => void }[] = [];
@@ -34,6 +34,13 @@ afterEach(() => {
 });
 
 describe("segmented control wrapper", () => {
+  it("draws an option's icon before its label", () => {
+    const wrapper = mountControl();
+    const icons = wrapper.findAll("svg[data-icon]");
+    expect(icons.map((i) => i.attributes("data-icon"))).toEqual(["folder"]);
+    expect(icons[0]?.element.parentElement?.textContent).toContain("Local");
+  });
+
   it("renders a linked item through NuxtLink and keeps the toggle state", () => {
     const wrapper = mountControl();
     const overview = wrapper.get("a[data-nuxt]");

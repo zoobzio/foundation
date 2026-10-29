@@ -2,7 +2,7 @@
 // trail's, the service events relayed.
 import type { LinkedFile } from "#test/mount/browser";
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import Browser from "../../../app/components/browser";
 import { makeBrowser } from "#test/mount/browser";
@@ -66,6 +66,38 @@ describe("browser wrapper", () => {
     const crumb = wrapper.get("nav a[data-nuxt]");
     expect(crumb.attributes("href")).toBe("/files");
     expect(crumb.text()).toBe("Root");
+  });
+
+  it("draws the refresh, folder, and action icons", async () => {
+    const { service } = makeBrowser(
+      {
+        actions: { open: { label: "Open" } },
+        folderActions: { rename: { label: "Rename" } },
+      },
+      { actions: { open: vi.fn() }, folderActions: { rename: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    expect(
+      wrapper
+        .get('button[aria-label="Refresh"] svg[data-icon]')
+        .attributes("data-icon"),
+    ).toBe("refresh");
+    const folders = wrapper.findAll(".f-data-browser-folder-btn");
+    expect(folders.length).toBeGreaterThan(0);
+    for (const folder of folders) {
+      expect(folder.get("svg[data-icon]").attributes("data-icon")).toBe(
+        "folder",
+      );
+    }
+    const triggers = wrapper.findAll('button[aria-label="Actions"]');
+    expect(triggers.length).toBe(folders.length + 2);
+    for (const trigger of triggers) {
+      expect(trigger.get("svg[data-icon]").attributes("data-icon")).toBe(
+        "actions",
+      );
+      expect(trigger.text()).toBe("");
+    }
   });
 
   it("relays the service's domain events", async () => {

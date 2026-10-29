@@ -35,13 +35,10 @@ const el = useTemplateRef<HTMLFormElement>("el");
 
 const { submitting } = useRefs(service);
 
-const settings = usePassthrough<FormPassthrough>(() => ({
+const settings = usePassthrough<FormPassthrough<T>>(() => ({
   pt,
   recipes: {
     form: {
-      // The service emits `failed` and then rethrows, so an async caller has
-      // a signal. The recipe is not one: the emit is the channel here, and
-      // a rejection left unhandled would surface as a console error.
       onSubmit: (e) => {
         e.preventDefault();
         service.submit().catch(() => {});
@@ -53,6 +50,12 @@ const settings = usePassthrough<FormPassthrough>(() => ({
     },
     reset: { type: "reset" },
     submit: { type: "submit", disabled: submitting.value },
+    field: (field) => ({
+      as: FormField,
+      service,
+      field,
+      pt: pt?.fields?.[field.key],
+    }),
   },
 }));
 
@@ -67,12 +70,7 @@ defineExpose({ ctx });
 const slots = defineSlots<FormSlots<T>>();
 
 const FField = useForward({
-  component: FormField,
-  props: ({ field }: { field: Field<T> }) => ({
-    service,
-    field,
-    pt: pt?.fields?.[field.key],
-  }),
+  props: ({ field }: { field: Field<T> }) => settings.value.field(field),
   slots,
 });
 </script>

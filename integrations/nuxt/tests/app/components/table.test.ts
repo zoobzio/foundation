@@ -1,5 +1,6 @@
 // The table wrapper: NuxtLink under the body's `link` part, row actions
-// through the layer's Menu with their icons, the service events relayed.
+// through the layer's Menu with their icons, the toolbar, head, and
+// pagination icons, the service events relayed.
 import type { LinkedRow } from "#test/mount/table";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -78,6 +79,50 @@ describe("table wrapper", () => {
       items[0]?.querySelector("svg[data-icon]")?.getAttribute("data-icon"),
     ).toBe("next");
     expect(items[1]?.querySelector("svg")).toBeNull();
+  });
+
+  it("draws the toolbar, row action, drag, and pagination icons", async () => {
+    const { service } = makeTable(
+      { actions: { edit: { label: "Edit" } } },
+      { actions: { edit: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    const icon = (selector: string) =>
+      wrapper.get(`${selector} svg[data-icon]`).attributes("data-icon");
+    expect(icon('button[aria-label="Refresh"]')).toBe("refresh");
+    expect(icon('button[aria-label="Columns"]')).toBe("columns");
+    expect(icon('button[aria-label="Actions"]')).toBe("actions");
+    expect(wrapper.get('button[aria-label="Refresh"]').text()).toBe("");
+    expect(
+      wrapper.findAll('.f-data-table-drag-handle svg[data-icon="drag"]'),
+    ).toHaveLength(3);
+    expect(icon('button[aria-label="First"]')).toBe("first");
+    expect(icon('button[aria-label="Last"]')).toBe("last");
+    expect(icon("button.f-select-trigger")).toBe("expand");
+  });
+
+  it("draws the sort direction after a sorted header", async () => {
+    const { service } = makeTable({
+      columns: [
+        { key: "id", label: "ID", type: "number" },
+        { key: "name", label: "Name", type: "text", sortable: true },
+        { key: "site", label: "Site", type: "url" },
+      ],
+    });
+    await service.init();
+    const wrapper = mountTable({ service });
+    expect(wrapper.find("th svg[data-icon^='sort']").exists()).toBe(false);
+    service.sortBy("name");
+    await flushPromises();
+    const sorted = () =>
+      wrapper
+        .get("th.f-data-table-sorted svg[data-icon]")
+        .attributes("data-icon");
+    expect(sorted()).toBe("sort-asc");
+    service.sortBy("name");
+    await flushPromises();
+    expect(sorted()).toBe("sort-desc");
   });
 
   it("relays the service's domain events", async () => {

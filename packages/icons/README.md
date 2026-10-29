@@ -6,9 +6,11 @@ The foundation design system's icon contract, as an
 sprites.
 
 The components of `@zoobzio/vue` draw no icons of their own: each leaves
-its icons to `*Icon` slots (`prevIcon`, `closeIcon`, `itemIcon`, …). This
-package names the roles those slots play, and the Nuxt layer fills the
-slots from these aliases by default. The vue package never depends on it.
+its icons to slots, a `prepend` or `append` beside content (`itemPrepend`,
+`triggerAppend`, `prevPrepend`, …) or the slot that replaces a button
+(`refresh`, `actions`, `first`, …). This package names the roles those
+slots play, and the Nuxt layer fills the slots from these aliases by
+default. The vue package never depends on it.
 
 ## Layout
 

@@ -29,12 +29,19 @@ const groups: DirectoryGroup<Entry>[] = [
         link: { to: "/off" },
         section: "w",
       },
-      { key: "plain", label: "Plain", section: "w" },
+      { key: "plain", label: "Plain", section: "w", icon: "folder" },
     ],
   },
 ];
 
 describe("directory wrapper", () => {
+  it("draws an item's icon before its label", () => {
+    const wrapper = mount(Directory<Entry>, { props: { groups } });
+    const icons = wrapper.findAll("svg[data-icon]");
+    expect(icons.map((i) => i.attributes("data-icon"))).toEqual(["folder"]);
+    expect(icons[0]?.element.parentElement?.textContent).toContain("Plain");
+  });
+
   it("renders linked items through NuxtLink with the recipe's attributes", () => {
     const wrapper = mount(Directory<Entry>, { props: { groups } });
     const links = wrapper.findAll("a[data-nuxt]");

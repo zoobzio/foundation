@@ -10,7 +10,7 @@ type Crumb = BreadcrumbItem & { depth: number };
 
 const crumbs: Crumb[] = [
   { key: "root", label: "Home", depth: 0, link: { to: "/" } },
-  { key: "docs", label: "Docs", depth: 1 },
+  { key: "docs", label: "Docs", depth: 1, icon: "folder" },
   {
     key: "legacy",
     label: "Legacy",
@@ -22,6 +22,13 @@ const crumbs: Crumb[] = [
 ];
 
 describe("breadcrumb wrapper", () => {
+  it("draws an item's icon before its label", () => {
+    const wrapper = mount(Breadcrumb<Crumb>, { props: { items: crumbs } });
+    const docs = wrapper.findAll("li").at(1);
+    expect(docs?.get("svg[data-icon]").attributes("data-icon")).toBe("folder");
+    expect(wrapper.findAll("li").at(0)?.find("svg").exists()).toBe(false);
+  });
+
   it("renders a linked ancestor through NuxtLink with the recipe's href", () => {
     const wrapper = mount(Breadcrumb<Crumb>, { props: { items: crumbs } });
     const links = wrapper.findAll("a[data-nuxt]");

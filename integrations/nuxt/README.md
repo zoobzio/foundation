@@ -57,11 +57,13 @@ import { createTable } from "@zoobzio/nuxt/factories/table";
 ## Components
 
 The components of `@zoobzio/vue` render links through a `link` passthrough
-part whose recipe is a plain anchor. The layer wraps each component that
-holds one (`Breadcrumb`, `Browser`, `Directory`, `Hero`, `Menu`,
-`SegmentedControl`, `Table`, `Tabs`, `Tree`) in `app/components/`, and the
-wrapper lays `NuxtLink` under that part, so navigation goes through the
-router with no setup. `#components` serves the wrapper under the vue
+part whose recipe is a plain anchor, and leave their icons to slots. The
+layer wraps each component that holds a `link` part, draws an icon, or
+renders another wrapped component through a part (thirty of them, listed
+in `WRAPPED` of `modules/imports/constant.ts`) in `app/components/`. A
+wrapper lays `NuxtLink` under the `link` part, so navigation goes through
+the router with no setup, and fills the icon slots from the contract (see
+[Icons](#icons)). `#components` serves the wrapper under the vue
 component's name; the vue component itself is not registered.
 
 A wrapper is one call to `wrap` of `@zoobzio/vue`: the vue component, a
@@ -92,18 +94,26 @@ const items: BreadcrumbItem[] = [
 `Table` and `Browser` lay the part under their nested manifests (`pt.body`
 and `pt.files`), so a consumer's part at the same path composes the same
 way. Where a vue component renders another of its own as a part, the
-wrapper names the layer's wrapped component through the part's `as`: the
-table's row actions and the browser's file and folder actions render
-through the layer's `Menu`, and the browser's trail through its
-`Breadcrumb`, so nested components navigate through `NuxtLink` and draw
-their icons without the consumer reaching in.
+wrapper names the layer's wrapped component through the part's `as`, so
+nested components navigate through `NuxtLink` and draw their icons
+without the consumer reaching in: the table's row actions and the
+browser's file and folder actions render through the layer's `Menu`, the
+browser's trail through its `Breadcrumb`, the table's pagination, column
+manager command, and checkboxes through its `Pagination`, `Command`, and
+`Checkbox`, a form's fields through its `FormField` and that field's
+controls through its `Select`, `MultiSelect`, `Checkbox`, `DatePicker`,
+`TagsInput`, `FileInput`, and `RichText`, and the facets', keywords', and
+date filters' popover contents through its `Command`, `TagsInput`,
+`SegmentedControl`, `Calendar`, and `RangeCalendar`.
 
 ## Icons
 
-The components of `@zoobzio/vue` draw no icons. Where one belongs, the
-component has a `prepend` and an `append` slot around the content
+The components of `@zoobzio/vue` draw no icons. Where one belongs beside
+content, the component has a `prepend` and an `append` slot around it
 (`itemPrepend`, `triggerAppend`, `prevPrepend`, …), so an icon can lead,
-trail, or both. The layer loads
+trail, or both; where a button is one item (a `Fab`), the component has
+one slot that replaces it (`refresh`, `actions`, `first`, …). The layer
+loads
 [`@icon-sheets/nuxt`](https://github.com/zoobzio/icon-sheets) with the
 foundation contract from [`@zoobzio/icons`](../../packages/icons/) as its
 default `iconSheets` option, so an app that extends the layer gets the
@@ -125,15 +135,32 @@ export default defineNuxtConfig({
 
 A wrapper fills those slots from the contract by default through the
 `slots` option of `wrap`: the consumer's slot wins whenever it renders
-one, and the wrapper's default fills in while it does not. The `Menu` is
-the first. The vue item types and the action descriptors of
-`@zoobzio/table` and `@zoobzio/browser` are interfaces, and `app/app.d.ts`
-widens `MenuItem` and both `ActionDescriptor`s with an optional
-`icon: IconAlias` by declaration merging, so the one type the package, the
-layer, and the app share carries the field. A menu item draws it in
-`itemPrepend`, and a row, file, or folder action given to `createTable` or
-`createBrowser` with an `icon` draws it the same way, since the layer's
-`Menu` renders those actions.
+one, and the wrapper's default fills in while it does not. A fixed role
+draws its alias: `expand` after a select's, multi select's, or
+accordion's trigger and as a tree branch's toggle; `prev` and `next` on
+the calendars and pickers and `calendar` on a picker's trigger; `search`
+before a command's filter; `remove` on a tag's and a file's remove
+button; `close` on a toast's; `top` on a scroller's back-to-top; `check`
+in a checkbox; the editor's and rich text's tools by key (`bold`,
+`heading`, `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`); and on
+the table and browser, `refresh`, `columns`, `actions`, `drag`,
+`sort-asc` or `sort-desc` after a sorted header, `folder` before a
+folder, and the pagination's `first`, `prev`, `next`, and `last`. A slot
+that replaces a Fab renders the part with the icon as its content, so the
+label stays the button's `aria-label` and the visible text goes. The
+facets', keywords', and date filters' triggers draw `filter`, `keywords`,
+and `calendar` that way.
+
+An item draws its own `icon`. The vue item types (`Option`, which the
+tabs, segmented control, accordion, select, and command options extend,
+plus `MenuItem`, `BreadcrumbItem`, `DirectoryItem`, and `FacetItem`) and
+the action descriptors of `@zoobzio/table` and `@zoobzio/browser` are
+interfaces, and `app/app.d.ts` widens each with an optional
+`icon: IconAlias` by declaration merging, so the one type the package,
+the layer, and the app share carries the field, and the wrapper draws it
+in the item's `prepend` slot. A row, file, folder, or bulk action given to
+`createTable` or `createBrowser` with an `icon` draws it the same way,
+since the layer's `Menu` renders those actions.
 
 ```vue
 <script setup lang="ts">
@@ -340,17 +367,17 @@ variant.
 ```
 app/
   app.vue         — the root: reka providers, loading indicator, error boundary, toaster
-  components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts and icons in prepend/append slots
+  components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts, icons in the slots, the layer's components under nested parts; icon.ts is the icon glue they share
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
+  constants/      — error page status codes, log levels, the editor tools' icons
   assets/css/     — reset.css, loaded by the layer config
   composables/    — useAppError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
-  constants/      — error page status codes, log levels
   factories/      — create<Name>(id, options) → use<Name>(): Service
   plugins/        — log: provides $log and $logger
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications
   types/          — per-feature options, initial state, and hook maps; hook, log, notification, error, request; icon (IconAlias)
-  utils/          — split (actions → descriptors + handlers), seed (state)
+  utils/          — split (actions → descriptors + handlers), seed (state), editor (a tool's icon by key)
 modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue components, definitions, and types, and the layer's own surface) and references app.d.ts for consumers
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
 nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset and @icon-sheets/nuxt with the foundation contract)

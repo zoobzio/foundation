@@ -2,14 +2,16 @@ import type { Component } from "vue";
 
 /**
  * The surface of a component type: its props and its slots, read from
- * either encoding. A generic SFC exports a call signature whose render
- * result carries the setup context, with the type parameter at its
- * constraint; a plain SFC exports a constructor whose instance carries
- * `$props` and `$slots`.
+ * either encoding. A generic SFC exports a call signature that takes the
+ * props and the setup context, with the type parameter at its constraint;
+ * the parameters are read rather than the render result, since a bound
+ * that names its own parameter (the tree's `children?: T[]`) leaves the
+ * result uninferrable. A plain SFC exports a constructor whose instance
+ * carries `$props` and `$slots`.
  */
-export type Surface<C> = C extends (...args: never[]) => { __ctx?: infer X }
+export type Surface<C> = C extends (props: infer P, ctx?: infer X) => unknown
   ? {
-      props: NonNullable<X> extends { props: infer P } ? P : never;
+      props: P;
       slots: NonNullable<X> extends { slots: infer S } ? S : never;
     }
   : C extends abstract new (...args: never[]) => {

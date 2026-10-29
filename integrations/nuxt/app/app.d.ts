@@ -14,8 +14,32 @@ import type { TableHooks } from "./types/table";
 // bulk action extends its descriptor, so an `icon` set in `createTable` or
 // `createBrowser` reaches the service's live action and the menu item
 // built from it.
+declare module "@zoobzio/vue/types/common" {
+  interface Option {
+    icon?: IconAlias;
+  }
+}
+
 declare module "@zoobzio/vue/types/components/menu" {
   interface MenuItem {
+    icon?: IconAlias;
+  }
+}
+
+declare module "@zoobzio/vue/types/components/breadcrumb" {
+  interface BreadcrumbItem {
+    icon?: IconAlias;
+  }
+}
+
+declare module "@zoobzio/vue/types/components/directory" {
+  interface DirectoryItem {
+    icon?: IconAlias;
+  }
+}
+
+declare module "@zoobzio/vue/types/components/facets" {
+  interface FacetItem {
     icon?: IconAlias;
   }
 }

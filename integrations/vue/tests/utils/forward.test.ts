@@ -44,6 +44,22 @@ describe("forward", () => {
     expect(mount(Host).text()).toBe("two: default");
   });
 
+  it("renders a part forward through the getter's `as` with the rest as props", () => {
+    const Host = defineComponent({
+      render: () =>
+        forward(
+          {
+            props: ({ name }: { name: string }) => ({ as: Child, label: name }),
+            slots: { body: ({ label }: { label: string }) => `<${label}>` },
+          },
+          { name: "part" },
+        ),
+    });
+    const wrapper = mount(Host);
+    expect(wrapper.text()).toBe("part: <part>");
+    expect(wrapper.get("p").attributes("as")).toBeUndefined();
+  });
+
   it("keeps the child's slot defaults when the record is empty", () => {
     const Host = defineComponent({
       render: () =>

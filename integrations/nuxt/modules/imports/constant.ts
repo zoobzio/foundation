@@ -49,21 +49,42 @@ export const COMPONENTS = [
   "tree",
 ] as const;
 
-// The components the layer wraps through `wrap` of @zoobzio/vue: each holds
-// a `link` part the layer lays `NuxtLink` under, and some draw icons in
-// their slots by default. These resolve to `app/components/<name>.ts`
-// instead of @zoobzio/vue, so `#components` serves the Nuxt version only;
-// a wrapper is typed as the vue component, so no separate declaration
-// is needed.
+// The components the layer wraps through `wrap` of @zoobzio/vue: one holds
+// a `link` part the layer lays `NuxtLink` under, draws icons in its slots
+// by default, or renders another wrapped component through a part's `as`.
+// These resolve to `app/components/<name>.ts` instead of @zoobzio/vue, so
+// `#components` serves the Nuxt version only; a wrapper is typed as the
+// vue component, so no separate declaration is needed.
 export const WRAPPED = [
+  "accordion",
   "breadcrumb",
   "browser",
+  "calendar",
+  "checkbox",
+  "command",
+  "date-filters",
+  "date-picker",
+  "date-range-picker",
   "directory",
+  "editor",
+  "facets",
+  "file-input",
+  "form",
+  "form-field",
   "hero",
+  "keywords",
   "menu",
+  "multi-select",
+  "pagination",
+  "range-calendar",
+  "rich-text",
+  "scroller",
   "segmented-control",
+  "select",
   "table",
   "tabs",
+  "tags-input",
+  "toast",
   "tree",
 ] as const satisfies readonly (typeof COMPONENTS)[number][];
 
@@ -119,6 +140,7 @@ export const LAYER = {
   "composables/log": ["useLogger"],
   "composables/notification": ["useNotifications"],
   "composables/request": ["useRequest", "useLazyRequest"],
+  "constants/editor": ["EDITOR_TOOL_ICONS"],
   "constants/error": [
     "ERROR_DEFAULT_STATUS_CODE",
     "ERROR_NOT_FOUND_STATUS_CODE",

@@ -39,16 +39,41 @@ export type ForwardIter<G extends ForwardGetter> = {
 };
 
 /**
+ * A per-datum getter of a rendered part: the datum is what the parent's
+ * template binds, the return is the part, `as` the component and the rest
+ * its props, as a `RenderedIter` recipe builds it.
+ */
+export type ForwardPartGetter = (datum: never) => { as: Component };
+
+/**
+ * A per-datum forward of a rendered part. It names no component of its
+ * own: each render takes the component from the part's `as` and hands it
+ * the rest as props, so a consumer's or a layer's `pt` swaps the component
+ * the forward renders, as it swaps any rendered part.
+ */
+export type ForwardPart<G extends ForwardPartGetter> = {
+  props: G;
+  slots: Record<string, unknown>;
+};
+
+/**
  * Any forward as the renderer sees it: the component erased, the getter
  * taking an optional datum that a static getter ignores. The component is
  * checked against its props where the entry is authored, through
- * `Forward` and `ForwardIter`.
+ * `Forward` and `ForwardIter`; a part forward has none, and its getter
+ * returns the component under `as`.
  */
-export type AnyForward = {
-  component: Component;
-  props(datum?: object): object;
-  slots: Record<string, unknown>;
-};
+export type AnyForward =
+  | {
+      component: Component;
+      props(datum?: object): object;
+      slots: Record<string, unknown>;
+    }
+  | {
+      component?: undefined;
+      props(datum?: object): { as: Component };
+      slots: Record<string, unknown>;
+    };
 
 /**
  * A record of forwards. `P` maps each key to that child's props, inferred

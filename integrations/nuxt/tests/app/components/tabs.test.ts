@@ -13,7 +13,7 @@ const tabs: TabsOption[] = [
     disabled: true,
     link: { to: "/billing" },
   },
-  { value: "local", label: "Local" },
+  { value: "local", label: "Local", icon: "folder" },
 ];
 
 const mounted: { unmount: () => void }[] = [];
@@ -41,6 +41,14 @@ const tabByText = (wrapper: ReturnType<typeof mountTabs>, label: string) => {
 };
 
 describe("tabs wrapper", () => {
+  it("draws an option's icon before its label", () => {
+    const wrapper = mountTabs();
+    expect(
+      tabByText(wrapper, "Local").get("svg[data-icon]").attributes("data-icon"),
+    ).toBe("folder");
+    expect(tabByText(wrapper, "Overview").find("svg").exists()).toBe(false);
+  });
+
   it("renders a linked tab through NuxtLink and keeps the tab role on it", () => {
     const wrapper = mountTabs();
     const overview = tabByText(wrapper, "Overview");
