@@ -45,7 +45,7 @@ const onError = (err: unknown) => {
 <template>
   <ConfigProvider :use-id="useIdFunction">
     <TooltipProvider>
-      <NuxtLoadingIndicator color="var(--sys-primary)" :threshold="0" />
+      <NuxtLoadingIndicator color="var(--primary)" :threshold="0" />
       <NuxtErrorBoundary @error="onError">
         <NuxtLayout>
           <NuxtPage />
