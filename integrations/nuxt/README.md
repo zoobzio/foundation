@@ -140,12 +140,19 @@ draws its alias: `expand` after a select's, multi select's, or
 accordion's trigger and as a tree branch's toggle; `prev` and `next` on
 the calendars and pickers and `calendar` on a picker's trigger; `search`
 before a command's filter; `remove` on a tag's and a file's remove
-button; `close` on a toast's; `top` on a scroller's back-to-top; `check`
+button and after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
 in a checkbox; the editor's and rich text's tools by key (`bold`,
 `heading`, `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`); and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
 `sort-asc` or `sort-desc` after a sorted header, `folder` before a
-folder, and the pagination's `first`, `prev`, `next`, and `last`. A slot
+folder, `magic` before the table's search, `next` after an autocomplete
+option that enters a stage (a field or an operator) and `expand` after the
+active trail option whose stage is open, and the pagination's `first`,
+`prev`, `next`, and `last`. The table's search renders through the
+layer's `TableSearch`: its Autocomplete with the `magic` icon in
+`inputPrepend`, the search key (`TABLE_SEARCH_KEY`, `/`) as a `kbd` in
+`inputAppend`, and that key focusing the input from anywhere on the page
+the user is not already typing, through `useFocusKey`. A slot
 that replaces a Fab renders the part with the icon as its content, so the
 label stays the button's `aria-label` and the visible text goes. The
 facets', keywords', and date filters' triggers draw `filter`, `keywords`,
@@ -153,14 +160,17 @@ and `calendar` that way.
 
 An item draws its own `icon`. The vue item types (`Option`, which the
 tabs, segmented control, accordion, select, and command options extend,
-plus `MenuItem`, `BreadcrumbItem`, `DirectoryItem`, and `FacetItem`) and
-the action descriptors of `@zoobzio/table` and `@zoobzio/browser` are
+plus `MenuItem`, `BreadcrumbItem`, `DirectoryItem`, and `FacetItem`), the
+action descriptors of `@zoobzio/table` and `@zoobzio/browser`, and the
+`Field` and `Option` of `@zoobzio/query` are
 interfaces, and `app/app.d.ts` widens each with an optional
 `icon: IconAlias` by declaration merging, so the one type the package,
 the layer, and the app share carries the field, and the wrapper draws it
 in the item's `prepend` slot. A row, file, folder, or bulk action given to
 `createTable` or `createBrowser` with an `icon` draws it the same way,
-since the layer's `Menu` renders those actions.
+since the layer's `Menu` renders those actions. A query field with an
+`icon` draws it before its option in the autocomplete's panel and trail,
+since the query service carries it onto the field's option.
 
 ```vue
 <script setup lang="ts">
@@ -370,9 +380,9 @@ app/
   components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts, icons in the slots, the layer's components under nested parts; icon.ts is the icon glue they share
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
-  constants/      — error page status codes, log levels, the editor tools' icons
+  constants/      — error page status codes, log levels, the editor tools' icons, the table's search key
   assets/css/     — reset.css, loaded by the layer config
-  composables/    — useAppError, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
+  composables/    — useAppError, useFocusKey, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   factories/      — create<Name>(id, options) → use<Name>(): Service
   plugins/        — log: provides $log and $logger
   stores/         — access<Name>(id, …) → the id's shared state container; accessLogs, accessNotifications

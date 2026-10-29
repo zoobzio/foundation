@@ -137,6 +137,7 @@ export const DEFINITIONS = [
 // `utils/` is plumbing the factories use and is not registered.
 export const LAYER = {
   "composables/error": ["useAppError"],
+  "composables/focus": ["useFocusKey"],
   "composables/hook": ["useHooks"],
   "composables/log": ["useLogger"],
   "composables/notification": ["useNotifications"],
@@ -147,6 +148,7 @@ export const LAYER = {
     "ERROR_NOT_FOUND_STATUS_CODE",
   ],
   "constants/log": ["LOG_ROOT_NAME", "LOG_LEVELS"],
+  "constants/table": ["TABLE_SEARCH_KEY"],
   "factories/browser": ["createBrowser"],
   "factories/code": ["createCode"],
   "factories/editor": ["createEditor"],

@@ -50,6 +50,17 @@ declare module "@zoobzio/table" {
   }
 }
 
+// A query field's `icon` is carried onto its option by the service, so the
+// autocomplete draws it before the field's label in the panel and the trail.
+declare module "@zoobzio/query" {
+  interface Field {
+    icon?: IconAlias;
+  }
+  interface Option {
+    icon?: IconAlias;
+  }
+}
+
 declare module "@zoobzio/browser" {
   interface ActionDescriptor {
     icon?: IconAlias;

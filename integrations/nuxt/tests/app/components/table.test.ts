@@ -1,6 +1,7 @@
 // The table wrapper: NuxtLink under the body's `link` part, row actions
 // through the layer's Menu with their icons, the toolbar, head, and
-// pagination icons, the service events relayed.
+// pagination icons, the search with its `magic` icon, `/` hint, and `/`
+// focus key, the service events relayed.
 import type { LinkedRow } from "#test/mount/table";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -123,6 +124,65 @@ describe("table wrapper", () => {
     service.sortBy("name");
     await flushPromises();
     expect(sorted()).toBe("sort-desc");
+  });
+
+  it("draws magic before the search input and the / hint after it", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const input = wrapper.get(".f-data-table-search input").element;
+    const lead = input.parentElement?.firstElementChild;
+    expect(lead?.getAttribute("data-icon")).toBe("magic");
+    const hint = input.nextElementSibling;
+    expect(hint?.tagName).toBe("KBD");
+    expect(hint?.textContent).toBe("/");
+    expect(hint?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("focuses the search on / pressed outside a field, and not within one", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const input = wrapper.get(".f-data-table-search input").element;
+    const press = (target: EventTarget, init: KeyboardEventInit = {}) => {
+      const event = new KeyboardEvent("keydown", {
+        key: "/",
+        code: "Slash",
+        bubbles: true,
+        cancelable: true,
+        ...init,
+      });
+      target.dispatchEvent(event);
+      target.dispatchEvent(
+        new KeyboardEvent("keyup", { ...init, key: "/", bubbles: true }),
+      );
+      return event;
+    };
+    expect(document.activeElement).not.toBe(input);
+    const claimed = press(document.body);
+    expect(document.activeElement).toBe(input);
+    expect(claimed.defaultPrevented).toBe(true);
+
+    const other = document.createElement("input");
+    document.body.append(other);
+    other.focus();
+    const typed = press(other);
+    expect(document.activeElement).toBe(other);
+    expect(typed.defaultPrevented).toBe(false);
+  });
+
+  it("keeps a consumer's pt.search over the layer's search", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({
+      service,
+      pt: { search: { placeholder: "Find" } },
+    });
+    const input = wrapper.get(".f-data-table-search input");
+    expect(input.attributes("placeholder")).toBe("Find");
+    expect(
+      input.element.parentElement?.firstElementChild?.getAttribute("data-icon"),
+    ).toBe("magic");
   });
 
   it("relays the service's domain events", async () => {

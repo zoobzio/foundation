@@ -46,11 +46,13 @@
   "dependencies": {
     "@icon-sheets/nuxt": "catalog:",
     "@nuxt/kit": "catalog:",
+    "@vueuse/core": "catalog:",
     "@zoobzio/browser": "workspace:*",
     "@zoobzio/code": "workspace:*",
     "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/icons": "workspace:*",
+    "@zoobzio/query": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/vue": "workspace:*",
     "ltrl-http": "catalog:",

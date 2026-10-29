@@ -20,6 +20,23 @@ import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import { QUERY_STATE_FIELDS } from "./constants";
 
 /**
+ * A field's option. The field's properties beyond the ones the query reads
+ * (what a layer widens it with, such as an icon) are carried onto it, so
+ * the option draws as the field does.
+ */
+const fieldOption = (key: string, field: Field, active?: boolean): Option => {
+  const {
+    label,
+    operators: _o,
+    defaultOperator: _d,
+    values: _v,
+    ...rest
+  } = field;
+  const option: Option = { ...rest, stage: "field", value: key, label };
+  return active ? { ...option, active } : option;
+};
+
+/**
  * The headless query machine. Owns the committed entries: one text entry
  * and one filter per field and operator, each validated against the field
  * schema. Any view adds and removes entries directly.
@@ -196,7 +213,7 @@ export class QueryService implements Service {
       case "field":
         return entries(this.fields)
           .filter(([, f]) => matches(f.label))
-          .map(([key, f]) => ({ stage: "field", value: key, label: f.label }));
+          .map(([key, f]) => fieldOption(key, f));
       case "op":
         return (field?.operators ?? [])
           .filter(matches)
@@ -216,9 +233,7 @@ export class QueryService implements Service {
   get trail(): Option[][] {
     const { key, field, op } = this.parse;
     if (!key || !field) return [];
-    const trail: Option[][] = [
-      [{ stage: "field", value: key, label: field.label, active: true }],
-    ];
+    const trail: Option[][] = [[fieldOption(key, field, true)]];
     if (op) trail.push([{ stage: "op", value: op, label: op, active: true }]);
     return trail;
   }

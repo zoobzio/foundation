@@ -133,12 +133,15 @@ defineSlots<AutocompleteSlots>();
       >
         <slot name="chip" v-bind="{ ...ctx, entry, index: i }">
           <button type="button" class="f-chip" @click="service.remove(i)">
+            <slot name="chipPrepend" v-bind="{ ...ctx, entry, index: i }" />
             {{ service.labelFor(entry) }}
+            <slot name="chipAppend" v-bind="{ ...ctx, entry, index: i }" />
           </button>
         </slot>
       </template>
     </slot>
     <div class="f-group">
+      <slot name="inputPrepend" v-bind="ctx" />
       <slot name="hint" v-bind="ctx">
         <div v-show="service.hint" class="f-group" aria-hidden="true">
           <span class="f-span">{{ service.draft }}</span>
@@ -151,6 +154,7 @@ defineSlots<AutocompleteSlots>();
           v-bind="settings.input"
         />
       </slot>
+      <slot name="inputAppend" v-bind="ctx" />
       <AutocompleteContent
         v-if="service.panels.length || empty"
         class="f-autocomplete-content"

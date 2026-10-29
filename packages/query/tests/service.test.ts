@@ -209,6 +209,29 @@ describe("panels", () => {
     expect(service.items).toEqual([]);
   });
 
+  it("carries a field's other properties onto its option, in the panel and the trail", () => {
+    const status = { label: "Status", values: ["Active"], icon: "check" };
+    const { service } = makeService({ fields: { status } });
+    expect(service.items).toEqual([
+      { stage: "field", value: "status", label: "Status", icon: "check" },
+    ]);
+    service.setDraft("Status: ");
+    expect(service.trail).toEqual([
+      [
+        {
+          stage: "field",
+          value: "status",
+          label: "Status",
+          icon: "check",
+          active: true,
+        },
+      ],
+    ]);
+    expect(service.items).toEqual([
+      { stage: "value", value: "Active", label: "Active" },
+    ]);
+  });
+
   it("asks a values provider for the term, and takes its result as is", () => {
     const values = vi.fn((term: string) =>
       term ? [`${term}@zoobz.io`, `${term}@example.com`] : [],

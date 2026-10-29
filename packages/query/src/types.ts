@@ -19,14 +19,17 @@ export type Values = readonly string[] | ((term: string) => readonly string[]);
  * A field the query can filter on. With `operators`, a filter on the field
  * carries an operator; `defaultOperator` fills one in when the caller names
  * none. With `values`, the value stage suggests them; without, the value is
- * free entry.
+ * free entry. An interface, so a layer may widen it by declaration merging
+ * (an icon); a property beyond the ones the query reads is carried onto
+ * the field's option, so a view that draws the field draws its option the
+ * same way.
  */
-export type Field = {
+export interface Field {
   label: string;
   operators?: readonly string[];
   defaultOperator?: string;
   values?: Values;
-};
+}
 
 /**
  * Config the consumer provides. Plain data, except that a field's `values`
@@ -97,13 +100,17 @@ export type Parse = {
 /**
  * A panel option. `value` is the stage's payload: a field key, an operator,
  * or a value. `active` marks the trail option whose stage the draft is in.
+ * A field or operator option enters a stage on select, so a view may draw
+ * it as a branch; an active one steps back out. An interface, so a layer
+ * may widen it as it widens `Field`: a field option carries the field's
+ * widened properties.
  */
-export type Option = {
+export interface Option {
   stage: Stage;
   value: string;
   label: string;
   active?: boolean;
-};
+}
 
 /**
  * The events of a query service, keyed by name.

@@ -109,9 +109,10 @@ slot's scope carries `settings`, so a replacement renders the part's
 props through `Primitive` with its own content.
 
 The item types a component takes (`MenuItem`, `TabsOption`,
-`BreadcrumbItem`, `DirectoryItem`, `CommandOption`, …) are interfaces, so
-a layer may widen one by declaration merging, and the widened field then
-reaches the layer's slot defaults through the slot's scope. `TreeNode` is
+`BreadcrumbItem`, `DirectoryItem`, `CommandOption`, the query's `Field`
+and `Option` behind the autocomplete, …) are interfaces, so a layer may
+widen one by declaration merging, and the widened field then reaches the
+layer's slot defaults through the slot's scope. `TreeNode` is
 the exception: it stays a type alias to satisfy reka's record bound.
 
 ## Data components

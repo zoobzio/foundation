@@ -120,13 +120,21 @@ export type AutocompleteChipContext = AutocompleteContext &
   AutocompleteChipAnchor;
 
 /**
- * Slots of the autocomplete. Each slot receives the context.
+ * Slots of the autocomplete. Each slot receives the context. `inputPrepend`
+ * and `inputAppend` sit either side of the input and its hint, within the
+ * group the content anchors to, so an icon can lead and a key hint trail.
+ * `chipPrepend` and `chipAppend` sit either side of a chip's label, within
+ * the button that removes it, so a remove icon can trail the label.
  */
 export type AutocompleteSlots = {
   chips?: (props: AutocompleteContext) => VNode[];
   chip?: (props: AutocompleteChipContext) => VNode[];
+  chipPrepend?: (props: AutocompleteChipContext) => VNode[];
+  chipAppend?: (props: AutocompleteChipContext) => VNode[];
   hint?: (props: AutocompleteContext) => VNode[];
+  inputPrepend?: (props: AutocompleteContext) => VNode[];
   input?: (props: AutocompleteContext) => VNode[];
+  inputAppend?: (props: AutocompleteContext) => VNode[];
   item?: (props: AutocompleteOptionContext) => VNode[];
   itemLabel?: (props: AutocompleteOptionContext) => VNode[];
   itemArrow?: (props: AutocompleteOptionContext) => VNode[];

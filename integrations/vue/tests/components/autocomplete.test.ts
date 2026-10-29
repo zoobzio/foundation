@@ -251,6 +251,51 @@ describe("autocomplete", () => {
     expect(wrapper.findAll(".f-autocomplete-row")).toHaveLength(VIEWPORT / ROW);
   });
 
+  it("renders chipPrepend and chipAppend either side of a chip's label", async () => {
+    const service = makeQuery();
+    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "filter", key: "status", value: "Active" });
+    const wrapper = mount(Autocomplete, {
+      props: { service },
+      slots: {
+        chipPrepend: (p) => h("i", { class: "lead" }, p.entry.kind),
+        chipAppend: (p) => h("i", { class: "trail" }, String(p.index)),
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await flushPromises();
+    const chips = wrapper.findAll(".f-chip");
+    expect(chips).toHaveLength(2);
+    for (const [i, chip] of chips.entries()) {
+      const [lead, trail] = chip.element.children;
+      expect(lead?.classList.contains("lead")).toBe(true);
+      expect(trail?.classList.contains("trail")).toBe(true);
+      expect(trail?.textContent).toBe(String(i));
+    }
+    expect(chips.map((c) => c.get(".lead").text())).toEqual(["text", "filter"]);
+    expect(chips[0]!.text()).toContain('"alice"');
+  });
+
+  it("renders inputPrepend and inputAppend either side of the input", () => {
+    const service = makeQuery();
+    const wrapper = mount(Autocomplete, {
+      props: { service, placeholder: "Find" },
+      slots: {
+        inputPrepend: (p) => h("i", { class: "lead" }, p.placeholder),
+        inputAppend: (p) => h("kbd", { class: "trail" }, String(p.empty)),
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    const input = wrapper.get("input").element;
+    const lead = input.parentElement?.firstElementChild;
+    expect(lead?.classList.contains("lead")).toBe(true);
+    expect(lead?.textContent).toBe("Find");
+    expect(input.nextElementSibling?.classList.contains("trail")).toBe(true);
+    expect(input.nextElementSibling?.textContent).toBe("false");
+  });
+
   it("virtualizes a consumer's item slot within the row", async () => {
     const service = makeQuery();
     const wrapper = mount(Autocomplete, {
