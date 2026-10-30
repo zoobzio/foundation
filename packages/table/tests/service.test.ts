@@ -448,7 +448,7 @@ describe("query", () => {
 
   it("a submitted draft commits through the column schema", () => {
     const { service } = makeService();
-    service.query.setDraft("Amount: over: 40");
+    service.query.setDraft("Amount: over 40");
     service.query.submit();
     service.query.setDraft("Created: 2026-02-01");
     service.query.submit();

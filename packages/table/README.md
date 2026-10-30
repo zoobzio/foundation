@@ -33,7 +33,7 @@ as `query` and its `filters`.
 
 ```ts
 table.query.add({ kind: "filter", key: "status", value: "Active" });
-table.query.setDraft("Amount: over: 40");
+table.query.setDraft("Amount: over 40");
 table.query.submit();
 table.query.filters; // [{ key: "status", value: "Active" }, { key: "amount", op: "over", value: "40" }]
 ```

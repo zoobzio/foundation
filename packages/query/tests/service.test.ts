@@ -171,7 +171,7 @@ describe("parse", () => {
 
   it("parses an operator for operator fields only", () => {
     const { service } = makeService();
-    service.setDraft("Amount: over: 4");
+    service.setDraft("Amount: over 4");
     expect(service.parse).toMatchObject({
       key: "amount",
       op: "over",
@@ -180,8 +180,42 @@ describe("parse", () => {
     expect(service.stage).toBe("value");
     service.setDraft("Amount: ");
     expect(service.stage).toBe("op");
-    service.setDraft("Status: over: 4");
-    expect(service.parse).toMatchObject({ key: "status", term: "over: 4" });
+    service.setDraft("Status: over 4");
+    expect(service.parse).toMatchObject({ key: "status", term: "over 4" });
+  });
+
+  it("takes an operator once its space is typed, without case", () => {
+    const { service } = makeService();
+    service.setDraft("Amount: over");
+    expect(service.parse).toMatchObject({ key: "amount", term: "over" });
+    expect(service.stage).toBe("op");
+    service.setDraft("Amount: over ");
+    expect(service.parse).toMatchObject({
+      key: "amount",
+      op: "over",
+      term: "",
+    });
+    expect(service.stage).toBe("value");
+    service.setDraft("Amount: OVER 4");
+    expect(service.parse).toMatchObject({ op: "over", term: "4" });
+    service.setDraft("Amount: overt 4");
+    expect(service.parse).toMatchObject({ key: "amount", term: "overt 4" });
+    expect(service.stage).toBe("op");
+  });
+
+  it("matches the longest operator first", () => {
+    const { service } = makeService({
+      fields: {
+        due: { label: "Due", operators: ["on", "on or before"] },
+      },
+    });
+    service.setDraft("Due: on or before 2026-01-01");
+    expect(service.parse).toMatchObject({
+      op: "on or before",
+      term: "2026-01-01",
+    });
+    service.setDraft("Due: on 2026-01-01");
+    expect(service.parse).toMatchObject({ op: "on", term: "2026-01-01" });
   });
 });
 
@@ -259,7 +293,7 @@ describe("panels", () => {
     const { service } = makeService();
     expect(service.trail).toEqual([]);
     expect(service.panels).toEqual([service.items]);
-    service.setDraft("Amount: over: 4");
+    service.setDraft("Amount: over 4");
     expect(service.trail).toEqual([
       [{ stage: "field", value: "amount", label: "Amount", active: true }],
       [{ stage: "op", value: "over", label: "over", active: true }],
@@ -269,14 +303,14 @@ describe("panels", () => {
     expect(service.panels).toEqual([...service.trail, service.items]);
   });
 
-  it("completes from the panel, with a colon for field and operator", () => {
+  it("completes from the panel: a colon after a field, a space after an operator", () => {
     const { service } = makeService();
     const at = (text: string) => {
       service.setDraft(text);
       return service.hint;
     };
     expect(at("na")).toBe("me: ");
-    expect(at("Amount: ov")).toBe("er: ");
+    expect(at("Amount: ov")).toBe("er ");
     expect(at("Status: inac")).toBe("tive");
     expect(at("Status: Active")).toBe("");
     expect(at("")).toBe("");
@@ -301,7 +335,7 @@ describe("select", () => {
     const { service } = makeService();
     service.setDraft("Amount: ");
     service.select({ stage: "op", value: "over", label: "over" });
-    expect(service.draft).toBe("Amount: over: ");
+    expect(service.draft).toBe("Amount: over ");
     service.select({ stage: "op", value: "over", label: "over", active: true });
     expect(service.draft).toBe("Amount: ");
   });
@@ -314,7 +348,7 @@ describe("select", () => {
 
   it("commits a value with the field and operator, then clears", () => {
     const { service, changed } = makeService();
-    service.setDraft("Amount: over: 4");
+    service.setDraft("Amount: over 4");
     service.select({ stage: "value", value: "40", label: "40" });
     const entry: Entry = {
       kind: "filter",
@@ -391,7 +425,7 @@ describe("text", () => {
   it("formats stage text, entry text and entry labels", () => {
     const { service } = makeService();
     expect(service.stageText("status")).toBe("Status: ");
-    expect(service.stageText("amount", "over")).toBe("Amount: over: ");
+    expect(service.stageText("amount", "over")).toBe("Amount: over ");
     expect(service.stageText("ghost")).toBe("ghost: ");
     const filter: Entry = {
       kind: "filter",
@@ -399,7 +433,7 @@ describe("text", () => {
       op: "over",
       value: "4",
     };
-    expect(service.textFor(filter)).toBe("Amount: over: 4");
+    expect(service.textFor(filter)).toBe("Amount: over 4");
     expect(service.labelFor(filter)).toBe("Amount: over 4");
     const text: Entry = { kind: "text", value: "alice" };
     expect(service.textFor(text)).toBe("alice");

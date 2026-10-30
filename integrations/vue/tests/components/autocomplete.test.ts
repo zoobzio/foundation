@@ -226,7 +226,7 @@ describe("autocomplete", () => {
     expect(
       wrapper.findAll(".f-autocomplete-item").map((i) => i.text()),
     ).toEqual(["over", "under"]);
-    await input.setValue("Amount: over: ");
+    await input.setValue("Amount: over ");
     await flushPromises();
     expect(wrapper.findAll(".f-button[aria-current]")).toHaveLength(2);
     expect(wrapper.find(".f-scroll-area-root").exists()).toBe(false);

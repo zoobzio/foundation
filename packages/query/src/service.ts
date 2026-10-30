@@ -37,12 +37,27 @@ const fieldOption = (key: string, field: Field, active?: boolean): Option => {
 };
 
 /**
+ * The operator the rest of a draft (after `Label: `) names: the longest of
+ * the field's operators that the rest starts with, followed by a space, so
+ * an operator typed without its space is still being completed. Matched
+ * without case; the field's spelling is returned.
+ */
+const operatorOf = (field: Field, rest: string): string | undefined => {
+  const operators = field.operators;
+  if (!operators?.length) return undefined;
+  const lower = rest.toLowerCase();
+  return [...operators]
+    .sort((a, b) => b.length - a.length)
+    .find((o) => lower.startsWith(`${o.toLowerCase()} `));
+};
+
+/**
  * The headless query machine. Owns the committed entries: one text entry
  * and one filter per field and operator, each validated against the field
  * schema. Any view adds and removes entries directly.
  *
  * Owns a draft as well, for a text view: the draft walks the grammar
- * `Label: op: term` through the field, operator and value stages of the
+ * `Label: op term` through the field, operator and value stages of the
  * configured fields, and commits as an entry. A view with no text input
  * leaves the draft alone.
  *
@@ -183,13 +198,9 @@ export class QueryService implements Service {
     if (!found) return { term: raw };
     const [key, field] = found;
     const rest = raw.slice(idx + 1).trimStart();
-    if (field.operators?.length) {
-      const j = rest.indexOf(":");
-      if (j >= 0) {
-        const name = rest.slice(0, j).trim().toLowerCase();
-        const op = field.operators.find((o) => o === name);
-        if (op) return { key, field, op, term: rest.slice(j + 1).trimStart() };
-      }
+    const op = operatorOf(field, rest);
+    if (op) {
+      return { key, field, op, term: rest.slice(op.length + 1).trimStart() };
     }
     return { key, field, term: rest };
   }
@@ -247,7 +258,8 @@ export class QueryService implements Service {
 
   /**
    * The inline completion: the rest of the first panel option whose label
-   * starts with the term. A field or operator completion ends in `: `.
+   * starts with the term. A field completion ends in `: `, an operator
+   * completion in a space.
    */
   get hint(): string {
     const q = this.parse.term.toLowerCase();
@@ -257,7 +269,14 @@ export class QueryService implements Service {
     );
     if (!match) return "";
     const rest = match.label.slice(q.length);
-    return this.stage === "value" ? rest : `${rest}: `;
+    switch (this.stage) {
+      case "field":
+        return `${rest}: `;
+      case "op":
+        return `${rest} `;
+      default:
+        return rest;
+    }
   }
 
   // --- draft -----------------------------------------------------------
@@ -322,23 +341,24 @@ export class QueryService implements Service {
 
   // --- text ------------------------------------------------------------
 
-  /** The text that enters a stage: `Label: ` or `Label: op: `. */
+  /** The text that enters a stage: `Label: ` or `Label: op `. */
   stageText(key: string, op?: string): string {
-    return `${this.labelOf(key)}: ${op ? `${op}: ` : ""}`;
+    return `${this.labelOf(key)}: ${op ? `${op} ` : ""}`;
   }
 
-  /** The text that commits an entry: `Label: op: value`, or the text. */
+  /** The text that commits an entry: `Label: op value`, or the text. */
   textFor(entry: Entry): string {
     if (entry.kind === "text") return entry.value;
     return `${this.stageText(entry.key, entry.op)}${entry.value}`;
   }
 
-  /** The display label of an entry: `Label: op value`, or the quoted text. */
+  /**
+   * The display label of an entry: its text, so a chip reads as the draft
+   * that made it, or the quoted text.
+   */
   labelFor(entry: Entry): string {
     if (entry.kind === "text") return `"${entry.value}"`;
-    return `${this.labelOf(entry.key)}: ${entry.op ? `${entry.op} ` : ""}${
-      entry.value
-    }`;
+    return this.textFor(entry);
   }
 
   private labelOf(key: string): string {
