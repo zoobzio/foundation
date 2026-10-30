@@ -24,6 +24,12 @@ export type ColumnType =
   | "image"
   | "action";
 
+/**
+ * A table column. An interface, so a layer may widen it by declaration
+ * merging (an icon); a property beyond the ones the table reads is carried
+ * onto the column's query field, so the search draws the field as the
+ * column does.
+ */
 export interface DataTableColumn<T> {
   key: keyof T;
   label: string;

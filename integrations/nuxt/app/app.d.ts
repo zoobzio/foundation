@@ -44,8 +44,14 @@ declare module "@zoobzio/vue/types/components/facets" {
   }
 }
 
+// A column's `icon` is drawn before its header, and carried onto its query
+// field by the table and onto its column-manager option by the vue table,
+// so the search and the manager draw it beside the column's label.
 declare module "@zoobzio/table" {
   interface ActionDescriptor {
+    icon?: IconAlias;
+  }
+  interface DataTableColumn<T> {
     icon?: IconAlias;
   }
 }

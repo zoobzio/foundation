@@ -5,8 +5,9 @@
 // Autocomplete with the `magic` icon, the `/` key hint, and the `/` key
 // focusing it) as the search, and the layer's Pagination.
 // Its Fab slots draw the `refresh`, `columns`, and `actions` icons; the
-// head draws `drag` on each handle and `sort-asc` or `sort-desc` after a
-// sorted header; a bulk action draws its own `icon`.
+// head draws `drag` on each handle, a column's own `icon` before its
+// header, and `sort-asc` or `sort-desc` after a sorted header; a bulk action
+// draws its own `icon`.
 import type { TableBodyPassthrough } from "@zoobzio/vue/types/components/table-body";
 import type { TableColumnsPassthrough } from "@zoobzio/vue/types/components/table-columns";
 import type { TableHeadPassthrough } from "@zoobzio/vue/types/components/table-head";
@@ -45,6 +46,7 @@ export default wrap(Core, {
     columns: ({ settings }) => iconPart(settings.trigger, "columns"),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
     dragPrepend: () => [icon("drag")],
+    headerPrepend: ({ column }) => iconOf(column.icon),
     headerAppend: ({ table, column }) =>
       table.isSorted(column)
         ? [icon(table.sortDirection === "asc" ? "sort-asc" : "sort-desc")]

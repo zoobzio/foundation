@@ -19,4 +19,15 @@ describe("columnOption", () => {
     });
     expect(columnOption(service, col("name")).disabled).toBe(false);
   });
+
+  it("carries a column's properties beyond the ones the table reads onto the option", () => {
+    const { service } = makeTable();
+    const column = { ...col("name"), icon: "user" };
+    expect(columnOption(service, column)).toEqual({
+      value: "name",
+      label: "Name",
+      disabled: false,
+      icon: "user",
+    });
+  });
 });

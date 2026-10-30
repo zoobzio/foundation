@@ -57,6 +57,13 @@ describe("fields", () => {
     });
   });
 
+  it("carries a column's properties beyond the ones the table reads onto its field", () => {
+    const column = { key: "name", label: "Name", sortable: true, icon: "user" };
+    expect(fields<FakeRow>([column as DataTableColumn<FakeRow>])).toEqual({
+      name: { label: "Name", icon: "user" },
+    });
+  });
+
   it("returns an empty record for no columns", () => {
     expect(fields([])).toEqual({});
   });
