@@ -35,8 +35,10 @@ const mountAutocomplete = (props: AutocompleteProps) => {
 
 /**
  * happy-dom lays nothing out, and the virtualizer renders no rows into a
- * viewport of no height. Give the scroll area's viewport ten rows of room
- * and each row its height, so the window is a real one.
+ * viewport of no height. Give the virtualizer's scroll element ten rows of
+ * room and each row its height, so the window is a real one. That element
+ * is the scroll area's viewport on the first panel and the plain viewport
+ * once a group has an option set.
  */
 const VIEWPORT = 280;
 const ROW = 28;
@@ -45,6 +47,7 @@ beforeEach(() => {
   vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(
     function (this: HTMLElement) {
       if (this.hasAttribute("data-reka-scroll-area-viewport")) return VIEWPORT;
+      if (this.classList.contains("f-autocomplete-viewport")) return VIEWPORT;
       if (this.hasAttribute("data-index")) return ROW;
       return 0;
     },
@@ -164,10 +167,10 @@ describe("autocomplete", () => {
     expect(wrapper.find(".f-autocomplete-viewport").exists()).toBe(true);
   });
 
-  it("scrolls the active panel in the scroller, the virtualizer its child", async () => {
+  it("scrolls the first panel in the scroller, the virtualizer its child", async () => {
     const service = makeQuery();
     const wrapper = mountAutocomplete({ service });
-    await wrapper.get("input").setValue("Status: ");
+    await wrapper.get("input").setValue("a");
     await flushPromises();
     const viewport = wrapper.get(".f-autocomplete-viewport");
     expect(viewport.classes()).toContain("f-scroll-area-root");
@@ -177,6 +180,9 @@ describe("autocomplete", () => {
         "data-reka-scroll-area-viewport",
       ),
     ).toBe(true);
+    expect(
+      wrapper.findAll(".f-autocomplete-item").map((i) => i.text()),
+    ).toEqual(["Status", "Amount", "Many"]);
   });
 
   it("pt overrides reach the scroller", async () => {
@@ -185,7 +191,7 @@ describe("autocomplete", () => {
       service,
       pt: { viewport: { type: "always" } },
     });
-    await wrapper.get("input").setValue("Status: ");
+    await wrapper.get("input").setValue("a");
     await flushPromises();
     expect(wrapper.find(".f-scroll-area-scrollbar").exists()).toBe(true);
     expect(wrapper.get("[data-reka-virtualizer]").element.parentElement).toBe(
@@ -193,11 +199,49 @@ describe("autocomplete", () => {
     );
   });
 
-  it("virtualizes the active panel", async () => {
+  it("drops the scroller once a group has an option set", async () => {
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({
+      service,
+      pt: { viewport: { type: "always" } },
+    });
+    const input = wrapper.get("input");
+    await input.setValue("a");
+    await flushPromises();
+    expect(wrapper.find(".f-scroll-area-root").exists()).toBe(true);
+    await input.setValue("Amount: ");
+    await flushPromises();
+    expect(wrapper.findAll(".f-button[aria-current]")).toHaveLength(1);
+    const viewport = wrapper.get(".f-autocomplete-viewport");
+    expect(viewport.element.tagName).toBe("DIV");
+    expect(viewport.classes()).toEqual(["f-autocomplete-viewport"]);
+    expect(wrapper.find(".f-scroll-area-root").exists()).toBe(false);
+    expect(wrapper.find(".f-scroll-area-scrollbar").exists()).toBe(false);
+    expect(wrapper.find("[data-reka-scroll-area-viewport]").exists()).toBe(
+      false,
+    );
+    expect(viewport.get("[data-reka-virtualizer]").element.parentElement).toBe(
+      viewport.element,
+    );
+    expect(
+      wrapper.findAll(".f-autocomplete-item").map((i) => i.text()),
+    ).toEqual(["over", "under"]);
+    await input.setValue("Amount: over: ");
+    await flushPromises();
+    expect(wrapper.findAll(".f-button[aria-current]")).toHaveLength(2);
+    expect(wrapper.find(".f-scroll-area-root").exists()).toBe(false);
+    expect(wrapper.find(".f-autocomplete-viewport").exists()).toBe(false);
+    await input.setValue("");
+    await flushPromises();
+    expect(wrapper.find(".f-scroll-area-root").exists()).toBe(true);
+  });
+
+  it("virtualizes the active panel, with or without the scroller", async () => {
     const service = makeQuery();
     const wrapper = mountAutocomplete({ service });
     await wrapper.get("input").setValue("Many: ");
     await flushPromises();
+    expect(wrapper.find(".f-scroll-area-root").exists()).toBe(false);
     const rows = wrapper.findAll(".f-autocomplete-row");
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.length).toBeLessThan(MANY.length);

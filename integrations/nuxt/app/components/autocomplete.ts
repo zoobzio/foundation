@@ -1,5 +1,6 @@
 // The vue autocomplete with the layer's Scroller as the viewport of its
-// active panel, the `remove` icon after each chip's label (the chip is the
+// first panel (the active panel renders with no scroller once a group has
+// an option set), the `remove` icon after each chip's label (the chip is the
 // button that removes its entry), an option's `icon` before its label, and
 // an arrow after an option that branches: `next` on a field or operator
 // option, as selecting it enters a stage, and `expand` on an active trail

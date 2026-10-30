@@ -1,5 +1,6 @@
-// The autocomplete wrapper: the layer's Scroller as the active panel's
-// viewport, so its back-to-top draws the `top` icon, `remove` after each
+// The autocomplete wrapper: the layer's Scroller as the first panel's
+// viewport, so its back-to-top draws the `top` icon, and no scroller once a
+// group has an option set, `remove` after each
 // chip's label, a field's `icon` before its option, and the branch arrows:
 // `next` on a field or operator option, `expand` on the active trail
 // option, none on a value.
@@ -43,6 +44,7 @@ beforeEach(() => {
   vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(
     function (this: HTMLElement) {
       if (this.hasAttribute("data-reka-scroll-area-viewport")) return 280;
+      if (this.classList.contains("f-autocomplete-viewport")) return 280;
       if (this.hasAttribute("data-index")) return 28;
       return 0;
     },
@@ -111,7 +113,24 @@ describe("autocomplete wrapper", () => {
     expect(service.query.entries).toHaveLength(1);
   });
 
-  it("renders the active panel in the layer's Scroller", async () => {
+  it("renders the active panel with no scroller once a group has an option set", async () => {
+    const wrapper = mount(Autocomplete, {
+      props: { service: makeQuery() },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").setValue("Status: ");
+    await flushPromises();
+    expect(wrapper.find(".f-scroll-area-root").exists()).toBe(false);
+    const viewport = wrapper.get<HTMLElement>(".f-autocomplete-viewport");
+    expect(viewport.classes()).toEqual(["f-autocomplete-viewport"]);
+    expect(viewport.get("[data-reka-virtualizer]").element.parentElement).toBe(
+      viewport.element,
+    );
+    expect(wrapper.find(".f-autocomplete-item").text()).toBe("Active");
+  });
+
+  it("renders the first panel in the layer's Scroller", async () => {
     const { service } = makeTable();
     const wrapper = mount(Autocomplete, {
       props: { service: service.query },

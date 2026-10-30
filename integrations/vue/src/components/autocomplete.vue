@@ -56,6 +56,10 @@ const $open = useModel(
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
+/**
+ * The index of the active panel: the one after the trail. Also the count of
+ * groups with an option set, so a depth of zero is the first panel.
+ */
 const depth = computed(() => service.trail.length);
 
 const settings = usePassthrough<AutocompletePassthrough>(() => ({
@@ -191,10 +195,18 @@ defineSlots<AutocompleteSlots>();
             </slot>
           </template>
         </div>
-        <Primitive
+        <!--
+          The scroller scrolls the first panel, the one open before any
+          selection. Once a group has an option set, the active panel
+          renders in a plain element with no scroller, so the viewport pt
+          does not apply. The virtualizer still windows its options within
+          that element, which scrolls them once a height bounds it.
+        -->
+        <component
+          :is="depth ? 'div' : Primitive"
           v-if="service.items.length"
           class="f-autocomplete-viewport"
-          v-bind="settings.viewport"
+          v-bind="depth ? {} : settings.viewport"
         >
           <AutocompleteVirtualizer
             v-slot="{ option, virtualItem, virtualizer }"
@@ -276,7 +288,7 @@ defineSlots<AutocompleteSlots>();
               </slot>
             </div>
           </AutocompleteVirtualizer>
-        </Primitive>
+        </component>
         <slot name="empty" v-bind="ctx">
           <div v-if="empty" class="f-group">
             <span class="f-span">No matches</span>

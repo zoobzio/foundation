@@ -46,10 +46,13 @@ export type AutocompleteChipAnchor = {
 
 /**
  * The parts of the autocomplete that accept passthrough. `input` adds the
- * native `keydown` emit. `viewport` is the scroll area of the active panel,
- * the package's scroller by default, and `virtualizer` windows its options
- * within it: only the rows in view, plus `overscan` either side, are in
- * the DOM. `estimateSize` seeds a row's height before it is measured. The
+ * native `keydown` emit. `viewport` is the scroll area of the first panel,
+ * the one open before any selection, the package's scroller by default.
+ * Once a group has an option set, the active panel renders in a plain
+ * `.f-autocomplete-viewport` element instead and `viewport` does not
+ * apply. `virtualizer` windows the active panel's options in either: only
+ * the rows in view, plus `overscan` either side, are in the DOM.
+ * `estimateSize` seeds a row's height before it is measured. The
  * virtualizer scrolls with its parent element, so the scroller's viewport
  * renders it as its own child; a `viewport` override keeps that `pt`
  * unless it sets its own.
