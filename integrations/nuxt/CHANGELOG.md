@@ -1,5 +1,20 @@
 # @zoobzio/nuxt
 
+## 0.0.15
+
+### Patch Changes
+
+- Updated dependencies [[`59e70a6`](https://github.com/zoobzio/foundation/commit/59e70a6626c0b612283282729e4ff7ee91822ea7)]:
+  - @zoobzio/theme@0.0.15
+  - @zoobzio/query@0.0.15
+  - @zoobzio/browser@0.0.15
+  - @zoobzio/form@0.0.15
+  - @zoobzio/table@0.0.15
+  - @zoobzio/editor@0.0.15
+  - @zoobzio/code@0.0.15
+  - @zoobzio/icons@0.0.15
+  - @zoobzio/vue@0.0.15
+
 ## 0.0.14
 
 ### Patch Changes

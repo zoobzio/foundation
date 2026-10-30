@@ -1,5 +1,11 @@
 # @zoobzio/theme
 
+## 0.0.15
+
+### Patch Changes
+
+- [`59e70a6`](https://github.com/zoobzio/foundation/commit/59e70a6626c0b612283282729e4ff7ee91822ea7) Thanks [@zoobzio](https://github.com/zoobzio)! - Bump version for theme publish.
+
 ## 0.0.14
 
 ### Patch Changes
