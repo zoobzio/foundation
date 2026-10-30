@@ -27,6 +27,12 @@
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "@zoobzio/icons#test": {
+      "dependsOn": ["build"]
+    },
+    "@zoobzio/theme#test": {
+      "dependsOn": ["build"]
     }
   }
 }

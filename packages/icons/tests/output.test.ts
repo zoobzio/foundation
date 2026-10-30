@@ -1,7 +1,6 @@
 // The build is checked against the config and its Iconify sources: every
 // alias resolves to the lucide icon its ref names, the typed union lists the
 // same aliases, and the sprites hold one symbol each.
-import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -59,7 +58,8 @@ let sets: typeof import("../.output/sets.mjs");
 let sheet: typeof import("../.output/sheet.mjs");
 
 beforeAll(async () => {
-  execFileSync("pnpm", ["run", "build"], { cwd: root, stdio: "pipe" });
+  if (!existsSync(`${root}.output/index.mjs`))
+    throw new Error("no .output to test: run `pnpm build` first");
   index = await import("../.output/index.mjs");
   contract = await import("../.output/config.mjs");
   sets = await import("../.output/sets.mjs");

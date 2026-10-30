@@ -2,7 +2,6 @@
 // the palette is the base, the shell roles are the only addition, everything
 // else is aurora's, every theme of aurora applies, and the package is a
 // preset that another kit build and the Nuxt module take as it is.
-import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
@@ -70,7 +69,8 @@ const hex = (untheme: ReturnType<typeof boot>, token: string) =>
   (untheme.resolve(token as never) as Hex).hex;
 
 beforeAll(async () => {
-  execFileSync("pnpm", ["run", "build"], { cwd: root, stdio: "pipe" });
+  if (!existsSync(`${root}.output/config.mjs`))
+    throw new Error("no .output to test: run `pnpm build` first");
   config = await import("../.output/config.mjs");
   index = await import("../.output/index.mjs");
   manifest = await import("../.output/manifest.mjs");
