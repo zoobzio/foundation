@@ -1,5 +1,5 @@
 ---
-"@zoobzio/query": minor
+"@zoobzio/query": patch 
 "@zoobzio/table": patch
 "@zoobzio/nuxt": patch
 ---
