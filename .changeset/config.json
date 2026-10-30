@@ -19,6 +19,7 @@
       "@zoobzio/editor",
       "@zoobzio/code",
       "@zoobzio/icons",
+      "@zoobzio/theme",
       "@zoobzio/vue",
       "@zoobzio/nuxt"
     ]

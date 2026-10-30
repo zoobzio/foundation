@@ -46,6 +46,7 @@
   "dependencies": {
     "@icon-sheets/nuxt": "catalog:",
     "@nuxt/kit": "catalog:",
+    "@untheme/nuxt": "catalog:",
     "@vueuse/core": "catalog:",
     "@zoobzio/browser": "workspace:*",
     "@zoobzio/code": "workspace:*",
@@ -54,10 +55,12 @@
     "@zoobzio/icons": "workspace:*",
     "@zoobzio/query": "workspace:*",
     "@zoobzio/table": "workspace:*",
+    "@zoobzio/theme": "workspace:*",
     "@zoobzio/vue": "workspace:*",
     "ltrl-http": "catalog:",
     "objectively": "catalog:",
-    "reka-ui": "catalog:"
+    "reka-ui": "catalog:",
+    "untheme": "catalog:"
   },
   "devDependencies": {
     "@codemirror/state": "catalog:",

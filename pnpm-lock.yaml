@@ -54,6 +54,18 @@ catalogs:
     '@types/node':
       specifier: ^26.6.6
       version: 26.6.6
+    '@untheme/aurora':
+      specifier: ^0.6.1
+      version: 0.6.1
+    '@untheme/kit':
+      specifier: ^0.6.1
+      version: 0.6.1
+    '@untheme/nuxt':
+      specifier: ^0.6.1
+      version: 0.6.1
+    '@untheme/testing':
+      specifier: ^0.6.1
+      version: 0.6.1
     '@vitejs/plugin-vue':
       specifier: ^6.0.6
       version: 6.0.10
@@ -108,6 +120,9 @@ catalogs:
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
+    untheme:
+      specifier: ^0.6.1
+      version: 0.6.1
     vitest:
       specifier: ^5.0.3
       version: 5.0.3
@@ -161,6 +176,9 @@ importers:
       '@nuxt/kit':
         specifier: 'catalog:'
         version: 4.6.2(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+      '@untheme/nuxt':
+        specifier: 'catalog:'
+        version: 0.6.1(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
       '@vueuse/core':
         specifier: 'catalog:'
         version: 14.3.0(vue@3.5.44(typescript@5.9.3))
@@ -185,6 +203,9 @@ importers:
       '@zoobzio/table':
         specifier: workspace:*
         version: link:../../packages/table
+      '@zoobzio/theme':
+        specifier: workspace:*
+        version: link:../../packages/theme
       '@zoobzio/vue':
         specifier: workspace:*
         version: link:../vue
@@ -197,6 +218,9 @@ importers:
       reka-ui:
         specifier: 'catalog:'
         version: 2.10.1(vue@3.5.44(typescript@5.9.3))
+      untheme:
+        specifier: 'catalog:'
+        version: 0.6.1
     devDependencies:
       '@codemirror/state':
         specifier: 'catalog:'
@@ -386,6 +410,28 @@ importers:
       objectively:
         specifier: 'catalog:'
         version: 0.3.0
+
+  packages/theme:
+    dependencies:
+      '@untheme/aurora':
+        specifier: 'catalog:'
+        version: 0.6.1
+      untheme:
+        specifier: 'catalog:'
+        version: 0.6.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      '@untheme/kit':
+        specifier: 'catalog:'
+        version: 0.6.1
+      '@untheme/testing':
+        specifier: 'catalog:'
+        version: 0.6.1
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.3(@types/node@26.6.6)(@vitest/coverage-v8@5.0.3)(happy-dom@20.10.6)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))
 
 packages:
 
@@ -856,6 +902,10 @@ packages:
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
     engines: {node: '>=12.22'}
+
+  '@humanwhocodes/momoa@3.3.13':
+    resolution: {integrity: sha512-AbKq3EW41+HY6pNMJgAOrz68iyiTTf0Nr1JRHHfuG5zwniJ9Dw8J3U7oa1I2ptpqYwmEf1sXKOGK6lbdZ9eqmg==}
+    engines: {node: '>=18'}
 
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
@@ -1753,6 +1803,29 @@ packages:
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
+  '@terrazzo/json-schema-tools@0.3.0':
+    resolution: {integrity: sha512-uF6tpAi+slKtvycLvwZGN1siLUTTqVri1iF2b05Dx1hvYM0WWzUdLC9RD7tAwQ39tTPf9rmI6czA8W0rGB5wUQ==}
+    peerDependencies:
+      '@humanwhocodes/momoa': ^3.0.0
+      yaml-to-momoa: 0.1.0
+    peerDependenciesMeta:
+      yaml-to-momoa:
+        optional: true
+
+  '@terrazzo/parser@2.10.0':
+    resolution: {integrity: sha512-I5l5x4CNUKjTF4Xcx7EkYEbjS9nIuAauW+J3AIuMBlBCLlBGjIdVHJ4m1DOM+afXeRCktvELP5Kzo8ecSz09zw==}
+    peerDependencies:
+      yaml-to-momoa: 0.1.0
+    peerDependenciesMeta:
+      yaml-to-momoa:
+        optional: true
+
+  '@terrazzo/token-tools@2.10.0':
+    resolution: {integrity: sha512-L06Aw59uESXbGnagSajEDBr3E8hQl0jJlsy8opwgQOvJFhxMT4dGCcOsRCh+nTfGA4uipJ8pWyQgVRW0uaUihw==}
+
+  '@terrazzo/token-types@2.10.0':
+    resolution: {integrity: sha512-93HnrQPUFsZv0k9Z2L0zsxwd2IVLmoI78TwfnHhKPDnGrE+hVyzYRlFi/5ihspNFIbfnXMHW1EmxeiF9m6UPiQ==}
+
   '@tiptap/core@3.32.0':
     resolution: {integrity: sha512-Ghh2h02GKSqzytQGcLV4espYOG4EHxjj0MsrUB2Vnr47xmlZYRf6r7k2J09H+JpBdaGrWwrTkyBEi5i3c3yy2Q==}
     peerDependencies:
@@ -1917,6 +1990,9 @@ packages:
     cpu: [arm64]
     os: [win32]
 
+  '@types/babel__code-frame@7.27.0':
+    resolution: {integrity: sha512-Dwlo+LrxDx/0SpfmJ/BKveHf7QXWvLBLc+x03l5sbzykj3oB9nHygCpSECF1a+s+QIxbghe+KHqC90vGtxLRAA==}
+
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -2003,6 +2079,34 @@ packages:
         optional: true
       webpack:
         optional: true
+
+  '@untheme/aurora@0.6.1':
+    resolution: {integrity: sha512-XrbzbTkscYoe3uA9cTaXaO2FjWPwt/0FYqSSLiJ/AMg/dcj+kVMKY5IPB0ev/NbAF0FQLQR3hSmK006jJsmfyg==}
+
+  '@untheme/catalog@0.6.1':
+    resolution: {integrity: sha512-XbZeMeiiGLBZJMZDZw6en8v8Sqx7hFHHGBH6JfjilaIlxKHx6y69lsfn9usF48OzuoC1HA7cs1B7fyOCVOc91w==}
+
+  '@untheme/core@0.6.1':
+    resolution: {integrity: sha512-gedXm+17KXX/41pQsqA0VvvsERZ21Qx+bGxspRECLBMFxA3CV8QXXwEBPMsn4MM9b90Mnwa66bYPzrkc7ptzuw==}
+
+  '@untheme/css@0.6.1':
+    resolution: {integrity: sha512-ojHBEOUawMOXgifvnOVk9ddNaGea7aSKkIrPDe/2OwtJHjw2x5kgDz96Fv1p2xsrzPKcGc6NyormXO7CO8ULsw==}
+
+  '@untheme/kit@0.6.1':
+    resolution: {integrity: sha512-k5GmRlAvns/49/oSEC8Pr6lMAeqIlwCjmFx8JcAKQe37jWERarFUMr+NU7ZZuMW4I4742JdhbBjJKL12qW9zpA==}
+    hasBin: true
+
+  '@untheme/nuxt@0.6.1':
+    resolution: {integrity: sha512-fSl5Ex23dKvwDzcmzsEfCCj+GlUA2paarmx7HiEQDW0NbyNfVlrO9SM/l0vVjBh0/Eak3v4YEpnsNWqbDROaOg==}
+
+  '@untheme/schema@0.6.1':
+    resolution: {integrity: sha512-ZkUKOuq4SGuK/LW04s9Ahzegn0m6d2tLtmKJXyfIQpPJkpiU2ociZ6JcUQelia74nbv29kGv3hGWP6MRjSHqpw==}
+
+  '@untheme/testing@0.6.1':
+    resolution: {integrity: sha512-aXXRUzWg217co0wz9QlAGgHQEGc6tm/SsqpiqfAQf/36FR4BbxhGV4lVaHhg5WhXaD2vBJ5BxcD+SLOIuP84iQ==}
+
+  '@untheme/utils@0.6.1':
+    resolution: {integrity: sha512-Z+TPdQsYQLrXoNb68dQBKTlYGcJaj7MkvDeZoFfCB4lBA4ryUREdM75xRtU8rM1rOCu1fSAe60EvW+3+uZMVxA==}
 
   '@vercel/nft@1.10.2':
     resolution: {integrity: sha512-w+WyX5Ulmj4dtTZrxaulqrjaLZHSbnPzx75SJsTNYmotKsqn1JlLnDJa+lz5hn90HJofhl/2MAtw0mCrgM3qYw==}
@@ -2549,6 +2653,9 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+
+  colorjs.io@0.7.1:
+    resolution: {integrity: sha512-LY7OHnJZxHwT5UlzNa9bbhHHDbzB6yE5+3MIPwJEQKRvSCt/T4G7epsj+9j2BExUIIfXFIJGsIXUKdfrK9Q5tA==}
 
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
@@ -3288,6 +3395,10 @@ packages:
     resolution: {integrity: sha512-2AT6j+gXe/1ueqbW6fLZJiIw3F8iXGJtt0yDrZaBhAZEG1raiTxKWU+IPqMCzQAXOUCKdA4UDMgacKH25XG2Cw==}
     engines: {node: '>=4'}
 
+  is-what@4.1.16:
+    resolution: {integrity: sha512-ZhMwEosbFJkA0YhFnNDgTM4ZxDRsS6HqTo7qsZM08fehyRYIYa0yHu5R6mgo1n/8MgaPBXiPimPD77baVFYg+A==}
+    engines: {node: '>=12.13'}
+
   is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
     engines: {node: '>=0.10.0'}
@@ -3519,6 +3630,10 @@ packages:
   mdast-util-to-hast@13.2.1:
     resolution: {integrity: sha512-cctsq2wp5vTsLIcaymblUriiTcZd0CwWtCbLvrOzYCDZoWyMNV8sZ7krj09FSnsiJi3WVsHLM4k6Dq/yaPyCXA==}
 
+  merge-anything@5.1.7:
+    resolution: {integrity: sha512-eRtbOb1N5iyH0tkQDAoQ4Ipsp/5qSR79Dzrz8hEPxRX10RWWR/iQXdoKmBSRCThY1Fh5EhISDtpSc93fpxUniQ==}
+    engines: {node: '>=12.13'}
+
   merge-stream@2.0.0:
     resolution: {integrity: sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==}
 
@@ -3715,6 +3830,9 @@ packages:
 
   objectively@0.1.2:
     resolution: {integrity: sha512-EMlCIN4uAMFnk2gUxOIunIWW9rn3oMn4oaxXiBDVUfSMDkcjC0KxWxkn7WJXlLVbCrJn7EBFH4gFqEmM5GXXQw==}
+
+  objectively@0.2.0:
+    resolution: {integrity: sha512-w2By5ARMfMu4ROrO6JQkFJuj21RyR1tpEuKB+HhbtGFJMbQaiXcaAOct09zv10e4fzhP1eNHI9gSvKVMrQ4Amg==}
 
   objectively@0.3.0:
     resolution: {integrity: sha512-en0NNm03+7yaz57sb07zEmoYVhWBcVaDy9zcBlLwcJgejyWxQXrm2OFEajwUblJcivQvVCmrDPeoQUM2WEM1eQ==}
@@ -4643,6 +4761,9 @@ packages:
       uploadthing:
         optional: true
 
+  untheme@0.6.1:
+    resolution: {integrity: sha512-mNLml6tYted3tOfO3XzAaoQc8BooWJvEY/n5bDNkvbgaIW/pyYOh7DogErKQmvf0009ZPaA7SMMcDEIvmKmofw==}
+
   untun@0.1.3:
     resolution: {integrity: sha512-4luGP9LMYszMRZwsvyUd9MrxgEGZdZuZgpVQHEEX0lCYFESasVRvZd0EYpCkOIbJKHMuv0LskpXc/8Un+MJzEQ==}
     hasBin: true
@@ -4916,6 +5037,9 @@ packages:
     resolution: {integrity: sha512-Tb2FUhB4vUsGQlfSquQLYkApkuPAFQXGFzxWKHHumVz2dK+X1RUm/HnID4+TfIGYJ1kTcwOaCk/buYCEJr6YjQ==}
     engines: {node: '>=20.11'}
     hasBin: true
+
+  wildcard-match@5.1.6:
+    resolution: {integrity: sha512-Dh5N543my42ynFsbT0v6iPpaqJt95MOK1n/lhojVTe/hS3gpP6e938bbzsfaS0goLlJbhEOCIJPe/Tc3hckoaQ==}
 
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
@@ -5608,6 +5732,8 @@ snapshots:
 
   '@humanwhocodes/module-importer@1.0.1':
     optional: true
+
+  '@humanwhocodes/momoa@3.3.13': {}
 
   '@humanwhocodes/retry@0.4.3':
     optional: true
@@ -6556,6 +6682,31 @@ snapshots:
       '@tanstack/virtual-core': 3.17.4
       vue: 3.5.44(typescript@5.9.3)
 
+  '@terrazzo/json-schema-tools@0.3.0(@humanwhocodes/momoa@3.3.13)':
+    dependencies:
+      '@humanwhocodes/momoa': 3.3.13
+
+  '@terrazzo/parser@2.10.0':
+    dependencies:
+      '@humanwhocodes/momoa': 3.3.13
+      '@terrazzo/json-schema-tools': 0.3.0(@humanwhocodes/momoa@3.3.13)
+      '@terrazzo/token-tools': 2.10.0
+      '@terrazzo/token-types': 2.10.0
+      '@types/babel__code-frame': 7.27.0
+      colorjs.io: 0.7.1
+      merge-anything: 5.1.7
+      picocolors: 1.1.1
+      scule: 1.3.0
+
+  '@terrazzo/token-tools@2.10.0':
+    dependencies:
+      '@humanwhocodes/momoa': 3.3.13
+      '@terrazzo/token-types': 2.10.0
+      colorjs.io: 0.7.1
+      wildcard-match: 5.1.6
+
+  '@terrazzo/token-types@2.10.0': {}
+
   '@tiptap/core@3.32.0(@tiptap/pm@3.32.0)':
     dependencies:
       '@tiptap/pm': 3.32.0
@@ -6722,6 +6873,8 @@ snapshots:
   '@turbo/windows-arm64@2.11.9':
     optional: true
 
+  '@types/babel__code-frame@7.27.0': {}
+
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -6762,7 +6915,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 26.1.1
+      '@types/node': 26.6.6
 
   '@ungap/structured-clone@1.4.0': {}
 
@@ -6809,6 +6962,72 @@ snapshots:
       - rolldown
       - rollup
       - unloader
+
+  '@untheme/aurora@0.6.1': {}
+
+  '@untheme/catalog@0.6.1':
+    dependencies:
+      '@untheme/schema': 0.6.1
+      objectively: 0.2.0
+
+  '@untheme/core@0.6.1':
+    dependencies:
+      '@untheme/schema': 0.6.1
+      '@untheme/utils': 0.6.1
+      objectively: 0.2.0
+
+  '@untheme/css@0.6.1':
+    dependencies:
+      '@untheme/schema': 0.6.1
+      objectively: 0.2.0
+
+  '@untheme/kit@0.6.1':
+    dependencies:
+      '@terrazzo/parser': 2.10.0
+      '@untheme/core': 0.6.1
+      '@untheme/schema': 0.6.1
+      '@untheme/utils': 0.6.1
+      jiti: 2.7.0
+      objectively: 0.2.0
+    transitivePeerDependencies:
+      - yaml-to-momoa
+
+  '@untheme/nuxt@0.6.1(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))':
+    dependencies:
+      '@nuxt/kit': 4.6.2(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)))
+      '@untheme/kit': 0.6.1
+      objectively: 0.2.0
+      untheme: 0.6.1
+      vue: 3.5.44(typescript@5.9.3)
+    transitivePeerDependencies:
+      - '@nuxt/schema'
+      - confbox
+      - dotenv
+      - giget
+      - jiti
+      - magic-string
+      - mlly
+      - oxc-parser
+      - rolldown
+      - typescript
+      - unplugin
+      - yaml-to-momoa
+
+  '@untheme/schema@0.6.1':
+    dependencies:
+      objectively: 0.2.0
+
+  '@untheme/testing@0.6.1':
+    dependencies:
+      '@untheme/kit': 0.6.1
+      untheme: 0.6.1
+    transitivePeerDependencies:
+      - yaml-to-momoa
+
+  '@untheme/utils@0.6.1':
+    dependencies:
+      '@untheme/schema': 0.6.1
+      objectively: 0.2.0
 
   '@vercel/nft@1.10.2(rollup@4.62.2)':
     dependencies:
@@ -7287,7 +7506,7 @@ snapshots:
 
   buffer-image-size@0.6.4:
     dependencies:
-      '@types/node': 26.1.1
+      '@types/node': 26.6.6
 
   buffer@6.0.3:
     dependencies:
@@ -7384,6 +7603,8 @@ snapshots:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
+
+  colorjs.io@0.7.1: {}
 
   comma-separated-tokens@2.0.3: {}
 
@@ -8133,6 +8354,8 @@ snapshots:
     dependencies:
       better-path-resolve: 1.0.0
 
+  is-what@4.1.16: {}
+
   is-windows@1.0.2: {}
 
   is-wsl@3.1.1:
@@ -8362,6 +8585,10 @@ snapshots:
       unist-util-position: 5.0.0
       unist-util-visit: 5.2.0
       vfile: 6.0.3
+
+  merge-anything@5.1.7:
+    dependencies:
+      is-what: 4.1.16
 
   merge-stream@2.0.0: {}
 
@@ -8764,6 +8991,8 @@ snapshots:
   object-identity@0.2.3: {}
 
   objectively@0.1.2: {}
+
+  objectively@0.2.0: {}
 
   objectively@0.3.0: {}
 
@@ -9722,6 +9951,14 @@ snapshots:
       db0: 0.3.4
       ioredis: 5.11.1
 
+  untheme@0.6.1:
+    dependencies:
+      '@untheme/catalog': 0.6.1
+      '@untheme/core': 0.6.1
+      '@untheme/css': 0.6.1
+      '@untheme/schema': 0.6.1
+      '@untheme/utils': 0.6.1
+
   untun@0.1.3:
     dependencies:
       citty: 0.1.6
@@ -9975,6 +10212,8 @@ snapshots:
       isexe: 4.0.0
 
   why-is-node-running@3.2.1: {}
+
+  wildcard-match@5.1.6: {}
 
   word-wrap@1.2.5:
     optional: true

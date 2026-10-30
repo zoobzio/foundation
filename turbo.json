@@ -10,6 +10,10 @@
       "dependsOn": ["^build"],
       "outputs": [".output/**", ".nuxt/**"]
     },
+    "@zoobzio/theme#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".output/**"]
+    },
     "stub": {
       "dependsOn": ["^stub"],
       "cache": false

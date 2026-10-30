@@ -15,6 +15,7 @@ types) live in [`@zoobzio/kit`](./kit/).
 | [`@zoobzio/editor`](./editor/)   | Editor service: one rich text document over tiptap, a feature set, commands, json/html/hast codecs                                        |
 | [`@zoobzio/code`](./code/)       | Code service: one text document over CodeMirror, history, the consumer's extensions, text codec                                           |
 | [`@zoobzio/icons`](./icons/)     | Icon contract: the roles the components leave to their icon slots, built by icon-sheets into a typed alias union, a contract, and sprites |
+| [`@zoobzio/theme`](./theme/)     | Theme: the aurora preset of untheme with the foundation palette as its base and the shell's roles, built by @untheme/kit into a preset    |
 
 Each package has its own README with usage, the state container contract,
 middleware, and events. The editor and the code service are the two backed

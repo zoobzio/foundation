@@ -27,8 +27,9 @@ export const NuxtErrorBoundary = defineComponent({
 export const NuxtLoadingIndicator = defineComponent({
   name: "NuxtLoadingIndicator",
   props: { color: String, threshold: Number },
-  setup() {
-    return () => h("div", { class: "nuxt-loading-indicator" });
+  setup(props) {
+    return () =>
+      h("div", { class: "nuxt-loading-indicator", "data-color": props.color });
   },
 });
 

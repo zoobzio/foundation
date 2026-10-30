@@ -52,7 +52,10 @@ const raise = (wrapper: ReturnType<typeof mountApp>, err: unknown) => {
 describe("app.vue", () => {
   it("renders the page inside the shell", () => {
     const wrapper = mountApp();
-    expect(wrapper.find(".nuxt-loading-indicator").exists()).toBe(true);
+    const indicator = wrapper.find(".nuxt-loading-indicator");
+    expect(indicator.exists()).toBe(true);
+    // The theme names the indicator's color; the shell never picks a role.
+    expect(indicator.attributes("data-color")).toBe("var(--loading-indicator)");
     expect(wrapper.find("main.page").exists()).toBe(true);
     expect(wrapper.findAll(".toast")).toHaveLength(0);
   });

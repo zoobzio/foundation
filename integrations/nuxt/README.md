@@ -23,6 +23,8 @@ behind Nuxt's two virtual modules stay live, filled only by
   hold links come as the layer's own wrappers, which render every link
   through `NuxtLink` (see [Components](#components)). It also carries
   `Icon`, from `@icon-sheets/nuxt` (see [Icons](#icons)).
+- `#imports` also carries `useUntheme`, `useUnthemeRenderer`, and
+  `useUnthemeCatalog`, from `@untheme/nuxt` (see [Theme](#theme)).
 - `#imports` carries the `define*` constructors of `@zoobzio/vue` and the
   layer's own surface: the composables, factories, stores, and constants
   as values, and everything under `types/` as types. It also carries the
@@ -194,6 +196,55 @@ const groups: MenuGroup[] = [
 </template>
 ```
 
+## Theme
+
+The components of `@zoobzio/vue` read no tokens: they are unstyled, and a
+consumer's stylesheet binds them. The layer loads
+[`@untheme/nuxt`](https://github.com/zoobzio/untheme) with the foundation
+theme from [`@zoobzio/theme`](../../packages/theme/) as its default
+`untheme` option, so an app that extends the layer boots the foundation
+palette, gets the aurora cascade (`--surface`, `--primary`, `--space-*`,
+`--type-*`, …) under `@layer untheme` on every page, and may swap a scheme
+or apply one of aurora's themes through `useUntheme()` with no setup. The
+module mirrors the selection onto `<html>` as `data-<modifier>` attributes
+(`data-color="dark"`), so an app's stylesheet selects on them too.
+
+```vue
+<script setup lang="ts">
+import { useUntheme } from "#imports";
+
+const untheme = useUntheme();
+</script>
+
+<template>
+  <button @click="untheme.swap('color', 'dark')">Dark</button>
+</template>
+```
+
+The theme is also where foundation keeps the tokens it reads itself. The
+shell's loading indicator draws `var(--loading-indicator)`, a role of
+`@zoobzio/theme` bound to `{primary}`, so it follows the scheme and the
+applied theme and a downstream theme rebinds it without touching the shell.
+A new token of the shell is one more entry in the theme's `src/roles.json`.
+
+An app with a theme of its own builds it over `@zoobzio/theme` in place of
+aurora (`source: "npm:/@zoobzio/theme"` in its kit config), so the shell's
+roles come along and its palette takes the base, and passes its package as
+the preset. The untheme module takes the closest layer's `untheme` option
+as a whole, so the app's preset replaces the foundation's:
+
+```ts
+export default defineNuxtConfig({
+  extends: ["@zoobzio/nuxt"],
+  untheme: { preset: "@acme/theme" },
+});
+```
+
+The module resolves a preset from the app's root, so an app that keeps the
+layer's default lists `@zoobzio/theme` and `untheme` in its own
+dependencies. See the theme package for the palette, the roles, and the
+extension.
+
 ## Stores and factories
 
 The data components of `@zoobzio/vue` (`Table`, `Form`, `Browser`,
@@ -360,11 +411,12 @@ const { push } = useNotifications();
 push({ variant: "success", title: "Saved" });
 ```
 
-The layer loads one stylesheet, `app/assets/css/reset.css`: a
+The layer loads one stylesheet of its own, `app/assets/css/reset.css`: a
 Preflight-style reset inside `@layer reset`, so any unlayered stylesheet
 (the system's own semantic classes, the app's CSS) wins every
 equal-specificity conflict. It uses no tokens, so it applies before and
-independently of any theme.
+independently of the theme's cascade, which `@untheme/nuxt` links in under
+`@layer untheme` (see [Theme](#theme)).
 
 The shell also wraps the page in a `NuxtErrorBoundary`. An error thrown
 under it is toasted rather than replacing the page: when the error's `data`
@@ -376,7 +428,7 @@ variant.
 
 ```
 app/
-  app.vue         — the root: reka providers, loading indicator, error boundary, toaster
+  app.vue         — the root: reka providers, loading indicator (colored by the theme's `loading-indicator` role), error boundary, toaster
   components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts, icons in the slots, the layer's components under nested parts; icon.ts is the icon glue they share
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
@@ -390,5 +442,5 @@ app/
   utils/          — split (actions → descriptors + handlers), seed (state), editor (a tool's icon by key)
 modules/          — local Nuxt modules: imports/ fills #components and #imports (the @zoobzio/vue components, definitions, and types, and the layer's own surface) and references app.d.ts for consumers
 tests/            — vitest + happy-dom, mirroring app/ path-for-path
-nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset and @icon-sheets/nuxt with the foundation contract)
+nuxt.config.ts    — layer config (no implicit imports, no component scanning or tag resolution; loads the reset, @icon-sheets/nuxt with the foundation contract, and @untheme/nuxt with the foundation theme)
 ```

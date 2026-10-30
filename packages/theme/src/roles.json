@@ -1,0 +1,7 @@
+{
+  "loading-indicator": {
+    "$type": "color",
+    "$description": "The page loading indicator the Nuxt layer's shell draws across the top of the viewport.",
+    "$value": "{primary}"
+  }
+}
