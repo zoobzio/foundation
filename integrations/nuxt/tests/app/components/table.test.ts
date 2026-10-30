@@ -126,12 +126,12 @@ describe("table wrapper", () => {
     expect(sorted()).toBe("sort-desc");
   });
 
-  it("draws magic before the search input and the / hint after it", async () => {
+  it("draws magic at the front of the search and the / hint after its input", async () => {
     const { service } = makeTable();
     await service.init();
     const wrapper = mountTable({ service });
     const input = wrapper.get(".f-data-table-search input").element;
-    const lead = input.parentElement?.firstElementChild;
+    const lead = wrapper.get(".f-data-table-search").element.firstElementChild;
     expect(lead?.getAttribute("data-icon")).toBe("magic");
     const hint = input.nextElementSibling;
     expect(hint?.tagName).toBe("KBD");
@@ -181,7 +181,9 @@ describe("table wrapper", () => {
     const input = wrapper.get(".f-data-table-search input");
     expect(input.attributes("placeholder")).toBe("Find");
     expect(
-      input.element.parentElement?.firstElementChild?.getAttribute("data-icon"),
+      wrapper
+        .get(".f-data-table-search")
+        .element.firstElementChild?.getAttribute("data-icon"),
     ).toBe("magic");
   });
 

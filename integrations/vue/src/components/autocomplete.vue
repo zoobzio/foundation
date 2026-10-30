@@ -126,6 +126,7 @@ defineSlots<AutocompleteSlots>();
 
 <template>
   <AutocompleteRoot ref="el" class="f-autocomplete-root" v-bind="settings.root">
+    <slot name="inputPrepend" v-bind="ctx" />
     <slot name="chips" v-bind="ctx">
       <template
         v-for="(entry, i) in service.entries"
@@ -141,7 +142,6 @@ defineSlots<AutocompleteSlots>();
       </template>
     </slot>
     <div class="f-group">
-      <slot name="inputPrepend" v-bind="ctx" />
       <slot name="hint" v-bind="ctx">
         <div v-show="service.hint" class="f-group" aria-hidden="true">
           <span class="f-span">{{ service.draft }}</span>

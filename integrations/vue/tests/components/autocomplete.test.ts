@@ -277,8 +277,9 @@ describe("autocomplete", () => {
     expect(chips[0]!.text()).toContain('"alice"');
   });
 
-  it("renders inputPrepend and inputAppend either side of the input", () => {
+  it("renders inputPrepend before the chips and inputAppend after the input", async () => {
     const service = makeQuery();
+    service.add({ kind: "text", value: "alice" });
     const wrapper = mount(Autocomplete, {
       props: { service, placeholder: "Find" },
       slots: {
@@ -288,10 +289,16 @@ describe("autocomplete", () => {
       attachTo: document.body,
     });
     mounted.push(wrapper);
-    const input = wrapper.get("input").element;
-    const lead = input.parentElement?.firstElementChild;
+    await flushPromises();
+    const root = wrapper.get(".f-autocomplete-root").element;
+    const lead = root.firstElementChild;
     expect(lead?.classList.contains("lead")).toBe(true);
     expect(lead?.textContent).toBe("Find");
+    expect(lead?.nextElementSibling?.classList.contains("f-chip")).toBe(true);
+    const input = wrapper.get("input").element;
+    expect(input.parentElement?.previousElementSibling).toBe(
+      lead?.nextElementSibling,
+    );
     expect(input.nextElementSibling?.classList.contains("trail")).toBe(true);
     expect(input.nextElementSibling?.textContent).toBe("false");
   });

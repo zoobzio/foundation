@@ -121,8 +121,10 @@ export type AutocompleteChipContext = AutocompleteContext &
 
 /**
  * Slots of the autocomplete. Each slot receives the context. `inputPrepend`
- * and `inputAppend` sit either side of the input and its hint, within the
- * group the content anchors to, so an icon can lead and a key hint trail.
+ * leads the root, before the chips, so an icon leads the whole field.
+ * `inputAppend` trails the input and its hint, within the group the content
+ * anchors to, so a key hint trails the input. The order is prepend, chips,
+ * input, append.
  * `chipPrepend` and `chipAppend` sit either side of a chip's label, within
  * the button that removes it, so a remove icon can trail the label.
  */

@@ -152,9 +152,10 @@ option that enters a stage (a field or an operator) and `expand` after the
 active trail option whose stage is open, and the pagination's `first`,
 `prev`, `next`, and `last`. The table's search renders through the
 layer's `TableSearch`: its Autocomplete with the `magic` icon in
-`inputPrepend`, the search key (`TABLE_SEARCH_KEY`, `/`) as a `kbd` in
-`inputAppend`, and that key focusing the input from anywhere on the page
-the user is not already typing, through `useFocusKey`. A slot
+`inputPrepend` at the front of the field, before its chips, the search
+key (`TABLE_SEARCH_KEY`, `/`) as a `kbd` in `inputAppend`, and that key
+focusing the input from anywhere on the page the user is not already
+typing, through `useFocusKey`. A slot
 that replaces a Fab renders the part with the icon as its content, so the
 label stays the button's `aria-label` and the visible text goes. The
 facets', keywords', and date filters' triggers draw `filter`, `keywords`,
