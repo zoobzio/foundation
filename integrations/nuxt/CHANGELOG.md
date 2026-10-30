@@ -1,5 +1,34 @@
 # @zoobzio/nuxt
 
+## 0.0.14
+
+### Patch Changes
+
+- [`16696d8`](https://github.com/zoobzio/foundation/commit/16696d8c380ba97166cbfc1a0e29eac2eddfe4a2) Thanks [@zoobzio](https://github.com/zoobzio)! - The autocomplete has `chipPrepend` and `chipAppend` slots either side of a chip's label, within the button that removes its entry; each takes the chip's context. The nuxt layer's Autocomplete draws `remove` in `chipAppend`, so every chip trails an x.
+
+- [`16696d8`](https://github.com/zoobzio/foundation/commit/16696d8c380ba97166cbfc1a0e29eac2eddfe4a2) Thanks [@zoobzio](https://github.com/zoobzio)! - `Field` and `Option` of the query are interfaces, so a layer may widen them by declaration merging, and a field's properties beyond the ones the query reads are carried onto its option in the panel and the trail. The nuxt layer widens both with `icon: IconAlias`, so a field given an `icon` draws it before its option in the autocomplete, and draws the branch arrows: `next` after a field or operator option, as selecting it enters a stage, `expand` after the active trail option, as its stage is the one open, and none after a value, as it commits. `@zoobzio/query` is a dependency of the layer.
+
+- [`c1ac409`](https://github.com/zoobzio/foundation/commit/c1ac4090ba659cc0696a0d8ccd0ea05a0d820adc) Thanks [@zoobzio](https://github.com/zoobzio)! - The autocomplete's active panel scrolls in the package's scroller, and its virtualized items render within a row the component owns. `viewport` in `AutocompletePassthrough` is now `Rendered<ScrollerProps>`: the scroller renders through the package's `Primitive`, so a `pt.viewport` takes the scroller's props and `pt`, and `as` swaps the component, as the nuxt layer does with its own Scroller. The scroller's viewport renders the virtualizer as its child, so the virtualizer scrolls with it; a bounded height on the scroll area's viewport is what makes the panel scroll, and the scrollbar is the scroller's to style. The virtualizer positions a row by its root and reka's item memoizes its element on its own state alone, so a row's corrected position, once measured, landed only when the row was next highlighted; consumers worked around it with an exact `estimateSize`. Each row is now a plain `.f-autocomplete-row` element the virtualizer positions and measures, with the item inside, so a measured height moves the rows after it and the estimate only seeds the first layout. An `item` slot on the active panel renders within that row: it may render any content, and `measure` is gone from its payload. The default item still carries `aria-setsize` and `aria-posinset`. In the nuxt layer, `Autocomplete` is wrapped with the layer's Scroller as its viewport, and the table's search renders through it.
+
+- [`72fbdcf`](https://github.com/zoobzio/foundation/commit/72fbdcf6782282766804ddb7223ad783f2dd878f) Thanks [@zoobzio](https://github.com/zoobzio)! - Change loading indicator token to `--primary`.
+
+- [`16696d8`](https://github.com/zoobzio/foundation/commit/16696d8c380ba97166cbfc1a0e29eac2eddfe4a2) Thanks [@zoobzio](https://github.com/zoobzio)! - The autocomplete has `inputPrepend` and `inputAppend` slots either side of its input and hint, within the group its content anchors to, as the command's filter does. The icon contract adds `magic` (`lucide:wand-sparkles`). In the nuxt layer, the table's search renders through the new `TableSearch`: the layer's Autocomplete with the `magic` icon before its input, the search key drawn as a `kbd` after it, and that key (`TABLE_SEARCH_KEY`, `/`) focusing the input from anywhere on the page the user is not already typing. The key is bound by `useFocusKey`, a composable over `@vueuse/core`'s `useMagicKeys` that focuses a target on a bare press of a key outside a field and cancels the press, leaving a press within a field or with a modifier held to its own handler; `@vueuse/core` is a new dependency of the layer. Both are on `#imports`.
+
+- [`08825c2`](https://github.com/zoobzio/foundation/commit/08825c2c7be451cd1177a153a8d33198396c9aa4) Thanks [@zoobzio](https://github.com/zoobzio)! - Theme. A new `@zoobzio/theme` package carries the foundation theme: the aurora preset of untheme with the foundation palette (cobalt, amber, and teal on stone greys) as its base, authored as an `@untheme/kit` config over `npm:/@untheme/aurora` and built into the modules, the layers (`foundation` first, then every aurora theme), and the preset manifest the untheme runtime consumes. Beside the palette, `src/roles.json` is the injection point for the tokens foundation itself reads: color roles over aurora's roles, so each follows the scheme, the channels, and the applied theme with no bindings of its own. The first is `loading-indicator`, bound to `{primary}`.
+
+  The Nuxt layer loads `@untheme/nuxt` with that package as its default `untheme` option, the way it loads `@icon-sheets/nuxt` with `@zoobzio/icons`, so an app that extends the layer boots the foundation palette, gets `useUntheme()` and the aurora cascade on every page, and may swap a scheme or apply a theme with no setup. An app with a theme of its own names `@zoobzio/theme` as the source of its kit config in place of aurora and passes its own package as `untheme.preset`; the module takes the closest layer's option as a whole. The shell's `NuxtLoadingIndicator` reads `var(--loading-indicator)` in place of `var(--primary)`.
+
+- Updated dependencies [[`16696d8`](https://github.com/zoobzio/foundation/commit/16696d8c380ba97166cbfc1a0e29eac2eddfe4a2), [`16696d8`](https://github.com/zoobzio/foundation/commit/16696d8c380ba97166cbfc1a0e29eac2eddfe4a2), [`c1ac409`](https://github.com/zoobzio/foundation/commit/c1ac4090ba659cc0696a0d8ccd0ea05a0d820adc), [`16696d8`](https://github.com/zoobzio/foundation/commit/16696d8c380ba97166cbfc1a0e29eac2eddfe4a2), [`08825c2`](https://github.com/zoobzio/foundation/commit/08825c2c7be451cd1177a153a8d33198396c9aa4)]:
+  - @zoobzio/vue@0.0.14
+  - @zoobzio/query@0.0.14
+  - @zoobzio/icons@0.0.14
+  - @zoobzio/theme@0.0.14
+  - @zoobzio/table@0.0.14
+  - @zoobzio/browser@0.0.14
+  - @zoobzio/form@0.0.14
+  - @zoobzio/editor@0.0.14
+  - @zoobzio/code@0.0.14
+
 ## 0.0.13
 
 ### Patch Changes
