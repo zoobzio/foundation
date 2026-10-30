@@ -1,9 +1,9 @@
 // The autocomplete wrapper: the layer's Scroller as the first panel's
 // viewport, so its back-to-top draws the `top` icon, and no scroller once a
-// group has an option set, `remove` after each
-// chip's label, a field's `icon` before its option, and the branch arrows:
-// `next` on a field or operator option, `expand` on the active trail
-// option, none on a value.
+// group has an option set, `remove` after each chip's label, a field's
+// `icon` before its option, `search` before the text option, and the branch
+// arrows: `next` on a field, operator or text option, `expand` on the
+// active trail option, none on a value.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { reactive } from "vue";
@@ -70,6 +70,32 @@ describe("autocomplete wrapper", () => {
       ["filter", "next"],
       ["next"],
     ]);
+  });
+
+  it("draws search before the text option, and expand on it once the quote is open", async () => {
+    const service = makeQuery();
+    const wrapper = mount(Autocomplete, {
+      props: { service },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").trigger("focus");
+    await flushPromises();
+    const items = wrapper.findAll(".f-autocomplete-item");
+    expect(items.map((item) => item.text())).toEqual([
+      "Search",
+      "Status",
+      "Amount",
+    ]);
+    expect(iconsOf(wrapper, ".f-autocomplete-item")[0]).toEqual([
+      "search",
+      "next",
+    ]);
+    await wrapper.get("input").setValue('"ali');
+    await flushPromises();
+    expect(wrapper.findAll(".f-autocomplete-item")).toHaveLength(0);
+    expect(wrapper.get(".f-button").text()).toBe("Search");
+    expect(iconsOf(wrapper, ".f-button")).toEqual([["search", "expand"]]);
   });
 
   it("draws expand on the active trail option, next on operators, and nothing on a value", async () => {

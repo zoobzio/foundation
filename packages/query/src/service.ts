@@ -17,7 +17,11 @@ import type { Emitter } from "@zoobzio/kit";
 
 import { entries } from "objectively";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
-import { QUERY_STATE_FIELDS } from "./constants";
+import {
+  QUERY_STATE_FIELDS,
+  QUERY_TEXT_LABEL,
+  QUERY_TEXT_QUOTE,
+} from "./constants";
 
 /**
  * A field's option. The field's properties beyond the ones the query reads
@@ -58,8 +62,8 @@ const operatorOf = (field: Field, rest: string): string | undefined => {
  *
  * Owns a draft as well, for a text view: the draft walks the grammar
  * `Label: op term` through the field, operator and value stages of the
- * configured fields, and commits as an entry. A view with no text input
- * leaves the draft alone.
+ * configured fields, or `"text"` through the text stage, and commits as an
+ * entry. A view with no text input leaves the draft alone.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy. Each
@@ -187,8 +191,27 @@ export class QueryService implements Service {
 
   // --- derived ---------------------------------------------------------
 
+  private get textOn(): boolean {
+    return this.config.text !== false;
+  }
+
+  /** The option that enters the text stage: the quote, under the label. */
+  private textOption(active?: boolean): Option {
+    const option: Option = {
+      stage: "text",
+      value: QUERY_TEXT_QUOTE,
+      label: this.config.textLabel ?? QUERY_TEXT_LABEL,
+    };
+    return active ? { ...option, active } : option;
+  }
+
   get parse(): Parse {
     const raw = this.draft;
+    if (this.textOn && raw.startsWith(QUERY_TEXT_QUOTE)) {
+      const body = raw.slice(1);
+      const closed = body.endsWith(QUERY_TEXT_QUOTE);
+      return { text: true, term: closed ? body.slice(0, -1) : body };
+    }
     const idx = raw.indexOf(":");
     if (idx < 0) return { term: raw };
     const prefix = raw.slice(0, idx).trim().toLowerCase();
@@ -206,15 +229,18 @@ export class QueryService implements Service {
   }
 
   get stage(): Stage {
-    const { field, op } = this.parse;
+    const { field, op, text } = this.parse;
+    if (text) return "text";
     if (!field) return "field";
     if (field.operators?.length && !op) return "op";
     return "value";
   }
 
   /**
-   * The options of the active panel, narrowed by the term. A value provider
-   * is given the term and its result stands as is.
+   * The options of the active panel, narrowed by the term. The field panel
+   * leads with the text option while nothing is typed; a term narrows it to
+   * the fields alone. A value provider is given the term and its result
+   * stands as is. Text takes no suggestions.
    */
   get items(): Option[] {
     const { field, term } = this.parse;
@@ -222,9 +248,14 @@ export class QueryService implements Service {
     const matches = (label: string) => !q || label.toLowerCase().includes(q);
     switch (this.stage) {
       case "field":
-        return entries(this.fields)
-          .filter(([, f]) => matches(f.label))
-          .map(([key, f]) => fieldOption(key, f));
+        return [
+          ...(this.textOn && !q ? [this.textOption()] : []),
+          ...entries(this.fields)
+            .filter(([, f]) => matches(f.label))
+            .map(([key, f]) => fieldOption(key, f)),
+        ];
+      case "text":
+        return [];
       case "op":
         return (field?.operators ?? [])
           .filter(matches)
@@ -242,7 +273,8 @@ export class QueryService implements Service {
 
   /** The ancestor panels: the path taken, one active option per panel. */
   get trail(): Option[][] {
-    const { key, field, op } = this.parse;
+    const { key, field, op, text } = this.parse;
+    if (text) return [[this.textOption(true)]];
     if (!key || !field) return [];
     const trail: Option[][] = [[fieldOption(key, field, true)]];
     if (op) trail.push([{ stage: "op", value: op, label: op, active: true }]);
@@ -281,8 +313,15 @@ export class QueryService implements Service {
 
   // --- draft -----------------------------------------------------------
 
+  /**
+   * Writes the draft. A quote that closes the text commits it at once: the
+   * closing quote ends the text as Enter does.
+   */
   setDraft(text: string): void {
     this.state.draft = text;
+    if (this.parse.text && text.length > 1 && text.endsWith(QUERY_TEXT_QUOTE)) {
+      this.submit();
+    }
   }
 
   reset(): void {
@@ -290,14 +329,19 @@ export class QueryService implements Service {
   }
 
   /**
-   * A field or operator option enters its stage; an active one steps back
-   * out. A value option commits.
+   * A field, operator or text option enters its stage; an active one steps
+   * back out. The text option opens a quote before the term typed so far.
+   * A value option commits.
    */
   select(option: Option): void {
-    const { key, op } = this.parse;
+    const { key, op, term } = this.parse;
     switch (option.stage) {
       case "field":
         this.state.draft = option.active ? "" : this.stageText(option.value);
+        return;
+      case "text":
+        if (!this.textOn) return;
+        this.state.draft = option.active ? "" : `${QUERY_TEXT_QUOTE}${term}`;
         return;
       case "op":
         if (!key) return;
@@ -311,20 +355,22 @@ export class QueryService implements Service {
   }
 
   /**
-   * Commits the term: as the field's value when a field is set, else as
-   * text. An empty term is ignored.
+   * Commits the term: as the field's value when a field is set, as text
+   * when the draft is quoted. An empty term is ignored, and so is a bare
+   * term, which is a field still being named.
    */
   submit(): void {
-    const { key, op, term } = this.parse;
+    const { key, op, text, term } = this.parse;
     const value = term.trim();
     if (!value) return;
     if (key) this.commit({ kind: "filter", key, op, value });
-    else this.commit({ kind: "text", value });
+    else if (text) this.commit({ kind: "text", value });
   }
 
   /**
    * Takes the last entry back into the draft, minus one character, so
-   * entries erase like continuous text.
+   * entries erase like continuous text: a text entry loses its closing
+   * quote and is back in the text stage.
    */
   unwrap(): void {
     const index = this.entries.length - 1;
@@ -346,18 +392,19 @@ export class QueryService implements Service {
     return `${this.labelOf(key)}: ${op ? `${op} ` : ""}`;
   }
 
-  /** The text that commits an entry: `Label: op value`, or the text. */
+  /** The text that commits an entry: `Label: op value`, or `"text"`. */
   textFor(entry: Entry): string {
-    if (entry.kind === "text") return entry.value;
+    if (entry.kind === "text") {
+      return `${QUERY_TEXT_QUOTE}${entry.value}${QUERY_TEXT_QUOTE}`;
+    }
     return `${this.stageText(entry.key, entry.op)}${entry.value}`;
   }
 
   /**
    * The display label of an entry: its text, so a chip reads as the draft
-   * that made it, or the quoted text.
+   * that made it.
    */
   labelFor(entry: Entry): string {
-    if (entry.kind === "text") return `"${entry.value}"`;
     return this.textFor(entry);
   }
 

@@ -188,11 +188,11 @@ describe("table", () => {
     expect(service.columnOrder).toContain("id");
   });
 
-  it("submits typed search text as the service query", async () => {
+  it("submits quoted search text as the service query", async () => {
     const { service, fetch } = makeTable();
     const wrapper = mountTable({ service });
     const input = wrapper.get(".f-data-table-search input");
-    await input.setValue("alice");
+    await input.setValue('"alice');
     await input.trigger("keydown", { key: "Enter" });
     await flushPromises();
     expect(service.query.text).toBe("alice");

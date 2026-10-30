@@ -141,15 +141,16 @@ one, and the wrapper's default fills in while it does not. A fixed role
 draws its alias: `expand` after a select's, multi select's, or
 accordion's trigger and as a tree branch's toggle; `prev` and `next` on
 the calendars and pickers and `calendar` on a picker's trigger; `search`
-before a command's filter; `remove` on a tag's and a file's remove
+before a command's filter and before the autocomplete's text option, the
+one that opens the quote free text is typed in; `remove` on a tag's and a file's remove
 button and after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
 in a checkbox; the editor's and rich text's tools by key (`bold`,
 `heading`, `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`); and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
 `sort-asc` or `sort-desc` after a sorted header, `folder` before a
 folder, `magic` before the table's search, `next` after an autocomplete
-option that enters a stage (a field or an operator) and `expand` after the
-active trail option whose stage is open, and the pagination's `first`,
+option that enters a stage (a field, an operator or the text option) and
+`expand` after the active trail option whose stage is open, and the pagination's `first`,
 `prev`, `next`, and `last`. The table's search renders through the
 layer's `TableSearch`: its Autocomplete with the `magic` icon in
 `inputPrepend` at the front of the field, before its chips, the search

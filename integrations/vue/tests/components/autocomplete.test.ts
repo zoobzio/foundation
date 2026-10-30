@@ -129,7 +129,24 @@ describe("autocomplete", () => {
     await input.trigger("keydown", { key: "Backspace" });
     await flushPromises();
     expect(service.text).toBe("");
-    expect((input.element as HTMLInputElement).value).toBe("alic");
+    expect((input.element as HTMLInputElement).value).toBe('"alice');
+  });
+
+  it("commits quoted text on its closing quote, and a bare word not at all", async () => {
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({ service });
+    const input = wrapper.get("input");
+    await input.setValue("alice");
+    await input.trigger("keydown", { key: "Enter" });
+    await flushPromises();
+    expect(service.entries).toEqual([]);
+    expect((input.element as HTMLInputElement).value).toBe("alice");
+    await input.setValue('"alice');
+    expect(service.entries).toEqual([]);
+    await input.setValue('"alice"');
+    await flushPromises();
+    expect(service.text).toBe("alice");
+    expect((input.element as HTMLInputElement).value).toBe("");
   });
 
   it("renders the entries as chips and removes one by click", async () => {

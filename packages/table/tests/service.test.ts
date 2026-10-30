@@ -399,6 +399,19 @@ describe("query", () => {
     expect(service.query.fields.name).toEqual({ label: "Name" });
   });
 
+  it("names the text option Search, or as textLabel says", () => {
+    const { service } = makeService();
+    expect(service.query.items[0]).toEqual({
+      stage: "text",
+      value: '"',
+      label: "Search",
+    });
+    const named = makeService({ config: { textLabel: "Find" } });
+    expect(named.service.query.items[0]?.label).toBe("Find");
+    service.query.setDraft('"acme"');
+    expect(service.query.text).toBe("acme");
+  });
+
   it("holds its entries and draft in the table's container", () => {
     const { service, state } = makeService();
     service.query.add({ kind: "text", value: "acme" });

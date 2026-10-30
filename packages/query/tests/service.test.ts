@@ -153,6 +153,29 @@ describe("remove and clear", () => {
 });
 
 describe("parse", () => {
+  it("reads a quoted draft as the text stage, the term within the quotes", () => {
+    const { service } = makeService();
+    service.setDraft('"');
+    expect(service.parse).toEqual({ text: true, term: "" });
+    expect(service.stage).toBe("text");
+    service.setDraft('"Status: Active');
+    expect(service.parse).toEqual({ text: true, term: "Status: Active" });
+    expect(service.items).toEqual([]);
+    expect(service.hint).toBe("");
+    expect(service.trail).toEqual([
+      [{ stage: "text", value: '"', label: "Search", active: true }],
+    ]);
+    expect(service.panels).toEqual(service.trail);
+  });
+
+  it("reads a quote as a character when text is off", () => {
+    const { service } = makeService({ ...fakeConfig, text: false });
+    service.setDraft('"na');
+    expect(service.parse).toEqual({ term: '"na' });
+    expect(service.stage).toBe("field");
+    expect(service.trail).toEqual([]);
+  });
+
   it("returns the field stage when no label prefix matches", () => {
     const { service } = makeService();
     service.setDraft("na");
@@ -220,15 +243,21 @@ describe("parse", () => {
 });
 
 describe("panels", () => {
-  it("lists fields, then operators, then values", () => {
+  it("lists the text option and the fields, then operators, then values", () => {
     const { service } = makeService();
     expect(service.items.map((o) => o.value)).toEqual([
+      '"',
       "id",
       "name",
       "status",
       "created",
       "amount",
     ]);
+    expect(service.items[0]).toEqual({
+      stage: "text",
+      value: '"',
+      label: "Search",
+    });
     service.setDraft("na");
     expect(service.items).toEqual([
       { stage: "field", value: "name", label: "Name" },
@@ -243,9 +272,24 @@ describe("panels", () => {
     expect(service.items).toEqual([]);
   });
 
+  it("offers the text option while nothing is typed, under the configured label, and not when text is off", () => {
+    const { service } = makeService({ ...fakeConfig, textLabel: "Find" });
+    expect(service.items[0]).toEqual({
+      stage: "text",
+      value: '"',
+      label: "Find",
+    });
+    service.setDraft(" ");
+    expect(service.items[0]?.stage).toBe("text");
+    service.setDraft("s");
+    expect(service.items.map((o) => o.value)).toEqual(["status"]);
+    const off = makeService({ ...fakeConfig, text: false });
+    expect(off.service.items.map((o) => o.stage)).not.toContain("text");
+  });
+
   it("carries a field's other properties onto its option, in the panel and the trail", () => {
     const status = { label: "Status", values: ["Active"], icon: "check" };
-    const { service } = makeService({ fields: { status } });
+    const { service } = makeService({ fields: { status }, text: false });
     expect(service.items).toEqual([
       { stage: "field", value: "status", label: "Status", icon: "check" },
     ]);
@@ -346,6 +390,21 @@ describe("select", () => {
     expect(service.draft).toBe("");
   });
 
+  it("opens a quote before the term on the text option, and steps back out of an active one", () => {
+    const { service } = makeService();
+    const search = service.items[0]!;
+    service.select(search);
+    expect(service.draft).toBe('"');
+    service.select({ ...search, active: true });
+    expect(service.draft).toBe("");
+    service.setDraft("ro");
+    service.select(search);
+    expect(service.draft).toBe('"ro');
+    const off = makeService({ ...fakeConfig, text: false });
+    off.service.select(search);
+    expect(off.service.draft).toBe("");
+  });
+
   it("commits a value with the field and operator, then clears", () => {
     const { service, changed } = makeService();
     service.setDraft("Amount: over 4");
@@ -379,21 +438,46 @@ describe("submit", () => {
     expect(service.draft).toBe("");
   });
 
-  it("commits free text as a text entry", () => {
+  it("commits a quoted draft as a text entry, closed or not", () => {
     const { service } = makeService();
-    service.setDraft("alice");
+    service.setDraft('"alice ');
     service.submit();
     expect(service.entries).toEqual([{ kind: "text", value: "alice" }]);
+    expect(service.draft).toBe("");
   });
 
-  it("ignores an empty term, and free text when text is off", () => {
+  it("commits the text as soon as the closing quote is typed", () => {
+    const { service, changed } = makeService();
+    service.setDraft('"alice');
+    expect(changed).not.toHaveBeenCalled();
+    service.setDraft('"alice"');
+    expect(service.entries).toEqual([{ kind: "text", value: "alice" }]);
+    expect(changed).toHaveBeenCalledOnce();
+    expect(service.draft).toBe("");
+    // An empty pair commits nothing and stays as typed.
+    service.setDraft('""');
+    expect(changed).toHaveBeenCalledOnce();
+    expect(service.draft).toBe('""');
+  });
+
+  it("ignores a bare term, which names a field still", () => {
+    const { service, changed } = makeService();
+    service.setDraft("alice");
+    service.submit();
+    service.setDraft("Status");
+    service.submit();
+    expect(changed).not.toHaveBeenCalled();
+    expect(service.draft).toBe("Status");
+  });
+
+  it("ignores an empty term, and quoted text when text is off", () => {
     const { service, changed } = makeService({ ...fakeConfig, text: false });
     service.setDraft("Status: ");
     service.submit();
-    service.setDraft("alice");
+    service.setDraft('"alice"');
     service.submit();
     expect(changed).not.toHaveBeenCalled();
-    expect(service.draft).toBe("alice");
+    expect(service.draft).toBe('"alice"');
   });
 
   it("keeps the draft when the entry is rejected", () => {
@@ -415,9 +499,10 @@ describe("unwrap", () => {
     expect(service.draft).toBe("Status: Activ");
     service.unwrap();
     expect(service.entries).toEqual([]);
-    expect(service.draft).toBe("alic");
+    expect(service.draft).toBe('"alice');
+    expect(service.stage).toBe("text");
     service.unwrap();
-    expect(service.draft).toBe("alic");
+    expect(service.draft).toBe('"alice');
   });
 });
 
@@ -436,7 +521,7 @@ describe("text", () => {
     expect(service.textFor(filter)).toBe("Amount: over 4");
     expect(service.labelFor(filter)).toBe("Amount: over 4");
     const text: Entry = { kind: "text", value: "alice" };
-    expect(service.textFor(text)).toBe("alice");
+    expect(service.textFor(text)).toBe('"alice"');
     expect(service.labelFor(text)).toBe('"alice"');
   });
 });

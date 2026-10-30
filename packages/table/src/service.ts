@@ -84,7 +84,10 @@ export class TableService<T> implements Service<T> {
 
     this.query = new QueryService(
       `${id}-query`,
-      { fields: fields(this.filterableColumns) },
+      {
+        fields: fields(this.filterableColumns),
+        ...(config.textLabel && { textLabel: config.textLabel }),
+      },
       this.state,
     );
     this.query.on("changed", () => this.refilter());

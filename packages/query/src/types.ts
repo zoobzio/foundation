@@ -38,9 +38,15 @@ export interface Field {
 export type Config = {
   fields: Record<string, Field>;
   /**
-   * Whether free text is accepted as an entry. Defaults to `true`.
+   * Whether free text is accepted as an entry. Defaults to `true`. Off, the
+   * field panel offers no text option and a quote opens no text stage.
    */
   text?: boolean;
+  /**
+   * The label of the option that enters the text stage, the first of the
+   * field panel. Defaults to `Search`.
+   */
+  textLabel?: string;
 };
 
 /**
@@ -81,27 +87,31 @@ export type Changers = KitChangers<State>;
 
 /**
  * The stage the draft is at. `field` names a field, `op` picks an
- * operator, `value` enters the value.
+ * operator, `value` enters the value, `text` composes free text.
  */
-export type Stage = "field" | "op" | "value";
+export type Stage = "field" | "op" | "value" | "text";
 
 /**
  * The draft parsed against the fields. `key` and `field` are set when the
  * draft starts with a field's label and a colon. `op` is set when an
- * operator field's draft names an operator next. `term` is the rest.
+ * operator field's draft names an operator next. `text` is set when the
+ * draft opens with a quote instead: it is free text. `term` is the rest,
+ * within the quotes for text.
  */
 export type Parse = {
   key?: string;
   field?: Field;
   op?: string;
+  text?: true;
   term: string;
 };
 
 /**
  * A panel option. `value` is the stage's payload: a field key, an operator,
- * or a value. `active` marks the trail option whose stage the draft is in.
- * A field or operator option enters a stage on select, so a view may draw
- * it as a branch; an active one steps back out. An interface, so a layer
+ * a value, or the quote that opens free text. `active` marks the trail
+ * option whose stage the draft is in. A field, operator or text option
+ * enters a stage on select, so a view may draw it as a branch; an active
+ * one steps back out. An interface, so a layer
  * may widen it as it widens `Field`: a field option carries the field's
  * widened properties.
  */

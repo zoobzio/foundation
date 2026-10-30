@@ -141,6 +141,11 @@ export type Config<T> = {
    */
   searchable?: boolean;
   /**
+   * The label of the query's text option, the first the search offers,
+   * which opens the quote free text is typed in. Defaults to `Search`.
+   */
+  textLabel?: string;
+  /**
    * The BCP 47 locale cells format in. Defaults to `en-US`.
    */
   locale?: string;
