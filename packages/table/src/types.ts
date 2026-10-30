@@ -1,4 +1,4 @@
-import type { Entry, Filter, Service as Query } from "@zoobzio/query";
+import type { Entry, Filter, Service as Query, Values } from "@zoobzio/query";
 import type {
   Change as KitChange,
   Changers as KitChangers,
@@ -29,6 +29,12 @@ export type ColumnType =
  * merging (an icon); a property beyond the ones the table reads is carried
  * onto the column's query field, so the search draws the field as the
  * column does.
+ *
+ * A column's query field is what the column declares: `operators`,
+ * `defaultOperator`, and `values`. The table supplies none, as it gives an
+ * operator no meaning: the consumer reads it from the filters its fetch is
+ * handed, so the consumer names the vocabulary. A column that declares
+ * nothing is a bare field, free entry and no operator stage.
  */
 export interface DataTableColumn<T> {
   key: keyof T;
@@ -37,19 +43,32 @@ export interface DataTableColumn<T> {
   align?: "left" | "center" | "right";
   sortable?: boolean;
   sortKey?: string;
-  enumValues?: string[];
   /**
    * Whether the column appears in the search autocomplete. Defaults by
    * type: everything except `action` and `image` is filterable.
    */
   filterable?: boolean;
+  /**
+   * The operators a filter on the column carries. Without them the column
+   * has no operator stage.
+   */
+  operators?: readonly string[];
+  /**
+   * The operator a filter takes when none is given. It must be one of
+   * `operators`, or every filter added without an operator is rejected.
+   */
+  defaultOperator?: string;
+  /**
+   * The values the search suggests: a list the term narrows, or a provider
+   * the term is given to. Without them the value is free entry.
+   */
+  values?: Values;
 }
 
 /**
  * A committed column filter, as the query holds it. Keys are strings,
  * matching the `sortField` / `columnOrder` convention; `op` is present for
- * operator columns (date/datetime: before/after/on, number/currency:
- * over/under/is).
+ * a column that declares operators.
  */
 export type TableFilter = Filter;
 
@@ -218,8 +237,8 @@ export type Service<T> = {
 
   /**
    * The query machine over the filterable columns: one field per column,
-   * with the operators of its type and the values of an enum or boolean
-   * column. A change to its entries refetches from the first page.
+   * with the operators and values the column declares. A change to its
+   * entries refetches from the first page.
    */
   readonly query: Query;
 

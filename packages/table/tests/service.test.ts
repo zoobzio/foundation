@@ -377,7 +377,7 @@ describe("actions", () => {
 });
 
 describe("query", () => {
-  it("fields mirror the filterable columns with operators, defaults, and values", () => {
+  it("fields mirror the filterable columns with their declared operators, defaults, and values", () => {
     const { service } = makeService();
     expect(Object.keys(service.query.fields)).toEqual(
       service.filterableColumns.map((c) => String(c.key)),

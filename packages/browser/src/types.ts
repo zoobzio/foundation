@@ -33,7 +33,6 @@ export interface BrowserColumn<T> {
   align?: "left" | "center" | "right";
   sortable?: boolean;
   sortKey?: string;
-  enumValues?: string[];
 }
 
 export type SortDirection = "asc" | "desc";

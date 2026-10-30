@@ -14,7 +14,7 @@ export const fakeColumns: DataTableColumn<FakeRow>[] = [
     key: "status",
     label: "Status",
     type: "enum",
-    enumValues: ["Active", "Inactive"],
+    values: ["Active", "Inactive"],
   },
   { key: "amount", label: "Amount", type: "currency" },
 ];

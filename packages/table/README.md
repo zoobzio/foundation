@@ -25,8 +25,11 @@ table.query.add({ kind: "filter", key: "status", value: "active" });
 ## Query
 
 `table.query` is a query service over the filterable columns: one field per
-column, with the operators and default operator of its type and the values
-of an enum or boolean column. Any view drives it: `add`, `remove`, `clear`,
+column, with the operators, default operator, and values the column
+declares. The table supplies none, as it gives an operator no meaning: the
+consumer reads it from the filters its fetch is handed, so the consumer
+names the vocabulary. A column that declares nothing is a bare field, free
+entry and no operator stage. Any view drives it: `add`, `remove`, `clear`,
 or the draft a text view composes through. A change to its entries resets
 the page, refetches, and emits `filtered`. The fetch params carry its `text`
 as `query` and its `filters`.
@@ -36,6 +39,28 @@ table.query.add({ kind: "filter", key: "status", value: "Active" });
 table.query.setDraft("Amount: over 40");
 table.query.submit();
 table.query.filters; // [{ key: "status", value: "Active" }, { key: "amount", op: "over", value: "40" }]
+```
+
+A column declares what its field offers.
+
+```ts
+const columns = [
+  {
+    key: "created",
+    label: "Created",
+    type: "date",
+    operators: ["before", "after", "on", "between"],
+  },
+  {
+    key: "name",
+    label: "Name",
+    type: "text",
+    operators: ["contains", "is"],
+    defaultOperator: "contains",
+  },
+  { key: "owner", label: "Owner", values: (term) => owners.search(term) },
+  { key: "amount", label: "Amount", type: "currency" }, // free entry, no operator stage
+];
 ```
 
 ## The state container

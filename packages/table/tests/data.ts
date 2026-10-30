@@ -8,17 +8,39 @@ export type FakeRow = {
   amount: number;
 };
 
+const NUMBER_OPERATORS = ["over", "under", "is"];
+const DATE_OPERATORS = ["before", "after", "on"];
+
 export const fakeColumns: DataTableColumn<FakeRow>[] = [
-  { key: "id", label: "ID", type: "number" },
+  {
+    key: "id",
+    label: "ID",
+    type: "number",
+    operators: NUMBER_OPERATORS,
+    defaultOperator: "is",
+  },
   { key: "name", label: "Name", type: "text", sortable: true },
   {
     key: "status",
     label: "Status",
     type: "enum",
-    enumValues: ["Active", "Inactive", "Pending"],
+    values: ["Active", "Inactive", "Pending"],
   },
-  { key: "created", label: "Created", type: "date", sortable: true },
-  { key: "amount", label: "Amount", type: "currency" },
+  {
+    key: "created",
+    label: "Created",
+    type: "date",
+    sortable: true,
+    operators: DATE_OPERATORS,
+    defaultOperator: "on",
+  },
+  {
+    key: "amount",
+    label: "Amount",
+    type: "currency",
+    operators: NUMBER_OPERATORS,
+    defaultOperator: "is",
+  },
 ];
 
 export const fakeRows: FakeRow[] = [

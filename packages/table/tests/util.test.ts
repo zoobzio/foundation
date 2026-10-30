@@ -11,15 +11,10 @@ describe("fields", () => {
     expect(result.name).toEqual({ label: "Name" });
   });
 
-  it("gives operator types their operators and default operator", () => {
+  it("gives a column the operators, default operator, and values it declares", () => {
     const result = fields(fakeColumns);
     expect(result.amount).toEqual({
       label: "Amount",
-      operators: ["over", "under", "is"],
-      defaultOperator: "is",
-    });
-    expect(result.id).toEqual({
-      label: "ID",
       operators: ["over", "under", "is"],
       defaultOperator: "is",
     });
@@ -28,32 +23,68 @@ describe("fields", () => {
       operators: ["before", "after", "on"],
       defaultOperator: "on",
     });
-  });
-
-  it("gives an enum column its values and a boolean column true/false", () => {
-    const columns: DataTableColumn<FakeRow & { active: boolean }>[] = [
-      {
-        key: "status",
-        label: "Status",
-        type: "enum",
-        enumValues: ["Active", "Inactive"],
-      },
-      { key: "active", label: "Active", type: "boolean" },
-    ];
-    expect(fields(columns)).toEqual({
-      status: { label: "Status", values: ["Active", "Inactive"] },
-      active: { label: "Active", values: ["true", "false"] },
+    expect(result.status).toEqual({
+      label: "Status",
+      values: ["Active", "Inactive", "Pending"],
     });
   });
 
-  it("leaves a column with no type, or a type with no operators, as a bare label", () => {
-    const columns: DataTableColumn<FakeRow>[] = [
+  it("supplies nothing from the type: an undeclared column is a bare label", () => {
+    const columns: DataTableColumn<FakeRow & { active: boolean }>[] = [
+      { key: "id", label: "ID", type: "number" },
+      { key: "created", label: "Created", type: "date" },
+      { key: "active", label: "Active", type: "boolean" },
+      { key: "status", label: "Status", type: "enum" },
       { key: "name", label: "Name" },
-      { key: "status", label: "Site", type: "url" },
     ];
     expect(fields(columns)).toEqual({
+      id: { label: "ID" },
+      created: { label: "Created" },
+      active: { label: "Active" },
+      status: { label: "Status" },
       name: { label: "Name" },
-      status: { label: "Site" },
+    });
+  });
+
+  it("takes any vocabulary: a provider, custom operators, custom values", () => {
+    const provider = (term: string) => [term];
+    const columns: DataTableColumn<FakeRow & { active: boolean }>[] = [
+      {
+        key: "created",
+        label: "Created",
+        type: "date",
+        operators: ["before", "after", "on", "between"],
+        defaultOperator: "between",
+      },
+      { key: "name", label: "Name", type: "text", operators: ["contains"] },
+      {
+        key: "active",
+        label: "Active",
+        type: "boolean",
+        values: ["Yes", "No"],
+      },
+      { key: "status", label: "Owner", values: provider },
+    ];
+    expect(fields(columns)).toEqual({
+      created: {
+        label: "Created",
+        operators: ["before", "after", "on", "between"],
+        defaultOperator: "between",
+      },
+      name: { label: "Name", operators: ["contains"] },
+      active: { label: "Active", values: ["Yes", "No"] },
+      status: { label: "Owner", values: provider },
+    });
+  });
+
+  it("drops an empty operator list and the default that goes with it", () => {
+    const columns: DataTableColumn<FakeRow>[] = [
+      { key: "amount", label: "Amount", operators: [], defaultOperator: "is" },
+      { key: "id", label: "ID", defaultOperator: "is" },
+    ];
+    expect(fields(columns)).toEqual({
+      amount: { label: "Amount" },
+      id: { label: "ID" },
     });
   });
 

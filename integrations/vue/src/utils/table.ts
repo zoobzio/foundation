@@ -19,8 +19,10 @@ export const columnOption = <T>(
     align: _a,
     sortable: _s,
     sortKey: _k,
-    enumValues: _e,
     filterable: _f,
+    operators: _o,
+    defaultOperator: _d,
+    values: _v,
     ...rest
   } = column;
   return {
