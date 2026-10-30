@@ -1,5 +1,22 @@
 # @zoobzio/nuxt
 
+## 0.1.0
+
+### Patch Changes
+
+- [`f169434`](https://github.com/zoobzio/foundation/commit/f1694342c7717d2ada6d8ce2795586db09f16fcc) Thanks [@zoobzio](https://github.com/zoobzio)! - A table column's properties beyond the ones the table reads are carried through: `fields` puts them on the column's query field, and the vue table's `columnOption` puts them on the column manager's option. The nuxt layer widens `DataTableColumn` with `icon?: IconAlias`, so a column's `icon` draws before its header (the wrapper's default `headerPrepend`), beside its field in the search, and beside its option in the column manager.
+
+- Updated dependencies [[`a10178c`](https://github.com/zoobzio/foundation/commit/a10178cf639b542aa62bb82d225771b8e71967cb), [`6c97175`](https://github.com/zoobzio/foundation/commit/6c97175e1922b32170583428a3129f721321fc6b), [`83b3439`](https://github.com/zoobzio/foundation/commit/83b3439176a69479e567f86aa18d4bce1db5ed2d), [`f169434`](https://github.com/zoobzio/foundation/commit/f1694342c7717d2ada6d8ce2795586db09f16fcc), [`506f77e`](https://github.com/zoobzio/foundation/commit/506f77e7c2795aae8c775362168f2e0ed1d3e4d8)]:
+  - @zoobzio/vue@0.1.0
+  - @zoobzio/query@0.1.0
+  - @zoobzio/table@0.1.0
+  - @zoobzio/browser@0.1.0
+  - @zoobzio/form@0.1.0
+  - @zoobzio/editor@0.1.0
+  - @zoobzio/code@0.1.0
+  - @zoobzio/icons@0.1.0
+  - @zoobzio/theme@0.1.0
+
 ## 0.0.15
 
 ### Patch Changes

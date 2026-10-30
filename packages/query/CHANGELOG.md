@@ -1,5 +1,14 @@
 # @zoobzio/query
 
+## 0.1.0
+
+### Patch Changes
+
+- [`83b3439`](https://github.com/zoobzio/foundation/commit/83b3439176a69479e567f86aa18d4bce1db5ed2d) Thanks [@zoobzio](https://github.com/zoobzio)! - The draft grammar is `Label: op term`: an operator is followed by a space, not a second colon, so a draft reads as its chip does. The operator is read once its space is typed and matched without case, longest first, so a multi-word operator is reached. The hint after an operator ends in a space; after a field it still ends in `: `. `labelFor` is the entry's text, so a chip's label and the draft that made it are the same string.
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.1.0
+
 ## 0.0.15
 
 ### Patch Changes

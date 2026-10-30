@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/theme",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "description": "The foundation design system's theme: the aurora preset of untheme with the foundation palette as its base and the roles the Nuxt layer's shell reads, built by @untheme/kit into the modules, the layers, and the preset manifest a downstream theme or app extends.",
   "license": "MIT",
   "author": {
