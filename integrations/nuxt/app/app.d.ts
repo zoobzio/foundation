@@ -56,10 +56,14 @@ declare module "@zoobzio/table" {
   }
 }
 
-// A query field's `icon` is carried onto its option by the service, so the
-// autocomplete draws it before the field's label in the panel and the trail.
+// A query field's or literal's `icon` is carried onto its option by the
+// service, so the autocomplete draws it before the label in the panel, and
+// a field's in the trail. A literal that names none draws `search`.
 declare module "@zoobzio/query" {
   interface Field {
+    icon?: IconAlias;
+  }
+  interface Literal {
     icon?: IconAlias;
   }
   interface Option {

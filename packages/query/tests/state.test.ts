@@ -10,7 +10,7 @@ describe("createQueryState", () => {
   it("each call returns an independent container", () => {
     const a = createQueryState();
     const b = createQueryState();
-    a.entries.push({ kind: "text", value: "x" });
+    a.entries.push({ kind: "literal", key: "text", value: "x" });
     expect(b.entries).toEqual([]);
   });
 

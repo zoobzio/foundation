@@ -1,4 +1,5 @@
-import type { Config } from "../src/types";
+import type { Config, Literal } from "../src/types";
+import { QUERY_TEXT_LITERAL } from "../src/constants";
 
 export const fakeConfig: Config = {
   fields: {
@@ -16,4 +17,17 @@ export const fakeConfig: Config = {
     },
     amount: { label: "Amount", operators: ["over", "under", "is"] },
   },
+};
+
+/** A literal with its own characters. */
+export const TAG: Literal = { label: "Tag", open: "(", close: ")" };
+
+/** A literal whose `open` extends the tag's. */
+export const NEST: Literal = { label: "Nest", open: "((", close: "))" };
+
+/** The text literal beside the two above. */
+export const TWO: Record<string, Literal> = {
+  text: QUERY_TEXT_LITERAL,
+  tag: TAG,
+  nest: NEST,
 };

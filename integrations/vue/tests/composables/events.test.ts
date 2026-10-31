@@ -12,7 +12,7 @@ describe("useServiceEmits", () => {
     });
 
     await service.init();
-    service.query.add({ kind: "text", value: "x" });
+    service.query.add({ kind: "literal", key: "text", value: "x" });
     expect(emit).toHaveBeenCalledWith("updated", {
       id: "test-table",
       total: 3,

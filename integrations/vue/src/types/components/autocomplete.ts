@@ -76,7 +76,9 @@ export type AutocompletePassthrough = {
 /**
  * Props of the autocomplete: the headless query service plus passthrough.
  * The component owns only `open`. The query owns the entries, the draft,
- * and the panels.
+ * and the panels. `empty` renders the empty state when the active panel
+ * has no options; a literal stage is terminal and renders nothing either
+ * way.
  */
 export type AutocompleteProps = {
   service: Query;

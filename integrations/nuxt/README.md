@@ -141,15 +141,17 @@ one, and the wrapper's default fills in while it does not. A fixed role
 draws its alias: `expand` after a select's, multi select's, or
 accordion's trigger and as a tree branch's toggle; `prev` and `next` on
 the calendars and pickers and `calendar` on a picker's trigger; `search`
-before a command's filter and before the autocomplete's text option, the
-one that opens the quote free text is typed in; `remove` on a tag's and a file's remove
+before a command's filter and before an autocomplete literal option that
+names no icon of its own (the text literal, the one that opens the quote
+free text is typed in); `remove` on a tag's and a file's remove
 button and after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
 in a checkbox; the editor's and rich text's tools by key (`bold`,
 `heading`, `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`); and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
 `sort-asc` or `sort-desc` after a sorted header, `folder` before a
 folder, `magic` before the table's search, `next` after an autocomplete
-option that enters a stage (a field, an operator or the text option) and
+option that enters a stage (a field or an operator; a literal option is
+terminal and draws none) and
 `expand` after the active trail option whose stage is open, and the pagination's `first`,
 `prev`, `next`, and `last`. The table's search renders through the
 layer's `TableSearch`: its Autocomplete with the `magic` icon in
@@ -166,7 +168,7 @@ An item draws its own `icon`. The vue item types (`Option`, which the
 tabs, segmented control, accordion, select, and command options extend,
 plus `MenuItem`, `BreadcrumbItem`, `DirectoryItem`, and `FacetItem`), the
 action descriptors of `@zoobzio/table` and `@zoobzio/browser`, and the
-`Field` and `Option` of `@zoobzio/query` are
+`Field`, `Literal`, and `Option` of `@zoobzio/query` are
 interfaces, and `app/app.d.ts` widens each with an optional
 `icon: IconAlias` by declaration merging, so the one type the package,
 the layer, and the app share carries the field, and the wrapper draws it
@@ -174,7 +176,8 @@ in the item's `prepend` slot. A row, file, folder, or bulk action given to
 `createTable` or `createBrowser` with an `icon` draws it the same way,
 since the layer's `Menu` renders those actions. A query field with an
 `icon` draws it before its option in the autocomplete's panel and trail,
-since the query service carries it onto the field's option.
+and a literal with one before its option in the panel, since the query
+service carries it onto the option.
 
 ```vue
 <script setup lang="ts">

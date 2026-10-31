@@ -1,4 +1,10 @@
-import type { Entry, Filter, Service as Query, Values } from "@zoobzio/query";
+import type {
+  Entry,
+  Filter,
+  Literal,
+  Service as Query,
+  Values,
+} from "@zoobzio/query";
 import type {
   Change as KitChange,
   Changers as KitChangers,
@@ -141,10 +147,12 @@ export type Config<T> = {
    */
   searchable?: boolean;
   /**
-   * The label of the query's text option, the first the search offers,
-   * which opens the quote free text is typed in. Defaults to `Search`.
+   * The literals of the query, handed to it as given: the values typed
+   * between their own characters, which lead the search's options.
+   * Defaults to the query's, the text literal alone, `"text"` under
+   * `Search`; the table reads the `text` literal as the fetch's `query`.
    */
-  textLabel?: string;
+  literals?: Record<string, Literal>;
   /**
    * The BCP 47 locale cells format in. Defaults to `en-US`.
    */

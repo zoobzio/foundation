@@ -31,14 +31,16 @@ describe("accessTable", () => {
       sortField: "name",
       sortDirection: "desc",
       columnOrder: ["name", "id"],
-      entries: [{ kind: "text", value: "ali" }],
+      entries: [{ kind: "literal", key: "text", value: "ali" }],
     });
     expect(state.page).toBe(3);
     expect(state.pageSize).toBe(50);
     expect(state.sortField).toBe("name");
     expect(state.sortDirection).toBe("desc");
     expect(state.columnOrder).toEqual(["name", "id"]);
-    expect(state.entries).toEqual([{ kind: "text", value: "ali" }]);
+    expect(state.entries).toEqual([
+      { kind: "literal", key: "text", value: "ali" },
+    ]);
     expect(state.data).toEqual([]);
     expect(state.initialized).toBe(false);
   });

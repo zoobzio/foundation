@@ -32,21 +32,33 @@ export interface Field {
 }
 
 /**
+ * A literal the draft composes in one step: a value written between its
+ * `open` and `close` characters, `"text"` say, with no stage of its own to
+ * suggest from. Its option leads the field panel under `label`; selecting
+ * it writes `open` before the term, and typing `close` commits the value.
+ * An interface, so a layer may widen it as it widens `Field` (an icon); a
+ * property beyond the ones the query reads is carried onto its option.
+ */
+export interface Literal {
+  label: string;
+  open: string;
+  close: string;
+}
+
+/**
  * Config the consumer provides. Plain data, except that a field's `values`
- * may be a provider. Fields are keyed by the identity a filter carries.
+ * may be a provider. Fields are keyed by the identity a filter carries,
+ * literals by the identity a literal entry carries.
  */
 export type Config = {
   fields: Record<string, Field>;
   /**
-   * Whether free text is accepted as an entry. Defaults to `true`. Off, the
-   * field panel offers no text option and a quote opens no text stage.
+   * The literals the draft accepts. Defaults to the text literal alone,
+   * `{ text: QUERY_TEXT_LITERAL }`, the quoted free text `text` reads. An
+   * empty record accepts none: the field panel offers no literal option
+   * and a quote is a character.
    */
-  text?: boolean;
-  /**
-   * The label of the option that enters the text stage, the first of the
-   * field panel. Defaults to `Search`.
-   */
-  textLabel?: string;
+  literals?: Record<string, Literal>;
 };
 
 /**
@@ -60,11 +72,11 @@ export type Filter = {
 };
 
 /**
- * A committed entry: free text, or a field filter. The query holds one text
- * entry and one filter per field and operator.
+ * A committed entry: a literal, or a field filter. The query holds one
+ * entry per literal and one filter per field and operator.
  */
 export type Entry =
-  | { kind: "text"; value: string }
+  | { kind: "literal"; key: string; value: string }
   | ({ kind: "filter" } & Filter);
 
 /**
@@ -87,33 +99,36 @@ export type Changers = KitChangers<State>;
 
 /**
  * The stage the draft is at. `field` names a field, `op` picks an
- * operator, `value` enters the value, `text` composes free text.
+ * operator, `value` enters the value, `literal` composes a literal. The
+ * literal stage is terminal: it suggests nothing and adds no trail, so a
+ * panel view has nothing to show while the literal is typed.
  */
-export type Stage = "field" | "op" | "value" | "text";
+export type Stage = "field" | "op" | "value" | "literal";
 
 /**
- * The draft parsed against the fields. `key` and `field` are set when the
- * draft starts with a field's label and a colon. `op` is set when an
- * operator field's draft names an operator next. `text` is set when the
- * draft opens with a quote instead: it is free text. `term` is the rest,
- * within the quotes for text.
+ * The draft parsed against the fields and literals. `key` and `field` are
+ * set when the draft starts with a field's label and a colon, and `op`
+ * when an operator field's draft names an operator next. `key` and
+ * `literal` are set when the draft opens with a literal's `open` instead.
+ * `term` is the rest: after the operator, or within the literal's
+ * characters.
  */
 export type Parse = {
   key?: string;
   field?: Field;
   op?: string;
-  text?: true;
+  literal?: Literal;
   term: string;
 };
 
 /**
  * A panel option. `value` is the stage's payload: a field key, an operator,
- * a value, or the quote that opens free text. `active` marks the trail
- * option whose stage the draft is in. A field, operator or text option
- * enters a stage on select, so a view may draw it as a branch; an active
- * one steps back out. An interface, so a layer
- * may widen it as it widens `Field`: a field option carries the field's
- * widened properties.
+ * a value, or a literal key. `active` marks the trail option whose stage
+ * the draft is in. A field or operator option enters a stage on select,
+ * so a view may draw it as a branch, and an active one steps back out. A
+ * literal option opens the literal, which is terminal; a value option
+ * commits. An interface, so a layer may widen it as it widens `Field` and
+ * `Literal`: a field or literal option carries the widened properties.
  */
 export interface Option {
   stage: Stage;
@@ -138,12 +153,14 @@ export type Listener<E extends Event> = KitListener<Events, E>;
 
 /**
  * The query machine: the committed entries any view adds to and removes
- * from, plus a draft a text view composes an entry through.
+ * from, plus a draft a text view composes an entry through. `text` is the
+ * value of the entry of the `text` literal, the quoted free text.
  */
 export type Service = {
   readonly id: string;
   readonly config: Config;
   readonly fields: Record<string, Field>;
+  readonly literals: Record<string, Literal>;
 
   readonly entries: Entry[];
   readonly draft: string;

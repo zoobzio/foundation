@@ -30,11 +30,13 @@ declares. The table supplies none, as it gives an operator no meaning: the
 consumer reads it from the filters its fetch is handed, so the consumer
 names the vocabulary. A column that declares nothing is a bare field, free
 entry and no operator stage. Any view drives it: `add`, `remove`, `clear`,
-or the draft a text view composes through. Free text is quoted in the
-draft, `"acme"`, and the field panel leads with the option that opens the
-quote, labelled `Search` or the config's `textLabel`. A change to its
-entries resets the page, refetches, and emits `filtered`. The fetch params
-carry its `text` as `query` and its `filters`.
+or the draft a text view composes through. Free text is the query's
+`text` literal, quoted in the draft, `"acme"`, and the field panel leads
+with the option that opens the quote, labelled `Search`; the config's
+`literals` replace the query's, so the option can be relabelled or a
+literal added beside it. A change to its entries resets the page,
+refetches, and emits `filtered`. The fetch params carry its `text` as
+`query` and its `filters`.
 
 ```ts
 table.query.add({ kind: "filter", key: "status", value: "Active" });

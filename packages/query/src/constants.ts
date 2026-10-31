@@ -1,4 +1,4 @@
-import type { StateKey } from "./types";
+import type { Literal, StateKey } from "./types";
 
 /**
  * The fields of the container, for key-driven iteration independent of a
@@ -9,11 +9,20 @@ export const QUERY_STATE_FIELDS: Record<StateKey, null> = {
   draft: null,
 };
 
-/**
- * The quote that opens free text in the draft, and closes it: a draft that
- * starts with it is the text stage, and a second one commits the text.
- */
-export const QUERY_TEXT_QUOTE = '"';
+/** The key of the text literal, the one `text` reads. */
+export const QUERY_TEXT_KEY = "text";
 
-/** The label of the text option when the config names none. */
-export const QUERY_TEXT_LABEL = "Search";
+/**
+ * The text literal: free text between quotes, under `Search`. A draft that
+ * opens with the quote is the literal, and a second one commits it.
+ */
+export const QUERY_TEXT_LITERAL: Literal = {
+  label: "Search",
+  open: '"',
+  close: '"',
+};
+
+/** The literals of a config that names none: the text literal alone. */
+export const QUERY_LITERALS: Record<string, Literal> = {
+  [QUERY_TEXT_KEY]: QUERY_TEXT_LITERAL,
+};

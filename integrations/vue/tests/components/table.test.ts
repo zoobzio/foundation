@@ -139,7 +139,7 @@ describe("table", () => {
     const { service } = makeTable();
     const wrapper = mountTable({ service });
     await service.init();
-    service.query.add({ kind: "text", value: "x" });
+    service.query.add({ kind: "literal", key: "text", value: "x" });
     await flushPromises();
     expect(wrapper.emitted("updated")?.at(0)).toEqual([
       { id: "test-table", total: 3 },
@@ -202,7 +202,7 @@ describe("table", () => {
 
   it("shows the committed entries as chips and unwinds one by click", async () => {
     const { service } = makeTable();
-    service.query.add({ kind: "text", value: "alice" });
+    service.query.add({ kind: "literal", key: "text", value: "alice" });
     service.query.add({ kind: "filter", key: "status", value: "Active" });
     const wrapper = mountTable({ service });
     await flushPromises();

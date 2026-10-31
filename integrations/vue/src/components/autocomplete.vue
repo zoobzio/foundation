@@ -62,6 +62,15 @@ const el = useTemplateRef<ComponentPublicInstance>("el");
  */
 const depth = computed(() => service.trail.length);
 
+/**
+ * Whether the content renders: the panels, or the empty state while the
+ * draft is at a stage that suggests. A literal is terminal, so its stage
+ * shows nothing, not even the empty state.
+ */
+const shown = computed(
+  () => service.panels.length > 0 || (empty && service.stage !== "literal"),
+);
+
 const settings = usePassthrough<AutocompletePassthrough>(() => ({
   pt,
   recipes: {
@@ -160,7 +169,7 @@ defineSlots<AutocompleteSlots>();
       </slot>
       <slot name="inputAppend" v-bind="ctx" />
       <AutocompleteContent
-        v-if="service.panels.length || empty"
+        v-if="shown"
         class="f-autocomplete-content"
         v-bind="settings.content"
       >

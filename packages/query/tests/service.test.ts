@@ -4,8 +4,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { QueryService } from "../src/service";
 import { createQueryState } from "../src/state";
+import { QUERY_TEXT_LITERAL } from "../src/constants";
 import type { Config, Entry } from "../src/types";
-import { fakeConfig } from "./data";
+import { fakeConfig, NEST, TAG, TWO } from "./data";
 
 const makeService = (config: Config = fakeConfig) => {
   const state = createQueryState();
@@ -31,9 +32,9 @@ describe("add", () => {
     });
   });
 
-  it("commits text and exposes it as text", () => {
+  it("commits the text literal and exposes it as text", () => {
     const { service } = makeService();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     expect(service.text).toBe("alice");
     expect(service.filters).toEqual([]);
   });
@@ -41,14 +42,14 @@ describe("add", () => {
   it("replaces a same-identity entry and moves it to the end", () => {
     const { service } = makeService();
     service.add({ kind: "filter", key: "status", value: "quoted" });
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "name", value: "Alice" });
     service.add({ kind: "filter", key: "status", value: "draft" });
-    service.add({ kind: "text", value: "bob" });
+    service.add({ kind: "literal", key: "text", value: "bob" });
     expect(service.entries).toEqual([
       { kind: "filter", key: "name", value: "Alice" },
       { kind: "filter", key: "status", value: "draft" },
-      { kind: "text", value: "bob" },
+      { kind: "literal", key: "text", value: "bob" },
     ]);
   });
 
@@ -80,9 +81,11 @@ describe("add", () => {
 
   it("an entry equal to the last one is a no-op", () => {
     const { service, changed } = makeService();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     changed.mockClear();
-    expect(service.add({ kind: "text", value: "alice" })).toBe(false);
+    expect(service.add({ kind: "literal", key: "text", value: "alice" })).toBe(
+      false,
+    );
     expect(changed).not.toHaveBeenCalled();
   });
 
@@ -117,11 +120,30 @@ describe("add", () => {
     ]);
   });
 
-  it("rejects empty text, and any text when the config turns it off", () => {
+  it("rejects an empty literal, and one whose key is not configured", () => {
     const { service } = makeService();
-    expect(service.add({ kind: "text", value: "" })).toBe(false);
-    const off = makeService({ ...fakeConfig, text: false });
-    expect(off.service.add({ kind: "text", value: "alice" })).toBe(false);
+    expect(service.add({ kind: "literal", key: "text", value: "" })).toBe(
+      false,
+    );
+    expect(service.add({ kind: "literal", key: "tag", value: "x" })).toBe(
+      false,
+    );
+    const off = makeService({ ...fakeConfig, literals: {} });
+    expect(
+      off.service.add({ kind: "literal", key: "text", value: "alice" }),
+    ).toBe(false);
+  });
+
+  it("holds one entry per literal key", () => {
+    const { service } = makeService({ ...fakeConfig, literals: TWO });
+    service.add({ kind: "literal", key: "text", value: "alice" });
+    service.add({ kind: "literal", key: "tag", value: "urgent" });
+    service.add({ kind: "literal", key: "text", value: "bob" });
+    expect(service.entries).toEqual([
+      { kind: "literal", key: "tag", value: "urgent" },
+      { kind: "literal", key: "text", value: "bob" },
+    ]);
+    expect(service.text).toBe("bob");
   });
 });
 
@@ -145,7 +167,7 @@ describe("remove and clear", () => {
     const { service, changed } = makeService();
     service.clear();
     expect(changed).not.toHaveBeenCalled();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     service.clear();
     expect(service.entries).toEqual([]);
     expect(changed).toHaveBeenCalledTimes(2);
@@ -153,23 +175,38 @@ describe("remove and clear", () => {
 });
 
 describe("parse", () => {
-  it("reads a quoted draft as the text stage, the term within the quotes", () => {
+  it("reads a quoted draft as the text literal, the term within the quotes, with no panels", () => {
     const { service } = makeService();
     service.setDraft('"');
-    expect(service.parse).toEqual({ text: true, term: "" });
-    expect(service.stage).toBe("text");
+    expect(service.parse).toEqual({
+      key: "text",
+      literal: QUERY_TEXT_LITERAL,
+      term: "",
+    });
+    expect(service.stage).toBe("literal");
     service.setDraft('"Status: Active');
-    expect(service.parse).toEqual({ text: true, term: "Status: Active" });
+    expect(service.parse.term).toBe("Status: Active");
     expect(service.items).toEqual([]);
     expect(service.hint).toBe("");
-    expect(service.trail).toEqual([
-      [{ stage: "text", value: '"', label: "Search", active: true }],
-    ]);
-    expect(service.panels).toEqual(service.trail);
+    expect(service.trail).toEqual([]);
+    expect(service.panels).toEqual([]);
   });
 
-  it("reads a quote as a character when text is off", () => {
-    const { service } = makeService({ ...fakeConfig, text: false });
+  it("reads a literal by its own characters, the longest open first", () => {
+    const { service, state } = makeService({ ...fakeConfig, literals: TWO });
+    service.setDraft("(ur");
+    expect(service.parse).toEqual({ key: "tag", literal: TAG, term: "ur" });
+    service.setDraft("((ur");
+    expect(service.parse).toEqual({ key: "nest", literal: NEST, term: "ur" });
+    // Written to the container, as setDraft would commit the closed literal.
+    state.draft = "((ur))";
+    expect(service.parse.term).toBe("ur");
+    state.draft = "(ur)";
+    expect(service.parse).toEqual({ key: "tag", literal: TAG, term: "ur" });
+  });
+
+  it("reads a quote as a character when no literal opens with it", () => {
+    const { service } = makeService({ ...fakeConfig, literals: {} });
     service.setDraft('"na');
     expect(service.parse).toEqual({ term: '"na' });
     expect(service.stage).toBe("field");
@@ -243,10 +280,10 @@ describe("parse", () => {
 });
 
 describe("panels", () => {
-  it("lists the text option and the fields, then operators, then values", () => {
+  it("lists the literal options and the fields, then operators, then values", () => {
     const { service } = makeService();
     expect(service.items.map((o) => o.value)).toEqual([
-      '"',
+      "text",
       "id",
       "name",
       "status",
@@ -254,8 +291,8 @@ describe("panels", () => {
       "amount",
     ]);
     expect(service.items[0]).toEqual({
-      stage: "text",
-      value: '"',
+      stage: "literal",
+      value: "text",
       label: "Search",
     });
     service.setDraft("na");
@@ -272,24 +309,27 @@ describe("panels", () => {
     expect(service.items).toEqual([]);
   });
 
-  it("offers the text option while nothing is typed, under the configured label, and not when text is off", () => {
-    const { service } = makeService({ ...fakeConfig, textLabel: "Find" });
-    expect(service.items[0]).toEqual({
-      stage: "text",
-      value: '"',
-      label: "Find",
+  it("offers the configured literals while nothing is typed, their other properties carried onto their options", () => {
+    const find = { ...QUERY_TEXT_LITERAL, label: "Find", icon: "search" };
+    const { service } = makeService({
+      ...fakeConfig,
+      literals: { text: find, tag: TAG },
     });
+    expect(service.items.slice(0, 2)).toEqual([
+      { stage: "literal", value: "text", label: "Find", icon: "search" },
+      { stage: "literal", value: "tag", label: "Tag" },
+    ]);
     service.setDraft(" ");
-    expect(service.items[0]?.stage).toBe("text");
+    expect(service.items[0]?.stage).toBe("literal");
     service.setDraft("s");
     expect(service.items.map((o) => o.value)).toEqual(["status"]);
-    const off = makeService({ ...fakeConfig, text: false });
-    expect(off.service.items.map((o) => o.stage)).not.toContain("text");
+    const off = makeService({ ...fakeConfig, literals: {} });
+    expect(off.service.items.map((o) => o.stage)).not.toContain("literal");
   });
 
   it("carries a field's other properties onto its option, in the panel and the trail", () => {
     const status = { label: "Status", values: ["Active"], icon: "check" };
-    const { service } = makeService({ fields: { status }, text: false });
+    const { service } = makeService({ fields: { status }, literals: {} });
     expect(service.items).toEqual([
       { stage: "field", value: "status", label: "Status", icon: "check" },
     ]);
@@ -390,17 +430,15 @@ describe("select", () => {
     expect(service.draft).toBe("");
   });
 
-  it("opens a quote before the term on the text option, and steps back out of an active one", () => {
+  it("opens a literal before the term on its option, and not one that is not configured", () => {
     const { service } = makeService();
     const search = service.items[0]!;
     service.select(search);
     expect(service.draft).toBe('"');
-    service.select({ ...search, active: true });
-    expect(service.draft).toBe("");
     service.setDraft("ro");
     service.select(search);
     expect(service.draft).toBe('"ro');
-    const off = makeService({ ...fakeConfig, text: false });
+    const off = makeService({ ...fakeConfig, literals: {} });
     off.service.select(search);
     expect(off.service.draft).toBe("");
   });
@@ -438,26 +476,46 @@ describe("submit", () => {
     expect(service.draft).toBe("");
   });
 
-  it("commits a quoted draft as a text entry, closed or not", () => {
+  it("commits a quoted draft as the text literal, closed or not", () => {
     const { service } = makeService();
     service.setDraft('"alice ');
     service.submit();
-    expect(service.entries).toEqual([{ kind: "text", value: "alice" }]);
+    expect(service.entries).toEqual([
+      { kind: "literal", key: "text", value: "alice" },
+    ]);
     expect(service.draft).toBe("");
   });
 
-  it("commits the text as soon as the closing quote is typed", () => {
+  it("commits the literal as soon as its close is typed", () => {
     const { service, changed } = makeService();
     service.setDraft('"alice');
     expect(changed).not.toHaveBeenCalled();
     service.setDraft('"alice"');
-    expect(service.entries).toEqual([{ kind: "text", value: "alice" }]);
+    expect(service.entries).toEqual([
+      { kind: "literal", key: "text", value: "alice" },
+    ]);
     expect(changed).toHaveBeenCalledOnce();
     expect(service.draft).toBe("");
     // An empty pair commits nothing and stays as typed.
     service.setDraft('""');
     expect(changed).toHaveBeenCalledOnce();
     expect(service.draft).toBe('""');
+    // A literal with its own characters commits on its own close.
+    const tags = makeService({ ...fakeConfig, literals: TWO });
+    tags.service.setDraft("(urgent");
+    expect(tags.service.entries).toEqual([]);
+    tags.service.setDraft("(urgent)");
+    expect(tags.service.entries).toEqual([
+      { kind: "literal", key: "tag", value: "urgent" },
+    ]);
+    tags.service.setDraft("((a)");
+    expect(tags.service.entries).toHaveLength(1);
+    tags.service.setDraft("((a))");
+    expect(tags.service.entries.at(-1)).toEqual({
+      kind: "literal",
+      key: "nest",
+      value: "a",
+    });
   });
 
   it("ignores a bare term, which names a field still", () => {
@@ -470,8 +528,8 @@ describe("submit", () => {
     expect(service.draft).toBe("Status");
   });
 
-  it("ignores an empty term, and quoted text when text is off", () => {
-    const { service, changed } = makeService({ ...fakeConfig, text: false });
+  it("ignores an empty term, and quoted text when no literal opens with a quote", () => {
+    const { service, changed } = makeService({ ...fakeConfig, literals: {} });
     service.setDraft("Status: ");
     service.submit();
     service.setDraft('"alice"');
@@ -492,15 +550,17 @@ describe("submit", () => {
 describe("unwrap", () => {
   it("takes the last entry back as text minus one character", () => {
     const { service } = makeService();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "status", value: "Active" });
     service.unwrap();
-    expect(service.entries).toEqual([{ kind: "text", value: "alice" }]);
+    expect(service.entries).toEqual([
+      { kind: "literal", key: "text", value: "alice" },
+    ]);
     expect(service.draft).toBe("Status: Activ");
     service.unwrap();
     expect(service.entries).toEqual([]);
     expect(service.draft).toBe('"alice');
-    expect(service.stage).toBe("text");
+    expect(service.stage).toBe("literal");
     service.unwrap();
     expect(service.draft).toBe('"alice');
   });
@@ -520,9 +580,11 @@ describe("text", () => {
     };
     expect(service.textFor(filter)).toBe("Amount: over 4");
     expect(service.labelFor(filter)).toBe("Amount: over 4");
-    const text: Entry = { kind: "text", value: "alice" };
+    const text: Entry = { kind: "literal", key: "text", value: "alice" };
     expect(service.textFor(text)).toBe('"alice"');
     expect(service.labelFor(text)).toBe('"alice"');
+    const ghost: Entry = { kind: "literal", key: "ghost", value: "x" };
+    expect(service.textFor(ghost)).toBe("x");
   });
 });
 

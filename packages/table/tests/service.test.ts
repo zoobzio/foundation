@@ -5,6 +5,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { TableService } from "../src/service";
 import { createTableState } from "../src/state";
+import { QUERY_TEXT_LITERAL } from "@zoobzio/query";
 import type {
   Actions,
   Change,
@@ -399,14 +400,16 @@ describe("query", () => {
     expect(service.query.fields.name).toEqual({ label: "Name" });
   });
 
-  it("names the text option Search, or as textLabel says", () => {
+  it("leads with the text literal, Search, or the literals the config names", () => {
     const { service } = makeService();
     expect(service.query.items[0]).toEqual({
-      stage: "text",
-      value: '"',
+      stage: "literal",
+      value: "text",
       label: "Search",
     });
-    const named = makeService({ config: { textLabel: "Find" } });
+    const named = makeService({
+      config: { literals: { text: { ...QUERY_TEXT_LITERAL, label: "Find" } } },
+    });
     expect(named.service.query.items[0]?.label).toBe("Find");
     service.query.setDraft('"acme"');
     expect(service.query.text).toBe("acme");
@@ -414,16 +417,18 @@ describe("query", () => {
 
   it("holds its entries and draft in the table's container", () => {
     const { service, state } = makeService();
-    service.query.add({ kind: "text", value: "acme" });
+    service.query.add({ kind: "literal", key: "text", value: "acme" });
     service.query.setDraft("Sta");
-    expect(state.entries).toEqual([{ kind: "text", value: "acme" }]);
+    expect(state.entries).toEqual([
+      { kind: "literal", key: "text", value: "acme" },
+    ]);
     expect(state.draft).toBe("Sta");
   });
 
   it("a change to the entries resets the page, refetches, and emits filtered", () => {
     const { service, state, actions, filtered } = makeService();
     state.page = 3;
-    service.query.add({ kind: "text", value: "acme" });
+    service.query.add({ kind: "literal", key: "text", value: "acme" });
     expect(service.page).toBe(1);
     expect(actions.fetch).toHaveBeenCalledOnce();
     expect(filtered).toHaveBeenCalledWith({
@@ -454,8 +459,8 @@ describe("query", () => {
     });
     service.query.remove(0);
     expect(actions.fetch).not.toHaveBeenCalled();
-    service.query.add({ kind: "text", value: "acme" });
-    service.query.add({ kind: "text", value: "acme" });
+    service.query.add({ kind: "literal", key: "text", value: "acme" });
+    service.query.add({ kind: "literal", key: "text", value: "acme" });
     expect(actions.fetch).toHaveBeenCalledOnce();
   });
 
@@ -474,7 +479,7 @@ describe("query", () => {
 
   it("fetch params carry the query's text and filters", async () => {
     const { service, actions } = makeService();
-    service.query.add({ kind: "text", value: "acme" });
+    service.query.add({ kind: "literal", key: "text", value: "acme" });
     service.query.add({ kind: "filter", key: "status", value: "Active" });
     await service.fetch();
     expect(actions.fetch).toHaveBeenLastCalledWith(

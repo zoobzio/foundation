@@ -86,7 +86,7 @@ export class TableService<T> implements Service<T> {
       `${id}-query`,
       {
         fields: fields(this.filterableColumns),
-        ...(config.textLabel && { textLabel: config.textLabel }),
+        ...(config.literals && { literals: config.literals }),
       },
       this.state,
     );

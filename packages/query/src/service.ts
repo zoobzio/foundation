@@ -6,6 +6,7 @@ import type {
   Field,
   Filter,
   Listener,
+  Literal,
   Option,
   Options,
   Parse,
@@ -18,9 +19,9 @@ import type { Emitter } from "@zoobzio/kit";
 import { entries } from "objectively";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
+  QUERY_LITERALS,
   QUERY_STATE_FIELDS,
-  QUERY_TEXT_LABEL,
-  QUERY_TEXT_QUOTE,
+  QUERY_TEXT_KEY,
 } from "./constants";
 
 /**
@@ -41,6 +42,29 @@ const fieldOption = (key: string, field: Field, active?: boolean): Option => {
 };
 
 /**
+ * A literal's option: its key under its label, with the literal's widened
+ * properties carried onto it as a field's are. Never active, as the
+ * literal stage adds no trail.
+ */
+const literalOption = (key: string, literal: Literal): Option => {
+  const { label, open: _o, close: _c, ...rest } = literal;
+  return { ...rest, stage: "literal", value: key, label };
+};
+
+/**
+ * The literal a draft opens with: the one whose `open` the draft starts
+ * with, the longest first, so a literal whose `open` extends another's
+ * wins.
+ */
+const literalOf = (
+  literals: Record<string, Literal>,
+  raw: string,
+): [string, Literal] | undefined =>
+  entries(literals)
+    .sort(([, a], [, b]) => b.open.length - a.open.length)
+    .find(([, l]) => raw.startsWith(l.open));
+
+/**
  * The operator the rest of a draft (after `Label: `) names: the longest of
  * the field's operators that the rest starts with, followed by a space, so
  * an operator typed without its space is still being completed. Matched
@@ -56,14 +80,15 @@ const operatorOf = (field: Field, rest: string): string | undefined => {
 };
 
 /**
- * The headless query machine. Owns the committed entries: one text entry
- * and one filter per field and operator, each validated against the field
- * schema. Any view adds and removes entries directly.
+ * The headless query machine. Owns the committed entries: one entry per
+ * literal and one filter per field and operator, each validated against
+ * the config. Any view adds and removes entries directly.
  *
  * Owns a draft as well, for a text view: the draft walks the grammar
  * `Label: op term` through the field, operator and value stages of the
- * configured fields, or `"text"` through the text stage, and commits as an
- * entry. A view with no text input leaves the draft alone.
+ * configured fields, or `open term close` through the literal stage of a
+ * configured literal, and commits as an entry. A view with no text input
+ * leaves the draft alone.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy. Each
@@ -72,6 +97,7 @@ const operatorOf = (field: Field, rest: string): string | undefined => {
  */
 export class QueryService implements Service {
   readonly fields: Record<string, Field>;
+  readonly literals: Record<string, Literal>;
 
   private readonly state: State;
   private readonly emitter: Emitter<Events> = makeEmitter();
@@ -84,6 +110,7 @@ export class QueryService implements Service {
   ) {
     this.state = makeProxy(state, QUERY_STATE_FIELDS, options, this.emitter);
     this.fields = config.fields;
+    this.literals = config.literals ?? QUERY_LITERALS;
   }
 
   on<E extends Event>(event: E, listener: Listener<E>): () => void {
@@ -103,7 +130,9 @@ export class QueryService implements Service {
   // --- entries ---------------------------------------------------------
 
   get text(): string {
-    const entry = this.entries.find((e) => e.kind === "text");
+    const entry = this.entries.find(
+      (e) => e.kind === "literal" && e.key === QUERY_TEXT_KEY,
+    );
     return entry?.value ?? "";
   }
 
@@ -118,15 +147,15 @@ export class QueryService implements Service {
   }
 
   /**
-   * Commits an entry. An entry with the same identity (the text, or a
-   * filter's key and operator) is replaced and moved to the end, so order
+   * Commits an entry. An entry with the same identity (a literal's key, or
+   * a filter's key and operator) is replaced and moved to the end, so order
    * tracks recency. An entry equal to one already held is a no-op.
    *
    * A filter on an operator field takes the field's default operator when
    * none is given, and is rejected when its operator is not accepted. A
    * filter with an operator on a field that has none is rejected. A filter
-   * on a key that is not a field passes through as given. Text is rejected
-   * when the config turns it off, or when empty.
+   * on a key that is not a field passes through as given. A literal is
+   * rejected when its key is not a configured literal, or when empty.
    *
    * @returns Whether the entries changed.
    */
@@ -158,9 +187,10 @@ export class QueryService implements Service {
   }
 
   private normalize(entry: Entry): Entry | undefined {
-    if (entry.kind === "text") {
-      if (this.config.text === false || !entry.value) return undefined;
-      return { kind: "text", value: entry.value };
+    if (entry.kind === "literal") {
+      const { key, value } = entry;
+      if (!this.literals[key] || !value) return undefined;
+      return { kind: "literal", key, value };
     }
     const { key, value } = entry;
     let op = entry.op;
@@ -180,9 +210,9 @@ export class QueryService implements Service {
   }
 
   private sameIdentity(a: Entry, b: Entry): boolean {
-    if (a.kind !== b.kind) return false;
-    if (a.kind === "text" || b.kind === "text") return true;
-    return a.key === b.key && a.op === b.op;
+    if (a.kind !== b.kind || a.key !== b.key) return false;
+    if (a.kind === "literal" || b.kind === "literal") return true;
+    return a.op === b.op;
   }
 
   private emitChanged(): void {
@@ -191,26 +221,15 @@ export class QueryService implements Service {
 
   // --- derived ---------------------------------------------------------
 
-  private get textOn(): boolean {
-    return this.config.text !== false;
-  }
-
-  /** The option that enters the text stage: the quote, under the label. */
-  private textOption(active?: boolean): Option {
-    const option: Option = {
-      stage: "text",
-      value: QUERY_TEXT_QUOTE,
-      label: this.config.textLabel ?? QUERY_TEXT_LABEL,
-    };
-    return active ? { ...option, active } : option;
-  }
-
   get parse(): Parse {
     const raw = this.draft;
-    if (this.textOn && raw.startsWith(QUERY_TEXT_QUOTE)) {
-      const body = raw.slice(1);
-      const closed = body.endsWith(QUERY_TEXT_QUOTE);
-      return { text: true, term: closed ? body.slice(0, -1) : body };
+    const opened = literalOf(this.literals, raw);
+    if (opened) {
+      const [key, literal] = opened;
+      const body = raw.slice(literal.open.length);
+      const closed = body.endsWith(literal.close);
+      const term = closed ? body.slice(0, -literal.close.length) : body;
+      return { key, literal, term };
     }
     const idx = raw.indexOf(":");
     if (idx < 0) return { term: raw };
@@ -229,8 +248,8 @@ export class QueryService implements Service {
   }
 
   get stage(): Stage {
-    const { field, op, text } = this.parse;
-    if (text) return "text";
+    const { field, op, literal } = this.parse;
+    if (literal) return "literal";
     if (!field) return "field";
     if (field.operators?.length && !op) return "op";
     return "value";
@@ -238,9 +257,9 @@ export class QueryService implements Service {
 
   /**
    * The options of the active panel, narrowed by the term. The field panel
-   * leads with the text option while nothing is typed; a term narrows it to
-   * the fields alone. A value provider is given the term and its result
-   * stands as is. Text takes no suggestions.
+   * leads with the literal options while nothing is typed; a term narrows
+   * it to the fields alone. A value provider is given the term and its
+   * result stands as is. A literal takes no suggestions.
    */
   get items(): Option[] {
     const { field, term } = this.parse;
@@ -249,12 +268,14 @@ export class QueryService implements Service {
     switch (this.stage) {
       case "field":
         return [
-          ...(this.textOn && !q ? [this.textOption()] : []),
+          ...(q
+            ? []
+            : entries(this.literals).map(([key, l]) => literalOption(key, l))),
           ...entries(this.fields)
             .filter(([, f]) => matches(f.label))
             .map(([key, f]) => fieldOption(key, f)),
         ];
-      case "text":
+      case "literal":
         return [];
       case "op":
         return (field?.operators ?? [])
@@ -271,10 +292,13 @@ export class QueryService implements Service {
     }
   }
 
-  /** The ancestor panels: the path taken, one active option per panel. */
+  /**
+   * The ancestor panels: the path taken, one active option per panel. A
+   * literal adds none: its stage is terminal, so the panels are empty
+   * while it is typed.
+   */
   get trail(): Option[][] {
-    const { key, field, op, text } = this.parse;
-    if (text) return [[this.textOption(true)]];
+    const { key, field, op } = this.parse;
     if (!key || !field) return [];
     const trail: Option[][] = [[fieldOption(key, field, true)]];
     if (op) trail.push([{ stage: "op", value: op, label: op, active: true }]);
@@ -314,12 +338,17 @@ export class QueryService implements Service {
   // --- draft -----------------------------------------------------------
 
   /**
-   * Writes the draft. A quote that closes the text commits it at once: the
-   * closing quote ends the text as Enter does.
+   * Writes the draft. A literal's `close` commits the literal at once: the
+   * closing character ends it as Enter does. The draft must hold both
+   * characters, so an `open` that is also the `close` opens the literal
+   * rather than closing it.
    */
   setDraft(text: string): void {
     this.state.draft = text;
-    if (this.parse.text && text.length > 1 && text.endsWith(QUERY_TEXT_QUOTE)) {
+    const { literal } = this.parse;
+    if (!literal) return;
+    const { open, close } = literal;
+    if (text.length >= open.length + close.length && text.endsWith(close)) {
       this.submit();
     }
   }
@@ -329,8 +358,8 @@ export class QueryService implements Service {
   }
 
   /**
-   * A field, operator or text option enters its stage; an active one steps
-   * back out. The text option opens a quote before the term typed so far.
+   * A field or operator option enters its stage; an active one steps back
+   * out. A literal option opens the literal before the term typed so far.
    * A value option commits.
    */
   select(option: Option): void {
@@ -339,10 +368,11 @@ export class QueryService implements Service {
       case "field":
         this.state.draft = option.active ? "" : this.stageText(option.value);
         return;
-      case "text":
-        if (!this.textOn) return;
-        this.state.draft = option.active ? "" : `${QUERY_TEXT_QUOTE}${term}`;
+      case "literal": {
+        const literal = this.literals[option.value];
+        if (literal) this.state.draft = `${literal.open}${term}`;
         return;
+      }
       case "op":
         if (!key) return;
         this.state.draft = option.active
@@ -355,22 +385,22 @@ export class QueryService implements Service {
   }
 
   /**
-   * Commits the term: as the field's value when a field is set, as text
-   * when the draft is quoted. An empty term is ignored, and so is a bare
-   * term, which is a field still being named.
+   * Commits the term: as the field's value when a field is set, as the
+   * literal's value when a literal is open. An empty term is ignored, and
+   * so is a bare term, which is a field still being named.
    */
   submit(): void {
-    const { key, op, text, term } = this.parse;
+    const { key, op, literal, term } = this.parse;
     const value = term.trim();
-    if (!value) return;
-    if (key) this.commit({ kind: "filter", key, op, value });
-    else if (text) this.commit({ kind: "text", value });
+    if (!value || !key) return;
+    if (literal) this.commit({ kind: "literal", key, value });
+    else this.commit({ kind: "filter", key, op, value });
   }
 
   /**
    * Takes the last entry back into the draft, minus one character, so
-   * entries erase like continuous text: a text entry loses its closing
-   * quote and is back in the text stage.
+   * entries erase like continuous text: a literal loses the last character
+   * of its `close` and is back in the literal stage.
    */
   unwrap(): void {
     const index = this.entries.length - 1;
@@ -392,10 +422,16 @@ export class QueryService implements Service {
     return `${this.labelOf(key)}: ${op ? `${op} ` : ""}`;
   }
 
-  /** The text that commits an entry: `Label: op value`, or `"text"`. */
+  /**
+   * The text that commits an entry: `Label: op value`, or the literal's
+   * value between its characters, `"text"`. A literal whose key is not
+   * configured is written bare.
+   */
   textFor(entry: Entry): string {
-    if (entry.kind === "text") {
-      return `${QUERY_TEXT_QUOTE}${entry.value}${QUERY_TEXT_QUOTE}`;
+    if (entry.kind === "literal") {
+      const literal = this.literals[entry.key];
+      if (!literal) return entry.value;
+      return `${literal.open}${entry.value}${literal.close}`;
     }
     return `${this.stageText(entry.key, entry.op)}${entry.value}`;
   }

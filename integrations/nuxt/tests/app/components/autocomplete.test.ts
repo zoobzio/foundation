@@ -1,9 +1,9 @@
 // The autocomplete wrapper: the layer's Scroller as the first panel's
 // viewport, so its back-to-top draws the `top` icon, and no scroller once a
 // group has an option set, `remove` after each chip's label, a field's
-// `icon` before its option, `search` before the text option, and the branch
-// arrows: `next` on a field, operator or text option, `expand` on the
-// active trail option, none on a value.
+// `icon` before its option, `search` before a literal option that names
+// none, and the branch arrows: `next` on a field or operator option,
+// `expand` on the active trail option, none on a value or a literal.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { reactive } from "vue";
@@ -72,7 +72,7 @@ describe("autocomplete wrapper", () => {
     ]);
   });
 
-  it("draws search before the text option, and expand on it once the quote is open", async () => {
+  it("draws search before the text literal, no arrow after it, and no panel once the quote is open", async () => {
     const service = makeQuery();
     const wrapper = mount(Autocomplete, {
       props: { service },
@@ -87,15 +87,33 @@ describe("autocomplete wrapper", () => {
       "Status",
       "Amount",
     ]);
-    expect(iconsOf(wrapper, ".f-autocomplete-item")[0]).toEqual([
-      "search",
-      "next",
-    ]);
+    expect(iconsOf(wrapper, ".f-autocomplete-item")[0]).toEqual(["search"]);
     await wrapper.get("input").setValue('"ali');
     await flushPromises();
     expect(wrapper.findAll(".f-autocomplete-item")).toHaveLength(0);
-    expect(wrapper.get(".f-button").text()).toBe("Search");
-    expect(iconsOf(wrapper, ".f-button")).toEqual([["search", "expand"]]);
+    expect(wrapper.findAll(".f-button")).toHaveLength(0);
+    expect(wrapper.find(".f-autocomplete-content").exists()).toBe(false);
+  });
+
+  it("draws a literal's own icon before its option", async () => {
+    const service = new QueryService(
+      "test-query",
+      {
+        fields: {},
+        literals: {
+          tag: { label: "Tag", open: "(", close: ")", icon: "filter" },
+        },
+      },
+      reactive(createQueryState()),
+    );
+    const wrapper = mount(Autocomplete, {
+      props: { service },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").trigger("focus");
+    await flushPromises();
+    expect(iconsOf(wrapper, ".f-autocomplete-item")).toEqual([["filter"]]);
   });
 
   it("draws expand on the active trail option, next on operators, and nothing on a value", async () => {
@@ -120,7 +138,7 @@ describe("autocomplete wrapper", () => {
 
   it("draws remove after each chip's label", async () => {
     const { service } = makeTable();
-    service.query.add({ kind: "text", value: "alice" });
+    service.query.add({ kind: "literal", key: "text", value: "alice" });
     service.query.add({ kind: "filter", key: "name", value: "Bob" });
     const wrapper = mount(Autocomplete, {
       props: { service: service.query },

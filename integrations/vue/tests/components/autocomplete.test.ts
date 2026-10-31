@@ -114,7 +114,7 @@ describe("autocomplete", () => {
 
   it("unwraps the last entry on Backspace over an empty draft only", async () => {
     const service = makeQuery();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "status", value: "Active" });
     const wrapper = mountAutocomplete({ service });
     await flushPromises();
@@ -151,7 +151,7 @@ describe("autocomplete", () => {
 
   it("renders the entries as chips and removes one by click", async () => {
     const service = makeQuery();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "amount", value: "40" });
     const wrapper = mountAutocomplete({ service });
     await flushPromises();
@@ -314,7 +314,7 @@ describe("autocomplete", () => {
 
   it("renders chipPrepend and chipAppend either side of a chip's label", async () => {
     const service = makeQuery();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "status", value: "Active" });
     const wrapper = mount(Autocomplete, {
       props: { service },
@@ -334,13 +334,16 @@ describe("autocomplete", () => {
       expect(trail?.classList.contains("trail")).toBe(true);
       expect(trail?.textContent).toBe(String(i));
     }
-    expect(chips.map((c) => c.get(".lead").text())).toEqual(["text", "filter"]);
+    expect(chips.map((c) => c.get(".lead").text())).toEqual([
+      "literal",
+      "filter",
+    ]);
     expect(chips[0]!.text()).toContain('"alice"');
   });
 
   it("renders inputPrepend before the chips and inputAppend after the input", async () => {
     const service = makeQuery();
-    service.add({ kind: "text", value: "alice" });
+    service.add({ kind: "literal", key: "text", value: "alice" });
     const wrapper = mount(Autocomplete, {
       props: { service, placeholder: "Find" },
       slots: {

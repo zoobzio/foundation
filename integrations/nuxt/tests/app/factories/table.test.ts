@@ -102,7 +102,7 @@ describe("createTable", () => {
     const users = createTable("users", makeOptions())();
     await users.init();
     expect(updated).toHaveBeenCalledWith({ id: "users", total: 3 });
-    users.query.add({ kind: "text", value: "ali" });
+    users.query.add({ kind: "literal", key: "text", value: "ali" });
     expect(filtered).toHaveBeenCalledWith({
       id: "users",
       query: "ali",
@@ -113,7 +113,7 @@ describe("createTable", () => {
   it("logs each relayed event under the service id", async () => {
     const users = createTable("users", makeOptions())();
     await users.init();
-    users.query.add({ kind: "text", value: "ali" });
+    users.query.add({ kind: "literal", key: "text", value: "ali" });
     expect(useNuxtApp().$logger("users").debug.mock.calls).toEqual([
       ["Table updated", { id: "users", total: 3 }],
       ["Table filtered", { id: "users", query: "ali", filters: [] }],
