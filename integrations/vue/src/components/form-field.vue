@@ -77,7 +77,9 @@ defineSlots<FormFieldSlots<T>>();
         :for="ctx.ids.control"
         class="f-label f-data-form-field-label"
       >
-        {{ field.label }}
+        <slot name="labelText" v-bind="ctx">
+          {{ field.label }}
+        </slot>
       </label>
     </slot>
     <slot v-if="ctx.control === 'input'" name="input" v-bind="ctx">
@@ -126,7 +128,9 @@ defineSlots<FormFieldSlots<T>>();
     </slot>
     <slot v-if="field.hint" name="hint" v-bind="ctx">
       <div :id="ctx.ids.hint" class="f-caption f-data-form-field-hint">
-        {{ field.hint }}
+        <slot name="hintText" v-bind="ctx">
+          {{ field.hint }}
+        </slot>
       </div>
     </slot>
     <slot v-if="ctx.error" name="error" v-bind="ctx">

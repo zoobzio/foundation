@@ -1,5 +1,5 @@
 import type { FormOptions, UseForm } from "../types/form";
-import type { Actions, Service } from "@zoobzio/form";
+import type { Actions, Config, Service } from "@zoobzio/form";
 
 import { useNuxtApp } from "#app";
 import { FormService } from "@zoobzio/form";
@@ -12,23 +12,25 @@ import { resolveTexts } from "../utils/text";
  * lifecycle actions and the middleware), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus under the `form:` prefix. The fields' text — each label, hint,
- * placeholder and option — resolves through the app's prosary service as
- * the service is built. The machine itself is `@zoobzio/form`; the Vue
- * form renders it through its `service` prop.
+ * bus under the `form:` prefix. The config's text — each field's label,
+ * hint, placeholder and option — resolves through the app's prosary
+ * service as the service is built. The `defaults` are the payload's
+ * values, data rather than text, and stand as given whatever their keys.
+ * The machine itself is `@zoobzio/form`; the Vue form renders it through
+ * its `service` prop.
  */
 export const createForm = <T>(
   id: string,
   options: FormOptions<T>,
 ): UseForm<T> => {
-  const { init, submit, middleware, initial, ...config } = options;
+  const { init, submit, middleware, initial, defaults, ...config } = options;
   const wiring: Actions<T> = { init, submit, middleware };
   return (): Service<T> => {
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
-    const resolved = {
-      ...config,
-      fields: resolveTexts(nuxt.$prosary, config.fields),
+    const resolved: Config<T> = {
+      ...resolveTexts(nuxt.$prosary, config),
+      ...(defaults && { defaults }),
     };
     const state = accessForm(id, resolved, initial);
     const service = new FormService(id, resolved, state, wiring);

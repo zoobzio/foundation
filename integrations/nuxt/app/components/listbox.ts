@@ -1,9 +1,9 @@
-// The vue listbox with its items' text resolved.
+// The vue listbox with each item's label in the visitor's locale.
 import Core from "@zoobzio/vue/components/listbox.vue";
 
-import { texts } from "./text";
+import { textSlot } from "./text";
 import { wrap } from "@zoobzio/vue/utils/wrap";
 
 export default wrap(Core, {
-  props: (props) => ({ ...props, items: texts(props.items) }),
+  slots: { itemLabel: ({ item }) => textSlot(item.label) },
 });

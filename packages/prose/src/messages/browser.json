@@ -18,5 +18,9 @@
   "clear": {
     "defaultMessage": "Clear",
     "description": "The button that clears the selected files."
+  },
+  "root": {
+    "defaultMessage": "Home",
+    "description": "The label of the root crumb: the first entry of the browser's trail, above every folder."
   }
 }

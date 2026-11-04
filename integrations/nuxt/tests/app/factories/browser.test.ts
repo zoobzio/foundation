@@ -150,4 +150,18 @@ describe("createBrowser", () => {
     expect(assets.config.folderActions?.rename?.label).toBe("Clear");
     expect(assets.config.bulkActions?.purge?.label).toBe("Clear");
   });
+
+  it("lays the contract's root label under a config that names none", () => {
+    const assets = createBrowser("assets-root", makeOptions())();
+    expect(assets.rootLabel).toBe("Home");
+    expect(assets.trail).toEqual([{ key: "", label: "Home" }]);
+  });
+
+  it("resolves the root label a config declares", () => {
+    const assets = createBrowser(
+      "assets-root-text",
+      makeOptions({ rootLabel: "browser.empty" }),
+    )();
+    expect(assets.rootLabel).toBe("Empty folder");
+  });
 });

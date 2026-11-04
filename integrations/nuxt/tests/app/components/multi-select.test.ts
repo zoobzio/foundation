@@ -36,4 +36,27 @@ describe("multi select wrapper", () => {
     );
     expect(checks).toHaveLength(2);
   });
+
+  it("reads its placeholder and its selection from the contract", () => {
+    const keyed: Option[] = [
+      { value: "a", label: "table.columns" },
+      { value: "b", label: "table.empty" },
+    ];
+    const bare = mount(MultiSelect<Option>, {
+      props: { items: keyed },
+      attachTo: document.body,
+    });
+    mounted.push(bare);
+    const placeholder = bare.get("button.f-select-trigger").text();
+    expect(placeholder).not.toBe("");
+    expect(placeholder).not.toContain("select.");
+    const chosen = mount(MultiSelect<Option>, {
+      props: { items: keyed, modelValue: keyed },
+      attachTo: document.body,
+    });
+    mounted.push(chosen);
+    expect(chosen.get("button.f-select-trigger").text()).toBe(
+      "Columns, No data",
+    );
+  });
 });

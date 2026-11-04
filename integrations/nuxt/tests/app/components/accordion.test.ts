@@ -46,4 +46,17 @@ describe("accordion wrapper", () => {
     expect(wrapper.find('svg[data-icon="expand"]').exists()).toBe(false);
     expect(wrapper.get("button.f-accordion-trigger i").text()).toBe("false");
   });
+
+  it("reads its items' labels from the contract", () => {
+    const wrapper = mount(Accordion<Option>, {
+      props: {
+        items: [{ value: "a", label: "table.columns" }],
+        type: "multiple",
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.text()).toContain("Columns");
+    expect(wrapper.text()).not.toContain("table.columns");
+  });
 });

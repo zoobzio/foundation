@@ -26,5 +26,9 @@
   "search": {
     "defaultMessage": "Search...",
     "description": "The placeholder of the table's search."
+  },
+  "text": {
+    "defaultMessage": "Search",
+    "description": "The label of the search's text literal: the option that opens the quote and takes free text, leading the field panel."
   }
 }

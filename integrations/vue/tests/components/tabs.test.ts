@@ -97,4 +97,18 @@ describe("tabs link part", () => {
       tabByText(wrapper, "Local").attributes("data-router"),
     ).toBeUndefined();
   });
+
+  it("renders triggerLabel as a tab's text, linked or not", () => {
+    const wrapper = mount(Tabs, {
+      props: { tabs: fakeLinkedOptions, modelValue: "overview" },
+      slots: {
+        triggerLabel: `<template #triggerLabel="{ option }"><i>{{ option.label }}*</i></template>`,
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.findAll('[role="tab"] i').map((i) => i.text())).toEqual(
+      fakeLinkedOptions.map((o) => `${o.label}*`),
+    );
+  });
 });

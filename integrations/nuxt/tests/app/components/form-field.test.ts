@@ -32,4 +32,25 @@ describe("form field wrapper", () => {
       wrapper.findAll('.f-tags-input-item-delete svg[data-icon="remove"]'),
     ).toHaveLength(2);
   });
+
+  it("reads the field's label, hint and placeholder from the contract", () => {
+    const field = {
+      type: "text",
+      key: "name",
+      label: "form.submit",
+      hint: "form.reset",
+      placeholder: "select.placeholder",
+    } as unknown as Field<FakePayload>;
+    const { service } = makeForm({ fields: [field] });
+    const wrapper = mount(FormField<FakePayload>, {
+      props: { service, field },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.get("label").text()).toBe("Submit");
+    expect(wrapper.get(".f-data-form-field-hint").text()).toBe("Reset");
+    expect(wrapper.get("input").attributes("placeholder")).toBe(
+      "Select an option",
+    );
+  });
 });

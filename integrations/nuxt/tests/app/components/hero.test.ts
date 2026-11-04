@@ -43,4 +43,16 @@ describe("hero wrapper", () => {
     expect(wrapper.get("a[data-nuxt]").classes()).toContain("custom");
     expect(wrapper.get("em.tag").text()).toBe("Build!");
   });
+
+  it("reads its description and its action's label from the contract", () => {
+    const wrapper = mount(Hero, {
+      props: {
+        tagline: "Build",
+        description: "table.empty",
+        action: { label: "table.refresh", to: "/start" },
+      },
+    });
+    expect(wrapper.get("p").text()).toBe("No data");
+    expect(wrapper.get("a[data-nuxt]").text()).toBe("Refresh");
+  });
 });

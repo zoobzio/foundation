@@ -147,27 +147,29 @@ const goToStep = (target: 1 | 2 | 3) => {
   }
 };
 
-const fieldLabel = computed(
-  () => fields.find((f) => f.key === selectedField.value)?.label ?? "Field",
-);
+const field = computed(() => fields.find((f) => f.key === selectedField.value));
 
-const operatorLabel = computed(() => {
-  if (!selectedOperator.value) return "Operator";
-  return (
-    selectedOperator.value.charAt(0).toUpperCase() +
-    selectedOperator.value.slice(1)
-  );
-});
+const operator = computed(() => selectedOperator.value || undefined);
 
-const valueLabel = computed(() => {
+/** The chosen value as text: the date, or the range's two dates. */
+const value = computed(() => {
   if (selectedOperator.value === "between") {
     if (!selectedRange.value?.start || !selectedRange.value?.end)
-      return "Value";
+      return undefined;
     return `${format(selectedRange.value.start)},${format(selectedRange.value.end)}`;
   }
-  if (!selectedDate.value) return "Value";
+  if (!selectedDate.value) return undefined;
   return format(selectedDate.value);
 });
+
+const fieldLabel = computed(() => field.value?.label ?? "Field");
+
+const operatorLabel = computed(() => {
+  if (!operator.value) return "Operator";
+  return operator.value.charAt(0).toUpperCase() + operator.value.slice(1);
+});
+
+const valueLabel = computed(() => value.value ?? "Value");
 
 watch(open, (isOpen) => {
   if (isOpen && filters?.length) {
@@ -252,6 +254,9 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
 const ctx = useContext<DateFiltersContext>("date-filters", () => ({
   fields,
   filters,
+  field: field.value,
+  operator: operator.value,
+  value: value.value,
   activeCount: activeCount.value,
   valid: isFormValid.value,
   apply: applyFilter,
@@ -290,7 +295,7 @@ defineSlots<DateFiltersSlots>();
                   ]"
                   @click="goToStep(1)"
                 >
-                  {{ fieldLabel }}
+                  <slot name="fieldLabel" v-bind="ctx">{{ fieldLabel }}</slot>
                 </button>
                 <slot name="stepSeparator" v-bind="ctx" />
                 <button
@@ -308,7 +313,9 @@ defineSlots<DateFiltersSlots>();
                   :disabled="!selectedField"
                   @click="goToStep(2)"
                 >
-                  {{ operatorLabel }}
+                  <slot name="operatorLabel" v-bind="ctx">{{
+                    operatorLabel
+                  }}</slot>
                 </button>
                 <slot name="stepSeparator" v-bind="ctx" />
                 <button
@@ -320,7 +327,7 @@ defineSlots<DateFiltersSlots>();
                   ]"
                   disabled
                 >
-                  {{ valueLabel }}
+                  <slot name="valueLabel" v-bind="ctx">{{ valueLabel }}</slot>
                 </button>
               </div>
             </slot>

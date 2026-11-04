@@ -337,4 +337,21 @@ describe("form-field", () => {
     });
     expect(wrapper.get("textarea").attributes("rows")).toBe("8");
   });
+
+  it("renders labelText and hintText inside the label and the hint, keeping their ids", () => {
+    const { service } = makeForm();
+    const wrapper = mountField(
+      { service, field: fakeField("name") },
+      {
+        labelText: `<template #labelText="{ field }"><i>{{ field.label }}*</i></template>`,
+        hintText: `<template #hintText="{ field }"><b>{{ field.hint }}*</b></template>`,
+      },
+    );
+    const label = wrapper.get("label.f-data-form-field-label");
+    expect(label.attributes("id")).toBe("test-form-name-label");
+    expect(label.get("i").text()).toBe(`${fakeField("name").label}*`);
+    const hint = wrapper.get(".f-data-form-field-hint");
+    expect(hint.attributes("id")).toBe("test-form-name-hint");
+    expect(hint.get("b").text()).toBe("Shown on your profile*");
+  });
 });

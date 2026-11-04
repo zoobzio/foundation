@@ -57,4 +57,16 @@ describe("hero", () => {
     expect(wrapper.find("a").exists()).toBe(false);
     expect(wrapper.get("i").text()).toBe("Get started");
   });
+
+  it("renders actionLabel inside the anchor, keeping its link", () => {
+    const wrapper = mountHero(
+      { action: { label: "Get started", to: "/start" } },
+      {
+        actionLabel: `<template #actionLabel="{ action }"><i>{{ action.label }}!</i></template>`,
+      },
+    );
+    const anchor = wrapper.get("a");
+    expect(anchor.attributes("href")).toBe("/start");
+    expect(anchor.get("i").text()).toBe("Get started!");
+  });
 });

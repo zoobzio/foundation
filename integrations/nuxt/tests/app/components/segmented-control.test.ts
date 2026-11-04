@@ -66,4 +66,16 @@ describe("segmented control wrapper", () => {
     await local?.trigger("click");
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["local"]);
   });
+
+  it("reads its options' labels from the contract", () => {
+    const wrapper = mount(SegmentedControl<SegmentedControlOption>, {
+      props: {
+        options: [{ value: "a", label: "table.columns" }],
+        modelValue: "a",
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.text()).toBe("Columns");
+  });
 });

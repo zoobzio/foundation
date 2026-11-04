@@ -155,4 +155,25 @@ describe("createTable", () => {
     expect(users.config.actions?.remove?.label).toBe("Clear");
     expect(users.config.bulkActions?.purge?.label).toBe("Clear");
   });
+
+  it("lays the contract's text literal under a config that names none", () => {
+    const users = createTable("users-literal", makeOptions())();
+    expect(users.config.literals).toEqual({
+      text: { label: "Search", open: '"', close: '"' },
+    });
+    expect(users.query.literals.text?.label).toBe("Search");
+  });
+
+  it("resolves the literals a config declares, and adds none to them", () => {
+    const users = createTable(
+      "users-literals",
+      makeOptions({
+        literals: { tag: { label: "table.columns", open: "#", close: " " } },
+      }),
+    )();
+    expect(users.config.literals).toEqual({
+      tag: { label: "Columns", open: "#", close: " " },
+    });
+    expect(users.query.literals.text).toBeUndefined();
+  });
 });

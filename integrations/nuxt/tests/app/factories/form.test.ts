@@ -174,4 +174,15 @@ describe("createForm", () => {
       { label: "Amount" },
     ]);
   });
+
+  it("leaves the defaults as data, whatever their keys hold", () => {
+    const contact = createForm(
+      "contact-defaults",
+      makeOptions({
+        defaults: { name: "form.submit" },
+      }),
+    )();
+    expect(contact.config.defaults).toEqual({ name: "form.submit" });
+    expect(contact.payload).toEqual({ name: "form.submit" });
+  });
 });

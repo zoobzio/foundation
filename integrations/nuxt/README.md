@@ -205,8 +205,8 @@ const groups: MenuGroup[] = [
 
 The components of `@zoobzio/vue` know nothing of translation: each renders
 its text as it is, in English by default, as it does outside the layer.
-The layer translates over the top, through the same `pt` layers, slot
-defaults and props maps its wrappers already lay under the components.
+The layer translates over the top, through the same `pt` layers and slot
+defaults its wrappers already lay under the components.
 
 Every `label`, `placeholder`, `title`, `description` or `hint` a component
 or a service carries is a `Text` of `@zoobzio/kit`: `string`, until a layer
@@ -244,14 +244,21 @@ export default defineNuxtConfig({
 A message resolves at the layer's boundary, before a component sees it, so
 what reaches `@zoobzio/vue` is always a string:
 
-- A wrapper's `props` map resolves what the consumer passed — the
-  options of a select, the groups of a menu, the nodes of a tree — and
-  supplies the component's own defaults (a placeholder, an empty state, a
-  button's name) as messages of the prose contract, through its `pt`
-  layer and slot defaults. The map and the defaults run on each render,
-  so they follow a locale switch.
-- A factory resolves the labels of the columns, actions and fields it
-  builds a service over, once, when the service is built in setup. The
+- A wrapper resolves each text where the component renders it: every
+  component exposes a slot around each label it draws (`itemLabel`,
+  `groupLabel`, `triggerLabel`, …), and the wrapper's default for that
+  slot is the label as the visitor reads it. A scalar text the component
+  hands to an attribute — a placeholder, an accessible name — resolves in
+  the wrapper's `props` map instead, as no slot can reach it. The
+  component's own defaults (a placeholder, an empty state, a button's
+  name) come from the prose contract the same way, through its `pt`
+  layer and slot defaults. All of it runs on each render, so it follows a
+  locale switch.
+- A factory resolves every text of the config it builds a service over —
+  the columns, actions, fields and literals — once, when the service is
+  built in setup, and lays the contract's messages under the defaults the
+  headless packages ship in English: the query's text literal
+  (`table.text`) and the browser's root crumb (`browser.root`). The
   search then matches a typed prefix against a column's label as the
   visitor reads it. The layer's `locale` plugin reloads the app when the
   visitor switches locale, so a built service never holds a stale one.

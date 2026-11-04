@@ -12,7 +12,7 @@ import type {
   SortDirection,
   State,
 } from "./types";
-import type { Emitter } from "@zoobzio/kit";
+import type { Emitter, Text } from "@zoobzio/kit";
 
 import { entries } from "objectively";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
@@ -109,7 +109,7 @@ export class BrowserService<T> implements Service<T> {
   get selected(): Set<string> {
     return this.state.selected;
   }
-  get rootLabel(): string {
+  get rootLabel(): Text {
     return this.config.rootLabel ?? BROWSER_DEFAULT_ROOT_LABEL;
   }
   get locale(): string {

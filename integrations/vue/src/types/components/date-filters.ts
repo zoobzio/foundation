@@ -66,12 +66,17 @@ export type DateFiltersEmits = {};
 
 /**
  * The date filters view model, served to `defineExpose` and the slots.
+ * `field`, `operator` and `value` are the stepper's choices so far, each
+ * absent until its step is done, `value` as the formatted date or range.
  * `activeCount` is the number of filters; `valid` is whether the value
  * step holds a filter `apply` can commit.
  */
 export type DateFiltersContext = {
   fields: DateFieldConfig[];
   filters?: DateFilter[];
+  field?: DateFieldConfig;
+  operator?: DateFilterOperator;
+  value?: string;
   activeCount: number;
   valid: boolean;
   apply: () => void;
@@ -88,6 +93,9 @@ export type DateFiltersSlots = {
   root?: (props: DateFiltersContext) => VNode[];
   stepper?: (props: DateFiltersContext) => VNode[];
   stepSeparator?: (props: DateFiltersContext) => VNode[];
+  fieldLabel?: (props: DateFiltersContext) => VNode[];
+  operatorLabel?: (props: DateFiltersContext) => VNode[];
+  valueLabel?: (props: DateFiltersContext) => VNode[];
   fieldCommand?: (props: DateFiltersContext) => VNode[];
   operatorCommand?: (props: DateFiltersContext) => VNode[];
   calendarWrapper?: (props: DateFiltersContext) => VNode[];

@@ -75,6 +75,7 @@ export type SelectSlots<T extends Option = Option> = {
   content?: (props: SelectContext<T>) => VNode[];
   item?: (props: SelectContext<T> & { option: T }) => VNode[];
   itemText?: (props: SelectContext<T> & { option: T }) => VNode[];
+  itemLabel?: (props: SelectContext<T> & { option: T }) => VNode[];
   triggerPrepend?: (props: SelectContext<T>) => VNode[];
   triggerAppend?: (props: SelectContext<T>) => VNode[];
 };

@@ -117,9 +117,21 @@ defineSlots<TreeSlots<T>>();
             class="f-anchor"
             v-bind="settings.link(flat.value)"
           >
-            {{ flat.value.label }}
+            <slot
+              name="itemText"
+              v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
+            >
+              {{ flat.value.label }}
+            </slot>
           </Primitive>
-          <span v-else class="f-span">{{ flat.value.label }}</span>
+          <span v-else class="f-span">
+            <slot
+              name="itemText"
+              v-bind="{ ...ctx, item: flat, isExpanded, isSelected }"
+            >
+              {{ flat.value.label }}
+            </slot>
+          </span>
         </slot>
         <slot
           name="itemAppend"

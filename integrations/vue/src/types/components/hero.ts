@@ -49,6 +49,7 @@ export type HeroSlots = {
   taglineHighlight?: (props: HeroContext) => VNode[];
   description?: (props: HeroContext) => VNode[];
   action?: (props: HeroContext) => VNode[];
+  actionLabel?: (props: HeroContext) => VNode[];
   showcase?: (props: HeroContext) => VNode[];
 };
 

@@ -11,6 +11,8 @@ type AppProsary = Prosary<Contract>;
 /**
  * The properties that carry text in the data the components and the
  * services take: what {@link resolveTexts} resolves, wherever it finds one.
+ * `rootLabel` is the browser's root crumb, the one text a service config
+ * carries at its top level.
  */
 const TEXT_KEYS: ReadonlySet<string> = new Set([
   "label",
@@ -19,6 +21,7 @@ const TEXT_KEYS: ReadonlySet<string> = new Set([
   "placeholder",
   "hint",
   "text",
+  "rootLabel",
 ]);
 
 /**
@@ -63,10 +66,10 @@ export const resolveText = (
 
 /**
  * Resolves every text in a value: the `label`, `description`, `title`,
- * `placeholder`, `hint` and `text` of each plain object, at any depth of
- * arrays and plain objects, so the options of a select, the groups of a
- * menu, the nodes of a tree or the columns of a table all resolve in one
- * call. Anything else — a function, a Date, a service — is kept as it is.
+ * `placeholder`, `hint`, `text` and `rootLabel` of each plain object, at
+ * any depth of arrays and plain objects, so the options of a select, the
+ * groups of a menu, the nodes of a tree or the whole config of a table all
+ * resolve in one call. Anything else — a function, a Date, a service — is kept as it is.
  * The result is a copy; the value given is never written.
  *
  * @param service - The app's prosary service.

@@ -79,7 +79,6 @@ const settings = usePassthrough<SelectPassthrough<T>>(() => ({
     itemText: {},
     item: (obj) => ({
       value: obj.value,
-      textValue: obj.label,
       disabled: obj.disabled,
     }),
   },
@@ -124,7 +123,9 @@ defineSlots<SelectSlots<T>>();
                     class="f-select-item-text"
                     v-bind="settings.itemText"
                   >
-                    {{ option.label }}
+                    <slot name="itemLabel" v-bind="{ ...ctx, option }">
+                      {{ option.label }}
+                    </slot>
                   </SelectItemText>
                 </slot>
               </SelectItem>

@@ -72,4 +72,16 @@ describe("tabs wrapper", () => {
     await tabByText(wrapper, "Local").trigger("click");
     expect(wrapper.emitted("update:modelValue")?.at(-1)).toEqual(["local"]);
   });
+
+  it("reads its tabs' labels from the contract", () => {
+    const wrapper = mount(Tabs<TabsOption>, {
+      props: {
+        tabs: [{ value: "a", label: "table.columns" }],
+        modelValue: "a",
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.get('[role="tab"]').text()).toBe("Columns");
+  });
 });

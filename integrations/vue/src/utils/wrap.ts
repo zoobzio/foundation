@@ -59,8 +59,10 @@ const filled = (slots: Slots, defaults: Slots): Slots => {
  * typed as the component itself. The wrapper declares no props: it
  * receives what the consumer passed as attrs and hands all of it on,
  * through the map when one is given, so an absent prop stays absent and
- * the wrapped component's own defaults apply. The map runs on each
- * render, so what it reads is tracked. It
+ * the wrapped component's own defaults apply. The map is for a scalar
+ * prop the component hands to an attribute; what the component renders
+ * is reached through its slots. The map runs on each render, so what it
+ * reads is tracked. It
  * declares the wrapped component's emits and relays each, so the events
  * are its own as far as a listener, devtools, or a test can tell. It
  * exposes the wrapped component's `ctx` as its own.

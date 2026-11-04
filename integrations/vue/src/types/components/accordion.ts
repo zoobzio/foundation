@@ -65,6 +65,9 @@ export type AccordionSlots<T extends Option = Option> = {
   trigger?: (
     props: AccordionContext<T> & { item: T; open: boolean },
   ) => VNode[];
+  triggerLabel?: (
+    props: AccordionContext<T> & { item: T; open: boolean },
+  ) => VNode[];
   triggerContent?: (
     props: AccordionContext<T> & { item: T; open: boolean },
   ) => VNode[];

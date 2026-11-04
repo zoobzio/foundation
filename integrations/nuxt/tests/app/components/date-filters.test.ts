@@ -49,4 +49,25 @@ describe("date filters wrapper", () => {
     expect(text).toContain("Columns");
     expect(text).not.toContain("table.columns");
   });
+
+  it("shows the chosen field's label on its step, from the contract", async () => {
+    const wrapper = mount(DateFilters, {
+      props: {
+        fields: [{ key: "created", label: "table.columns" }],
+        addFilter: vi.fn(),
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get('button[aria-label="Dates"]').trigger("click");
+    await flushPromises();
+    const option = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="option"]'),
+    ).find((el) => el.textContent?.includes("Columns"));
+    if (!option) throw new Error("no field option");
+    option.click();
+    await flushPromises();
+    const step = document.body.querySelector(".f-date-filters-step--completed");
+    expect(step?.textContent?.trim()).toBe("Columns");
+  });
 });

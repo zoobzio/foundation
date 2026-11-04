@@ -98,4 +98,22 @@ describe("tree wrapper", () => {
     expect(wrapper.emitted("select")).toEqual([[nodes[0]]]);
     expect(wrapper.emitted("update:modelValue")).toEqual([[nodes[0]]]);
   });
+
+  it("reads its nodes' labels from the contract, linked or not", () => {
+    const wrapper = mount(Tree<Node>, {
+      props: {
+        items: [
+          { key: "a", label: "table.columns", slug: "a" },
+          { key: "b", label: "table.empty", slug: "b", link: { to: "/b" } },
+        ],
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.findAll('[role="treeitem"]').map((i) => i.text())).toEqual([
+      "Columns",
+      "No data",
+    ]);
+    expect(wrapper.get("a[data-nuxt]").text()).toBe("No data");
+  });
 });

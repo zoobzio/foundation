@@ -114,7 +114,6 @@ const settings = usePassthrough<AutocompletePassthrough>(() => ({
     },
     item: (anchor) => ({
       value: anchor.option.value,
-      textValue: anchor.option.label,
       onSelect: (event) => {
         event.preventDefault();
         service.select(anchor.option);

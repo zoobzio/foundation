@@ -81,7 +81,6 @@ const settings = usePassthrough<MultiSelectPassthrough<T>>(() => ({
     content: { position: "popper", sideOffset: SELECT_SIDE_OFFSET },
     item: (option) => ({
       value: option.value,
-      textValue: option.label,
       disabled: option.disabled,
     }),
     itemCheckbox: (option) => ({
@@ -142,7 +141,9 @@ defineSlots<MultiSelectSlots<T>>();
                     class="f-select-item-text"
                     v-bind="settings.itemText"
                   >
-                    {{ item.label }}
+                    <slot name="itemLabel" v-bind="{ ...ctx, item }">
+                      {{ item.label }}
+                    </slot>
                   </SelectItemText>
                 </slot>
               </SelectItem>

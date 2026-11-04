@@ -84,7 +84,7 @@ export type BrowserFolder = {
  */
 export type BrowserCrumb = {
   key: string;
-  label: string;
+  label: Text;
 };
 
 /**
@@ -126,7 +126,7 @@ export type Config<T> = {
   /**
    * The label of the root crumb. Defaults to `Home`.
    */
-  rootLabel?: string;
+  rootLabel?: Text;
   actions?: Record<string, ActionDescriptor>;
   folderActions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;
@@ -223,7 +223,7 @@ export type Service<T> = {
   readonly actions: FileAction<T>[];
   readonly folderActions: FolderAction[];
   readonly bulkActions: BulkAction[];
-  readonly rootLabel: string;
+  readonly rootLabel: Text;
   readonly locale: string;
   readonly currency: string;
   readonly timeZone: string;

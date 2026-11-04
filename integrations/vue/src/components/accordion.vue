@@ -98,7 +98,9 @@ defineSlots<AccordionSlots<T>>();
                         name="triggerPrepend"
                         v-bind="{ ...ctx, item, open }"
                       />
-                      {{ item.label }}
+                      <slot name="triggerLabel" v-bind="{ ...ctx, item, open }">
+                        {{ item.label }}
+                      </slot>
                       <slot
                         name="triggerAppend"
                         v-bind="{ ...ctx, item, open }"

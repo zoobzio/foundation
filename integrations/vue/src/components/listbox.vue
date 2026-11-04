@@ -76,7 +76,9 @@ defineSlots<ListboxSlots<T>>();
         <template v-for="option in items" :key="option.value">
           <slot name="item" v-bind="{ ...ctx, item: option }">
             <ListboxItem class="f-listbox-item" v-bind="settings.item(option)">
-              {{ option.label }}
+              <slot name="itemLabel" v-bind="{ ...ctx, item: option }">
+                {{ option.label }}
+              </slot>
             </ListboxItem>
           </slot>
         </template>

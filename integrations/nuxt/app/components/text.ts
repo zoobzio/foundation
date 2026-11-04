@@ -1,7 +1,9 @@
-// The text glue of the wrappers: a text, or the texts of a value, resolved
-// through the app's prosary service as `icon.ts` draws through the app's
-// sprite. Each runs at render time — in a slot default, a `pt` function or
-// a `props` map — where the Nuxt app is reachable from the rendering
+// The text glue of the wrappers: one text resolved through the app's
+// prosary service as `icon.ts` draws through the app's sprite. A wrapper
+// resolves a label where the component renders it, in the default of the
+// component's text slot, and a scalar text prop the component hands to an
+// attribute — a placeholder, an accessible name — in its `props` map. Each
+// runs at render time, where the Nuxt app is reachable from the rendering
 // instance, and where what it reads of the service's locale and messages
 // is tracked. Never call one at module scope.
 import type { Contract } from "#build/prosary/index.mjs";
@@ -12,7 +14,7 @@ import type { VNode } from "vue";
 
 import { useNuxtApp } from "#app";
 import { createTextVNode, h } from "vue";
-import { resolveText, resolveTexts } from "../utils/text";
+import { resolveText } from "../utils/text";
 
 /**
  * One text as the visitor reads it, called as `$t` is: a key and its
@@ -27,18 +29,19 @@ export const text: Format<Contract> & ((value: Text) => string) = (
   resolveText(useNuxtApp().$prosary, args.length ? [value, ...args] : value);
 
 /**
- * A value with every text in it resolved: the options, groups, items or
- * nodes a wrapper hands on to the component it wraps.
- */
-export const texts = <T>(value: T): T =>
-  resolveTexts(useNuxtApp().$prosary, value);
-
-/**
  * One text as a slot's content: what a slot default returns where the
  * component's own default is its English.
  */
 export const textSlot = (value: Text): VNode[] => [
   createTextVNode(text(value)),
+];
+
+/**
+ * One text inside an element: the span or caption a component's own slot
+ * default renders around a label, with the text in the visitor's locale.
+ */
+export const textIn = (tag: string, cls: string, value: Text): VNode[] => [
+  h(tag, { class: cls }, text(value)),
 ];
 
 /**

@@ -61,7 +61,9 @@ defineSlots<HeroSlots>();
         </slot>
         <slot name="action" v-bind="ctx">
           <Primitive v-if="action" class="f-anchor" v-bind="settings.link">
-            {{ action.label }}
+            <slot name="actionLabel" v-bind="ctx">
+              {{ action.label }}
+            </slot>
           </Primitive>
         </slot>
       </div>

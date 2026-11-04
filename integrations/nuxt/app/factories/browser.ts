@@ -13,10 +13,13 @@ import { resolveTexts } from "../utils/text";
  * the wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus as `browser:updated` and `browser:navigated`. The columns' and the
- * actions' labels resolve through the app's prosary service as the service
- * is built. The machine itself is `@zoobzio/browser`; the Vue browser
- * renders it through its `service` prop.
+ * bus as `browser:updated` and `browser:navigated`. Every text of the
+ * config — the columns' and the actions' labels, the root crumb's —
+ * resolves through the app's prosary service as the service is built. A
+ * config that names no `rootLabel` takes the contract's `browser.root`,
+ * so the root crumb reads in the visitor's locale. The machine itself is
+ * `@zoobzio/browser`; the Vue browser renders it through its `service`
+ * prop.
  */
 export const createBrowser = <T>(
   id: string,
@@ -29,6 +32,7 @@ export const createBrowser = <T>(
   const bulk = split(bulkActions);
   const config: Config<T> = {
     ...rest,
+    rootLabel: rest.rootLabel ?? "browser.root",
     actions: files.descriptors,
     folderActions: folders.descriptors,
     bulkActions: bulk.descriptors,
@@ -42,13 +46,7 @@ export const createBrowser = <T>(
   return (): Service<T> => {
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
-    const resolved: Config<T> = {
-      ...config,
-      columns: resolveTexts(nuxt.$prosary, config.columns),
-      actions: resolveTexts(nuxt.$prosary, config.actions),
-      folderActions: resolveTexts(nuxt.$prosary, config.folderActions),
-      bulkActions: resolveTexts(nuxt.$prosary, config.bulkActions),
-    };
+    const resolved = resolveTexts(nuxt.$prosary, config);
     const state = accessBrowser<T>(id, initial);
     const service = new BrowserService(id, resolved, state, wiring);
     service.on("updated", (event) => {

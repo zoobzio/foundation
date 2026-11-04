@@ -209,4 +209,19 @@ describe("tree link part", () => {
     expect(reference.attributes("href")).toBe("/reference");
     expect(reference.classes()).toContain("f-anchor");
   });
+
+  it("renders itemText as a node's text, inside its anchor when linked", () => {
+    const wrapper = mountTree(
+      { expanded: ["guides"] },
+      {
+        itemText: `<template #itemText="{ item }"><i>{{ item.value.label }}*</i></template>`,
+      },
+    );
+    const items = wrapper.findAll('[role="treeitem"]');
+    expect(items.length).toBeGreaterThan(0);
+    for (const item of items) {
+      expect(item.get("i").text()).toMatch(/\*$/);
+    }
+    expect(wrapper.findAll("a.f-anchor i").length).toBeGreaterThan(0);
+  });
 });

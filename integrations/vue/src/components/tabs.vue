@@ -83,13 +83,17 @@ defineSlots<TabsSlots<T>>();
             <Primitive v-if="option.link" v-bind="settings.link(option)">
               <slot name="trigger" v-bind="{ ...ctx, option }">
                 <slot name="triggerPrepend" v-bind="{ ...ctx, option }" />
-                {{ option.label }}
+                <slot name="triggerLabel" v-bind="{ ...ctx, option }">
+                  {{ option.label }}
+                </slot>
                 <slot name="triggerAppend" v-bind="{ ...ctx, option }" />
               </slot>
             </Primitive>
             <slot v-else name="trigger" v-bind="{ ...ctx, option }">
               <slot name="triggerPrepend" v-bind="{ ...ctx, option }" />
-              {{ option.label }}
+              <slot name="triggerLabel" v-bind="{ ...ctx, option }">
+                {{ option.label }}
+              </slot>
               <slot name="triggerAppend" v-bind="{ ...ctx, option }" />
             </slot>
           </TabsTrigger>

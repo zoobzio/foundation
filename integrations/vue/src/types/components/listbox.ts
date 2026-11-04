@@ -57,6 +57,7 @@ export type ListboxContext<T extends Option = Option> = {
 export type ListboxSlots<T extends Option = Option> = {
   content?: (props: ListboxContext<T>) => VNode[];
   item?: (props: ListboxContext<T> & { item: T }) => VNode[];
+  itemLabel?: (props: ListboxContext<T> & { item: T }) => VNode[];
 };
 
 /**

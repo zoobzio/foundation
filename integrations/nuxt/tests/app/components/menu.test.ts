@@ -144,4 +144,18 @@ describe("menu wrapper", () => {
       itemByText("Profile").querySelector("svg[data-icon]"),
     ).not.toBeNull();
   });
+
+  it("reads its label, its groups' and its items' labels from the contract", async () => {
+    const wrapper = await mountMenu({
+      label: "table.refresh",
+      groups: [
+        { key: "g", label: "table.columns", items: [{ label: "table.empty" }] },
+      ],
+    });
+    expect(wrapper.get("button.f-button").text()).toBe("Refresh");
+    const content = document.body.textContent ?? "";
+    expect(content).toContain("Columns");
+    expect(content).toContain("No data");
+    expect(content).not.toContain("table.");
+  });
 });

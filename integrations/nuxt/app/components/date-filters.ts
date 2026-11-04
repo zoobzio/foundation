@@ -1,20 +1,19 @@
 // The vue date filters with the layer's Command behind its field and
 // operator steps, the layer's Calendar and RangeCalendar behind its value
 // step, the `calendar` icon as its trigger's content, and its text — the
-// trigger, the fields' labels, the operators, the placeholders, the apply
-// button — in the visitor's locale.
+// trigger, the steps, the operators, the placeholders, the apply button —
+// in the visitor's locale. The fields' labels resolve in the Command.
 import Core from "@zoobzio/vue/components/date-filters.vue";
 
-import { h } from "vue";
+import { createTextVNode, h } from "vue";
 import { iconPart } from "./icon";
-import { text, texts } from "./text";
+import { text, textSlot } from "./text";
 import { wrap } from "@zoobzio/vue/utils/wrap";
 import Calendar from "./calendar";
 import Command from "./command";
 import RangeCalendar from "./range-calendar";
 
 export default wrap(Core, {
-  props: (props) => ({ ...props, fields: texts(props.fields) }),
   pt: (pt) => ({
     ...pt,
     trigger: { label: text("dateFilters.trigger"), ...pt?.trigger },
@@ -44,6 +43,11 @@ export default wrap(Core, {
   }),
   slots: {
     trigger: ({ settings }) => iconPart(settings.trigger, "calendar"),
+    fieldLabel: ({ field }) => textSlot(field?.label ?? "dateFilters.field"),
+    operatorLabel: ({ operator }) =>
+      textSlot(operator ? `dateFilters.${operator}` : "dateFilters.operator"),
+    valueLabel: ({ value }) =>
+      value ? [createTextVNode(value)] : textSlot("dateFilters.value"),
     applyButton: ({ valid, apply }) => [
       h(
         "button",

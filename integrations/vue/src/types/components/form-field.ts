@@ -117,6 +117,7 @@ export type FormFieldContext<T> = {
  */
 export type FormFieldSlots<T> = {
   label?: (props: FormFieldContext<T>) => VNode[];
+  labelText?: (props: FormFieldContext<T>) => VNode[];
   input?: (props: FormFieldContext<T>) => VNode[];
   textarea?: (props: FormFieldContext<T>) => VNode[];
   select?: (props: FormFieldContext<T>) => VNode[];
@@ -128,5 +129,6 @@ export type FormFieldSlots<T> = {
   fileInput?: (props: FormFieldContext<T>) => VNode[];
   richText?: (props: FormFieldContext<T>) => VNode[];
   hint?: (props: FormFieldContext<T>) => VNode[];
+  hintText?: (props: FormFieldContext<T>) => VNode[];
   error?: (props: FormFieldContext<T>) => VNode[];
 };

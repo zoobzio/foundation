@@ -69,4 +69,21 @@ describe("directory wrapper", () => {
     await home.trigger("click");
     expect(wrapper.emitted("select")).toEqual([[groups[0]?.items[0]]]);
   });
+
+  it("reads its groups' and its items' labels from the contract", () => {
+    const wrapper = mount(Directory<Entry>, {
+      props: {
+        groups: [
+          {
+            key: "g",
+            label: "table.columns",
+            items: [{ key: "i", label: "table.empty", section: "g" }],
+          },
+        ],
+      },
+    });
+    expect(wrapper.get(".f-caption").text()).toBe("Columns");
+    expect(wrapper.text()).toContain("No data");
+    expect(wrapper.text()).not.toContain("table.");
+  });
 });

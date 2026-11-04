@@ -109,4 +109,20 @@ describe("select", () => {
     expect(wrapper.get("output").text()).toBe(`Pick one:${fakeOptions.length}`);
     expect(wrapper.find("button.f-select-trigger").exists()).toBe(false);
   });
+
+  it("renders itemLabel inside each item's text, scoped with the option", async () => {
+    const wrapper = mountSelect(
+      {},
+      {
+        itemLabel: `<template #itemLabel="{ option }"><i>{{ option.label }}*</i></template>`,
+      },
+    );
+    await openSelect(wrapper);
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>(".f-select-item-text i"),
+    );
+    expect(items.map((i) => i.textContent)).toEqual(
+      fakeOptions.map((o) => `${o.label}*`),
+    );
+  });
 });
