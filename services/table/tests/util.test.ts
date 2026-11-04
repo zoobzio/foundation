@@ -6,13 +6,13 @@ import type { FakeRow } from "./data";
 
 describe("fields", () => {
   it("keys one field per column, in column order, labeled by the column", () => {
-    const result = fields(fakeColumns);
+    const result = fields(fakeColumns, "UTC");
     expect(Object.keys(result)).toEqual(fakeColumns.map((c) => String(c.key)));
     expect(result.name).toEqual({ label: "Name" });
   });
 
   it("gives a column the operators, default operator, and values it declares", () => {
-    const result = fields(fakeColumns);
+    const result = fields(fakeColumns, "UTC");
     expect(result.amount).toEqual({
       label: "Amount",
       operators: ["over", "under", "is"],
@@ -22,6 +22,7 @@ describe("fields", () => {
       label: "Created",
       operators: ["before", "after", "on"],
       defaultOperator: "on",
+      values: expect.any(Function),
     });
     expect(result.status).toEqual({
       label: "Status",
@@ -29,20 +30,56 @@ describe("fields", () => {
     });
   });
 
-  it("supplies nothing from the type: an undeclared column is a bare label", () => {
+  it("supplies nothing from the type but date values: an undeclared column is a bare label", () => {
     const columns: DataTableColumn<FakeRow & { active: boolean }>[] = [
       { key: "id", label: "ID", type: "number" },
-      { key: "created", label: "Created", type: "date" },
       { key: "active", label: "Active", type: "boolean" },
       { key: "status", label: "Status", type: "enum" },
       { key: "name", label: "Name" },
     ];
-    expect(fields(columns)).toEqual({
+    expect(fields(columns, "UTC")).toEqual({
       id: { label: "ID" },
-      created: { label: "Created" },
       active: { label: "Active" },
       status: { label: "Status" },
       name: { label: "Name" },
+    });
+  });
+
+  it("gives a date or datetime column without values the days of the zone", () => {
+    const columns: DataTableColumn<FakeRow & { seen: string }>[] = [
+      { key: "created", label: "Created", type: "date" },
+      { key: "seen", label: "Seen", type: "datetime" },
+      { key: "name", label: "Name", type: "text" },
+    ];
+    const result = fields(columns, "UTC");
+    expect(result.created).toEqual({
+      label: "Created",
+      values: expect.any(Function),
+    });
+    expect(result.seen).toEqual({
+      label: "Seen",
+      values: expect.any(Function),
+    });
+    expect(result.name).toEqual({ label: "Name" });
+    const values = result.created!.values as (term: string) => string[];
+    expect(values("2025-03")).toHaveLength(31);
+    expect(values("2025-03")[0]).toBe("2025-03-31");
+  });
+
+  it("lets a date column's own values win over the days", () => {
+    const provider = (term: string) => [term];
+    const columns: DataTableColumn<FakeRow & { seen: string }>[] = [
+      {
+        key: "created",
+        label: "Created",
+        type: "date",
+        values: ["2025-01-01"],
+      },
+      { key: "seen", label: "Seen", type: "datetime", values: provider },
+    ];
+    expect(fields(columns, "UTC")).toEqual({
+      created: { label: "Created", values: ["2025-01-01"] },
+      seen: { label: "Seen", values: provider },
     });
   });
 
@@ -65,11 +102,12 @@ describe("fields", () => {
       },
       { key: "status", label: "Owner", values: provider },
     ];
-    expect(fields(columns)).toEqual({
+    expect(fields(columns, "UTC")).toEqual({
       created: {
         label: "Created",
         operators: ["before", "after", "on", "between"],
         defaultOperator: "between",
+        values: expect.any(Function),
       },
       name: { label: "Name", operators: ["contains"] },
       active: { label: "Active", values: ["Yes", "No"] },
@@ -82,7 +120,7 @@ describe("fields", () => {
       { key: "amount", label: "Amount", operators: [], defaultOperator: "is" },
       { key: "id", label: "ID", defaultOperator: "is" },
     ];
-    expect(fields(columns)).toEqual({
+    expect(fields(columns, "UTC")).toEqual({
       amount: { label: "Amount" },
       id: { label: "ID" },
     });
@@ -90,12 +128,14 @@ describe("fields", () => {
 
   it("carries a column's properties beyond the ones the table reads onto its field", () => {
     const column = { key: "name", label: "Name", sortable: true, icon: "user" };
-    expect(fields<FakeRow>([column as DataTableColumn<FakeRow>])).toEqual({
+    expect(
+      fields<FakeRow>([column as DataTableColumn<FakeRow>], "UTC"),
+    ).toEqual({
       name: { label: "Name", icon: "user" },
     });
   });
 
   it("returns an empty record for no columns", () => {
-    expect(fields([])).toEqual({});
+    expect(fields([], "UTC")).toEqual({});
   });
 });

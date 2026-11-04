@@ -392,12 +392,37 @@ describe("query", () => {
       label: "Created",
       operators: ["before", "after", "on"],
       defaultOperator: "on",
+      values: expect.any(Function),
     });
     expect(service.query.fields.status).toEqual({
       label: "Status",
       values: ["Active", "Inactive", "Pending"],
     });
     expect(service.query.fields.name).toEqual({ label: "Name" });
+  });
+
+  it("suggests days for a date column, today first in the config's zone", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-11-04T23:30:00Z"));
+      const { service } = makeService({ config: { timeZone: "Asia/Tokyo" } });
+      service.query.setDraft("Created: on ");
+      expect(service.query.stage).toBe("value");
+      expect(service.query.items[0]).toEqual({
+        stage: "value",
+        value: "2026-11-05",
+        label: "2026-11-05",
+      });
+      service.query.setDraft("Created: on 2025-03-1");
+      expect(service.query.hint).toBe("9");
+      expect(service.query.items.map((i) => i.value)).toContain("2025-03-15");
+      service.query.select(service.query.items.at(-1)!);
+      expect(service.query.filters).toEqual([
+        { key: "created", op: "on", value: "2025-03-10" },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("leads with the text literal, Search, or the literals the config names", () => {

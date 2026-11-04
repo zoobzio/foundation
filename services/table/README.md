@@ -26,10 +26,11 @@ table.query.add({ kind: "filter", key: "status", value: "active" });
 
 `table.query` is a query service over the filterable columns: one field per
 column, with the operators, default operator, and values the column
-declares. The table supplies none, as it gives an operator no meaning: the
-consumer reads it from the filters its fetch is handed, so the consumer
-names the vocabulary. A column that declares nothing is a bare field, free
-entry and no operator stage. Any view drives it: `add`, `remove`, `clear`,
+declares. The table supplies no operators, as it gives an operator no
+meaning: the consumer reads it from the filters its fetch is handed, so the
+consumer names the vocabulary. A column that declares nothing is a bare
+field, free entry and no operator stage, except a `date` or `datetime`
+column, whose values default to the days the query's `dateValues` generates. Any view drives it: `add`, `remove`, `clear`,
 or the draft a text view composes through. Free text is the query's
 `text` literal, quoted in the draft, `"acme"`, and the field panel leads
 with the option that opens the quote, labelled `Search`; the config's
@@ -66,6 +67,15 @@ const columns = [
   { key: "amount", label: "Amount", type: "currency" }, // free entry, no operator stage
 ];
 ```
+
+### Date values
+
+A `date` or `datetime` column that declares no `values` suggests days,
+`YYYY-MM-DD`, generated from the term by the query's `dateValues`, so a
+visitor filtering on a date always has an option as long as the term is
+date syntax. Today is read in the config's `timeZone`. A column's own
+`values` replace the days; `dateValues` is exported by `@zoobzio/query`,
+so a column can wrap it. The generation rule is the query's to document.
 
 ## The state container
 

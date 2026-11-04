@@ -85,7 +85,7 @@ export class TableService<T> implements Service<T> {
     this.query = new QueryService(
       `${id}-query`,
       {
-        fields: fields(this.filterableColumns),
+        fields: fields(this.filterableColumns, this.timeZone),
         ...(config.literals && { literals: config.literals }),
       },
       this.state,

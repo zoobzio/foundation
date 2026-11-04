@@ -114,6 +114,36 @@ const config = {
 };
 ```
 
+## Date values
+
+`dateValues(timeZone, now?)` is a values provider for a field that filters
+on a date: an unbounded, term-driven list of days, `YYYY-MM-DD`, so a
+visitor always has an option as long as the term is date syntax. Every
+option is a whole day, as choosing one commits the filter: the typed
+prefix selects a range of days rather than drilling through years and
+months. Today is read in `timeZone`, from `now` on each call.
+
+| term                                          | options                                         |
+| --------------------------------------------- | ----------------------------------------------- |
+| empty                                         | the last 31 days, today first                   |
+| partial year, `2` or `202`                    | the same recent days, narrowed to the prefix    |
+| year, `2025` or `2025-`                       | the days of that year, newest first, 31 at most |
+| month, `2025-03` or `2025-03-`                | the days of that month, newest first            |
+| partial day, `2025-03-1`                      | the matching days of that month                 |
+| a complete day                                | that day alone                                  |
+| a day that does not exist, or not date syntax | nothing                                         |
+
+Years and months may lie in the future; only the empty term looks back from
+today. `QUERY_DATE_VALUES_LIMIT` is the window and the cap.
+
+```ts
+const config = {
+  fields: {
+    created: { label: "Created", values: dateValues("America/New_York") },
+  },
+};
+```
+
 ## The state container
 
 The service reads and writes the `state` container: the entries and the

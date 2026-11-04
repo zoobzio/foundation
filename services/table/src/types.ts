@@ -38,10 +38,14 @@ export type ColumnType =
  * column does.
  *
  * A column's query field is what the column declares: `operators`,
- * `defaultOperator`, and `values`. The table supplies none, as it gives an
- * operator no meaning: the consumer reads it from the filters its fetch is
- * handed, so the consumer names the vocabulary. A column that declares
- * nothing is a bare field, free entry and no operator stage.
+ * `defaultOperator`, and `values`. The table supplies no operators, as it
+ * gives an operator no meaning: the consumer reads it from the filters its
+ * fetch is handed, so the consumer names the vocabulary. It supplies values
+ * for a `date` or `datetime` column alone, the days the query's
+ * `dateValues` generates from the term in the config's `timeZone`, where
+ * the column declares none
+ * of its own. A column that declares nothing else is a bare field, free
+ * entry and no operator stage.
  */
 export interface DataTableColumn<T> {
   key: keyof T;
@@ -67,7 +71,9 @@ export interface DataTableColumn<T> {
   defaultOperator?: string;
   /**
    * The values the search suggests: a list the term narrows, or a provider
-   * the term is given to. Without them the value is free entry.
+   * the term is given to. Without them the value is free entry, except on
+   * a `date` or `datetime` column, which suggests the days the query's
+   * `dateValues` generates from the term.
    */
   values?: Values;
 }
@@ -163,8 +169,9 @@ export type Config<T> = {
    */
   currency?: string;
   /**
-   * The IANA time zone date and datetime cells format in. Defaults to
-   * `UTC`, so a server and a browser render the same text.
+   * The IANA time zone date and datetime cells format in, and the one the
+   * day a date column's search suggests first, today, is read in. Defaults
+   * to `UTC`, so a server and a browser render the same text.
    */
   timeZone?: string;
 };

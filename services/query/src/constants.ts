@@ -26,3 +26,9 @@ export const QUERY_TEXT_LITERAL: Literal = {
 export const QUERY_LITERALS: Record<string, Literal> = {
   [QUERY_TEXT_KEY]: QUERY_TEXT_LITERAL,
 };
+
+/**
+ * The most days `dateValues` lists: the recent window an empty term looks
+ * back over, and the cap on a term that names a whole year.
+ */
+export const QUERY_DATE_VALUES_LIMIT = 31;
