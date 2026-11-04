@@ -68,6 +68,15 @@ const columns = [
 ];
 ```
 
+A column may name a route for its cells: `link: (row) => string`. A view
+renders each cell of the column as a link to the route, with the cell's
+content inside, so a row's title can be the way to the row's own page. The
+query does not read it; it stays off the column's field.
+
+```ts
+{ key: "name", label: "Name", type: "text", link: (row) => `/users/${row.id}` }
+```
+
 ### Date values
 
 A `date` or `datetime` column that declares no `values` suggests days,

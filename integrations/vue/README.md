@@ -137,6 +137,14 @@ service.init();
 <Table :service="service" @updated="onUpdated" />
 ```
 
+A column that names a route (`link: (row) => string`) renders each of its
+cells through the body's `link` part, an anchor to the route around the
+content the cell would otherwise render: the type's formatting or a
+`cell:<type>` slot. A `cell:<key>` slot still replaces the whole cell. A
+`url` column without a route keeps its own link, to the value in a new tab.
+`pt.body.link` swaps the anchor for a router link, which receives the same
+`href`.
+
 `form.vue` renders a headless `@zoobzio/form` service the same way: one
 `form-field.vue` per config field, each resolved to the control its `type`
 names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,

@@ -25,7 +25,8 @@ export type TableCell<T> = {
 
 /**
  * The parts of the table body that accept passthrough. `link` is the
- * anchor of a `url` cell, built per cell.
+ * anchor of a cell, built per cell: the route of a column that names one,
+ * wrapping the cell's content, or the value of a `url` cell in a new tab.
  */
 export type TableBodyPassthrough<T> = {
   rowCheckbox: Rendered<CheckboxProps, CheckboxEmits>;
@@ -59,7 +60,8 @@ export type TableCellContext<T> = TableBodyContext<T> & TableCell<T>;
 /**
  * Slots of the table body. Cell overrides cascade: `cell:<key>` for one
  * column, then `cell:<type>` for all columns of a type, then `cell` for
- * every cell.
+ * every cell. A `cell:<key>` slot replaces the whole cell; the others
+ * render inside the link of a column that names a route.
  */
 export type TableBodySlots<T> = {
   empty?: (props: TableBodyContext<T>) => VNode[];

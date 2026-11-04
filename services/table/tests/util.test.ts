@@ -135,6 +135,15 @@ describe("fields", () => {
     });
   });
 
+  it("keeps a column's link off its field", () => {
+    const column: DataTableColumn<FakeRow> = {
+      key: "name",
+      label: "Name",
+      link: (row) => `/rows/${row.id}`,
+    };
+    expect(fields([column], "UTC")).toEqual({ name: { label: "Name" } });
+  });
+
   it("returns an empty record for no columns", () => {
     expect(fields([], "UTC")).toEqual({});
   });

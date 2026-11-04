@@ -1,5 +1,6 @@
 import type { TableProps } from "../../src/types/components/table";
 import type { FakeRow } from "#test/data/table";
+import type { DataTableColumn } from "@zoobzio/table";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -258,6 +259,93 @@ describe("table", () => {
       .findAll("button")
       .find((b) => b.attributes("aria-label") === "Reload");
     expect(refresh).toBeDefined();
+  });
+});
+
+describe("table column links", () => {
+  const route = (row: FakeRow) => `/rows/${row.id}`;
+  const linked = (
+    key: keyof FakeRow,
+    type: DataTableColumn<FakeRow>["type"],
+  ): DataTableColumn<FakeRow>[] => [
+    { key: "id", label: "ID", type: "number" },
+    { key, label: String(key), type, link: route },
+    { key: "site", label: "Site", type: "url" },
+  ];
+
+  it("renders a linked text cell as an anchor to the route around the text", async () => {
+    const { service } = makeTable({ columns: linked("name", "text") });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    const anchor = first.get("td:nth-child(2) a");
+    expect(anchor.attributes("href")).toBe("/rows/1");
+    expect(anchor.attributes("target")).toBeUndefined();
+    expect(anchor.attributes("rel")).toBeUndefined();
+    expect(anchor.classes()).toContain("f-anchor");
+    expect(anchor.text()).toBe("Alice");
+  });
+
+  it("renders a linked date cell with the formatted date inside the anchor", async () => {
+    const { service } = makeTable({ columns: linked("created", "date") });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    const anchor = first.get("td:nth-child(2) a");
+    expect(anchor.attributes("href")).toBe("/rows/1");
+    expect(anchor.get("span").text()).toBe("Jan 15, 2025");
+  });
+
+  it("leaves a url cell as a new-tab link to its value", async () => {
+    const { service } = makeTable({ columns: linked("name", "text") });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    const anchor = first.get("td:last-child a");
+    expect(anchor.attributes("href")).toBe("https://a.example");
+    expect(anchor.attributes("target")).toBe("_blank");
+    expect(anchor.attributes("rel")).toBe("noopener");
+  });
+
+  it("wraps a cell:<type> slot in the anchor and lets a cell:<key> slot replace the cell", async () => {
+    const { service } = makeTable({ columns: linked("created", "date") });
+    await service.init();
+    const wrapper = mountTable(
+      { service },
+      { "cell:date": "<em>by-type</em>", "cell:id": "<em>by-key</em>" },
+    );
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    expect(first.get("td:nth-child(2) a em").text()).toBe("by-type");
+    expect(first.find("td:nth-child(1) a").exists()).toBe(false);
+    expect(first.get("td:nth-child(1) em").text()).toBe("by-key");
+  });
+
+  it("renders a cell:<key> slot on a linked column without the anchor", async () => {
+    const { service } = makeTable({ columns: linked("name", "text") });
+    await service.init();
+    const wrapper = mountTable({ service }, { "cell:name": "<em>own</em>" });
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    expect(first.find("td:nth-child(2) a").exists()).toBe(false);
+    expect(first.get("td:nth-child(2) em").text()).toBe("own");
+  });
+
+  it("routes a linked cell through the component pt.body.link names", async () => {
+    const { service } = makeTable({ columns: linked("name", "text") });
+    await service.init();
+    const wrapper = mountTable({
+      service,
+      pt: { body: { link: () => ({ as: RouterLink }) } },
+    });
+    const first = wrapper.findAll("tbody tr").at(0);
+    if (!first) throw new Error("no rows");
+    const anchor = first.get("td:nth-child(2) a[data-router]");
+    expect(anchor.attributes("href")).toBe("/rows/1");
+    expect(anchor.text()).toBe("Alice");
   });
 });
 

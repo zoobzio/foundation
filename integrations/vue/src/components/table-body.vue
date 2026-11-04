@@ -42,12 +42,10 @@ const settings = usePassthrough<TableBodyPassthrough<T>>(() => ({
       groups: [{ key: "actions", items: actions.value }],
       align: "end",
     },
-    link: ({ value }) => ({
-      as: "a",
-      href: String(value),
-      target: "_blank",
-      rel: "noopener",
-    }),
+    link: ({ row, column, value }) =>
+      column.link
+        ? { as: "a", href: column.link(row) }
+        : { as: "a", href: String(value), target: "_blank", rel: "noopener" },
   },
 }));
 
@@ -89,6 +87,35 @@ defineSlots<TableBodySlots<T>>();
             :name="`cell:${String(col.key)}`"
             v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
           />
+          <!-- A column with a route renders its cell through the link part -->
+          <RekaPrimitive
+            v-else-if="col.link"
+            class="f-anchor"
+            v-bind="settings.link({ row, column: col, value: row[col.key] })"
+          >
+            <slot
+              v-if="col.type && slots[`cell:${col.type}`]"
+              :name="`cell:${col.type}`"
+              v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+            />
+            <slot
+              v-else
+              name="cell"
+              v-bind="{ ...ctx, row, column: col, value: row[col.key] }"
+            >
+              <span class="f-span">
+                {{
+                  cell(
+                    row[col.key],
+                    col.type,
+                    service.locale,
+                    service.currency,
+                    service.timeZone,
+                  )
+                }}
+              </span>
+            </slot>
+          </RekaPrimitive>
           <!-- 2. cell:<type> overrides all columns of a type -->
           <slot
             v-else-if="col.type && slots[`cell:${col.type}`]"

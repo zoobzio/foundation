@@ -378,6 +378,17 @@ describe("actions", () => {
 });
 
 describe("query", () => {
+  it("carries a column's link on the column and not on its field", () => {
+    const link = (row: FakeRow) => `/rows/${row.id}`;
+    const { service } = makeService({
+      config: { columns: [{ key: "name", label: "Name", type: "text", link }] },
+    });
+    expect(service.columns).toEqual([
+      { key: "name", label: "Name", type: "text", link },
+    ]);
+    expect(service.query.fields).toEqual({ name: { label: "Name" } });
+  });
+
   it("fields mirror the filterable columns with their declared operators, defaults, and values", () => {
     const { service } = makeService();
     expect(Object.keys(service.query.fields)).toEqual(

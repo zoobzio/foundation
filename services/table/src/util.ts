@@ -9,9 +9,10 @@ import { dateValues } from "@zoobzio/query";
  * alone: the days the query's `dateValues` generates in `timeZone`, where
  * the column declares none of its own. A column that declares nothing
  * else is a bare field, free entry and no operator stage. A column's
- * properties beyond the ones the table reads (what a layer widens it with,
- * such as an icon) are carried onto its field, so the search draws the
- * field as the column does.
+ * properties beyond the ones the table and its views read (what a layer
+ * widens it with, such as an icon) are carried onto its field, so the
+ * search draws the field as the column does; its `link` is the view's and
+ * stays off the field.
  */
 export const fields = <T>(
   columns: DataTableColumn<T>[],
@@ -31,6 +32,7 @@ export const fields = <T>(
         operators,
         defaultOperator,
         values: declared,
+        link: _l,
         ...rest
       } = c;
       const values =

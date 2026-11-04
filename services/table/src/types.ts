@@ -33,9 +33,9 @@ export type ColumnType =
 
 /**
  * A table column. An interface, so a layer may widen it by declaration
- * merging (an icon); a property beyond the ones the table reads is carried
- * onto the column's query field, so the search draws the field as the
- * column does.
+ * merging (an icon); a property beyond the ones the table and its views
+ * read is carried onto the column's query field, so the search draws the
+ * field as the column does.
  *
  * A column's query field is what the column declares: `operators`,
  * `defaultOperator`, and `values`. The table supplies no operators, as it
@@ -76,6 +76,14 @@ export interface DataTableColumn<T> {
    * `dateValues` generates from the term.
    */
   values?: Values;
+  /**
+   * The route of the column's cells. A cell of the column renders as a
+   * link to the route, with the content the cell would otherwise render
+   * inside, so a row's title can be the way to the row's own page. The
+   * view reads it; the query does not, so it does not reach the column's
+   * field. On a `url` column the route replaces the value's own link.
+   */
+  link?: (row: T) => string;
 }
 
 /**

@@ -4,9 +4,9 @@ import type { DataTableColumn, Service } from "@zoobzio/table";
 /**
  * A column as a selectable option for the column manager. A pinned column
  * is disabled: it stays visible. The column's properties beyond the ones
- * the table reads (what a layer widens it with, such as an icon) are
- * carried onto the option, so the manager draws the column as the head
- * does.
+ * the table and its views read (what a layer widens it with, such as an
+ * icon) are carried onto the option, so the manager draws the column as
+ * the head does; its `link` is the body's and stays off the option.
  */
 export const columnOption = <T>(
   table: Service<T>,
@@ -23,6 +23,7 @@ export const columnOption = <T>(
     operators: _o,
     defaultOperator: _d,
     values: _v,
+    link: _l,
     ...rest
   } = column;
   return {

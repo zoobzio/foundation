@@ -46,6 +46,29 @@ describe("table wrapper", () => {
     expect(links[0]?.attributes("target")).toBe("_blank");
   });
 
+  it("renders a linked cell through NuxtLink to the column's route", async () => {
+    const { service } = makeTable({
+      columns: [
+        { key: "id", label: "ID", type: "number" },
+        {
+          key: "name",
+          label: "Name",
+          type: "text",
+          link: (row) => `/people/${row.id}`,
+        },
+      ],
+    });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const links = wrapper.findAll("tbody a[data-nuxt]");
+    expect(links.map((a) => a.attributes("href"))).toEqual([
+      "/people/1",
+      "/people/2",
+    ]);
+    expect(links[0]?.attributes("target")).toBeUndefined();
+    expect(links[0]?.text()).toBe("Alice");
+  });
+
   it("composes a consumer's pt.body.link over NuxtLink", async () => {
     const { service } = makeTable();
     await service.init();

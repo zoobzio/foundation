@@ -1,3 +1,5 @@
+import type { FakeRow } from "#test/data/table";
+
 import { describe, expect, it } from "vitest";
 import { columnOption } from "../../src/utils/table";
 import { fakeColumns } from "#test/data/table";
@@ -28,6 +30,19 @@ describe("columnOption", () => {
       label: "Name",
       disabled: false,
       icon: "user",
+    });
+  });
+
+  it("keeps a column's link off the option", () => {
+    const { service } = makeTable();
+    const column = {
+      ...col("name"),
+      link: (row: FakeRow) => `/rows/${row.id}`,
+    };
+    expect(columnOption(service, column)).toEqual({
+      value: "name",
+      label: "Name",
+      disabled: false,
     });
   });
 });
