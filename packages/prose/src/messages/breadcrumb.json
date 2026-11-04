@@ -1,0 +1,6 @@
+{
+  "label": {
+    "defaultMessage": "Breadcrumb",
+    "description": "The accessible name of the breadcrumb navigation, read by screen readers."
+  }
+}

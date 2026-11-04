@@ -4,7 +4,7 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   compatibilityDate: "2025-11-06",
 
-  modules: ["@icon-sheets/nuxt", "@untheme/nuxt"],
+  modules: ["@icon-sheets/nuxt", "@untheme/nuxt", "@prosary/nuxt"],
 
   imports: { autoImport: false, scan: false },
 
@@ -16,6 +16,8 @@ export default defineNuxtConfig({
   iconSheets: { preset: "@zoobzio/icons" },
 
   untheme: { preset: "@zoobzio/theme" },
+
+  prosary: { build: "@zoobzio/prose" },
 
   css: [fileURLToPath(new URL("./app/assets/css/reset.css", import.meta.url))],
 

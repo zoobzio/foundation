@@ -12,6 +12,7 @@ import type {
   Listener as KitListener,
   Middleware as KitMiddleware,
   Options as KitOptions,
+  Text,
 } from "@zoobzio/kit";
 
 /**
@@ -44,7 +45,7 @@ export type ColumnType =
  */
 export interface DataTableColumn<T> {
   key: keyof T;
-  label: string;
+  label: Text;
   type?: ColumnType;
   align?: "left" | "center" | "right";
   sortable?: boolean;
@@ -85,7 +86,7 @@ export type SortDirection = "asc" | "desc";
  * half is a handler registered under the same key in `Actions`.
  */
 export interface ActionDescriptor {
-  label: string;
+  label: Text;
 }
 
 /**

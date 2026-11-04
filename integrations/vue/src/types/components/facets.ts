@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverProps, PopoverEmits } from "./popover";
@@ -10,7 +11,7 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
  */
 export interface FacetItem {
   value: string;
-  label: string;
+  label: Text;
   count: number;
 }
 
@@ -19,7 +20,7 @@ export interface FacetItem {
  */
 export type FacetGroup<T extends FacetItem = FacetItem> = {
   key: string;
-  label: string;
+  label: Text;
   items: T[];
 };
 
@@ -39,7 +40,7 @@ export type FacetsProps<T extends FacetItem = FacetItem> = {
   groups: FacetGroup<T>[];
   selected?: Set<string>;
   open?: boolean;
-  placeholder?: string;
+  placeholder?: Text;
   pt?: PT<FacetsPassthrough<T>>;
 };
 

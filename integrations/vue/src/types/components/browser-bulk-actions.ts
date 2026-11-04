@@ -27,4 +27,5 @@ export type BrowserBulkActionsSlots<T> = {
   bulkActionAppend?: (
     props: BrowserBulkActionsContext<T> & { action: BulkAction },
   ) => VNode[];
+  bulkClear?: (props: BrowserBulkActionsContext<T>) => VNode[];
 };

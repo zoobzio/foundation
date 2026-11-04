@@ -1,0 +1,6 @@
+{
+  "placeholder": {
+    "defaultMessage": "Add tags...",
+    "description": "The placeholder of the tags input while it is empty."
+  }
+}

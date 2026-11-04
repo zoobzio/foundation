@@ -290,6 +290,23 @@ describe("browser", () => {
     expect(wrapper.find('button[aria-label="Refresh"]').exists()).toBe(false);
   });
 
+  it("relays the bulkClear slot from the top", async () => {
+    const { service } = makeBrowser(
+      { bulkActions: fakeBrowserBulkActions },
+      { bulkActions: { purge: vi.fn() } },
+    );
+    await service.init();
+    service.toggleRow("1");
+    const wrapper = mountBrowser(
+      { service },
+      { bulkClear: `<template #bulkClear><u>clear</u></template>` },
+    );
+    await flushPromises();
+    expect(wrapper.get(".f-data-browser-bulk-action-clear u").text()).toBe(
+      "clear",
+    );
+  });
+
   it("serves the files context to the noFiles slot", async () => {
     const { service } = makeBrowser(
       {},

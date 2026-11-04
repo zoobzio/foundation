@@ -138,4 +138,21 @@ describe("createTable", () => {
     expect(b.initialized).toBe(false);
     expect(b.data).toEqual([]);
   });
+
+  it("resolves the columns' and the actions' labels through the app's service", () => {
+    const useUsers = createTable(
+      "users-text",
+      makeOptions({
+        columns: [{ key: "name", label: "table.columns" }],
+        actions: { remove: { label: "table.clear", action: vi.fn() } },
+        bulkActions: { purge: { label: "browser.clear", action: vi.fn() } },
+      }),
+    );
+    const users = useUsers();
+    expect(users.config.columns.map((column) => column.label)).toEqual([
+      "Columns",
+    ]);
+    expect(users.config.actions?.remove?.label).toBe("Clear");
+    expect(users.config.bulkActions?.purge?.label).toBe("Clear");
+  });
 });

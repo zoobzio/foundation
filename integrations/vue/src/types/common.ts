@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { PrimitiveProps } from "reka-ui";
 import type { AnchorHTMLAttributes } from "vue";
 
@@ -6,7 +7,7 @@ import type { AnchorHTMLAttributes } from "vue";
  */
 export interface Option {
   value: string;
-  label: string;
+  label: Text;
   disabled?: boolean;
 }
 
@@ -14,9 +15,9 @@ export interface Option {
  * A navigation link.
  */
 export interface Link {
-  label: string;
+  label: Text;
   to: string;
-  description?: string;
+  description?: Text;
   target?: "_blank" | "_self";
   disabled?: boolean;
 }
@@ -46,7 +47,7 @@ export interface Hierarchy<T> {
  */
 export interface TocLink extends Hierarchy<TocLink> {
   id: string;
-  text: string;
+  text: Text;
   depth: number;
 }
 

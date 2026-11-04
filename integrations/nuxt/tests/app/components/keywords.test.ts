@@ -29,4 +29,23 @@ describe("keywords wrapper", () => {
     );
     expect(removes).toHaveLength(2);
   });
+
+  it("reads its headings, placeholders and match modes from the contract", async () => {
+    const wrapper = mount(Keywords, {
+      props: { modelValue: "", open: true },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await flushPromises();
+    const captions = Array.from(
+      document.body.querySelectorAll(".f-keywords-label"),
+    ).map((caption) => caption.textContent?.trim());
+    expect(captions).toEqual(["Include", "Exclude", "Match"]);
+    const placeholders = Array.from(
+      document.body.querySelectorAll("input.f-tags-input-input"),
+    ).map((input) => input.getAttribute("placeholder"));
+    expect(placeholders).toEqual(["Add keyword...", "Exclude keyword..."]);
+    expect(document.body.textContent).toContain("AND");
+    expect(document.body.textContent).toContain("OR");
+  });
 });

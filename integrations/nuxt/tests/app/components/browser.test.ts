@@ -3,7 +3,7 @@
 import type { LinkedFile } from "#test/mount/browser";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import Browser from "../../../app/components/browser";
 import { makeBrowser } from "#test/mount/browser";
 
@@ -106,5 +106,28 @@ describe("browser wrapper", () => {
     await service.init();
     const updated = wrapper.emitted("updated")?.at(0)?.at(0);
     expect(updated).toMatchObject({ id: "test-browser" });
+  });
+
+  it("reads its empty state from the contract", async () => {
+    const { service } = makeBrowser({}, {}, { folders: [], files: [] });
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    await flushPromises();
+    expect(wrapper.get(".f-data-browser-empty").text()).toBe("Empty folder");
+  });
+
+  it("formats typed cells through the app's prosary service", async () => {
+    const { service } = makeBrowser({
+      columns: [
+        { key: "id", label: "ID", type: "number" },
+        { key: "name", label: "Name", type: "boolean" },
+      ],
+    });
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    await flushPromises();
+    const cells = wrapper.findAll("tbody td").map((td) => td.text());
+    expect(cells).toContain("1");
+    expect(cells).toContain("Yes");
   });
 });

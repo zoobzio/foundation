@@ -1,0 +1,50 @@
+{
+  "trigger": {
+    "defaultMessage": "Dates",
+    "description": "The button that opens the date filters."
+  },
+  "fields": {
+    "defaultMessage": "Fields",
+    "description": "The heading of the list of date fields to filter on."
+  },
+  "operators": {
+    "defaultMessage": "Operators",
+    "description": "The heading of the list of comparisons a date filter can make."
+  },
+  "after": {
+    "defaultMessage": "After",
+    "description": "The comparison that keeps dates after the chosen one."
+  },
+  "before": {
+    "defaultMessage": "Before",
+    "description": "The comparison that keeps dates before the chosen one."
+  },
+  "between": {
+    "defaultMessage": "Between",
+    "description": "The comparison that keeps dates within a chosen range."
+  },
+  "field": {
+    "defaultMessage": "Field",
+    "description": "The first step of the date filter stepper while no field is chosen."
+  },
+  "operator": {
+    "defaultMessage": "Operator",
+    "description": "The second step of the date filter stepper while no comparison is chosen."
+  },
+  "value": {
+    "defaultMessage": "Value",
+    "description": "The third step of the date filter stepper while no date is chosen."
+  },
+  "apply": {
+    "defaultMessage": "Apply",
+    "description": "The button that adds the composed date filter."
+  },
+  "searchFields": {
+    "defaultMessage": "Search fields...",
+    "description": "The placeholder of the search over the date fields."
+  },
+  "searchOperators": {
+    "defaultMessage": "Search operators...",
+    "description": "The placeholder of the search over the comparisons."
+  }
+}

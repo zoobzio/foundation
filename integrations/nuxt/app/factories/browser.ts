@@ -5,6 +5,7 @@ import { useNuxtApp } from "#app";
 import { BrowserService } from "@zoobzio/browser";
 import { accessBrowser } from "../stores/browser";
 import { split } from "../utils/actions";
+import { resolveTexts } from "../utils/text";
 
 /**
  * Builds the id-scoped composable of a browser. Call it at module scope:
@@ -12,9 +13,10 @@ import { split } from "../utils/actions";
  * the wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus as `browser:updated` and `browser:navigated`. The machine itself is
- * `@zoobzio/browser`; the Vue browser renders it through its `service`
- * prop.
+ * bus as `browser:updated` and `browser:navigated`. The columns' and the
+ * actions' labels resolve through the app's prosary service as the service
+ * is built. The machine itself is `@zoobzio/browser`; the Vue browser
+ * renders it through its `service` prop.
  */
 export const createBrowser = <T>(
   id: string,
@@ -40,8 +42,15 @@ export const createBrowser = <T>(
   return (): Service<T> => {
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
+    const resolved: Config<T> = {
+      ...config,
+      columns: resolveTexts(nuxt.$prosary, config.columns),
+      actions: resolveTexts(nuxt.$prosary, config.actions),
+      folderActions: resolveTexts(nuxt.$prosary, config.folderActions),
+      bulkActions: resolveTexts(nuxt.$prosary, config.bulkActions),
+    };
     const state = accessBrowser<T>(id, initial);
-    const service = new BrowserService(id, config, state, wiring);
+    const service = new BrowserService(id, resolved, state, wiring);
     service.on("updated", (event) => {
       log.debug("Browser updated", event);
       nuxt.callHook("browser:updated", event);

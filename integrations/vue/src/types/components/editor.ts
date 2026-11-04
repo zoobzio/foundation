@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
 import type { Events, Service } from "@zoobzio/editor";
@@ -10,7 +11,7 @@ import type { ButtonHTMLAttributes, HTMLAttributes, VNode } from "vue";
  */
 export interface EditorTool {
   key: string;
-  label: string;
+  label: Text;
   active: boolean;
   disabled: boolean;
   run: () => void;
@@ -70,6 +71,7 @@ export type EditorSlots<I, O> = {
   toolbar?: (props: EditorContext<I, O>) => VNode[];
   tool?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
   toolPrepend?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
+  toolLabel?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
   toolAppend?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
 };
 

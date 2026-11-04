@@ -79,6 +79,7 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
     includeInput: {
       as: TagsInput,
       modelValue: include.value,
+      placeholder: KEYWORDS_INCLUDE_PLACEHOLDER,
       delimiter: "",
       "onUpdate:modelValue": (v) => {
         include.value = v;
@@ -87,6 +88,7 @@ const settings = usePassthrough<KeywordsPassthrough>(() => ({
     excludeInput: {
       as: TagsInput,
       modelValue: exclude.value,
+      placeholder: KEYWORDS_EXCLUDE_PLACEHOLDER,
       delimiter: "",
       "onUpdate:modelValue": (v) => {
         exclude.value = v;
@@ -139,7 +141,7 @@ defineSlots<KeywordsSlots>();
                   <template #input>
                     <input
                       :value="includeInput"
-                      :placeholder="KEYWORDS_INCLUDE_PLACEHOLDER"
+                      :placeholder="settings.includeInput.placeholder"
                       class="f-tags-input-input"
                       @input="onIncludeInput"
                       @keydown="onIncludeKeydown"
@@ -162,7 +164,7 @@ defineSlots<KeywordsSlots>();
                   <template #input>
                     <input
                       :value="excludeInput"
-                      :placeholder="KEYWORDS_EXCLUDE_PLACEHOLDER"
+                      :placeholder="settings.excludeInput.placeholder"
                       class="f-tags-input-input"
                       @input="onExcludeInput"
                       @keydown="onExcludeKeydown"

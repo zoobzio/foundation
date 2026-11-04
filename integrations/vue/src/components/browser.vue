@@ -107,6 +107,9 @@ const { Folders, Files } = useForward({
       <template v-if="slots.bulkActionAppend" #bulkActionAppend="slotProps">
         <slot name="bulkActionAppend" v-bind="slotProps" />
       </template>
+      <template v-if="slots.bulkClear" #bulkClear="slotProps">
+        <slot name="bulkClear" v-bind="slotProps" />
+      </template>
     </BrowserBulkActions>
 
     <slot v-if="isEmpty" name="empty" v-bind="ctx">

@@ -66,6 +66,7 @@ packages/
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
   editor/         — @zoobzio/editor: headless rich text editor service over tiptap, with json/html/hast codecs (pure TS, no framework)
   code/           — @zoobzio/code: headless code editor service over CodeMirror, the consumer's extensions for language and theme (pure TS, no framework)
+  prose/          — @zoobzio/prose: the text the components render by default, built by @prosary/kit (generated from message files)
   icons/          — @zoobzio/icons: the icon contract the Nuxt layer draws by default, built by icon-sheets (generated, no source)
   theme/          — @zoobzio/theme: the foundation theme over the aurora preset of untheme, the Nuxt layer's default (generated from a palette and a roles file)
 integrations/

@@ -1,0 +1,10 @@
+{
+  "trigger": {
+    "defaultMessage": "Filters",
+    "description": "The button that opens the facet filters."
+  },
+  "placeholder": {
+    "defaultMessage": "Search filters...",
+    "description": "The placeholder of the search inside the facet filters."
+  }
+}

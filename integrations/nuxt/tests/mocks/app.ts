@@ -9,6 +9,9 @@
 
 import { ref, type Ref } from "vue";
 import { vi } from "vitest";
+import { contract } from "@zoobzio/prose";
+import en from "@zoobzio/prose/messages/en";
+import { makeProsary } from "prosary";
 
 // --- useState ----------------------------------------------------------
 
@@ -81,13 +84,29 @@ const $logger = (name = "app") => {
   return logger;
 };
 
+// --- prosary -------------------------------------------------------------
+
+// The app's translation service, as @prosary/nuxt would provide it: over
+// the layer's own build, holding the source locale, so the factories and
+// the text plugin resolve through a real service.
+export const $prosary = makeProsary(contract, {
+  locale: contract.locale,
+  messages: en,
+});
+
+export const $t = $prosary.createResolver();
+
 export const useNuxtApp = () => ({
   callHook,
   hook,
   hooks: { addHooks, hook },
   $log: $logger(),
   $logger,
+  $prosary,
+  $t,
 });
+
+export const reloadNuxtApp = vi.fn();
 
 // A plugin is its setup function; a test calls it with a fake app.
 export const defineNuxtPlugin = <P>(plugin: P): P => plugin;

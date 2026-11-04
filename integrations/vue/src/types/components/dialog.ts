@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type {
   DialogRootProps,
   DialogRootEmits,
@@ -26,8 +27,8 @@ export type DialogPassthrough = {
  * Props of the dialog.
  */
 export type DialogProps = {
-  title: string;
-  description: string;
+  title: Text;
+  description: Text;
   open?: boolean;
   pt?: PT<DialogPassthrough>;
 };

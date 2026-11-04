@@ -98,4 +98,16 @@ describe("breadcrumb wrapper", () => {
     expect(ctx?.id).toBe("breadcrumb");
     expect(ctx?.items).toHaveLength(4);
   });
+
+  it("names itself from the contract unless the consumer does, and resolves its items", () => {
+    const items = [{ key: "a", label: "table.columns" }];
+    const named = mount(Breadcrumb, { props: { items } });
+    expect(named.get("nav").attributes("aria-label")).toBe("Breadcrumb");
+    expect(named.get("nav").text()).toContain("Columns");
+    const own = mount(Breadcrumb, {
+      props: { items },
+      attrs: { "aria-label": "Trail" },
+    });
+    expect(own.get("nav").attributes("aria-label")).toBe("Trail");
+  });
 });

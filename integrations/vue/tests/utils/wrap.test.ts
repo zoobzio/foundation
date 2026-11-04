@@ -157,6 +157,32 @@ describe("wrap", () => {
     expect(wrapper.get("b").text()).toBe("default");
   });
 
+  it("maps the attrs through the props option on each render", async () => {
+    const Wrapped = wrap(Core, {
+      props: (props) => ({
+        ...props,
+        label: `${props.label}!`,
+        open: props.open ?? true,
+      }),
+    });
+    const wrapper = mount(Wrapped, { props: { label: "one" } });
+    expect(wrapper.get("span").text()).toBe("one!");
+    expect(wrapper.get("i").attributes("data-open")).toBe("true");
+    await wrapper.setProps({ label: "two", open: false });
+    expect(wrapper.get("span").text()).toBe("two!");
+    expect(wrapper.get("i").attributes("data-open")).toBe("false");
+  });
+
+  it("lays the pt layer under the pt the props option returns", () => {
+    const Wrapped = wrap(Core, {
+      props: (props) => ({ ...props, pt: { root: { title: "mapped" } } }),
+      pt: { root: { class: "laid" } },
+    });
+    const wrapper = mount(Wrapped, { props: { label: "one" } });
+    expect(wrapper.get("div").classes()).toEqual(["laid"]);
+    expect(wrapper.get("div").attributes("title")).toBe("mapped");
+  });
+
   it("exposes the wrapped component's ctx and keeps its name", () => {
     const Wrapped = wrap(Core);
     const wrapper = mount(Wrapped, { props: { label: "one" } });
@@ -176,6 +202,7 @@ describe("WrapOptions", () => {
     };
     const hero: WrapOptions<typeof Hero> = {
       pt: { link: { as: "span" } },
+      props: (props) => ({ ...props, tagline: props.tagline.toUpperCase() }),
       slots: { title: ({ title }) => [h("b", title)] },
     };
     const bad: WrapOptions<typeof Menu> = {

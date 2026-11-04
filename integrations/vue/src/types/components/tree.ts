@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { LinkProps, LinkTarget } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
@@ -22,7 +23,7 @@ import type {
  */
 export type TreeNode = {
   key: string;
-  label: string;
+  label: Text;
   disabled?: boolean;
   link?: LinkTarget;
   children?: TreeNode[];

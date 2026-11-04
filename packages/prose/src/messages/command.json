@@ -1,0 +1,10 @@
+{
+  "placeholder": {
+    "defaultMessage": "Search...",
+    "description": "The placeholder of the command palette's filter input."
+  },
+  "empty": {
+    "defaultMessage": "No results found",
+    "description": "Shown in the command palette when no option matches the typed filter."
+  }
+}

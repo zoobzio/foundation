@@ -1,0 +1,22 @@
+{
+  "refresh": {
+    "defaultMessage": "Refresh",
+    "description": "The button that fetches the current folder again."
+  },
+  "actions": {
+    "defaultMessage": "Actions",
+    "description": "The button on a file or folder that opens its actions."
+  },
+  "empty": {
+    "defaultMessage": "Empty folder",
+    "description": "Shown when the current folder holds neither files nor folders."
+  },
+  "noFiles": {
+    "defaultMessage": "No files",
+    "description": "Shown in the file list when the current folder holds folders but no files."
+  },
+  "clear": {
+    "defaultMessage": "Clear",
+    "description": "The button that clears the selected files."
+  }
+}

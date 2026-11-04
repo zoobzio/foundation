@@ -211,6 +211,17 @@ describe("editor", () => {
     expect(wrapper.get("nav.custom").text()).not.toBe("");
   });
 
+  it("the toolLabel slot replaces each button's label", () => {
+    const { service } = makeEditor({ history: false });
+    const wrapper = mountEditor(
+      { service },
+      { toolLabel: '<i class="custom-label">{{ params.tool.key }}</i>' },
+    );
+    const bold = wrapper.get('.f-data-editor-tool[data-tool="bold"]');
+    expect(bold.get("i.custom-label").text()).toBe("bold");
+    expect(bold.text()).toBe("bold");
+  });
+
   it("the tool slot replaces each button", () => {
     const { service } = makeEditor({ history: false });
     const wrapper = mountEditor(

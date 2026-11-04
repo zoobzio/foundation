@@ -48,7 +48,9 @@ defineSlots<BrowserBulkActionsSlots<T>>();
       class="f-button f-data-browser-bulk-action-clear"
       @click="service.clearSelection()"
     >
-      {{ BROWSER_CLEAR_SELECTION_LABEL }}
+      <slot name="bulkClear" v-bind="ctx">{{
+        BROWSER_CLEAR_SELECTION_LABEL
+      }}</slot>
     </button>
   </div>
 </template>

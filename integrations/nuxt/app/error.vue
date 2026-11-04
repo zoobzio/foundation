@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { NuxtError } from "#app";
 
-import { clearError } from "#app";
+import { clearError, useNuxtApp } from "#app";
 import { computed } from "vue";
 import {
   ERROR_DEFAULT_STATUS_CODE,
@@ -14,14 +14,16 @@ const props = defineProps<{
   error: NuxtError;
 }>();
 
+const { $t: t } = useNuxtApp();
+
 const statusCode = computed(
   () => props.error.statusCode ?? ERROR_DEFAULT_STATUS_CODE,
 );
 
 const message = computed(() => {
   if (statusCode.value === ERROR_NOT_FOUND_STATUS_CODE)
-    return "The page you're looking for doesn't exist.";
-  return props.error.message || "Something went wrong.";
+    return t("error.notFound");
+  return props.error.message || t("error.unknown");
 });
 
 const handleError = () => clearError({ redirect: "/" });
@@ -31,6 +33,8 @@ const handleError = () => clearError({ redirect: "/" });
   <div class="f-error-page">
     <span class="f-error-code">{{ statusCode }}</span>
     <span class="f-error-message">{{ message }}</span>
-    <button class="f-error-action" @click="handleError">Go home</button>
+    <button class="f-error-action" @click="handleError">
+      {{ t("error.home") }}
+    </button>
   </div>
 </template>

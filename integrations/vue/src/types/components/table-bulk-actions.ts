@@ -27,4 +27,5 @@ export type TableBulkActionsSlots<T> = {
   bulkActionAppend?: (
     props: TableBulkActionsContext<T> & { action: BulkAction },
   ) => VNode[];
+  bulkClear?: (props: TableBulkActionsContext<T>) => VNode[];
 };

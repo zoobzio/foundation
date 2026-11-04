@@ -1,0 +1,10 @@
+{
+  "yes": {
+    "defaultMessage": "Yes",
+    "description": "A boolean cell of a table or a browser that holds true."
+  },
+  "no": {
+    "defaultMessage": "No",
+    "description": "A boolean cell of a table or a browser that holds false."
+  }
+}

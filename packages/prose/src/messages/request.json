@@ -1,0 +1,10 @@
+{
+  "failed": {
+    "defaultMessage": "Request failed",
+    "description": "The message of the error thrown when a request fails and the caller names none."
+  },
+  "unknown": {
+    "defaultMessage": "An unknown error occurred",
+    "description": "The title of the notification toasted when a request fails and the caller names none."
+  }
+}

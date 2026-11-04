@@ -5,6 +5,7 @@ import { useNuxtApp } from "#app";
 import { TableService } from "@zoobzio/table";
 import { accessTable } from "../stores/table";
 import { split } from "../utils/actions";
+import { resolveTexts } from "../utils/text";
 
 /**
  * Builds the id-scoped composable of a table. Call it at module scope: the
@@ -12,8 +13,12 @@ import { split } from "../utils/actions";
  * wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus as `table:updated` and `table:filtered`. The machine itself is
- * `@zoobzio/table`; the Vue table renders it through its `service` prop.
+ * bus as `table:updated` and `table:filtered`. The columns' and the
+ * actions' labels resolve through the app's prosary service as the service
+ * is built, so a label that is a key of the app's contract reaches the
+ * machine — and the search that matches a typed prefix against it — as
+ * the visitor reads it. The machine itself is `@zoobzio/table`; the Vue
+ * table renders it through its `service` prop.
  */
 export const createTable = <T>(
   id: string,
@@ -35,8 +40,14 @@ export const createTable = <T>(
   return (): Service<T> => {
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
-    const state = accessTable(id, config, initial);
-    const service = new TableService(id, config, state, wiring);
+    const resolved: Config<T> = {
+      ...config,
+      columns: resolveTexts(nuxt.$prosary, config.columns),
+      actions: resolveTexts(nuxt.$prosary, config.actions),
+      bulkActions: resolveTexts(nuxt.$prosary, config.bulkActions),
+    };
+    const state = accessTable(id, resolved, initial);
+    const service = new TableService(id, resolved, state, wiring);
     service.on("updated", (event) => {
       log.debug("Table updated", event);
       nuxt.callHook("table:updated", event);

@@ -1,0 +1,30 @@
+{
+  "refresh": {
+    "defaultMessage": "Refresh",
+    "description": "The button that fetches the table's rows again."
+  },
+  "columns": {
+    "defaultMessage": "Columns",
+    "description": "The button that opens the column manager, and the heading of its one group."
+  },
+  "actions": {
+    "defaultMessage": "Actions",
+    "description": "The button on a row that opens its actions."
+  },
+  "empty": {
+    "defaultMessage": "No data",
+    "description": "Shown in place of the rows when the table holds none."
+  },
+  "clear": {
+    "defaultMessage": "Clear",
+    "description": "The button that clears the selected rows."
+  },
+  "searchColumns": {
+    "defaultMessage": "Search columns...",
+    "description": "The placeholder of the column manager's search."
+  },
+  "search": {
+    "defaultMessage": "Search...",
+    "description": "The placeholder of the table's search."
+  }
+}

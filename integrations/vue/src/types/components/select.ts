@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { Option } from "../common";
 import type { Passthrough, PassthroughIter, PT } from "../passthrough";
 import type { Definition } from "../definition";
@@ -32,7 +33,7 @@ export type SelectProps<T extends Option = Option> = {
   modelValue?: NoInfer<T>;
   open?: boolean;
   options: T[];
-  placeholder?: string;
+  placeholder?: Text;
   disabled?: boolean;
   required?: boolean;
   name?: string;

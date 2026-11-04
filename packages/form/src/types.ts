@@ -5,6 +5,7 @@ import type {
   Listener as KitListener,
   Middleware as KitMiddleware,
   Options as KitOptions,
+  Text,
 } from "@zoobzio/kit";
 
 import type { ZodType } from "zod";
@@ -18,7 +19,7 @@ import type { ZodType } from "zod";
  */
 export interface Option<V extends string = string> {
   value: V;
-  label: string;
+  label: Text;
   disabled?: boolean;
 }
 
@@ -61,8 +62,8 @@ export type ChoiceItem<T, K extends keyof T> =
  */
 export type FieldBase<T, V> = {
   key: Keys<T, V>;
-  label: string;
-  hint?: string;
+  label: Text;
+  hint?: Text;
   disabled?: boolean;
   required?: boolean;
   colspan?: Colspan;
@@ -73,7 +74,7 @@ export type FieldBase<T, V> = {
  */
 export type TextField<T> = FieldBase<T, string> & {
   type: "text" | "email" | "password" | "tel" | "url";
-  placeholder?: string;
+  placeholder?: Text;
   maxLength?: number;
 };
 
@@ -82,7 +83,7 @@ export type TextField<T> = FieldBase<T, string> & {
  */
 export type NumberField<T> = FieldBase<T, number> & {
   type: "number";
-  placeholder?: string;
+  placeholder?: Text;
   min?: number;
   max?: number;
   step?: number;
@@ -93,7 +94,7 @@ export type NumberField<T> = FieldBase<T, number> & {
  */
 export type TextareaField<T> = FieldBase<T, string> & {
   type: "textarea";
-  placeholder?: string;
+  placeholder?: Text;
   rows?: number;
   maxLength?: number;
 };
@@ -107,7 +108,7 @@ export type TextareaField<T> = FieldBase<T, string> & {
  */
 export type SelectField<T, V extends string = string> = FieldBase<T, V> & {
   type: "select";
-  placeholder?: string;
+  placeholder?: Text;
   options: Option<V>[];
 };
 
@@ -120,7 +121,7 @@ export type MultiSelectField<T, V extends string = string> = FieldBase<
   V[]
 > & {
   type: "multi-select";
-  placeholder?: string;
+  placeholder?: Text;
   options: Option<V>[];
 };
 
@@ -146,7 +147,7 @@ export type RadioField<T, V extends string = string> = FieldBase<T, V> & {
  */
 export type DateField<T> = FieldBase<T, Date> & {
   type: "date";
-  placeholder?: string;
+  placeholder?: Text;
   minDate?: Date;
   maxDate?: Date;
 };
@@ -171,7 +172,7 @@ export type TemporalField<T> = FieldBase<T, string> & {
  */
 export type TagsInputField<T> = FieldBase<T, string[]> & {
   type: "tags-input";
-  placeholder?: string;
+  placeholder?: Text;
   max?: number;
   delimiter?: string;
 };

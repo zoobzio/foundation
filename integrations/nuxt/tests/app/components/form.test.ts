@@ -73,4 +73,15 @@ describe("form wrapper", () => {
       wrapper.findAll(".f-data-form-field b").map((b) => b.text()),
     ).toEqual(["Name", "Amount"]);
   });
+
+  it("reads its footer's buttons from the contract", () => {
+    const { service } = makeForm();
+    const wrapper = mount(Form, {
+      props: { service },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.get(".f-data-form-reset").text()).toBe("Reset");
+    expect(wrapper.get(".f-data-form-submit").text()).toBe("Submit");
+  });
 });

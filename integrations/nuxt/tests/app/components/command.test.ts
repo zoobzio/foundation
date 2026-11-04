@@ -6,7 +6,7 @@ import type {
 } from "@zoobzio/vue/types/components/command";
 
 import { afterEach, describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import Command from "../../../app/components/command";
 
 const groups: CommandGroup<CommandOption>[] = [
@@ -54,5 +54,27 @@ describe("command wrapper", () => {
     mounted.push(wrapper);
     const pear = wrapper.findAll('[role="option"]').at(1);
     expect(iconsOf(pear!.element)).toEqual(["check"]);
+  });
+
+  it("reads its placeholder, its options and its empty state from the contract", async () => {
+    const wrapper = mount(Command, {
+      props: {
+        groups: [
+          {
+            key: "g",
+            label: "table.columns",
+            options: [{ value: "a", label: "table.empty" }],
+          },
+        ],
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.get("input").attributes("placeholder")).toBe("Search...");
+    expect(wrapper.text()).toContain("No data");
+    expect(wrapper.text()).not.toContain("table.empty");
+    await wrapper.get("input").setValue("zzz");
+    await flushPromises();
+    expect(wrapper.text()).toContain("No results found");
   });
 });

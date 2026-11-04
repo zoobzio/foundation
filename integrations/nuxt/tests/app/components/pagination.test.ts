@@ -52,4 +52,14 @@ describe("pagination wrapper", () => {
     expect(wrapper.find('button[aria-label="First"]').exists()).toBe(false);
     expect(wrapper.get("b").text()).toBe("|<");
   });
+
+  it("reads its summary and its sizes in the visitor's locale", () => {
+    const wrapper = mount(Pagination, {
+      props: { page: 2, size: 25, count: 5, total: 50 },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    expect(wrapper.get("span.f-span").text()).toBe("Page 2 of 5 (50 results)");
+    expect(wrapper.get("button.f-select-trigger").text()).toBe("Show 25");
+  });
 });

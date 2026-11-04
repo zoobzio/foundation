@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type {
   ToastRootProps,
   ToastRootEmits,
@@ -28,8 +29,8 @@ export type ToastPassthrough = {
  * Props of the toast. `duration` is in milliseconds.
  */
 export type ToastProps = {
-  title?: string;
-  description?: string;
+  title?: Text;
+  description?: Text;
   variant?: ToastVariant;
   open?: boolean;
   duration?: number;

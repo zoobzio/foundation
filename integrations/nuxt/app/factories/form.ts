@@ -4,6 +4,7 @@ import type { Actions, Service } from "@zoobzio/form";
 import { useNuxtApp } from "#app";
 import { FormService } from "@zoobzio/form";
 import { accessForm } from "../stores/form";
+import { resolveTexts } from "../utils/text";
 
 /**
  * Builds the id-scoped composable of a form. Call it at module scope: the
@@ -11,8 +12,10 @@ import { accessForm } from "../stores/form";
  * lifecycle actions and the middleware), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus under the `form:` prefix. The machine itself is `@zoobzio/form`; the
- * Vue form renders it through its `service` prop.
+ * bus under the `form:` prefix. The fields' text — each label, hint,
+ * placeholder and option — resolves through the app's prosary service as
+ * the service is built. The machine itself is `@zoobzio/form`; the Vue
+ * form renders it through its `service` prop.
  */
 export const createForm = <T>(
   id: string,
@@ -23,8 +26,12 @@ export const createForm = <T>(
   return (): Service<T> => {
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
-    const state = accessForm(id, config, initial);
-    const service = new FormService(id, config, state, wiring);
+    const resolved = {
+      ...config,
+      fields: resolveTexts(nuxt.$prosary, config.fields),
+    };
+    const state = accessForm(id, resolved, initial);
+    const service = new FormService(id, resolved, state, wiring);
     service.on("initialized", (event) => {
       log.debug("Form initialized", event);
       nuxt.callHook("form:initialized", event);

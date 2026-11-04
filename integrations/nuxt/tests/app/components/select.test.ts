@@ -41,4 +41,20 @@ describe("select wrapper", () => {
     expect(wrapper.find("svg").exists()).toBe(false);
     expect(wrapper.get("button.f-select-trigger i").text()).toBe("v");
   });
+
+  it("reads its placeholder and its options from the contract", () => {
+    const keyed: Option[] = [{ value: "a", label: "table.empty" }];
+    const bare = mount(Select<Option>, {
+      props: { options: keyed },
+      attachTo: document.body,
+    });
+    mounted.push(bare);
+    expect(bare.get("button.f-select-trigger").text()).toBe("Select an option");
+    const chosen = mount(Select<Option>, {
+      props: { options: keyed, modelValue: keyed[0] },
+      attachTo: document.body,
+    });
+    mounted.push(chosen);
+    expect(chosen.get("button.f-select-trigger").text()).toBe("No data");
+  });
 });

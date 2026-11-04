@@ -1,0 +1,34 @@
+{
+  "trigger": {
+    "defaultMessage": "Keywords",
+    "description": "The button that opens the keyword filters."
+  },
+  "include": {
+    "defaultMessage": "Add keyword...",
+    "description": "The placeholder of the input that adds a keyword rows must contain."
+  },
+  "exclude": {
+    "defaultMessage": "Exclude keyword...",
+    "description": "The placeholder of the input that adds a keyword rows must not contain."
+  },
+  "includeLabel": {
+    "defaultMessage": "Include",
+    "description": "The heading of the section that lists the keywords rows must contain."
+  },
+  "excludeLabel": {
+    "defaultMessage": "Exclude",
+    "description": "The heading of the section that lists the keywords rows must not contain."
+  },
+  "match": {
+    "defaultMessage": "Match",
+    "description": "The heading of the control that chooses how the included keywords combine."
+  },
+  "and": {
+    "defaultMessage": "AND",
+    "description": "The match mode where a row must contain every included keyword."
+  },
+  "or": {
+    "defaultMessage": "OR",
+    "description": "The match mode where a row must contain any included keyword."
+  }
+}

@@ -33,4 +33,20 @@ describe("date filters wrapper", () => {
       "search",
     );
   });
+
+  it("reads the fields' labels from the contract", async () => {
+    const wrapper = mount(DateFilters, {
+      props: {
+        fields: [{ key: "created", label: "table.columns" }],
+        addFilter: vi.fn(),
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get('button[aria-label="Dates"]').trigger("click");
+    await flushPromises();
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Columns");
+    expect(text).not.toContain("table.columns");
+  });
 });

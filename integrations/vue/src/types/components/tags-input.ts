@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type {
   TagsInputRootProps,
   TagsInputRootEmits,
@@ -28,7 +29,7 @@ export type TagsInputPassthrough = {
  */
 export type TagsInputProps = {
   modelValue?: string[];
-  placeholder?: string;
+  placeholder?: Text;
   disabled?: boolean;
   required?: boolean;
   max?: number;

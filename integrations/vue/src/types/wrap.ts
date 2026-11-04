@@ -29,6 +29,11 @@ export type PTOf<C> = Surface<C>["props"] extends { pt?: infer P }
   : never;
 
 /**
+ * A component's props.
+ */
+export type PropsOf<C> = Surface<C>["props"];
+
+/**
  * A component's slot record.
  */
 export type SlotsOf<C> = NonNullable<Surface<C>["slots"]>;
@@ -44,8 +49,13 @@ export type SlotsOf<C> = NonNullable<Surface<C>["slots"]>;
  *
  * `slots` fill in where the consumer renders no slot of that name. Each
  * default takes the slot's own scope.
+ *
+ * `props` maps what the consumer passed to what the component receives,
+ * on each render: a prop the consumer left out stays out unless the map
+ * supplies it, so the component's own defaults still apply.
  */
 export type WrapOptions<C extends Component> = {
   pt?: PTOf<C> | ((pt: PTOf<C> | undefined) => PTOf<C>);
   slots?: Partial<SlotsOf<C>>;
+  props?: (props: PropsOf<C>) => PropsOf<C>;
 };

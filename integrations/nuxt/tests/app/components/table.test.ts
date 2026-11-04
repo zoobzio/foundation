@@ -7,6 +7,11 @@ import type { LinkedRow } from "#test/mount/table";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import Table from "../../../app/components/table";
+import type { Config } from "@zoobzio/table";
+
+import { reactive } from "vue";
+import { TableService, createTableState } from "@zoobzio/table";
+import { $prosary } from "#test/mocks/app";
 import { makeTable } from "#test/mount/table";
 
 const mounted: { unmount: () => void }[] = [];
@@ -193,5 +198,87 @@ describe("table wrapper", () => {
     await service.init();
     const updated = wrapper.emitted("updated")?.at(0)?.at(0);
     expect(updated).toMatchObject({ id: "test-table", total: 2 });
+  });
+
+  it("reads its empty state from the contract", async () => {
+    const { service } = makeTable(
+      {},
+      { fetch: vi.fn(async () => ({ data: [], total: 0, pageCount: 0 })) },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    expect(wrapper.get("tbody").text()).toBe("No data");
+  });
+
+  it("reads the bulk bar's clear button from the contract", async () => {
+    const { service } = makeTable(
+      { bulkActions: { purge: { label: "Purge" } } },
+      { bulkActions: { purge: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    service.toggleRow("1");
+    await flushPromises();
+    expect(wrapper.get(".f-data-table-bulk-action-clear").text()).toBe("Clear");
+  });
+
+  it("formats typed cells through the app's prosary service", async () => {
+    type Typed = {
+      id: number;
+      when: Date;
+      day: string;
+      amount: number;
+      size: number;
+      ok: boolean;
+    };
+    const at = new Date("2025-11-04T13:05:00Z");
+    const rows: Typed[] = [
+      {
+        id: 1,
+        when: at,
+        day: "2025-11-04",
+        amount: 1234.5,
+        size: 1536,
+        ok: true,
+      },
+    ];
+    const config: Config<Typed> = {
+      columns: [
+        { key: "when", label: "When", type: "datetime" },
+        { key: "day", label: "Day", type: "date" },
+        { key: "amount", label: "Amount", type: "currency" },
+        { key: "size", label: "Size", type: "filesize" },
+        { key: "ok", label: "Ok", type: "boolean" },
+        { key: "id", label: "ID", type: "number" },
+      ],
+      rowKey: "id",
+    };
+    const service = new TableService<Typed>(
+      "typed-table",
+      config,
+      reactive(createTableState(config)),
+      { fetch: vi.fn(async () => ({ data: rows, total: 1, pageCount: 1 })) },
+    );
+    await service.init();
+    const wrapper = mount(Table<Typed>, {
+      props: { service },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await flushPromises();
+    const cells = wrapper.findAll("tbody td").map((td) => td.text());
+    expect(cells).toContain(`${$prosary.date(at)} ${$prosary.time(at)}`);
+    expect(cells).toContain(
+      $prosary.date(new Date("2025-11-04"), {
+        dateStyle: "medium",
+        timeZone: "UTC",
+      }),
+    );
+    expect(cells).toContain(
+      $prosary.number(1234.5, { style: "currency", currency: "USD" }),
+    );
+    expect(cells).toContain("1.5 kB");
+    expect(cells).toContain("Yes");
+    expect(cells).toContain("1");
   });
 });

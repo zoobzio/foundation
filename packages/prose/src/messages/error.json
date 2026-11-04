@@ -1,0 +1,18 @@
+{
+  "unknown": {
+    "defaultMessage": "Something went wrong.",
+    "description": "The error page's message when the error carries none."
+  },
+  "notFound": {
+    "defaultMessage": "The page you're looking for doesn't exist.",
+    "description": "The error page's message for a 404."
+  },
+  "home": {
+    "defaultMessage": "Go home",
+    "description": "The error page's button that clears the error and returns to the home page."
+  },
+  "unexpected": {
+    "defaultMessage": "An unexpected error occurred",
+    "description": "The notification's title when an error the app did not shape reaches the error boundary."
+  }
+}

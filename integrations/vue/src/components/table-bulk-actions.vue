@@ -48,7 +48,9 @@ defineSlots<TableBulkActionsSlots<T>>();
       class="f-button f-data-table-bulk-action-clear"
       @click="service.clearSelection()"
     >
-      {{ TABLE_CLEAR_SELECTION_LABEL }}
+      <slot name="bulkClear" v-bind="ctx">{{
+        TABLE_CLEAR_SELECTION_LABEL
+      }}</slot>
     </button>
   </div>
 </template>

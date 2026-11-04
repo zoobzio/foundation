@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { Option } from "../common";
 import type {
@@ -40,7 +41,7 @@ export type MultiSelectProps<T extends Option> = {
   modelValue?: NoInfer<T[] | undefined>;
   open?: boolean;
   items: T[];
-  placeholder?: string;
+  placeholder?: Text;
   disabled?: boolean;
   required?: boolean;
   pt?: PT<MultiSelectPassthrough<T>>;

@@ -1,0 +1,26 @@
+{
+  "first": {
+    "defaultMessage": "First",
+    "description": "The button that goes to the first page."
+  },
+  "previous": {
+    "defaultMessage": "Previous",
+    "description": "The button that goes to the previous page."
+  },
+  "next": {
+    "defaultMessage": "Next",
+    "description": "The button that goes to the next page."
+  },
+  "last": {
+    "defaultMessage": "Last",
+    "description": "The button that goes to the last page."
+  },
+  "info": {
+    "defaultMessage": "Page {page} of {count} ({total} results)",
+    "description": "The summary beside the pager: the current page, the page count, and the total number of rows."
+  },
+  "size": {
+    "defaultMessage": "Show {size}",
+    "description": "An option of the page size select; the size is the number of rows per page."
+  }
+}

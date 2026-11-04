@@ -6,6 +6,7 @@ import type {
   Listener as KitListener,
   Middleware as KitMiddleware,
   Options as KitOptions,
+  Text,
 } from "@zoobzio/kit";
 
 /**
@@ -25,7 +26,7 @@ export type Values = readonly string[] | ((term: string) => readonly string[]);
  * same way.
  */
 export interface Field {
-  label: string;
+  label: Text;
   operators?: readonly string[];
   defaultOperator?: string;
   values?: Values;
@@ -40,7 +41,7 @@ export interface Field {
  * property beyond the ones the query reads is carried onto its option.
  */
 export interface Literal {
-  label: string;
+  label: Text;
   open: string;
   close: string;
 }
@@ -133,7 +134,7 @@ export type Parse = {
 export interface Option {
   stage: Stage;
   value: string;
-  label: string;
+  label: Text;
   active?: boolean;
 }
 

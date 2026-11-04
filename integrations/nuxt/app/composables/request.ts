@@ -2,7 +2,7 @@ import type { AppError } from "../types/error";
 import type { RequestOptions } from "../types/request";
 import type { MaybeRefOrGetter } from "vue";
 
-import { useAsyncData, useLazyAsyncData } from "#app";
+import { useAsyncData, useLazyAsyncData, useNuxtApp } from "#app";
 import { toValue, watch } from "vue";
 import { status } from "ltrl-http";
 import { useLogger } from "./log";
@@ -25,6 +25,9 @@ const make = (
   ) => {
     const id = crypto.randomUUID();
     const log = useLogger(toValue(key));
+    // The error's message and the notification's title are strings, so the
+    // defaults resolve here, in the locale active when the request fails.
+    const { $t: t } = useNuxtApp();
 
     log.debug("Request started", {
       id,
@@ -49,10 +52,10 @@ const make = (
           });
           throw useAppError(
             errOpts?.status ?? status.INTERNAL_SERVER_ERROR,
-            errOpts?.message ?? "Request failed",
+            errOpts?.message ?? t("request.failed"),
             {
               notification: errOpts?.notification ?? {
-                title: "An unknown error occurred",
+                title: t("request.unknown"),
                 variant: "error",
                 description: results.error.value?.message,
               },

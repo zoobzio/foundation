@@ -74,6 +74,23 @@ describe("table", () => {
     expect(name.classes()).toContain("f-data-table-sorted");
   });
 
+  it("relays the bulkClear slot from the top", async () => {
+    const { service } = makeTable(
+      { bulkActions: fakeBulkActions },
+      { bulkActions: { removeSelected: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable(
+      { service },
+      { bulkClear: `<template #bulkClear><u>clear</u></template>` },
+    );
+    service.toggleAll();
+    await flushPromises();
+    expect(wrapper.get(".f-data-table-bulk-action-clear u").text()).toBe(
+      "clear",
+    );
+  });
+
   it("selects rows and shows the bulk actions bar", async () => {
     const removeSelected = vi.fn();
     const { service } = makeTable(

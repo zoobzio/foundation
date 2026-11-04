@@ -1,0 +1,10 @@
+{
+  "placeholder": {
+    "defaultMessage": "Select an option",
+    "description": "The text a single select shows while nothing is selected."
+  },
+  "multiple": {
+    "defaultMessage": "Select options",
+    "description": "The text a multi select shows while nothing is selected."
+  }
+}

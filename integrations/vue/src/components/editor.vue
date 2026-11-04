@@ -81,7 +81,9 @@ defineSlots<EditorSlots<I, O>>();
               v-bind="settings.tool(tool)"
             >
               <slot name="toolPrepend" v-bind="{ ...ctx, tool }" />
-              {{ tool.label }}
+              <slot name="toolLabel" v-bind="{ ...ctx, tool }">
+                {{ tool.label }}
+              </slot>
               <slot name="toolAppend" v-bind="{ ...ctx, tool }" />
             </button>
           </slot>

@@ -1,0 +1,6 @@
+{
+  "cursor": {
+    "defaultMessage": "Ln {line}, Col {column}",
+    "description": "The status line of the code editor: the cursor's line and column, both counted from 1."
+  }
+}

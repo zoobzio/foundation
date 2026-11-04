@@ -131,4 +131,23 @@ describe("createBrowser", () => {
     expect(b.initialized).toBe(false);
     expect(b.files).toEqual([]);
   });
+
+  it("resolves the columns' and the actions' labels through the app's service", () => {
+    const useAssets = createBrowser(
+      "assets-text",
+      makeOptions({
+        columns: [{ key: "name", label: "browser.refresh" }],
+        actions: { open: { label: "browser.actions", action: vi.fn() } },
+        folderActions: { rename: { label: "table.clear", action: vi.fn() } },
+        bulkActions: { purge: { label: "browser.clear", action: vi.fn() } },
+      }),
+    );
+    const assets = useAssets();
+    expect(assets.config.columns.map((column) => column.label)).toEqual([
+      "Refresh",
+    ]);
+    expect(assets.config.actions?.open?.label).toBe("Actions");
+    expect(assets.config.folderActions?.rename?.label).toBe("Clear");
+    expect(assets.config.bulkActions?.purge?.label).toBe("Clear");
+  });
 });

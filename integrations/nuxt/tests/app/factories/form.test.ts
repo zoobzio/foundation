@@ -151,4 +151,27 @@ describe("createForm", () => {
     a.set("name", "Dave");
     expect(b.payload.name).toBe("Alice");
   });
+
+  it("resolves the fields' text through the app's service", () => {
+    const useContact = createForm(
+      "contact-text",
+      makeOptions({
+        fields: [
+          {
+            type: "text",
+            key: "name",
+            label: "form.submit",
+            hint: "form.reset",
+            placeholder: "select.placeholder",
+          },
+          { type: "number", key: "amount", label: "Amount" },
+        ],
+      }),
+    );
+    const contact = useContact();
+    expect(contact.config.fields).toMatchObject([
+      { label: "Submit", hint: "Reset", placeholder: "Select an option" },
+      { label: "Amount" },
+    ]);
+  });
 });

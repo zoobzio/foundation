@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { ScrollerProps } from "./scroller";
 import type {
@@ -34,7 +35,7 @@ export interface CommandOption extends Option {
  */
 export type CommandGroup<T extends CommandOption> = {
   key: string;
-  label: string;
+  label: Text;
   options: T[];
 };
 
@@ -58,7 +59,7 @@ export type CommandPassthrough<T extends CommandOption = CommandOption> = {
 export type CommandProps<T extends CommandOption> = {
   groups: CommandGroup<T>[];
   modelValue?: NoInfer<T[] | undefined>;
-  placeholder?: string;
+  placeholder?: Text;
   disabled?: boolean;
   multiple?: boolean;
   search?: string;

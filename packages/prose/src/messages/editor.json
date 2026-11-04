@@ -1,0 +1,54 @@
+{
+  "bold": {
+    "defaultMessage": "Bold",
+    "description": "The toolbar button for the bold mark."
+  },
+  "italic": {
+    "defaultMessage": "Italic",
+    "description": "The toolbar button for the italic mark."
+  },
+  "underline": {
+    "defaultMessage": "Underline",
+    "description": "The toolbar button for the underline mark."
+  },
+  "strike": {
+    "defaultMessage": "Strike",
+    "description": "The toolbar button for the strikethrough mark."
+  },
+  "code": {
+    "defaultMessage": "Code",
+    "description": "The toolbar button for the inline code mark."
+  },
+  "heading": {
+    "defaultMessage": "H{level}",
+    "description": "The toolbar button for a heading; the level is 1 to 6. Keep it short: it is one of up to six side by side."
+  },
+  "bulletList": {
+    "defaultMessage": "Bullet list",
+    "description": "The toolbar button for a bulleted list."
+  },
+  "orderedList": {
+    "defaultMessage": "Ordered list",
+    "description": "The toolbar button for a numbered list."
+  },
+  "blockquote": {
+    "defaultMessage": "Quote",
+    "description": "The toolbar button for a block quotation."
+  },
+  "codeBlock": {
+    "defaultMessage": "Code block",
+    "description": "The toolbar button for a code block."
+  },
+  "rule": {
+    "defaultMessage": "Rule",
+    "description": "The toolbar button that inserts a horizontal rule."
+  },
+  "undo": {
+    "defaultMessage": "Undo",
+    "description": "The toolbar button that undoes the last change."
+  },
+  "redo": {
+    "defaultMessage": "Redo",
+    "description": "The toolbar button that redoes the last undone change."
+  }
+}

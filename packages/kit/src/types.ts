@@ -110,3 +110,20 @@ export type Codec<I, D, O, C> = {
   read: Step<I, D, C>;
   write: Step<D, O, C>;
 };
+
+/**
+ * The forms text a service carries can take beyond a plain string. Empty
+ * here, so {@link Text} is `string`: a layer that resolves messages widens
+ * it by declaration merging, and every `label`, `placeholder` or `hint`
+ * the packages carry then accepts a message wherever that layer is in use.
+ * The packages never read the text; the layer resolves it before a view
+ * or a service sees it.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface TextMap {}
+
+/**
+ * Text a service carries and a view renders: a plain string, or a message
+ * in any form {@link TextMap} admits.
+ */
+export type Text = string | TextMap[keyof TextMap];

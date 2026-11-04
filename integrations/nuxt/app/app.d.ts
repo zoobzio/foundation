@@ -5,6 +5,20 @@ import type { FormHooks } from "./types/form";
 import type { Logger } from "./types/log";
 import type { IconAlias } from "./types/icon";
 import type { TableHooks } from "./types/table";
+import type { AppMessage } from "./types/text";
+
+// The text the packages carry admits the app's messages: a `label`,
+// `placeholder` or `hint` of any service or component takes a key of the
+// app's contract, or a key with its values, in place of a string. The
+// contract extends @zoobzio/prose, so the components' own keys are among
+// them. The layer resolves every message at its boundary — a wrapper's
+// props map, a factory — so the components and the services, which know
+// only strings, never see one.
+declare module "@zoobzio/kit" {
+  interface TextMap {
+    app: AppMessage;
+  }
+}
 
 // The item types of @zoobzio/vue and the action descriptors of the headless
 // packages are interfaces, so the layer widens the ones its wrappers draw

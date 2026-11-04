@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { ErrorData } from "./types/error";
 
-import Toast from "@zoobzio/vue/components/toast.vue";
 import Toaster from "@zoobzio/vue/components/toaster.vue";
+import Toast from "./components/toast";
 import {
   NuxtErrorBoundary,
   NuxtLayout,
@@ -11,7 +11,7 @@ import {
 } from "#components";
 
 import { ConfigProvider, TooltipProvider } from "reka-ui";
-import { isNuxtError, useHead } from "#app";
+import { isNuxtError, useNuxtApp } from "#app";
 import { useId } from "vue";
 import { useNotifications } from "./composables/notification";
 </script>
@@ -19,11 +19,7 @@ import { useNotifications } from "./composables/notification";
 <script setup lang="ts">
 const useIdFunction = () => useId();
 
-useHead({
-  htmlAttrs: {
-    lang: "en",
-  },
-});
+const { $t } = useNuxtApp();
 
 const { notifications, push, remove } = useNotifications();
 
@@ -36,7 +32,7 @@ const onError = (err: unknown) => {
   }
 
   push({
-    title: err instanceof Error ? err.message : "An unexpected error occurred",
+    title: err instanceof Error ? err.message : $t("error.unexpected"),
     variant: "error",
   });
 };

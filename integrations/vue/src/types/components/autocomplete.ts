@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { ScrollerProps } from "./scroller";
 import type {
   Passthrough,
@@ -83,7 +84,7 @@ export type AutocompletePassthrough = {
 export type AutocompleteProps = {
   service: Query;
   empty?: boolean;
-  placeholder?: string;
+  placeholder?: Text;
   disabled?: boolean;
   open?: boolean;
   pt?: PT<AutocompletePassthrough>;

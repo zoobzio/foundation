@@ -201,6 +201,65 @@ const groups: MenuGroup[] = [
 </template>
 ```
 
+## Text
+
+The components of `@zoobzio/vue` know nothing of translation: each renders
+its text as it is, in English by default, as it does outside the layer.
+The layer translates over the top, through the same `pt` layers, slot
+defaults and props maps its wrappers already lay under the components.
+
+Every `label`, `placeholder`, `title`, `description` or `hint` a component
+or a service carries is a `Text` of `@zoobzio/kit`: `string`, until a layer
+widens it. This layer widens it to the app's messages — a key of the app's
+contract, or a key with its values — so a column, an action, a menu item,
+a form field or a toast takes a message in place of a string:
+
+```ts
+const table = createTable("users", {
+  columns: [
+    { key: "name", label: "users.column.name" },
+    { key: "role", label: "users.column.role" },
+  ],
+  actions: { remove: { label: "users.action.remove", action: (row) => … } },
+});
+```
+
+The layer loads [`@prosary/nuxt`](https://github.com/zoobzio/prosary) with
+the build of [`@zoobzio/prose`](../../packages/prose/) — the components'
+own text, as messages — as its `prosary.build`, the way it loads untheme
+with `@zoobzio/theme`. An app that extends the layer gets `$t`, `useT`,
+`useLocale` and `useProsary` from the module, one locale per visitor, with
+no setup. An app with text of its own ships a prose package of its own — a
+kit config that `extends: "@zoobzio/prose/config"`, built with
+`prosary build` — and passes it as `build`; the app's option replaces the
+layer's:
+
+```ts
+export default defineNuxtConfig({
+  extends: ["@zoobzio/nuxt"],
+  prosary: { build: "@acme/prose" },
+});
+```
+
+A message resolves at the layer's boundary, before a component sees it, so
+what reaches `@zoobzio/vue` is always a string:
+
+- A wrapper's `props` map resolves what the consumer passed — the
+  options of a select, the groups of a menu, the nodes of a tree — and
+  supplies the component's own defaults (a placeholder, an empty state, a
+  button's name) as messages of the prose contract, through its `pt`
+  layer and slot defaults. The map and the defaults run on each render,
+  so they follow a locale switch.
+- A factory resolves the labels of the columns, actions and fields it
+  builds a service over, once, when the service is built in setup. The
+  search then matches a typed prefix against a column's label as the
+  visitor reads it. The layer's `locale` plugin reloads the app when the
+  visitor switches locale, so a built service never holds a stale one.
+
+`resolveText` and `resolveTexts` are on `#imports`, for code of the app
+that renders text outside a wrapper; `AppMessage` is the message type. A string the contract does not declare — a file name, a value —
+is data, and renders unchanged.
+
 ## Theme
 
 The components of `@zoobzio/vue` read no tokens: they are unstyled, and a

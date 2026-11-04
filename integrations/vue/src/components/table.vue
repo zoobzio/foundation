@@ -119,6 +119,9 @@ const { THead, TBody } = useForward({
       <template v-if="slots.bulkActionAppend" #bulkActionAppend="slotProps">
         <slot name="bulkActionAppend" v-bind="slotProps" />
       </template>
+      <template v-if="slots.bulkClear" #bulkClear="slotProps">
+        <slot name="bulkClear" v-bind="slotProps" />
+      </template>
     </TableBulkActions>
 
     <table class="f-table">

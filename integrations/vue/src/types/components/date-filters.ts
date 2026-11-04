@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { CalendarProps, CalendarEmits } from "./calendar";
 import type { CommandOption, CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
@@ -27,7 +28,7 @@ export type DateFilter = {
  */
 export type DateFieldConfig = {
   key: string;
-  label: string;
+  label: Text;
 };
 
 /**
@@ -65,12 +66,15 @@ export type DateFiltersEmits = {};
 
 /**
  * The date filters view model, served to `defineExpose` and the slots.
- * `activeCount` is the number of filters.
+ * `activeCount` is the number of filters; `valid` is whether the value
+ * step holds a filter `apply` can commit.
  */
 export type DateFiltersContext = {
   fields: DateFieldConfig[];
   filters?: DateFilter[];
   activeCount: number;
+  valid: boolean;
+  apply: () => void;
   el: HTMLDivElement | null;
   settings: DateFiltersPassthrough;
 };

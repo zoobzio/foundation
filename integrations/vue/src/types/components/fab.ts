@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { EventEmits } from "../events";
 import type { Definition } from "../definition";
 import type { VNode } from "vue";
@@ -6,7 +7,7 @@ import type { VNode } from "vue";
  * Props of the floating action button.
  */
 export type FabProps = {
-  label?: string;
+  label?: Text;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   badge?: number | string;

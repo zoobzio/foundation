@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type { Link, LinkProps } from "../common";
 import type { Passthrough, PT } from "../passthrough";
 import type { Definition } from "../definition";
@@ -17,7 +18,7 @@ export type HeroPassthrough = {
 export type HeroProps = {
   tagline: string;
   taglineHighlight?: string;
-  description?: string;
+  description?: Text;
   action?: Link;
   pt?: PT<HeroPassthrough>;
 };

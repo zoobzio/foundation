@@ -1,8 +1,8 @@
-// The vue form field with the layer's wrapped controls behind its parts, so
-// a field's select, multi select, checkbox, date picker, tags input, file
-// input, and rich text draw their icons.
+// The vue form field with the layer's inputs behind its parts, and the
+// field's text — its label, hint, placeholder, options — resolved.
 import Core from "@zoobzio/vue/components/form-field.vue";
 
+import { texts } from "./text";
 import { wrap } from "@zoobzio/vue/utils/wrap";
 import Checkbox from "./checkbox";
 import DatePicker from "./date-picker";
@@ -13,6 +13,7 @@ import Select from "./select";
 import TagsInput from "./tags-input";
 
 export default wrap(Core, {
+  props: (props) => ({ ...props, field: texts(props.field) }),
   pt: {
     select: { as: Select },
     multiSelect: { as: MultiSelect },

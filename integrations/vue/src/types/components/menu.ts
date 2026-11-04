@@ -1,3 +1,4 @@
+import type { Text } from "@zoobzio/kit";
 import type {
   DropdownMenuRootProps,
   DropdownMenuRootEmits,
@@ -21,7 +22,7 @@ import type { ComponentPublicInstance, Ref, VNode } from "vue";
  * interface, so a framework layer may widen it by declaration merging.
  */
 export interface MenuItem {
-  label: string;
+  label: Text;
   disabled?: boolean;
   link?: LinkTarget;
 }
@@ -31,7 +32,7 @@ export interface MenuItem {
  */
 export type MenuGroup<T extends MenuItem = MenuItem> = {
   key: string;
-  label?: string;
+  label?: Text;
   items: T[];
 };
 
@@ -55,7 +56,7 @@ export type MenuPassthrough<T extends MenuItem = MenuItem> = {
  */
 export type MenuProps<T extends MenuItem = MenuItem> = {
   open?: boolean;
-  label?: string;
+  label?: Text;
   groups: MenuGroup<T>[];
   side?: "top" | "right" | "bottom" | "left";
   align?: "start" | "center" | "end";

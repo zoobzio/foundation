@@ -1,0 +1,14 @@
+{
+  "reset": {
+    "defaultMessage": "Reset",
+    "description": "The button that restores the form's initial values."
+  },
+  "submit": {
+    "defaultMessage": "Submit",
+    "description": "The button that submits the form."
+  },
+  "submitting": {
+    "defaultMessage": "Submitting...",
+    "description": "The submit button's text while the submission is in flight."
+  }
+}

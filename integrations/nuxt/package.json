@@ -46,6 +46,7 @@
   "dependencies": {
     "@icon-sheets/nuxt": "catalog:",
     "@nuxt/kit": "catalog:",
+    "@prosary/nuxt": "catalog:",
     "@untheme/nuxt": "catalog:",
     "@vueuse/core": "catalog:",
     "@zoobzio/browser": "workspace:*",
@@ -53,12 +54,15 @@
     "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",
     "@zoobzio/icons": "workspace:*",
+    "@zoobzio/kit": "workspace:*",
+    "@zoobzio/prose": "workspace:*",
     "@zoobzio/query": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/theme": "workspace:*",
     "@zoobzio/vue": "workspace:*",
     "ltrl-http": "catalog:",
     "objectively": "catalog:",
+    "prosary": "catalog:",
     "reka-ui": "catalog:",
     "untheme": "catalog:"
   },

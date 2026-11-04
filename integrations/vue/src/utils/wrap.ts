@@ -55,24 +55,28 @@ const filled = (slots: Slots, defaults: Slots): Slots => {
 };
 
 /**
- * Wraps a component with a `pt` layer and slot defaults, typed as the
- * component itself. The wrapper declares no props: it receives what the
- * consumer passed as attrs and hands all of it on, so an absent prop
- * stays absent and the wrapped component's own defaults apply. It
+ * Wraps a component with a `pt` layer, slot defaults and a props map,
+ * typed as the component itself. The wrapper declares no props: it
+ * receives what the consumer passed as attrs and hands all of it on,
+ * through the map when one is given, so an absent prop stays absent and
+ * the wrapped component's own defaults apply. The map runs on each
+ * render, so what it reads is tracked. It
  * declares the wrapped component's emits and relays each, so the events
  * are its own as far as a listener, devtools, or a test can tell. It
  * exposes the wrapped component's `ctx` as its own.
  *
  * @param core - The component to wrap.
- * @param options - The `pt` layer and the slot defaults to lay under it.
+ * @param options - The `pt` layer, the slot defaults and the props map.
  * @returns A component with the wrapped component's contract.
  */
 export function wrap<C extends Component>(core: C, options?: WrapOptions<C>): C;
 export function wrap(
   core: Component,
-  options: { pt?: unknown; slots?: unknown } = {},
+  options: { pt?: unknown; slots?: unknown; props?: unknown } = {},
 ): Component {
   const defaults = record(options.slots) ? options.slots : {};
+  const mapped = (props: Slots): Slots =>
+    typeof options.props === "function" ? options.props(props) : props;
   const names = declared(core);
   return defineComponent({
     name: typeof core.name === "string" ? core.name : undefined,
@@ -82,12 +86,14 @@ export function wrap(
       const el = shallowRef<{ ctx?: unknown } | null>(null);
       const listeners = relayed(names, emit);
       expose({ ctx: computed(() => el.value?.ctx) });
-      return (): VNode =>
-        h(
+      return (): VNode => {
+        const props = mapped(attrs);
+        return h(
           core,
-          { ...attrs, ...listeners, pt: laid(attrs.pt, options.pt), ref: el },
+          { ...props, ...listeners, pt: laid(props.pt, options.pt), ref: el },
           filled(slots, defaults),
         );
+      };
     },
   });
 }

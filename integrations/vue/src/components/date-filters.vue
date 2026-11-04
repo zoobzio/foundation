@@ -253,6 +253,8 @@ const ctx = useContext<DateFiltersContext>("date-filters", () => ({
   fields,
   filters,
   activeCount: activeCount.value,
+  valid: isFormValid.value,
+  apply: applyFilter,
   el: el.value,
   settings: settings.value,
 }));
