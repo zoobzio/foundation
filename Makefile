@@ -49,7 +49,7 @@ inspect: ## Check the formatting with oxfmt
 
 clean: ## Remove the build output and the Nuxt caches
 	rm -rf .coverage
-	find packages integrations -maxdepth 2 \( -name .dist -o -name .coverage \) -type d -prune -exec rm -rf {} +
+	find packages services integrations -maxdepth 2 \( -name .dist -o -name .coverage \) -type d -prune -exec rm -rf {} +
 	find integrations -maxdepth 2 \( -name .nuxt -o -name .output \) -type d -prune -exec rm -rf {} +
 
 check: lint inspect typecheck test ## Run lint, inspect, typecheck, and test on the existing build output

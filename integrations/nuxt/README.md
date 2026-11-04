@@ -2,7 +2,7 @@
 
 Nuxt layer for the foundation design system. It carries the Nuxt-only
 wiring over [`@zoobzio/vue`](../vue/) and the headless services in
-`packages/`: `useState`-backed stores, hook-bus factories, and the app shell.
+`services/`: `useState`-backed stores, hook-bus factories, and the app shell.
 
 ## Usage
 

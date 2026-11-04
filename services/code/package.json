@@ -1,7 +1,7 @@
 {
-  "name": "@zoobzio/form",
+  "name": "@zoobzio/code",
   "version": "0.1.2",
-  "description": "Headless data form service: payload, per-key validation, touched tracking, submit lifecycle over a Zod schema. No framework dependency.",
+  "description": "Headless code editor service over CodeMirror: one text document, the snapshot a view reads, reader/writer seams for the document form a consumer ingests and consumes, and the consumer's own CodeMirror extensions for language, theme, and keymaps. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git",
-    "directory": "packages/form"
+    "directory": "services/code"
   },
   "files": [
     ".dist"
@@ -35,8 +35,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@zoobzio/kit": "workspace:*",
-    "objectively": "catalog:",
-    "zod": "catalog:"
+    "@codemirror/commands": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
+    "@zoobzio/kit": "workspace:*"
   }
 }

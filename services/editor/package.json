@@ -1,7 +1,7 @@
 {
-  "name": "@zoobzio/code",
+  "name": "@zoobzio/editor",
   "version": "0.1.2",
-  "description": "Headless code editor service over CodeMirror: one text document, the snapshot a view reads, reader/writer seams for the document form a consumer ingests and consumes, and the consumer's own CodeMirror extensions for language, theme, and keymaps. No framework dependency.",
+  "description": "Headless rich text editor service over tiptap: one document, a feature set, the snapshot a view reads, reader/writer seams for the document form a consumer ingests and consumes, and the json, html, and hast codecs. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git",
-    "directory": "packages/code"
+    "directory": "services/editor"
   },
   "files": [
     ".dist"
@@ -35,9 +35,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@codemirror/commands": "catalog:",
-    "@codemirror/state": "catalog:",
-    "@codemirror/view": "catalog:",
-    "@zoobzio/kit": "workspace:*"
+    "@tiptap/core": "catalog:",
+    "@tiptap/html": "catalog:",
+    "@tiptap/pm": "catalog:",
+    "@tiptap/starter-kit": "catalog:",
+    "@types/hast": "catalog:",
+    "@zoobzio/kit": "workspace:*",
+    "hast-util-from-html": "catalog:",
+    "hast-util-to-html": "catalog:"
   }
 }

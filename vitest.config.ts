@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     projects: [
       "packages/*/vitest.config.ts",
+      "services/*/vitest.config.ts",
       "integrations/*/vitest.config.ts",
     ],
     coverage: {
@@ -18,6 +19,7 @@ export default defineConfig({
       reportsDirectory: ".coverage",
       include: [
         "packages/*/src/**/*.{ts,vue}",
+        "services/*/src/**/*.{ts,vue}",
         "integrations/vue/src/**/*.{ts,vue}",
         "integrations/nuxt/app/**/*.{ts,vue}",
         "integrations/nuxt/modules/**/*.ts",

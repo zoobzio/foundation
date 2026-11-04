@@ -1,7 +1,7 @@
 {
-  "name": "@zoobzio/browser",
+  "name": "@zoobzio/form",
   "version": "0.1.2",
-  "description": "Headless data browser service: folder trail navigation, file sort, selection, action joins. No framework dependency.",
+  "description": "Headless data form service: payload, per-key validation, touched tracking, submit lifecycle over a Zod schema. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git",
-    "directory": "packages/browser"
+    "directory": "services/form"
   },
   "files": [
     ".dist"
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@zoobzio/kit": "workspace:*",
-    "objectively": "catalog:"
+    "objectively": "catalog:",
+    "zod": "catalog:"
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "@zoobzio/table",
+  "name": "@zoobzio/browser",
   "version": "0.1.2",
-  "description": "Headless data table service: paging, sort, selection, column order, and a query over the columns. No framework dependency.",
+  "description": "Headless data browser service: folder trail navigation, file sort, selection, action joins. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zoobzio/foundation.git",
-    "directory": "packages/table"
+    "directory": "services/browser"
   },
   "files": [
     ".dist"
@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "@zoobzio/kit": "workspace:*",
-    "@zoobzio/query": "workspace:*",
     "objectively": "catalog:"
   }
 }

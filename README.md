@@ -1,8 +1,8 @@
 # foundation
 
 A design system for Vue 3 + Nuxt, built as a pnpm workspace: framework-free
-headless services in `packages/`, and the framework bindings over them in
-`integrations/`. Foundation spans the full range from unstyled interactive
+headless services in `services/`, the kit and built contracts they rest on in
+`packages/`, and the framework bindings over them in `integrations/`. Foundation spans the full range from unstyled interactive
 components built on semantic HTML up to stateful, generic data widgets.
 
 ## Usage
@@ -33,11 +33,12 @@ import { defineSelect } from "@zoobzio/vue/definitions/select";
 
 ## Architecture
 
-| Tier       | Where                | What it is                                                                                                                                                       |
-| ---------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Services   | `packages/*`         | Headless data machines (query, browser, form, table, editor, code) in pure TypeScript, sharing the emitter and state proxy in [`@zoobzio/kit`](./packages/kit/). |
-| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.                         |
-| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                                            |
+| Tier       | Where                | What it is                                                                                                                                    |
+| ---------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Packages   | `packages/*`         | The kit the services share (emitter, state proxy, codecs) in [`@zoobzio/kit`](./packages/kit/), and the built contracts: prose, icons, theme. |
+| Services   | `services/*`         | Headless data machines (query, browser, form, table, editor, code) in pure TypeScript, each built on [`@zoobzio/kit`](./packages/kit/).       |
+| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.      |
+| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                         |
 
 Each data component pairs a **definition** (`defineTable`, `defineForm`,
 `defineEditor`, `defineCode`, …) —
@@ -51,7 +52,8 @@ Auto-import is **disabled** — everything is imported explicitly. Each package
 ships its source through subpath exports; see the package READMEs for the
 import surface:
 
-- [`packages/README.md`](./packages/README.md) — the headless services
+- [`packages/README.md`](./packages/README.md) — the kit and the built contracts
+- [`services/README.md`](./services/README.md) — the headless services
 - [`integrations/vue/README.md`](./integrations/vue/README.md) — the Vue components
 - [`integrations/nuxt/README.md`](./integrations/nuxt/README.md) — the Nuxt layer
 
@@ -60,15 +62,16 @@ import surface:
 ```
 packages/
   kit/            — @zoobzio/kit: the emitter, state proxy, and types the services share
+  prose/          — @zoobzio/prose: the text the components render by default, built by @prosary/kit (generated from message files)
+  icons/          — @zoobzio/icons: the icon contract the Nuxt layer draws by default, built by icon-sheets (generated, no source)
+  theme/          — @zoobzio/theme: the foundation theme over the aurora preset of untheme, the Nuxt layer's default (generated from a palette and a roles file)
+services/
   query/          — @zoobzio/query: headless query service (pure TS, no framework)
   browser/        — @zoobzio/browser: headless browser service (pure TS, no framework)
   form/           — @zoobzio/form: headless form service (pure TS, no framework)
   table/          — @zoobzio/table: headless table service (pure TS, no framework)
   editor/         — @zoobzio/editor: headless rich text editor service over tiptap, with json/html/hast codecs (pure TS, no framework)
   code/           — @zoobzio/code: headless code editor service over CodeMirror, the consumer's extensions for language and theme (pure TS, no framework)
-  prose/          — @zoobzio/prose: the text the components render by default, built by @prosary/kit (generated from message files)
-  icons/          — @zoobzio/icons: the icon contract the Nuxt layer draws by default, built by icon-sheets (generated, no source)
-  theme/          — @zoobzio/theme: the foundation theme over the aurora preset of untheme, the Nuxt layer's default (generated from a palette and a roles file)
 integrations/
   vue/            — @zoobzio/vue: Vue 3 components, definitions, and types
   nuxt/           — @zoobzio/nuxt: the Nuxt layer (stores, factories, app shell)

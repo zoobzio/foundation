@@ -196,16 +196,16 @@ importers:
         version: 14.3.0(vue@3.5.44(typescript@5.9.3))
       '@zoobzio/browser':
         specifier: workspace:*
-        version: link:../../packages/browser
+        version: link:../../services/browser
       '@zoobzio/code':
         specifier: workspace:*
-        version: link:../../packages/code
+        version: link:../../services/code
       '@zoobzio/editor':
         specifier: workspace:*
-        version: link:../../packages/editor
+        version: link:../../services/editor
       '@zoobzio/form':
         specifier: workspace:*
-        version: link:../../packages/form
+        version: link:../../services/form
       '@zoobzio/icons':
         specifier: workspace:*
         version: link:../../packages/icons
@@ -217,10 +217,10 @@ importers:
         version: link:../../packages/prose
       '@zoobzio/query':
         specifier: workspace:*
-        version: link:../../packages/query
+        version: link:../../services/query
       '@zoobzio/table':
         specifier: workspace:*
-        version: link:../../packages/table
+        version: link:../../services/table
       '@zoobzio/theme':
         specifier: workspace:*
         version: link:../../packages/theme
@@ -275,25 +275,25 @@ importers:
         version: 3.12.2
       '@zoobzio/browser':
         specifier: workspace:*
-        version: link:../../packages/browser
+        version: link:../../services/browser
       '@zoobzio/code':
         specifier: workspace:*
-        version: link:../../packages/code
+        version: link:../../services/code
       '@zoobzio/editor':
         specifier: workspace:*
-        version: link:../../packages/editor
+        version: link:../../services/editor
       '@zoobzio/form':
         specifier: workspace:*
-        version: link:../../packages/form
+        version: link:../../services/form
       '@zoobzio/kit':
         specifier: workspace:*
         version: link:../../packages/kit
       '@zoobzio/query':
         specifier: workspace:*
-        version: link:../../packages/query
+        version: link:../../services/query
       '@zoobzio/table':
         specifier: workspace:*
-        version: link:../../packages/table
+        version: link:../../services/table
       defu:
         specifier: 'catalog:'
         version: 6.1.7
@@ -319,69 +319,6 @@ importers:
       vue-tsc:
         specifier: 'catalog:'
         version: 2.2.12(typescript@5.9.3)
-      zod:
-        specifier: 'catalog:'
-        version: 4.6.7
-
-  packages/browser:
-    dependencies:
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
-      objectively:
-        specifier: 'catalog:'
-        version: 0.3.0
-
-  packages/code:
-    dependencies:
-      '@codemirror/commands':
-        specifier: 'catalog:'
-        version: 6.11.1
-      '@codemirror/state':
-        specifier: 'catalog:'
-        version: 6.7.6
-      '@codemirror/view':
-        specifier: 'catalog:'
-        version: 6.43.15
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
-
-  packages/editor:
-    dependencies:
-      '@tiptap/core':
-        specifier: 'catalog:'
-        version: 3.32.0(@tiptap/pm@3.32.0)
-      '@tiptap/html':
-        specifier: 'catalog:'
-        version: 3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(happy-dom@20.10.6)
-      '@tiptap/pm':
-        specifier: 'catalog:'
-        version: 3.32.0
-      '@tiptap/starter-kit':
-        specifier: 'catalog:'
-        version: 3.32.0
-      '@types/hast':
-        specifier: 'catalog:'
-        version: 3.0.5
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
-      hast-util-from-html:
-        specifier: 'catalog:'
-        version: 2.0.3
-      hast-util-to-html:
-        specifier: 'catalog:'
-        version: 9.0.5
-
-  packages/form:
-    dependencies:
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
-      objectively:
-        specifier: 'catalog:'
-        version: 0.3.0
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -426,27 +363,6 @@ importers:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@26.6.6)(@vitest/coverage-v8@5.0.3)(happy-dom@20.10.6)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1))
 
-  packages/query:
-    dependencies:
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
-      objectively:
-        specifier: 'catalog:'
-        version: 0.3.0
-
-  packages/table:
-    dependencies:
-      '@zoobzio/kit':
-        specifier: workspace:*
-        version: link:../kit
-      '@zoobzio/query':
-        specifier: workspace:*
-        version: link:../query
-      objectively:
-        specifier: 'catalog:'
-        version: 0.3.0
-
   packages/theme:
     dependencies:
       '@untheme/aurora':
@@ -468,6 +384,90 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@26.6.6)(@vitest/coverage-v8@5.0.3)(happy-dom@20.10.6)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1))
+
+  services/browser:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      objectively:
+        specifier: 'catalog:'
+        version: 0.3.0
+
+  services/code:
+    dependencies:
+      '@codemirror/commands':
+        specifier: 'catalog:'
+        version: 6.11.1
+      '@codemirror/state':
+        specifier: 'catalog:'
+        version: 6.7.6
+      '@codemirror/view':
+        specifier: 'catalog:'
+        version: 6.43.15
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+
+  services/editor:
+    dependencies:
+      '@tiptap/core':
+        specifier: 'catalog:'
+        version: 3.32.0(@tiptap/pm@3.32.0)
+      '@tiptap/html':
+        specifier: 'catalog:'
+        version: 3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0)(happy-dom@20.10.6)
+      '@tiptap/pm':
+        specifier: 'catalog:'
+        version: 3.32.0
+      '@tiptap/starter-kit':
+        specifier: 'catalog:'
+        version: 3.32.0
+      '@types/hast':
+        specifier: 'catalog:'
+        version: 3.0.5
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      hast-util-from-html:
+        specifier: 'catalog:'
+        version: 2.0.3
+      hast-util-to-html:
+        specifier: 'catalog:'
+        version: 9.0.5
+
+  services/form:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      objectively:
+        specifier: 'catalog:'
+        version: 0.3.0
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+
+  services/query:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      objectively:
+        specifier: 'catalog:'
+        version: 0.3.0
+
+  services/table:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      '@zoobzio/query':
+        specifier: workspace:*
+        version: link:../query
+      objectively:
+        specifier: 'catalog:'
+        version: 0.3.0
 
 packages:
 
