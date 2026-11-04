@@ -1,5 +1,12 @@
 # @zoobzio/query
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.1.6
+
 ## 0.1.5
 
 ### Patch Changes
