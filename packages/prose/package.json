@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/prose",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "The foundation design system's text: every label, placeholder and notice its components render, authored as FormatJS messages and built by @prosary/kit into a typed contract and a bundle per locale. An app's own prosary config extends it, so the components' text translates with the app's.",
   "license": "MIT",
   "author": {

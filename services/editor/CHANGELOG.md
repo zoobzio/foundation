@@ -1,5 +1,12 @@
 # @zoobzio/editor
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`4d53efc`](https://github.com/zoobzio/foundation/commit/4d53efcc827acf43f31378d48d4695a7dbc581ad)]:
+  - @zoobzio/kit@0.1.3
+
 ## 0.1.2
 
 ### Patch Changes
