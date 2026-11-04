@@ -1,5 +1,12 @@
 # @zoobzio/editor
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.1.5
+
 ## 0.1.4
 
 ### Patch Changes
