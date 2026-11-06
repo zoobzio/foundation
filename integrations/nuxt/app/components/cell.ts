@@ -2,7 +2,10 @@
 // format a cell's value through the app's prosary service, by the column's
 // type, as `text.ts` resolves its text. Each is a `cell:<type>` slot, so a
 // consumer's `cell:<key>` slot still wins for one column, and a type the
-// layer does not format falls to the vue component's own cell.
+// layer does not format falls to the vue component's own cell. A date or a
+// datetime formats in the service's time zone, as the vue component's own
+// cell does, never the runtime's: a server and a browser render the same
+// text.
 import type { VNode } from "vue";
 
 import { useNuxtApp } from "#app";
@@ -12,8 +15,11 @@ import { textSlot } from "./text";
 /** The units a file size climbs through, 1024 at a time. */
 const UNITS = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"] as const;
 
-/** A cell's value as the slot scope hands it, with the service's currency. */
-type Cell = { value: unknown; currency: string };
+/** What a cell reads of its service: the currency and the time zone. */
+type Formats = { currency: string; timeZone: string };
+
+/** A cell's value as the slot scope hands it, with the service's formats. */
+type Cell = { value: unknown } & Formats;
 
 /** A formatted value as a cell's content; an absent value as none. */
 const node = (text: string): VNode[] => [h("span", { class: "f-span" }, text)];
@@ -22,22 +28,24 @@ const node = (text: string): VNode[] => [h("span", { class: "f-span" }, text)];
 const isCalendarDay = (value: unknown): boolean =>
   typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 
-const date = ({ value }: Cell): VNode[] => {
+const date = ({ value, timeZone }: Cell): VNode[] => {
   if (value == null) return node("");
   const { $prosary } = useNuxtApp();
   const at = new Date(String(value));
   return node(
     isCalendarDay(value)
       ? $prosary.date(at, { dateStyle: "medium", timeZone: "UTC" })
-      : $prosary.date(at),
+      : $prosary.date(at, { timeZone }),
   );
 };
 
-const datetime = ({ value }: Cell): VNode[] => {
+const datetime = ({ value, timeZone }: Cell): VNode[] => {
   if (value == null) return node("");
   const { $prosary } = useNuxtApp();
   const at = new Date(String(value));
-  return node(`${$prosary.date(at)} ${$prosary.time(at)}`);
+  return node(
+    `${$prosary.date(at, { timeZone })} ${$prosary.time(at, { timeZone })}`,
+  );
 };
 
 const number = ({ value }: Cell): VNode[] => {
@@ -81,15 +89,17 @@ const boolean = ({ value }: Cell): VNode[] => {
 };
 
 /**
- * The `cell:<type>` slot defaults, over a reader of the service's currency
- * from the slot's scope: `table` for the table body, `browser` for the
- * browser's files.
+ * The `cell:<type>` slot defaults, over a reader of the service from the
+ * slot's scope, for its currency and its time zone: `table` for the table
+ * body, `browser` for the browser's files.
  */
-export const cellSlots = <S>(currencyOf: (scope: S) => string) => {
+export const cellSlots = <S>(serviceOf: (scope: S) => Formats) => {
   const cell =
     (format: (cell: Cell) => VNode[]) =>
-    (scope: S & { value: unknown }): VNode[] =>
-      format({ value: scope.value, currency: currencyOf(scope) });
+    (scope: S & { value: unknown }): VNode[] => {
+      const { currency, timeZone } = serviceOf(scope);
+      return format({ value: scope.value, currency, timeZone });
+    };
   return {
     "cell:date": cell(date),
     "cell:datetime": cell(datetime),

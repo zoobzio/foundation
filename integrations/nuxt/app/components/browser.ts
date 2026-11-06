@@ -6,7 +6,7 @@
 // action its own `icon`. Its own text — the refresh and actions labels, the
 // empty states, the clear button — reads in the visitor's locale, and a
 // date, number, currency, file size or boolean cell formats through the
-// app's prosary service.
+// app's prosary service, a date or a datetime in the browser's time zone.
 import type {
   BrowserFileCellContext,
   BrowserFilesPassthrough,
@@ -43,9 +43,7 @@ export default wrap(Core, {
     }),
   }),
   slots: {
-    ...cellSlots<BrowserFileCellContext<unknown>>(
-      ({ browser }) => browser.currency,
-    ),
+    ...cellSlots<BrowserFileCellContext<unknown>>(({ browser }) => browser),
     refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
     folderActions: ({ settings }) =>

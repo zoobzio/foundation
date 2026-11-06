@@ -5,6 +5,7 @@ import type { LinkedFile } from "#test/mount/browser";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import Browser from "../../../app/components/browser";
+import { $prosary } from "#test/mocks/app";
 import { makeBrowser } from "#test/mount/browser";
 
 const mounted: { unmount: () => void }[] = [];
@@ -129,5 +130,31 @@ describe("browser wrapper", () => {
     const cells = wrapper.findAll("tbody td").map((td) => td.text());
     expect(cells).toContain("1");
     expect(cells).toContain("Yes");
+  });
+
+  it("formats date and datetime cells in the browser's time zone", async () => {
+    // The 5th, early, in the zone; the 4th in UTC, and wherever the tests run.
+    const timeZone = "Pacific/Kiritimati";
+    const at = "2025-11-04T13:05:00Z";
+    const { service } = makeBrowser(
+      {
+        columns: [
+          { key: "name", label: "When", type: "datetime" },
+          { key: "url", label: "Day", type: "date" },
+        ],
+        timeZone,
+      },
+      {},
+      { folders: [], files: [{ id: 1, name: at, url: at }] },
+    );
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    await flushPromises();
+    const cells = wrapper.findAll("tbody td").map((td) => td.text());
+    const date = $prosary.date(new Date(at), { timeZone });
+    const time = $prosary.time(new Date(at), { timeZone });
+    expect(date).not.toBe($prosary.date(new Date(at), { timeZone: "UTC" }));
+    expect(cells).toContain(`${date} ${time}`);
+    expect(cells).toContain(date);
   });
 });

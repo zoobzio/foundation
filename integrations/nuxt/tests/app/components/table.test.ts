@@ -290,7 +290,9 @@ describe("table wrapper", () => {
     mounted.push(wrapper);
     await flushPromises();
     const cells = wrapper.findAll("tbody td").map((td) => td.text());
-    expect(cells).toContain(`${$prosary.date(at)} ${$prosary.time(at)}`);
+    expect(cells).toContain(
+      `${$prosary.date(at, { timeZone: "UTC" })} ${$prosary.time(at, { timeZone: "UTC" })}`,
+    );
     expect(cells).toContain(
       $prosary.date(new Date("2025-11-04"), {
         dateStyle: "medium",
@@ -303,5 +305,44 @@ describe("table wrapper", () => {
     expect(cells).toContain("1.5 kB");
     expect(cells).toContain("Yes");
     expect(cells).toContain("1");
+  });
+
+  it("formats date and datetime cells in the table's time zone", async () => {
+    type Timed = { id: number; when: string; day: string };
+    // The 5th, early, in the zone; the 4th in UTC, and wherever the tests run.
+    const timeZone = "Pacific/Kiritimati";
+    const at = "2025-11-04T13:05:00Z";
+    const config: Config<Timed> = {
+      columns: [
+        { key: "when", label: "When", type: "datetime" },
+        { key: "day", label: "Day", type: "date" },
+      ],
+      rowKey: "id",
+      timeZone,
+    };
+    const service = new TableService<Timed>(
+      "timed-table",
+      config,
+      reactive(createTableState(config)),
+      {
+        fetch: vi.fn(async () => ({
+          data: [{ id: 1, when: at, day: at }],
+          total: 1,
+          pageCount: 1,
+        })),
+      },
+    );
+    await service.init();
+    const wrapper = mount(Table<Timed>, {
+      props: { service },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await flushPromises();
+    const cells = wrapper.findAll("tbody td").map((td) => td.text());
+    const date = $prosary.date(new Date(at), { timeZone });
+    const time = $prosary.time(new Date(at), { timeZone });
+    expect(date).not.toBe($prosary.date(new Date(at), { timeZone: "UTC" }));
+    expect(cells).toEqual([`${date} ${time}`, date]);
   });
 });

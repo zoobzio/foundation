@@ -10,7 +10,8 @@
 // draws its own `icon`. Its own text — the toolbar's labels and
 // placeholders, the empty state, the clear button — reads in the
 // visitor's locale, and a date, number, currency, file size or boolean
-// cell formats through the app's prosary service.
+// cell formats through the app's prosary service, a date or a datetime in
+// the table's time zone.
 import type {
   TableBodyPassthrough,
   TableCellContext,
@@ -57,7 +58,7 @@ export default wrap(Core, {
     }),
   }),
   slots: {
-    ...cellSlots<TableCellContext<unknown>>(({ table }) => table.currency),
+    ...cellSlots<TableCellContext<unknown>>(({ table }) => table),
     refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
     columns: ({ settings }) => iconPart(settings.trigger, "columns"),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
