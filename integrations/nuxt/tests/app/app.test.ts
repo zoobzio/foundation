@@ -56,6 +56,8 @@ describe("app.vue", () => {
     expect(indicator.exists()).toBe(true);
     // The theme names the indicator's color; the shell never picks a role.
     expect(indicator.attributes("data-color")).toBe("var(--loading-indicator)");
+    // Unthrottled, so a fast page change shows the bar too.
+    expect(indicator.attributes("data-throttle")).toBe("0");
     expect(wrapper.find("main.page").exists()).toBe(true);
     expect(wrapper.findAll(".toast")).toHaveLength(0);
   });
