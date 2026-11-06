@@ -1,5 +1,26 @@
 # @zoobzio/nuxt
 
+## 0.1.7
+
+### Patch Changes
+
+- [`9d9bd1b`](https://github.com/zoobzio/foundation/commit/9d9bd1b577c8c9304d53355492a9697858e1ad79) Thanks [@zoobzio](https://github.com/zoobzio)! - The nuxt layer's date and datetime cells format in the service's time zone. The `cell:date` and `cell:datetime` slots of the table and browser wrappers formatted through the app's prosary service with no zone, so a cell read in the runtime's own: a server in UTC and a browser elsewhere rendered different text, and the page hydrated with a mismatch. Each now passes the table's or the browser's `timeZone` — the config's, `UTC` when it names none — as the vue components' own cells do, so the config's zone is the one a cell renders in on both sides. A calendar day, `YYYY-MM-DD`, still formats in UTC.
+
+- [`e09554d`](https://github.com/zoobzio/foundation/commit/e09554d03d8baa6925275c8a112d9a9654c2c5a8) Thanks [@zoobzio](https://github.com/zoobzio)! - The nuxt layer's shell shows the loading indicator at once. The shell passed `threshold` to `NuxtLoadingIndicator`, which is not a prop of the component, so Nuxt dropped it and kept its default throttle of 200ms: the bar only appeared for a page change that outlasted the window, and a fast one, a local request in particular, never showed it. The shell now passes `throttle` as `0`, so the bar runs for every page change and for every call that starts it.
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.1.7
+  - @zoobzio/query@0.1.7
+  - @zoobzio/browser@0.1.7
+  - @zoobzio/form@0.1.7
+  - @zoobzio/table@0.1.7
+  - @zoobzio/editor@0.1.7
+  - @zoobzio/code@0.1.7
+  - @zoobzio/prose@0.1.7
+  - @zoobzio/icons@0.1.7
+  - @zoobzio/theme@0.1.7
+  - @zoobzio/vue@0.1.7
+
 ## 0.1.6
 
 ### Patch Changes
