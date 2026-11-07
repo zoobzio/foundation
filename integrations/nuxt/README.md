@@ -146,7 +146,11 @@ names no icon of its own (the text literal, the one that opens the quote
 free text is typed in); `remove` on a tag's and a file's remove
 button and after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
 in a checkbox; the editor's and rich text's tools by key (`bold`,
-`heading`, `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`); and on
+`bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`), each drawn in place
+of the button's text so the toolbar is icon-only, with the tool's label in
+the visitor's locale as the button's accessible name and its `title`, and
+`expand` after the block type dropdown's text, which reads in the
+visitor's locale as its entries do; and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
 `sort-asc` or `sort-desc` after a sorted header, `folder` before a
 folder, `magic` before the table's search, `next` after an autocomplete
@@ -330,7 +334,10 @@ state of their own. The layer carries that state for Nuxt, split in two tiers:
   `load` the document on both sides, in setup, so the server's static copy
   and the client's editor hold the same document. The editor component
   renders that copy as HTML on the server and mounts the editor over it
-  only when the user interacts, so no `ClientOnly` is needed.
+  only when the user interacts, so no `ClientOnly` is needed. The layer's
+  `nuxt.config` defines `navigator` for the server build as the runtime's
+  own, since Nuxt's default (`undefined`) crashed tiptap as the editor
+  was constructed on the server in a production build.
   The code editor's record is the same shape with a cursor in place of the
   active marks; its component renders the text in a `pre` on the server and
   mounts the CodeMirror view in its place when the user interacts.

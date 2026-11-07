@@ -188,9 +188,19 @@ describe("form-field", () => {
     const tools = wrapper
       .findAll(".f-data-editor-tool")
       .map((b) => b.attributes("data-tool"));
-    expect(tools).toContain("heading-2");
-    expect(tools).not.toContain("heading-1");
     expect(tools).not.toContain("bulletList");
+    await wrapper
+      .get(".f-data-editor-block")
+      .trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const blocks = Array.from(
+      document.body.querySelectorAll('[role="menuitem"]'),
+    ).map((el) => el.getAttribute("data-block"));
+    expect(blocks).toEqual(["paragraph", "heading-2"]);
+    document.body.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
+    await flushPromises();
     await host.trigger("pointerdown");
     expect(host.attributes("contenteditable")).toBe("true");
     service.set("body", "");

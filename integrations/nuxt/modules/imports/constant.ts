@@ -405,6 +405,10 @@ export const VUE_TYPES = {
   ],
   "components/editor": [
     "EditorTool",
+    "EditorToolKind",
+    "EditorToolGroup",
+    "EditorGroup",
+    "EditorBlock",
     "EditorPassthrough",
     "EditorProps",
     "EditorEmits",

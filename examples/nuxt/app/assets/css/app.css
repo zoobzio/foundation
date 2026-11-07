@@ -1,0 +1,76 @@
+/* The page shell, on aurora's tokens. */
+
+body {
+  margin: 0;
+  font: var(--type-body);
+  letter-spacing: var(--type-body-letter-spacing);
+  color: var(--on-surface);
+  background: var(--surface);
+}
+
+.page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-5);
+  display: grid;
+  gap: var(--space-6);
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.page-title {
+  margin: 0 0 var(--space-2);
+  font: var(--type-headline);
+  letter-spacing: var(--type-headline-letter-spacing);
+}
+
+.page-lead {
+  margin: 0;
+  max-width: 48ch;
+  color: var(--on-surface-muted);
+}
+
+.page-scheme {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.output {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.output-title {
+  margin: 0;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+}
+
+.output-code {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  overflow-x: auto;
+  font: var(--type-code, var(--type-body));
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  color: var(--on-surface);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}

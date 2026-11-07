@@ -20,8 +20,8 @@
     "description": "The toolbar button for the inline code mark."
   },
   "heading": {
-    "defaultMessage": "H{level}",
-    "description": "The toolbar button for a heading; the level is 1 to 6. Keep it short: it is one of up to six side by side."
+    "defaultMessage": "Heading {level}",
+    "description": "The toolbar's block type dropdown entry for a heading, and the trigger's text when the selection is in one; the level is 1 to 6."
   },
   "bulletList": {
     "defaultMessage": "Bullet list",
@@ -50,5 +50,9 @@
   "redo": {
     "defaultMessage": "Redo",
     "description": "The toolbar button that redoes the last undone change."
+  },
+  "paragraph": {
+    "defaultMessage": "Paragraph",
+    "description": "The block type dropdown's entry for a plain paragraph, beside the headings; it is also the trigger's text when the selection is in one."
   }
 }

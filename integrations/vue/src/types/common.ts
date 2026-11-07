@@ -55,3 +55,9 @@ export interface TocLink extends Hierarchy<TocLink> {
  * A keyboard shortcut string, for example `meta+k`.
  */
 export type ButtonShortcut = string;
+
+/**
+ * The `data-*` attributes a rendered part may carry, which Vue's HTML
+ * attribute types leave out.
+ */
+export type DataAttributes = Record<`data-${string}`, string | undefined>;

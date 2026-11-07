@@ -1,16 +1,27 @@
-import type { EditorTool } from "../types/components/editor";
+import type {
+  EditorBlock,
+  EditorGroup,
+  EditorTool,
+} from "../types/components/editor";
 import type { ComputedRef, MaybeRefOrGetter, Ref } from "vue";
 import type { Service } from "@zoobzio/editor";
 
 import { computed, onBeforeUnmount, ref, toValue, watch } from "vue";
 import { html } from "@zoobzio/editor";
-import { editorTools } from "../utils/editor";
+import {
+  editorBlock,
+  editorBlocks,
+  editorGroups,
+  editorTools,
+} from "../utils/editor";
 
 /**
  * The editor's view model over a host element: the document as static
- * markup until the user interacts, the toolbar's tools, and `activate`,
- * which turns the editor on over the host in place. `editor.vue` is one
- * rendering of it; a consumer's own component is another.
+ * markup until the user interacts, the toolbar's tools and their groups,
+ * the block types and the one at the selection, and `activate`, which
+ * turns the editor on over the host in place.
+ * `editor.vue` is one rendering of it; a consumer's own component is
+ * another.
  *
  * The markup is the document through the editor's `html` codec. It follows
  * `load` while the editor is off and freezes at mount, so a view that binds
@@ -32,6 +43,9 @@ export const useEditor = <I, O>(
 ): {
   markup: Ref<string>;
   tools: ComputedRef<EditorTool[]>;
+  groups: ComputedRef<EditorGroup[]>;
+  blocks: ComputedRef<EditorBlock[]>;
+  block: ComputedRef<EditorBlock>;
   activate: (event?: Event) => void;
 } => {
   const render = () => html.write(service.json, service.context);
@@ -44,6 +58,9 @@ export const useEditor = <I, O>(
   );
 
   const tools = computed(() => editorTools(service));
+  const groups = computed(() => editorGroups(tools.value));
+  const blocks = computed(() => editorBlocks(tools.value));
+  const block = computed(() => editorBlock(tools.value, blocks.value));
 
   const activate = (event?: Event) => {
     const element = toValue(host);
@@ -56,5 +73,5 @@ export const useEditor = <I, O>(
     service.unmount();
   });
 
-  return { markup, tools, activate };
+  return { markup, tools, groups, blocks, block, activate };
 };

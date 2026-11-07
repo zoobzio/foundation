@@ -233,27 +233,44 @@ service.init();
 </Browser>
 ```
 
-`editor.vue` renders a headless `@zoobzio/editor` service: a toolbar with
-one button per mark and node the service's schema holds (bold, italic,
-headings by level, lists, quote, code block, rule, then undo and redo),
-over a host `div` that shows the document as static HTML. The editor is
+`editor.vue` renders a headless `@zoobzio/editor` service: a toolbar
+grouped as a rich text editor's is (the block type; the marks; the lists;
+quote, code block, and rule; then undo and redo) with a separator between
+groups, over a host `div` that shows the document as static HTML. The
+block type is one dropdown, the package's Menu, over the paragraph and the
+headings the service offers by level; its trigger names the block at the
+selection, and a pick applies it. The editor is
 off until the user interacts: a pointer or keyboard focus on the host, or
 a toolbar click, mounts the service's editor over the host in place, so
 the content is readable from the first paint (server-rendered and hydrated
 untouched) and turns editable with no visible change. The static copy
-follows `load` while the editor is off. Each button runs the tool's
-command and reports `aria-pressed` from the service's `active`. The
-`loaded`, `updated`, `mounted`, and `unmounted` events relay as emits;
-`data-mounted` on the root says the editor is on. `pt.tool` is built per
-tool; the `tool` slot receives its tool; `toolbar`
-replaces the whole bar, and its context carries `activate` for a custom
-bar to turn the editor on.
+follows `load` while the editor is off.
+
+The toolbar is reka's: one tab stop, with the arrow keys moving between
+the controls, the dropdown's trigger among them. Each tool is a Fab
+rendered through `Primitive`, with the
+tool's label as its accessible name and, by default, its text; a
+`toolLabel` slot that draws an icon makes the button icon-only with the
+name intact. A press keeps focus in the document, so the selection the
+command applies to stays where it is. A toggle (a mark, a block) reports
+`aria-pressed` from the service's `active`; an action (undo, redo, rule)
+never does. A tool is disabled where the service's `can` says its command
+would not apply: a mark inside a code block, undo with nothing to undo.
+The `loaded`, `updated`, `mounted`, and `unmounted` events relay as
+emits; `data-mounted` on the root says the editor is on. `pt.tool` is
+built per tool, `pt.separator` per group, and `pt.block` is the Menu's
+props; the `tool` slot receives its tool, `separator` its group, and
+`block` replaces the dropdown, whose trigger and items `blockLabel`,
+`blockAppend`, and `blockItemLabel` fill; `toolbar` replaces the whole
+bar, and its context carries `tools`, `groups`, `blocks`, `block`, and
+`activate` for a custom bar to turn the editor on.
 
 `useEditor(service, host)` is the component's view model on its own, for a
 consumer that renders the editor its own way: `markup`, the document as
 static HTML that follows `load` while the editor is off and freezes at
-mount; `tools`, the toolbar as data; and `activate`, which mounts the
-editor over the host in place. Bind `markup` to the host's `innerHTML`,
+mount; `tools`, the toolbar as data, `groups`, the same by group, `blocks`,
+the block types, and `block`, the one at the selection; and `activate`,
+which mounts the editor over the host in place. Bind `markup` to the host's `innerHTML`,
 `activate` to its `pointerdown` and `focus`, and give the host a
 `tabindex`. The editor unmounts with the scope.
 

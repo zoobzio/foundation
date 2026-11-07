@@ -48,6 +48,23 @@ export type Config = {
 export type Active = Record<string, boolean>;
 
 /**
+ * Whether each command would apply at the selection, mirroring the
+ * commands by name: `can.toggle("bold")` is false inside a code block,
+ * `can.undo()` is false with nothing to undo. What a toolbar reads to
+ * disable a tool. Each read is tied to the revision and the active
+ * snapshot, so a reactive container recomputes it as the selection moves.
+ */
+export type Can = {
+  toggle(mark: string, attrs?: Record<string, unknown>): boolean;
+  block(node: string, attrs?: Record<string, unknown>): boolean;
+  wrap(node: string, attrs?: Record<string, unknown>): boolean;
+  list(node: string): boolean;
+  insert(content: Doc | Doc[]): boolean;
+  undo(): boolean;
+  redo(): boolean;
+};
+
+/**
  * The state container the service reads and writes: the revision, which
  * counts every change to the document; whether the document is empty; the
  * active marks and nodes; and whether the editor is mounted. The document
@@ -139,6 +156,9 @@ export type Service<I, O> = {
   readonly empty: boolean;
   readonly active: Active;
   readonly mounted: boolean;
+
+  /** Whether each command would apply at the selection. */
+  readonly can: Can;
 
   /**
    * The document in the editor's own form. Reads the revision, so a

@@ -1,6 +1,7 @@
 import type {
   Actions,
   Active,
+  Can,
   Config,
   Context,
   Event,
@@ -14,6 +15,7 @@ import type { Emitter } from "@zoobzio/kit";
 import type { ChainedCommands, Extensions, JSONContent } from "@tiptap/core";
 
 import { Editor } from "@tiptap/core";
+import { EditorState, Selection } from "@tiptap/pm/state";
 import { StarterKit } from "@tiptap/starter-kit";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
@@ -41,6 +43,7 @@ import { features, same, snapshot } from "./util";
 export class EditorService<I, O> implements Service<I, O> {
   public readonly config: Config;
   public readonly context: Context;
+  public readonly can: Can;
 
   private readonly state: State;
   private readonly editor: Editor;
@@ -67,6 +70,7 @@ export class EditorService<I, O> implements Service<I, O> {
       injectCSS: false,
     });
     this.context = { schema: this.editor.schema, extensions };
+    this.can = this.checks();
     this.attach();
 
     // A non-extensible object is never wrapped by a reactive proxy (Vue
@@ -123,8 +127,10 @@ export class EditorService<I, O> implements Service<I, O> {
   }
 
   /**
-   * Replaces the document through the reader. The history starts over: a
-   * loaded document is a new beginning, not an edit to undo.
+   * Replaces the document through the reader. A loaded document is a new
+   * beginning, not an edit: the history starts over, and the selection
+   * sits at the document's start, as a fresh editor's does, rather than
+   * where tiptap's replace leaves it, at the end.
    */
   load(source: I): void {
     const content = this.actions.read(source, this.context);
@@ -141,14 +147,54 @@ export class EditorService<I, O> implements Service<I, O> {
    * state with no plugins and attaches them when a view is created; the
    * service attaches them at once, so history and the other document-level
    * plugins run before any mount, and the same with none. With `reset`,
-   * the plugins are dropped first, so each starts over.
+   * the state is built anew over the document, so each plugin starts over
+   * and the selection is at the start.
    */
   private attach(reset = false): void {
     const plugins = this.editor.extensionManager.plugins;
+    const current = this.editor.state;
     const state = reset
-      ? this.editor.state.reconfigure({ plugins: [] })
-      : this.editor.state;
-    this.editor.view.updateState(state.reconfigure({ plugins }));
+      ? EditorState.create({
+          doc: current.doc,
+          selection: Selection.atStart(current.doc),
+          plugins,
+        })
+      : current.reconfigure({ plugins });
+    this.editor.view.updateState(state);
+  }
+
+  /**
+   * The `can` reads over tiptap's dry run of each command. Each reads the
+   * revision and the active snapshot first, so a reactive container tracks
+   * them: what a command can do changes with the document (history) and
+   * with the selection's place (marks inside a code block), and the
+   * snapshot changes whenever the selection crosses a mark or node.
+   */
+  private checks(): Can {
+    const dry = (read: () => boolean): boolean =>
+      this.at(this.revision, () => {
+        void this.active;
+        return read();
+      });
+    const can = () => this.editor.can();
+    return {
+      toggle: (mark, attrs) => dry(() => can().toggleMark(mark, attrs)),
+      block: (node, attrs) =>
+        dry(() => can().toggleNode(node, EDITOR_BLOCK_FALLBACK, attrs)),
+      wrap: (node, attrs) => dry(() => can().toggleWrap(node, attrs)),
+      list: (node) => dry(() => can().toggleList(node, EDITOR_LIST_ITEM)),
+      insert: (content) => dry(() => can().insertContent(content)),
+      undo: () =>
+        dry(() => {
+          const { undo } = can();
+          return typeof undo === "function" ? undo() : false;
+        }),
+      redo: () =>
+        dry(() => {
+          const { redo } = can();
+          return typeof redo === "function" ? redo() : false;
+        }),
+    };
   }
 
   /** Writes the active snapshot when it differs from the one held. */

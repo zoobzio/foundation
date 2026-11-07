@@ -149,6 +149,17 @@ describe("load", () => {
     expect(service.revision).toBe(2);
   });
 
+  it("puts the selection at the start", () => {
+    const { service } = makeService();
+    service.load(doc(paragraph("First"), paragraph("Second")));
+    service.insert(paragraph("Inserted"));
+    expect(service.json.content?.map((n) => n.content?.[0]?.text)).toEqual([
+      "Inserted",
+      "First",
+      "Second",
+    ]);
+  });
+
   it("starts the history over", () => {
     const { service } = makeService();
     service.load(hello);
@@ -321,6 +332,73 @@ describe("commands", () => {
     expect(ran).toBe(true);
     expect(service.active.bold).toBe(true);
     expect(service.active.italic).toBe(true);
+  });
+});
+
+describe("can", () => {
+  it("mirrors the commands at the selection", () => {
+    const { service } = makeService();
+    service.load(hello);
+    select(service, 1, 6);
+    expect(service.can.toggle("bold")).toBe(true);
+    expect(service.can.block("heading", { level: 2 })).toBe(true);
+    expect(service.can.wrap("blockquote")).toBe(true);
+    expect(service.can.list("bulletList")).toBe(true);
+    expect(service.can.insert({ type: "horizontalRule" })).toBe(true);
+  });
+
+  it("refuses a mark where the node admits none", () => {
+    const { service } = makeService();
+    service.load(hello);
+    select(service, 1, 6);
+    service.block("codeBlock");
+    expect(service.active.codeBlock).toBe(true);
+    expect(service.can.toggle("bold")).toBe(false);
+    expect(service.can.toggle("italic")).toBe(false);
+  });
+
+  it("undo and redo follow the history", () => {
+    const { service } = makeService();
+    service.load(hello);
+    expect(service.can.undo()).toBe(false);
+    expect(service.can.redo()).toBe(false);
+    service.insert(paragraph("More"));
+    expect(service.can.undo()).toBe(true);
+    expect(service.can.redo()).toBe(false);
+    service.undo();
+    expect(service.can.undo()).toBe(false);
+    expect(service.can.redo()).toBe(true);
+  });
+
+  it("undo and redo are refused when history is off", () => {
+    const { service } = makeService({ config: { history: false } });
+    service.insert(paragraph("More"));
+    expect(service.can.undo()).toBe(false);
+    expect(service.can.redo()).toBe(false);
+  });
+
+  it("reads the revision and the active snapshot, so a reactive read tracks them", () => {
+    const reads: string[] = [];
+    const { service } = makeService({
+      options: {
+        get: {
+          state: {
+            revision: (v) => {
+              reads.push("revision");
+              return v;
+            },
+            active: (v) => {
+              reads.push("active");
+              return v;
+            },
+          },
+        },
+      },
+    });
+    service.load(hello);
+    reads.length = 0;
+    service.can.undo();
+    expect(reads).toEqual(["revision", "active"]);
   });
 });
 

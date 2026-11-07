@@ -50,7 +50,7 @@ describe("rich-text", () => {
     ctxOf(wrapper).editor.insert(paragraph("More"));
     await nextTick();
     expect(wrapper.emitted("update:modelValue")).toEqual([
-      ["<p>Hello</p><p>More</p>"],
+      ["<p>More</p><p>Hello</p>"],
     ]);
   });
 
@@ -89,7 +89,7 @@ describe("rich-text", () => {
     await nextTick();
     const [html] = wrapper.emitted("update:modelValue")!.at(-1) as [string];
     await wrapper.setProps({ modelValue: html });
-    expect(wrapper.get(".f-data-editor-content").text()).toBe("HelloMore");
+    expect(wrapper.get(".f-data-editor-content").text()).toBe("MoreHello");
     expect(editor.undo()).toBe(true);
   });
 
@@ -106,10 +106,12 @@ describe("rich-text", () => {
     const tools = wrapper
       .findAll(".f-data-editor-tool")
       .map((b) => b.attributes("data-tool"));
-    expect(tools).toContain("heading-2");
-    expect(tools).not.toContain("heading-1");
     expect(tools).not.toContain("bulletList");
     expect(tools).not.toContain("undo");
+    expect(ctxOf(wrapper).blocks.map((b) => b.value)).toEqual([
+      "paragraph",
+      "heading-2",
+    ]);
   });
 
   it("names the editor service by id", () => {
@@ -143,6 +145,12 @@ describe("rich-text", () => {
     expect(tools.every((b) => b.attributes("disabled") !== undefined)).toBe(
       true,
     );
+    expect(
+      tools.every((b) => b.attributes("data-disabled") !== undefined),
+    ).toBe(true);
+    expect(
+      wrapper.get(".f-data-editor-block").attributes("disabled"),
+    ).toBeDefined();
   });
 
   it("passthrough reaches the editor through the layer", () => {

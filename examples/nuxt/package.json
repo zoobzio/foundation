@@ -1,0 +1,24 @@
+{
+  "name": "@zoobzio/example-nuxt",
+  "private": true,
+  "description": "A fake app on the foundation Nuxt layer: one page with the rich text editor, styled with the layer's tokens.",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "prepare": "nuxi prepare",
+    "lint": "oxlint",
+    "typecheck": "nuxi typecheck"
+  },
+  "dependencies": {
+    "@zoobzio/icons": "workspace:*",
+    "@zoobzio/nuxt": "workspace:*",
+    "@zoobzio/prose": "workspace:*",
+    "@zoobzio/theme": "workspace:*",
+    "nuxt": "catalog:",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "vue-tsc": "catalog:"
+  }
+}

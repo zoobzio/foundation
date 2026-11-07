@@ -82,7 +82,12 @@ const layered = usePassthrough<RichTextPassthrough>(() => ({
           }
         : {}),
     },
-    ...(disabled ? { tool: () => ({ disabled: true }) } : {}),
+    ...(disabled
+      ? {
+          tool: () => ({ disabled: true }),
+          block: { pt: { trigger: { disabled: true } } },
+        }
+      : {}),
   },
 }));
 

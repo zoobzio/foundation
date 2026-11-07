@@ -1,4 +1,4 @@
-import type { EditorEmits } from "../types/components/editor";
+import type { EditorEmits, EditorToolGroup } from "../types/components/editor";
 import type { Level } from "@zoobzio/editor";
 
 /** The service events the editor relays as emits. Each is a declared emit. */
@@ -8,6 +8,20 @@ export const EDITOR_EVENTS = [
   "mounted",
   "unmounted",
 ] as const satisfies readonly (keyof EditorEmits)[];
+
+/** The groups of the toolbar, in the order they render. */
+export const EDITOR_TOOL_GROUPS: readonly EditorToolGroup[] = [
+  "headings",
+  "marks",
+  "lists",
+  "blocks",
+  "history",
+];
+
+/** The value of the block type dropdown's paragraph entry. */
+export const EDITOR_PARAGRAPH_KEY = "paragraph";
+
+export const EDITOR_PARAGRAPH_LABEL = "Paragraph";
 
 /** The heading levels the toolbar offers when the config names none. */
 export const EDITOR_HEADING_LEVELS: readonly Level[] = [1, 2, 3, 4, 5, 6];
@@ -22,7 +36,7 @@ export const EDITOR_MARKS: readonly (readonly [name: string, label: string])[] =
     ["code", "Code"],
   ];
 
-export const EDITOR_HEADING_LABEL = "H";
+export const EDITOR_HEADING_LABEL = "Heading ";
 export const EDITOR_BULLET_LIST_LABEL = "Bullet list";
 export const EDITOR_ORDERED_LIST_LABEL = "Ordered list";
 export const EDITOR_BLOCKQUOTE_LABEL = "Quote";

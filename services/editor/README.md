@@ -29,6 +29,8 @@ editor.block("heading", { level: 2 }); // block nodes, back to a paragraph
 editor.wrap("blockquote"); // wrapping nodes
 editor.list("bulletList"); // lists
 editor.undo();
+editor.can.toggle("bold"); // false inside a code block
+editor.can.undo(); // false with nothing to undo
 editor.document; // a hast root, through the writer
 editor.json; // the editor's own form
 
@@ -104,7 +106,11 @@ The service reads and writes the `state` container: the revision, the
 empty flag, the active snapshot, and the mounted flag. The document is not
 in it. `document` and `json` read the revision and then read the editor, so
 a reactive container recomputes them on every change and a reader that is
-not asked costs nothing.
+not asked costs nothing. `can` mirrors the commands by name as dry runs
+(`can.toggle`, `can.block`, `can.wrap`, `can.list`, `can.insert`,
+`can.undo`, `can.redo`), each reading the revision and the active snapshot
+first, so a toolbar bound to a reactive container disables a tool as the
+selection moves.
 
 ```ts
 createEditorState(); // plain: tests, Node
@@ -115,7 +121,8 @@ useState(`editor-${id}`, () => createEditorState()).value; // Nuxt, shared by id
 Each service holds its own editor. Two services over one container share
 the revision and nothing else, so one mounted editor per id. `load` must
 run where the editor runs: a revision carried across SSR says nothing about
-the document on the other side.
+the document on the other side. A loaded document is a new beginning: the
+history starts over and the selection sits at its start.
 
 `mount` takes its element over rather than appending to it: the element
 becomes the editor's DOM and its children are reconciled to the document.

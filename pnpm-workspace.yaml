@@ -2,6 +2,7 @@ packages:
   - packages/*
   - services/*
   - integrations/*
+  - examples/*
 
 catalog:
   "@changesets/changelog-github": ^0.7.0
