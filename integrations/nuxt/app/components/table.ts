@@ -8,7 +8,8 @@
 // head draws `drag` on each handle, a column's own `icon` before its
 // header, and `sort-asc` or `sort-desc` after a sorted header; a bulk action
 // draws its own `icon`. Its own text — the toolbar's labels and
-// placeholders, the empty state, the clear button — reads in the
+// placeholders, the empty state, the clear button, the name of a column's
+// resizer — reads in the
 // visitor's locale, and a date, number, currency, file size or boolean
 // cell formats through the app's prosary service, a date or a datetime in
 // the table's time zone.
@@ -43,8 +44,11 @@ export default wrap(Core, {
     },
     refresh: { label: text("table.refresh"), ...pt?.refresh },
     pagination: { as: Pagination, ...pt?.pagination },
-    head: layer<TableHeadPassthrough>(pt?.head, {
+    head: layer<TableHeadPassthrough<unknown>>(pt?.head, {
       selectAllCheckbox: { as: Checkbox },
+      resizer: (column) => ({
+        "aria-label": text("table.resize", { column: text(column.label) }),
+      }),
     }),
     body: layer<TableBodyPassthrough<unknown>>(pt?.body, {
       link: () => ({ as: NuxtLink }),

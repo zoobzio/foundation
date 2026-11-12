@@ -1,13 +1,16 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
-import type { PT, Rendered } from "../passthrough";
+import type { PT, PassthroughIter, Rendered } from "../passthrough";
 import type { DataTableColumn, Service } from "@zoobzio/table";
-import type { VNode } from "vue";
+import type { HTMLAttributes, VNode } from "vue";
 
 /**
- * The parts of the table head that accept passthrough.
+ * The parts of the table head that accept passthrough. `resizer` is the
+ * handle on a column's trailing border, built per column: a focusable
+ * separator named for the column, whose value is the column's width.
  */
-export type TableHeadPassthrough = {
+export type TableHeadPassthrough<T> = {
   selectAllCheckbox: Rendered<CheckboxProps, CheckboxEmits>;
+  resizer: PassthroughIter<DataTableColumn<T>, HTMLAttributes>;
 };
 
 /**
@@ -15,7 +18,7 @@ export type TableHeadPassthrough = {
  */
 export type TableHeadProps<T> = {
   service: Service<T>;
-  pt?: PT<TableHeadPassthrough>;
+  pt?: PT<TableHeadPassthrough<T>>;
 };
 
 /**
@@ -24,7 +27,7 @@ export type TableHeadProps<T> = {
 export type TableHeadContext<T> = {
   table: Service<T>;
   el: HTMLTableSectionElement | null;
-  settings: TableHeadPassthrough;
+  settings: TableHeadPassthrough<T>;
 };
 
 /**

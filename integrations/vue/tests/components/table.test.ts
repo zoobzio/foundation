@@ -75,6 +75,81 @@ describe("table", () => {
     expect(name.classes()).toContain("f-data-table-sorted");
   });
 
+  it("renders a resizer on every column border and widths by value", async () => {
+    const { service } = makeTable(
+      { actions: fakeActions, bulkActions: fakeBulkActions },
+      { actions: { edit: vi.fn() }, bulkActions: { removeSelected: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    const resizers = wrapper.findAll("thead th > .f-data-table-resizer");
+    expect(resizers).toHaveLength(service.visibleColumns.length);
+    expect(resizers.map((r) => r.attributes("aria-label"))).toEqual([
+      "Resize ID",
+      "Resize Name",
+      "Resize Status",
+      "Resize Created",
+      "Resize Amount",
+      "Resize Site",
+    ]);
+    expect(resizers[1]?.attributes("role")).toBe("separator");
+    expect(resizers[1]?.attributes("aria-valuenow")).toBeUndefined();
+
+    // One col per rendered column, select and actions included.
+    const cols = wrapper.findAll("colgroup col");
+    expect(cols).toHaveLength(service.colSpan);
+    expect(cols.every((c) => !c.attributes("style"))).toBe(true);
+
+    service.resizeColumn("name", 240);
+    await flushPromises();
+    expect(cols[2]?.attributes("style")).toContain("width: 240px");
+    expect(resizers[1]?.attributes("aria-valuenow")).toBe("240");
+    expect(resizers[1]?.attributes("aria-valuemin")).toBe("48");
+  });
+
+  it("resizes a column as its resizer is dragged and resets on a double click", async () => {
+    const { service } = makeTable({
+      columns: [
+        { key: "id", label: "ID", type: "number" },
+        { key: "name", label: "Name", type: "text", width: 200 },
+      ],
+    });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const resizer = wrapper.findAll(".f-data-table-resizer")[1];
+    if (!resizer) throw new Error("no resizer");
+    const th = wrapper.findAll("thead th")[1];
+    await resizer.trigger("pointerdown", { button: 0, clientX: 100 });
+    expect(th?.classes()).toContain("f-data-table-resizing");
+    await resizer.trigger("pointermove", { clientX: 160 });
+    expect(service.columnWidth("name")).toBe(260);
+    expect(wrapper.findAll("colgroup col")[1]?.attributes("style")).toContain(
+      "width: 260px",
+    );
+    await resizer.trigger("pointerup");
+    expect(th?.classes()).not.toContain("f-data-table-resizing");
+    await resizer.trigger("keydown", { key: "ArrowLeft" });
+    expect(service.columnWidth("name")).toBe(244);
+    await resizer.trigger("dblclick");
+    expect(service.columnWidth("name")).toBe(200);
+  });
+
+  it("names a resizer through pt.head.resizer", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({
+      service,
+      pt: {
+        head: {
+          resizer: (column) => ({ "aria-label": `Size ${column.label}` }),
+        },
+      },
+    });
+    const resizer = wrapper.get(".f-data-table-resizer");
+    expect(resizer.attributes("aria-label")).toBe("Size ID");
+    expect(resizer.attributes("role")).toBe("separator");
+  });
+
   it("relays the bulkClear slot from the top", async () => {
     const { service } = makeTable(
       { bulkActions: fakeBulkActions },

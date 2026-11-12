@@ -11,8 +11,8 @@ import { dateValues } from "@zoobzio/query";
  * else is a bare field, free entry and no operator stage. A column's
  * properties beyond the ones the table and its views read (what a layer
  * widens it with, such as an icon) are carried onto its field, so the
- * search draws the field as the column does; its `link` is the view's and
- * stays off the field.
+ * search draws the field as the column does; its `link`, `width`, and `minWidth` are the
+ * view's and stay off the field.
  */
 export const fields = <T>(
   columns: DataTableColumn<T>[],
@@ -33,6 +33,8 @@ export const fields = <T>(
         defaultOperator,
         values: declared,
         link: _l,
+        width: _w,
+        minWidth: _m,
         ...rest
       } = c;
       const values =

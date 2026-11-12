@@ -39,7 +39,21 @@ useServiceEmits(service, TABLE_EVENTS, emit);
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const { page, pageSize, pageCount, total, hasSelection } = useRefs(service);
+const {
+  page,
+  pageSize,
+  pageCount,
+  total,
+  hasSelection,
+  visibleColumns,
+  isSelectable,
+  hasActions,
+} = useRefs(service);
+
+const widthOf = (key: keyof T) => {
+  const width = service.columnWidth(String(key));
+  return width === undefined ? undefined : { width: `${width}px` };
+};
 
 const settings = usePassthrough<TablePassthrough>(() => ({
   pt,
@@ -125,6 +139,15 @@ const { THead, TBody } = useForward({
     </TableBulkActions>
 
     <table class="f-table">
+      <colgroup>
+        <col v-if="isSelectable" class="f-data-table-select" />
+        <col
+          v-for="col in visibleColumns"
+          :key="String(col.key)"
+          :style="widthOf(col.key)"
+        />
+        <col v-if="hasActions" class="f-data-table-actions" />
+      </colgroup>
       <THead />
       <TBody />
     </table>

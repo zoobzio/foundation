@@ -24,7 +24,8 @@ export type TableBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 
 /**
  * The slice of the state container a table may start from: the paging,
- * sort, selection, column order, and committed query the consumer chooses,
+ * sort, selection, column order, column widths, and committed query the
+ * consumer chooses,
  * never what a fetch fills in. It seeds the `useState` record, so it must
  * survive Nuxt's payload (devalue carries the `Set`).
  */
@@ -37,6 +38,7 @@ export type TableInitial<T> = Partial<
     | "sortDirection"
     | "selected"
     | "columnOrder"
+    | "columnWidths"
     | "entries"
   >
 >;

@@ -5,6 +5,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { TableService } from "../src/service";
 import { createTableState } from "../src/state";
+import { TABLE_MIN_COLUMN_WIDTH } from "../src/constants";
 import { QUERY_TEXT_LITERAL } from "@zoobzio/query";
 import type {
   Actions,
@@ -303,6 +304,94 @@ describe("columns", () => {
     service.reorderColumns(["id"]);
     service.resetColumns();
     expect(service.columnOrder).toEqual(["status", "id"]);
+  });
+
+  it("resizeColumn rounds the width and holds it at the minimum", () => {
+    const { service } = makeService();
+    expect(service.columnWidth("name")).toBeUndefined();
+    service.resizeColumn("name", 180.4);
+    expect(service.columnWidth("name")).toBe(180);
+    expect(service.columnWidths).toEqual({ name: 180 });
+    service.resizeColumn("name", 3);
+    expect(service.columnWidth("name")).toBe(TABLE_MIN_COLUMN_WIDTH);
+  });
+
+  it("resizeColumn holds a column at the minimum it names", () => {
+    const { service } = makeService({
+      config: {
+        columns: [{ key: "name", label: "Name", minWidth: 120 }],
+      },
+    });
+    expect(service.columnMinWidth("name")).toBe(120);
+    service.resizeColumn("name", 50);
+    expect(service.columnWidth("name")).toBe(120);
+  });
+
+  it("resizeColumn replaces the widths and emits change", () => {
+    const { service, state } = makeService();
+    const change = vi.fn();
+    service.on("change", change);
+    const before = state.columnWidths;
+    service.resizeColumn("name", 200);
+    expect(state.columnWidths).not.toBe(before);
+    expect(change).toHaveBeenCalledWith(
+      expect.objectContaining({
+        field: "columnWidths",
+        after: { name: 200 },
+      }),
+    );
+  });
+
+  it("resizeColumn ignores an unknown key, a non-finite width, and no change", () => {
+    const { service, state } = makeService();
+    service.resizeColumn("name", 200);
+    const before = state.columnWidths;
+    service.resizeColumn("ghost", 200);
+    service.resizeColumn("name", Number.NaN);
+    service.resizeColumn("name", 200);
+    expect(state.columnWidths).toBe(before);
+  });
+
+  it("resetColumnWidth restores the declared width, or none", () => {
+    const { service, state } = makeService({
+      state: createTableState({
+        columns: [
+          { key: "id", label: "ID", width: 80 },
+          { key: "name", label: "Name" },
+        ],
+        rowKey: "id",
+      }),
+      config: {
+        columns: [
+          { key: "id", label: "ID", width: 80 },
+          { key: "name", label: "Name" },
+        ],
+      },
+    });
+    expect(service.columnWidth("id")).toBe(80);
+    service.resizeColumn("id", 300);
+    service.resizeColumn("name", 300);
+    service.resetColumnWidth("id");
+    service.resetColumnWidth("name");
+    expect(service.columnWidths).toEqual({ id: 80 });
+    const before = state.columnWidths;
+    service.resetColumnWidth("name");
+    expect(state.columnWidths).toBe(before);
+  });
+
+  it("resetColumns restores the declared widths", () => {
+    const columns = [
+      { key: "id" as const, label: "ID", width: 80 },
+      { key: "name" as const, label: "Name" },
+    ];
+    const { service } = makeService({
+      state: createTableState({ columns, rowKey: "id" }),
+      config: { columns },
+    });
+    service.resizeColumn("id", 300);
+    service.resizeColumn("name", 300);
+    service.resetColumns();
+    expect(service.columnWidths).toEqual({ id: 80 });
   });
 
   it("colSpan adds a column each for row actions and bulk actions", () => {

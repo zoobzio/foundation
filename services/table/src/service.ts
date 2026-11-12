@@ -19,13 +19,15 @@ import {
   TABLE_DEFAULT_CURRENCY,
   TABLE_DEFAULT_LOCALE,
   TABLE_DEFAULT_TIME_ZONE,
+  TABLE_MIN_COLUMN_WIDTH,
   TABLE_STATE_FIELDS,
 } from "./constants";
+import { declaredWidths } from "./state";
 import { fields } from "./util";
 
 /**
  * The headless table machine. Owns paging, sort, selection, column order,
- * and the query over its columns; delegates data loading to `wiring.fetch`.
+ * column widths, and the query over its columns; delegates data loading to `wiring.fetch`.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy; the
@@ -131,6 +133,9 @@ export class TableService<T> implements Service<T> {
   }
   get columnOrder(): string[] {
     return this.state.columnOrder;
+  }
+  get columnWidths(): Record<string, number> {
+    return this.state.columnWidths;
   }
   get searchable(): boolean {
     return this.config.searchable ?? true;
@@ -304,6 +309,29 @@ export class TableService<T> implements Service<T> {
     this.state.columnOrder = order;
   }
 
+  columnWidth(key: string): number | undefined {
+    return this.columnWidths[key];
+  }
+
+  columnMinWidth(key: string): number {
+    return this.columnMap.get(key)?.minWidth ?? TABLE_MIN_COLUMN_WIDTH;
+  }
+
+  resizeColumn(key: string, width: number): void {
+    if (!this.columnMap.has(key) || !Number.isFinite(width)) return;
+    const next = Math.max(this.columnMinWidth(key), Math.round(width));
+    if (this.columnWidths[key] === next) return;
+    this.state.columnWidths = { ...this.columnWidths, [key]: next };
+  }
+
+  resetColumnWidth(key: string): void {
+    const declared = this.columnMap.get(key)?.width;
+    if (this.columnWidths[key] === declared) return;
+    const { [key]: _, ...rest } = this.columnWidths;
+    this.state.columnWidths =
+      declared === undefined ? rest : { ...rest, [key]: declared };
+  }
+
   private insertAtDefinition(order: string[], key: string): string[] {
     const index = this.definitionIndex.get(key) ?? Infinity;
     const at = order.findIndex(
@@ -326,6 +354,7 @@ export class TableService<T> implements Service<T> {
 
   resetColumns(): void {
     this.state.columnOrder = this.defaultColumnKeys;
+    this.state.columnWidths = declaredWidths(this.columns);
   }
 
   // --- search ----------------------------------------------------------

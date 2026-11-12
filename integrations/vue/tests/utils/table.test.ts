@@ -33,11 +33,13 @@ describe("columnOption", () => {
     });
   });
 
-  it("keeps a column's link off the option", () => {
+  it("keeps a column's link and widths off the option", () => {
     const { service } = makeTable();
     const column = {
       ...col("name"),
       link: (row: FakeRow) => `/rows/${row.id}`,
+      width: 200,
+      minWidth: 80,
     };
     expect(columnOption(service, column)).toEqual({
       value: "name",

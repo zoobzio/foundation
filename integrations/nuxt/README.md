@@ -382,7 +382,8 @@ The options are the headless config with the behavior joined on. An action
 is its descriptor and its handler under one key (`{ label, action }`); the
 factory splits them back into the config and the wiring the service takes.
 `initial` is the slice of the state container the consumer chooses (for a
-table: paging, sort, selection, column order, committed query), never what
+table: paging, sort, selection, column order, column widths, committed
+query), never what
 a fetch fills in. It seeds the `useState` record on first access, so it
 must be something Nuxt's payload can carry: plain data, with `Set` and
 `Date` allowed (devalue serializes them). A second id with the same

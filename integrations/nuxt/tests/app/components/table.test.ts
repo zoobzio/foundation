@@ -131,6 +131,19 @@ describe("table wrapper", () => {
     expect(icon("button.f-select-trigger")).toBe("expand");
   });
 
+  it("names each column's resizer in the visitor's locale", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const resizers = wrapper.findAll("th > .f-data-table-resizer");
+    expect(resizers).toHaveLength(service.visibleColumns.length);
+    const first = service.visibleColumns[0];
+    expect(resizers[0]?.attributes("aria-label")).toBe(
+      `Resize ${String(first?.label)}`,
+    );
+    expect(resizers[0]?.attributes("role")).toBe("separator");
+  });
+
   it("draws the sort direction after a sorted header", async () => {
     const { service } = makeTable({
       columns: [

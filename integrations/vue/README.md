@@ -145,6 +145,25 @@ content the cell would otherwise render: the type's formatting or a
 `pt.body.link` swaps the anchor for a router link, which receives the same
 `href`.
 
+Every column's header carries a resizer on its trailing border, a
+`span.f-data-table-resizer` that is the last child of the `th`, outside
+the `header` slot so a replaced header keeps it. A drag writes the
+column's width through the service's `resizeColumn` as the pointer moves,
+starting from the service's width or, for a column that has none, from the
+rendered width of its `th`; the left and right arrow keys step it by 16
+pixels, and a double click or Enter restores the width the column
+declares. The `th` carries `f-data-table-resizing` for the length of a
+drag. The resizer is a focusable `separator` named for its column
+(`Resize Name`), with the width as its value; `pt.head.resizer` builds its
+attributes per column. The table renders the widths by value: a
+`colgroup` with one `col` per rendered column, each sized column's `col`
+carrying its `width` inline. The package ships no styles, so the
+stylesheet places the resizer on the border (an absolutely positioned
+strip on the `th`'s inline end, with `cursor: col-resize` and
+`touch-action: none`) and decides how firmly a width holds: under
+`table-layout: fixed` a `col`'s width is the column's width, while the
+default `auto` layout treats it as a preference the content can exceed.
+
 `form.vue` renders a headless `@zoobzio/form` service the same way: one
 `form-field.vue` per config field, each resolved to the control its `type`
 names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,

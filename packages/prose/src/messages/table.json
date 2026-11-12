@@ -19,6 +19,10 @@
     "defaultMessage": "Clear",
     "description": "The button that clears the selected rows."
   },
+  "resize": {
+    "defaultMessage": "Resize {column}",
+    "description": "The accessible name of the handle on a column's border that resizes the column."
+  },
   "searchColumns": {
     "defaultMessage": "Search columns...",
     "description": "The placeholder of the column manager's search."

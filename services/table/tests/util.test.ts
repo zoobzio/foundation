@@ -135,11 +135,13 @@ describe("fields", () => {
     });
   });
 
-  it("keeps a column's link off its field", () => {
+  it("keeps a column's link and widths off its field", () => {
     const column: DataTableColumn<FakeRow> = {
       key: "name",
       label: "Name",
       link: (row) => `/rows/${row.id}`,
+      width: 200,
+      minWidth: 80,
     };
     expect(fields([column], "UTC")).toEqual({ name: { label: "Name" } });
   });

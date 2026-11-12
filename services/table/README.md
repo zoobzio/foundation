@@ -2,8 +2,8 @@
 
 Headless data table service. Pure TypeScript, no framework dependency.
 
-Owns: paging, sort, row selection, column order, and the query over its
-columns (`@zoobzio/query`).
+Owns: paging, sort, row selection, column order, column widths, and the
+query over its columns (`@zoobzio/query`).
 Delegates: data loading (`fetch`) and state storage (the container).
 
 ## Usage
@@ -77,6 +77,30 @@ query does not read it; it stays off the column's field.
 { key: "name", label: "Name", type: "text", link: (row) => `/users/${row.id}` }
 ```
 
+## Column widths
+
+`columnWidths` holds the width of each sized column in pixels, by column
+key. A column that declares a `width` starts at it; a column without one
+has no entry until it is resized, and a view leaves it to size by its
+content. `resizeColumn(key, width)` rounds the width to a whole pixel and
+holds it at the column's `minWidth`, `TABLE_MIN_COLUMN_WIDTH` (48) where
+it names none. `resetColumnWidth(key)` restores the declared width, or
+none; `resetColumns()` restores the declared widths along with the default
+order. Each write replaces the record and emits `change`.
+
+```ts
+const columns = [
+  { key: "id", label: "ID", width: 80 },
+  { key: "name", label: "Name", minWidth: 120 },
+];
+
+table.resizeColumn("name", 240);
+table.columnWidth("name"); // 240
+table.columnWidths; // { id: 80, name: 240 }
+table.resetColumnWidth("name");
+table.columnWidth("name"); // undefined
+```
+
 ### Date values
 
 A `date` or `datetime` column that declares no `values` suggests days,
@@ -89,7 +113,7 @@ so a column can wrap it. The generation rule is the query's to document.
 ## The state container
 
 The service reads and writes the `state` container: paging, sort, selection,
-column order, and the query's entries and draft. The container can be a
+column order, column widths, and the query's entries and draft. The container can be a
 plain object or a reactive proxy. The service replaces each member as a
 whole, so a proxy tracks every change.
 

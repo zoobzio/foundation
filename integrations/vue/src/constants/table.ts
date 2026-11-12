@@ -12,6 +12,7 @@ export const TABLE_COLUMNS_GROUP_LABEL = "Columns";
 export const TABLE_ACTIONS_LABEL = "Actions";
 export const TABLE_EMPTY_TEXT = "No data";
 export const TABLE_CLEAR_SELECTION_LABEL = "Clear";
+export const TABLE_RESIZE_LABEL = "Resize";
 
 export const TABLE_COLUMNS_PLACEHOLDER = "Search columns...";
 export const TABLE_SEARCH_PLACEHOLDER = "Search...";

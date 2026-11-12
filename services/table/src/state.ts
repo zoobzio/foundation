@@ -1,9 +1,22 @@
-import type { Config, State } from "./types";
+import type { Config, DataTableColumn, State } from "./types";
 
 import {
   TABLE_DEFAULT_PAGE_SIZE,
   TABLE_DEFAULT_SORT_DIRECTION,
 } from "./constants";
+
+/**
+ * The widths the columns declare, by column key: what the container starts
+ * from and what a reset restores.
+ */
+export const declaredWidths = <T>(
+  columns: DataTableColumn<T>[],
+): Record<string, number> =>
+  Object.fromEntries(
+    columns.flatMap((c) =>
+      c.width === undefined ? [] : [[String(c.key), c.width]],
+    ),
+  );
 
 /**
  * Builds the initial state container from config defaults. The result is a
@@ -23,6 +36,7 @@ export const createTableState = <T>(config: Config<T>): State<T> => ({
   columnOrder: (
     config.defaultColumnOrder ?? config.columns.map((c) => c.key)
   ).map(String),
+  columnWidths: declaredWidths(config.columns),
   entries: [],
   draft: "",
 });

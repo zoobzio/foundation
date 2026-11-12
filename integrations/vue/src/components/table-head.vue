@@ -13,8 +13,10 @@ import Primitive from "./primitive.vue";
 import { useTemplateRef } from "vue";
 import { useRefs } from "../composables/ref";
 import { useDrag } from "../composables/drag";
+import { useResize } from "../composables/resize";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { TABLE_RESIZE_LABEL } from "../constants/table";
 </script>
 
 <script setup lang="ts" generic="T">
@@ -31,7 +33,13 @@ const drag = useDrag(
   { handle: true },
 );
 
-const settings = usePassthrough<TableHeadPassthrough>(() => ({
+const resize = useResize(
+  (key) => service.columnWidth(key),
+  (key, width) => service.resizeColumn(key, width),
+  (key) => service.resetColumnWidth(key),
+);
+
+const settings = usePassthrough<TableHeadPassthrough<T>>(() => ({
   pt,
   recipes: {
     selectAllCheckbox: {
@@ -39,6 +47,14 @@ const settings = usePassthrough<TableHeadPassthrough>(() => ({
       modelValue: selectAllState.value,
       "onUpdate:modelValue": () => service.toggleAll(),
     },
+    resizer: (column) => ({
+      role: "separator",
+      tabindex: 0,
+      "aria-orientation": "vertical",
+      "aria-label": `${TABLE_RESIZE_LABEL} ${column.label}`,
+      "aria-valuemin": service.columnMinWidth(String(column.key)),
+      "aria-valuenow": service.columnWidth(String(column.key)),
+    }),
   },
 }));
 
@@ -67,6 +83,7 @@ defineSlots<TableHeadSlots<T>>();
           'f-data-table-sortable': col.sortable,
           'f-data-table-sorted': service.isSorted(col),
           'f-data-table-dragging': drag.isDragging(String(col.key)),
+          'f-data-table-resizing': resize.isResizing(String(col.key)),
           'f-data-table-drop-left':
             drag.dropSideFor(String(col.key)) === 'before',
           'f-data-table-drop-right':
@@ -99,6 +116,13 @@ defineSlots<TableHeadSlots<T>>();
             </span>
           </div>
         </slot>
+        <span
+          class="f-span f-data-table-resizer"
+          v-bind="{
+            ...settings.resizer(col),
+            ...resize.handleAttrs(String(col.key)),
+          }"
+        />
       </th>
       <th v-if="hasActions" class="f-th f-data-table-actions" />
     </tr>

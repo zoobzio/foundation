@@ -6,7 +6,8 @@ import type { DataTableColumn, Service } from "@zoobzio/table";
  * is disabled: it stays visible. The column's properties beyond the ones
  * the table and its views read (what a layer widens it with, such as an
  * icon) are carried onto the option, so the manager draws the column as
- * the head does; its `link` is the body's and stays off the option.
+ * the head does; its `link`, `width`, and `minWidth` are the table's and stay off the
+ * option.
  */
 export const columnOption = <T>(
   table: Service<T>,
@@ -24,6 +25,8 @@ export const columnOption = <T>(
     defaultOperator: _d,
     values: _v,
     link: _l,
+    width: _w,
+    minWidth: _m,
     ...rest
   } = column;
   return {

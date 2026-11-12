@@ -84,6 +84,18 @@ export interface DataTableColumn<T> {
    * field. On a `url` column the route replaces the value's own link.
    */
   link?: (row: T) => string;
+  /**
+   * The width the column starts at, in pixels. It seeds the container's
+   * `columnWidths`, and is what `resetColumnWidth` restores. Without it
+   * the column has no width until it is resized, and a view sizes it by
+   * its content.
+   */
+  width?: number;
+  /**
+   * The narrowest the column resizes to, in pixels. Defaults to
+   * `TABLE_MIN_COLUMN_WIDTH`.
+   */
+  minWidth?: number;
 }
 
 /**
@@ -186,7 +198,7 @@ export type Config<T> = {
 
 /**
  * The state container the service reads and writes: paging, sort,
- * selection, column order, and the query's slice. The container can be a
+ * selection, column order, column widths, and the query's slice. The container can be a
  * plain object or a reactive proxy. The service replaces each member as a
  * whole, so a proxy tracks every change. `entries` and `draft` belong to
  * the table's `query` machine, its only writer.
@@ -203,6 +215,11 @@ export type State<T> = {
   sortDirection: SortDirection;
   selected: Set<string>;
   columnOrder: string[];
+  /**
+   * The width of each sized column, in pixels, by column key. A column
+   * without an entry has no width of its own.
+   */
+  columnWidths: Record<string, number>;
   entries: Entry[];
   draft: string;
 };
@@ -282,6 +299,7 @@ export type Service<T> = {
   readonly sortDirection: SortDirection;
   readonly selected: Set<string>;
   readonly columnOrder: string[];
+  readonly columnWidths: Record<string, number>;
 
   readonly visibleColumns: DataTableColumn<T>[];
   readonly filterableColumns: DataTableColumn<T>[];
@@ -307,6 +325,28 @@ export type Service<T> = {
   setVisibleColumns(keys: Iterable<string>): void;
   moveColumn(key: string, toKey: string): void;
   reorderColumns(order: string[]): void;
+  /**
+   * The width of a column in pixels, by its key as a string, or `undefined` for a column that has
+   * none: a view leaves it to size by its content.
+   */
+  columnWidth(key: string): number | undefined;
+  /**
+   * The narrowest a column resizes to, in pixels.
+   */
+  columnMinWidth(key: string): number;
+  /**
+   * Sets the width of a column, rounded to a whole pixel and held at the
+   * column's minimum. An unknown key and a width that is not a finite
+   * number are ignored.
+   */
+  resizeColumn(key: string, width: number): void;
+  /**
+   * Restores a column to the width it declares, or to none.
+   */
+  resetColumnWidth(key: string): void;
+  /**
+   * Restores the default column order and the declared column widths.
+   */
   resetColumns(): void;
   isColumnPinned(key: keyof T): boolean;
   isColumnVisible(key: keyof T): boolean;

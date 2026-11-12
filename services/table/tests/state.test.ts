@@ -21,6 +21,7 @@ describe("createTableState", () => {
       sortDirection: "asc",
       selected: new Set(),
       columnOrder: fakeColumns.map((c) => String(c.key)),
+      columnWidths: {},
       entries: [],
       draft: "",
     });
@@ -32,6 +33,17 @@ describe("createTableState", () => {
       defaultColumnOrder: ["name", "id"],
     });
     expect(state.columnOrder).toEqual(["name", "id"]);
+  });
+
+  it("seeds columnWidths from the widths the columns declare", () => {
+    const state = createTableState<FakeRow>({
+      ...config,
+      columns: [
+        { key: "id", label: "ID", width: 80 },
+        { key: "name", label: "Name" },
+      ],
+    });
+    expect(state.columnWidths).toEqual({ id: 80 });
   });
 
   it("each call returns an independent container", () => {
