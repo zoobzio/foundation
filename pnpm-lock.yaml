@@ -37,11 +37,11 @@ catalogs:
       specifier: ^4.5.0
       version: 4.6.2
     '@prosary/kit':
-      specifier: 0.0.10
-      version: 0.0.10
+      specifier: 0.0.11
+      version: 0.0.11
     '@prosary/nuxt':
-      specifier: 0.0.10
-      version: 0.0.10
+      specifier: 0.0.11
+      version: 0.0.11
     '@tiptap/core':
       specifier: 3.32.0
       version: 3.32.0
@@ -118,8 +118,8 @@ catalogs:
       specifier: ^1.86.0
       version: 1.86.0
     prosary:
-      specifier: 0.0.10
-      version: 0.0.10
+      specifier: 0.0.11
+      version: 0.0.11
     reka-ui:
       specifier: ^2.6.0
       version: 2.10.1
@@ -212,7 +212,7 @@ importers:
         version: 4.6.2(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))
       '@prosary/nuxt':
         specifier: 'catalog:'
-        version: 0.0.10(@nuxt/schema@4.6.2)(@prosary/kit@0.0.10)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))
+        version: 0.0.11(@nuxt/schema@4.6.2)(@prosary/kit@0.0.11)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))
       '@untheme/nuxt':
         specifier: 'catalog:'
         version: 0.6.1(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))
@@ -260,7 +260,7 @@ importers:
         version: 0.3.0
       prosary:
         specifier: 'catalog:'
-        version: 0.0.10
+        version: 0.0.11
       reka-ui:
         specifier: 'catalog:'
         version: 2.10.1(vue@3.5.44(typescript@5.9.3))
@@ -377,13 +377,13 @@ importers:
     devDependencies:
       '@prosary/kit':
         specifier: 'catalog:'
-        version: 0.0.10
+        version: 0.0.11
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
       prosary:
         specifier: 'catalog:'
-        version: 0.0.10
+        version: 0.0.11
       vitest:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@26.6.6)(@vitest/coverage-v8@5.0.3)(happy-dom@20.10.6)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1))
@@ -1558,34 +1558,37 @@ packages:
   '@poppinss/exception@1.2.3':
     resolution: {integrity: sha512-dCED+QRChTVatE9ibtoaxc+WkdzOSjYTKi/+uacHWIsfodVfpsueo3+DKpgU5Px8qXjgmXkSvhXvSCz3fnP9lw==}
 
-  '@prosary/core@0.0.10':
-    resolution: {integrity: sha512-iAUMyxc6CGdJsrdX26nl18us6OuMIqrWc4WLHzdkvCvPZpMx4B+C97/e6XIDcpk3Y/JsabF9eibu+Geh4P2rAQ==}
+  '@prosary/catalog@0.0.11':
+    resolution: {integrity: sha512-/iUyiYEBRuTvgc8RuzjcGHuiAd9DdbprWNzBlvXiMFE5UwcYqVtIJ6qBhoF1DAMTE7FqAcE6Z6dlDP+BdMBxiQ==}
 
-  '@prosary/kit@0.0.10':
-    resolution: {integrity: sha512-+1CwsoeByGegFbN6gxgdL68rpyO+rHNwnde19YzaTBFc95WjF5eeQFPU6Zw0wJGWjvWjuqEd1CxJrBxYHiN0iA==}
+  '@prosary/core@0.0.11':
+    resolution: {integrity: sha512-cnyTXXaQ6AuE4GYAVc8I2QYo6w+Kxa+aNnETOPA/Wf1O5VGg3Qp99ZF2MbphTaGYiXqEcaF3DzImw7SlPP7XkA==}
+
+  '@prosary/kit@0.0.11':
+    resolution: {integrity: sha512-wbg6y6A7pnuFxbCq6PonCBOV0+1MMr9oDrSEKFewdZpIlrMOpMsgPeEmlQua8M8Mks0vAEVrl/UHvqZMnx8MaQ==}
     hasBin: true
     peerDependencies:
-      '@prosary/translate': 0.0.10
+      '@prosary/translate': 0.0.11
     peerDependenciesMeta:
       '@prosary/translate':
         optional: true
 
-  '@prosary/nuxt@0.0.10':
-    resolution: {integrity: sha512-Irlj4xylTFDNZxzpapnM3z1gRGuC8KZ5wZ0tNbucnUrGyw4rVSVuOAYm+2GDRPisDGLKDYo/fP5kd1p6Jcx/Tw==}
+  '@prosary/nuxt@0.0.11':
+    resolution: {integrity: sha512-t5DyuDTJKWDdPC0vFWxYYhId+ISFq2C6Omt0eYTvY6yJZCb3mzdelnDLbjvftxC1FPlv379/QrOxyXYMRnDI1w==}
     peerDependencies:
-      '@prosary/kit': 0.0.10
+      '@prosary/kit': 0.0.11
     peerDependenciesMeta:
       '@prosary/kit':
         optional: true
 
-  '@prosary/parse@0.0.10':
-    resolution: {integrity: sha512-6ZpyGdehm+d4Hm72NP0CpwaaMdrdKIojsdzVyVliACG7h+1X6jpsIZtFsl0h02ilEY+VsURBnzE73QJ5OtmtUw==}
+  '@prosary/parse@0.0.11':
+    resolution: {integrity: sha512-BpcuvTAxlPg7JI5/YYqTXg5K1EjoY2/BWJhWt8gDEWEt5SYZiSp2rIxoCqhyQrqEiGR872dQxhnj4N78YAvSFA==}
 
-  '@prosary/schema@0.0.10':
-    resolution: {integrity: sha512-FiTQ7DqRuHTfe22VynPtVeVUXyCPXZ8snYry2KG5ioAcds8cD5Tt0U4LBQCu2v4HPSopMIrcIgZ5C21WVddKOw==}
+  '@prosary/schema@0.0.11':
+    resolution: {integrity: sha512-AtOBFJof//kQGw4Ya1YavMZtNeLot4J+Ir9yrLspYZ8WukufRDvp7sZ5ccypR8nETnEPA7CucQSxne2kfTVOBQ==}
 
-  '@prosary/vue@0.0.10':
-    resolution: {integrity: sha512-1TyvhkS4Ga14qpuaKAAptpn/THLbwQMOfCfa0hTQLXlLG99OrljTqWpqvOM3ANySaOtsiVPpegSwwrCShswU0g==}
+  '@prosary/vue@0.0.11':
+    resolution: {integrity: sha512-9r1C3jWYQSNS9c3k8H/5aXbWYngRsCqjuEiI0aHeLd+G/cVIuiBNiIqa17rVjRKEKTdQL95tkdfbamz14i/hZQ==}
     peerDependencies:
       vue: ^3.5.35
 
@@ -4348,8 +4351,8 @@ packages:
   property-information@7.2.0:
     resolution: {integrity: sha512-IAtzIB6sUiWaJYrX9smp3V46pBGbBeLFRGdh25kg1334VcBlD8HzhPeNIWQH9zhGmo2itIe25EHt9dQP7G5hmg==}
 
-  prosary@0.0.10:
-    resolution: {integrity: sha512-b9DAjCjTGElltNFc8cOdFz8MysLFAQ36XHq11k9whlbjEkNCn+sriMif+4W424w6WUtRrcF7NaXZ9DgEHcjDNw==}
+  prosary@0.0.11:
+    resolution: {integrity: sha512-TU3saRCTpSo1a4/bMuQU45wmsWgfM8i9GjoPcMk9jK5X5LAQQHyIIiic+Af7KT7Qcana/Jg1kzRdTvDczuN3Zg==}
 
   prosemirror-changeset@2.4.4:
     resolution: {integrity: sha512-Gyuz9jYdrAeA9I7AholyOes9KUmv/lEwsC5O9s5xF5VB3EgTPsXMGUxz4+H1B+wKVPdZbvRcg1Cp3x8qX+8ofA==}
@@ -6792,15 +6795,21 @@ snapshots:
 
   '@poppinss/exception@1.2.3': {}
 
-  '@prosary/core@0.0.10':
+  '@prosary/catalog@0.0.11':
     dependencies:
-      '@prosary/schema': 0.0.10
+      '@prosary/schema': 0.0.11
+      '@types/hast': 3.0.5
+      objectively: 0.3.0
 
-  '@prosary/kit@0.0.10':
+  '@prosary/core@0.0.11':
+    dependencies:
+      '@prosary/schema': 0.0.11
+
+  '@prosary/kit@0.0.11':
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.22
-      '@prosary/parse': 0.0.10
-      '@prosary/schema': 0.0.10
+      '@prosary/parse': 0.0.11
+      '@prosary/schema': 0.0.11
       hast-util-to-html: 9.0.5
       jiti: 2.7.0
       objectively: 0.3.0
@@ -6809,15 +6818,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@prosary/nuxt@0.0.10(@nuxt/schema@4.6.2)(@prosary/kit@0.0.10)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))':
+  '@prosary/nuxt@0.0.11(@nuxt/schema@4.6.2)(@prosary/kit@0.0.11)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(typescript@5.9.3)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))':
     dependencies:
       '@nuxt/kit': 4.6.2(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.0)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.1)(rolldown@1.2.14)(rollup@4.62.2)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1)))
-      '@prosary/vue': 0.0.10(vue@3.5.44(typescript@5.9.3))
+      '@prosary/catalog': 0.0.11
+      '@prosary/vue': 0.0.11(vue@3.5.44(typescript@5.9.3))
       '@types/hast': 3.0.5
-      prosary: 0.0.10
+      prosary: 0.0.11
       vue: 3.5.44(typescript@5.9.3)
     optionalDependencies:
-      '@prosary/kit': 0.0.10
+      '@prosary/kit': 0.0.11
     transitivePeerDependencies:
       - '@nuxt/schema'
       - confbox
@@ -6831,7 +6841,7 @@ snapshots:
       - typescript
       - unplugin
 
-  '@prosary/parse@0.0.10':
+  '@prosary/parse@0.0.11':
     dependencies:
       '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
@@ -6851,12 +6861,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@prosary/schema@0.0.10':
+  '@prosary/schema@0.0.11':
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.22
       objectively: 0.3.0
 
-  '@prosary/vue@0.0.10(vue@3.5.44(typescript@5.9.3))':
+  '@prosary/vue@0.0.11(vue@3.5.44(typescript@5.9.3))':
     dependencies:
       '@types/hast': 3.0.5
       property-information: 7.2.0
@@ -10008,10 +10018,10 @@ snapshots:
 
   property-information@7.2.0: {}
 
-  prosary@0.0.10:
+  prosary@0.0.11:
     dependencies:
-      '@prosary/core': 0.0.10
-      '@prosary/schema': 0.0.10
+      '@prosary/core': 0.0.11
+      '@prosary/schema': 0.0.11
 
   prosemirror-changeset@2.4.4:
     dependencies:

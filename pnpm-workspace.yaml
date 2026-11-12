@@ -15,8 +15,8 @@ catalog:
   "@iconify-json/lucide": ^1.2.148
   "@internationalized/date": ^3.7.0
   "@nuxt/kit": ^4.5.0
-  "@prosary/kit": 0.0.10
-  "@prosary/nuxt": 0.0.10
+  "@prosary/kit": 0.0.11
+  "@prosary/nuxt": 0.0.11
   "@tiptap/core": 3.32.0
   "@tiptap/html": 3.32.0
   "@tiptap/pm": 3.32.0
@@ -42,7 +42,7 @@ catalog:
   obuild: ^0.4.44
   oxfmt: ^0.71.0
   oxlint: ^1.86.0
-  prosary: 0.0.10
+  prosary: 0.0.11
   reka-ui: ^2.6.0
   turbo: ^2.11.7
   typescript: ^5.9.3
