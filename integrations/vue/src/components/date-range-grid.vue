@@ -1,11 +1,11 @@
 <script lang="ts">
 import type {
-  RangeCalendarProps,
-  RangeCalendarEmits,
-  RangeCalendarPassthrough,
-  RangeCalendarContext,
-  RangeCalendarSlots,
-} from "../types/components/range-calendar";
+  DateRangeGridProps,
+  DateRangeGridEmits,
+  DateRangeGridPassthrough,
+  DateRangeGridContext,
+  DateRangeGridSlots,
+} from "../types/components/date-range-grid";
 import type { DateRange } from "reka-ui";
 import type { ComponentPublicInstance } from "vue";
 
@@ -31,9 +31,9 @@ import { useContext } from "../composables/context";
 </script>
 
 <script setup lang="ts">
-const { modelValue, maxValue, pt } = defineProps<RangeCalendarProps>();
+const { modelValue, maxValue, pt } = defineProps<DateRangeGridProps>();
 
-const emit = defineEmits<RangeCalendarEmits>();
+const emit = defineEmits<DateRangeGridEmits>();
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
@@ -43,7 +43,7 @@ const $model = useModel<DateRange | undefined>(
   { explicit: "modelValue" },
 );
 
-const settings = usePassthrough<RangeCalendarPassthrough>(() => ({
+const settings = usePassthrough<DateRangeGridPassthrough>(() => ({
   pt,
   recipes: {
     root: {
@@ -67,7 +67,7 @@ const settings = usePassthrough<RangeCalendarPassthrough>(() => ({
   },
 }));
 
-const ctx = useContext<RangeCalendarContext>("calendar", () => ({
+const ctx = useContext<DateRangeGridContext>("date-range-grid", () => ({
   maxValue,
   modelValue: $model,
   el: el.value,
@@ -75,24 +75,24 @@ const ctx = useContext<RangeCalendarContext>("calendar", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<RangeCalendarSlots>();
+defineSlots<DateRangeGridSlots>();
 </script>
 
 <template>
   <RangeCalendarRoot
     ref="el"
-    class="f-range-calendar-root"
+    class="f-date-range-grid-root"
     v-bind="settings.root"
   >
     <template #default="{ weekDays, grid }">
       <slot name="header" v-bind="{ ...ctx, weekDays, grid }">
         <RangeCalendarHeader
-          class="f-range-calendar-header"
+          class="f-date-range-grid-header"
           v-bind="settings.header"
         >
           <slot name="prev" v-bind="{ ...ctx, weekDays, grid }">
             <RangeCalendarPrev
-              class="f-range-calendar-prev"
+              class="f-date-range-grid-prev"
               v-bind="settings.prev"
             >
               <slot name="prevPrepend" v-bind="{ ...ctx, weekDays, grid }" />
@@ -102,13 +102,13 @@ defineSlots<RangeCalendarSlots>();
           </slot>
           <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
             <RangeCalendarHeading
-              class="f-range-calendar-heading"
+              class="f-date-range-grid-heading"
               v-bind="settings.heading"
             />
           </slot>
           <slot name="next" v-bind="{ ...ctx, weekDays, grid }">
             <RangeCalendarNext
-              class="f-range-calendar-next"
+              class="f-date-range-grid-next"
               v-bind="settings.next"
             >
               <slot name="nextPrepend" v-bind="{ ...ctx, weekDays, grid }" />
@@ -121,22 +121,22 @@ defineSlots<RangeCalendarSlots>();
       <template v-for="month in grid" :key="month.value.toString()">
         <slot name="grid" v-bind="{ ...ctx, weekDays, grid, month }">
           <RangeCalendarGrid
-            class="f-range-calendar-grid"
+            class="f-date-range-grid-grid"
             v-bind="settings.grid"
           >
             <slot name="gridHead" v-bind="{ ...ctx, weekDays, grid, month }">
               <RangeCalendarGridHead
-                class="f-range-calendar-grid-head"
+                class="f-date-range-grid-grid-head"
                 v-bind="settings.gridHead"
               >
                 <RangeCalendarGridRow
-                  class="f-range-calendar-grid-row"
+                  class="f-date-range-grid-grid-row"
                   v-bind="settings.gridRow"
                 >
                   <template v-for="day in weekDays" :key="day">
                     <slot name="headCell" v-bind="{ ...ctx, day }">
                       <RangeCalendarHeadCell
-                        class="f-range-calendar-head-cell"
+                        class="f-date-range-grid-head-cell"
                         v-bind="settings.headCell"
                       >
                         {{ day }}
@@ -148,19 +148,19 @@ defineSlots<RangeCalendarSlots>();
             </slot>
             <slot name="gridBody" v-bind="{ ...ctx, weekDays, grid, month }">
               <RangeCalendarGridBody
-                class="f-range-calendar-grid-body"
+                class="f-date-range-grid-grid-body"
                 v-bind="settings.gridBody"
               >
                 <RangeCalendarGridRow
                   v-for="(week, i) in month.rows"
                   :key="i"
-                  class="f-range-calendar-grid-row"
+                  class="f-date-range-grid-grid-row"
                   v-bind="settings.gridRow"
                 >
                   <template v-for="date in week" :key="date.toString()">
                     <slot name="cell" v-bind="{ ...ctx, month, date }">
                       <RangeCalendarCell
-                        class="f-range-calendar-cell"
+                        class="f-date-range-grid-cell"
                         v-bind="settings.cell(date)"
                       >
                         <slot
@@ -168,7 +168,7 @@ defineSlots<RangeCalendarSlots>();
                           v-bind="{ ...ctx, month, date }"
                         >
                           <RangeCalendarCellTrigger
-                            class="f-range-calendar-cell-trigger"
+                            class="f-date-range-grid-cell-trigger"
                             v-bind="
                               settings.cellTrigger({
                                 day: date,

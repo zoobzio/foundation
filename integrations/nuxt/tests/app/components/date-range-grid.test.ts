@@ -1,7 +1,7 @@
-// The range calendar wrapper: `prev` and `next` before the month controls.
+// The date range grid wrapper: `prev` and `next` before the month controls.
 import { afterEach, describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import RangeCalendar from "../../../app/components/range-calendar";
+import DateRangeGrid from "../../../app/components/date-range-grid";
 
 const mounted: { unmount: () => void }[] = [];
 
@@ -10,21 +10,21 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
-describe("range calendar wrapper", () => {
+describe("date range grid wrapper", () => {
   it("draws prev and next before the month controls", () => {
-    const wrapper = mount(RangeCalendar, {
+    const wrapper = mount(DateRangeGrid, {
       props: { modelValue: undefined },
       attachTo: document.body,
     });
     mounted.push(wrapper);
     expect(
       wrapper
-        .get(".f-range-calendar-prev svg[data-icon]")
+        .get(".f-date-range-grid-prev svg[data-icon]")
         .attributes("data-icon"),
     ).toBe("prev");
     expect(
       wrapper
-        .get(".f-range-calendar-next svg[data-icon]")
+        .get(".f-date-range-grid-next svg[data-icon]")
         .attributes("data-icon"),
     ).toBe("next");
   });

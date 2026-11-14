@@ -25,7 +25,7 @@ import type { DateValue } from "@internationalized/date";
  * The part of the root's slot payload that the slots receive.
  * Derived from the reka component.
  */
-export type RangeCalendarView = Pick<
+export type DateRangeGridView = Pick<
   SlotProps<typeof RangeCalendarRoot>,
   "weekDays" | "grid"
 >;
@@ -33,12 +33,12 @@ export type RangeCalendarView = Pick<
 /**
  * One month of the grid payload.
  */
-export type RangeCalendarMonth = RangeCalendarView["grid"][number];
+export type DateRangeGridMonth = DateRangeGridView["grid"][number];
 
 /**
- * The parts of the range calendar that accept passthrough.
+ * The parts of the date range grid that accept passthrough.
  */
-export type RangeCalendarPassthrough = {
+export type DateRangeGridPassthrough = {
   root: Passthrough<RangeCalendarRootProps, RangeCalendarRootEmits>;
   header: Passthrough<RangeCalendarHeaderProps>;
   prev: Passthrough<RangeCalendarPrevProps>;
@@ -57,78 +57,78 @@ export type RangeCalendarPassthrough = {
 };
 
 /**
- * Props of the range calendar. `modelValue` is required. Its presence on
+ * Props of the date range grid. `modelValue` is required. Its presence on
  * the vnode decides control, so pass `undefined` explicitly for an
  * uncontrolled instance.
  */
-export type RangeCalendarProps = {
+export type DateRangeGridProps = {
   modelValue: DateRange | undefined;
   maxValue?: DateValue;
-  pt?: PT<RangeCalendarPassthrough>;
+  pt?: PT<DateRangeGridPassthrough>;
 };
 
 /**
- * Emits of the range calendar.
+ * Emits of the date range grid.
  */
-export type RangeCalendarEmits = {
+export type DateRangeGridEmits = {
   "update:modelValue": [value: DateRange | undefined];
 };
 
 /**
- * The range calendar view model, served to `defineExpose` and the slots.
+ * The date range grid view model, served to `defineExpose` and the slots.
  */
-export type RangeCalendarContext = {
+export type DateRangeGridContext = {
   maxValue?: DateValue;
   modelValue: Ref<DateRange | undefined>;
   el: ComponentPublicInstance | null;
-  settings: RangeCalendarPassthrough;
+  settings: DateRangeGridPassthrough;
 };
 
 /**
- * Slots of the range calendar. Each slot receives the context.
+ * Slots of the date range grid. Each slot receives the context.
  * Header and grid slots also receive the view. Cell slots also receive
  * the `month` and `date`.
  */
-export type RangeCalendarSlots = {
-  header?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  prev?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  heading?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  next?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
+export type DateRangeGridSlots = {
+  header?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
+  prev?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
+  heading?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
+  next?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
   grid?: (
-    props: RangeCalendarContext &
-      RangeCalendarView & { month: RangeCalendarMonth },
+    props: DateRangeGridContext &
+      DateRangeGridView & { month: DateRangeGridMonth },
   ) => VNode[];
   gridHead?: (
-    props: RangeCalendarContext &
-      RangeCalendarView & { month: RangeCalendarMonth },
+    props: DateRangeGridContext &
+      DateRangeGridView & { month: DateRangeGridMonth },
   ) => VNode[];
   gridBody?: (
-    props: RangeCalendarContext &
-      RangeCalendarView & { month: RangeCalendarMonth },
+    props: DateRangeGridContext &
+      DateRangeGridView & { month: DateRangeGridMonth },
   ) => VNode[];
-  headCell?: (props: RangeCalendarContext & { day: string }) => VNode[];
+  headCell?: (props: DateRangeGridContext & { day: string }) => VNode[];
   cell?: (
-    props: RangeCalendarContext & {
-      month: RangeCalendarMonth;
+    props: DateRangeGridContext & {
+      month: DateRangeGridMonth;
       date: DateValue;
     },
   ) => VNode[];
   cellTrigger?: (
-    props: RangeCalendarContext & {
-      month: RangeCalendarMonth;
+    props: DateRangeGridContext & {
+      month: DateRangeGridMonth;
       date: DateValue;
     },
   ) => VNode[];
-  prevPrepend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  prevAppend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  nextPrepend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
-  nextAppend?: (props: RangeCalendarContext & RangeCalendarView) => VNode[];
+  prevPrepend?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
+  prevAppend?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
+  nextPrepend?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
+  nextAppend?: (props: DateRangeGridContext & DateRangeGridView) => VNode[];
 };
 
 /**
- * A range calendar instance as data: props plus emit listeners.
+ * A date range grid instance as data: props plus emit listeners.
  */
-export type RangeCalendarDefinition = Definition<
-  RangeCalendarProps,
-  RangeCalendarEmits
+export type DateRangeGridDefinition = Definition<
+  DateRangeGridProps,
+  DateRangeGridEmits
 >;

@@ -5,5 +5,9 @@ export default defineNuxtConfig({
 
   extends: ["@zoobzio/nuxt"],
 
-  css: ["~/assets/css/app.css", "~/assets/css/editor.css"],
+  css: [
+    "~/assets/css/app.css",
+    "~/assets/css/editor.css",
+    "~/assets/css/calendar.css",
+  ],
 });

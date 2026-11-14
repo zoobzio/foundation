@@ -44,6 +44,8 @@ catalog:
   oxlint: ^1.86.0
   prosary: 0.0.11
   reka-ui: ^2.6.0
+  rrule-temporal: ^2.2.9
+  temporal-polyfill: ^1.0.8
   turbo: ^2.11.7
   typescript: ^5.9.3
   untheme: ^0.6.1

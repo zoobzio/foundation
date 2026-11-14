@@ -1,0 +1,321 @@
+/*
+ * The calendar, bound to the layer's bare hooks: the root, the toolbar and
+ * its tools and separators, the grid of days, the agenda, and the occurrences.
+ */
+
+.f-data-calendar {
+  display: grid;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+/* --- toolbar --------------------------------------------------------- */
+
+.f-data-calendar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--surface-container);
+  border-bottom: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-calendar-heading {
+  flex: 1;
+  margin: 0 var(--space-2);
+  font: var(--type-label);
+  font-size: 1rem;
+  letter-spacing: var(--type-label-letter-spacing);
+}
+
+.f-data-calendar-separator {
+  align-self: stretch;
+  width: 1px;
+  margin: var(--space-1) var(--space-1);
+  background: var(--outline-muted);
+}
+
+.f-data-calendar-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.f-data-calendar-tool svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.f-data-calendar-tool:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-calendar-tool:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-data-calendar-tool[aria-pressed="true"] {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.f-data-calendar-tool:disabled {
+  color: var(--on-surface-muted);
+  opacity: 0.5;
+  cursor: default;
+  background: transparent;
+}
+
+/* --- grid ------------------------------------------------------------ */
+
+.f-data-calendar-grid {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.f-data-calendar-weekday {
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  text-align: left;
+  color: var(--on-surface-muted);
+  border-bottom: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-calendar-grid .f-data-calendar-day {
+  height: 6.5rem;
+  padding: var(--space-1);
+  vertical-align: top;
+  border-top: 1px var(--stroke-solid) var(--outline-muted);
+  border-left: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-calendar-grid .f-data-calendar-day:first-child {
+  border-left: 0;
+}
+
+.f-data-calendar-week:first-child .f-data-calendar-day {
+  border-top: 0;
+}
+
+.f-data-calendar[data-view="week"] .f-data-calendar-day,
+.f-data-calendar[data-view="day"] .f-data-calendar-day {
+  height: 20rem;
+}
+
+.f-data-calendar-day[data-outside] {
+  background: color-mix(in srgb, var(--surface-container) 50%, transparent);
+}
+
+.f-data-calendar-day[data-outside] .f-data-calendar-day-label {
+  color: var(--on-surface-muted);
+}
+
+.f-data-calendar-day-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 var(--space-1);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.f-data-calendar-day-label:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-calendar-day-label:focus-visible,
+.f-data-calendar-occurrence:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-data-calendar-day[data-today] .f-data-calendar-day-label {
+  color: var(--surface);
+  background: var(--primary);
+}
+
+/* --- occurrences ----------------------------------------------------- */
+
+.f-data-calendar-occurrences {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.f-data-calendar-occurrence {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  width: 100%;
+  padding: 1px var(--space-1);
+  font: var(--type-label);
+  font-size: 0.75rem;
+  letter-spacing: var(--type-label-letter-spacing);
+  text-align: left;
+  color: var(--on-surface);
+  background: transparent;
+  border: 1px solid transparent;
+  border-left: 3px solid var(--primary);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.f-data-calendar-occurrence .f-span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.f-data-calendar-occurrence-time {
+  flex: none;
+  color: var(--on-surface-muted);
+}
+
+.f-data-calendar-occurrence:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-calendar-occurrence[data-all-day] {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.f-data-calendar-occurrence[data-type="Task"] {
+  border-left-style: dashed;
+}
+
+.f-data-calendar-occurrence[data-selected] {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+/* --- agenda ---------------------------------------------------------- */
+
+.f-data-calendar-agenda {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.f-data-calendar-agenda > .f-data-calendar-day {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-calendar-agenda > .f-data-calendar-day:first-child {
+  border-top: 0;
+}
+
+.f-data-calendar-agenda .f-data-calendar-day-label {
+  justify-content: flex-start;
+  justify-self: start;
+  padding: 0 var(--space-2);
+}
+
+.f-data-calendar-agenda .f-data-calendar-occurrences {
+  margin: 0;
+}
+
+.f-data-calendar-agenda .f-data-calendar-occurrence {
+  font-size: 0.8125rem;
+  padding: var(--space-1) var(--space-2);
+}
+
+.f-data-calendar-empty {
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--on-surface-muted);
+}
+
+/* --- the example page ------------------------------------------------ */
+
+.page-wide {
+  max-width: 68rem;
+}
+
+.detail {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.detail-title {
+  margin: 0;
+  font: var(--type-label);
+  font-size: 1rem;
+}
+
+.detail-type {
+  margin-left: var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+}
+
+.detail-when {
+  margin: 0;
+  color: var(--on-surface-muted);
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.detail-actions button,
+.detail-add {
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}

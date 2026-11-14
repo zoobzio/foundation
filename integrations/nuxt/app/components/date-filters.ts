@@ -1,5 +1,5 @@
 // The vue date filters with the layer's Command behind its field and
-// operator steps, the layer's Calendar and RangeCalendar behind its value
+// operator steps, the layer's DateGrid and DateRangeGrid behind its value
 // step, the `calendar` icon as its trigger's content, and its text — the
 // trigger, the steps, the operators, the placeholders, the apply button —
 // in the visitor's locale. The fields' labels resolve in the Command.
@@ -9,9 +9,9 @@ import { createTextVNode, h } from "vue";
 import { iconPart } from "./icon";
 import { text, textSlot } from "./text";
 import { wrap } from "@zoobzio/vue/utils/wrap";
-import Calendar from "./calendar";
+import DateGrid from "./date-grid";
 import Command from "./command";
-import RangeCalendar from "./range-calendar";
+import DateRangeGrid from "./date-range-grid";
 
 export default wrap(Core, {
   pt: (pt) => ({
@@ -38,8 +38,8 @@ export default wrap(Core, {
       ],
       ...pt?.operatorCommand,
     },
-    calendar: { as: Calendar, ...pt?.calendar },
-    rangeCalendar: { as: RangeCalendar, ...pt?.rangeCalendar },
+    calendar: { as: DateGrid, ...pt?.calendar },
+    rangeCalendar: { as: DateRangeGrid, ...pt?.rangeCalendar },
   }),
   slots: {
     trigger: ({ settings }) => iconPart(settings.trigger, "calendar"),

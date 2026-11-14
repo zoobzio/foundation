@@ -123,6 +123,12 @@ catalogs:
     reka-ui:
       specifier: ^2.6.0
       version: 2.10.1
+    rrule-temporal:
+      specifier: ^2.2.9
+      version: 2.2.9
+    temporal-polyfill:
+      specifier: ^1.0.8
+      version: 1.0.8
     turbo:
       specifier: ^2.11.7
       version: 2.11.9
@@ -179,6 +185,9 @@ importers:
 
   examples/nuxt:
     dependencies:
+      '@zoobzio/calendar':
+        specifier: workspace:*
+        version: link:../../services/calendar
       '@zoobzio/icons':
         specifier: workspace:*
         version: link:../../packages/icons
@@ -222,6 +231,9 @@ importers:
       '@zoobzio/browser':
         specifier: workspace:*
         version: link:../../services/browser
+      '@zoobzio/calendar':
+        specifier: workspace:*
+        version: link:../../services/calendar
       '@zoobzio/code':
         specifier: workspace:*
         version: link:../../services/code
@@ -301,6 +313,9 @@ importers:
       '@zoobzio/browser':
         specifier: workspace:*
         version: link:../../services/browser
+      '@zoobzio/calendar':
+        specifier: workspace:*
+        version: link:../../services/calendar
       '@zoobzio/code':
         specifier: workspace:*
         version: link:../../services/code
@@ -418,6 +433,18 @@ importers:
       objectively:
         specifier: 'catalog:'
         version: 0.3.0
+
+  services/calendar:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      rrule-temporal:
+        specifier: 'catalog:'
+        version: 2.2.9
+      temporal-polyfill:
+        specifier: 'catalog:'
+        version: 1.0.8
 
   services/code:
     dependencies:
@@ -4552,6 +4579,9 @@ packages:
   rou3@0.9.2:
     resolution: {integrity: sha512-3SOzvaAg8rkHrXtRjpCvCvbyO5to9oOO27Z/XqHEYXfMRVSw/qMIVdmaOk9W2lcRLtR6dlqTjo9hDeJk70QBYQ==}
 
+  rrule-temporal@2.2.9:
+    resolution: {integrity: sha512-5Bc+IxlGKZtOF/JtkM+39VtK9uYvg1NRWGzZCy2QQj9KFZ4mMMa949GMtGv0Ud/bzyk2KuGhwxmVDuq8cnbzuA==}
+
   run-applescript@7.1.0:
     resolution: {integrity: sha512-DPe5pVFaAsinSaV6QjQ6gdiedWDcRCbUuiQfQa2wmWV7+xC9bGulGI8+TdRmoFkAPaBXk8CrAbnlY2ISniJ47Q==}
     engines: {node: '>=18'}
@@ -4765,6 +4795,15 @@ packages:
 
   teex@1.0.1:
     resolution: {integrity: sha512-eYE6iEI62Ni1H8oIa7KlDU6uQBtqr4Eajni3wX7rpfXD8ysFx8z0+dri+KWEPWpBsxXfxu58x/0jvTVT1ekOSg==}
+
+  temporal-polyfill@1.0.8:
+    resolution: {integrity: sha512-RCCGa0GddT099XG49ijdD0tDf86L8vfuZun1+JyJiO4Y2NP9PACQsG0OnvNPXwVLisdvhr/zqL2nhKQmXXx08A==}
+
+  temporal-spec@1.0.1:
+    resolution: {integrity: sha512-wxVoanmDeavXie1vu2JaQ3WIc3JZnWAOYFBsJyATaVsXsycKYUflGsyBmrRSnoCpZJpwPyr38VpgSUlQ8CbFxg==}
+
+  temporal-utils@1.0.4:
+    resolution: {integrity: sha512-4mAcgbWlaxe+gn23gk8g0iHxCVGVOhKzSCfF5HM3lfvH8BdT+/pBmH/R/E4CrIse+koUgs8ThkPzCLnui6Fi8w==}
 
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
@@ -10348,6 +10387,10 @@ snapshots:
 
   rou3@0.9.2: {}
 
+  rrule-temporal@2.2.9:
+    dependencies:
+      temporal-spec: 1.0.1
+
   run-applescript@7.1.0: {}
 
   run-parallel@1.2.0:
@@ -10560,6 +10603,15 @@ snapshots:
     transitivePeerDependencies:
       - bare-abort-controller
       - react-native-b4a
+
+  temporal-polyfill@1.0.8:
+    dependencies:
+      temporal-spec: 1.0.1
+      temporal-utils: 1.0.4
+
+  temporal-spec@1.0.1: {}
+
+  temporal-utils@1.0.4: {}
 
   term-size@2.2.1: {}
 

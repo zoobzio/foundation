@@ -1,11 +1,11 @@
 import type { Text } from "@zoobzio/kit";
-import type { CalendarProps, CalendarEmits } from "./calendar";
+import type { DateGridProps, DateGridEmits } from "./date-grid";
 import type { CommandOption, CommandProps, CommandEmits } from "./command";
 import type { FabProps } from "./fab";
 import type { PT, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
 import type { PopoverProps, PopoverEmits } from "./popover";
-import type { RangeCalendarProps, RangeCalendarEmits } from "./range-calendar";
+import type { DateRangeGridProps, DateRangeGridEmits } from "./date-range-grid";
 import type { VNode } from "vue";
 
 /**
@@ -45,8 +45,8 @@ export type DateFiltersPassthrough = {
     CommandProps<CommandOption>,
     CommandEmits<CommandOption>
   >;
-  calendar: Rendered<CalendarProps, CalendarEmits>;
-  rangeCalendar: Rendered<RangeCalendarProps, RangeCalendarEmits>;
+  calendar: Rendered<DateGridProps, DateGridEmits>;
+  rangeCalendar: Rendered<DateRangeGridProps, DateRangeGridEmits>;
 };
 
 /**

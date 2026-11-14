@@ -11,11 +11,11 @@ import type { CommandOption } from "../types/components/command";
 import type { DateValue } from "@internationalized/date";
 import type { DateRange } from "reka-ui";
 
-import Calendar from "./calendar.vue";
+import DateGrid from "./date-grid.vue";
 import Command from "./command.vue";
 import Fab from "./fab.vue";
 import Popover from "./popover.vue";
-import RangeCalendar from "./range-calendar.vue";
+import DateRangeGrid from "./date-range-grid.vue";
 
 import Primitive from "./primitive.vue";
 
@@ -233,7 +233,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     calendar: {
-      as: Calendar,
+      as: DateGrid,
       modelValue: selectedDate.value,
       maxValue: today(getLocalTimeZone()),
       "onUpdate:modelValue": (v) => {
@@ -241,7 +241,7 @@ const settings = usePassthrough<DateFiltersPassthrough>(() => ({
       },
     },
     rangeCalendar: {
-      as: RangeCalendar,
+      as: DateRangeGrid,
       modelValue: selectedRange.value,
       maxValue: today(getLocalTimeZone()),
       "onUpdate:modelValue": (v) => {

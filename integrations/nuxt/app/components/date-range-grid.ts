@@ -1,6 +1,6 @@
-// The vue range calendar with the `prev` and `next` icons before its month
+// The vue date range grid with the `prev` and `next` icons before its month
 // controls.
-import Core from "@zoobzio/vue/components/range-calendar.vue";
+import Core from "@zoobzio/vue/components/date-range-grid.vue";
 
 import { icon } from "./icon";
 import { wrap } from "@zoobzio/vue/utils/wrap";

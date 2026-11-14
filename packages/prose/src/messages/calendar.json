@@ -1,0 +1,38 @@
+{
+  "today": {
+    "defaultMessage": "Today",
+    "description": "The button that moves the calendar to today."
+  },
+  "previous": {
+    "defaultMessage": "Previous",
+    "description": "The button that moves the calendar one month, week or day back."
+  },
+  "next": {
+    "defaultMessage": "Next",
+    "description": "The button that moves the calendar one month, week or day forward."
+  },
+  "month": {
+    "defaultMessage": "Month",
+    "description": "The option that shows the calendar a month at a time."
+  },
+  "week": {
+    "defaultMessage": "Week",
+    "description": "The option that shows the calendar a week at a time."
+  },
+  "day": {
+    "defaultMessage": "Day",
+    "description": "The option that shows the calendar a day at a time."
+  },
+  "agenda": {
+    "defaultMessage": "Agenda",
+    "description": "The option that shows the calendar as a list of the coming days."
+  },
+  "untitled": {
+    "defaultMessage": "Untitled",
+    "description": "The name of a calendar event or task that has no title."
+  },
+  "empty": {
+    "defaultMessage": "Nothing scheduled",
+    "description": "The text of the calendar's agenda when no event or task falls in the days it shows."
+  }
+}

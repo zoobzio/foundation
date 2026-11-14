@@ -50,6 +50,7 @@
     "@untheme/nuxt": "catalog:",
     "@vueuse/core": "catalog:",
     "@zoobzio/browser": "workspace:*",
+    "@zoobzio/calendar": "workspace:*",
     "@zoobzio/code": "workspace:*",
     "@zoobzio/editor": "workspace:*",
     "@zoobzio/form": "workspace:*",

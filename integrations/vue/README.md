@@ -42,12 +42,12 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), and the code editor (code.vue)
-  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode
+  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), the code editor (code.vue), and the calendar (calendar.vue)
+  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode, useCalendar
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough (Passthrough, Rendered, PT), forward, slots, context, definition, wrap; per-component types in core/
-  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code
-  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code
+  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code, calendar
+  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code, calendar
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
@@ -100,7 +100,7 @@ Where an icon belongs beside content, a component has a `prepend` and an
 `append` slot around it rather than an icon slot: `itemPrepend` and
 `itemAppend` around a menu item's label, `triggerPrepend` and
 `triggerAppend` around a select's display, `prevPrepend` and `prevAppend`
-around a calendar's previous control, and so on. Each receives the scope
+around a date grid's previous control, and so on. Each receives the scope
 of the content it sits beside. The Fab is one item, so it has one default
 slot in place of its label text, and a component that renders a Fab as a
 part has one slot that replaces the part (a table's `refresh`, a row's
@@ -366,3 +366,60 @@ service.load(source);
   @updated="onUpdated"
 />
 ```
+
+`calendar.vue` renders a headless `@zoobzio/calendar` service: a toolbar
+over the days of the service's view. The month, week, and day views are one `table`, a row
+per week and a cell per day; the agenda view is a list of the days that
+hold an occurrence. Each day lists the occurrences that touch it, so one
+that spans three days is in each. The component owns no feature state: it
+reads the service, calls its methods, and relays its `navigated`, `loaded`,
+`changed`, and `selected` events as emits.
+
+```ts
+import { reactive } from "vue";
+import { CalendarService, createCalendarState, json } from "@zoobzio/calendar";
+import Calendar from "@zoobzio/vue/components/calendar.vue";
+
+const config = { timeZone: "Europe/Amsterdam" };
+const state = reactive(createCalendarState(config));
+const service = new CalendarService("team", config, state, { ...json, fetch });
+service.init();
+```
+
+```vue
+<Calendar :service="service" @selected="onSelected" />
+```
+
+A day's date is a button that opens the day: it moves the service's date
+there, in the day view where the service offers one. An occurrence is a
+button that selects it (`service.select`), pressed while it is the
+selection. The heading, the weekdays, and the times read in the config's
+`locale`, and the times in its `timeZone`. The component is unstyled and
+lays nothing out: the root carries `data-view` and `data-loading`, a day
+`data-date`, `data-today`, and `data-outside` (a day of the month view
+outside its month), and an occurrence `data-key`, `data-type` (`Event` or
+`Task`), `data-all-day`, and `data-selected`, for a stylesheet to read.
+
+The toolbar is built from the service as the editor's is: one tool per
+command, in groups, each a button inside reka's toolbar, which gives the
+controls one tab stop and arrow-key focus. The `navigate` group holds
+`today` (off while the calendar is on today), `prev`, and `next`; the
+heading stands after it; the `views` group holds one toggle per view the
+service offers, pressed while the calendar is in it, and is left out where
+the service offers one view. A button carries `f-data-calendar-tool`,
+`data-tool` (the tool's key), and `data-group`. The `tool` part and the
+`tool`, `toolPrepend`, `toolLabel`, and `toolAppend` slots reach one tool
+at a time, so a consumer dresses a button without rebuilding the bar; the
+`toolbarPrepend` and `toolbarAppend` slots add controls of the consumer's
+own before and after the tools, inside the same toolbar.
+
+The parts are `toolbar`, `separator`, `tool`, `grid`, `agenda`, `weekday`,
+`day`, `dayLabel`, and `occurrence`; the slots are `toolbar`,
+`toolbarPrepend`, `toolbarAppend`, `separator`, `heading`, `tool`,
+`toolPrepend`, `toolLabel`, `toolAppend`, `weekday`, `day`, `dayLabel`,
+`occurrence`, `occurrenceTime`, `occurrenceLabel`, and `empty`.
+`useCalendar(service)` is the view model on its own (the tools and their
+groups, the heading, the weekdays, the days and weeks with their
+occurrences, an occurrence's time, and `open`), for a consumer's own
+rendering. The
+month grids that pick a date are `date-grid.vue` and `date-range-grid.vue`.

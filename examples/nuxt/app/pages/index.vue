@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RichText } from "#components";
+import { NuxtLink, RichText } from "#components";
 import { useUntheme } from "#imports";
 import { computed, ref } from "vue";
 
@@ -26,7 +26,8 @@ const html = ref(`<h1>Field notes</h1>
         <h1 class="page-title">Editor</h1>
         <p class="page-lead">
           The rich text component of the foundation layer, as an app would style
-          it.
+          it. <NuxtLink to="/calendar">The calendar</NuxtLink> is the other
+          page.
         </p>
       </div>
       <button type="button" class="page-scheme" @click="toggle">

@@ -1,175 +1,302 @@
 <script lang="ts">
 import type {
-  CalendarProps,
+  CalendarContext,
   CalendarEmits,
   CalendarPassthrough,
-  CalendarContext,
+  CalendarProps,
   CalendarSlots,
 } from "../types/components/calendar";
-import type { DateValue } from "@internationalized/date";
-import type { ComponentPublicInstance } from "vue";
 
-import {
-  CalendarRoot,
-  CalendarHeader,
-  CalendarHeading,
-  CalendarPrev,
-  CalendarNext,
-  CalendarGrid,
-  CalendarGridHead,
-  CalendarGridBody,
-  CalendarGridRow,
-  CalendarHeadCell,
-  CalendarCell,
-  CalendarCellTrigger,
-} from "reka-ui";
+import Fab from "./fab.vue";
+import Primitive from "./primitive.vue";
+
+import { ToolbarButton, ToolbarRoot, ToolbarSeparator } from "reka-ui";
 
 import { useTemplateRef } from "vue";
+import { useServiceEmits } from "../composables/events";
+import { useRefs } from "../composables/ref";
+import { useCalendar } from "../composables/calendar";
 import { usePassthrough } from "../composables/passthrough";
-import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
+import {
+  CALENDAR_EMPTY_TEXT,
+  CALENDAR_EVENTS,
+  CALENDAR_HEADING_GROUP,
+  CALENDAR_UNTITLED_LABEL,
+} from "../constants/calendar";
 </script>
 
-<script setup lang="ts">
-const { modelValue, maxValue, pt } = defineProps<CalendarProps>();
+<script setup lang="ts" generic="I, O">
+const { service, pt } = defineProps<CalendarProps<I, O>>();
 
-const emit = defineEmits<CalendarEmits>();
+const emit = defineEmits<CalendarEmits<O>>();
 
-const el = useTemplateRef<ComponentPublicInstance>("el");
+useServiceEmits(service, CALENDAR_EVENTS, emit);
 
-const $model = useModel<DateValue | undefined>(
-  () => modelValue,
-  (v) => emit("update:modelValue", v),
-  { explicit: "modelValue" },
-);
+const el = useTemplateRef<HTMLDivElement>("el");
+
+const { view, loading, selected, occurrences } = useRefs(service);
+
+const { tools, groups, heading, weekdays, days, weeks, time, open } =
+  useCalendar(service);
 
 const settings = usePassthrough<CalendarPassthrough>(() => ({
   pt,
   recipes: {
-    root: {
-      modelValue: $model.value,
-      maxValue,
-      "onUpdate:modelValue": (v) => {
-        $model.value = v;
-      },
-    },
-    header: {},
-    prev: {},
-    heading: {},
-    next: {},
+    toolbar: {},
+    separator: () => ({}),
+    tool: (tool) => ({
+      as: Fab,
+      class: "f-data-calendar-tool",
+      "data-tool": tool.key,
+      "data-group": tool.group,
+      label: tool.label,
+      type: "button",
+      "aria-pressed": tool.kind === "toggle" ? tool.active : undefined,
+      disabled: tool.disabled,
+      onClick: () => tool.run(),
+    }),
     grid: {},
-    gridHead: {},
-    gridBody: {},
-    gridRow: {},
-    headCell: {},
-    cell: (date) => ({ date }),
-    cellTrigger: ({ day, month }) => ({ day, month }),
+    agenda: {},
+    weekday: (weekday) => ({ scope: "col", abbr: weekday.name }),
+    day: () => ({}),
+    dayLabel: (day) => ({
+      type: "button",
+      "aria-label": day.name,
+      "aria-current": day.today ? "date" : undefined,
+      onClick: () => open(day.date),
+    }),
+    occurrence: (occurrence) => ({
+      type: "button",
+      "aria-pressed": occurrence.key === selected.value,
+      onClick: () => service.select(occurrence.key),
+    }),
   },
 }));
 
-const ctx = useContext<CalendarContext>("calendar", () => ({
-  maxValue,
-  modelValue: $model,
+const ctx = useContext<CalendarContext<I, O>>("calendar", () => ({
+  calendar: service,
+  heading: heading.value,
+  weekdays: weekdays.value,
+  weeks: weeks.value,
+  days: days.value,
+  tools: tools.value,
+  groups: groups.value,
+  time,
+  open,
   el: el.value,
   settings: settings.value,
 }));
 
 defineExpose({ ctx });
-defineSlots<CalendarSlots>();
+defineSlots<CalendarSlots<I, O>>();
 </script>
 
 <template>
-  <CalendarRoot ref="el" class="f-calendar-root" v-bind="settings.root">
-    <template #default="{ weekDays, grid }">
-      <slot name="header" v-bind="{ ...ctx, weekDays, grid }">
-        <CalendarHeader class="f-calendar-header" v-bind="settings.header">
-          <slot name="prev" v-bind="{ ...ctx, weekDays, grid }">
-            <CalendarPrev class="f-calendar-prev" v-bind="settings.prev">
-              <slot name="prevPrepend" v-bind="{ ...ctx, weekDays, grid }" />
-              <span class="f-span">Previous</span>
-              <slot name="prevAppend" v-bind="{ ...ctx, weekDays, grid }" />
-            </CalendarPrev>
-          </slot>
-          <slot name="heading" v-bind="{ ...ctx, weekDays, grid }">
-            <CalendarHeading
-              class="f-calendar-heading"
-              v-bind="settings.heading"
+  <div
+    ref="el"
+    class="f-group f-data-calendar"
+    :data-view="view"
+    :data-loading="loading || undefined"
+  >
+    <slot name="toolbar" v-bind="ctx">
+      <ToolbarRoot
+        class="f-group f-data-calendar-toolbar"
+        v-bind="settings.toolbar"
+      >
+        <slot name="toolbarPrepend" v-bind="ctx" />
+        <template v-for="(group, index) in groups" :key="group.name">
+          <slot v-if="index > 0" name="separator" v-bind="{ ...ctx, group }">
+            <ToolbarSeparator
+              class="f-data-calendar-separator"
+              v-bind="settings.separator(group)"
             />
           </slot>
-          <slot name="next" v-bind="{ ...ctx, weekDays, grid }">
-            <CalendarNext class="f-calendar-next" v-bind="settings.next">
-              <slot name="nextPrepend" v-bind="{ ...ctx, weekDays, grid }" />
-              <span class="f-span">Next</span>
-              <slot name="nextAppend" v-bind="{ ...ctx, weekDays, grid }" />
-            </CalendarNext>
+          <template v-for="tool in group.tools" :key="tool.key">
+            <slot name="tool" v-bind="{ ...ctx, tool }">
+              <ToolbarButton as-child :disabled="settings.tool(tool).disabled">
+                <Primitive v-bind="settings.tool(tool)">
+                  <slot name="toolPrepend" v-bind="{ ...ctx, tool }" />
+                  <slot name="toolLabel" v-bind="{ ...ctx, tool }">
+                    <span class="f-span">{{ tool.label }}</span>
+                  </slot>
+                  <slot name="toolAppend" v-bind="{ ...ctx, tool }" />
+                </Primitive>
+              </ToolbarButton>
+            </slot>
+          </template>
+          <slot
+            v-if="group.name === CALENDAR_HEADING_GROUP"
+            name="heading"
+            v-bind="ctx"
+          >
+            <h2 class="f-h2 f-data-calendar-heading" aria-live="polite">
+              {{ heading }}
+            </h2>
           </slot>
-        </CalendarHeader>
-      </slot>
-      <template v-for="month in grid" :key="month.value.toString()">
-        <slot name="grid" v-bind="{ ...ctx, weekDays, grid, month }">
-          <CalendarGrid class="f-calendar-grid" v-bind="settings.grid">
-            <slot name="gridHead" v-bind="{ ...ctx, weekDays, grid, month }">
-              <CalendarGridHead
-                class="f-calendar-grid-head"
-                v-bind="settings.gridHead"
+        </template>
+        <slot name="toolbarAppend" v-bind="ctx" />
+      </ToolbarRoot>
+    </slot>
+
+    <ol
+      v-if="view === 'agenda'"
+      class="f-ol f-data-calendar-agenda"
+      v-bind="settings.agenda"
+    >
+      <template v-for="day in days" :key="day.date">
+        <li
+          v-if="day.occurrences.length"
+          class="f-li f-data-calendar-day"
+          :data-date="day.date"
+          :data-today="day.today || undefined"
+          v-bind="settings.day(day)"
+        >
+          <slot name="day" v-bind="{ ...ctx, day }">
+            <slot name="dayLabel" v-bind="{ ...ctx, day }">
+              <button
+                class="f-button f-data-calendar-day-label"
+                v-bind="settings.dayLabel(day)"
               >
-                <CalendarGridRow
-                  class="f-calendar-grid-row"
-                  v-bind="settings.gridRow"
-                >
-                  <template v-for="day in weekDays" :key="day">
-                    <slot name="headCell" v-bind="{ ...ctx, day }">
-                      <CalendarHeadCell
-                        class="f-calendar-head-cell"
-                        v-bind="settings.headCell"
-                      >
-                        {{ day }}
-                      </CalendarHeadCell>
-                    </slot>
-                  </template>
-                </CalendarGridRow>
-              </CalendarGridHead>
+                {{ day.name }}
+              </button>
             </slot>
-            <slot name="gridBody" v-bind="{ ...ctx, weekDays, grid, month }">
-              <CalendarGridBody
-                class="f-calendar-grid-body"
-                v-bind="settings.gridBody"
+            <ul class="f-ul f-data-calendar-occurrences">
+              <li
+                v-for="occurrence in day.occurrences"
+                :key="occurrence.key"
+                class="f-li f-data-calendar-occurrence-item"
               >
-                <CalendarGridRow
-                  v-for="(week, i) in month.rows"
-                  :key="i"
-                  class="f-calendar-grid-row"
-                  v-bind="settings.gridRow"
-                >
-                  <template v-for="date in week" :key="date.toString()">
-                    <slot name="cell" v-bind="{ ...ctx, month, date }">
-                      <CalendarCell
-                        class="f-calendar-cell"
-                        v-bind="settings.cell(date)"
+                <slot name="occurrence" v-bind="{ ...ctx, day, occurrence }">
+                  <button
+                    class="f-button f-data-calendar-occurrence"
+                    :data-key="occurrence.key"
+                    :data-type="occurrence.entry['@type']"
+                    :data-all-day="occurrence.allDay || undefined"
+                    :data-selected="occurrence.key === selected || undefined"
+                    v-bind="settings.occurrence(occurrence)"
+                  >
+                    <slot
+                      name="occurrenceTime"
+                      v-bind="{ ...ctx, day, occurrence }"
+                    >
+                      <time
+                        v-if="!occurrence.allDay"
+                        class="f-time f-data-calendar-occurrence-time"
+                        :datetime="occurrence.start"
                       >
-                        <slot
-                          name="cellTrigger"
-                          v-bind="{ ...ctx, month, date }"
-                        >
-                          <CalendarCellTrigger
-                            class="f-calendar-cell-trigger"
-                            v-bind="
-                              settings.cellTrigger({
-                                day: date,
-                                month: month.value,
-                              })
-                            "
-                          />
-                        </slot>
-                      </CalendarCell>
+                        {{ time(occurrence) }}
+                      </time>
                     </slot>
-                  </template>
-                </CalendarGridRow>
-              </CalendarGridBody>
-            </slot>
-          </CalendarGrid>
-        </slot>
+                    <slot
+                      name="occurrenceLabel"
+                      v-bind="{ ...ctx, day, occurrence }"
+                    >
+                      <span class="f-span">
+                        {{ occurrence.entry.title || CALENDAR_UNTITLED_LABEL }}
+                      </span>
+                    </slot>
+                  </button>
+                </slot>
+              </li>
+            </ul>
+          </slot>
+        </li>
       </template>
-    </template>
-  </CalendarRoot>
+      <li v-if="!occurrences.length" class="f-li f-data-calendar-empty">
+        <slot name="empty" v-bind="ctx">
+          <span class="f-span">{{ CALENDAR_EMPTY_TEXT }}</span>
+        </slot>
+      </li>
+    </ol>
+
+    <table v-else class="f-table f-data-calendar-grid" v-bind="settings.grid">
+      <thead class="f-thead f-data-calendar-weekdays">
+        <tr class="f-tr">
+          <th
+            v-for="weekday in weekdays"
+            :key="weekday.key"
+            class="f-th f-data-calendar-weekday"
+            v-bind="settings.weekday(weekday)"
+          >
+            <slot name="weekday" v-bind="{ ...ctx, weekday }">
+              {{ weekday.label }}
+            </slot>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="f-tbody">
+        <tr
+          v-for="week in weeks"
+          :key="week[0]?.date"
+          class="f-tr f-data-calendar-week"
+        >
+          <td
+            v-for="day in week"
+            :key="day.date"
+            class="f-td f-data-calendar-day"
+            :data-date="day.date"
+            :data-today="day.today || undefined"
+            :data-outside="day.outside || undefined"
+            v-bind="settings.day(day)"
+          >
+            <slot name="day" v-bind="{ ...ctx, day }">
+              <slot name="dayLabel" v-bind="{ ...ctx, day }">
+                <button
+                  class="f-button f-data-calendar-day-label"
+                  v-bind="settings.dayLabel(day)"
+                >
+                  {{ day.label }}
+                </button>
+              </slot>
+              <ul
+                v-if="day.occurrences.length"
+                class="f-ul f-data-calendar-occurrences"
+              >
+                <li
+                  v-for="occurrence in day.occurrences"
+                  :key="occurrence.key"
+                  class="f-li f-data-calendar-occurrence-item"
+                >
+                  <slot name="occurrence" v-bind="{ ...ctx, day, occurrence }">
+                    <button
+                      class="f-button f-data-calendar-occurrence"
+                      :data-key="occurrence.key"
+                      :data-type="occurrence.entry['@type']"
+                      :data-all-day="occurrence.allDay || undefined"
+                      :data-selected="occurrence.key === selected || undefined"
+                      v-bind="settings.occurrence(occurrence)"
+                    >
+                      <slot
+                        name="occurrenceTime"
+                        v-bind="{ ...ctx, day, occurrence }"
+                      >
+                        <time
+                          v-if="!occurrence.allDay"
+                          class="f-time f-data-calendar-occurrence-time"
+                          :datetime="occurrence.start"
+                        >
+                          {{ time(occurrence) }}
+                        </time>
+                      </slot>
+                      <slot
+                        name="occurrenceLabel"
+                        v-bind="{ ...ctx, day, occurrence }"
+                      >
+                        <span class="f-span">
+                          {{
+                            occurrence.entry.title || CALENDAR_UNTITLED_LABEL
+                          }}
+                        </span>
+                      </slot>
+                    </button>
+                  </slot>
+                </li>
+              </ul>
+            </slot>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>

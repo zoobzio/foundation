@@ -106,7 +106,7 @@ manager command, and checkboxes through its `Pagination`, `Command`, and
 controls through its `Select`, `MultiSelect`, `Checkbox`, `DatePicker`,
 `TagsInput`, `FileInput`, `ImageInput`, and `RichText`, and the facets', keywords', and
 date filters' popover contents through its `Command`, `TagsInput`,
-`SegmentedControl`, `Calendar`, and `RangeCalendar`.
+`SegmentedControl`, `DateGrid`, and `DateRangeGrid`.
 
 ## Icons
 
@@ -140,7 +140,7 @@ A wrapper fills those slots from the contract by default through the
 one, and the wrapper's default fills in while it does not. A fixed role
 draws its alias: `expand` after a select's, multi select's, or
 accordion's trigger and as a tree branch's toggle; `prev` and `next` on
-the calendars and pickers and `calendar` on a picker's trigger; `search`
+the date grids and pickers and `calendar` on a picker's trigger; `search`
 before a command's filter and before an autocomplete literal option that
 names no icon of its own (the text literal, the one that opens the quote
 free text is typed in); `remove` on a tag's, a file's, and an image
@@ -151,7 +151,9 @@ in a checkbox; the editor's and rich text's tools by key (`bold`,
 of the button's text so the toolbar is icon-only, with the tool's label in
 the visitor's locale as the button's accessible name and its `title`, and
 `expand` after the block type dropdown's text, which reads in the
-visitor's locale as its entries do; and on
+visitor's locale as its entries do; the calendar's steps by key (`prev`,
+`next`, see `CALENDAR_TOOL_ICONS`), drawn the same way, while today and
+the views keep their names as text; and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
 `sort-asc` or `sort-desc` after a sorted header, `folder` before a
 folder, `magic` before the table's search, `next` after an autocomplete
@@ -390,13 +392,14 @@ must be something Nuxt's payload can carry: plain data, with `Set` and
 `Date` allowed (devalue serializes them). A second id with the same
 options is a second, independent state.
 
-| Factory         | Store           | Hooks relayed                                                                                       |
-| --------------- | --------------- | --------------------------------------------------------------------------------------------------- |
-| `createTable`   | `accessTable`   | `table:updated`, `table:filtered`                                                                   |
-| `createForm`    | `accessForm`    | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed` |
-| `createBrowser` | `accessBrowser` | `browser:updated`, `browser:navigated`                                                              |
-| `createEditor`  | `accessEditor`  | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                             |
-| `createCode`    | `accessCode`    | `code:loaded`, `code:updated`, `code:mounted`, `code:unmounted`                                     |
+| Factory          | Store            | Hooks relayed                                                                                       |
+| ---------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
+| `createTable`    | `accessTable`    | `table:updated`, `table:filtered`                                                                   |
+| `createForm`     | `accessForm`     | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed` |
+| `createBrowser`  | `accessBrowser`  | `browser:updated`, `browser:navigated`                                                              |
+| `createEditor`   | `accessEditor`   | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                             |
+| `createCode`     | `accessCode`     | `code:loaded`, `code:updated`, `code:mounted`, `code:unmounted`                                     |
+| `createCalendar` | `accessCalendar` | `calendar:navigated`, `calendar:loaded`, `calendar:changed`, `calendar:selected`                    |
 
 Every relayed payload carries the service's `id`. `useHooks` subscribes
 for one instance: each listener fires for events with that id only, and
@@ -512,7 +515,7 @@ app/
   components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts, icons in the slots, the layer's components under nested parts; icon.ts is the icon glue they share
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
-  constants/      — error page status codes, log levels, the editor tools' icons, the table's search key
+  constants/      — error page status codes, log levels, the editor's and the calendar's tools' icons and text, the table's search key
   assets/css/     — reset.css, loaded by the layer config
   composables/    — useAppError, useFocusKey, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   factories/      — create<Name>(id, options) → use<Name>(): Service
