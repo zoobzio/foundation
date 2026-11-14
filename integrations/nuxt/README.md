@@ -104,7 +104,7 @@ browser's trail through its `Breadcrumb`, the table's pagination, column
 manager command, and checkboxes through its `Pagination`, `Command`, and
 `Checkbox`, a form's fields through its `FormField` and that field's
 controls through its `Select`, `MultiSelect`, `Checkbox`, `DatePicker`,
-`TagsInput`, `FileInput`, and `RichText`, and the facets', keywords', and
+`TagsInput`, `FileInput`, `ImageInput`, and `RichText`, and the facets', keywords', and
 date filters' popover contents through its `Command`, `TagsInput`,
 `SegmentedControl`, `Calendar`, and `RangeCalendar`.
 
@@ -143,8 +143,9 @@ accordion's trigger and as a tree branch's toggle; `prev` and `next` on
 the calendars and pickers and `calendar` on a picker's trigger; `search`
 before a command's filter and before an autocomplete literal option that
 names no icon of its own (the text literal, the one that opens the quote
-free text is typed in); `remove` on a tag's and a file's remove
-button and after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
+free text is typed in); `remove` on a tag's, a file's, and an image
+input's remove button, `image` in an image input's placeholder and
+`camera` before its pick label; `remove` also after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
 in a checkbox; the editor's and rich text's tools by key (`bold`,
 `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`), each drawn in place
 of the button's text so the toolbar is icon-only, with the tool's label in

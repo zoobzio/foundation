@@ -43,20 +43,21 @@ form.field("email"); // { value, error, touched } — error only once touched
 its `type` renders, and the control's own settings. `key` may only point
 at a payload property that accepts the control's value.
 
-| Type                                      | Value       | Settings                                   |
-| ----------------------------------------- | ----------- | ------------------------------------------ |
-| `text`, `email`, `password`, `tel`, `url` | `string`    | `placeholder`, `maxLength`                 |
-| `number`                                  | `number`    | `placeholder`, `min`, `max`, `step`        |
-| `textarea`                                | `string`    | `placeholder`, `rows`, `maxLength`         |
-| `select`, `radio`                         | `string`¹   | `options` (+ `placeholder`, `orientation`) |
-| `multi-select`                            | `string[]`¹ | `options`, `placeholder`                   |
-| `checkbox`                                | `boolean`   |                                            |
-| `date`                                    | `Date`      | `placeholder`, `minDate`, `maxDate`        |
-| `time`, `datetime-local`, `date-input`    | `string`    | `min`, `max`, `step`                       |
-| `tags-input`                              | `string[]`  | `placeholder`, `max`, `delimiter`          |
-| `file`                                    | `File`      | `accept`, `capture`                        |
-| `multi-file`                              | `File[]`    | `accept`, `capture`                        |
-| `richtext`                                | `string`    | `features`                                 |
+| Type                                      | Value            | Settings                                   |
+| ----------------------------------------- | ---------------- | ------------------------------------------ |
+| `text`, `email`, `password`, `tel`, `url` | `string`         | `placeholder`, `maxLength`                 |
+| `number`                                  | `number`         | `placeholder`, `min`, `max`, `step`        |
+| `textarea`                                | `string`         | `placeholder`, `rows`, `maxLength`         |
+| `select`, `radio`                         | `string`¹        | `options` (+ `placeholder`, `orientation`) |
+| `multi-select`                            | `string[]`¹      | `options`, `placeholder`                   |
+| `checkbox`                                | `boolean`        |                                            |
+| `date`                                    | `Date`           | `placeholder`, `minDate`, `maxDate`        |
+| `time`, `datetime-local`, `date-input`    | `string`         | `min`, `max`, `step`                       |
+| `tags-input`                              | `string[]`       | `placeholder`, `max`, `delimiter`          |
+| `file`                                    | `File`           | `accept`, `capture`                        |
+| `multi-file`                              | `File[]`         | `accept`, `capture`                        |
+| `image`                                   | `File \| string` | `accept`, `capture`                        |
+| `richtext`                                | `string`         | `features`                                 |
 
 ¹ Or the property's own string literal union. A choice field (`select`,
 `radio`, `multi-select`) over `role: "admin" | "member"` keys that property
@@ -80,7 +81,10 @@ const config: Config<Payload> = {
 
 A `file` field holds the picked `File` and a `multi-file` field the picked
 files; limits on size, type, and count belong to the schema (`z.file()`,
-`z.array(z.file())`). A `richtext` field holds the document as an HTML
+`z.array(z.file())`). An `image` field holds the stored image's URL, a
+newly picked `File`, or nothing once removed, so the image saves with the
+rest of the form and the submit action reads from the value what it owes
+the server (see below). A `richtext` field holds the document as an HTML
 string, so the schema validates a string and the payload stays
 serializable; an empty document writes `""`, so `z.string().min(1)` marks
 it required. `features` is the editor's feature set (`headings`, `lists`,
@@ -90,6 +94,7 @@ off.
 ```ts
 const fields: Field<Post>[] = [
   { type: "file", key: "cover", label: "Cover", accept: "image/*" },
+  { type: "image", key: "photo", label: "Photo" },
   {
     type: "richtext",
     key: "body",
@@ -99,8 +104,29 @@ const fields: Field<Post>[] = [
 ];
 const schema = z.object({
   cover: z.file().max(5_000_000).mime(["image/png", "image/jpeg"]),
+  photo: z
+    .union([z.string(), z.file().max(5_000_000).mime(["image/png"])])
+    .optional(),
   body: z.string().min(1, "Body is required"),
 });
+```
+
+The service uploads nothing. An `image` value tells the submit action
+which request the image needs: a `File` is a new pick to upload, a string
+is the stored image and stays, and an empty value where the record held
+an image is a removal. Use `z.string()` for the stored side unless every
+stored URL is absolute, as `z.url()` rejects a path like `/uploads/a.png`,
+and add `.nullable()` when a record without an image carries `null`.
+
+```ts
+const actions: Actions<Post> = {
+  submit: async ({ payload }) => {
+    const { photo, ...rest } = payload;
+    await api.posts.update(post.id, rest);
+    if (photo instanceof File) await api.posts.uploadPhoto(post.id, photo);
+    else if (!photo && post.photo) await api.posts.removePhoto(post.id);
+  },
+};
 ```
 
 ## The state container

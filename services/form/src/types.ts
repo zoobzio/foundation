@@ -201,6 +201,21 @@ export type MultiFileField<T> = FieldBase<T, File[]> & {
 };
 
 /**
+ * Single image. The value is the stored image's URL, a newly picked
+ * `File`, or undefined once removed, so the payload says what the submit
+ * action owes the server: a `File` is uploaded, a string is kept, and an
+ * empty value where the record held a URL is a removal. `accept` (images
+ * of any type when unset) and `capture` read as the native attributes do.
+ * The schema takes both forms
+ * (`z.union([z.string(), z.file().max(...).mime(...)]).optional()`).
+ */
+export type ImageField<T> = FieldBase<T, File | string> & {
+  type: "image";
+  accept?: string;
+  capture?: "user" | "environment";
+};
+
+/**
  * A heading level a rich text field offers.
  */
 export type RichTextLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -253,6 +268,7 @@ export type Field<T> =
   | TagsInputField<T>
   | FileField<T>
   | MultiFileField<T>
+  | ImageField<T>
   | RichTextField<T>;
 
 /**

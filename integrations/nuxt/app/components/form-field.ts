@@ -9,6 +9,7 @@ import { wrap } from "@zoobzio/vue/utils/wrap";
 import Checkbox from "./checkbox";
 import DatePicker from "./date-picker";
 import FileInput from "./file-input";
+import ImageInput from "./image-input";
 import MultiSelect from "./multi-select";
 import RichText from "./rich-text";
 import Select from "./select";
@@ -29,6 +30,7 @@ export default wrap(Core, {
     datePicker: { as: DatePicker },
     tagsInput: { as: TagsInput },
     fileInput: { as: FileInput },
+    imageInput: { as: ImageInput },
     richText: { as: RichText },
   },
   slots: {

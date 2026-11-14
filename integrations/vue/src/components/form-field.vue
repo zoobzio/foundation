@@ -9,6 +9,7 @@ import type {
 import Checkbox from "./checkbox.vue";
 import DatePicker from "./date-picker.vue";
 import FileInput from "./file-input.vue";
+import ImageInput from "./image-input.vue";
 import MultiSelect from "./multi-select.vue";
 import Radio from "./radio.vue";
 import RichText from "./rich-text.vue";
@@ -46,6 +47,7 @@ const settings = usePassthrough<FormFieldPassthrough>(() => {
       datePicker: { as: DatePicker, ...recipes.datePicker },
       tagsInput: { as: TagsInput, ...recipes.tagsInput },
       fileInput: { as: FileInput, ...recipes.fileInput },
+      imageInput: { as: ImageInput, ...recipes.imageInput },
       richText: { as: RichText, ...recipes.richText },
     },
   };
@@ -122,6 +124,13 @@ defineSlots<FormFieldSlots<T>>();
     </slot>
     <slot v-else-if="ctx.control === 'fileInput'" name="fileInput" v-bind="ctx">
       <Primitive v-bind="settings.fileInput" class="f-data-form-file-input" />
+    </slot>
+    <slot
+      v-else-if="ctx.control === 'imageInput'"
+      name="imageInput"
+      v-bind="ctx"
+    >
+      <Primitive v-bind="settings.imageInput" class="f-data-form-image-input" />
     </slot>
     <slot v-else-if="ctx.control === 'richText'" name="richText" v-bind="ctx">
       <Primitive v-bind="settings.richText" class="f-data-form-rich-text" />

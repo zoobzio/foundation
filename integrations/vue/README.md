@@ -167,7 +167,7 @@ default `auto` layout treats it as a preference the content can exceed.
 `form.vue` renders a headless `@zoobzio/form` service the same way: one
 `form-field.vue` per config field, each resolved to the control its `type`
 names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,
-`datePicker`, `tagsInput`, `fileInput`, `richText`), with the lifecycle
+`datePicker`, `tagsInput`, `fileInput`, `imageInput`, `richText`), with the lifecycle
 events (`initialized`, `submitted`, `rejected`, `restored`, `reset`,
 `failed`) relayed as emits. The form's own submit recipe catches the
 service's rejection, so a failed submit action reaches the consumer as the
@@ -186,7 +186,18 @@ or `error` slot override keeps the association by reusing the ids.
 A `file` or `multi-file` field renders `file-input.vue`: a native file
 input with the picked files listed beneath it, each with a remove button.
 The model is the list of files; a pick replaces it, as the native input
-does, and a form reset clears the native list too. A `richtext` field
+does, and a form reset clears the native list too. An `image` field
+renders `image-input.vue`: a preview of the image, or a placeholder while
+there is none, with a native file input, a `pick` label that opens it, and
+a `remove` button. The model is the stored image's URL, a picked `File`,
+or undefined; the component previews a picked file through an object URL
+it revokes when the model moves on or it unmounts. The native input is
+`required` only while there is no image, as a stored image leaves it
+empty. The package ships no styles, so the stylesheet hides the native
+input behind the label and frames the preview (`f-image-input-root`,
+`-preview`, `-placeholder`, `-input`, `-pick`, `-remove`); the
+`placeholder` slot takes an avatar in its place, and `placeholderContent`
+an icon inside it. A `richtext` field
 renders `rich-text.vue`: a v-model over the document as an HTML string,
 with an `@zoobzio/editor` service the component owns behind it, rendered
 through `editor.vue`. The field's `features` are the editor's config, an

@@ -8,6 +8,7 @@ import type {
   CheckboxField,
   DateField,
   FileField,
+  ImageField,
   MultiFileField,
   MultiSelectField,
   NumberField,
@@ -367,6 +368,31 @@ const files = <T>(
 });
 
 /**
+ * The image passes a stored URL or a picked `File` both ways; anything
+ * else in the payload (a `null` from a record without an image) reads as
+ * no image. A removal writes undefined.
+ */
+const image = <T>(
+  form: Service<T>,
+  field: ImageField<T>,
+  value: T[keyof T] | undefined,
+  wire: Wiring,
+): FormFieldRecipes["imageInput"] => ({
+  modelValue:
+    value instanceof File || typeof value === "string" ? value : undefined,
+  accept: field.accept,
+  capture: field.capture,
+  disabled: field.disabled,
+  required: field.required,
+  pt: { input: wire },
+  "onUpdate:modelValue": (v) => {
+    form.set(field.key, v);
+    form.touch(field.key);
+    form.check(field.key);
+  },
+});
+
+/**
  * The rich text writes on every edit and validates on blur, as a textarea
  * does. The field's features are the editor's config: the two are
  * structurally one type, and this assignment is where that is checked.
@@ -412,6 +438,7 @@ const blank = (): FormFieldRecipes => ({
   datePicker: { modelValue: undefined },
   tagsInput: {},
   fileInput: {},
+  imageInput: {},
   richText: {},
 });
 
@@ -480,6 +507,10 @@ export const fielder = <T>(
     case "multi-file":
       return resolve("fileInput", {
         fileInput: files(form, field, value, wire),
+      });
+    case "image":
+      return resolve("imageInput", {
+        imageInput: image(form, field, value, wire),
       });
     case "richtext":
       return resolve("richText", {

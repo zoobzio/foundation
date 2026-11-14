@@ -1,0 +1,14 @@
+{
+  "change": {
+    "defaultMessage": "Change",
+    "description": "The button of an image input that picks another image in place of the one it shows."
+  },
+  "choose": {
+    "defaultMessage": "Choose",
+    "description": "The button of an image input that picks an image while it holds none."
+  },
+  "remove": {
+    "defaultMessage": "Remove",
+    "description": "The button of an image input that removes the image it shows."
+  }
+}

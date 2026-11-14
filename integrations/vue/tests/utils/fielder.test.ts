@@ -46,6 +46,7 @@ describe("fielder", () => {
       "input",
       "fileInput",
       "fileInput",
+      "imageInput",
       "richText",
     ]);
   });
@@ -288,6 +289,46 @@ describe("fielder", () => {
     expect(
       fielder(service, fakeField("attachments")).recipes.fileInput.modelValue,
     ).toEqual(picked);
+  });
+
+  it("image passes a stored URL or a picked file both ways", () => {
+    const { service } = makeForm();
+    const { control, recipes } = fielder(service, fakeField("photo"));
+    expect(control).toBe("imageInput");
+    expect(recipes.imageInput).toMatchObject({
+      modelValue: "/photos/ada.png",
+      capture: "user",
+      pt: { input: { id: "test-form-photo" } },
+    });
+    const next = fakeFile("next.png");
+    recipes.imageInput["onUpdate:modelValue"]?.(next);
+    expect(toRaw(service.payload.photo)).toBe(next);
+    expect(service.touched.has("photo")).toBe(true);
+    expect(
+      toRaw(fielder(service, fakeField("photo")).recipes.imageInput.modelValue),
+    ).toBe(next);
+  });
+
+  it("image writes a removal as undefined and checks a pick", () => {
+    const { service } = makeForm();
+    const { recipes } = fielder(service, fakeField("photo"));
+    recipes.imageInput["onUpdate:modelValue"]?.(undefined);
+    expect("photo" in service.payload).toBe(true);
+    expect(service.payload.photo).toBeUndefined();
+    expect(service.errors.photo).toBeUndefined();
+    recipes.imageInput["onUpdate:modelValue"]?.(
+      fakeFile("doc.pdf", "application/pdf"),
+    );
+    expect(service.errors.photo).toBe("PNG only");
+  });
+
+  it("image reads a payload value of another type as no image", () => {
+    const { service } = makeForm();
+    // A record without an image may carry null where the type has none.
+    service.set("photo", null as never);
+    expect(
+      fielder(service, fakeField("photo")).recipes.imageInput.modelValue,
+    ).toBeUndefined();
   });
 
   it("richtext seats the HTML, the features, and the field's id", () => {

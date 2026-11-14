@@ -172,6 +172,34 @@ describe("form-field", () => {
     expect(wrapper.find(".f-file-input-item").exists()).toBe(false);
   });
 
+  it("renders an image input seeded from the payload and writes a pick and a removal", async () => {
+    const { service } = makeForm();
+    const wrapper = mountField({ service, field: fakeField("photo") });
+    expect(wrapper.find(".f-data-form-image-input").exists()).toBe(true);
+    expect(wrapper.get(".f-image-input-preview").attributes("src")).toBe(
+      "/photos/ada.png",
+    );
+    const input = wrapper.get<HTMLInputElement>("input.f-image-input-input");
+    expect(input.attributes("accept")).toBe("image/*");
+    expect(input.attributes("capture")).toBe("user");
+    // The field label and the pick label both open the native input.
+    expect(input.attributes("id")).toBe("test-form-photo");
+    expect(wrapper.get(".f-image-input-pick").attributes("for")).toBe(
+      "test-form-photo",
+    );
+    const next = fakeFile("next.png");
+    Object.defineProperty(input.element, "files", { value: [next] });
+    await input.trigger("change");
+    expect(toRaw(service.payload.photo)).toBe(next);
+    expect(wrapper.get(".f-image-input-preview").attributes("src")).toMatch(
+      /^blob:/,
+    );
+    await wrapper.get(".f-image-input-remove").trigger("click");
+    expect(service.payload.photo).toBeUndefined();
+    expect(wrapper.find(".f-image-input-preview").exists()).toBe(false);
+    expect(wrapper.find(".f-image-input-placeholder").exists()).toBe(true);
+  });
+
   it("renders a multiple file input", () => {
     const { service } = makeForm();
     const wrapper = mountField({ service, field: fakeField("attachments") });

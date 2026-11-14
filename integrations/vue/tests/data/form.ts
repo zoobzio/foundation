@@ -27,6 +27,7 @@ export type FakePayload = {
   birthday: string;
   avatar: File;
   attachments: File[];
+  photo?: File | string;
   body: string;
 };
 
@@ -62,6 +63,9 @@ export const fakeSchema = z.object({
   birthday: z.string().min(1, "Birthday is required"),
   avatar: z.file().mime(["image/png"], "PNG only"),
   attachments: z.array(z.file()).max(2, "Two at most"),
+  photo: z
+    .union([z.string(), z.file().mime(["image/png"], "PNG only")])
+    .optional(),
   body: z.string().min(1, "Body is required"),
 });
 
@@ -130,6 +134,7 @@ export const fakeFields: Field<FakePayload>[] = [
     accept: "image/*",
   },
   { type: "multi-file", key: "attachments", label: "Attachments" },
+  { type: "image", key: "photo", label: "Photo", capture: "user" },
   {
     type: "richtext",
     key: "body",
@@ -159,6 +164,7 @@ export const fakeDefaults: Partial<FakePayload> = {
   birthday: "1990-05-20",
   avatar: fakeFile(),
   attachments: [],
+  photo: "/photos/ada.png",
   body: "<p>Hello</p>",
 };
 
