@@ -51,12 +51,11 @@ describe("browser", () => {
     expect(wrapper.findAll(".f-data-browser-files tr")).toHaveLength(3);
   });
 
-  it("renders folders alphabetically above the files in one headerless table", async () => {
+  it("renders folders alphabetically above the files in one table", async () => {
     const { service } = makeBrowser();
     await service.init();
     const wrapper = mountBrowser({ service });
     const table = wrapper.get("table.f-table");
-    expect(table.find("thead").exists()).toBe(false);
     expect(
       table.findAll(".f-data-browser-folder .f-span").map((s) => s.text()),
     ).toEqual(["Archive", "Drafts", "Media"]);
@@ -69,14 +68,162 @@ describe("browser", () => {
     ]);
   });
 
-  it("swaps the body for the empty state once an empty folder settles", async () => {
+  it("swaps the rows for the empty state under the head once an empty folder settles", async () => {
     const { service } = makeBrowser({}, {}, { folders: [], files: [] });
     const wrapper = mountBrowser({ service });
-    expect(wrapper.find("table.f-table").exists()).toBe(true);
+    expect(wrapper.find(".f-data-browser-empty").exists()).toBe(false);
     await service.init();
     await flushPromises();
-    expect(wrapper.get(".f-data-browser-empty").text()).toBe("Empty folder");
-    expect(wrapper.find("table.f-table").exists()).toBe(false);
+    const empty = wrapper.get("table.f-table tbody.f-data-browser-empty");
+    expect(empty.text()).toBe("Empty folder");
+    expect(empty.get("td").attributes("colspan")).toBe("3");
+    expect(wrapper.find(".f-data-browser-files").exists()).toBe(false);
+    expect(wrapper.find("thead .f-data-browser-breadcrumb").exists()).toBe(
+      true,
+    );
+  });
+
+  it("names a search with no match apart from an empty folder", async () => {
+    const { service } = makeBrowser({}, {}, { folders: [], files: [] });
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    service.query.add({ kind: "literal", key: "text", value: "zzz" });
+    await flushPromises();
+    expect(wrapper.get(".f-data-browser-empty").text()).toBe("No matches");
+  });
+
+  it("attaches the trail and the listing's counts to the table as its head", async () => {
+    const { service } = makeBrowser(
+      { actions: fakeFileActions },
+      { actions: { download: vi.fn(), remove: vi.fn() } },
+    );
+    const wrapper = mountBrowser({ service });
+    const head = wrapper.get("table.f-table thead.f-data-browser-head");
+    expect(head.findAll("th")).toHaveLength(1);
+    // The columns and the actions column.
+    expect(head.get("th").attributes("colspan")).toBe("4");
+    expect(head.find(".f-data-browser-breadcrumb").exists()).toBe(true);
+    expect(wrapper.find(".f-data-browser-toolbar nav").exists()).toBe(false);
+    // Nothing is counted before the first fetch settles.
+    expect(head.find(".f-data-browser-summary").exists()).toBe(false);
+    await service.init();
+    await flushPromises();
+    expect(head.get(".f-data-browser-summary").text()).toBe(
+      "3 folders, 3 files",
+    );
+  });
+
+  it("selects every file from the head's checkbox", async () => {
+    const { service } = makeBrowser(
+      { bulkActions: fakeBrowserBulkActions },
+      { bulkActions: { purge: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    const all = wrapper.get('thead th.f-data-browser-select [role="checkbox"]');
+    expect(wrapper.get("thead").findAll("th")).toHaveLength(2);
+    await all.trigger("click");
+    await flushPromises();
+    expect(service.selected).toEqual(new Set(["1", "2", "3"]));
+    service.toggleRow("1");
+    await flushPromises();
+    expect(all.attributes("aria-checked")).toBe("mixed");
+  });
+
+  it("relays the head's slots from the top", async () => {
+    const { service } = makeBrowser();
+    await service.init();
+    service.open({ key: "media", label: "Media" });
+    await flushPromises();
+    const wrapper = mountBrowser(
+      { service },
+      {
+        crumbPrepend: `<template #crumbPrepend="s"><i>{{ s.index }}{{ s.last ? "!" : "" }}</i></template>`,
+        summary: `<template #summary="s"><b>{{ s.browser.files.length }}</b></template>`,
+      },
+    );
+    expect(
+      wrapper.findAll(".f-data-browser-breadcrumb i").map((i) => i.text()),
+    ).toEqual(["0", "1!"]);
+    expect(wrapper.get(".f-data-browser-summary b").text()).toBe("3");
+  });
+
+  it("submits quoted search text as the service query", async () => {
+    const { service, fetch } = makeBrowser();
+    const wrapper = mountBrowser({ service });
+    const input = wrapper.get(".f-data-browser-search input");
+    expect(input.attributes("placeholder")).toBe("Search...");
+    await input.setValue('"logo');
+    await input.trigger("keydown", { key: "Enter" });
+    await flushPromises();
+    expect(service.query.text).toBe("logo");
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenLastCalledWith(
+      expect.objectContaining({ path: [], query: "logo" }),
+      service,
+    );
+    expect(wrapper.emitted("filtered")?.at(0)).toEqual([
+      { id: "test-browser", query: "logo", filters: [] },
+    ]);
+  });
+
+  it("drops the search on opening a folder", async () => {
+    const { service } = makeBrowser();
+    await service.init();
+    service.query.add({ kind: "literal", key: "text", value: "logo" });
+    const wrapper = mountBrowser({ service });
+    await flushPromises();
+    expect(wrapper.findAll(".f-chip")).toHaveLength(1);
+    await wrapper.get(".f-data-browser-folder-btn").trigger("click");
+    await flushPromises();
+    expect(wrapper.findAll(".f-chip")).toHaveLength(0);
+    expect(service.query.text).toBe("");
+  });
+
+  it("hides the search when the config says so", () => {
+    const { service } = makeBrowser({ searchable: false });
+    const wrapper = mountBrowser({ service });
+    expect(wrapper.find(".f-data-browser-search").exists()).toBe(false);
+  });
+
+  it("sorts the files from the sort menu, flipping on a repeat", async () => {
+    const { service, fetch } = makeBrowser();
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    const trigger = wrapper.get('button[aria-label="Sort"]');
+    const pick = async (label: string) => {
+      await trigger.trigger("click", { button: 0, ctrlKey: false });
+      await flushPromises();
+      const item = menuItem(label);
+      if (!item) throw new Error(`no rendered ${label} item`);
+      return item;
+    };
+    const size = await pick("Size");
+    // The sortable columns alone.
+    expect(menuItem("Modified")).toBeUndefined();
+    expect(size.hasAttribute("data-current")).toBe(false);
+    size.click();
+    await flushPromises();
+    expect(service.sortField).toBe("size");
+    expect(service.sortDirection).toBe("asc");
+    expect(fetch).toHaveBeenLastCalledWith(
+      expect.objectContaining({ sortField: "size", sortDirection: "asc" }),
+      service,
+    );
+    const again = await pick("Size");
+    expect(again.hasAttribute("data-current")).toBe(true);
+    expect(again.getAttribute("data-direction")).toBe("asc");
+    again.click();
+    await flushPromises();
+    expect(service.sortDirection).toBe("desc");
+  });
+
+  it("renders no sort menu without a sortable column", () => {
+    const { service } = makeBrowser({
+      columns: [{ key: "name", label: "Name" }],
+    });
+    const wrapper = mountBrowser({ service });
+    expect(wrapper.find('button[aria-label="Sort"]').exists()).toBe(false);
   });
 
   it("hides the folders section when the folder has no subfolders", async () => {
@@ -376,14 +523,24 @@ describe("browser", () => {
       service,
       pt: {
         refresh: { label: "Reload" },
+        search: { placeholder: "Find" },
+        sortTrigger: { label: "Order" },
+        head: {
+          breadcrumb: { items: [{ key: "top", label: "Top", index: 0 }] },
+        },
         files: { actionsTrigger: { label: "More" } },
       },
     });
+    expect(
+      wrapper.get(".f-data-browser-search input").attributes("placeholder"),
+    ).toBe("Find");
+    expect(wrapper.find('button[aria-label="Order"]').exists()).toBe(true);
+    expect(wrapper.get(".f-data-browser-breadcrumb").text()).toBe("Top");
     expect(wrapper.find('button[aria-label="Reload"]').exists()).toBe(true);
     expect(wrapper.findAll('button[aria-label="More"]')).toHaveLength(3);
   });
 
-  it("the empty slot replaces the whole body", async () => {
+  it("the empty slot fills the body under the head", async () => {
     const { service } = makeBrowser({}, {}, { folders: [], files: [] });
     await service.init();
     const wrapper = mountBrowser(
@@ -392,7 +549,9 @@ describe("browser", () => {
         empty: `<template #empty="s"><p>{{ s.browser.id }} is empty</p></template>`,
       },
     );
-    expect(wrapper.get("p").text()).toBe("test-browser is empty");
-    expect(wrapper.find("table").exists()).toBe(false);
+    expect(wrapper.get("tbody.f-data-browser-empty td p").text()).toBe(
+      "test-browser is empty",
+    );
+    expect(wrapper.find("thead").exists()).toBe(true);
   });
 });

@@ -18,6 +18,8 @@ describe("createBrowserState", () => {
       sortField: null,
       sortDirection: BROWSER_DEFAULT_SORT_DIRECTION,
       selected: new Set(),
+      entries: [],
+      draft: "",
     });
   });
 

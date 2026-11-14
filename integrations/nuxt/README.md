@@ -99,8 +99,9 @@ way. Where a vue component renders another of its own as a part, the
 wrapper names the layer's wrapped component through the part's `as`, so
 nested components navigate through `NuxtLink` and draw their icons
 without the consumer reaching in: the table's row actions and the
-browser's file and folder actions render through the layer's `Menu`, the
-browser's trail through its `Breadcrumb`, the table's pagination, column
+browser's file and folder actions and its sort options render through the
+layer's `Menu`, the browser's trail through its `Breadcrumb` (under
+`pt.head`), its search through the layer's `TableSearch`, the table's pagination, column
 manager command, and checkboxes through its `Pagination`, `Command`, and
 `Checkbox`, a form's fields through its `FormField` and that field's
 controls through its `Select`, `MultiSelect`, `Checkbox`, `DatePicker`,
@@ -156,7 +157,10 @@ visitor's locale as its entries do; the calendar's steps by key (`prev`,
 the views keep their names as text; and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
 `sort-asc` or `sort-desc` after a sorted header, `folder` before a
-folder, `magic` before the table's search, `next` after an autocomplete
+folder, `folder-open` before the root crumb of the browser's trail, `sort`
+as the browser's sort trigger until its files sort by a column and
+`sort-asc` or `sort-desc` from then on, as after that column's item in the
+menu, `magic` before the table's and the browser's search, `next` after an autocomplete
 option that enters a stage (a field or an operator; a literal option is
 terminal and draws none) and
 `expand` after the active trail option whose stage is open, and the pagination's `first`,
@@ -265,7 +269,8 @@ what reaches `@zoobzio/vue` is always a string:
   the columns, actions, fields and literals — once, when the service is
   built in setup, and lays the contract's messages under the defaults the
   headless packages ship in English: the query's text literal
-  (`table.text`) and the browser's root crumb (`browser.root`). The
+  (`table.text`, `browser.text`) and the browser's root crumb
+  (`browser.root`). The
   search then matches a typed prefix against a column's label as the
   visitor reads it. The layer's `locale` plugin reloads the app when the
   visitor switches locale, so a built service never holds a stale one.
@@ -396,7 +401,7 @@ options is a second, independent state.
 | ---------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
 | `createTable`    | `accessTable`    | `table:updated`, `table:filtered`                                                                   |
 | `createForm`     | `accessForm`     | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed` |
-| `createBrowser`  | `accessBrowser`  | `browser:updated`, `browser:navigated`                                                              |
+| `createBrowser`  | `accessBrowser`  | `browser:updated`, `browser:navigated`, `browser:filtered`                                          |
 | `createEditor`   | `accessEditor`   | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                             |
 | `createCode`     | `accessCode`     | `code:loaded`, `code:updated`, `code:mounted`, `code:unmounted`                                     |
 | `createCalendar` | `accessCalendar` | `calendar:navigated`, `calendar:loaded`, `calendar:changed`, `calendar:selected`                    |

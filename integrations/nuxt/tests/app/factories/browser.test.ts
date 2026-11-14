@@ -88,6 +88,8 @@ describe("createBrowser", () => {
       path: ["media"],
       sortField: null,
       sortDirection: "asc",
+      query: "",
+      filters: [],
     });
     expect(assets.files).toEqual(fakeFiles);
     expect(assets.folders.map((f) => f.key)).toEqual(["archive", "media"]);
@@ -97,9 +99,11 @@ describe("createBrowser", () => {
   it("relays service events onto the Nuxt hook bus", async () => {
     const updated = vi.fn();
     const navigated = vi.fn();
+    const filtered = vi.fn();
     useNuxtApp().hooks.addHooks({
       "browser:updated": updated,
       "browser:navigated": navigated,
+      "browser:filtered": filtered,
     });
     const assets = createBrowser("assets", makeOptions())();
     await assets.init();
@@ -111,6 +115,17 @@ describe("createBrowser", () => {
     });
     assets.open({ key: "media", label: "Media" });
     expect(navigated).toHaveBeenCalledWith({ id: "assets", path: ["media"] });
+    assets.query.add({ kind: "literal", key: "text", value: "logo" });
+    expect(filtered).toHaveBeenCalledWith({
+      id: "assets",
+      query: "logo",
+      filters: [],
+    });
+  });
+
+  it("labels the search's text literal from the contract", () => {
+    const assets = createBrowser("assets", makeOptions())();
+    expect(assets.query.items[0]?.label).toBe("Search");
   });
 
   it("every call of one composable shares the id's state", async () => {

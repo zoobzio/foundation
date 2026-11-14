@@ -7,6 +7,7 @@ export const COMPONENTS = [
   "browser-bulk-actions",
   "browser-files",
   "browser-folders",
+  "browser-head",
   "calendar",
   "checkbox",
   "code",
@@ -312,8 +313,16 @@ export const VUE_TYPES = {
     "BrowserFoldersContext",
     "BrowserFoldersSlots",
   ],
-  "components/browser": [
+  "components/browser-head": [
     "BrowserCrumbItem",
+    "BrowserHeadPassthrough",
+    "BrowserHeadProps",
+    "BrowserHeadContext",
+    "BrowserCrumbContext",
+    "BrowserHeadSlots",
+  ],
+  "components/browser": [
+    "BrowserSortItem",
     "BrowserPassthrough",
     "BrowserProps",
     "BrowserEmits",

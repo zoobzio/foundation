@@ -3,6 +3,22 @@
     "defaultMessage": "Refresh",
     "description": "The button that fetches the current folder again."
   },
+  "search": {
+    "defaultMessage": "Search this folder...",
+    "description": "The placeholder of the browser's search, which searches the folder the browser stands in."
+  },
+  "text": {
+    "defaultMessage": "Search",
+    "description": "The label of the search's text literal: the option that opens the quote and takes free text, leading the field panel."
+  },
+  "sort": {
+    "defaultMessage": "Sort",
+    "description": "The button that opens the list of columns the files sort by."
+  },
+  "summary": {
+    "defaultMessage": "{folders, plural, one {# folder} other {# folders}}, {files, plural, one {# file} other {# files}}",
+    "description": "The counts of the folders and files the current folder shows, at the end of the browser's head."
+  },
   "actions": {
     "defaultMessage": "Actions",
     "description": "The button on a file or folder that opens its actions."
@@ -10,6 +26,10 @@
   "empty": {
     "defaultMessage": "Empty folder",
     "description": "Shown when the current folder holds neither files nor folders."
+  },
+  "noMatches": {
+    "defaultMessage": "No matches",
+    "description": "Shown when a search of the current folder matches neither files nor folders."
   },
   "noFiles": {
     "defaultMessage": "No files",

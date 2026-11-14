@@ -224,16 +224,30 @@ const service = new FormService("profile", config, state, { submit });
 />
 ```
 
-`browser.vue` renders a headless `@zoobzio/browser` service: a breadcrumb
-over the service's `trail`, then one headerless table with the folder rows
-(`browser-folders.vue`) above the file rows (`browser-files.vue`), each a
-`tbody` of its own so the columns line up. Folder clicks `open`, crumb
-clicks `navigate`, row and folder menus dispatch by key through `runAction`
-and `runFolderAction`, and the bulk actions bar runs `runBulkAction` over
-the selection. The `updated` and `navigated` events relay as emits. Cell
-slots cascade as the table's do (`cell:<key>`, `cell:<type>`, `cell`);
-`noFiles` fills the empty file section, `empty` replaces the whole body once
-a folder settles with neither folders nor files.
+`browser.vue` renders a headless `@zoobzio/browser` service. Its toolbar
+holds the search (the autocomplete over the service's `query`, as the
+table's is, hidden by `searchable: false`), the sort menu (the service's
+`sortableColumns` behind a Fab; an item sorts by its column, and again
+flips the direction; the sorted item carries `data-current` and
+`data-direction`), and the refresh. Under it is one table. Its head
+(`browser-head.vue`) is a single row attached to the listing: the
+select-all checkbox where the files are selectable, then one cell with the
+breadcrumb over the service's `trail` and, once the first fetch settles,
+the listing's counts (`summary`). The folder rows (`browser-folders.vue`)
+sit above the file rows (`browser-files.vue`), each a `tbody` of its own so
+the columns line up. Folder clicks `open`, crumb clicks `navigate` (either
+drops the search, which belongs to the folder it was typed in), row and
+folder menus dispatch by key through `runAction` and `runFolderAction`, and
+the bulk actions bar runs `runBulkAction` over the selection. The
+`updated`, `navigated`, and `filtered` events relay as emits. Cell slots
+cascade as the table's do (`cell:<key>`, `cell:<type>`, `cell`);
+`crumbPrepend` and `crumbAppend` sit around a crumb's label, `sort`
+replaces the sort trigger and `sortPrepend` and `sortAppend` sit around
+its items; `noFiles` fills the empty file section, and `empty` fills the
+one row the body becomes, under the head, once a folder settles with
+neither folders nor files: `Empty folder`, or `No matches` under a search.
+The head's parts take passthrough under `pt.head` (`breadcrumb`,
+`selectAllCheckbox`).
 
 ```ts
 import { reactive } from "vue";

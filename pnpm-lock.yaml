@@ -185,6 +185,9 @@ importers:
 
   examples/nuxt:
     dependencies:
+      '@zoobzio/browser':
+        specifier: workspace:*
+        version: link:../../services/browser
       '@zoobzio/calendar':
         specifier: workspace:*
         version: link:../../services/calendar
@@ -430,6 +433,9 @@ importers:
       '@zoobzio/kit':
         specifier: workspace:*
         version: link:../../packages/kit
+      '@zoobzio/query':
+        specifier: workspace:*
+        version: link:../query
       objectively:
         specifier: 'catalog:'
         version: 0.3.0

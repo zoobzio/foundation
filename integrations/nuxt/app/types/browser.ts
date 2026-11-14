@@ -33,12 +33,15 @@ export type BrowserBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 
 /**
  * The slice of the state container a browser may start from: the trail,
- * the file sort, and the selection the consumer chooses, never what a fetch
- * fills in. It seeds the `useState` record, so it must survive Nuxt's
+ * the file sort, the selection, and the search's entries the consumer
+ * chooses, never what a fetch fills in. It seeds the `useState` record, so it must survive Nuxt's
  * payload (devalue carries the `Set`).
  */
 export type BrowserInitial<T> = Partial<
-  Pick<State<T>, "path" | "sortField" | "sortDirection" | "selected">
+  Pick<
+    State<T>,
+    "path" | "sortField" | "sortDirection" | "selected" | "entries"
+  >
 >;
 
 /**
@@ -58,8 +61,8 @@ export type BrowserOptions<T> = Omit<
 };
 
 /**
- * The Nuxt hooks a browser relays: `browser:updated` and
- * `browser:navigated`, each carrying the service's payload with its
+ * The Nuxt hooks a browser relays: `browser:updated`,
+ * `browser:navigated`, and `browser:filtered`, each carrying the service's payload with its
  * scoping `id`.
  */
 export type BrowserHooks = Hooks<"browser", Events<unknown>>;

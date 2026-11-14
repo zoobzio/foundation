@@ -1,4 +1,11 @@
 import type {
+  Entry,
+  Filter,
+  Literal,
+  Service as Query,
+  Values,
+} from "@zoobzio/query";
+import type {
   Change as KitChange,
   Changers as KitChangers,
   Changes as KitChanges,
@@ -25,16 +32,58 @@ export type ColumnType =
   | "action";
 
 /**
- * A file column — what the browser renders per file row.
+ * A file column — what the browser renders per file row. An interface, so
+ * a layer may widen it by declaration merging (an icon); a property beyond
+ * the ones the browser and its views read is carried onto the column's
+ * query field, so the search draws the field as the column does.
+ *
+ * A column's query field is what the column declares: `operators`,
+ * `defaultOperator`, and `values`. The browser supplies no operators, as
+ * it gives an operator no meaning: the consumer reads it from the filters
+ * its fetch is handed. It supplies values for a `date` or `datetime`
+ * column alone, the days the query's `dateValues` generates from the term
+ * in the config's `timeZone`, where the column declares none of its own.
  */
 export interface BrowserColumn<T> {
   key: keyof T;
   label: Text;
   type?: ColumnType;
   align?: "left" | "center" | "right";
+  /**
+   * Whether the files sort by the column. A view lists the sortable
+   * columns as its sort options.
+   */
   sortable?: boolean;
   sortKey?: string;
+  /**
+   * Whether the column appears in the search autocomplete. Defaults by
+   * type: everything except `action` and `image` is filterable.
+   */
+  filterable?: boolean;
+  /**
+   * The operators a filter on the column carries. Without them the column
+   * has no operator stage.
+   */
+  operators?: readonly string[];
+  /**
+   * The operator a filter takes when none is given. It must be one of
+   * `operators`, or every filter added without an operator is rejected.
+   */
+  defaultOperator?: string;
+  /**
+   * The values the search suggests: a list the term narrows, or a provider
+   * the term is given to. Without them the value is free entry, except on
+   * a `date` or `datetime` column, which suggests the days the query's
+   * `dateValues` generates from the term.
+   */
+  values?: Values;
 }
+
+/**
+ * A committed column filter, as the query holds it. `op` is present for a
+ * column that declares operators.
+ */
+export type BrowserFilter = Filter;
 
 export type SortDirection = "asc" | "desc";
 
@@ -91,12 +140,19 @@ export type BrowserCrumb = {
  * Parameters passed to the fetch action. The browser owns navigation and
  * file sort: `path` is the folder-key trail from the root (`[]` = root).
  * Sorting applies to files only — folders always render alphabetically,
- * enforced by the service regardless of fetch order.
+ * enforced by the service regardless of fetch order. Its query owns the
+ * search: `query` is the committed free text, `filters` the committed
+ * column filters. The search is typed in one folder and dropped on leaving
+ * it, so a fetch that matches within `path` searches the current folder;
+ * how far below `path` it reaches, and whether folders are matched, is the
+ * fetch's to decide.
  */
 export interface BrowserFetchParams {
   path: string[];
   sortField: string | null;
   sortDirection: SortDirection;
+  query: string;
+  filters: BrowserFilter[];
 }
 
 export interface BrowserFetchResult<T> {
@@ -131,6 +187,19 @@ export type Config<T> = {
   folderActions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;
   /**
+   * Whether a UI renders the toolbar search. Defaults to `true`. A hint for
+   * the view layer only — the search surface on the service (`query`, the
+   * fetch params) stays live for imperative use.
+   */
+  searchable?: boolean;
+  /**
+   * The literals of the query, handed to it as given: the values typed
+   * between their own characters, which lead the search's options.
+   * Defaults to the query's, the text literal alone, `"text"` under
+   * `Search`; the browser reads the `text` literal as the fetch's `query`.
+   */
+  literals?: Record<string, Literal>;
+  /**
    * The BCP 47 locale cells format in. Defaults to `en-US`.
    */
   locale?: string;
@@ -139,17 +208,20 @@ export type Config<T> = {
    */
   currency?: string;
   /**
-   * The IANA time zone date and datetime cells format in. Defaults to
-   * `UTC`, so a server and a browser render the same text.
+   * The IANA time zone date and datetime cells format in, and the one the
+   * day a date column's search suggests first, today, is read in. Defaults
+   * to `UTC`, so a server and a browser render the same text.
    */
   timeZone?: string;
 };
 
 /**
  * The state container the service reads and writes: the listing, the load
- * flags, the trail, the file sort, and the selection. The container can be
- * a plain object or a reactive proxy. The service replaces each member as a
- * whole, so a proxy tracks every change.
+ * flags, the trail, the file sort, the selection, and the query's slice.
+ * The container can be a plain object or a reactive proxy. The service
+ * replaces each member as a whole, so a proxy tracks every change.
+ * `entries` and `draft` belong to the browser's `query` machine, their
+ * only writer.
  */
 export type State<T> = {
   folders: BrowserFolder[];
@@ -160,6 +232,8 @@ export type State<T> = {
   sortField: string | null;
   sortDirection: SortDirection;
   selected: Set<string>;
+  entries: Entry[];
+  draft: string;
 };
 
 export type StateKey = keyof State<unknown>;
@@ -197,6 +271,8 @@ export type Actions<T> = {
  * - `updated`: a fetch settled, success or failure. `path` is the key trail,
  *   `folders`/`files` the section lengths.
  * - `navigated`: the trail changed through `open` or `navigate`.
+ * - `filtered`: the query's entries changed, by the search or by leaving
+ *   the folder it was typed in.
  */
 export type Events<T> = {
   change: [change: Change<T>];
@@ -204,6 +280,7 @@ export type Events<T> = {
     event: { id: string; path: string[]; folders: number; files: number },
   ];
   navigated: [event: { id: string; path: string[] }];
+  filtered: [event: { id: string; query: string; filters: BrowserFilter[] }];
 };
 
 export type Event<T> = keyof Events<T>;
@@ -224,9 +301,17 @@ export type Service<T> = {
   readonly folderActions: FolderAction[];
   readonly bulkActions: BulkAction[];
   readonly rootLabel: Text;
+  readonly searchable: boolean;
   readonly locale: string;
   readonly currency: string;
   readonly timeZone: string;
+
+  /**
+   * The query machine over the filterable columns: one field per column,
+   * with the operators and values the column declares. A change to its
+   * entries refetches the current folder; leaving the folder clears it.
+   */
+  readonly query: Query;
 
   readonly folders: BrowserFolder[];
   readonly files: T[];
@@ -245,6 +330,11 @@ export type Service<T> = {
    * key recurs at several depths; its index is what `navigate` takes.
    */
   readonly trail: BrowserCrumb[];
+  readonly filterableColumns: BrowserColumn<T>[];
+  /** The columns the files sort by: what a view lists as its sort options. */
+  readonly sortableColumns: BrowserColumn<T>[];
+  /** Whether the query holds an entry: the listing is a search's result. */
+  readonly isFiltered: boolean;
   readonly isAllSelected: boolean;
   readonly isIndeterminate: boolean;
   readonly selectAllState: boolean | "indeterminate";
@@ -256,7 +346,8 @@ export type Service<T> = {
   /**
    * Whether the current folder has settled with neither folders nor files.
    * Gated on `initialized` and `loading`, so a view shows the listing, not
-   * the empty state, until the first fetch resolves.
+   * the empty state, until the first fetch resolves. Under `isFiltered` it
+   * is a search with no match rather than an empty folder.
    */
   readonly isEmpty: boolean;
 

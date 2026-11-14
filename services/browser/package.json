@@ -1,7 +1,7 @@
 {
   "name": "@zoobzio/browser",
   "version": "0.1.9",
-  "description": "Headless data browser service: folder trail navigation, file sort, selection, action joins. No framework dependency.",
+  "description": "Headless data browser service: folder trail navigation, file sort, selection, action joins, and a query over the columns. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@zoobzio/kit": "workspace:*",
+    "@zoobzio/query": "workspace:*",
     "objectively": "catalog:"
   }
 }

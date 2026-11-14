@@ -1,9 +1,7 @@
-import type {
-  BreadcrumbEmits,
-  BreadcrumbItem,
-  BreadcrumbProps,
-} from "./breadcrumb";
+import type { AutocompleteEmits, AutocompleteProps } from "./autocomplete";
 import type { FabEmits, FabProps } from "./fab";
+import type { MenuEmits, MenuItem, MenuProps } from "./menu";
+import type { BrowserHeadPassthrough, BrowserHeadSlots } from "./browser-head";
 import type {
   BrowserFoldersPassthrough,
   BrowserFoldersSlots,
@@ -19,22 +17,23 @@ import type { Events, Service } from "@zoobzio/browser";
 import type { VNode } from "vue";
 
 /**
- * A trail crumb as a breadcrumb item: the service's crumb plus its trail
- * index, which `navigate` takes when the crumb is selected.
+ * A sortable column as an item of the sort menu: the column's sort field,
+ * which `sortBy` takes when the item is selected, plus its label.
  */
-export interface BrowserCrumbItem extends BreadcrumbItem {
-  index: number;
+export interface BrowserSortItem extends MenuItem {
+  key: string;
 }
 
 /**
- * The parts of the browser that accept passthrough. `breadcrumb` is the
- * trail from the root; `refresh` refetches the current folder.
+ * The parts of the browser that accept passthrough. `search` is the
+ * autocomplete over the browser's search machine; `sortMenu` lists the
+ * sortable columns behind `sortTrigger`; `refresh` refetches the current
+ * folder.
  */
 export type BrowserPassthrough = {
-  breadcrumb: Rendered<
-    BreadcrumbProps<BrowserCrumbItem>,
-    BreadcrumbEmits<BrowserCrumbItem>
-  >;
+  search: Rendered<AutocompleteProps, AutocompleteEmits>;
+  sortMenu: Rendered<MenuProps<BrowserSortItem>, MenuEmits<BrowserSortItem>>;
+  sortTrigger: Rendered<FabProps>;
   refresh: Rendered<FabProps, FabEmits>;
 };
 
@@ -46,6 +45,7 @@ export type BrowserPassthrough = {
 export type BrowserProps<T> = {
   service: Service<T>;
   pt?: PT<BrowserPassthrough> & {
+    head?: PT<BrowserHeadPassthrough>;
     folders?: PT<BrowserFoldersPassthrough>;
     files?: PT<BrowserFilesPassthrough<T>>;
   };
@@ -60,6 +60,7 @@ export type BrowserProps<T> = {
 export type BrowserEmits<T> = {
   updated: Events<T>["updated"];
   navigated: Events<T>["navigated"];
+  filtered: Events<T>["filtered"];
 };
 
 /**
@@ -73,14 +74,23 @@ export type BrowserContext<T> = {
 
 /**
  * Slots of the browser: its own regions plus every child slot, relayed.
- * `empty` replaces the whole body once a folder settles with neither
- * folders nor files.
+ * `sort` replaces the sort menu's trigger; `sortPrepend` and `sortAppend`
+ * sit around each of its items. `empty` fills the one row the body is
+ * once a folder settles with neither folders nor files, under the head.
  */
-export type BrowserSlots<T> = BrowserFoldersSlots<T> &
+export type BrowserSlots<T> = BrowserHeadSlots<T> &
+  BrowserFoldersSlots<T> &
   BrowserFilesSlots<T> &
   BrowserBulkActionsSlots<T> & {
     toolbar?: (props: BrowserContext<T>) => VNode[];
-    breadcrumb?: (props: BrowserContext<T>) => VNode[];
+    search?: (props: BrowserContext<T>) => VNode[];
+    sort?: (props: BrowserContext<T>) => VNode[];
+    sortPrepend?: (
+      props: BrowserContext<T> & { item: BrowserSortItem },
+    ) => VNode[];
+    sortAppend?: (
+      props: BrowserContext<T> & { item: BrowserSortItem },
+    ) => VNode[];
     empty?: (props: BrowserContext<T>) => VNode[];
     refresh?: (props: BrowserContext<T>) => VNode[];
   };

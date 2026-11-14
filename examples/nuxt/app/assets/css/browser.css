@@ -1,0 +1,568 @@
+/*
+ * The browser, bound to the layer's bare hooks: the root, the toolbar with
+ * its search, sort and refresh, the bulk actions bar, and the one table
+ * whose head is the trail and whose body is the folders over the files.
+ */
+
+.f-data-browser {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* --- toolbar --------------------------------------------------------- */
+
+.f-data-browser-toolbar {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+/* The sort and refresh buttons: icon-only, the label is the name. */
+.f-data-browser-toolbar > .f-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.f-data-browser-toolbar > .f-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.f-data-browser-toolbar > .f-button:hover,
+.f-data-browser-toolbar > .f-button[data-state="open"] {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    var(--surface)
+  );
+}
+
+.f-data-browser-toolbar > .f-button:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+/* --- search ---------------------------------------------------------- */
+
+.f-data-browser-search {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+.f-data-browser-search:focus-within {
+  border-color: var(--primary);
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-data-browser-search > svg {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  color: var(--on-surface-muted);
+}
+
+/* A committed entry: click to remove it. */
+.f-data-browser-search .f-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  height: 1.5rem;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border: 0;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-browser-search .f-chip:hover {
+  text-decoration: line-through;
+}
+
+/* The input's group: the hint under the input, the key after it. */
+.f-data-browser-search > .f-group {
+  position: static;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 8rem;
+}
+
+.f-data-browser-search .f-autocomplete-input {
+  flex: 1;
+  min-width: 0;
+  height: 1.75rem;
+  padding: 0;
+  font: var(--type-body);
+  letter-spacing: var(--type-body-letter-spacing);
+  color: var(--on-surface);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.f-data-browser-search .f-autocomplete-input::placeholder {
+  color: var(--on-surface-muted);
+}
+
+/* The completion the Tab key takes, drawn after the draft it completes. */
+.f-data-browser-search > .f-group > .f-group[aria-hidden] {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+  font: var(--type-body);
+  letter-spacing: var(--type-body-letter-spacing);
+  white-space: pre;
+  pointer-events: none;
+}
+
+.f-data-browser-search > .f-group > .f-group[aria-hidden] > :first-child {
+  visibility: hidden;
+}
+
+.f-data-browser-search > .f-group > .f-group[aria-hidden] > :last-child {
+  color: var(--on-surface-muted);
+}
+
+.f-data-browser-search .f-kbd {
+  flex: none;
+  padding: 0 var(--space-1);
+  font: var(--type-label);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--on-surface-muted);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-sm);
+}
+
+/* The panel: the trail of stages picked so far, then the options. */
+.f-autocomplete-content {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: 50;
+  min-width: 16rem;
+  padding: var(--space-1);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-autocomplete-content > .f-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  border-bottom: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-autocomplete-content > .f-group:last-child {
+  border-bottom: 0;
+  color: var(--on-surface-muted);
+}
+
+.f-autocomplete-content > .f-group > .f-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+  height: 1.5rem;
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+  background: transparent;
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-autocomplete-content > .f-group > .f-button[aria-current] {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.f-autocomplete-viewport {
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.f-autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  outline: none;
+}
+
+.f-autocomplete-item .f-span {
+  flex: 1;
+}
+
+.f-autocomplete-item svg,
+.f-autocomplete-content > .f-group > .f-button svg {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--on-surface-muted);
+}
+
+.f-autocomplete-item[data-highlighted] {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+/* --- sort menu ------------------------------------------------------- */
+
+/* The menu itself is the dropdown editor.css binds; the sorted column's
+   item carries the direction at its end. */
+.f-dropdown-menu-item[data-direction] svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-left: auto;
+}
+
+/* --- bulk actions ---------------------------------------------------- */
+
+.f-data-browser-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  border: 1px var(--stroke-solid)
+    color-mix(in srgb, var(--primary) 40%, transparent);
+  border-radius: var(--shape-md);
+}
+
+.f-data-browser-bulk-actions-count {
+  flex: 1;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--primary);
+}
+
+.f-data-browser-bulk-actions .f-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 1.75rem;
+  padding: 0 var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-browser-bulk-actions .f-button svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.f-data-browser-bulk-action-clear {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* --- table ----------------------------------------------------------- */
+
+.f-data-browser .f-table {
+  width: 100%;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  transition: opacity var(--transition-fast);
+}
+
+.f-data-browser-loading .f-tbody {
+  opacity: 0.55;
+}
+
+.f-data-browser .f-th,
+.f-data-browser .f-td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.f-data-browser .f-td {
+  border-top: 1px var(--stroke-solid) var(--outline-muted);
+  white-space: nowrap;
+}
+
+/* The checkbox column and the actions column hug their one control. */
+.f-data-browser .f-data-browser-select,
+.f-data-browser .f-data-browser-actions {
+  width: 1%;
+}
+
+.f-data-browser .f-data-browser-select {
+  padding-right: 0;
+}
+
+.f-data-browser .f-data-browser-actions {
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: right;
+}
+
+/* --- head: the trail and the counts ---------------------------------- */
+
+.f-data-browser-head .f-th {
+  font-weight: inherit;
+  background: var(--surface-container);
+}
+
+.f-data-browser-header-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 1.75rem;
+}
+
+.f-data-browser-breadcrumb .f-ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.f-data-browser-breadcrumb .f-li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.f-data-browser-breadcrumb .f-li + .f-li::before {
+  content: "/";
+  color: var(--on-surface-muted);
+}
+
+.f-data-browser-breadcrumb .f-button,
+.f-data-browser-breadcrumb .f-anchor,
+.f-data-browser-breadcrumb [aria-current] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 1.75rem;
+  padding: 0 var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  border-radius: var(--shape-md);
+}
+
+.f-data-browser-breadcrumb .f-li:first-child > * {
+  padding-left: 0;
+}
+
+.f-data-browser-breadcrumb .f-button,
+.f-data-browser-breadcrumb .f-anchor {
+  color: var(--on-surface-muted);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.f-data-browser-breadcrumb .f-button:hover,
+.f-data-browser-breadcrumb .f-anchor:hover {
+  color: var(--primary);
+}
+
+.f-data-browser-breadcrumb .f-button:focus-visible {
+  outline: var(--border-focus);
+}
+
+.f-data-browser-breadcrumb [aria-current] {
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.f-data-browser-breadcrumb svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primary);
+}
+
+.f-data-browser-summary {
+  flex: none;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface-muted);
+}
+
+/* --- rows ------------------------------------------------------------ */
+
+.f-data-browser .f-tbody .f-tr:hover .f-td {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-browser .f-data-browser-selected .f-td {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.f-data-browser-folder-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--on-surface);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.f-data-browser-folder-btn svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--primary);
+}
+
+.f-data-browser-folder-btn:hover .f-span {
+  text-decoration: underline;
+}
+
+.f-data-browser-folder-btn:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: 2px;
+}
+
+.f-data-browser-folder-count {
+  padding: 0 var(--space-2);
+  font: var(--type-label);
+  font-weight: 400;
+  color: var(--on-surface-muted);
+  background: var(--surface-container);
+  border-radius: var(--shape-md);
+}
+
+.f-data-browser-empty .f-td,
+.f-data-browser-no-files .f-td {
+  padding: var(--space-5) var(--space-3);
+  color: var(--on-surface-muted);
+  text-align: center;
+}
+
+.f-data-browser-empty .f-tr:hover .f-td,
+.f-data-browser-no-files:hover .f-td {
+  background: transparent !important;
+}
+
+/* A row's actions trigger. */
+.f-data-browser-actions .f-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--on-surface-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-browser-actions .f-button:hover,
+.f-data-browser-actions .f-button[data-state="open"] {
+  color: var(--on-surface);
+  background: var(--surface-container);
+}
+
+.f-data-browser-actions .f-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* --- checkbox -------------------------------------------------------- */
+
+.f-data-browser .f-checkbox-root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  color: var(--surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--on-surface-muted);
+  border-radius: var(--shape-sm);
+  cursor: pointer;
+}
+
+.f-data-browser .f-checkbox-root .f-group {
+  display: flex;
+}
+
+.f-data-browser .f-checkbox-root svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  visibility: hidden;
+}
+
+.f-data-browser .f-checkbox-root[data-state="checked"],
+.f-data-browser .f-checkbox-root[data-state="indeterminate"] {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.f-data-browser .f-checkbox-root[data-state="checked"] svg {
+  visibility: visible;
+}
+
+/* Some of the files: a dash in place of the check. */
+.f-data-browser .f-checkbox-root[data-state="indeterminate"] .f-group {
+  width: 0.5rem;
+  height: 2px;
+  background: var(--surface);
+}
+
+.f-data-browser .f-checkbox-root[data-state="indeterminate"] svg {
+  display: none;
+}
+
+.f-data-browser .f-checkbox-root:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: 1px;
+}

@@ -86,8 +86,14 @@ declare module "@zoobzio/query" {
   }
 }
 
+// A browser column's `icon` is carried onto its query field by the browser
+// and onto its sort item by the vue browser, so the search and the sort
+// menu draw it beside the column's label.
 declare module "@zoobzio/browser" {
   interface ActionDescriptor {
+    icon?: IconAlias;
+  }
+  interface BrowserColumn<T> {
     icon?: IconAlias;
   }
 }

@@ -56,9 +56,11 @@ const makeService = (
   );
   const updated = vi.fn();
   const navigated = vi.fn();
+  const filtered = vi.fn();
   service.on("updated", updated);
   service.on("navigated", navigated);
-  return { service, state, actions, updated, navigated };
+  service.on("filtered", filtered);
+  return { service, state, actions, updated, navigated, filtered };
 };
 
 describe("config", () => {
@@ -85,7 +87,13 @@ describe("fetch", () => {
     await service.fetch();
 
     expect(actions.fetch).toHaveBeenCalledWith(
-      { path: ["media", "2025"], sortField: "size", sortDirection: "desc" },
+      {
+        path: ["media", "2025"],
+        sortField: "size",
+        sortDirection: "desc",
+        query: "",
+        filters: [],
+      },
       service,
     );
     expect(service.files).toEqual(fakeFiles);
@@ -170,7 +178,13 @@ describe("navigation", () => {
     expect(service.depth).toBe(1);
     expect(service.selected).toEqual(new Set());
     expect(actions.fetch).toHaveBeenCalledWith(
-      { path: ["media"], sortField: null, sortDirection: "asc" },
+      {
+        path: ["media"],
+        sortField: null,
+        sortDirection: "asc",
+        query: "",
+        filters: [],
+      },
       service,
     );
     expect(navigated).toHaveBeenCalledWith({
@@ -592,5 +606,131 @@ describe("action dispatch", () => {
       service.runFolderAction("rename", fixture(fakeFolders.at(0))),
     ).not.toThrow();
     expect(() => service.runBulkAction("deleteSelected")).not.toThrow();
+  });
+});
+
+describe("query", () => {
+  it("is searchable unless the config says otherwise", () => {
+    expect(makeService().service.searchable).toBe(true);
+    expect(
+      makeService({ config: { searchable: false } }).service.searchable,
+    ).toBe(false);
+  });
+
+  it("keys one field per filterable column", () => {
+    const { service } = makeService({
+      config: {
+        columns: [
+          { key: "name", label: "Name" },
+          { key: "size", label: "Size", type: "filesize", filterable: false },
+          { key: "modified", label: "Modified", type: "image" },
+        ],
+      },
+    });
+    expect(service.filterableColumns.map((c) => c.key)).toEqual(["name"]);
+    expect(service.query.fields).toEqual({ name: { label: "Name" } });
+  });
+
+  it("lists the sortable columns", () => {
+    const { service } = makeService();
+    expect(service.sortableColumns.map((c) => c.key)).toEqual(["name", "size"]);
+  });
+
+  it("hands the config's literals to the query", () => {
+    const { service } = makeService({
+      config: {
+        literals: { text: { label: "Find", open: '"', close: '"' } },
+      },
+    });
+    expect(service.query.items[0]?.label).toBe("Find");
+  });
+
+  it("holds its entries and draft in the browser's container", () => {
+    const { service, state } = makeService();
+    service.query.add({ kind: "literal", key: "text", value: "logo" });
+    service.query.setDraft("Na");
+    expect(state.entries).toEqual([
+      { kind: "literal", key: "text", value: "logo" },
+    ]);
+    expect(state.draft).toBe("Na");
+    expect(service.isFiltered).toBe(true);
+  });
+
+  it("a change to the entries refetches the folder it stands in and emits filtered", () => {
+    const { service, state, actions, filtered } = makeService();
+    state.path = [{ key: "media", label: "Media" }];
+
+    service.query.add({ kind: "literal", key: "text", value: "logo" });
+    service.query.add({ kind: "filter", key: "name", value: "hero.png" });
+
+    expect(actions.fetch).toHaveBeenCalledTimes(2);
+    expect(actions.fetch).toHaveBeenLastCalledWith(
+      {
+        path: ["media"],
+        sortField: null,
+        sortDirection: "asc",
+        query: "logo",
+        filters: [{ key: "name", value: "hero.png" }],
+      },
+      service,
+    );
+    expect(filtered).toHaveBeenLastCalledWith({
+      id: "test-browser",
+      query: "logo",
+      filters: [{ key: "name", value: "hero.png" }],
+    });
+
+    service.query.clear();
+    expect(service.isFiltered).toBe(false);
+    expect(actions.fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it("leaving the folder drops the search, in one fetch", () => {
+    const { service, actions, filtered, navigated } = makeService();
+    service.query.add({ kind: "literal", key: "text", value: "logo" });
+    service.query.setDraft("Na");
+    vi.mocked(actions.fetch).mockClear();
+    filtered.mockClear();
+
+    service.open({ key: "media", label: "Media" });
+
+    expect(service.query.entries).toEqual([]);
+    expect(service.query.draft).toBe("");
+    expect(actions.fetch).toHaveBeenCalledTimes(1);
+    expect(actions.fetch).toHaveBeenCalledWith(
+      expect.objectContaining({ path: ["media"], query: "", filters: [] }),
+      service,
+    );
+    expect(filtered).toHaveBeenCalledWith({
+      id: "test-browser",
+      query: "",
+      filters: [],
+    });
+    expect(navigated).toHaveBeenCalledTimes(1);
+
+    service.query.add({ kind: "literal", key: "text", value: "hero" });
+    vi.mocked(actions.fetch).mockClear();
+    service.navigate(0);
+    expect(service.query.entries).toEqual([]);
+    expect(actions.fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("a move with no search emits no filtered", () => {
+    const { service, filtered } = makeService();
+    service.open({ key: "media", label: "Media" });
+    expect(filtered).not.toHaveBeenCalled();
+  });
+
+  it("isEmpty holds for a search with no match", async () => {
+    const actions: Actions<FakeFile> = {
+      fetch: vi.fn(async () => ({ folders: [], files: [] })),
+    };
+    const { service } = makeService({ actions });
+    await service.init();
+    service.query.add({ kind: "literal", key: "text", value: "zzz" });
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(service.isEmpty).toBe(true);
+    expect(service.isFiltered).toBe(true);
   });
 });

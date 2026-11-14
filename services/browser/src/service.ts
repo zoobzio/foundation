@@ -12,9 +12,11 @@ import type {
   SortDirection,
   State,
 } from "./types";
+import type { Service as Query } from "@zoobzio/query";
 import type { Emitter, Text } from "@zoobzio/kit";
 
 import { entries } from "objectively";
+import { QueryService } from "@zoobzio/query";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   BROWSER_DEFAULT_CURRENCY,
@@ -24,17 +26,18 @@ import {
   BROWSER_ROOT_KEY,
   BROWSER_STATE_FIELDS,
 } from "./constants";
-import { sortFolders } from "./util";
+import { fields, sortFolders } from "./util";
 
 /**
- * The headless browser machine. Owns the folder trail, the file sort, and
- * the file selection; delegates data loading to `wiring.fetch` and joins
- * the config's action descriptors to the handlers in `wiring`.
+ * The headless browser machine. Owns the folder trail, the file sort, the
+ * file selection, and the query over its columns; delegates data loading
+ * to `wiring.fetch` and joins the config's action descriptors to the
+ * handlers in `wiring`.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy; the
  * service replaces each member as a whole. Each write emits `change`, and
- * the domain methods emit `updated` and `navigated`. `on` subscribes.
+ * the domain methods emit `updated`, `navigated`, and `filtered`. `on` subscribes.
  */
 export class BrowserService<T> implements Service<T> {
   readonly columns: BrowserColumn<T>[];
@@ -42,9 +45,16 @@ export class BrowserService<T> implements Service<T> {
   readonly actions: Service<T>["actions"];
   readonly folderActions: Service<T>["folderActions"];
   readonly bulkActions: Service<T>["bulkActions"];
+  readonly query: Query;
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
+
+  /**
+   * Set while the trail moves: the move fetches once itself, so the query
+   * it clears on the way does not fetch a second time.
+   */
+  private moving = false;
 
   constructor(
     public readonly id: string,
@@ -77,6 +87,16 @@ export class BrowserService<T> implements Service<T> {
           wiring.bulkActions?.[key]?.(selected),
       }),
     );
+
+    this.query = new QueryService(
+      `${id}-query`,
+      {
+        fields: fields(this.filterableColumns, this.timeZone),
+        ...(config.literals && { literals: config.literals }),
+      },
+      this.state,
+    );
+    this.query.on("changed", () => this.refilter());
   }
 
   on<E extends Event<T>>(event: E, listener: Listener<T, E>): () => void {
@@ -112,6 +132,9 @@ export class BrowserService<T> implements Service<T> {
   get rootLabel(): Text {
     return this.config.rootLabel ?? BROWSER_DEFAULT_ROOT_LABEL;
   }
+  get searchable(): boolean {
+    return this.config.searchable ?? true;
+  }
   get locale(): string {
     return this.config.locale ?? BROWSER_DEFAULT_LOCALE;
   }
@@ -141,6 +164,20 @@ export class BrowserService<T> implements Service<T> {
         label: crumb.label,
       })),
     ];
+  }
+
+  get filterableColumns(): BrowserColumn<T>[] {
+    return this.columns.filter(
+      (c) => c.filterable ?? (c.type !== "action" && c.type !== "image"),
+    );
+  }
+
+  get sortableColumns(): BrowserColumn<T>[] {
+    return this.columns.filter((c) => c.sortable);
+  }
+
+  get isFiltered(): boolean {
+    return this.state.entries.length > 0;
   }
 
   get isAllSelected(): boolean {
@@ -197,12 +234,12 @@ export class BrowserService<T> implements Service<T> {
 
   // --- navigation ------------------------------------------------------
 
-  /** Descends into a folder: push its crumb, drop the selection, refetch. */
+  /**
+   * Descends into a folder: push its crumb, drop the selection and the
+   * search, refetch.
+   */
   open(folder: BrowserFolder): void {
-    this.state.path = [...this.path, { key: folder.key, label: folder.label }];
-    this.state.selected = new Set();
-    this.fetch();
-    this.emitter.emit("navigated", { id: this.id, path: this.pathKeys });
+    this.move([...this.path, { key: folder.key, label: folder.label }]);
   }
 
   /**
@@ -211,10 +248,37 @@ export class BrowserService<T> implements Service<T> {
    */
   navigate(index: number): void {
     if (index < 0 || index >= this.depth) return;
-    this.state.path = this.path.slice(0, index);
+    this.move(this.path.slice(0, index));
+  }
+
+  /**
+   * Moves the trail. The selection and the search belong to the folder
+   * they were made in, so both are dropped: the committed entries (which
+   * emits `filtered`) and the draft being typed. One fetch follows.
+   */
+  private move(path: BrowserCrumb[]): void {
+    this.state.path = path;
     this.state.selected = new Set();
+    this.moving = true;
+    try {
+      this.query.clear();
+      this.query.setDraft("");
+    } finally {
+      this.moving = false;
+    }
     this.fetch();
     this.emitter.emit("navigated", { id: this.id, path: this.pathKeys });
+  }
+
+  // --- search ----------------------------------------------------------
+
+  private refilter(): void {
+    if (!this.moving) this.fetch();
+    this.emitter.emit("filtered", {
+      id: this.id,
+      query: this.query.text,
+      filters: this.query.filters,
+    });
   }
 
   // --- sorting ---------------------------------------------------------
@@ -293,6 +357,8 @@ export class BrowserService<T> implements Service<T> {
           path: this.pathKeys,
           sortField: this.sortField,
           sortDirection: this.sortDirection,
+          query: this.query.text,
+          filters: this.query.filters,
         },
         this,
       );

@@ -69,7 +69,8 @@ const add = async () => {
         <p class="page-lead">
           The calendar of the foundation layer over a fake backend: recurring
           events, an occurrence that moved, all-day spans, and a task.
-          <NuxtLink to="/">The editor</NuxtLink> is the other page.
+          <NuxtLink to="/">The editor</NuxtLink> and
+          <NuxtLink to="/browser">the browser</NuxtLink> are the other pages.
         </p>
       </div>
       <button type="button" class="page-scheme" @click="toggle">

@@ -1,7 +1,7 @@
 {
   "name": "@zoobzio/example-nuxt",
   "private": true,
-  "description": "A fake app on the foundation Nuxt layer: a page with the rich text editor and a page with the calendar, styled with the layer's tokens.",
+  "description": "A fake app on the foundation Nuxt layer: a page each for the rich text editor, the calendar, and the browser, styled with the layer's tokens.",
   "type": "module",
   "scripts": {
     "dev": "nuxi dev",
@@ -11,6 +11,7 @@
     "typecheck": "nuxi typecheck"
   },
   "dependencies": {
+    "@zoobzio/browser": "workspace:*",
     "@zoobzio/calendar": "workspace:*",
     "@zoobzio/icons": "workspace:*",
     "@zoobzio/nuxt": "workspace:*",

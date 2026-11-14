@@ -3,6 +3,7 @@ import type { Actions, Config, Service } from "@zoobzio/browser";
 
 import { useNuxtApp } from "#app";
 import { BrowserService } from "@zoobzio/browser";
+import { QUERY_TEXT_KEY, QUERY_TEXT_LITERAL } from "@zoobzio/query";
 import { accessBrowser } from "../stores/browser";
 import { split } from "../utils/actions";
 import { resolveTexts } from "../utils/text";
@@ -13,11 +14,13 @@ import { resolveTexts } from "../utils/text";
  * the wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus as `browser:updated` and `browser:navigated`. Every text of the
- * config — the columns' and the actions' labels, the root crumb's —
- * resolves through the app's prosary service as the service is built. A
- * config that names no `rootLabel` takes the contract's `browser.root`,
- * so the root crumb reads in the visitor's locale. The machine itself is
+ * bus as `browser:updated`, `browser:navigated`, and `browser:filtered`.
+ * Every text of the config — the columns' and the actions' labels, the
+ * root crumb's, the literals' — resolves through the app's prosary service
+ * as the service is built. A config that names no `rootLabel` takes the
+ * contract's `browser.root`, and one that names no `literals` the query's
+ * text literal under `browser.text`, so the root crumb and the search's
+ * leading option read in the visitor's locale. The machine itself is
  * `@zoobzio/browser`; the Vue browser renders it through its `service`
  * prop.
  */
@@ -33,6 +36,9 @@ export const createBrowser = <T>(
   const config: Config<T> = {
     ...rest,
     rootLabel: rest.rootLabel ?? "browser.root",
+    literals: rest.literals ?? {
+      [QUERY_TEXT_KEY]: { ...QUERY_TEXT_LITERAL, label: "browser.text" },
+    },
     actions: files.descriptors,
     folderActions: folders.descriptors,
     bulkActions: bulk.descriptors,
@@ -56,6 +62,10 @@ export const createBrowser = <T>(
     service.on("navigated", (event) => {
       log.debug("Browser navigated", event);
       nuxt.callHook("browser:navigated", event);
+    });
+    service.on("filtered", (event) => {
+      log.debug("Browser filtered", event);
+      nuxt.callHook("browser:filtered", event);
     });
     return service;
   };

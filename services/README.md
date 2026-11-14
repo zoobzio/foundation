@@ -8,7 +8,7 @@ event emitter, the state container proxy, and their types) live in
 | Package                            | Description                                                                                          |
 | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | [`@zoobzio/query`](./query/)       | Query service: committed text and field filters over a field schema, plus a draft that composes them |
-| [`@zoobzio/browser`](./browser/)   | Browser service: folder trail navigation, file sort, selection, action joins                         |
+| [`@zoobzio/browser`](./browser/)   | Browser service: folder trail navigation, file sort, selection, search, action joins                 |
 | [`@zoobzio/form`](./form/)         | Form service: payload, per-key validation, touched tracking, submit lifecycle                        |
 | [`@zoobzio/table`](./table/)       | Table service: paging, sort, selection, column order, search filters                                 |
 | [`@zoobzio/editor`](./editor/)     | Editor service: one rich text document over tiptap, a feature set, commands, json/html/hast codecs   |

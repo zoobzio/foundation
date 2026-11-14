@@ -1,5 +1,6 @@
 // The browser wrapper: NuxtLink under the file rows' `link` part and the
-// trail's, the service events relayed.
+// trail's, the search, sort, and head drawn with the layer's icons and
+// text, the service events relayed.
 import type { LinkedFile } from "#test/mount/browser";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -56,11 +57,13 @@ describe("browser wrapper", () => {
     const wrapper = mountBrowser({
       service,
       pt: {
-        breadcrumb: {
-          items: [
-            { key: "root", label: "Root", index: 0, link: { to: "/files" } },
-            { key: "here", label: "Here", index: 1 },
-          ],
+        head: {
+          breadcrumb: {
+            items: [
+              { key: "root", label: "Root", index: 0, link: { to: "/files" } },
+              { key: "here", label: "Here", index: 1 },
+            ],
+          },
         },
       },
     });
@@ -101,6 +104,83 @@ describe("browser wrapper", () => {
     }
   });
 
+  it("draws the search as the table's is drawn, in the browser's words", () => {
+    const { service } = makeBrowser();
+    const wrapper = mountBrowser({ service });
+    const search = wrapper.get(".f-data-browser-search");
+    expect(search.get("svg[data-icon]").attributes("data-icon")).toBe("magic");
+    expect(search.get("input").attributes("placeholder")).toBe(
+      "Search this folder...",
+    );
+    expect(search.get("kbd").text()).toBe("/");
+  });
+
+  it("opens the trail with the open folder and counts the listing after it", async () => {
+    const { service } = makeBrowser();
+    await service.init();
+    service.open({ key: "media", label: "Media" });
+    await flushPromises();
+    const wrapper = mountBrowser({ service });
+    const crumbs = wrapper.findAll("thead .f-data-browser-breadcrumb li");
+    expect(crumbs.map((li) => li.text())).toEqual(["Home", "Media"]);
+    expect(crumbs[0]!.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "folder-open",
+    );
+    expect(crumbs[1]!.find("svg[data-icon]").exists()).toBe(false);
+    expect(wrapper.get("thead .f-data-browser-summary").text()).toBe(
+      "2 folders, 2 files",
+    );
+  });
+
+  it("counts one folder and one file in the singular", async () => {
+    const { service } = makeBrowser(
+      {},
+      {},
+      {
+        folders: [{ key: "a", label: "A" }],
+        files: [{ id: 1, name: "a", url: "https://cdn.example/a" }],
+      },
+    );
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    expect(wrapper.get(".f-data-browser-summary").text()).toBe(
+      "1 folder, 1 file",
+    );
+  });
+
+  it("draws the sort trigger by the files' sort and marks the sorted column", async () => {
+    const { service } = makeBrowser({
+      columns: [
+        { key: "name", label: "Name", sortable: true },
+        { key: "url", label: "URL", type: "url", sortable: true },
+      ],
+    });
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    const trigger = wrapper.get('button[aria-label="Sort"]');
+    expect(trigger.text()).toBe("");
+    expect(trigger.get("svg[data-icon]").attributes("data-icon")).toBe("sort");
+    service.sortBy("name");
+    await flushPromises();
+    expect(trigger.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "sort-asc",
+    );
+    await trigger.trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    expect(items.map((el) => el.textContent?.trim())).toEqual(["Name", "URL"]);
+    expect(
+      items.map((el) => el.querySelector("svg")?.getAttribute("data-icon")),
+    ).toEqual(["sort-asc", undefined]);
+    service.sortBy("name");
+    await flushPromises();
+    expect(trigger.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "sort-desc",
+    );
+  });
+
   it("relays the service's domain events", async () => {
     const { service } = makeBrowser();
     const wrapper = mountBrowser({ service });
@@ -115,6 +195,9 @@ describe("browser wrapper", () => {
     const wrapper = mountBrowser({ service });
     await flushPromises();
     expect(wrapper.get(".f-data-browser-empty").text()).toBe("Empty folder");
+    service.query.add({ kind: "literal", key: "text", value: "zzz" });
+    await flushPromises();
+    expect(wrapper.get(".f-data-browser-empty").text()).toBe("No matches");
   });
 
   it("formats typed cells through the app's prosary service", async () => {
