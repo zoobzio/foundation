@@ -30,8 +30,9 @@ const params = computed(() => ({
           A folder tree over a fake backend. The search is the current folder's:
           try <code>"logo"</code>, <code>Kind: Image</code>, or
           <code>Size: over 10</code> (megabytes), then open a folder and watch
-          it clear. <NuxtLink to="/">The editor</NuxtLink> and
-          <NuxtLink to="/calendar">the calendar</NuxtLink> are the other pages.
+          it clear. <NuxtLink to="/">The editor</NuxtLink>,
+          <NuxtLink to="/calendar">the calendar</NuxtLink>, and
+          <NuxtLink to="/table">the table</NuxtLink> are the other pages.
         </p>
       </div>
       <button type="button" class="page-scheme" @click="toggle">

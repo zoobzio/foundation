@@ -26,8 +26,9 @@ const html = ref(`<h1>Field notes</h1>
         <h1 class="page-title">Editor</h1>
         <p class="page-lead">
           The rich text component of the foundation layer, as an app would style
-          it. <NuxtLink to="/calendar">The calendar</NuxtLink> and
-          <NuxtLink to="/browser">the browser</NuxtLink> are the other pages.
+          it. <NuxtLink to="/calendar">The calendar</NuxtLink>,
+          <NuxtLink to="/browser">the browser</NuxtLink>, and
+          <NuxtLink to="/table">the table</NuxtLink> are the other pages.
         </p>
       </div>
       <button type="button" class="page-scheme" @click="toggle">

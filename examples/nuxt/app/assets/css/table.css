@@ -1,0 +1,701 @@
+/*
+ * The table, bound to the layer's bare hooks: the root, the toolbar with
+ * its search, column manager and refresh, the bulk actions bar, the table
+ * with its sortable, draggable, resizable headers, and the pagination. The
+ * search's panel is the autocomplete browser.css binds, and a row's actions
+ * menu the dropdown editor.css binds.
+ */
+
+/* Seven columns want more room than the prose pages do. */
+.page-wide {
+  max-width: 64rem;
+}
+
+.f-data-table {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* --- toolbar --------------------------------------------------------- */
+
+.f-data-table-toolbar {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+/* The columns and refresh buttons: icon-only, the label is the name. */
+.f-data-table-toolbar > .f-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.f-data-table-toolbar > .f-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.f-data-table-toolbar > .f-button:hover,
+.f-data-table-toolbar > .f-button[data-state="open"] {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    var(--surface)
+  );
+}
+
+.f-data-table-toolbar > .f-button:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+/* --- search ---------------------------------------------------------- */
+
+.f-data-table-search {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) var(--space-3);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+.f-data-table-search:focus-within {
+  border-color: var(--primary);
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-data-table-search > svg {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  color: var(--on-surface-muted);
+}
+
+/* A committed entry: click to remove it. */
+.f-data-table-search .f-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  height: 1.5rem;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  border: 0;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-table-search .f-chip:hover {
+  text-decoration: line-through;
+}
+
+/* The input's group: the hint under the input, the key after it. */
+.f-data-table-search > .f-group {
+  position: static;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 8rem;
+}
+
+.f-data-table-search .f-autocomplete-input {
+  flex: 1;
+  min-width: 0;
+  height: 1.75rem;
+  padding: 0;
+  font: var(--type-body);
+  letter-spacing: var(--type-body-letter-spacing);
+  color: var(--on-surface);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.f-data-table-search .f-autocomplete-input::placeholder {
+  color: var(--on-surface-muted);
+}
+
+/* The completion the Tab key takes, drawn after the draft it completes. */
+.f-data-table-search > .f-group > .f-group[aria-hidden] {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: 1.75rem;
+  font: var(--type-body);
+  letter-spacing: var(--type-body-letter-spacing);
+  white-space: pre;
+  pointer-events: none;
+}
+
+.f-data-table-search > .f-group > .f-group[aria-hidden] > :first-child {
+  visibility: hidden;
+}
+
+.f-data-table-search > .f-group > .f-group[aria-hidden] > :last-child {
+  color: var(--on-surface-muted);
+}
+
+.f-data-table-search .f-kbd {
+  flex: none;
+  padding: 0 var(--space-1);
+  font: var(--type-label);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--on-surface-muted);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-sm);
+}
+
+/* --- column manager -------------------------------------------------- */
+
+/* The popover holds a command: a filter over a checklist of the columns.
+   A pinned column is listed, checked and disabled. */
+.f-popover-content {
+  z-index: 50;
+  width: 14rem;
+  padding: var(--space-1);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-listbox-root > .f-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-listbox-root > .f-group svg {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--on-surface-muted);
+}
+
+.f-listbox-filter {
+  flex: 1;
+  min-width: 0;
+  height: 1.75rem;
+  padding: 0;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.f-listbox-filter::placeholder {
+  color: var(--on-surface-muted);
+}
+
+.f-listbox-content {
+  max-height: 16rem;
+  padding-top: var(--space-1);
+  overflow-y: auto;
+}
+
+.f-listbox-content .f-group {
+  padding: var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface-muted);
+}
+
+.f-listbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  outline: none;
+}
+
+.f-listbox-item[data-highlighted] {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.f-listbox-item[data-disabled] {
+  color: var(--on-surface-muted);
+  cursor: default;
+}
+
+.f-listbox-item[data-disabled] .f-checkbox-root {
+  opacity: 0.5;
+}
+
+/* --- bulk actions ---------------------------------------------------- */
+
+.f-data-table-bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  border: 1px var(--stroke-solid)
+    color-mix(in srgb, var(--primary) 40%, transparent);
+  border-radius: var(--shape-md);
+}
+
+.f-data-table-bulk-actions-count {
+  flex: 1;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--primary);
+}
+
+.f-data-table-bulk-actions .f-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 1.75rem;
+  padding: 0 var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-table-bulk-actions .f-button svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.f-data-table-bulk-actions .f-data-table-bulk-action-clear {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* --- table ----------------------------------------------------------- */
+
+/* A fixed layout, so a column holds the width it is resized to and the
+   unsized ones share what is left. */
+.f-data-table .f-table {
+  width: 100%;
+  table-layout: fixed;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+.f-data-table .f-tbody {
+  transition: opacity var(--transition-fast);
+}
+
+.f-data-table-loading .f-tbody {
+  opacity: 0.55;
+}
+
+.f-data-table .f-th,
+.f-data-table .f-td {
+  padding: var(--space-2) var(--space-3);
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.f-data-table .f-td {
+  border-top: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+/* The checkbox column and the actions column hug their one control. */
+.f-data-table col.f-data-table-select {
+  width: 2.5rem;
+}
+
+.f-data-table col.f-data-table-actions {
+  width: 3rem;
+}
+
+.f-data-table .f-th.f-data-table-select,
+.f-data-table .f-td.f-data-table-select {
+  padding-right: 0;
+  text-overflow: clip;
+}
+
+.f-data-table .f-td.f-data-table-actions {
+  padding: 0 var(--space-2);
+  text-align: right;
+}
+
+/* --- head: sort, drag, resize ---------------------------------------- */
+
+.f-data-table-head .f-th {
+  position: relative;
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  background: var(--surface-container);
+}
+
+.f-data-table-header-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 1.75rem;
+}
+
+.f-data-table-header,
+.f-data-table-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-overflow: ellipsis;
+  background: transparent;
+  border: 0;
+}
+
+.f-data-table-header-btn {
+  cursor: pointer;
+}
+
+.f-data-table-header-btn:hover,
+.f-data-table-sorted .f-data-table-header-btn {
+  color: var(--on-surface);
+}
+
+.f-data-table-header-btn:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: 2px;
+}
+
+.f-data-table-header-btn svg {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--primary);
+}
+
+/* The grip a header is dragged by: there on hover, to move the column. */
+.f-data-table-drag-handle {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  opacity: 0;
+  cursor: grab;
+  transition: opacity var(--transition-fast);
+}
+
+.f-data-table-drag-handle svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.f-data-table-head .f-th:hover .f-data-table-drag-handle {
+  opacity: 1;
+}
+
+.f-data-table-head .f-data-table-dragging {
+  opacity: 0.4;
+}
+
+/* Where the dragged column lands: a rule on that side of the target. */
+.f-data-table-head .f-data-table-drop-left {
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+.f-data-table-head .f-data-table-drop-right {
+  box-shadow: inset -2px 0 0 var(--primary);
+}
+
+/* The column's right edge: drag it, or focus it and use the arrow keys;
+   a double click restores the declared width. */
+.f-data-table-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0.5rem;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+
+.f-data-table-resizer::after {
+  content: "";
+  position: absolute;
+  top: 25%;
+  right: 0;
+  bottom: 25%;
+  width: 1px;
+  background: var(--outline-muted);
+}
+
+.f-data-table-resizer:hover::after,
+.f-data-table-resizer:focus-visible::after,
+.f-data-table-resizing .f-data-table-resizer::after {
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--primary);
+}
+
+/* --- rows ------------------------------------------------------------ */
+
+.f-data-table .f-tbody .f-tr:hover .f-td {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    transparent
+  );
+}
+
+.f-data-table .f-data-table-selected .f-td {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.f-data-table .f-data-table-empty .f-td,
+.f-data-table .f-data-table-empty:hover .f-td {
+  padding: var(--space-5) var(--space-3);
+  color: var(--on-surface-muted);
+  text-align: center;
+  background: transparent;
+}
+
+/* A row's actions trigger. */
+.f-data-table-actions .f-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--on-surface-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-table-actions .f-button:hover,
+.f-data-table-actions .f-button[data-state="open"] {
+  color: var(--on-surface);
+  background: var(--surface-container);
+}
+
+.f-data-table-actions .f-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* An action's icon, in the dropdown editor.css binds. */
+.f-dropdown-menu-item svg {
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--on-surface-muted);
+}
+
+/* --- checkbox -------------------------------------------------------- */
+
+/* The rows', the head's, and the column manager's. */
+:is(.f-data-table, .f-listbox-item) .f-checkbox-root {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  color: var(--surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--on-surface-muted);
+  border-radius: var(--shape-sm);
+  cursor: pointer;
+}
+
+:is(.f-data-table, .f-listbox-item) .f-checkbox-root .f-group {
+  display: flex;
+  padding: 0;
+  color: inherit;
+}
+
+:is(.f-data-table, .f-listbox-item) .f-checkbox-root svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: inherit;
+  visibility: hidden;
+}
+
+:is(.f-data-table, .f-listbox-item) .f-checkbox-root[data-state="checked"],
+.f-data-table .f-checkbox-root[data-state="indeterminate"] {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+:is(.f-data-table, .f-listbox-item) .f-checkbox-root[data-state="checked"] svg {
+  visibility: visible;
+}
+
+/* Some of the page's rows: a dash in place of the check. */
+.f-data-table .f-checkbox-root[data-state="indeterminate"] .f-group {
+  width: 0.5rem;
+  height: 2px;
+  background: var(--surface);
+}
+
+.f-data-table .f-checkbox-root[data-state="indeterminate"] svg {
+  display: none;
+}
+
+.f-data-table .f-checkbox-root:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: 1px;
+}
+
+/* --- pagination ------------------------------------------------------ */
+
+/* The summary, the pager, and the page size, in one row under the table. */
+.f-data-table > .f-group:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+}
+
+.f-data-table > .f-group:last-child > .f-span {
+  color: var(--on-surface-muted);
+}
+
+.f-data-table > .f-group:last-child .f-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.f-data-table > .f-group:last-child .f-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 var(--space-1);
+  font: inherit;
+  color: var(--on-surface);
+  background: transparent;
+  border: 0;
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-table > .f-group:last-child .f-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.f-data-table > .f-group:last-child .f-button:hover:enabled {
+  background: var(--surface-container);
+}
+
+.f-data-table > .f-group:last-child .f-button:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-data-table > .f-group:last-child .f-button:disabled {
+  color: var(--on-surface-muted);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.f-data-table > .f-group:last-child .f-button[aria-current] {
+  font-weight: 600;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  opacity: 1;
+}
+
+/* The page size: a select, its panel styled as the other menus are. */
+.f-data-table .f-select-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 1.75rem;
+  padding: 0 var(--space-2);
+  font: inherit;
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-table .f-select-trigger svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--on-surface-muted);
+}
+
+.f-data-table .f-select-trigger:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+.f-select-content {
+  z-index: 50;
+  min-width: var(--reka-select-trigger-width);
+  padding: var(--space-1);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-select-item {
+  padding: var(--space-1) var(--space-2);
+  font: var(--type-label);
+  color: var(--on-surface);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  outline: none;
+}
+
+.f-select-item[data-highlighted] {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.f-select-item[data-state="checked"] {
+  font-weight: 600;
+  color: var(--primary);
+}

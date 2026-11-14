@@ -200,6 +200,9 @@ importers:
       '@zoobzio/prose':
         specifier: workspace:*
         version: link:../../packages/prose
+      '@zoobzio/table':
+        specifier: workspace:*
+        version: link:../../services/table
       '@zoobzio/theme':
         specifier: workspace:*
         version: link:../../packages/theme
