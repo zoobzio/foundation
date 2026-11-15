@@ -1,5 +1,12 @@
 # @zoobzio/code
 
+## 0.1.10
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.1.10
+
 ## 0.1.9
 
 ### Patch Changes

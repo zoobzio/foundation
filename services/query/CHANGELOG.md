@@ -1,5 +1,30 @@
 # @zoobzio/query
 
+## 0.1.10
+
+### Patch Changes
+
+- [`f3ba642`](https://github.com/zoobzio/foundation/commit/f3ba642458b64fb7b5e175ece3ff8e5fe9f196e7) Thanks [@zoobzio](https://github.com/zoobzio)! - A field's values provider may ask an API, and gives its values a page at a time. `@zoobzio/query` asks a provider once per change of the draft, at the value stage, rather than on every read of `items`, and holds what it gives in a new member of the container, `suggest`: `{ options, status, more }`. A provider gives a list, a page (`{ values, next }`), or a promise of either, and is handed the lookup beside the term: the field `key`, the `op`, an `AbortSignal`, and the `cursor`. `more()` asks for the page after the last while the provider names one, and adds its values to the options. `status` is `loading` for the first page of a term and `extending` for a further one; the options of the term before stay while the next loads on the same field and operator. A draft that moves on aborts the lookup and drops its result. A provider that throws or rejects emits the new `failed` event. `debounced(provider, ms)` wraps a provider so a term typed through asks once. `Provider`, `Page`, `Lookup`, `Suggest`, and `SuggestStatus` are new types; the service gains `suggest` and `more`.
+
+  Breaking for a consumer of `dateValues`: it returns a page, `{ values, next }`, where it returned a list, and `QUERY_DATE_VALUES_LIMIT` is the size of a page where it was a cap. The days no longer stop at 31: an empty term runs back from today with no end, and a year lists all its days. A partial year runs back from the latest day it can start rather than narrowing the last 31 days, so `19` lists from `1999-12-31` where it listed nothing. A year below 1000 reads as itself, `0099-12-31`.
+
+  Breaking for a container built by hand: `State` of the query, the table, and the browser gains `suggest`, which `createQueryState`, `createTableState`, and `createBrowserState` seed.
+
+  The vue `autocomplete.vue` asks for more as the visitor nears the end of a provider's options, by scroll or by key: a sentinel (`f-autocomplete-sentinel`) lies over the last of them, `AUTOCOMPLETE_MORE_LEAD` deep, and is watched while it is on screen. The viewport of the active panel needs a height to bound it, as before; without one the options load until they run off the page. New slots: `loading`, in place of the options while a first page is out and none are held, and `more`, after the options while a further page is out. The content carries `aria-busy` through either, and an item's `aria-setsize` is `-1` while more remain. Fixed: the default `empty` state rendered under the options whenever `empty` was set; it now renders once the panel has none.
+
+  The texts of the autocomplete's panel are named: `AUTOCOMPLETE_EMPTY_TEXT`, `AUTOCOMPLETE_LOADING_TEXT`, and `AUTOCOMPLETE_MORE_TEXT` in the vue package, and the nuxt wrapper reads the `empty`, `loading`, and `more` states from the contract, so they follow the visitor's locale. New in the prose contract: `autocomplete.empty`, `autocomplete.loading`, and `autocomplete.more`.
+
+- [`56e6d5b`](https://github.com/zoobzio/foundation/commit/56e6d5b4ecc0a8eb47eee18ad48c09f47d00a932) Thanks [@zoobzio](https://github.com/zoobzio)! - Saved views. `@zoobzio/views` is a new headless service: named payloads over a Zod schema the payload type is inferred from, the active view, and the lifecycle around them (`select`, `save`, `saveAs`, `rename`, `remove`, `revert`). It holds no live payload: `read` yields it and `apply` puts one in place, so a table or a browser stays the source of truth and `drifted` is the difference between what it holds and the active view. A view is the app's or inherited (`system`: select and copy only) or the user's own. An action that would lose something (a selection over unsaved edits, a revert, a removal) is held as `pending` until `resolve("save" | "proceed" | "cancel")`; a save that fails leaves the intent pending and the edits in place. A stored view the schema no longer accepts is set aside as `stale` and never applied.
+
+  `@zoobzio/table` and `@zoobzio/browser` gain `snapshot()` and `restore(snapshot)`, and a `restored` event. A table's snapshot is its `sorting`, `columnOrder`, `columnVisibility`, and `columnSizing` slices, its `pageSize`, and the query's `entries`; a browser's is its `sortField`, `sortDirection`, and `entries`. A restore lands in one fetch, from the first page, and fetches nothing before `init`. `@zoobzio/query` gains `replace(entries)`, which commits a whole set of entries with one `changed`.
+
+  The vue `views.vue` renders the service: the views as tabs, a mark on the active tab while it has drifted (`f-views-drifted` on the root, `f-views-badge` on the tab), the active view's actions in a menu beside them, and the dialogs that confirm a pending intent and name a view. `defineViews` and the `Views*` types come with it.
+
+  The nuxt layer has `createViews(id, options)`, whose composable takes what the views are over (anything with a `snapshot` and a `restore`), `accessViews`, the `views:*` hooks, `TABLE_VIEW_SCHEMA` and `BROWSER_VIEW_SCHEMA` with their `TableView` and `BrowserView` types, and the `Views` component with its text under `views.*` in `@zoobzio/prose`. `createTable` and `createBrowser` relay `table:restored` and `browser:restored`.
+
+- Updated dependencies []:
+  - @zoobzio/kit@0.1.10
+
 ## 0.1.9
 
 ### Patch Changes
