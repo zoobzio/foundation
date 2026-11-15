@@ -1,7 +1,7 @@
 {
   "name": "@zoobzio/table",
   "version": "0.1.9",
-  "description": "Headless data table service: paging, sort, selection, column order, and a query over the columns. No framework dependency.",
+  "description": "Headless data table service: a TanStack Table over a state container, with server-side paging and sort, and a query over the columns. No framework dependency.",
   "license": "MIT",
   "author": {
     "name": "Alex Thorwaldson",
@@ -35,6 +35,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@tanstack/table-core": "catalog:",
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",
     "objectively": "catalog:"

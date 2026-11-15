@@ -118,16 +118,18 @@ the exception: it stays a type alias to satisfy reka's record bound.
 ## Data components
 
 `table.vue` renders a headless `@zoobzio/table` service. The component owns
-no feature state: it reads the service, calls its methods, and relays its
-`updated` and `filtered` events as emits. The service's state container
-must be reactive for the table to update.
+no feature state: it renders from the service's TanStack table
+(`service.table`: its header groups, rows, and visible cells), writes
+through it, and relays the service's `updated` and `filtered` events as
+emits. The service's state container must be reactive for the table to
+update.
 
 ```ts
 import { reactive } from "vue";
 import { TableService, createTableState } from "@zoobzio/table";
 import Table from "@zoobzio/vue/components/table.vue";
 
-const config = { columns, rowKey: "id" };
+const config = { columns, getRowId: (row) => row.id };
 const state = reactive(createTableState(config));
 const service = new TableService("users", config, state, { fetch });
 service.init();
@@ -137,10 +139,24 @@ service.init();
 <Table :service="service" @updated="onUpdated" />
 ```
 
-A column that names a route (`link: (row) => string`) renders each of its
-cells through the body's `link` part, an anchor to the route around the
+A slot of the head receives its `column`, and a cell slot its `cell`,
+`row`, `column`, and `value`, as TanStack Table holds them: a column's
+label and type are on `column.columnDef.meta`, and a row's record is
+`row.original`. Cell slots cascade: `cell:<id>` for one column, then
+`cell:<type>`, then `cell`.
+
+A header whose column sorts is a button over the column's own sort
+handler: a click sorts, a click with Shift held adds the column to the
+sorts, and a third click clears it. The `th` carries
+`f-data-table-sortable`, `f-data-table-sorted` while sorted, and
+`aria-sort`. The checkbox column renders while the table's
+`enableRowSelection` is on, which a config with bulk actions turns on; the
+head's checkbox selects the rows of the page.
+
+A column that names a route (`meta.link: (row) => string`) renders each of
+its cells through the body's `link` part, an anchor to the route around the
 content the cell would otherwise render: the type's formatting or a
-`cell:<type>` slot. A `cell:<key>` slot still replaces the whole cell. A
+`cell:<type>` slot. A `cell:<id>` slot still replaces the whole cell. A
 `url` column without a route keeps its own link, to the value in a new tab.
 `pt.body.link` swaps the anchor for a router link, which receives the same
 `href`.
@@ -148,40 +164,40 @@ content the cell would otherwise render: the type's formatting or a
 Every column's header carries a resizer on its trailing border, a
 `span.f-data-table-resizer` that is the last child of the `th`, outside
 the `header` slot so a replaced header keeps it. A drag writes the
-column's width through the service's `resizeColumn` as the pointer moves,
-starting from the service's width or, for a column that has none, from the
-rendered width of its `th`; the left and right arrow keys step it by 16
-pixels, and a double click or Enter restores the width the column
-declares. The `th` carries `f-data-table-resizing` for the length of a
-drag. The resizer is a focusable `separator` named for its column
-(`Resize Name`), with the width as its value; `pt.head.resizer` builds its
-attributes per column. The table renders the widths by value: a
-`colgroup` with one `col` per rendered column, each sized column's `col`
-carrying its `width` inline. The package ships no styles, so the
-stylesheet places the resizer on the border (an absolutely positioned
-strip on the `th`'s inline end, with `cursor: col-resize` and
-`touch-action: none`) and decides how firmly a width holds: under
-`table-layout: fixed` a `col`'s width is the column's width, while the
-default `auto` layout treats it as a preference the content can exceed.
+column's size to the table's `columnSizing` as the pointer moves, starting
+from the column's size; the left and right arrow keys step it by 16
+pixels, and a double click or Enter restores the size the column declares.
+The table holds a size at the column's `minSize` and `maxSize`. The `th`
+carries `f-data-table-resizing` for the length of a drag. The resizer is a
+focusable `separator` named for its column (`Resize Name`), with the size
+as its value; `pt.head.resizer` builds its attributes per column.
+
+The table renders the sizes by value: a `colgroup` with one `col` per
+rendered column, each data column's `col` carrying its size as an inline
+`width`, but the last visible one, which carries none. The `table` element
+carries the total of the sizes as an inline `min-width`. Under
+`table-layout: fixed` and `width: 100%`, which the stylesheet sets, every
+column then holds exactly its size, the last takes what the table has left
+while it is wider than its columns, and once they outgrow it the table
+widens and scrolls. A resize of the last column starts from the width it
+is rendered at. The total counts the data columns alone: the select and
+actions columns are the stylesheet's, and their width comes out of the
+last column's. The package ships no styles, so the stylesheet also places
+the resizer on the border (an absolutely positioned strip on the `th`'s
+inline end, with `cursor: col-resize` and `touch-action: none`).
 
 The `table` element renders within a scroller, `.f-data-table-scroller`,
 a horizontal `scroller.vue` between the toolbar and the pagination, so
 columns resized past the space the table has scroll within it, and the
 toolbar, the bulk actions, and the pagination keep their width.
-`pt.scroller` configures it or swaps it through `as`. A fixed-layout table
-is at least as wide as its sized columns add up to, whatever its `width`
-says, so the stylesheet bounds the scroller rather than the table: where
-the root is a grid or a flex container its track must be free to shrink
+`pt.scroller` configures it or swaps it through `as`. The stylesheet bounds
+the scroller rather than the table: where the root is a grid or a flex
+container its track must be free to shrink
 (`grid-template-columns: minmax(0, 1fr)`, or `min-width: 0` on the
 scroller), or the root grows with the table and nothing scrolls. The
 table's frame (border, radius, clipping) belongs on the scroller, and the
 scrollbar is the scroller's own `.f-scroll-area-scrollbar` and
-`.f-scroll-area-thumb`. The `table` element carries the service's
-`columnsMinWidth` as an inline `min-width`, so a column that grows takes
-space from the unsized ones only down to their minimum, and from there the
-table widens and scrolls. The floor counts the data columns alone: the
-select and actions columns are the stylesheet's, and their width comes out
-of it.
+`.f-scroll-area-thumb`.
 
 `form.vue` renders a headless `@zoobzio/form` service the same way: one
 `form-field.vue` per config field, each resolved to the control its `type`

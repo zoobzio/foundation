@@ -1,54 +1,64 @@
 import type {
   Actions,
   Config,
-  DataTableColumn,
   Event,
   Events,
   Listener,
   Options,
+  RowData,
   Service,
   State,
+  TableInstance,
+  TableSlices,
 } from "./types";
 import type { Service as Query } from "@zoobzio/query";
 import type { Emitter } from "@zoobzio/kit";
+import type { Updater } from "@tanstack/table-core";
 
 import { entries } from "objectively";
+import { constructTable, functionalUpdate } from "@tanstack/table-core";
 import { QueryService } from "@zoobzio/query";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   TABLE_DEFAULT_CURRENCY,
   TABLE_DEFAULT_LOCALE,
   TABLE_DEFAULT_TIME_ZONE,
-  TABLE_MIN_COLUMN_WIDTH,
+  TABLE_SLICES,
   TABLE_STATE_FIELDS,
 } from "./constants";
-import { declaredWidths } from "./state";
+import { features } from "./features";
 import { fields } from "./util";
 
+const SUBSCRIPTION = { unsubscribe: () => {} };
+
+/** A writable atom, as TanStack Table takes one for a slice it does not own. */
+type SliceAtom<V> = {
+  get: () => V;
+  set: (updater: Updater<V>) => void;
+  subscribe: () => typeof SUBSCRIPTION;
+};
+
 /**
- * The headless table machine. Owns paging, sort, selection, column order,
- * column widths, and the query over its columns; delegates data loading to `wiring.fetch`.
+ * The headless table machine: a TanStack table over the `state` container,
+ * the query over its columns, and the loading of its rows through
+ * `wiring.fetch`. The server filters, sorts, and pages; the table holds
+ * one page.
  *
- * The service reads and writes the `state` container through the `options`
- * middleware. The container can be a plain object or a reactive proxy; the
- * service replaces each member as a whole. Each write emits `change`, and
- * the domain methods emit `updated` and `filtered`. `on` subscribes.
+ * The container owns every slice of the table's state, under TanStack's
+ * names, and is read and written through the `options` middleware. It can
+ * be a plain object or a reactive proxy; each member is replaced as a
+ * whole. Each write emits `change`; a write of `pagination` or `sorting`
+ * refetches, and a change of the query's entries refetches from the first
+ * page. `on` subscribes.
  */
-export class TableService<T> implements Service<T> {
-  readonly columns: DataTableColumn<T>[];
-  readonly rowKey: keyof T;
+export class TableService<T extends RowData> implements Service<T> {
+  readonly table: TableInstance<T>;
+  readonly query: Query;
   readonly actions: Service<T>["actions"];
   readonly bulkActions: Service<T>["bulkActions"];
-  readonly pinnedColumns: (keyof T)[];
-  readonly query: Query;
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
-
-  private readonly columnMap: Map<string, DataTableColumn<T>>;
-  private readonly definitionIndex: Map<string, number>;
-  private readonly pinnedSet: Set<string>;
-  private readonly defaultColumnKeys: string[];
 
   constructor(
     public readonly id: string,
@@ -58,37 +68,59 @@ export class TableService<T> implements Service<T> {
     options: Options<T> = {},
   ) {
     this.state = makeProxy(state, TABLE_STATE_FIELDS, options, this.emitter);
-    this.columns = config.columns;
-    this.rowKey = config.rowKey;
-    this.actions = entries(config.actions ?? {}).map(([key, descriptor]) => ({
+
+    const {
+      actions,
+      bulkActions,
+      searchable: _s,
+      literals,
+      initialEntries: _e,
+      locale: _l,
+      currency: _c,
+      timeZone: _z,
+      ...table
+    } = config;
+
+    this.actions = entries(actions ?? {}).map(([key, descriptor]) => ({
       ...descriptor,
       key,
       action: (row: T) => this.runAction(key, row),
     }));
-    this.bulkActions = entries(config.bulkActions ?? {}).map(
-      ([key, descriptor]) => ({
-        ...descriptor,
-        key,
-        action: (selected: Set<string>) =>
-          wiring.bulkActions?.[key]?.(selected),
-      }),
-    );
-    this.pinnedColumns = config.pinnedColumns ?? [];
+    this.bulkActions = entries(bulkActions ?? {}).map(([key, descriptor]) => ({
+      ...descriptor,
+      key,
+      action: (selected: string[]) => wiring.bulkActions?.[key]?.(selected),
+    }));
 
-    this.columnMap = new Map(config.columns.map((c) => [String(c.key), c]));
-    this.definitionIndex = new Map(
-      config.columns.map((c, i) => [String(c.key), i]),
-    );
-    this.pinnedSet = new Set(this.pinnedColumns.map(String));
-    this.defaultColumnKeys = (
-      config.defaultColumnOrder ?? config.columns.map((c) => c.key)
-    ).map(String);
+    this.table = constructTable({
+      enableRowSelection: this.bulkActions.length > 0,
+      ...table,
+      features,
+      data: this.state.data,
+      rowCount: this.state.rowCount,
+      manualPagination: true,
+      manualSorting: true,
+      atoms: {
+        pagination: this.slice("pagination", true),
+        sorting: this.slice("sorting", true),
+        rowSelection: this.slice("rowSelection"),
+        columnOrder: this.slice("columnOrder"),
+        columnVisibility: this.slice("columnVisibility"),
+        columnSizing: this.slice("columnSizing"),
+      } satisfies Record<keyof typeof TABLE_SLICES, unknown>,
+    });
+    // The table takes its options once, by value. The page and its count
+    // are the container's, so the two options read it on every access.
+    Object.defineProperties(this.table.options, {
+      data: { get: () => this.state.data, enumerable: true },
+      rowCount: { get: () => this.state.rowCount, enumerable: true },
+    });
 
     this.query = new QueryService(
       `${id}-query`,
       {
-        fields: fields(this.filterableColumns, this.timeZone),
-        ...(config.literals && { literals: config.literals }),
+        fields: fields(this.table.getAllLeafColumns(), this.timeZone),
+        ...(literals && { literals }),
       },
       this.state,
     );
@@ -99,43 +131,42 @@ export class TableService<T> implements Service<T> {
     return this.emitter.on(event, listener);
   }
 
+  /**
+   * A slice of the table's state as the atom TanStack Table reads and
+   * writes: the container's member, with no value of its own. A write to
+   * a slice the fetch is handed refetches, unless it changes nothing.
+   */
+  private slice<K extends keyof TableSlices>(
+    key: K,
+    refetch = false,
+  ): SliceAtom<TableSlices[K]> {
+    const state: TableSlices = this.state;
+    return {
+      get: () => state[key],
+      set: (updater: Updater<TableSlices[K]>) => {
+        const before = state[key];
+        const after = functionalUpdate(updater, before);
+        if (refetch && same(before, after)) return;
+        state[key] = after;
+        if (refetch) void this.fetch();
+      },
+      subscribe: () => SUBSCRIPTION,
+    };
+  }
+
   // --- state -----------------------------------------------------------
 
   get data(): T[] {
     return this.state.data;
+  }
+  get rowCount(): number {
+    return this.state.rowCount;
   }
   get loading(): boolean {
     return this.state.loading;
   }
   get initialized(): boolean {
     return this.state.initialized;
-  }
-  get page(): number {
-    return this.state.page;
-  }
-  get pageSize(): number {
-    return this.state.pageSize;
-  }
-  get total(): number {
-    return this.state.total;
-  }
-  get pageCount(): number {
-    return this.state.pageCount;
-  }
-  get sortField(): string | null {
-    return this.state.sortField;
-  }
-  get sortDirection() {
-    return this.state.sortDirection;
-  }
-  get selected(): Set<string> {
-    return this.state.selected;
-  }
-  get columnOrder(): string[] {
-    return this.state.columnOrder;
-  }
-  get columnWidths(): Record<string, number> {
-    return this.state.columnWidths;
   }
   get searchable(): boolean {
     return this.config.searchable ?? true;
@@ -150,213 +181,6 @@ export class TableService<T> implements Service<T> {
     return this.config.timeZone ?? TABLE_DEFAULT_TIME_ZONE;
   }
 
-  // --- derived ---------------------------------------------------------
-
-  get filterableColumns(): DataTableColumn<T>[] {
-    return this.columns.filter(
-      (c) => c.filterable ?? (c.type !== "action" && c.type !== "image"),
-    );
-  }
-
-  get visibleColumns(): DataTableColumn<T>[] {
-    return this.columnOrder
-      .map((key) => this.columnMap.get(key))
-      .filter((c): c is DataTableColumn<T> => c !== undefined);
-  }
-
-  get isAllSelected(): boolean {
-    if (!this.data.length) return false;
-    return this.data.every((row) => this.selected.has(this.keyOf(row)));
-  }
-
-  get isIndeterminate(): boolean {
-    if (!this.selected.size) return false;
-    return !this.isAllSelected;
-  }
-
-  get selectAllState(): boolean | "indeterminate" {
-    if (this.isIndeterminate) return "indeterminate";
-    return this.isAllSelected;
-  }
-
-  get colSpan(): number {
-    return (
-      this.visibleColumns.length +
-      (this.hasActions ? 1 : 0) +
-      (this.isSelectable ? 1 : 0)
-    );
-  }
-
-  get hasSelection(): boolean {
-    return this.selected.size > 0;
-  }
-
-  get isSelectable(): boolean {
-    return this.bulkActions.length > 0;
-  }
-
-  get hasActions(): boolean {
-    return this.actions.length > 0;
-  }
-
-  keyOf(row: T): string {
-    return String(row[this.config.rowKey]);
-  }
-
-  // --- paging ----------------------------------------------------------
-
-  goToPage(page: number): void {
-    if (page < 1 || page > this.pageCount) return;
-    this.state.page = page;
-    this.fetch();
-  }
-
-  setPageSize(size: number): void {
-    this.state.pageSize = size;
-    this.state.page = 1;
-    this.fetch();
-  }
-
-  // --- sorting ---------------------------------------------------------
-
-  sortBy(field: string): void {
-    if (this.sortField === field) {
-      this.state.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
-    } else {
-      this.state.sortField = field;
-      this.state.sortDirection = "asc";
-    }
-    this.state.page = 1;
-    this.fetch();
-  }
-
-  sortFieldFor(col: DataTableColumn<T>): string {
-    return col.sortKey ?? String(col.key);
-  }
-
-  isSorted(col: DataTableColumn<T>): boolean {
-    return this.sortField === this.sortFieldFor(col);
-  }
-
-  // --- selection -------------------------------------------------------
-
-  toggleRow(key: string): void {
-    const next = new Set(this.selected);
-    if (next.has(key)) next.delete(key);
-    else next.add(key);
-    this.state.selected = next;
-  }
-
-  toggleAll(): void {
-    if (this.isAllSelected) {
-      this.state.selected = new Set();
-    } else {
-      this.state.selected = new Set(this.data.map((row) => this.keyOf(row)));
-    }
-  }
-
-  clearSelection(): void {
-    this.state.selected = new Set();
-  }
-
-  isRowSelected(row: T): boolean {
-    return this.selected.has(this.keyOf(row));
-  }
-
-  // --- columns ---------------------------------------------------------
-
-  isColumnPinned(key: keyof T): boolean {
-    return this.pinnedSet.has(String(key));
-  }
-
-  isColumnVisible(key: keyof T): boolean {
-    return this.columnOrder.includes(String(key));
-  }
-
-  toggleColumn(key: keyof T): void {
-    const k = String(key);
-    if (this.pinnedSet.has(k)) return;
-    if (this.columnOrder.includes(k)) {
-      this.state.columnOrder = this.columnOrder.filter((c) => c !== k);
-    } else {
-      this.state.columnOrder = this.insertAtDefinition(this.columnOrder, k);
-    }
-  }
-
-  setVisibleColumns(keys: Iterable<string>): void {
-    const wanted = new Set(keys);
-    for (const k of this.pinnedSet) wanted.add(k);
-    let order = this.columnOrder.filter((k) => wanted.has(k));
-    for (const k of wanted) {
-      if (!this.columnMap.has(k) || order.includes(k)) continue;
-      order = this.insertAtDefinition(order, k);
-    }
-    this.state.columnOrder = order;
-  }
-
-  moveColumn(key: string, toKey: string): void {
-    if (key === toKey) return;
-    const order = [...this.columnOrder];
-    const from = order.indexOf(key);
-    const to = order.indexOf(toKey);
-    if (from === -1 || to === -1) return;
-    order.splice(from, 1);
-    order.splice(to, 0, key);
-    this.state.columnOrder = order;
-  }
-
-  reorderColumns(order: string[]): void {
-    this.state.columnOrder = order;
-  }
-
-  columnWidth(key: string): number | undefined {
-    return this.columnWidths[key];
-  }
-
-  columnMinWidth(key: string): number {
-    return this.columnMap.get(key)?.minWidth ?? TABLE_MIN_COLUMN_WIDTH;
-  }
-
-  get columnsMinWidth(): number {
-    let sized = 0;
-    let unsized = 0;
-    let floor = 0;
-    for (const column of this.visibleColumns) {
-      const key = String(column.key);
-      const width = this.columnWidth(key);
-      if (width === undefined) {
-        unsized += 1;
-        floor = Math.max(floor, this.columnMinWidth(key));
-      } else sized += width;
-    }
-    return sized + unsized * floor;
-  }
-
-  resizeColumn(key: string, width: number): void {
-    if (!this.columnMap.has(key) || !Number.isFinite(width)) return;
-    const next = Math.max(this.columnMinWidth(key), Math.round(width));
-    if (this.columnWidths[key] === next) return;
-    this.state.columnWidths = { ...this.columnWidths, [key]: next };
-  }
-
-  resetColumnWidth(key: string): void {
-    const declared = this.columnMap.get(key)?.width;
-    if (this.columnWidths[key] === declared) return;
-    const { [key]: _, ...rest } = this.columnWidths;
-    this.state.columnWidths =
-      declared === undefined ? rest : { ...rest, [key]: declared };
-  }
-
-  private insertAtDefinition(order: string[], key: string): string[] {
-    const index = this.definitionIndex.get(key) ?? Infinity;
-    const at = order.findIndex(
-      (k) => (this.definitionIndex.get(k) ?? Infinity) > index,
-    );
-    const next = [...order];
-    next.splice(at === -1 ? next.length : at, 0, key);
-    return next;
-  }
-
   // --- actions ---------------------------------------------------------
 
   runAction(key: string, row: T): void {
@@ -364,19 +188,20 @@ export class TableService<T> implements Service<T> {
   }
 
   runBulkAction(key: string): void {
-    this.wiring.bulkActions?.[key]?.(this.selected);
-  }
-
-  resetColumns(): void {
-    this.state.columnOrder = this.defaultColumnKeys;
-    this.state.columnWidths = declaredWidths(this.columns);
+    this.wiring.bulkActions?.[key]?.(this.table.getSelectedRowIds());
   }
 
   // --- search ----------------------------------------------------------
 
+  /**
+   * The query changed what the rows are, so the page the table was on
+   * names other rows, or none: back to the first, in the one fetch.
+   */
   private refilter(): void {
-    this.state.page = 1;
-    this.fetch();
+    if (this.state.pagination.pageIndex !== 0) {
+      this.state.pagination = { ...this.state.pagination, pageIndex: 0 };
+    }
+    void this.fetch();
     this.emitter.emit("filtered", {
       id: this.id,
       query: this.query.text,
@@ -398,21 +223,22 @@ export class TableService<T> implements Service<T> {
     try {
       const result = await this.wiring.fetch(
         {
-          page: this.page,
-          pageSize: this.pageSize,
-          sortField: this.sortField,
-          sortDirection: this.sortDirection,
+          pagination: this.state.pagination,
+          sorting: this.state.sorting,
           query: this.query.text,
           filters: this.query.filters,
         },
         this,
       );
       this.state.data = result.data;
-      this.state.total = result.total;
-      this.state.pageCount = result.pageCount;
+      this.state.rowCount = result.rowCount;
     } finally {
       this.state.loading = false;
-      this.emitter.emit("updated", { id: this.id, total: this.total });
+      this.emitter.emit("updated", { id: this.id, rowCount: this.rowCount });
     }
   }
 }
+
+/** Whether a write to a slice leaves it as it was, member for member. */
+const same = (before: unknown, after: unknown): boolean =>
+  before === after || JSON.stringify(before) === JSON.stringify(after);

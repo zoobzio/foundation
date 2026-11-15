@@ -1,6 +1,6 @@
 import type { CheckboxEmits, CheckboxProps } from "./checkbox";
 import type { PT, PassthroughIter, Rendered } from "../passthrough";
-import type { DataTableColumn, Service } from "@zoobzio/table";
+import type { RowData, Service, TableColumn } from "@zoobzio/table";
 import type { HTMLAttributes, VNode } from "vue";
 
 /**
@@ -8,15 +8,15 @@ import type { HTMLAttributes, VNode } from "vue";
  * handle on a column's trailing border, built per column: a focusable
  * separator named for the column, whose value is the column's width.
  */
-export type TableHeadPassthrough<T> = {
+export type TableHeadPassthrough<T extends RowData> = {
   selectAllCheckbox: Rendered<CheckboxProps, CheckboxEmits>;
-  resizer: PassthroughIter<DataTableColumn<T>, HTMLAttributes>;
+  resizer: PassthroughIter<TableColumn<T>, HTMLAttributes>;
 };
 
 /**
  * Props of the table head: the headless service plus passthrough.
  */
-export type TableHeadProps<T> = {
+export type TableHeadProps<T extends RowData> = {
   service: Service<T>;
   pt?: PT<TableHeadPassthrough<T>>;
 };
@@ -24,7 +24,7 @@ export type TableHeadProps<T> = {
 /**
  * The table head view model, served to `defineExpose` and the slots.
  */
-export type TableHeadContext<T> = {
+export type TableHeadContext<T extends RowData> = {
   table: Service<T>;
   el: HTMLTableSectionElement | null;
   settings: TableHeadPassthrough<T>;
@@ -33,20 +33,18 @@ export type TableHeadContext<T> = {
 /**
  * Slots of the table head. Each slot receives the context and its `column`.
  */
-export type TableHeadSlots<T> = {
-  header?: (
-    props: TableHeadContext<T> & { column: DataTableColumn<T> },
-  ) => VNode[];
+export type TableHeadSlots<T extends RowData> = {
+  header?: (props: TableHeadContext<T> & { column: TableColumn<T> }) => VNode[];
   headerPrepend?: (
-    props: TableHeadContext<T> & { column: DataTableColumn<T> },
+    props: TableHeadContext<T> & { column: TableColumn<T> },
   ) => VNode[];
   headerAppend?: (
-    props: TableHeadContext<T> & { column: DataTableColumn<T> },
+    props: TableHeadContext<T> & { column: TableColumn<T> },
   ) => VNode[];
   dragPrepend?: (
-    props: TableHeadContext<T> & { column: DataTableColumn<T> },
+    props: TableHeadContext<T> & { column: TableColumn<T> },
   ) => VNode[];
   dragAppend?: (
-    props: TableHeadContext<T> & { column: DataTableColumn<T> },
+    props: TableHeadContext<T> & { column: TableColumn<T> },
   ) => VNode[];
 };

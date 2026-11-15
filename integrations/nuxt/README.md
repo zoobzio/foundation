@@ -228,8 +228,8 @@ a form field or a toast takes a message in place of a string:
 ```ts
 const table = createTable("users", {
   columns: [
-    { key: "name", label: "users.column.name" },
-    { key: "role", label: "users.column.role" },
+    { accessorKey: "name", meta: { label: "users.column.name" } },
+    { accessorKey: "role", meta: { label: "users.column.role" } },
   ],
   actions: { remove: { label: "users.action.remove", action: (row) => … } },
 });
@@ -360,15 +360,18 @@ import { createTable } from "@zoobzio/nuxt/factories/table";
 
 export const useUsers = createTable<User>("users", {
   columns: [
-    { key: "id", label: "ID", type: "number" },
-    { key: "name", label: "Name", type: "text", sortable: true },
+    { accessorKey: "id", meta: { label: "ID", type: "number" } },
+    { accessorKey: "name", meta: { label: "Name", type: "text" } },
   ],
-  rowKey: "id",
+  getRowId: (user) => user.id,
   fetch: (params) => $fetch("/api/users", { query: params }),
   actions: {
     edit: { label: "Edit", action: (user) => navigateTo(`/users/${user.id}`) },
   },
-  initial: { pageSize: 50, sortField: "name" },
+  initialState: {
+    pagination: { pageIndex: 0, pageSize: 50 },
+    sorting: [{ id: "name", desc: false }],
+  },
 });
 ```
 

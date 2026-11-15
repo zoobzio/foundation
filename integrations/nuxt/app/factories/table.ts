@@ -1,5 +1,5 @@
 import type { TableOptions, UseTable } from "../types/table";
-import type { Actions, Config, Service } from "@zoobzio/table";
+import type { Actions, Config, RowData, Service } from "@zoobzio/table";
 
 import { useNuxtApp } from "#app";
 import { QUERY_TEXT_KEY, QUERY_TEXT_LITERAL } from "@zoobzio/query";
@@ -15,7 +15,7 @@ import { resolveTexts } from "../utils/text";
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
  * bus as `table:updated` and `table:filtered`. Every text of the config —
- * the columns' and the actions' labels, the literals' — resolves through
+ * the labels of the columns' `meta` and of the actions, the literals' — resolves through
  * the app's prosary service as the service is built, so a label that is a
  * key of the app's contract reaches the machine — and the search that
  * matches a typed prefix against it — as the visitor reads it. A config
@@ -24,11 +24,11 @@ import { resolveTexts } from "../utils/text";
  * the search's placeholder does. The machine itself is `@zoobzio/table`;
  * the Vue table renders it through its `service` prop.
  */
-export const createTable = <T>(
+export const createTable = <T extends RowData>(
   id: string,
   options: TableOptions<T>,
 ): UseTable<T> => {
-  const { fetch, actions, bulkActions, initial, ...rest } = options;
+  const { fetch, actions, bulkActions, ...rest } = options;
   const rows = split(actions);
   const bulk = split(bulkActions);
   const config: Config<T> = {
@@ -48,7 +48,7 @@ export const createTable = <T>(
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
     const resolved = resolveTexts(nuxt.$prosary, config);
-    const state = accessTable(id, resolved, initial);
+    const state = accessTable(id, resolved);
     const service = new TableService(id, resolved, state, wiring);
     service.on("updated", (event) => {
       log.debug("Table updated", event);

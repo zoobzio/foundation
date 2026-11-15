@@ -7,6 +7,7 @@ import type { Logger } from "./types/log";
 import type { IconAlias } from "./types/icon";
 import type { TableHooks } from "./types/table";
 import type { AppMessage } from "./types/text";
+import type { CellData, RowData, TableFeatures } from "@tanstack/table-core";
 
 // The text the packages carry admits the app's messages: a `label`,
 // `placeholder` or `hint` of any service or component takes a key of the
@@ -59,14 +60,22 @@ declare module "@zoobzio/vue/types/components/facets" {
   }
 }
 
-// A column's `icon` is drawn before its header, and carried onto its query
-// field by the table and onto its column-manager option by the vue table,
-// so the search and the manager draw it beside the column's label.
 declare module "@zoobzio/table" {
   interface ActionDescriptor {
     icon?: IconAlias;
   }
-  interface DataTableColumn<T> {
+}
+
+// A table column's `icon`, on its `meta`, is drawn before its header, and
+// carried onto its query field by the table and onto its column-manager
+// option by the vue table, so the search and the manager draw it beside
+// the column's label.
+declare module "@tanstack/table-core" {
+  interface ColumnMeta<
+    in out TFeatures extends TableFeatures,
+    in out TData extends RowData,
+    TValue extends CellData = CellData,
+  > {
     icon?: IconAlias;
   }
 }

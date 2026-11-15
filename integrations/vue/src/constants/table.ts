@@ -1,10 +1,11 @@
 import type { TableEmits } from "../types/components/table";
+import type { RowData } from "@zoobzio/table";
 
 /** The service events the table relays as emits. Each is a declared emit. */
 export const TABLE_EVENTS = [
   "updated",
   "filtered",
-] as const satisfies readonly (keyof TableEmits<unknown>)[];
+] as const satisfies readonly (keyof TableEmits<RowData>)[];
 
 export const TABLE_REFRESH_LABEL = "Refresh";
 export const TABLE_COLUMNS_LABEL = "Columns";

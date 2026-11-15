@@ -1,4 +1,4 @@
-import type { ActionDescriptor, DataTableColumn } from "../src/types";
+import type { ActionDescriptor, TableColumnDef } from "../src/types";
 
 export type FakeRow = {
   id: number;
@@ -11,35 +11,45 @@ export type FakeRow = {
 const NUMBER_OPERATORS = ["over", "under", "is"];
 const DATE_OPERATORS = ["before", "after", "on"];
 
-export const fakeColumns: DataTableColumn<FakeRow>[] = [
+export const fakeColumns: TableColumnDef<FakeRow>[] = [
   {
-    key: "id",
-    label: "ID",
-    type: "number",
-    operators: NUMBER_OPERATORS,
-    defaultOperator: "is",
+    accessorKey: "id",
+    enableHiding: false,
+    size: 80,
+    meta: {
+      label: "ID",
+      type: "number",
+      operators: NUMBER_OPERATORS,
+      defaultOperator: "is",
+    },
   },
-  { key: "name", label: "Name", type: "text", sortable: true },
+  { accessorKey: "name", minSize: 120, meta: { label: "Name", type: "text" } },
   {
-    key: "status",
-    label: "Status",
-    type: "enum",
-    values: ["Active", "Inactive", "Pending"],
+    accessorKey: "status",
+    enableSorting: false,
+    meta: {
+      label: "Status",
+      type: "enum",
+      values: ["Active", "Inactive", "Pending"],
+    },
   },
   {
-    key: "created",
-    label: "Created",
-    type: "date",
-    sortable: true,
-    operators: DATE_OPERATORS,
-    defaultOperator: "on",
+    accessorKey: "created",
+    meta: {
+      label: "Created",
+      type: "date",
+      operators: DATE_OPERATORS,
+      defaultOperator: "on",
+    },
   },
   {
-    key: "amount",
-    label: "Amount",
-    type: "currency",
-    operators: NUMBER_OPERATORS,
-    defaultOperator: "is",
+    accessorKey: "amount",
+    meta: {
+      label: "Amount",
+      type: "currency",
+      operators: NUMBER_OPERATORS,
+      defaultOperator: "is",
+    },
   },
 ];
 
@@ -66,6 +76,8 @@ export const fakeRows: FakeRow[] = [
     amount: 300,
   },
 ];
+
+export const getRowId = (row: FakeRow): string => String(row.id);
 
 export const fakeActions: Record<string, ActionDescriptor> = {
   edit: { label: "Edit" },

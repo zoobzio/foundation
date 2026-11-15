@@ -1,3 +1,4 @@
+import type { Features } from "./features";
 import type {
   Entry,
   Filter,
@@ -15,9 +16,24 @@ import type {
   Options as KitOptions,
   Text,
 } from "@zoobzio/kit";
+import type {
+  Cell,
+  CellData,
+  Column,
+  ColumnDef,
+  Header,
+  PaginationState,
+  Row,
+  RowData,
+  SortingState,
+  Table,
+  TableFeatures,
+  TableOptions,
+  TableState,
+} from "@tanstack/table-core";
 
 /**
- * Column data type — drives cell rendering and sort behavior.
+ * Column data type: drives how a view renders the column's cells.
  */
 export type ColumnType =
   | "text"
@@ -32,82 +48,68 @@ export type ColumnType =
   | "image"
   | "action";
 
-/**
- * A table column. An interface, so a layer may widen it by declaration
- * merging (an icon); a property beyond the ones the table and its views
- * read is carried onto the column's query field, so the search draws the
- * field as the column does.
- *
- * A column's query field is what the column declares: `operators`,
- * `defaultOperator`, and `values`. The table supplies no operators, as it
- * gives an operator no meaning: the consumer reads it from the filters its
- * fetch is handed, so the consumer names the vocabulary. It supplies values
- * for a `date` or `datetime` column alone, the days the query's
- * `dateValues` generates from the term in the config's `timeZone`, where
- * the column declares none
- * of its own. A column that declares nothing else is a bare field, free
- * entry and no operator stage.
- */
-export interface DataTableColumn<T> {
-  key: keyof T;
-  label: Text;
-  type?: ColumnType;
-  align?: "left" | "center" | "right";
-  sortable?: boolean;
-  sortKey?: string;
-  /**
-   * Whether the column appears in the search autocomplete. Defaults by
-   * type: everything except `action` and `image` is filterable.
-   */
-  filterable?: boolean;
-  /**
-   * The operators a filter on the column carries. Without them the column
-   * has no operator stage.
-   */
-  operators?: readonly string[];
-  /**
-   * The operator a filter takes when none is given. It must be one of
-   * `operators`, or every filter added without an operator is rejected.
-   */
-  defaultOperator?: string;
-  /**
-   * The values the search suggests: a list the term narrows, or a provider
-   * the term is given to, which may ask an API and give its values a page
-   * at a time. Without them the value is free entry, except on a `date` or
-   * `datetime` column, which suggests the days the query's `dateValues`
-   * generates from the term.
-   */
-  values?: Values;
-  /**
-   * The route of the column's cells. A cell of the column renders as a
-   * link to the route, with the content the cell would otherwise render
-   * inside, so a row's title can be the way to the row's own page. The
-   * view reads it; the query does not, so it does not reach the column's
-   * field. On a `url` column the route replaces the value's own link.
-   */
-  link?: (row: T) => string;
-  /**
-   * The width the column starts at, in pixels. It seeds the container's
-   * `columnWidths`, and is what `resetColumnWidth` restores. Without it
-   * the column has no width until it is resized, and a view sizes it by
-   * its content.
-   */
-  width?: number;
-  /**
-   * The narrowest the column resizes to, in pixels. Defaults to
-   * `TABLE_MIN_COLUMN_WIDTH`.
-   */
-  minWidth?: number;
+// What a column carries beyond what TanStack Table reads, on its `meta`.
+// The interface is TanStack's, so a layer may widen it further by
+// declaration merging (an icon); a property beyond the ones the table and
+// its views read is carried onto the column's query field, so the search
+// draws the field as the column does.
+declare module "@tanstack/table-core" {
+  interface ColumnMeta<
+    in out TFeatures extends TableFeatures,
+    in out TData extends RowData,
+    TValue extends CellData = CellData,
+  > {
+    /** The column's name, as its header and its query field show it. */
+    label?: Text;
+    type?: ColumnType;
+    align?: "left" | "center" | "right";
+    /**
+     * Whether the column appears in the search autocomplete. Defaults by
+     * type: everything except `action` and `image` is filterable.
+     */
+    filterable?: boolean;
+    /**
+     * The operators a filter on the column carries. Without them the column
+     * has no operator stage. The table gives an operator no meaning: the
+     * consumer reads it from the filters its fetch is handed.
+     */
+    operators?: readonly string[];
+    /**
+     * The operator a filter takes when none is given. It must be one of
+     * `operators`, or every filter added without an operator is rejected.
+     */
+    defaultOperator?: string;
+    /**
+     * The values the search suggests: a list the term narrows, or a
+     * provider the term is given to. Without them the value is free entry,
+     * except on a `date` or `datetime` column, which suggests the days the
+     * query's `dateValues` generates from the term.
+     */
+    values?: Values;
+    /**
+     * The route of the column's cells. A cell of the column renders as a
+     * link to the route, with the content the cell would otherwise render
+     * inside. On a `url` column the route replaces the value's own link.
+     */
+    link?: (row: TData) => string;
+  }
 }
 
+/** The TanStack Table types, bound to the features the service registers. */
+export type { RowData };
+export type TableInstance<T extends RowData> = Table<Features, T>;
+export type TableColumnDef<T extends RowData> = ColumnDef<Features, T>;
+export type TableColumn<T extends RowData> = Column<Features, T>;
+export type TableHeader<T extends RowData> = Header<Features, T>;
+export type TableRow<T extends RowData> = Row<Features, T>;
+export type TableCell<T extends RowData> = Cell<Features, T>;
+export type TableSlices = TableState<Features>;
+
 /**
- * A committed column filter, as the query holds it. Keys are strings,
- * matching the `sortField` / `columnOrder` convention; `op` is present for
- * a column that declares operators.
+ * A committed column filter, as the query holds it: `key` is the column's
+ * id; `op` is present for a column that declares operators.
  */
 export type TableFilter = Filter;
-
-export type SortDirection = "asc" | "desc";
 
 /**
  * The serializable half of a row/bulk action: how it renders. The behavior
@@ -118,77 +120,82 @@ export interface ActionDescriptor {
 }
 
 /**
- * Row action — the live shape the service exposes: descriptor joined with
- * its handler, under the config key. `runAction(key, row)` dispatches by
- * key.
+ * Row action: descriptor joined with its handler, under the config key.
  */
-export interface RowAction<T> extends ActionDescriptor {
+export interface RowAction<T extends RowData> extends ActionDescriptor {
   key: string;
   action: (row: T) => void;
 }
 
 /**
- * Bulk action — the live shape the service exposes: descriptor joined with
- * its handler, under the config key. `runBulkAction(key)` dispatches by key
- * over the service's selection.
+ * Bulk action: descriptor joined with its handler, under the config key.
+ * The handler is given the ids of the selected rows.
  */
 export interface BulkAction extends ActionDescriptor {
   key: string;
-  action: (selected: Set<string>) => void;
+  action: (selected: string[]) => void;
 }
 
 /**
- * Parameters passed to the fetch action. The table owns paging and sort;
- * its query owns the search: `query` is the committed free text, `filters`
- * the committed column filters.
+ * What the fetch is handed: the table's `pagination` and `sorting` slices
+ * as TanStack Table holds them, and the search: `query` is the committed
+ * free text, `filters` the committed column filters.
  */
-export interface DataTableFetchParams {
-  page: number;
-  pageSize: number;
-  sortField: string | null;
-  sortDirection: SortDirection;
+export interface FetchParams {
+  pagination: PaginationState;
+  sorting: SortingState;
   query: string;
   filters: TableFilter[];
 }
 
-export interface DataTableFetchResult<T> {
+/** One page of rows, and the count of every row the search leaves. */
+export interface FetchResult<T extends RowData> {
   data: T[];
-  total: number;
-  pageCount: number;
+  rowCount: number;
 }
 
 /**
- * Config the consumer provides — pure serializable data. Actions are
- * descriptor records: the key is the action's identity, shared with the
- * handler record in `Actions`.
+ * The TanStack Table options the service sets itself: the state is the
+ * container's, the data is the fetch's, and the server sorts and pages.
  */
-export type Config<T> = {
-  columns: DataTableColumn<T>[];
-  rowKey: keyof T;
+type Owned =
+  | "features"
+  | "data"
+  | "state"
+  | "atoms"
+  | "rowCount"
+  | "pageCount"
+  | "manualPagination"
+  | "manualSorting"
+  | "mergeOptions";
+
+/**
+ * Config the consumer provides: the options of the TanStack table, as it
+ * takes them (`columns`, `getRowId`, `initialState`, `defaultColumn`, any
+ * other but the ones the service owns), beside the service's own.
+ */
+export type Config<T extends RowData> = Omit<
+  TableOptions<Features, T>,
+  Owned
+> & {
   actions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;
-  pinnedColumns?: (keyof T)[];
-  defaultColumnOrder?: (keyof T)[];
   /**
    * Whether a UI renders the toolbar search. Defaults to `true`. A hint for
-   * the view layer only — the search surface on the service (`query`,
-   * `filters`, mutators, fetch params) stays live for imperative use.
+   * the view layer only: the query stays live for imperative use.
    */
   searchable?: boolean;
   /**
-   * The literals of the query, handed to it as given: the values typed
-   * between their own characters, which lead the search's options.
-   * Defaults to the query's, the text literal alone, `"text"` under
-   * `Search`; the table reads the `text` literal as the fetch's `query`.
+   * The literals of the query, handed to it as given. Defaults to the
+   * query's, the text literal alone; the table reads the `text` literal as
+   * the fetch's `query`.
    */
   literals?: Record<string, Literal>;
-  /**
-   * The BCP 47 locale cells format in. Defaults to `en-US`.
-   */
+  /** The entries the query starts from. */
+  initialEntries?: Entry[];
+  /** The BCP 47 locale cells format in. Defaults to `en-US`. */
   locale?: string;
-  /**
-   * The ISO 4217 code currency cells format in. Defaults to `USD`.
-   */
+  /** The ISO 4217 code currency cells format in. Defaults to `USD`. */
   currency?: string;
   /**
    * The IANA time zone date and datetime cells format in, and the one the
@@ -199,57 +206,44 @@ export type Config<T> = {
 };
 
 /**
- * The state container the service reads and writes: paging, sort,
- * selection, column order, column widths, and the query's slice. The container can be a
- * plain object or a reactive proxy. The service replaces each member as a
- * whole, so a proxy tracks every change. `entries`, `draft`, and `suggest`
- * belong to the table's `query` machine, their only writer.
+ * The state container the service reads and writes: the slices of the
+ * TanStack table under their own names, the fetched page, and the query's
+ * slice. The container can be a plain object or a reactive proxy. Each
+ * member is replaced as a whole, so a proxy tracks every change.
  */
-export type State<T> = {
+export type State<T extends RowData> = TableSlices & {
   data: T[];
+  rowCount: number;
   loading: boolean;
   initialized: boolean;
-  page: number;
-  pageSize: number;
-  total: number;
-  pageCount: number;
-  sortField: string | null;
-  sortDirection: SortDirection;
-  selected: Set<string>;
-  columnOrder: string[];
-  /**
-   * The width of each sized column, in pixels, by column key. A column
-   * without an entry has no width of its own.
-   */
-  columnWidths: Record<string, number>;
   entries: Entry[];
   draft: string;
   suggest: Suggest;
 };
 
-export type StateKey = keyof State<unknown>;
+export type StateKey = keyof State<RowData>;
 
 /**
  * The kit's state mechanisms bound to this service's container: per-field
  * middleware, the read/write options, and the change objects.
  */
-export type Middleware<T> = KitMiddleware<State<T>>;
-export type Options<T> = KitOptions<State<T>>;
-export type Changes<T> = KitChanges<State<T>>;
-export type Change<T, K extends StateKey = StateKey> = KitChange<State<T>, K>;
-export type Changers<T> = KitChangers<State<T>>;
+export type Middleware<T extends RowData> = KitMiddleware<State<T>>;
+export type Options<T extends RowData> = KitOptions<State<T>>;
+export type Changes<T extends RowData> = KitChanges<State<T>>;
+export type Change<
+  T extends RowData,
+  K extends StateKey = StateKey,
+> = KitChange<State<T>, K>;
+export type Changers<T extends RowData> = KitChangers<State<T>>;
 
 /**
  * The consumer-supplied behavior: the fetch mechanism plus handlers keyed
  * like the config's descriptor records.
  */
-export type Actions<T> = {
-  fetch: (
-    params: DataTableFetchParams,
-    service: Service<T>,
-  ) => Promise<DataTableFetchResult<T>>;
+export type Actions<T extends RowData> = {
+  fetch: (params: FetchParams, service: Service<T>) => Promise<FetchResult<T>>;
   actions?: Record<string, (row: T) => void>;
-  bulkActions?: Record<string, (selected: Set<string>) => void>;
+  bulkActions?: Record<string, (selected: string[]) => void>;
 };
 
 /**
@@ -258,31 +252,32 @@ export type Actions<T> = {
  * reads the new state.
  *
  * - `change`: any field of the container was written.
- * - `updated`: a fetch settled, success or failure. `total` is the stored total.
+ * - `updated`: a fetch settled, success or failure.
  * - `filtered`: the query's entries changed.
  */
-export type Events<T> = {
+export type Events<T extends RowData> = {
   change: [change: Change<T>];
-  updated: [event: { id: string; total: number }];
+  updated: [event: { id: string; rowCount: number }];
   filtered: [event: { id: string; query: string; filters: TableFilter[] }];
 };
 
-export type Event<T> = keyof Events<T>;
+export type Event<T extends RowData> = keyof Events<T>;
 
-export type Listener<T, E extends Event<T>> = KitListener<Events<T>, E>;
+export type Listener<T extends RowData, E extends Event<T>> = KitListener<
+  Events<T>,
+  E
+>;
 
-export type Service<T> = {
+export type Service<T extends RowData> = {
   readonly id: string;
   readonly config: Config<T>;
-  readonly columns: DataTableColumn<T>[];
-  readonly rowKey: keyof T;
-  readonly actions: RowAction<T>[];
-  readonly bulkActions: BulkAction[];
-  readonly pinnedColumns: (keyof T)[];
-  readonly searchable: boolean;
-  readonly locale: string;
-  readonly currency: string;
-  readonly timeZone: string;
+
+  /**
+   * The TanStack table over the container: columns, headers, rows, and
+   * the APIs of every registered feature. A write through it lands in the
+   * container; a change of `pagination` or `sorting` refetches.
+   */
+  readonly table: TableInstance<T>;
 
   /**
    * The query machine over the filterable columns: one field per column,
@@ -291,76 +286,18 @@ export type Service<T> = {
    */
   readonly query: Query;
 
+  readonly actions: RowAction<T>[];
+  readonly bulkActions: BulkAction[];
+  readonly searchable: boolean;
+  readonly locale: string;
+  readonly currency: string;
+  readonly timeZone: string;
+
   readonly data: T[];
+  readonly rowCount: number;
   readonly loading: boolean;
   readonly initialized: boolean;
-  readonly page: number;
-  readonly pageSize: number;
-  readonly total: number;
-  readonly pageCount: number;
-  readonly sortField: string | null;
-  readonly sortDirection: SortDirection;
-  readonly selected: Set<string>;
-  readonly columnOrder: string[];
-  readonly columnWidths: Record<string, number>;
 
-  readonly visibleColumns: DataTableColumn<T>[];
-  readonly filterableColumns: DataTableColumn<T>[];
-  readonly isAllSelected: boolean;
-  readonly isIndeterminate: boolean;
-  readonly selectAllState: boolean | "indeterminate";
-  readonly colSpan: number;
-  readonly hasSelection: boolean;
-  readonly isSelectable: boolean;
-  readonly hasActions: boolean;
-
-  goToPage(page: number): void;
-  setPageSize(size: number): void;
-  sortBy(field: string): void;
-  sortFieldFor(col: DataTableColumn<T>): string;
-  isSorted(col: DataTableColumn<T>): boolean;
-  keyOf(row: T): string;
-  toggleRow(key: string): void;
-  toggleAll(): void;
-  clearSelection(): void;
-  isRowSelected(row: T): boolean;
-  toggleColumn(key: keyof T): void;
-  setVisibleColumns(keys: Iterable<string>): void;
-  moveColumn(key: string, toKey: string): void;
-  reorderColumns(order: string[]): void;
-  /**
-   * The width of a column in pixels, by its key as a string, or `undefined` for a column that has
-   * none: a view leaves it to size by its content.
-   */
-  columnWidth(key: string): number | undefined;
-  /**
-   * The narrowest a column resizes to, in pixels.
-   */
-  columnMinWidth(key: string): number;
-  /**
-   * The narrowest the visible columns go together, in pixels: the widths
-   * of the sized ones, plus room for every unsized one to hold the widest
-   * minimum among them, as a view shares what is left evenly between the
-   * unsized. A view holds its table at it, so a column resized past the
-   * space there is leaves the others at their minimum, not at nothing.
-   */
-  readonly columnsMinWidth: number;
-  /**
-   * Sets the width of a column, rounded to a whole pixel and held at the
-   * column's minimum. An unknown key and a width that is not a finite
-   * number are ignored.
-   */
-  resizeColumn(key: string, width: number): void;
-  /**
-   * Restores a column to the width it declares, or to none.
-   */
-  resetColumnWidth(key: string): void;
-  /**
-   * Restores the default column order and the declared column widths.
-   */
-  resetColumns(): void;
-  isColumnPinned(key: keyof T): boolean;
-  isColumnVisible(key: keyof T): boolean;
   runAction(key: string, row: T): void;
   runBulkAction(key: string): void;
   init(): Promise<boolean>;

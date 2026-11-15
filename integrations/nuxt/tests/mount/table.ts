@@ -28,21 +28,17 @@ export const makeTable = (
 ) => {
   const full: Config<LinkedRow> = {
     columns: [
-      { key: "id", label: "ID", type: "number" },
-      { key: "name", label: "Name", type: "text" },
-      { key: "site", label: "Site", type: "url" },
+      { accessorKey: "id", meta: { label: "ID", type: "number" } },
+      { accessorKey: "name", meta: { label: "Name", type: "text" } },
+      { accessorKey: "site", meta: { label: "Site", type: "url" } },
     ],
-    rowKey: "id",
+    getRowId: (row) => String(row.id),
     ...config,
   };
   const state: State<LinkedRow> = reactive(createTableState(full));
   const fetch =
     wiring.fetch ??
-    vi.fn(async () => ({
-      data: linkedRows,
-      total: linkedRows.length,
-      pageCount: 1,
-    }));
+    vi.fn(async () => ({ data: linkedRows, rowCount: linkedRows.length }));
   const service = new TableService<LinkedRow>("test-table", full, state, {
     ...wiring,
     fetch,

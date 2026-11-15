@@ -2,11 +2,7 @@
 // memory that `fetch` reads. The backend does what a real one would: it
 // narrows the orders by the search, sorts them, and hands back one page
 // with the total, so the table holds a page and never the whole list.
-import type {
-  DataTableFetchParams,
-  DataTableFetchResult,
-  TableFilter,
-} from "@zoobzio/table";
+import type { FetchParams, FetchResult, TableFilter } from "@zoobzio/table";
 
 import { createTable } from "@zoobzio/nuxt/factories/table";
 
@@ -100,15 +96,18 @@ const passes = (order: Order, { key, op, value }: TableFilter): boolean => {
   }
 };
 
-/** The fields the backend sorts by, by the sort field a column names. */
-const SORTS: Record<string, keyof Order | undefined> = {
-  id: "id",
-  customer: "customer",
-  status: "status",
-  items: "items",
-  total: "total",
-  placed: "placed",
+/** How two orders stand under one field: numbers by size, the rest as text. */
+const compare = (a: Order, b: Order, field: keyof Order): number => {
+  const x = a[field];
+  const y = b[field];
+  return typeof x === "number" && typeof y === "number"
+    ? x - y
+    : String(x).localeCompare(String(y));
 };
+
+/** Whether a sort names a field of an order, as a column's id does. */
+const sortable = (id: string, order: Order): id is keyof Order & string =>
+  id in order;
 
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -117,13 +116,11 @@ const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * them. Free text matches the order's number or its customer.
  */
 const fetch = async ({
-  page,
-  pageSize,
-  sortField,
-  sortDirection,
+  pagination: { pageIndex, pageSize },
+  sorting,
   query,
   filters,
-}: DataTableFetchParams): Promise<DataTableFetchResult<Order>> => {
+}: FetchParams): Promise<FetchResult<Order>> => {
   await pause(150);
   const term = query.trim().toLowerCase();
 
@@ -135,81 +132,78 @@ const fetch = async ({
       filters.every((filter) => passes(order, filter)),
   );
 
-  const field = SORTS[sortField ?? ""];
-  if (field) {
-    const sign = sortDirection === "asc" ? 1 : -1;
-    found.sort((a, b) => {
-      const x = a[field];
-      const y = b[field];
-      const order =
-        typeof x === "number" && typeof y === "number"
-          ? x - y
-          : String(x).localeCompare(String(y));
-      return order * sign;
-    });
-  }
+  // The sorts in order, as an `ORDER BY` lists them: the first decides,
+  // and each one after breaks the ties the ones before leave.
+  found.sort((a, b) => {
+    for (const { id, desc } of sorting) {
+      if (!sortable(id, a)) continue;
+      const order = compare(a, b, id);
+      if (order !== 0) return desc ? -order : order;
+    }
+    return 0;
+  });
 
-  const start = (page - 1) * pageSize;
+  const start = pageIndex * pageSize;
   return {
     data: found.slice(start, start + pageSize),
-    total: found.length,
-    pageCount: Math.max(1, Math.ceil(found.length / pageSize)),
+    rowCount: found.length,
   };
 };
 
 export const useOrders = createTable<Order>("orders", {
-  rowKey: "id",
-  pinnedColumns: ["id"],
+  getRowId: (order) => order.id,
+  defaultColumn: { minSize: 48 },
   columns: [
-    { key: "id", label: "Order", type: "text", sortable: true, width: 96 },
     {
-      key: "customer",
-      label: "Customer",
-      type: "text",
-      sortable: true,
-      width: 180,
+      accessorKey: "id",
+      size: 96,
+      enableHiding: false,
+      meta: { label: "Order", type: "text" },
     },
     {
-      key: "status",
-      label: "Status",
-      type: "enum",
-      sortable: true,
-      values: [...STATUSES],
+      accessorKey: "customer",
+      size: 180,
+      meta: { label: "Customer", type: "text" },
     },
     {
-      key: "items",
-      label: "Items",
-      type: "number",
-      sortable: true,
-      width: 88,
-      operators: ["over", "under"],
-      defaultOperator: "over",
+      accessorKey: "status",
+      meta: { label: "Status", type: "enum", values: [...STATUSES] },
     },
     {
-      key: "total",
-      label: "Total",
-      type: "currency",
-      sortable: true,
-      operators: ["over", "under"],
-      defaultOperator: "over",
+      accessorKey: "items",
+      size: 88,
+      meta: {
+        label: "Items",
+        type: "number",
+        operators: ["over", "under"],
+        defaultOperator: "over",
+      },
     },
     {
-      key: "placed",
-      label: "Placed",
-      type: "date",
-      sortable: true,
-      operators: ["on", "before", "after"],
-      defaultOperator: "on",
+      accessorKey: "total",
+      meta: {
+        label: "Total",
+        type: "currency",
+        operators: ["over", "under"],
+        defaultOperator: "over",
+      },
     },
     {
-      key: "gift",
-      label: "Gift",
-      type: "boolean",
-      values: ["Yes", "No"],
-      width: 80,
+      accessorKey: "placed",
+      meta: {
+        label: "Placed",
+        type: "date",
+        operators: ["on", "before", "after"],
+        defaultOperator: "on",
+      },
+    },
+    {
+      accessorKey: "gift",
+      size: 80,
+      meta: { label: "Gift", type: "boolean", values: ["Yes", "No"] },
     },
   ],
-  initial: { pageSize: 10, sortField: "placed", sortDirection: "desc" },
+  initialState: { sorting: [{ id: "placed", desc: true }] },
   fetch,
   actions: {
     refund: {
@@ -236,10 +230,10 @@ export const useOrders = createTable<Order>("orders", {
       label: "Delete",
       icon: "remove",
       action: (selected) => {
-        orders = orders.filter((o) => !selected.has(o.id));
-        const table = useOrders();
-        table.clearSelection();
-        table.fetch();
+        orders = orders.filter((o) => !selected.includes(o.id));
+        const service = useOrders();
+        service.table.resetRowSelection(true);
+        service.fetch();
       },
     },
   },

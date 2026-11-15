@@ -34,14 +34,14 @@ describe("table-columns", () => {
       .trigger("click", { button: 0, ctrlKey: false });
     await flushPromises();
     expect(wrapper.emitted("update:open")).toEqual([[true]]);
-    expect(items()).toHaveLength(service.columns.length);
+    expect(items()).toHaveLength(service.table.getAllLeafColumns().length);
   });
 
   it("follows a controlled open prop", async () => {
     const { service } = makeTable();
     const wrapper = mountColumns({ service, open: true });
     await flushPromises();
-    expect(items()).toHaveLength(service.columns.length);
+    expect(items()).toHaveLength(service.table.getAllLeafColumns().length);
     await wrapper.setProps({ open: false });
     await flushPromises();
     expect(items()).toHaveLength(0);

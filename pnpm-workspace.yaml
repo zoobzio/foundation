@@ -17,6 +17,7 @@ catalog:
   "@nuxt/kit": ^4.5.0
   "@prosary/kit": 0.0.11
   "@prosary/nuxt": 0.0.11
+  "@tanstack/table-core": ^9.3.1
   "@tiptap/core": 3.32.0
   "@tiptap/html": 3.32.0
   "@tiptap/pm": 3.32.0

@@ -222,7 +222,6 @@ export const LAYER_TYPES = {
   "types/table": [
     "TableAction",
     "TableBulkAction",
-    "TableInitial",
     "TableOptions",
     "TableHooks",
     "UseTable",
@@ -612,7 +611,7 @@ export const VUE_TYPES = {
   ],
   "components/table-body": [
     "TableActionItem",
-    "TableCell",
+    "TableCellScope",
     "TableBodyPassthrough",
     "TableBodyProps",
     "TableBodyContext",

@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { Browser, NuxtLink } from "#components";
-import { useUntheme } from "#imports";
+import { Browser } from "#components";
 import { computed } from "vue";
 import { useAssets } from "~/composables/assets";
-
-const untheme = useUntheme();
-const dark = computed(() => untheme.config.input.color === "dark");
-const toggle = () => untheme.swap("color", dark.value ? "light" : "dark");
 
 const assets = useAssets();
 await assets.init();
@@ -30,14 +25,9 @@ const params = computed(() => ({
           A folder tree over a fake backend. The search is the current folder's:
           try <code>"logo"</code>, <code>Kind: Image</code>, or
           <code>Size: over 10</code> (megabytes), then open a folder and watch
-          it clear. <NuxtLink to="/">The editor</NuxtLink>,
-          <NuxtLink to="/calendar">the calendar</NuxtLink>, and
-          <NuxtLink to="/table">the table</NuxtLink> are the other pages.
+          it clear.
         </p>
       </div>
-      <button type="button" class="page-scheme" @click="toggle">
-        {{ dark ? "Light" : "Dark" }}
-      </button>
     </header>
 
     <section class="demo">

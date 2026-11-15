@@ -1,4 +1,4 @@
-import type { ActionDescriptor, DataTableColumn } from "@zoobzio/table";
+import type { ActionDescriptor, TableColumnDef } from "@zoobzio/table";
 
 export type FakeRow = {
   id: number;
@@ -9,18 +9,21 @@ export type FakeRow = {
   site: string;
 };
 
-export const fakeColumns: DataTableColumn<FakeRow>[] = [
-  { key: "id", label: "ID", type: "number" },
-  { key: "name", label: "Name", type: "text", sortable: true },
+export const fakeColumns: TableColumnDef<FakeRow>[] = [
+  { accessorKey: "id", meta: { label: "ID", type: "number" } },
+  { accessorKey: "name", meta: { label: "Name", type: "text" } },
   {
-    key: "status",
-    label: "Status",
-    type: "enum",
-    values: ["Active", "Inactive", "Pending"],
+    accessorKey: "status",
+    enableSorting: false,
+    meta: {
+      label: "Status",
+      type: "enum",
+      values: ["Active", "Inactive", "Pending"],
+    },
   },
-  { key: "created", label: "Created", type: "date", sortable: true },
-  { key: "amount", label: "Amount", type: "currency" },
-  { key: "site", label: "Site", type: "url" },
+  { accessorKey: "created", meta: { label: "Created", type: "date" } },
+  { accessorKey: "amount", meta: { label: "Amount", type: "currency" } },
+  { accessorKey: "site", meta: { label: "Site", type: "url" } },
 ];
 
 export const fakeRows: FakeRow[] = [

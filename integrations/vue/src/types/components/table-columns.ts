@@ -2,7 +2,7 @@ import type { CommandEmits, CommandOption, CommandProps } from "./command";
 import type { FabProps } from "./fab";
 import type { PopoverEmits, PopoverProps } from "./popover";
 import type { PT, Passthrough, Rendered } from "../passthrough";
-import type { Service } from "@zoobzio/table";
+import type { RowData, Service } from "@zoobzio/table";
 import type { ComponentPublicInstance, Ref } from "vue";
 import type { VNode } from "vue";
 
@@ -19,7 +19,7 @@ export type TableColumnsPassthrough = {
  * Props of the column manager: the headless service, the popover's open
  * state, plus passthrough.
  */
-export type TableColumnsProps<T> = {
+export type TableColumnsProps<T extends RowData> = {
   service: Service<T>;
   open?: boolean;
   pt?: PT<TableColumnsPassthrough>;
@@ -35,7 +35,7 @@ export type TableColumnsEmits = {
 /**
  * The column manager view model, served to `defineExpose` and the slots.
  */
-export type TableColumnsContext<T> = {
+export type TableColumnsContext<T extends RowData> = {
   table: Service<T>;
   open: Ref<boolean>;
   el: ComponentPublicInstance | null;
@@ -45,6 +45,6 @@ export type TableColumnsContext<T> = {
 /**
  * Slots of the column manager: `columns` replaces its trigger.
  */
-export type TableColumnsSlots<T> = {
+export type TableColumnsSlots<T extends RowData> = {
   columns?: (props: TableColumnsContext<T>) => VNode[];
 };

@@ -1,6 +1,6 @@
 import type { TableProps } from "../../src/types/components/table";
 import type { FakeRow } from "#test/data/table";
-import type { DataTableColumn } from "@zoobzio/table";
+import type { ColumnType, TableColumnDef } from "@zoobzio/table";
 import type { FunctionalComponent } from "vue";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -8,7 +8,7 @@ import { h } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import Table from "../../src/components/table.vue";
 import { makeTable } from "#test/mount/table";
-import { fakeActions, fakeBulkActions } from "#test/data/table";
+import { fakeActions, fakeBulkActions, fakeColumns } from "#test/data/table";
 import { RouterLink } from "#test/mount/link";
 
 const mounted: { unmount: () => void }[] = [];
@@ -69,12 +69,35 @@ describe("table", () => {
     const name = wrapper.findAll("thead th").find((th) => th.text() === "Name");
     if (!name) throw new Error("no Name header");
     await name.get("button").trigger("click");
-    expect(service.sortField).toBe("name");
     expect(fetch).toHaveBeenLastCalledWith(
-      expect.objectContaining({ sortField: "name", sortDirection: "asc" }),
+      expect.objectContaining({ sorting: [{ id: "name", desc: false }] }),
       service,
     );
     expect(name.classes()).toContain("f-data-table-sorted");
+    expect(name.attributes("aria-sort")).toBe("ascending");
+    await name.get("button").trigger("click");
+    expect(name.attributes("aria-sort")).toBe("descending");
+    await name.get("button").trigger("click");
+    expect(name.attributes("aria-sort")).toBeUndefined();
+    expect(name.classes()).not.toContain("f-data-table-sorted");
+  });
+
+  it("adds a sort to the list on a shift click, and offers none on a column that cannot sort", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const header = (label: string) => {
+      const th = wrapper.findAll("thead th").find((h) => h.text() === label);
+      if (!th) throw new Error(`no ${label} header`);
+      return th;
+    };
+    await header("Name").get("button").trigger("click");
+    await header("Amount").get("button").trigger("click", { shiftKey: true });
+    expect(service.table.atoms.sorting.get()).toEqual([
+      { id: "name", desc: false },
+      { id: "amount", desc: true },
+    ]);
+    expect(header("Status").find("button").exists()).toBe(false);
   });
 
   it("renders the table element within a horizontal scroller", async () => {
@@ -93,20 +116,20 @@ describe("table", () => {
     );
   });
 
-  it("holds the table element at the floor of its columns", async () => {
+  it("holds the table element at the total size of its columns", async () => {
     const { service } = makeTable({
       columns: [
-        { key: "id", label: "ID", type: "number" },
-        { key: "name", label: "Name", type: "text", width: 200 },
+        { accessorKey: "id", meta: { label: "ID" } },
+        { accessorKey: "name", size: 200, meta: { label: "Name" } },
       ],
     });
     await service.init();
     const wrapper = mountTable({ service });
     const table = wrapper.get(".f-table");
-    expect(table.attributes("style")).toContain("min-width: 248px");
-    service.resizeColumn("name", 900);
+    expect(table.attributes("style")).toContain("min-width: 350px");
+    service.table.setColumnSizing({ name: 900 });
     await flushPromises();
-    expect(table.attributes("style")).toContain("min-width: 948px");
+    expect(table.attributes("style")).toContain("min-width: 1050px");
   });
 
   it("swaps the scroller through its passthrough", async () => {
@@ -128,7 +151,7 @@ describe("table", () => {
     await service.init();
     const wrapper = mountTable({ service });
     const resizers = wrapper.findAll("thead th > .f-data-table-resizer");
-    expect(resizers).toHaveLength(service.visibleColumns.length);
+    expect(resizers).toHaveLength(6);
     expect(resizers.map((r) => r.attributes("aria-label"))).toEqual([
       "Resize ID",
       "Resize Name",
@@ -138,45 +161,67 @@ describe("table", () => {
       "Resize Site",
     ]);
     expect(resizers[1]?.attributes("role")).toBe("separator");
-    expect(resizers[1]?.attributes("aria-valuenow")).toBeUndefined();
+    expect(resizers[1]?.attributes("aria-valuenow")).toBe("150");
 
-    // One col per rendered column, select and actions included.
+    // One col per rendered column, select and actions included. Every
+    // data column holds its size but the last, which takes what is left.
     const cols = wrapper.findAll("colgroup col");
-    expect(cols).toHaveLength(service.colSpan);
-    expect(cols.every((c) => !c.attributes("style"))).toBe(true);
+    expect(cols).toHaveLength(8);
+    expect(cols.map((c) => c.attributes("style"))).toEqual([
+      undefined,
+      "width: 150px;",
+      "width: 150px;",
+      "width: 150px;",
+      "width: 150px;",
+      "width: 150px;",
+      undefined,
+      undefined,
+    ]);
 
-    service.resizeColumn("name", 240);
+    service.table.setColumnSizing({ name: 240 });
     await flushPromises();
     expect(cols[2]?.attributes("style")).toContain("width: 240px");
     expect(resizers[1]?.attributes("aria-valuenow")).toBe("240");
-    expect(resizers[1]?.attributes("aria-valuemin")).toBe("48");
   });
 
   it("resizes a column as its resizer is dragged and resets on a double click", async () => {
     const { service } = makeTable({
       columns: [
-        { key: "id", label: "ID", type: "number" },
-        { key: "name", label: "Name", type: "text", width: 200 },
+        { accessorKey: "id", meta: { label: "ID" } },
+        {
+          accessorKey: "name",
+          size: 200,
+          minSize: 120,
+          meta: { label: "Name" },
+        },
+        { accessorKey: "amount", meta: { label: "Amount" } },
       ],
     });
     await service.init();
     const wrapper = mountTable({ service });
     const resizer = wrapper.findAll(".f-data-table-resizer")[1];
     if (!resizer) throw new Error("no resizer");
+    expect(resizer.attributes("aria-valuemin")).toBe("120");
     const th = wrapper.findAll("thead th")[1];
+    const size = () => service.table.getColumn("name")?.getSize();
     await resizer.trigger("pointerdown", { button: 0, clientX: 100 });
     expect(th?.classes()).toContain("f-data-table-resizing");
     await resizer.trigger("pointermove", { clientX: 160 });
-    expect(service.columnWidth("name")).toBe(260);
+    expect(size()).toBe(260);
     expect(wrapper.findAll("colgroup col")[1]?.attributes("style")).toContain(
       "width: 260px",
     );
     await resizer.trigger("pointerup");
     expect(th?.classes()).not.toContain("f-data-table-resizing");
     await resizer.trigger("keydown", { key: "ArrowLeft" });
-    expect(service.columnWidth("name")).toBe(244);
+    expect(size()).toBe(244);
+    // A drag past the column's minimum holds it there.
+    await resizer.trigger("pointerdown", { button: 0, clientX: 300 });
+    await resizer.trigger("pointermove", { clientX: 0 });
+    await resizer.trigger("pointerup");
+    expect(size()).toBe(120);
     await resizer.trigger("dblclick");
-    expect(service.columnWidth("name")).toBe(200);
+    expect(size()).toBe(200);
   });
 
   it("names a resizer through pt.head.resizer", async () => {
@@ -186,12 +231,12 @@ describe("table", () => {
       service,
       pt: {
         head: {
-          resizer: (column) => ({ "aria-label": `Size ${column.label}` }),
+          resizer: (column) => ({ "aria-label": `Size ${column.id}` }),
         },
       },
     });
     const resizer = wrapper.get(".f-data-table-resizer");
-    expect(resizer.attributes("aria-label")).toBe("Size ID");
+    expect(resizer.attributes("aria-label")).toBe("Size id");
     expect(resizer.attributes("role")).toBe("separator");
   });
 
@@ -205,7 +250,7 @@ describe("table", () => {
       { service },
       { bulkClear: `<template #bulkClear><u>clear</u></template>` },
     );
-    service.toggleAll();
+    service.table.toggleAllPageRowsSelected(true);
     await flushPromises();
     expect(wrapper.get(".f-data-table-bulk-action-clear u").text()).toBe(
       "clear",
@@ -221,15 +266,26 @@ describe("table", () => {
     await service.init();
     const wrapper = mountTable({ service });
     expect(wrapper.find(".f-data-table-bulk-actions").exists()).toBe(false);
-    service.toggleAll();
+    await wrapper.get("thead .f-data-table-select button").trigger("click");
     await flushPromises();
-    expect(service.selected.size).toBe(3);
+    expect(service.table.getSelectedRowIds()).toEqual(["1", "2", "3"]);
+    expect(wrapper.findAll("tbody tr.f-data-table-selected")).toHaveLength(3);
+    await wrapper.get("tbody .f-data-table-select button").trigger("click");
+    await flushPromises();
+    expect(service.table.getSelectedRowIds()).toEqual(["2", "3"]);
     const bar = wrapper.get(".f-data-table-bulk-actions");
-    expect(bar.text()).toContain("3 selected");
+    expect(bar.text()).toContain("2 selected");
     await bar.get(".f-data-table-bulk-action").trigger("click");
-    expect(removeSelected).toHaveBeenCalledWith(service.selected);
+    expect(removeSelected).toHaveBeenCalledWith(["2", "3"]);
     await bar.get(".f-data-table-bulk-action-clear").trigger("click");
-    expect(service.selected.size).toBe(0);
+    expect(service.table.getSelectedRowIds()).toEqual([]);
+  });
+
+  it("renders no checkbox column without row selection", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    expect(wrapper.find(".f-data-table-select").exists()).toBe(false);
   });
 
   it("renders the actions column and dispatches a row action by key", async () => {
@@ -280,7 +336,7 @@ describe("table", () => {
     service.query.add({ kind: "literal", key: "text", value: "x" });
     await flushPromises();
     expect(wrapper.emitted("updated")?.at(0)).toEqual([
-      { id: "test-table", total: 3 },
+      { id: "test-table", rowCount: 40 },
     ]);
     expect(wrapper.emitted("filtered")?.at(0)).toEqual([
       { id: "test-table", query: "x", filters: [] },
@@ -296,15 +352,17 @@ describe("table", () => {
       .find((b) => b.attributes("aria-label") === "Next" || b.text() === "2");
     if (!next) throw new Error("no page control");
     await next.trigger("click");
-    expect(service.page).toBe(2);
     expect(fetch).toHaveBeenLastCalledWith(
-      expect.objectContaining({ page: 2 }),
+      expect.objectContaining({ pagination: { pageIndex: 1, pageSize: 10 } }),
       service,
     );
   });
 
   it("hides a column from the column manager", async () => {
-    const { service } = makeTable({ pinnedColumns: ["id"] });
+    const [id, ...rest] = fakeColumns;
+    const { service } = makeTable({
+      columns: [{ ...id!, enableHiding: false }, ...rest],
+    });
     await service.init();
     const wrapper = mountTable({ service });
     const trigger = wrapper
@@ -316,14 +374,18 @@ describe("table", () => {
     const items = Array.from(
       document.body.querySelectorAll<HTMLElement>(".f-listbox-item"),
     );
-    const id = items.find((el) => el.textContent?.includes("ID"));
+    const locked = items.find((el) => el.textContent?.includes("ID"));
     const status = items.find((el) => el.textContent?.includes("Status"));
-    if (!id || !status) throw new Error("no rendered column items");
-    expect(id.hasAttribute("data-disabled")).toBe(true);
+    if (!locked || !status) throw new Error("no rendered column items");
+    expect(locked.hasAttribute("data-disabled")).toBe(true);
     status.click();
     await flushPromises();
-    expect(service.columnOrder).not.toContain("status");
-    expect(service.columnOrder).toContain("id");
+    const shown = service.table.getVisibleLeafColumns().map((c) => c.id);
+    expect(shown).not.toContain("status");
+    expect(shown).toContain("id");
+    expect(wrapper.findAll("thead th").map((th) => th.text())).not.toContain(
+      "Status",
+    );
   });
 
   it("submits quoted search text as the service query", async () => {
@@ -385,12 +447,12 @@ describe("table", () => {
 describe("table column links", () => {
   const route = (row: FakeRow) => `/rows/${row.id}`;
   const linked = (
-    key: keyof FakeRow,
-    type: DataTableColumn<FakeRow>["type"],
-  ): DataTableColumn<FakeRow>[] => [
-    { key: "id", label: "ID", type: "number" },
-    { key, label: String(key), type, link: route },
-    { key: "site", label: "Site", type: "url" },
+    key: keyof FakeRow & string,
+    type: ColumnType,
+  ): TableColumnDef<FakeRow>[] => [
+    { accessorKey: "id", meta: { label: "ID", type: "number" } },
+    { accessorKey: key, meta: { label: key, type, link: route } },
+    { accessorKey: "site", meta: { label: "Site", type: "url" } },
   ];
 
   it("renders a linked text cell as an anchor to the route around the text", async () => {

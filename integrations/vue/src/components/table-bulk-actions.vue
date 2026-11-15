@@ -5,18 +5,17 @@ import type {
   TableBulkActionsSlots,
 } from "../types/components/table-bulk-actions";
 
+import type { RowData } from "@zoobzio/table";
+
 import { useTemplateRef } from "vue";
-import { useRefs } from "../composables/ref";
 import { useContext } from "../composables/context";
 import { TABLE_CLEAR_SELECTION_LABEL } from "../constants/table";
 </script>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends RowData">
 const { service } = defineProps<TableBulkActionsProps<T>>();
 
 const el = useTemplateRef<HTMLDivElement>("el");
-
-const { bulkActions, selected } = useRefs(service);
 
 const ctx = useContext<TableBulkActionsContext<T>>(
   "table-bulk-actions",
@@ -30,10 +29,10 @@ defineSlots<TableBulkActionsSlots<T>>();
 <template>
   <div ref="el" class="f-group f-data-table-bulk-actions">
     <span class="f-span f-data-table-bulk-actions-count">
-      {{ selected.size }} selected
+      {{ service.table.getSelectedRowIds().length }} selected
     </span>
     <button
-      v-for="bulk in bulkActions"
+      v-for="bulk in service.bulkActions"
       :key="bulk.key"
       type="button"
       class="f-button f-data-table-bulk-action"
@@ -46,7 +45,7 @@ defineSlots<TableBulkActionsSlots<T>>();
     <button
       type="button"
       class="f-button f-data-table-bulk-action-clear"
-      @click="service.clearSelection()"
+      @click="service.table.resetRowSelection(true)"
     >
       <slot name="bulkClear" v-bind="ctx">{{
         TABLE_CLEAR_SELECTION_LABEL
