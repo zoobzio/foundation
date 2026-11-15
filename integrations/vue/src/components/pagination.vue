@@ -21,7 +21,14 @@ import { usePaginate } from "../composables/paginate";
 </script>
 
 <script setup lang="ts">
-const { page, size, count, total, pt } = defineProps<PaginationProps>();
+const {
+  page,
+  size,
+  count,
+  total,
+  sizable = true,
+  pt,
+} = defineProps<PaginationProps>();
 
 const emit = defineEmits<PaginationEmits>();
 
@@ -128,7 +135,7 @@ defineSlots<PaginationSlots>();
         </slot>
       </div>
     </slot>
-    <slot name="size" v-bind="ctx">
+    <slot v-if="sizable" name="size" v-bind="ctx">
       <Primitive v-bind="settings.size" />
     </slot>
   </div>

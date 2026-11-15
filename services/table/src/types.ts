@@ -103,7 +103,12 @@ export type TableColumn<T extends RowData> = Column<Features, T>;
 export type TableHeader<T extends RowData> = Header<Features, T>;
 export type TableRow<T extends RowData> = Row<Features, T>;
 export type TableCell<T extends RowData> = Cell<Features, T>;
-export type TableSlices = TableState<Features>;
+/**
+ * The slices the container holds: the table's state but `columnResizing`,
+ * the progress of a resize through TanStack's own handler, which stays
+ * with the table.
+ */
+export type TableSlices = Omit<TableState<Features>, "columnResizing">;
 
 /**
  * A committed column filter, as the query holds it: `key` is the column's
@@ -186,21 +191,78 @@ type Owned =
   | "mergeOptions";
 
 /**
+ * The TanStack Table options the `permissions` answer for: the table-wide
+ * switches of its features. A column's own (`enableSorting`,
+ * `enableHiding`, `enableResizing` on its definition) stay the column's.
+ */
+type Gated =
+  | "enableSorting"
+  | "enableMultiSort"
+  | "enableHiding"
+  | "enableColumnResizing"
+  | "enableRowSelection";
+
+/**
+ * Something a visitor may do with the table.
+ *
+ * - `search`: use the toolbar search. A view renders none without it; the
+ *   query stays live for imperative use.
+ * - `sort`: sort by a column.
+ * - `multiSort`: add a column to the sorts.
+ * - `select`: select rows. Rows select only where the config also names
+ *   bulk actions and `bulkActions` is granted.
+ * - `actions`: run a row action. Without it the service has none.
+ * - `bulkActions`: run a bulk action. Without it the service has none.
+ * - `hide`: show and hide columns.
+ * - `reorder`: move a column.
+ * - `resize`: resize a column.
+ * - `pageSize`: change the size of the page.
+ * - `refresh`: refetch from the toolbar. `fetch()` itself always fetches.
+ */
+export type Permission =
+  | "search"
+  | "sort"
+  | "multiSort"
+  | "select"
+  | "actions"
+  | "bulkActions"
+  | "hide"
+  | "reorder"
+  | "resize"
+  | "pageSize"
+  | "refresh";
+
+/**
+ * The one gate over what a visitor may do: a boolean per permission and
+ * nothing else, so the answers of any permission model drop straight in.
+ * `true` grants, `false` takes away, and one left out is as
+ * `TABLE_DEFAULT_PERMISSIONS` says.
+ */
+export type Permissions = Partial<Record<Permission, boolean>>;
+
+/**
  * Config the consumer provides: the options of the TanStack table, as it
  * takes them (`columns`, `getRowId`, `initialState`, `defaultColumn`, any
- * other but the ones the service owns), beside the service's own.
+ * other but the ones the service owns or its `permissions` answer for),
+ * beside the service's own.
  */
 export type Config<T extends RowData> = Omit<
   TableOptions<Features, T>,
-  Owned
+  Owned | Gated
 > & {
   actions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;
   /**
-   * Whether a UI renders the toolbar search. Defaults to `true`. A hint for
-   * the view layer only: the query stays live for imperative use.
+   * What a visitor may do. The service reads the record on every check
+   * and never copies it, so a reactive one, or one whose members are
+   * getters, is followed as it changes.
    */
-  searchable?: boolean;
+  permissions?: Permissions;
+  /**
+   * Which rows select, where rows select at all: `permissions.select`
+   * and the bulk actions decide that. Defaults to every row.
+   */
+  enableRowSelection?: (row: TableRow<T>) => boolean;
   /**
    * The literals of the query, handed to it as given. Defaults to the
    * query's, the text literal alone; the table reads the `text` literal as
@@ -304,9 +366,10 @@ export type Service<T extends RowData> = {
    */
   readonly query: Query;
 
+  /** The row actions; none without the `actions` permission. */
   readonly actions: RowAction<T>[];
+  /** The bulk actions; none without the `bulkActions` permission. */
   readonly bulkActions: BulkAction[];
-  readonly searchable: boolean;
   readonly locale: string;
   readonly currency: string;
   readonly timeZone: string;
@@ -316,7 +379,18 @@ export type Service<T extends RowData> = {
   readonly loading: boolean;
   readonly initialized: boolean;
 
+  /**
+   * Whether a permission is granted: as the config's `permissions` say,
+   * or its default. The table's own answers follow it
+   * (`column.getCanSort()`, `getCanHide()`, `getCanResize()`,
+   * `row.getCanSelect()`), and a write of the column order or the page
+   * size through the table is dropped without its permission.
+   */
+  can(permission: Permission): boolean;
+
+  /** Runs a row action; nothing without the `actions` permission. */
   runAction(key: string, row: T): void;
+  /** Runs a bulk action; nothing without the `bulkActions` permission. */
   runBulkAction(key: string): void;
   init(): Promise<boolean>;
   fetch(): Promise<void>;

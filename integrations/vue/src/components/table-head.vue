@@ -99,7 +99,7 @@ defineSlots<TableHeadSlots<T>>();
         v-for="{ column: col } in group.headers"
         :key="col.id"
         class="f-th"
-        v-bind="drag.itemAttrs(col.id)"
+        v-bind="service.can('reorder') ? drag.itemAttrs(col.id) : {}"
         :aria-sort="sortOf(col)"
         :class="{
           'f-data-table-sortable': col.getCanSort(),
@@ -128,6 +128,7 @@ defineSlots<TableHeadSlots<T>>();
               <slot name="headerAppend" v-bind="{ ...ctx, column: col }" />
             </span>
             <span
+              v-if="service.can('reorder')"
               class="f-span f-data-table-drag-handle"
               v-bind="drag.handleAttrs(col.id)"
             >
@@ -137,6 +138,7 @@ defineSlots<TableHeadSlots<T>>();
           </div>
         </slot>
         <span
+          v-if="col.getCanResize()"
           class="f-span f-data-table-resizer"
           v-bind="{
             ...settings.resizer(col),

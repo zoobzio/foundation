@@ -153,6 +153,15 @@ sorts, and a third click clears it. The `th` carries
 `enableRowSelection` is on, which a config with bulk actions turns on; the
 head's checkbox selects the rows of the page.
 
+The table renders what the service's `permissions` grant, and follows a
+reactive record as it changes. Without `search`, `hide`, or `refresh` the
+toolbar has no search, column manager, or refresh; without `sort` a header
+is plain text; without `reorder` a header has no drag handle and does not
+drag; without `resize`, or on a column with `enableResizing: false`, it
+has no resizer; without `pageSize` the pagination has no size picker
+(`pagination.vue` takes `sizable: false`); and without `select`,
+`bulkActions`, or `actions` the checkbox and actions columns are gone.
+
 A column that names a route (`meta.link: (row) => string`) renders each of
 its cells through the body's `link` part, an anchor to the route around the
 content the cell would otherwise render: the type's formatting or a

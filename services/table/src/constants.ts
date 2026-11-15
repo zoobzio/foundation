@@ -1,8 +1,26 @@
-import type { StateKey, TableSlices } from "./types";
+import type { Permission, StateKey, TableSlices } from "./types";
 
 export const TABLE_DEFAULT_LOCALE = "en-US";
 export const TABLE_DEFAULT_CURRENCY = "USD";
 export const TABLE_DEFAULT_TIME_ZONE = "UTC";
+
+/**
+ * What each permission is where the config's `permissions` do not say:
+ * every one is granted, so a permission is set to take something away.
+ */
+export const TABLE_DEFAULT_PERMISSIONS: Record<Permission, boolean> = {
+  search: true,
+  sort: true,
+  multiSort: true,
+  select: true,
+  actions: true,
+  bulkActions: true,
+  hide: true,
+  reorder: true,
+  resize: true,
+  pageSize: true,
+  refresh: true,
+};
 
 /**
  * The slices of the TanStack table the container holds, by name.

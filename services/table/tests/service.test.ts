@@ -6,6 +6,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { TableService } from "../src/service";
 import { createTableState } from "../src/state";
+import { TABLE_DEFAULT_PERMISSIONS } from "../src/constants";
 import { QUERY_TEXT_LITERAL } from "@zoobzio/query";
 import type {
   Actions,
@@ -13,6 +14,7 @@ import type {
   Config,
   FetchResult,
   Options,
+  Permission,
   State,
 } from "../src/types";
 import {
@@ -287,9 +289,15 @@ describe("selection", () => {
     await bulk.service.fetch();
     expect(bulk.table.getRow("1").getCanSelect()).toBe(true);
 
-    const forced = makeService({ config: { enableRowSelection: true } });
-    await forced.service.fetch();
-    expect(forced.table.getRow("1").getCanSelect()).toBe(true);
+    const some = makeService({
+      config: {
+        bulkActions: fakeBulkActions,
+        enableRowSelection: (row) => row.id !== "1",
+      },
+    });
+    await some.service.fetch();
+    expect(some.table.getRow("1").getCanSelect()).toBe(false);
+    expect(some.table.getRow("2").getCanSelect()).toBe(true);
   });
 
   it("outlives the page it was made on", async () => {
@@ -596,13 +604,6 @@ describe("query", () => {
     );
   });
 
-  it("searchable defaults on and follows config off", () => {
-    expect(makeService().service.searchable).toBe(true);
-    expect(
-      makeService({ config: { searchable: false } }).service.searchable,
-    ).toBe(false);
-  });
-
   it("locale, currency, and time zone default and follow config", () => {
     expect(makeService().service.locale).toBe("en-US");
     expect(makeService().service.currency).toBe("USD");
@@ -800,5 +801,137 @@ describe("views", () => {
     vi.mocked(actions.fetch).mockClear();
     service.query.clear();
     expect(actions.fetch).toHaveBeenCalledOnce();
+  });
+});
+
+describe("permissions", () => {
+  const full = { actions: fakeActions, bulkActions: fakeBulkActions };
+
+  it("grants every permission by default and takes away what the config says", () => {
+    const { service } = makeService();
+    for (const key of Object.keys(TABLE_DEFAULT_PERMISSIONS)) {
+      expect(service.can(key as Permission)).toBe(true);
+    }
+    const denied = makeService({ config: { permissions: { sort: false } } });
+    expect(denied.service.can("sort")).toBe(false);
+    expect(denied.service.can("hide")).toBe(true);
+  });
+
+  it("reads the record on every check, so a change of it is followed", () => {
+    const permissions = { sort: true };
+    const { service, table } = makeService({ config: { permissions } });
+    expect(table.getColumn("name")?.getCanSort()).toBe(true);
+    permissions.sort = false;
+    expect(service.can("sort")).toBe(false);
+    expect(table.getColumn("name")?.getCanSort()).toBe(false);
+  });
+
+  it("answers the table's own checks: sort, multi-sort, hide, resize", () => {
+    const { table } = makeService({
+      config: {
+        permissions: {
+          sort: false,
+          multiSort: false,
+          hide: false,
+          resize: false,
+        },
+      },
+    });
+    const name = table.getColumn("name");
+    expect(name?.getCanSort()).toBe(false);
+    expect(name?.getCanMultiSort()).toBe(false);
+    expect(name?.getCanHide()).toBe(false);
+    expect(name?.getCanResize()).toBe(false);
+
+    const open = makeService().table;
+    expect(open.getColumn("name")?.getCanSort()).toBe(true);
+    expect(open.getColumn("name")?.getCanMultiSort()).toBe(true);
+    expect(open.getColumn("name")?.getCanHide()).toBe(true);
+    expect(open.getColumn("name")?.getCanResize()).toBe(true);
+    // A column's own switch still stands under a granted permission.
+    expect(open.getColumn("status")?.getCanSort()).toBe(false);
+    expect(open.getColumn("id")?.getCanHide()).toBe(false);
+  });
+
+  it("selects only with select, bulkActions, and bulk actions to run", async () => {
+    const off = makeService({
+      config: { ...full, permissions: { select: false } },
+    });
+    await off.service.fetch();
+    expect(off.table.getRow("1").getCanSelect()).toBe(false);
+    expect(off.service.bulkActions).toHaveLength(1);
+
+    const none = makeService({
+      config: { ...full, permissions: { bulkActions: false } },
+    });
+    await none.service.fetch();
+    expect(none.table.getRow("1").getCanSelect()).toBe(false);
+  });
+
+  it("has no actions, and runs none, without their permission", () => {
+    const edit = vi.fn();
+    const deleteSelected = vi.fn();
+    const permissions = { actions: false, bulkActions: false };
+    const { service } = makeService({
+      config: { ...full, permissions },
+      actions: {
+        ...makeActions(),
+        actions: { edit },
+        bulkActions: { deleteSelected },
+      },
+    });
+    expect(service.actions).toEqual([]);
+    expect(service.bulkActions).toEqual([]);
+    service.runAction("edit", fakeRows[0] as FakeRow);
+    service.runBulkAction("deleteSelected");
+    expect(edit).not.toHaveBeenCalled();
+    expect(deleteSelected).not.toHaveBeenCalled();
+
+    permissions.actions = true;
+    permissions.bulkActions = true;
+    expect(service.actions.map((a) => a.key)).toEqual(["edit", "delete"]);
+    service.runAction("edit", fakeRows[0] as FakeRow);
+    service.runBulkAction("deleteSelected");
+    expect(edit).toHaveBeenCalledWith(fakeRows[0]);
+    expect(deleteSelected).toHaveBeenCalledWith([]);
+  });
+
+  it("drops a write of the column order without reorder", () => {
+    const { table, state } = makeService({
+      config: { permissions: { reorder: false } },
+    });
+    table.setColumnOrder(["amount", "id"]);
+    expect(state.columnOrder).toEqual([]);
+  });
+
+  it("drops a change of page size without pageSize, and still pages", async () => {
+    const { service, table, state, actions } = makeService({
+      config: { permissions: { pageSize: false } },
+    });
+    await service.fetch();
+    table.setPageSize(50);
+    expect(state.pagination).toEqual({ pageIndex: 0, pageSize: 10 });
+    table.setPageIndex(2);
+    expect(state.pagination).toEqual({ pageIndex: 2, pageSize: 10 });
+    expect(actions.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("restores a snapshot whatever the permissions say", () => {
+    const { service, state } = makeService({
+      config: {
+        permissions: { sort: false, reorder: false, pageSize: false },
+      },
+    });
+    service.restore({
+      sorting: [{ id: "name", desc: true }],
+      columnOrder: ["amount", "id"],
+      columnVisibility: {},
+      columnSizing: {},
+      pageSize: 50,
+      entries: [],
+    });
+    expect(state.sorting).toEqual([{ id: "name", desc: true }]);
+    expect(state.columnOrder).toEqual(["amount", "id"]);
+    expect(state.pagination.pageSize).toBe(50);
   });
 });

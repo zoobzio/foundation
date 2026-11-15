@@ -6,6 +6,7 @@ import type { TableOptions } from "../../../app/types/table";
 import type { FakeRow } from "#test/data/table";
 
 import { describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 import { useNuxtApp } from "#app";
 import { createTable } from "../../../app/factories/table";
 import { fakeColumns, fakeRows, getRowId } from "#test/data/table";
@@ -81,6 +82,27 @@ describe("createTable", () => {
     expect(users.actions).toEqual([]);
     expect(users.bulkActions).toEqual([]);
     expect(users.table.options.enableRowSelection).toBe(false);
+  });
+
+  it("takes the visitor's permissions over the options', and follows them", () => {
+    const useUsers = createTable(
+      "users",
+      makeOptions({ permissions: { sort: false, hide: false } }),
+    );
+    const mine = ref({ hide: true, resize: false });
+    const users = useUsers(mine);
+    expect(users.can("sort")).toBe(false);
+    expect(users.can("hide")).toBe(true);
+    expect(users.can("resize")).toBe(false);
+    expect(users.can("refresh")).toBe(true);
+    expect(users.table.getColumn("name")?.getCanSort()).toBe(false);
+
+    mine.value = { hide: false, resize: true };
+    expect(users.can("hide")).toBe(false);
+    expect(users.table.getColumn("name")?.getCanResize()).toBe(true);
+
+    expect(useUsers(() => ({ sort: true })).can("sort")).toBe(true);
+    expect(useUsers().can("sort")).toBe(false);
   });
 
   it("init dispatches the wired fetch into the store", async () => {

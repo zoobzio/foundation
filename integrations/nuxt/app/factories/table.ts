@@ -1,6 +1,7 @@
 import type { TableOptions, UseTable } from "../types/table";
 import type { Actions, Config, RowData, Service } from "@zoobzio/table";
 
+import { toValue } from "vue";
 import { useNuxtApp } from "#app";
 import { QUERY_TEXT_KEY, QUERY_TEXT_LITERAL } from "@zoobzio/query";
 import { TableService } from "@zoobzio/table";
@@ -21,7 +22,10 @@ import { resolveTexts } from "../utils/text";
  * matches a typed prefix against it — as the visitor reads it. A config
  * that names no literals takes the query's text literal under the
  * contract's `table.text`, so its option reads in the visitor's locale as
- * the search's placeholder does. The machine itself is `@zoobzio/table`;
+ * the search's placeholder does. The composable takes the permissions of
+ * the visitor it is called for, as a record, a ref, or a getter: they
+ * stand over the options' `permissions`, key by key, and are read on every
+ * check. The machine itself is `@zoobzio/table`;
  * the Vue table renders it through its `service` prop.
  */
 export const createTable = <T extends RowData>(
@@ -44,10 +48,16 @@ export const createTable = <T extends RowData>(
     actions: rows.handlers,
     bulkActions: bulk.handlers,
   };
-  return (): Service<T> => {
+  return (permissions): Service<T> => {
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
     const resolved = resolveTexts(nuxt.$prosary, config);
+    // Past the copy `resolveTexts` makes, so the source is read as it
+    // stands on every check.
+    Object.defineProperty(resolved, "permissions", {
+      get: () => ({ ...config.permissions, ...toValue(permissions) }),
+      enumerable: true,
+    });
     const state = accessTable(id, resolved);
     const service = new TableService(id, resolved, state, wiring);
     service.on("updated", (event) => {

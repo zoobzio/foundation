@@ -19,13 +19,14 @@ export type PaginationPassthrough = {
 /**
  * Props of the pagination. `page` and `size` are models, falling back to
  * page 1 and the default page size. `count` is the page count. `total` is
- * the item count.
+ * the item count. `sizable: false` leaves the page size picker out.
  */
 export type PaginationProps = {
   page?: number;
   size?: number;
   count: number;
   total: number;
+  sizable?: boolean;
   pt?: PT<PaginationPassthrough>;
 };
 

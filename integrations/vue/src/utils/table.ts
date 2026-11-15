@@ -59,7 +59,8 @@ export const moveColumn = <T extends RowData>(
 
 /**
  * Whether the table's rows select at all: the head and the body render
- * their checkbox column unless the table's `enableRowSelection` is off.
+ * their checkbox column unless the table's `enableRowSelection` is off,
+ * as it is without bulk actions or the permissions to select and run them.
  */
 export const isSelectable = <T extends RowData>(
   table: TableInstance<T>,

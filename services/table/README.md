@@ -39,15 +39,18 @@ over it. A view renders from it (`getHeaderGroups()`, `getRowModel()`,
 `setColumnOrder`, `column.toggleVisibility()`, `setColumnSizing`).
 
 The config is the table's options as TanStack takes them: `columns`,
-`getRowId`, `initialState`, `defaultColumn`, `enableMultiSort`, and any
-other but the ones the service sets itself (`features`, `data`, `state`,
-`atoms`, `rowCount`, `pageCount`, `manualPagination`, `manualSorting`).
-Beside them sit the service's own: `actions`, `bulkActions`, `searchable`,
+`getRowId`, `initialState`, `defaultColumn`, `maxMultiSortColCount`, and
+any other but the ones the service sets itself (`features`, `data`,
+`state`, `atoms`, `rowCount`, `pageCount`, `manualPagination`,
+`manualSorting`) and the table-wide switches its `permissions` answer for
+(`enableSorting`, `enableMultiSort`, `enableHiding`,
+`enableColumnResizing`, and `enableRowSelection` as a boolean). Beside
+them sit the service's own: `actions`, `bulkActions`, `permissions`,
 `literals`, `initialEntries`, `locale`, `currency`, and `timeZone`.
 
 The registered features are `features`, exported with its type `Features`:
 row pagination, row sorting, row selection, column ordering, column
-visibility, and column sizing. An option, a state slice, or an API of a
+visibility, column sizing, and column resizing. An option, a state slice, or an API of a
 feature exists once the feature is listed there. `TableInstance<T>`,
 `TableColumnDef<T>`, `TableColumn<T>`, `TableHeader<T>`, `TableRow<T>`,
 and `TableCell<T>` are TanStack's types bound to them.
@@ -61,9 +64,57 @@ What the defaults are is TanStack's to say. The ones a view meets first:
   sort clears it. A sort with Shift held adds to the list.
 - A column is 150 pixels wide, no narrower than 20, unless it or
   `defaultColumn` says (`size`, `minSize`, `maxSize`).
-- Rows select when the config names bulk actions, or as
-  `enableRowSelection` says. A selection outlives the page it was made on.
-- A column with `enableHiding: false` stays visible.
+- Rows select when the config names bulk actions; `enableRowSelection`,
+  a predicate over the row, says which. A selection outlives the page it
+  was made on.
+- A column with `enableHiding: false` stays visible, and one with
+  `enableResizing: false` keeps its size.
+
+## Permissions
+
+`permissions` is the one gate over what a visitor may do with the table: a
+record of booleans and nothing else, so the answers of whatever permission
+model the app has drop straight in. `true` grants, `false` takes away, and
+a permission left out is granted (`TABLE_DEFAULT_PERMISSIONS`).
+
+```ts
+const config = {
+  columns,
+  permissions: {
+    bulkActions: user.can("orders.write"),
+    hide: user.can("orders.arrange"),
+    reorder: user.can("orders.arrange"),
+  },
+};
+```
+
+| Permission    | Without it                                                                        |
+| ------------- | --------------------------------------------------------------------------------- |
+| `search`      | A view renders no toolbar search. The query stays live.                           |
+| `sort`        | No column sorts: `column.getCanSort()` is `false`.                                |
+| `multiSort`   | A sort replaces the sort: `column.getCanMultiSort()` is `false`.                  |
+| `select`      | No row selects: `row.getCanSelect()` is `false`.                                  |
+| `actions`     | `service.actions` is empty and `runAction` runs nothing.                          |
+| `bulkActions` | `service.bulkActions` is empty, `runBulkAction` runs nothing, and no row selects. |
+| `hide`        | No column hides: `column.getCanHide()` is `false`.                                |
+| `reorder`     | A write of the column order through the table is dropped.                         |
+| `resize`      | No column resizes: `column.getCanResize()` is `false`.                            |
+| `pageSize`    | A change of the page size through the table is dropped.                           |
+| `refresh`     | A view renders no refresh. `fetch()` itself always fetches.                       |
+
+`service.can(permission)` is the check, and the table's own answers follow
+it, so a view that renders from `getCanSort()` or `getCanHide()` needs
+nothing more. A permission only takes away: a column's own
+`enableSorting: false` stands under a granted `sort`, and rows select only
+with `select`, `bulkActions`, and bulk actions to run.
+
+The service reads the record on every check and never copies it, so a
+reactive record, or one whose members are getters, is followed as it
+changes. A permission taken away stops the interaction and leaves the
+state as it is: a sort already in place stays, and `restore` puts a
+snapshot in place whatever the permissions say, so a saved view reads the
+same for every visitor. The gate is over the interface only. What a
+visitor must not see or do is the server's to refuse.
 
 ### The server's part
 

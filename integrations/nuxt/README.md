@@ -401,6 +401,19 @@ must be something Nuxt's payload can carry: plain data, with `Set` and
 `Date` allowed (devalue serializes them). A second id with the same
 options is a second, independent state.
 
+A table's composable takes the permissions of the visitor it is called
+for: a record of booleans, or a ref or a getter of one, which the table
+follows as it changes. They stand over the options' own `permissions`, key
+by key, and one left out is granted.
+
+```ts
+const session = useSession();
+const users = useUsers(() => ({
+  bulkActions: session.can("users.write"),
+  reorder: session.can("users.arrange"),
+}));
+```
+
 | Factory          | Store            | Hooks relayed                                                                                                            |
 | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `createTable`    | `accessTable`    | `table:updated`, `table:filtered`, `table:restored`                                                                      |

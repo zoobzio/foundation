@@ -1,11 +1,13 @@
 import type { Bound } from "./actions";
 import type { Hooks } from "./hooks";
+import type { MaybeRefOrGetter } from "vue";
 import type {
   ActionDescriptor,
   Actions,
   BulkAction,
   Config,
   Events,
+  Permissions,
   RowAction,
   RowData,
   Service,
@@ -48,6 +50,10 @@ export type TableHooks = Hooks<"table", Events<RowData>>;
 
 /**
  * The id-scoped composable `createTable` returns. Call it in setup; every
- * call yields a service over the same shared container.
+ * call yields a service over the same shared container. The permissions it
+ * is given are what this visitor may do, over the options' own: a ref or a
+ * getter is read on every check, so the table follows it as it changes.
  */
-export type UseTable<T extends RowData> = () => Service<T>;
+export type UseTable<T extends RowData> = (
+  permissions?: MaybeRefOrGetter<Permissions | undefined>,
+) => Service<T>;

@@ -4,7 +4,10 @@ import type {
   Event,
   Events,
   Listener,
+  BulkAction,
   Options,
+  Permission,
+  RowAction,
   RowData,
   Service,
   Snapshot,
@@ -23,6 +26,7 @@ import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   TABLE_DEFAULT_CURRENCY,
   TABLE_DEFAULT_LOCALE,
+  TABLE_DEFAULT_PERMISSIONS,
   TABLE_DEFAULT_TIME_ZONE,
   TABLE_SLICES,
   TABLE_STATE_FIELDS,
@@ -55,8 +59,14 @@ type SliceAtom<V> = {
 export class TableService<T extends RowData> implements Service<T> {
   readonly table: TableInstance<T>;
   readonly query: Query;
-  readonly actions: Service<T>["actions"];
-  readonly bulkActions: Service<T>["bulkActions"];
+
+  /** The actions the config names, whatever the permissions say. */
+  private readonly named: { rows: RowAction<T>[]; bulk: BulkAction[] };
+  /** What a service without a permission has in their place. */
+  private readonly none: { rows: RowAction<T>[]; bulk: BulkAction[] } = {
+    rows: [],
+    bulk: [],
+  };
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
@@ -79,7 +89,8 @@ export class TableService<T extends RowData> implements Service<T> {
     const {
       actions,
       bulkActions,
-      searchable: _s,
+      permissions: _p,
+      enableRowSelection,
       literals,
       initialEntries: _e,
       locale: _l,
@@ -88,19 +99,22 @@ export class TableService<T extends RowData> implements Service<T> {
       ...table
     } = config;
 
-    this.actions = entries(actions ?? {}).map(([key, descriptor]) => ({
-      ...descriptor,
-      key,
-      action: (row: T) => this.runAction(key, row),
-    }));
-    this.bulkActions = entries(bulkActions ?? {}).map(([key, descriptor]) => ({
-      ...descriptor,
-      key,
-      action: (selected: string[]) => wiring.bulkActions?.[key]?.(selected),
-    }));
+    this.named = {
+      rows: entries(actions ?? {}).map(([key, descriptor]) => ({
+        ...descriptor,
+        key,
+        action: (row: T) => this.runAction(key, row),
+      })),
+      bulk: entries(bulkActions ?? {}).map(([key, descriptor]) => ({
+        ...descriptor,
+        key,
+        action: (selected: string[]) => {
+          if (this.can("bulkActions")) wiring.bulkActions?.[key]?.(selected);
+        },
+      })),
+    };
 
     this.table = constructTable({
-      enableRowSelection: this.bulkActions.length > 0,
       ...table,
       features,
       data: this.state.data,
@@ -108,19 +122,43 @@ export class TableService<T extends RowData> implements Service<T> {
       manualPagination: true,
       manualSorting: true,
       atoms: {
-        pagination: this.slice("pagination", true),
+        pagination: this.slice(
+          "pagination",
+          true,
+          (before, after) =>
+            before.pageSize === after.pageSize || this.can("pageSize"),
+        ),
         sorting: this.slice("sorting", true),
         rowSelection: this.slice("rowSelection"),
-        columnOrder: this.slice("columnOrder"),
+        columnOrder: this.slice("columnOrder", false, () =>
+          this.can("reorder"),
+        ),
         columnVisibility: this.slice("columnVisibility"),
         columnSizing: this.slice("columnSizing"),
       } satisfies Record<keyof typeof TABLE_SLICES, unknown>,
     });
     // The table takes its options once, by value. The page and its count
-    // are the container's, so the two options read it on every access.
+    // are the container's, and the switches of its features the
+    // permissions', so each of these options reads its source on every
+    // access.
+    const gate = (permission: Permission) => ({
+      get: () => this.can(permission),
+      enumerable: true,
+    });
     Object.defineProperties(this.table.options, {
       data: { get: () => this.state.data, enumerable: true },
       rowCount: { get: () => this.state.rowCount, enumerable: true },
+      enableSorting: gate("sort"),
+      enableMultiSort: gate("multiSort"),
+      enableHiding: gate("hide"),
+      enableColumnResizing: gate("resize"),
+      enableRowSelection: {
+        get: () =>
+          this.can("select") && this.bulkActions.length > 0
+            ? (enableRowSelection ?? true)
+            : false,
+        enumerable: true,
+      },
     });
 
     this.query = new QueryService(
@@ -141,11 +179,13 @@ export class TableService<T extends RowData> implements Service<T> {
   /**
    * A slice of the table's state as the atom TanStack Table reads and
    * writes: the container's member, with no value of its own. A write to
-   * a slice the fetch is handed refetches, unless it changes nothing.
+   * a slice the fetch is handed refetches, unless it changes nothing. A
+   * write the `allowed` guard refuses is dropped.
    */
   private slice<K extends keyof TableSlices>(
     key: K,
     refetch = false,
+    allowed?: (before: TableSlices[K], after: TableSlices[K]) => boolean,
   ): SliceAtom<TableSlices[K]> {
     const state: TableSlices = this.state;
     return {
@@ -154,6 +194,7 @@ export class TableService<T extends RowData> implements Service<T> {
         const before = state[key];
         const after = functionalUpdate(updater, before);
         if (refetch && same(before, after)) return;
+        if (allowed && !allowed(before, after)) return;
         state[key] = after;
         if (refetch) void this.fetch();
       },
@@ -175,9 +216,6 @@ export class TableService<T extends RowData> implements Service<T> {
   get initialized(): boolean {
     return this.state.initialized;
   }
-  get searchable(): boolean {
-    return this.config.searchable ?? true;
-  }
   get locale(): string {
     return this.config.locale ?? TABLE_DEFAULT_LOCALE;
   }
@@ -188,13 +226,31 @@ export class TableService<T extends RowData> implements Service<T> {
     return this.config.timeZone ?? TABLE_DEFAULT_TIME_ZONE;
   }
 
+  // --- permissions -----------------------------------------------------
+
+  can(permission: Permission): boolean {
+    return (
+      this.config.permissions?.[permission] ??
+      TABLE_DEFAULT_PERMISSIONS[permission]
+    );
+  }
+
   // --- actions ---------------------------------------------------------
 
+  get actions(): RowAction<T>[] {
+    return this.can("actions") ? this.named.rows : this.none.rows;
+  }
+
+  get bulkActions(): BulkAction[] {
+    return this.can("bulkActions") ? this.named.bulk : this.none.bulk;
+  }
+
   runAction(key: string, row: T): void {
-    this.wiring.actions?.[key]?.(row);
+    if (this.can("actions")) this.wiring.actions?.[key]?.(row);
   }
 
   runBulkAction(key: string): void {
+    if (!this.can("bulkActions")) return;
     this.wiring.bulkActions?.[key]?.(this.table.getSelectedRowIds());
   }
 

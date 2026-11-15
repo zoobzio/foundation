@@ -4,7 +4,7 @@ import type { ColumnType, TableColumnDef } from "@zoobzio/table";
 import type { FunctionalComponent } from "vue";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { h } from "vue";
+import { h, reactive } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import Table from "../../src/components/table.vue";
 import { makeTable } from "#test/mount/table";
@@ -425,10 +425,76 @@ describe("table", () => {
     ).toBe("Find");
   });
 
-  it("hides the search when the config says so", () => {
-    const { service } = makeTable({ searchable: false });
+  it("hides the search without the search permission", () => {
+    const { service } = makeTable({ permissions: { search: false } });
     const wrapper = mountTable({ service });
     expect(wrapper.find(".f-data-table-search").exists()).toBe(false);
+  });
+
+  it("renders every control with every permission", async () => {
+    const { service } = makeTable(
+      { actions: fakeActions, bulkActions: fakeBulkActions },
+      { actions: { edit: vi.fn() }, bulkActions: { removeSelected: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    const labels = wrapper
+      .findAll("button")
+      .map((b) => b.attributes("aria-label"));
+    expect(labels).toContain("Refresh");
+    expect(labels).toContain("Columns");
+    expect(wrapper.find(".f-data-table-search").exists()).toBe(true);
+    expect(wrapper.find(".f-data-table-header-btn").exists()).toBe(true);
+    expect(wrapper.find(".f-data-table-drag-handle").exists()).toBe(true);
+    expect(wrapper.find(".f-data-table-resizer").exists()).toBe(true);
+    expect(wrapper.find("th.f-data-table-select").exists()).toBe(true);
+    expect(wrapper.find("th.f-data-table-actions").exists()).toBe(true);
+    expect(wrapper.find("thead th:nth-child(2)").attributes("draggable")).toBe(
+      "false",
+    );
+  });
+
+  it("renders no control of a permission taken away, and follows a change", async () => {
+    const permissions = reactive({
+      search: false,
+      sort: false,
+      select: false,
+      actions: false,
+      hide: false,
+      reorder: false,
+      resize: false,
+      pageSize: false,
+      refresh: false,
+    });
+    const { service } = makeTable(
+      { actions: fakeActions, bulkActions: fakeBulkActions, permissions },
+      { actions: { edit: vi.fn() }, bulkActions: { removeSelected: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    const labels = () =>
+      wrapper.findAll("button").map((b) => b.attributes("aria-label"));
+    const withSize = mountTable({ service: makeTable().service });
+    expect(labels()).not.toContain("Refresh");
+    expect(labels()).not.toContain("Columns");
+    expect(wrapper.find(".f-data-table-search").exists()).toBe(false);
+    expect(wrapper.find(".f-data-table-header-btn").exists()).toBe(false);
+    expect(wrapper.find(".f-data-table-drag-handle").exists()).toBe(false);
+    expect(wrapper.find(".f-data-table-resizer").exists()).toBe(false);
+    expect(wrapper.find(".f-data-table-select").exists()).toBe(false);
+    expect(wrapper.find(".f-data-table-actions").exists()).toBe(false);
+    expect(wrapper.find("thead th").attributes("draggable")).toBeUndefined();
+    expect(wrapper.findAll("[role=combobox]").length).toBeLessThan(
+      withSize.findAll("[role=combobox]").length,
+    );
+
+    permissions.sort = true;
+    permissions.resize = true;
+    permissions.refresh = true;
+    await flushPromises();
+    expect(labels()).toContain("Refresh");
+    expect(wrapper.find(".f-data-table-header-btn").exists()).toBe(true);
+    expect(wrapper.find(".f-data-table-resizer").exists()).toBe(true);
   });
 
   it("pt overrides reach their part", () => {

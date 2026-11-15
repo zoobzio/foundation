@@ -69,6 +69,7 @@ const settings = usePassthrough<TablePassthrough>(() => ({
       size: table.atoms.pagination.get().pageSize,
       count: table.getPageCount(),
       total: service.rowCount,
+      sizable: service.can("pageSize"),
       "onUpdate:page": (p) => table.setPageIndex(p - 1),
       "onUpdate:size": (s) => table.setPageSize(s),
     },
@@ -107,15 +108,19 @@ const { THead, TBody } = useForward({
   >
     <slot name="toolbar" v-bind="ctx">
       <div class="f-group f-data-table-toolbar">
-        <slot v-if="service.searchable" name="search" v-bind="ctx">
+        <slot v-if="service.can('search')" name="search" v-bind="ctx">
           <Primitive v-bind="settings.search" class="f-data-table-search" />
         </slot>
-        <TableColumns :service="service" :pt="pt?.columns">
+        <TableColumns
+          v-if="service.can('hide')"
+          :service="service"
+          :pt="pt?.columns"
+        >
           <template v-if="slots.columns" #columns="slotProps">
             <slot name="columns" v-bind="slotProps" />
           </template>
         </TableColumns>
-        <slot name="refresh" v-bind="ctx">
+        <slot v-if="service.can('refresh')" name="refresh" v-bind="ctx">
           <Primitive v-bind="settings.refresh" />
         </slot>
       </div>
