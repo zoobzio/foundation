@@ -17,13 +17,12 @@ export const makeTable = (
 ) => {
   const full: Config<FakeRow> = {
     columns: fakeColumns,
-    rowKey: "id",
+    getRowId: (row) => String(row.id),
     ...config,
   };
   const state: State<FakeRow> = reactive(createTableState(full));
   const fetch =
-    wiring.fetch ??
-    vi.fn(async () => ({ data: rows, total: rows.length, pageCount: 4 }));
+    wiring.fetch ?? vi.fn(async () => ({ data: rows, rowCount: 40 }));
   const service = new TableService<FakeRow>("test-table", full, state, {
     ...wiring,
     fetch,

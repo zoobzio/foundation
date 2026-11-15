@@ -8,18 +8,14 @@ import type { FakeRow } from "#test/data/table";
 import { describe, expect, it, vi } from "vitest";
 import { useNuxtApp } from "#app";
 import { createTable } from "../../../app/factories/table";
-import { fakeColumns, fakeRows } from "#test/data/table";
+import { fakeColumns, fakeRows, getRowId } from "#test/data/table";
 
 const makeOptions = (
   overrides: Partial<TableOptions<FakeRow>> = {},
 ): TableOptions<FakeRow> => ({
   columns: fakeColumns,
-  rowKey: "id",
-  fetch: vi.fn(async () => ({
-    data: fakeRows,
-    total: fakeRows.length,
-    pageCount: 4,
-  })),
+  getRowId,
+  fetch: vi.fn(async () => ({ data: fakeRows, rowCount: 3 })),
   ...overrides,
 });
 
@@ -30,21 +26,31 @@ describe("createTable", () => {
     expect(users.id).toBe("users");
     expect(users.initialized).toBe(false);
     expect(users.data).toEqual([]);
-    expect(users.page).toBe(1);
-    expect(users.columnOrder).toEqual(["id", "name", "status", "amount"]);
+    expect(users.table.atoms.pagination.get().pageIndex).toBe(0);
+    expect(users.table.getVisibleLeafColumns().map((c) => c.id)).toEqual([
+      "id",
+      "name",
+      "status",
+      "amount",
+    ]);
   });
 
   it("seeds the service from the initial state", () => {
     const useUsers = createTable(
       "users",
       makeOptions({
-        initial: { page: 2, pageSize: 10, sortField: "name" },
+        initialState: {
+          pagination: { pageIndex: 1, pageSize: 20 },
+          sorting: [{ id: "name", desc: false }],
+        },
       }),
     );
-    const users = useUsers();
-    expect(users.page).toBe(2);
-    expect(users.pageSize).toBe(10);
-    expect(users.sortField).toBe("name");
+    const { table } = useUsers();
+    expect(table.atoms.pagination.get()).toEqual({
+      pageIndex: 1,
+      pageSize: 20,
+    });
+    expect(table.getColumn("name")?.getIsSorted()).toBe("asc");
   });
 
   it("joins each action descriptor to its handler under the config key", () => {
@@ -65,30 +71,31 @@ describe("createTable", () => {
     ]);
     users.actions[0]?.action(fakeRows[0] as FakeRow);
     expect(edit).toHaveBeenCalledWith(fakeRows[0]);
-    users.toggleRow("2");
+    users.table.setRowSelection({ "2": true });
     users.runBulkAction("purge");
-    expect(purge).toHaveBeenCalledWith(new Set(["2"]));
+    expect(purge).toHaveBeenCalledWith(["2"]);
   });
 
   it("leaves a table without actions unselectable", () => {
     const users = createTable("users", makeOptions())();
     expect(users.actions).toEqual([]);
     expect(users.bulkActions).toEqual([]);
-    expect(users.hasActions).toBe(false);
-    expect(users.isSelectable).toBe(false);
+    expect(users.table.options.enableRowSelection).toBe(false);
   });
 
   it("init dispatches the wired fetch into the store", async () => {
-    const options = makeOptions({ initial: { pageSize: 10 } });
+    const options = makeOptions({
+      initialState: { pagination: { pageIndex: 0, pageSize: 20 } },
+    });
     const users = createTable("users", options)();
     await users.init();
     expect(options.fetch).toHaveBeenCalledOnce();
     expect(vi.mocked(options.fetch).mock.calls.at(0)?.[0]).toMatchObject({
-      page: 1,
-      pageSize: 10,
+      pagination: { pageIndex: 0, pageSize: 20 },
+      sorting: [],
     });
     expect(users.data).toEqual(fakeRows);
-    expect(users.total).toBe(3);
+    expect(users.rowCount).toBe(3);
     expect(users.initialized).toBe(true);
   });
 
@@ -101,7 +108,7 @@ describe("createTable", () => {
     });
     const users = createTable("users", makeOptions())();
     await users.init();
-    expect(updated).toHaveBeenCalledWith({ id: "users", total: 3 });
+    expect(updated).toHaveBeenCalledWith({ id: "users", rowCount: 3 });
     users.query.add({ kind: "literal", key: "text", value: "ali" });
     expect(filtered).toHaveBeenCalledWith({
       id: "users",
@@ -115,7 +122,7 @@ describe("createTable", () => {
     await users.init();
     users.query.add({ kind: "literal", key: "text", value: "ali" });
     expect(useNuxtApp().$logger("users").debug.mock.calls).toEqual([
-      ["Table updated", { id: "users", total: 3 }],
+      ["Table updated", { id: "users", rowCount: 3 }],
       ["Table filtered", { id: "users", query: "ali", filters: [] }],
     ]);
   });
@@ -126,9 +133,9 @@ describe("createTable", () => {
     const b = useUsers();
     expect(a).not.toBe(b);
     await a.init();
-    a.toggleRow("1");
+    a.table.setRowSelection({ "1": true });
     expect(b.data).toEqual(fakeRows);
-    expect(b.selected).toEqual(new Set(["1"]));
+    expect(b.table.getSelectedRowIds()).toEqual(["1"]);
   });
 
   it("different ids stay independent", async () => {
@@ -143,15 +150,16 @@ describe("createTable", () => {
     const useUsers = createTable(
       "users-text",
       makeOptions({
-        columns: [{ key: "name", label: "table.columns" }],
+        columns: [{ accessorKey: "name", meta: { label: "table.columns" } }],
         actions: { remove: { label: "table.clear", action: vi.fn() } },
         bulkActions: { purge: { label: "browser.clear", action: vi.fn() } },
       }),
     );
     const users = useUsers();
-    expect(users.config.columns.map((column) => column.label)).toEqual([
+    expect(users.config.columns.map((column) => column.meta?.label)).toEqual([
       "Columns",
     ]);
+    expect(users.query.fields.name?.label).toBe("Columns");
     expect(users.config.actions?.remove?.label).toBe("Clear");
     expect(users.config.bulkActions?.purge?.label).toBe("Clear");
   });

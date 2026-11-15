@@ -1,4 +1,4 @@
-import type { DataTableColumn } from "@zoobzio/table";
+import type { TableColumnDef } from "@zoobzio/table";
 
 export type FakeRow = {
   id: number;
@@ -7,17 +7,17 @@ export type FakeRow = {
   amount: number;
 };
 
-export const fakeColumns: DataTableColumn<FakeRow>[] = [
-  { key: "id", label: "ID", type: "number" },
-  { key: "name", label: "Name", type: "text", sortable: true },
+export const fakeColumns: TableColumnDef<FakeRow>[] = [
+  { accessorKey: "id", meta: { label: "ID", type: "number" } },
+  { accessorKey: "name", meta: { label: "Name", type: "text" } },
   {
-    key: "status",
-    label: "Status",
-    type: "enum",
-    values: ["Active", "Inactive"],
+    accessorKey: "status",
+    meta: { label: "Status", type: "enum", values: ["Active", "Inactive"] },
   },
-  { key: "amount", label: "Amount", type: "currency" },
+  { accessorKey: "amount", meta: { label: "Amount", type: "currency" } },
 ];
+
+export const getRowId = (row: FakeRow): string => String(row.id);
 
 export const fakeRows: FakeRow[] = [
   { id: 1, name: "Alice", status: "Active", amount: 100 },

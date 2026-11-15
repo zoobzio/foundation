@@ -1,32 +1,135 @@
 # @zoobzio/table
 
-Headless data table service. Pure TypeScript, no framework dependency.
+Headless data table service: a [TanStack Table](https://tanstack.com/table)
+(`@tanstack/table-core`) over a state container, for rows a server filters,
+sorts, and pages. Pure TypeScript, no framework dependency.
 
-Owns: paging, sort, row selection, column order, column widths, and the
-query over its columns (`@zoobzio/query`).
-Delegates: data loading (`fetch`) and state storage (the container).
+Owns: the container the table's state lives in, the loading of its rows,
+the query over its columns (`@zoobzio/query`), and row and bulk actions.
+Delegates: every table feature (paging, sorting, selection, column order,
+visibility, and sizing) to TanStack Table, data loading to `fetch`, and
+state storage to the container.
 
 ## Usage
 
 ```ts
 import { TableService, createTableState } from "@zoobzio/table";
 
-const config = { columns: [{ key: "name", label: "Name" }], rowKey: "id" };
+const config = {
+  columns: [{ accessorKey: "name", meta: { label: "Name" } }],
+  getRowId: (user) => user.id,
+};
 
-const table = new TableService("users", config, createTableState(config), {
+const users = new TableService("users", config, createTableState(config), {
   fetch: async (params) => api.users(params),
 });
 
-await table.init();
-table.sortBy("name");
-table.query.add({ kind: "filter", key: "status", value: "active" });
+await users.init();
+users.table.getColumn("name")?.toggleSorting();
+users.query.add({ kind: "filter", key: "status", value: "active" });
 ```
+
+## The table
+
+`service.table` is the TanStack table: its columns, header groups, rows,
+and cells, and the APIs of every registered feature. There is no second API
+over it. A view renders from it (`getHeaderGroups()`, `getRowModel()`,
+`row.getVisibleCells()`) and writes through it (`setPageIndex`,
+`column.getToggleSortingHandler()`, `row.toggleSelected()`,
+`setColumnOrder`, `column.toggleVisibility()`, `setColumnSizing`).
+
+The config is the table's options as TanStack takes them: `columns`,
+`getRowId`, `initialState`, `defaultColumn`, `enableMultiSort`, and any
+other but the ones the service sets itself (`features`, `data`, `state`,
+`atoms`, `rowCount`, `pageCount`, `manualPagination`, `manualSorting`).
+Beside them sit the service's own: `actions`, `bulkActions`, `searchable`,
+`literals`, `initialEntries`, `locale`, `currency`, and `timeZone`.
+
+The registered features are `features`, exported with its type `Features`:
+row pagination, row sorting, row selection, column ordering, column
+visibility, and column sizing. An option, a state slice, or an API of a
+feature exists once the feature is listed there. `TableInstance<T>`,
+`TableColumnDef<T>`, `TableColumn<T>`, `TableHeader<T>`, `TableRow<T>`,
+and `TableCell<T>` are TanStack's types bound to them.
+
+What the defaults are is TanStack's to say. The ones a view meets first:
+
+- A page is 10 rows.
+- Every column that reads a value sorts; `enableSorting: false` on a
+  column turns it off. The first sort of a column runs ascending for
+  strings and descending for anything else, by the rows loaded. A third
+  sort clears it. A sort with Shift held adds to the list.
+- A column is 150 pixels wide, no narrower than 20, unless it or
+  `defaultColumn` says (`size`, `minSize`, `maxSize`).
+- Rows select when the config names bulk actions, or as
+  `enableRowSelection` says. A selection outlives the page it was made on.
+- A column with `enableHiding: false` stays visible.
+
+### The server's part
+
+The server filters, sorts, and pages, so the table holds one page and
+renders its rows as fetched. The fetch is handed the `pagination` and
+`sorting` slices as the table holds them, and the search:
+
+```ts
+fetch({ pagination, sorting, query, filters }) {
+  // pagination: { pageIndex: 0, pageSize: 10 }
+  // sorting:    [{ id: "placed", desc: true }, { id: "total", desc: false }]
+  // query:      "acme"
+  // filters:    [{ key: "status", value: "Active" }]
+  return { data: rows, rowCount: 137 };
+}
+```
+
+`sorting` is an ordered list, as an `ORDER BY` is; an `id` is a column's
+id. `rowCount` is the count of every row the search leaves, which the
+table reads its page count from.
+
+A write of `pagination` or `sorting` refetches, unless it changes nothing.
+A sort stays on the page it was made on. A change of page size keeps the
+top row in view. A change of the query's entries goes to the first page.
+
+### Columns
+
+A column is a TanStack column definition. What the service and its views
+read beyond it sits on the column's `meta`:
+
+```ts
+const columns = [
+  {
+    accessorKey: "name",
+    size: 240,
+    meta: {
+      label: "Name",
+      type: "text",
+      link: (row) => `/users/${row.id}`,
+      operators: ["contains", "is"],
+      defaultOperator: "contains",
+    },
+  },
+  { accessorKey: "created", meta: { label: "Created", type: "date" } },
+  { accessorKey: "owner", meta: { label: "Owner", values: owners.search } },
+];
+```
+
+- `label`: the column's name, in its header and on its query field. Without
+  one the column goes by its id.
+- `type`: how a view renders the column's cells.
+- `align`.
+- `link`: the route of the column's cells. A view renders each cell of the
+  column as a link to the route, with the cell's content inside.
+- `filterable`, `operators`, `defaultOperator`, `values`: the column's
+  query field, below.
+
+`meta` is TanStack's `ColumnMeta` interface, widened by declaration
+merging, so a layer may widen it further (an icon).
 
 ## Query
 
-`table.query` is a query service over the filterable columns: one field per
-column, with the operators, default operator, and values the column
-declares. The table supplies no operators, as it gives an operator no
+`service.query` is a query service over the filterable columns: one field
+per column, keyed by its id, with the label, operators, default operator,
+and values its `meta` declares. A column is filterable if it reads a value
+and is not an `action` or an `image` one, or as its `meta.filterable` says. The table supplies no operators, as it gives an operator no
 meaning: the consumer reads it from the filters its fetch is handed, so the
 consumer names the vocabulary. A column that declares nothing is a bare
 field, free entry and no operator stage, except a `date` or `datetime`
@@ -35,77 +138,21 @@ or the draft a text view composes through. Free text is the query's
 `text` literal, quoted in the draft, `"acme"`, and the field panel leads
 with the option that opens the quote, labelled `Search`; the config's
 `literals` replace the query's, so the option can be relabelled or a
-literal added beside it. A change to its entries resets the page,
-refetches, and emits `filtered`. The fetch params carry its `text` as
-`query` and its `filters`.
+literal added beside it. A change to its entries goes to the
+first page, refetches, and emits `filtered`. The fetch params carry its
+`text` as `query` and its `filters`. `initialEntries` in the config are the
+entries it starts from.
 
 ```ts
-table.query.add({ kind: "filter", key: "status", value: "Active" });
-table.query.setDraft("Amount: over 40");
-table.query.submit();
-table.query.filters; // [{ key: "status", value: "Active" }, { key: "amount", op: "over", value: "40" }]
+users.query.add({ kind: "filter", key: "status", value: "Active" });
+users.query.setDraft("Amount: over 40");
+users.query.submit();
+users.query.filters; // [{ key: "status", value: "Active" }, { key: "amount", op: "over", value: "40" }]
 ```
 
-A column declares what its field offers.
-
-```ts
-const columns = [
-  {
-    key: "created",
-    label: "Created",
-    type: "date",
-    operators: ["before", "after", "on", "between"],
-  },
-  {
-    key: "name",
-    label: "Name",
-    type: "text",
-    operators: ["contains", "is"],
-    defaultOperator: "contains",
-  },
-  { key: "owner", label: "Owner", values: (term) => owners.search(term) },
-  { key: "amount", label: "Amount", type: "currency" }, // free entry, no operator stage
-];
-```
-
-A column may name a route for its cells: `link: (row) => string`. A view
-renders each cell of the column as a link to the route, with the cell's
-content inside, so a row's title can be the way to the row's own page. The
-query does not read it; it stays off the column's field.
-
-```ts
-{ key: "name", label: "Name", type: "text", link: (row) => `/users/${row.id}` }
-```
-
-## Column widths
-
-`columnWidths` holds the width of each sized column in pixels, by column
-key. A column that declares a `width` starts at it; a column without one
-has no entry until it is resized, and a view leaves it to size by its
-content. `resizeColumn(key, width)` rounds the width to a whole pixel and
-holds it at the column's `minWidth`, `TABLE_MIN_COLUMN_WIDTH` (48) where
-it names none. `resetColumnWidth(key)` restores the declared width, or
-none; `resetColumns()` restores the declared widths along with the default
-order. Each write replaces the record and emits `change`.
-
-`columnsMinWidth` is the narrowest the visible columns go together: the
-widths of the sized ones, plus room for every unsized one to hold the
-widest `minWidth` among them, as a view shares what is left evenly between
-the unsized. A view holds its table at it, so a column resized past the
-space there is leaves the others at their minimum rather than at nothing.
-
-```ts
-const columns = [
-  { key: "id", label: "ID", width: 80 },
-  { key: "name", label: "Name", minWidth: 120 },
-];
-
-table.resizeColumn("name", 240);
-table.columnWidth("name"); // 240
-table.columnWidths; // { id: 80, name: 240 }
-table.resetColumnWidth("name");
-table.columnWidth("name"); // undefined
-```
+A property of a column's `meta` beyond the ones the table and its views
+read is carried onto its field, so the search draws the field as the
+column does; its `link` stays off the field.
 
 ### Date values
 
@@ -118,20 +165,31 @@ so a column can wrap it. The generation rule is the query's to document.
 
 A column's `values` may also be a provider that asks an API and gives its
 values a page at a time; the query's README documents the contract. The
-query emits `failed` when one throws or rejects: `table.query.on("failed", …)`.
+query emits `failed` when one throws or rejects: `users.query.on("failed", …)`.
 
 ## The state container
 
-The service reads and writes the `state` container: paging, sort, selection,
-column order, column widths, and the query's entries, draft, and suggested values. The container can be a
-plain object or a reactive proxy. The service replaces each member as a
-whole, so a proxy tracks every change.
+The service reads and writes the `state` container, and so does the table:
+each slice of TanStack's state sits in it under TanStack's name
+(`pagination`, `sorting`, `rowSelection`, `columnOrder`,
+`columnVisibility`, `columnSizing`), beside the fetched page (`data`,
+`rowCount`), `loading`, `initialized`, and the query's entries, draft, and
+suggested values. The table holds no state of its own: every read of a
+slice is a read of the container, so a write from anywhere (a hydrated
+payload, another service over the same container) is what the table
+renders next. The container can be a plain object or a reactive proxy.
+Each member is replaced as a whole, so a proxy tracks every change, and it
+is plain JSON, so a server payload carries it.
 
 ```ts
 createTableState(config); // plain: tests, Node
 reactive(createTableState(config)); // Vue
 useState(`table-${id}`, () => createTableState(config)).value; // Nuxt, shared by id
 ```
+
+`createTableState` starts each slice from TanStack's default under the
+config's `initialState`, which is also what the table's resets
+(`resetColumnOrder()`, `resetColumnSizing()`, `resetSorting()`) restore.
 
 ## Middleware
 
@@ -141,7 +199,7 @@ value on.
 
 ```ts
 new TableService(id, config, state, wiring, {
-  set: { state: { query: (query) => query.trim() } },
+  set: { state: { draft: (draft) => draft.trim() } },
 });
 ```
 
@@ -150,12 +208,13 @@ new TableService(id, config, state, wiring, {
 `on(event, listener)` subscribes. Listeners run in subscription order, after
 the write lands. The return value removes the listener.
 
-- `change`: a field of the container was written. `{ field, before, after }`, narrowed by `field`.
-- `updated`: a fetch settled. `{ id, total }`.
+- `change`: a field of the container was written, by the service or
+  through the table. `{ field, before, after }`, narrowed by `field`.
+- `updated`: a fetch settled. `{ id, rowCount }`.
 - `filtered`: the query's entries changed. `{ id, query, filters }`.
 
 ```ts
 const off = table.on("change", (change) => {
-  if (change.field === "page") track(change.after);
+  if (change.field === "pagination") track(change.after.pageIndex);
 });
 ```

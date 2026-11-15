@@ -6,6 +6,7 @@ import type {
   TableProps,
   TableSlots,
 } from "../types/components/table";
+import type { RowData } from "@zoobzio/table";
 
 import TableBody from "./table-body.vue";
 import TableBulkActions from "./table-bulk-actions.vue";
@@ -21,7 +22,6 @@ import Primitive from "./primitive.vue";
 import { useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
 import { useForward } from "../composables/forward";
-import { useRefs } from "../composables/ref";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
 import {
@@ -29,9 +29,10 @@ import {
   TABLE_REFRESH_LABEL,
   TABLE_SEARCH_PLACEHOLDER,
 } from "../constants/table";
+import { columnWidth, isSelectable } from "../utils/table";
 </script>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends RowData">
 const { service, pt } = defineProps<TableProps<T>>();
 
 const emit = defineEmits<TableEmits<T>>();
@@ -40,21 +41,10 @@ useServiceEmits(service, TABLE_EVENTS, emit);
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const {
-  page,
-  pageSize,
-  pageCount,
-  total,
-  hasSelection,
-  visibleColumns,
-  isSelectable,
-  hasActions,
-} = useRefs(service);
+const table = service.table;
 
-const widthOf = (key: keyof T) => {
-  const width = service.columnWidth(String(key));
-  return width === undefined ? undefined : { width: `${width}px` };
-};
+const widthOf = (width: number | undefined) =>
+  width === undefined ? undefined : { width: `${width}px` };
 
 const settings = usePassthrough<TablePassthrough>(() => ({
   pt,
@@ -75,12 +65,12 @@ const settings = usePassthrough<TablePassthrough>(() => ({
     },
     pagination: {
       as: Pagination,
-      page: page.value,
-      size: pageSize.value,
-      count: pageCount.value,
-      total: total.value,
-      "onUpdate:page": (p) => service.goToPage(p),
-      "onUpdate:size": (s) => service.setPageSize(s),
+      page: table.atoms.pagination.get().pageIndex + 1,
+      size: table.atoms.pagination.get().pageSize,
+      count: table.getPageCount(),
+      total: service.rowCount,
+      "onUpdate:page": (p) => table.setPageIndex(p - 1),
+      "onUpdate:size": (s) => table.setPageSize(s),
     },
   },
 }));
@@ -131,7 +121,10 @@ const { THead, TBody } = useForward({
       </div>
     </slot>
 
-    <TableBulkActions v-if="hasSelection" :service="service">
+    <TableBulkActions
+      v-if="table.getSelectedRowIds().length"
+      :service="service"
+    >
       <template v-if="slots.bulkActionPrepend" #bulkActionPrepend="slotProps">
         <slot name="bulkActionPrepend" v-bind="slotProps" />
       </template>
@@ -144,18 +137,15 @@ const { THead, TBody } = useForward({
     </TableBulkActions>
 
     <Primitive v-bind="settings.scroller" class="f-data-table-scroller">
-      <table
-        class="f-table"
-        :style="{ minWidth: `${service.columnsMinWidth}px` }"
-      >
+      <table class="f-table" :style="{ minWidth: `${table.getTotalSize()}px` }">
         <colgroup>
-          <col v-if="isSelectable" class="f-data-table-select" />
+          <col v-if="isSelectable(table)" class="f-data-table-select" />
           <col
-            v-for="col in visibleColumns"
-            :key="String(col.key)"
-            :style="widthOf(col.key)"
+            v-for="col in table.getVisibleLeafColumns()"
+            :key="col.id"
+            :style="widthOf(columnWidth(col))"
           />
-          <col v-if="hasActions" class="f-data-table-actions" />
+          <col v-if="service.actions.length" class="f-data-table-actions" />
         </colgroup>
         <THead />
         <TBody />

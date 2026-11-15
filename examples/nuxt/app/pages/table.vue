@@ -8,10 +8,8 @@ await orders.init();
 
 // What the next fetch is handed: the page, the sort, and the search.
 const params = computed(() => ({
-  page: orders.page,
-  pageSize: orders.pageSize,
-  sortField: orders.sortField,
-  sortDirection: orders.sortDirection,
+  pagination: orders.table.atoms.pagination.get(),
+  sorting: orders.table.atoms.sorting.get(),
   query: orders.query.text,
   filters: orders.query.filters,
 }));
@@ -26,7 +24,8 @@ const params = computed(() => ({
           A page of orders at a time from a fake backend. Press
           <code>/</code> to search: try <code>"hopper"</code>,
           <code>Status: Shipped</code>, or <code>Total: over 300</code>. Sort by
-          a header, drag one by its grip to move the column, drag its edge to
+          a header, and by a second with Shift held; a third click clears the
+          sort. Drag a header by its grip to move the column, drag its edge to
           resize it.
         </p>
       </div>

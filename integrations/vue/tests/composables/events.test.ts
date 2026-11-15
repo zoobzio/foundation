@@ -15,7 +15,7 @@ describe("useServiceEmits", () => {
     service.query.add({ kind: "literal", key: "text", value: "x" });
     expect(emit).toHaveBeenCalledWith("updated", {
       id: "test-table",
-      total: 3,
+      rowCount: 40,
     });
     expect(emit).toHaveBeenCalledWith("filtered", {
       id: "test-table",

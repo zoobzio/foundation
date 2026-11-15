@@ -49,12 +49,14 @@ describe("table wrapper", () => {
   it("renders a linked cell through NuxtLink to the column's route", async () => {
     const { service } = makeTable({
       columns: [
-        { key: "id", label: "ID", type: "number" },
+        { accessorKey: "id", meta: { label: "ID", type: "number" } },
         {
-          key: "name",
-          label: "Name",
-          type: "text",
-          link: (row) => `/people/${row.id}`,
+          accessorKey: "name",
+          meta: {
+            label: "Name",
+            type: "text",
+            link: (row) => `/people/${row.id}`,
+          },
         },
       ],
     });
@@ -136,33 +138,30 @@ describe("table wrapper", () => {
     await service.init();
     const wrapper = mountTable({ service });
     const resizers = wrapper.findAll("th > .f-data-table-resizer");
-    expect(resizers).toHaveLength(service.visibleColumns.length);
-    const first = service.visibleColumns[0];
-    expect(resizers[0]?.attributes("aria-label")).toBe(
-      `Resize ${String(first?.label)}`,
-    );
+    expect(resizers).toHaveLength(3);
+    expect(resizers[0]?.attributes("aria-label")).toBe("Resize ID");
     expect(resizers[0]?.attributes("role")).toBe("separator");
   });
 
   it("draws the sort direction after a sorted header", async () => {
     const { service } = makeTable({
       columns: [
-        { key: "id", label: "ID", type: "number" },
-        { key: "name", label: "Name", type: "text", sortable: true },
-        { key: "site", label: "Site", type: "url" },
+        { accessorKey: "id", meta: { label: "ID", type: "number" } },
+        { accessorKey: "name", meta: { label: "Name", type: "text" } },
+        { accessorKey: "site", meta: { label: "Site", type: "url" } },
       ],
     });
     await service.init();
     const wrapper = mountTable({ service });
     expect(wrapper.find("th svg[data-icon^='sort']").exists()).toBe(false);
-    service.sortBy("name");
+    service.table.getColumn("name")?.toggleSorting(false);
     await flushPromises();
     const sorted = () =>
       wrapper
         .get("th.f-data-table-sorted svg[data-icon]")
         .attributes("data-icon");
     expect(sorted()).toBe("sort-asc");
-    service.sortBy("name");
+    service.table.getColumn("name")?.toggleSorting(true);
     await flushPromises();
     expect(sorted()).toBe("sort-desc");
   });
@@ -233,13 +232,13 @@ describe("table wrapper", () => {
     const wrapper = mountTable({ service });
     await service.init();
     const updated = wrapper.emitted("updated")?.at(0)?.at(0);
-    expect(updated).toMatchObject({ id: "test-table", total: 2 });
+    expect(updated).toMatchObject({ id: "test-table", rowCount: 2 });
   });
 
   it("reads its empty state from the contract", async () => {
     const { service } = makeTable(
       {},
-      { fetch: vi.fn(async () => ({ data: [], total: 0, pageCount: 0 })) },
+      { fetch: vi.fn(async () => ({ data: [], rowCount: 0 })) },
     );
     await service.init();
     const wrapper = mountTable({ service });
@@ -253,7 +252,7 @@ describe("table wrapper", () => {
     );
     await service.init();
     const wrapper = mountTable({ service });
-    service.toggleRow("1");
+    service.table.getRow("1").toggleSelected(true);
     await flushPromises();
     expect(wrapper.get(".f-data-table-bulk-action-clear").text()).toBe("Clear");
   });
@@ -280,20 +279,20 @@ describe("table wrapper", () => {
     ];
     const config: Config<Typed> = {
       columns: [
-        { key: "when", label: "When", type: "datetime" },
-        { key: "day", label: "Day", type: "date" },
-        { key: "amount", label: "Amount", type: "currency" },
-        { key: "size", label: "Size", type: "filesize" },
-        { key: "ok", label: "Ok", type: "boolean" },
-        { key: "id", label: "ID", type: "number" },
+        { accessorKey: "when", meta: { label: "When", type: "datetime" } },
+        { accessorKey: "day", meta: { label: "Day", type: "date" } },
+        { accessorKey: "amount", meta: { label: "Amount", type: "currency" } },
+        { accessorKey: "size", meta: { label: "Size", type: "filesize" } },
+        { accessorKey: "ok", meta: { label: "Ok", type: "boolean" } },
+        { accessorKey: "id", meta: { label: "ID", type: "number" } },
       ],
-      rowKey: "id",
+      getRowId: (row) => String(row.id),
     };
     const service = new TableService<Typed>(
       "typed-table",
       config,
       reactive(createTableState(config)),
-      { fetch: vi.fn(async () => ({ data: rows, total: 1, pageCount: 1 })) },
+      { fetch: vi.fn(async () => ({ data: rows, rowCount: 1 })) },
     );
     await service.init();
     const wrapper = mount(Table<Typed>, {
@@ -327,10 +326,10 @@ describe("table wrapper", () => {
     const at = "2025-11-04T13:05:00Z";
     const config: Config<Timed> = {
       columns: [
-        { key: "when", label: "When", type: "datetime" },
-        { key: "day", label: "Day", type: "date" },
+        { accessorKey: "when", meta: { label: "When", type: "datetime" } },
+        { accessorKey: "day", meta: { label: "Day", type: "date" } },
       ],
-      rowKey: "id",
+      getRowId: (row) => String(row.id),
       timeZone,
     };
     const service = new TableService<Timed>(
@@ -340,8 +339,7 @@ describe("table wrapper", () => {
       {
         fetch: vi.fn(async () => ({
           data: [{ id: 1, when: at, day: at }],
-          total: 1,
-          pageCount: 1,
+          rowCount: 1,
         })),
       },
     );

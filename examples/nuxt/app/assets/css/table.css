@@ -166,7 +166,7 @@
 /* --- column manager -------------------------------------------------- */
 
 /* The popover holds a command: a filter over a checklist of the columns.
-   A pinned column is listed, checked and disabled. */
+   A column that cannot be hidden is listed, checked and disabled. */
 .f-popover-content {
   z-index: 50;
   width: 14rem;
@@ -317,8 +317,10 @@
   border-radius: var(--shape-md);
 }
 
-/* A fixed layout, so a column holds the width it is resized to and the
-   unsized ones share what is left. */
+/* A fixed layout, so a column holds exactly its size. The table is as
+   wide as its scroller, and the last column, which carries no width, takes
+   what is left; the table's inline min-width is the total of the sizes, so
+   past that it scrolls. */
 .f-data-table .f-table {
   width: 100%;
   table-layout: fixed;

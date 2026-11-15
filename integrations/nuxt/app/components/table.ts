@@ -18,10 +18,12 @@ import type {
   TableBodyPassthrough,
   TableCellContext,
 } from "@zoobzio/vue/types/components/table-body";
+import type { RowData } from "@zoobzio/table";
 import type { TableColumnsPassthrough } from "@zoobzio/vue/types/components/table-columns";
 import type { TableHeadPassthrough } from "@zoobzio/vue/types/components/table-head";
 
 import Core from "@zoobzio/vue/components/table.vue";
+import { columnLabel } from "@zoobzio/vue/utils/table";
 
 import NuxtLink from "#app/components/nuxt-link";
 import { layer } from "@zoobzio/vue/utils/passthrough";
@@ -47,13 +49,15 @@ export default wrap(Core, {
     refresh: { label: text("table.refresh"), ...pt?.refresh },
     pagination: { as: Pagination, ...pt?.pagination },
     scroller: { as: Scroller, ...pt?.scroller },
-    head: layer<TableHeadPassthrough<unknown>>(pt?.head, {
+    head: layer<TableHeadPassthrough<RowData>>(pt?.head, {
       selectAllCheckbox: { as: Checkbox },
       resizer: (column) => ({
-        "aria-label": text("table.resize", { column: text(column.label) }),
+        "aria-label": text("table.resize", {
+          column: text(columnLabel(column)),
+        }),
       }),
     }),
-    body: layer<TableBodyPassthrough<unknown>>(pt?.body, {
+    body: layer<TableBodyPassthrough<RowData>>(pt?.body, {
       link: () => ({ as: NuxtLink }),
       rowCheckbox: { as: Checkbox },
       actionsTrigger: { label: text("table.actions") },
@@ -65,16 +69,16 @@ export default wrap(Core, {
     }),
   }),
   slots: {
-    ...cellSlots<TableCellContext<unknown>>(({ table }) => table),
+    ...cellSlots<TableCellContext<RowData>>(({ table }) => table),
     refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
     columns: ({ settings }) => iconPart(settings.trigger, "columns"),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
     dragPrepend: () => [icon("drag")],
-    headerPrepend: ({ column }) => iconOf(column.icon),
-    headerAppend: ({ table, column }) =>
-      table.isSorted(column)
-        ? [icon(table.sortDirection === "asc" ? "sort-asc" : "sort-desc")]
-        : [],
+    headerPrepend: ({ column }) => iconOf(column.columnDef.meta?.icon),
+    headerAppend: ({ column }) => {
+      const sorted = column.getIsSorted();
+      return sorted ? [icon(sorted === "asc" ? "sort-asc" : "sort-desc")] : [];
+    },
     bulkActionPrepend: ({ action }) => iconOf(action.icon),
     bulkClear: () => textSlot("table.clear"),
     empty: () => textSlot("table.empty"),

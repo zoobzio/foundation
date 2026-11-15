@@ -47,6 +47,7 @@
     "@icon-sheets/nuxt": "catalog:",
     "@nuxt/kit": "catalog:",
     "@prosary/nuxt": "catalog:",
+    "@tanstack/table-core": "catalog:",
     "@untheme/nuxt": "catalog:",
     "@vueuse/core": "catalog:",
     "@zoobzio/browser": "workspace:*",

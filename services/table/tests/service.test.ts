@@ -1,32 +1,35 @@
 // Constructor-injected seams — a plain state container, a vi.fn() Actions
-// fake, and vi.fn() listeners. Every test drives a state transition and
-// asserts both the new state and the side-channel contracts (fetch params,
-// events).
+// fake, and vi.fn() listeners. The table is TanStack's, so nothing here
+// tests what it computes: every test drives the service's own part — the
+// container as the owner of the table's state, the fetch a write causes,
+// the query, the actions, the events.
 import { describe, expect, it, vi } from "vitest";
 import { TableService } from "../src/service";
 import { createTableState } from "../src/state";
-import { TABLE_MIN_COLUMN_WIDTH } from "../src/constants";
 import { QUERY_TEXT_LITERAL } from "@zoobzio/query";
 import type {
   Actions,
   Change,
   Config,
-  DataTableColumn,
-  DataTableFetchResult,
+  FetchResult,
   Options,
   State,
 } from "../src/types";
-import { fakeColumns, fakeRows, fakeActions, fakeBulkActions } from "./data";
+import {
+  fakeActions,
+  fakeBulkActions,
+  fakeColumns,
+  fakeRows,
+  getRowId,
+} from "./data";
 import type { FakeRow } from "./data";
 
-const makeState = (): State<FakeRow> =>
-  createTableState<FakeRow>({ columns: fakeColumns, rowKey: "id" });
+const base: Config<FakeRow> = { columns: fakeColumns, getRowId };
 
 const makeActions = (rows: FakeRow[] = fakeRows) => ({
-  fetch: vi.fn(async (): Promise<DataTableFetchResult<FakeRow>> => ({
+  fetch: vi.fn(async (): Promise<FetchResult<FakeRow>> => ({
     data: rows,
-    total: rows.length,
-    pageCount: 4,
+    rowCount: 40,
   })),
 });
 
@@ -38,11 +41,12 @@ const makeService = (
     options?: Options<FakeRow>;
   } = {},
 ) => {
-  const state = overrides.state ?? makeState();
+  const config = { ...base, ...overrides.config };
+  const state = overrides.state ?? createTableState<FakeRow>(config);
   const actions = overrides.actions ?? makeActions();
   const service = new TableService<FakeRow>(
     "test-table",
-    { columns: fakeColumns, rowKey: "id", ...overrides.config },
+    config,
     state,
     actions,
     overrides.options,
@@ -51,40 +55,41 @@ const makeService = (
   const filtered = vi.fn();
   service.on("updated", updated);
   service.on("filtered", filtered);
-  return { service, state, actions, updated, filtered };
+  return { service, table: service.table, state, actions, updated, filtered };
 };
 
+const ids = (service: TableService<FakeRow>): string[] =>
+  service.table.getVisibleLeafColumns().map((c) => c.id);
+
 describe("fetch", () => {
-  it("passes current paging/sort params and applies the result", async () => {
-    const { service, state, actions } = makeService();
-    state.page = 2;
-    state.sortField = "name";
-    state.sortDirection = "desc";
+  it("passes the pagination and sorting slices and applies the result", async () => {
+    const { service, table, state, actions } = makeService();
+    state.pagination = { pageIndex: 1, pageSize: 10 };
+    state.sorting = [{ id: "name", desc: true }];
 
     await service.fetch();
 
     expect(actions.fetch).toHaveBeenCalledWith(
       {
-        page: 2,
-        pageSize: 25,
-        sortField: "name",
-        sortDirection: "desc",
+        pagination: { pageIndex: 1, pageSize: 10 },
+        sorting: [{ id: "name", desc: true }],
         query: "",
         filters: [],
       },
       service,
     );
     expect(service.data).toEqual(fakeRows);
-    expect(service.total).toBe(fakeRows.length);
-    expect(service.pageCount).toBe(4);
+    expect(service.rowCount).toBe(40);
+    expect(table.getRowModel().rows.map((r) => r.id)).toEqual(["1", "2", "3"]);
+    expect(table.getPageCount()).toBe(4);
   });
 
   it("holds loading during flight and clears it after", async () => {
-    const box: { resolve?: (r: DataTableFetchResult<FakeRow>) => void } = {};
+    const box: { resolve?: (r: FetchResult<FakeRow>) => void } = {};
     const actions = {
       fetch: vi.fn(
         () =>
-          new Promise<DataTableFetchResult<FakeRow>>((res) => {
+          new Promise<FetchResult<FakeRow>>((res) => {
             box.resolve = res;
           }),
       ),
@@ -93,7 +98,7 @@ describe("fetch", () => {
 
     const flight = service.fetch();
     expect(service.loading).toBe(true);
-    box.resolve?.({ data: [], total: 0, pageCount: 0 });
+    box.resolve?.({ data: [], rowCount: 0 });
     await flight;
     expect(service.loading).toBe(false);
   });
@@ -106,320 +111,196 @@ describe("fetch", () => {
 
     await expect(service.fetch()).rejects.toThrow("boom");
     expect(service.loading).toBe(false);
-    expect(updated).toHaveBeenCalledWith({ id: "test-table", total: 0 });
+    expect(updated).toHaveBeenCalledWith({ id: "test-table", rowCount: 0 });
   });
 
-  it("emits updated with the fresh total", async () => {
+  it("emits updated with the fresh row count", async () => {
     const { service, updated } = makeService();
     await service.fetch();
-    expect(updated).toHaveBeenCalledWith({
-      id: "test-table",
-      total: fakeRows.length,
-    });
+    expect(updated).toHaveBeenCalledWith({ id: "test-table", rowCount: 40 });
   });
 });
 
-describe("paging", () => {
-  it("goToPage fetches the page inside bounds", async () => {
-    const { service, state, actions } = makeService();
-    state.pageCount = 3;
-    service.goToPage(2);
-    expect(service.page).toBe(2);
+describe("the container", () => {
+  it("is where every write through the table lands", async () => {
+    const { service, table, state } = makeService({
+      config: { bulkActions: fakeBulkActions },
+    });
+    await service.fetch();
+
+    table.setPageIndex(2);
+    table.getColumn("name")?.toggleSorting(true);
+    table.getRow("2").toggleSelected(true);
+    table.setColumnOrder(["amount", "id"]);
+    table.getColumn("status")?.toggleVisibility(false);
+    table.setColumnSizing({ name: 240 });
+
+    expect(state.pagination).toEqual({ pageIndex: 2, pageSize: 10 });
+    expect(state.sorting).toEqual([{ id: "name", desc: true }]);
+    expect(state.rowSelection).toEqual({ "2": true });
+    expect(state.columnOrder).toEqual(["amount", "id"]);
+    expect(state.columnVisibility).toEqual({ status: false });
+    expect(state.columnSizing).toEqual({ name: 240 });
+  });
+
+  it("is what the table reads, whoever wrote it", async () => {
+    const { service, table, state } = makeService();
+    await service.fetch();
+
+    state.columnVisibility = { name: false };
+    state.columnOrder = ["amount"];
+    state.pagination = { pageIndex: 3, pageSize: 10 };
+    state.data = [fakeRows[2]!];
+
+    expect(ids(service)).toEqual(["amount", "id", "status", "created"]);
+    expect(table.getCanNextPage()).toBe(false);
+    expect(table.getRowModel().rows.map((r) => r.original)).toEqual([
+      fakeRows[2],
+    ]);
+  });
+
+  it("is shared: two services over one container never disagree", async () => {
+    const a = makeService();
+    const b = makeService({ state: a.state });
+    await a.service.fetch();
+
+    a.table.getColumn("name")?.toggleVisibility(false);
+    a.table.setPageIndex(1);
+
+    expect(ids(b.service)).not.toContain("name");
+    expect(b.table.getRowModel().rows).toHaveLength(fakeRows.length);
+    expect(b.state.pagination.pageIndex).toBe(1);
+  });
+
+  it("starts the table from the config's initial state, and resets to it", () => {
+    const { table, state } = makeService({
+      config: { initialState: { columnOrder: ["amount", "name"] } },
+    });
+    expect(state.columnOrder).toEqual(["amount", "name"]);
+    table.setColumnOrder(["id"]);
+    table.resetColumnOrder();
+    expect(state.columnOrder).toEqual(["amount", "name"]);
+  });
+});
+
+describe("refetching", () => {
+  it("a change of page refetches, and one that changes nothing does not", () => {
+    const { table, state, actions } = makeService();
+    state.rowCount = 40;
+    table.setPageIndex(1);
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    table.setPageIndex(1);
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    table.nextPage();
+    expect(actions.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("a change of page size refetches and keeps the top row in view", () => {
+    const { table, state, actions } = makeService();
+    state.pagination = { pageIndex: 3, pageSize: 10 };
+    table.setPageSize(20);
+    expect(state.pagination).toEqual({ pageIndex: 1, pageSize: 20 });
     expect(actions.fetch).toHaveBeenCalledOnce();
   });
 
-  it("goToPage ignores out-of-bounds targets", () => {
-    const { service, state, actions } = makeService();
-    state.pageCount = 3;
-    service.goToPage(0);
-    service.goToPage(4);
-    expect(service.page).toBe(1);
-    expect(actions.fetch).not.toHaveBeenCalled();
+  it("a sort refetches and stays on the page", () => {
+    const { table, state, actions } = makeService();
+    state.pagination = { pageIndex: 2, pageSize: 10 };
+    table.getColumn("name")?.toggleSorting();
+    expect(state.sorting).toHaveLength(1);
+    expect(state.pagination.pageIndex).toBe(2);
+    expect(actions.fetch).toHaveBeenCalledOnce();
   });
 
-  it("setPageSize resets to the first page", () => {
-    const { service, state } = makeService();
-    state.page = 3;
-    state.pageCount = 5;
-    service.setPageSize(50);
-    expect(service.pageSize).toBe(50);
-    expect(service.page).toBe(1);
-  });
-});
-
-describe("sorting", () => {
-  it("first sort on a field starts ascending and resets the page", () => {
-    const { service, state } = makeService();
-    state.page = 2;
-    state.pageCount = 5;
-    service.sortBy("name");
-    expect(service.sortField).toBe("name");
-    expect(service.sortDirection).toBe("asc");
-    expect(service.page).toBe(1);
-  });
-
-  it("sorting the same field toggles direction", () => {
-    const { service } = makeService();
-    service.sortBy("name");
-    service.sortBy("name");
-    expect(service.sortDirection).toBe("desc");
-    service.sortBy("name");
-    expect(service.sortDirection).toBe("asc");
-  });
-
-  it("isSorted respects sortKey over key", () => {
-    const { service } = makeService();
-    const col = { key: "name" as const, label: "Name", sortKey: "name_ci" };
-    service.sortBy("name_ci");
-    expect(service.isSorted(col)).toBe(true);
-    expect(service.isSorted({ key: "name", label: "Name" })).toBe(false);
-  });
-});
-
-describe("selection", () => {
-  it("toggleRow adds then removes a key", () => {
-    const { service } = makeService();
-    service.toggleRow("1");
-    expect(service.selected).toEqual(new Set(["1"]));
-    service.toggleRow("1");
-    expect(service.selected).toEqual(new Set());
-  });
-
-  it("selectAllState walks none → indeterminate → all", async () => {
-    const { service } = makeService();
+  it("the first sort of a column follows the type of its values", async () => {
+    const { service, table, state } = makeService();
     await service.fetch();
-    expect(service.selectAllState).toBe(false);
-    service.toggleRow("1");
-    expect(service.selectAllState).toBe("indeterminate");
-    service.toggleAll();
-    expect(service.selectAllState).toBe(true);
-    expect(service.selected).toEqual(
-      new Set(fakeRows.map((r) => String(r.id))),
-    );
+    table.getColumn("name")?.toggleSorting();
+    expect(state.sorting).toEqual([{ id: "name", desc: false }]);
+    table.getColumn("amount")?.toggleSorting();
+    expect(state.sorting).toEqual([{ id: "amount", desc: true }]);
   });
 
-  it("toggleAll clears when everything is selected", async () => {
-    const { service } = makeService();
+  it("a third sort of a column clears it, and a multi sort adds to the list", async () => {
+    const { service, table, state } = makeService();
     await service.fetch();
-    service.toggleAll();
-    service.toggleAll();
-    expect(service.selected).toEqual(new Set());
+    const name = table.getColumn("name");
+    name?.toggleSorting();
+    name?.toggleSorting();
+    expect(state.sorting).toEqual([{ id: "name", desc: true }]);
+    name?.toggleSorting();
+    expect(state.sorting).toEqual([]);
+    name?.toggleSorting();
+    table.getColumn("amount")?.toggleSorting(undefined, true);
+    expect(state.sorting).toEqual([
+      { id: "name", desc: false },
+      { id: "amount", desc: true },
+    ]);
   });
 
-  it("isAllSelected is false with no data", () => {
-    const { service } = makeService();
-    expect(service.isAllSelected).toBe(false);
+  it("the server sorts and pages: the table renders the rows as fetched", async () => {
+    const { service, table } = makeService();
+    await service.fetch();
+    table.getColumn("amount")?.toggleSorting(true);
+    expect(table.getRowModel().rows.map((r) => r.original)).toEqual(fakeRows);
   });
 
-  it("hasSelection follows the selected set", () => {
-    const { service } = makeService();
-    expect(service.hasSelection).toBe(false);
-    service.toggleRow("1");
-    expect(service.hasSelection).toBe(true);
-    service.clearSelection();
-    expect(service.hasSelection).toBe(false);
+  it("a write of selection, order, visibility, or size does not refetch", async () => {
+    const { service, table, actions } = makeService({
+      config: { bulkActions: fakeBulkActions },
+    });
+    await service.fetch();
+    table.toggleAllPageRowsSelected(true);
+    table.setColumnOrder(["amount"]);
+    table.getColumn("name")?.toggleVisibility(false);
+    table.setColumnSizing({ name: 200 });
+    expect(actions.fetch).toHaveBeenCalledOnce();
   });
 });
 
 describe("columns", () => {
-  it("toggleColumn hides and re-shows at the definition slot", () => {
-    const { service } = makeService();
-    service.toggleColumn("name");
-    expect(service.isColumnVisible("name")).toBe(false);
-    expect(service.columnOrder).toEqual(["id", "status", "created", "amount"]);
-    service.toggleColumn("name");
-    expect(service.columnOrder).toEqual([
-      "id",
-      "name",
-      "status",
-      "created",
-      "amount",
-    ]);
+  it("a column that refuses hiding stays", () => {
+    const { service, table } = makeService();
+    table.getColumn("id")?.toggleVisibility(false);
+    table.getColumn("name")?.toggleVisibility(false);
+    expect(ids(service)).toEqual(["id", "status", "created", "amount"]);
   });
 
-  it("toggleColumn places a re-shown column relative to the current order", () => {
-    const { service } = makeService();
-    service.reorderColumns(["amount", "id", "created"]);
-    service.toggleColumn("name");
-    expect(service.columnOrder).toEqual(["name", "amount", "id", "created"]);
+  it("a column's size is the one it declares, the default, or the one it is given, held at its minimum", () => {
+    const { table } = makeService();
+    expect(table.getColumn("id")?.getSize()).toBe(80);
+    expect(table.getColumn("name")?.getSize()).toBe(150);
+    table.setColumnSizing({ name: 40, amount: 300 });
+    expect(table.getColumn("name")?.getSize()).toBe(120);
+    expect(table.getColumn("amount")?.getSize()).toBe(300);
+    expect(table.getTotalSize()).toBe(80 + 120 + 150 + 150 + 300);
+  });
+});
+
+describe("selection", () => {
+  it("is on with bulk actions, off without, and as the config says", async () => {
+    const bare = makeService();
+    await bare.service.fetch();
+    expect(bare.table.getRow("1").getCanSelect()).toBe(false);
+
+    const bulk = makeService({ config: { bulkActions: fakeBulkActions } });
+    await bulk.service.fetch();
+    expect(bulk.table.getRow("1").getCanSelect()).toBe(true);
+
+    const forced = makeService({ config: { enableRowSelection: true } });
+    await forced.service.fetch();
+    expect(forced.table.getRow("1").getCanSelect()).toBe(true);
   });
 
-  it("setVisibleColumns keeps the current order and seats new columns", () => {
-    const { service } = makeService();
-    service.reorderColumns(["amount", "id"]);
-    service.setVisibleColumns(["status", "id", "amount"]);
-    expect(service.columnOrder).toEqual(["status", "amount", "id"]);
-  });
-
-  it("setVisibleColumns keeps pinned columns and drops unknown keys", () => {
-    const { service } = makeService({ config: { pinnedColumns: ["id"] } });
-    service.setVisibleColumns(["name", "ghost"]);
-    expect(service.columnOrder).toEqual(["id", "name"]);
-  });
-
-  it("moveColumn moves a column to another column's slot", () => {
-    const { service } = makeService();
-    service.moveColumn("id", "status");
-    expect(service.columnOrder).toEqual([
-      "name",
-      "status",
-      "id",
-      "created",
-      "amount",
-    ]);
-    service.moveColumn("amount", "name");
-    expect(service.columnOrder).toEqual([
-      "amount",
-      "name",
-      "status",
-      "id",
-      "created",
-    ]);
-  });
-
-  it("moveColumn ignores unknown and equal keys", () => {
-    const { service, state } = makeService();
-    const before = state.columnOrder;
-    service.moveColumn("id", "id");
-    service.moveColumn("id", "ghost");
-    service.moveColumn("ghost", "id");
-    expect(state.columnOrder).toBe(before);
-  });
-
-  it("toggleColumn refuses pinned columns", () => {
-    const { service } = makeService({ config: { pinnedColumns: ["id"] } });
-    service.toggleColumn("id");
-    expect(service.isColumnVisible("id")).toBe(true);
-  });
-
-  it("visibleColumns follows columnOrder and drops unknown keys", () => {
-    const { service } = makeService();
-    service.reorderColumns(["name", "id", "ghost"]);
-    expect(service.visibleColumns.map((c) => c.key)).toEqual(["name", "id"]);
-  });
-
-  it("resetColumns restores the configured order", () => {
-    const { service } = makeService({
-      config: { defaultColumnOrder: ["status", "id"] },
+  it("outlives the page it was made on", async () => {
+    const { service, table, state } = makeService({
+      config: { bulkActions: fakeBulkActions },
     });
-    service.reorderColumns(["id"]);
-    service.resetColumns();
-    expect(service.columnOrder).toEqual(["status", "id"]);
-  });
-
-  it("resizeColumn rounds the width and holds it at the minimum", () => {
-    const { service } = makeService();
-    expect(service.columnWidth("name")).toBeUndefined();
-    service.resizeColumn("name", 180.4);
-    expect(service.columnWidth("name")).toBe(180);
-    expect(service.columnWidths).toEqual({ name: 180 });
-    service.resizeColumn("name", 3);
-    expect(service.columnWidth("name")).toBe(TABLE_MIN_COLUMN_WIDTH);
-  });
-
-  it("resizeColumn holds a column at the minimum it names", () => {
-    const { service } = makeService({
-      config: {
-        columns: [{ key: "name", label: "Name", minWidth: 120 }],
-      },
-    });
-    expect(service.columnMinWidth("name")).toBe(120);
-    service.resizeColumn("name", 50);
-    expect(service.columnWidth("name")).toBe(120);
-  });
-
-  it("columnsMinWidth holds sized columns at their width and unsized ones at the widest minimum", () => {
-    const columns: DataTableColumn<FakeRow>[] = [
-      { key: "id", label: "ID", width: 80 },
-      { key: "name", label: "Name", minWidth: 120 },
-      { key: "status", label: "Status" },
-    ];
-    const { service } = makeService({
-      config: { columns },
-      state: createTableState<FakeRow>({ columns, rowKey: "id" }),
-    });
-    // 80 sized, and two unsized that share evenly: 120 each.
-    expect(service.columnsMinWidth).toBe(80 + 2 * 120);
-    service.resizeColumn("name", 300);
-    expect(service.columnsMinWidth).toBe(80 + 300 + TABLE_MIN_COLUMN_WIDTH);
-    service.toggleColumn("status");
-    expect(service.columnsMinWidth).toBe(80 + 300);
-  });
-
-  it("resizeColumn replaces the widths and emits change", () => {
-    const { service, state } = makeService();
-    const change = vi.fn();
-    service.on("change", change);
-    const before = state.columnWidths;
-    service.resizeColumn("name", 200);
-    expect(state.columnWidths).not.toBe(before);
-    expect(change).toHaveBeenCalledWith(
-      expect.objectContaining({
-        field: "columnWidths",
-        after: { name: 200 },
-      }),
-    );
-  });
-
-  it("resizeColumn ignores an unknown key, a non-finite width, and no change", () => {
-    const { service, state } = makeService();
-    service.resizeColumn("name", 200);
-    const before = state.columnWidths;
-    service.resizeColumn("ghost", 200);
-    service.resizeColumn("name", Number.NaN);
-    service.resizeColumn("name", 200);
-    expect(state.columnWidths).toBe(before);
-  });
-
-  it("resetColumnWidth restores the declared width, or none", () => {
-    const { service, state } = makeService({
-      state: createTableState({
-        columns: [
-          { key: "id", label: "ID", width: 80 },
-          { key: "name", label: "Name" },
-        ],
-        rowKey: "id",
-      }),
-      config: {
-        columns: [
-          { key: "id", label: "ID", width: 80 },
-          { key: "name", label: "Name" },
-        ],
-      },
-    });
-    expect(service.columnWidth("id")).toBe(80);
-    service.resizeColumn("id", 300);
-    service.resizeColumn("name", 300);
-    service.resetColumnWidth("id");
-    service.resetColumnWidth("name");
-    expect(service.columnWidths).toEqual({ id: 80 });
-    const before = state.columnWidths;
-    service.resetColumnWidth("name");
-    expect(state.columnWidths).toBe(before);
-  });
-
-  it("resetColumns restores the declared widths", () => {
-    const columns = [
-      { key: "id" as const, label: "ID", width: 80 },
-      { key: "name" as const, label: "Name" },
-    ];
-    const { service } = makeService({
-      state: createTableState({ columns, rowKey: "id" }),
-      config: { columns },
-    });
-    service.resizeColumn("id", 300);
-    service.resizeColumn("name", 300);
-    service.resetColumns();
-    expect(service.columnWidths).toEqual({ id: 80 });
-  });
-
-  it("colSpan adds a column each for row actions and bulk actions", () => {
-    const plain = makeService();
-    expect(plain.service.colSpan).toBe(fakeColumns.length);
-    const armed = makeService({
-      config: { actions: fakeActions, bulkActions: fakeBulkActions },
-    });
-    expect(armed.service.colSpan).toBe(fakeColumns.length + 2);
+    await service.fetch();
+    table.toggleAllPageRowsSelected(true);
+    state.data = [{ ...fakeRows[0]!, id: 9 }];
+    expect(table.getIsAllPageRowsSelected()).toBe(false);
+    expect(table.getSelectedRowIds()).toEqual(["1", "2", "3"]);
   });
 });
 
@@ -430,17 +311,6 @@ describe("actions", () => {
     });
     expect(service.actions.map((a) => a.key)).toEqual(["edit", "delete"]);
     expect(service.bulkActions.map((a) => a.key)).toEqual(["deleteSelected"]);
-  });
-
-  it("hasActions and isSelectable follow the config", () => {
-    const bare = makeService().service;
-    expect(bare.hasActions).toBe(false);
-    expect(bare.isSelectable).toBe(false);
-    const { service } = makeService({
-      config: { actions: fakeActions, bulkActions: fakeBulkActions },
-    });
-    expect(service.hasActions).toBe(true);
-    expect(service.isSelectable).toBe(true);
   });
 
   it("runAction dispatches a row to the handler under the key", () => {
@@ -455,16 +325,17 @@ describe("actions", () => {
     expect(edit).toHaveBeenCalledExactlyOnceWith(row);
   });
 
-  it("runBulkAction dispatches the current selection", () => {
+  it("runBulkAction dispatches the ids of the selected rows", async () => {
     const deleteSelected = vi.fn();
-    const { service } = makeService({
+    const { service, table } = makeService({
       config: { bulkActions: fakeBulkActions },
       actions: { ...makeActions(), bulkActions: { deleteSelected } },
     });
-    service.toggleRow("1");
-    service.toggleRow("2");
+    await service.fetch();
+    table.getRow("1").toggleSelected(true);
+    table.getRow("2").toggleSelected(true);
     service.runBulkAction("deleteSelected");
-    expect(deleteSelected).toHaveBeenCalledExactlyOnceWith(new Set(["1", "2"]));
+    expect(deleteSelected).toHaveBeenCalledExactlyOnceWith(["1", "2"]);
   });
 
   it("the live action closures call the handlers under their keys", () => {
@@ -479,29 +350,27 @@ describe("actions", () => {
       },
     });
     service.actions[0]!.action(fakeRows[0]!);
-    service.bulkActions[0]!.action(new Set(["9"]));
+    service.bulkActions[0]!.action(["9"]);
     expect(edit).toHaveBeenCalledWith(fakeRows[0]);
-    expect(deleteSelected).toHaveBeenCalledWith(new Set(["9"]));
+    expect(deleteSelected).toHaveBeenCalledWith(["9"]);
   });
 });
 
 describe("query", () => {
-  it("carries a column's link on the column and not on its field", () => {
-    const link = (row: FakeRow) => `/rows/${row.id}`;
-    const { service } = makeService({
-      config: { columns: [{ key: "name", label: "Name", type: "text", link }] },
-    });
-    expect(service.columns).toEqual([
-      { key: "name", label: "Name", type: "text", link },
+  it("keys one field per filterable column, in column order, labeled by its meta", () => {
+    const { service } = makeService();
+    expect(Object.keys(service.query.fields)).toEqual([
+      "id",
+      "name",
+      "status",
+      "created",
+      "amount",
     ]);
-    expect(service.query.fields).toEqual({ name: { label: "Name" } });
+    expect(service.query.fields.name).toEqual({ label: "Name" });
   });
 
-  it("fields mirror the filterable columns with their declared operators, defaults, and values", () => {
+  it("gives a field the operators, default operator, and values its column declares", () => {
     const { service } = makeService();
-    expect(Object.keys(service.query.fields)).toEqual(
-      service.filterableColumns.map((c) => String(c.key)),
-    );
     expect(service.query.fields.amount).toEqual({
       label: "Amount",
       operators: ["over", "under", "is"],
@@ -517,7 +386,72 @@ describe("query", () => {
       label: "Status",
       values: ["Active", "Inactive", "Pending"],
     });
-    expect(service.query.fields.name).toEqual({ label: "Name" });
+  });
+
+  it("labels a column without one by its id, and drops an empty operator list with its default", () => {
+    const { service } = makeService({
+      config: {
+        columns: [
+          { accessorKey: "name" },
+          {
+            accessorKey: "amount",
+            meta: { label: "Amount", operators: [], defaultOperator: "is" },
+          },
+        ],
+      },
+    });
+    expect(service.query.fields).toEqual({
+      name: { label: "name" },
+      amount: { label: "Amount" },
+    });
+  });
+
+  it("lets a date column's own values win over the days", () => {
+    const { service } = makeService({
+      config: {
+        columns: [
+          {
+            accessorKey: "created",
+            meta: { label: "Created", type: "date", values: ["today"] },
+          },
+        ],
+      },
+    });
+    expect(service.query.fields.created).toEqual({
+      label: "Created",
+      values: ["today"],
+    });
+  });
+
+  it("carries a meta's properties beyond the ones the table reads onto the field, and keeps the link off it", () => {
+    const link = (row: FakeRow) => `/rows/${row.id}`;
+    const meta = { label: "Name", align: "right" as const, link, icon: "user" };
+    const { service, table } = makeService({
+      config: { columns: [{ accessorKey: "name", meta }] },
+    });
+    expect(table.getColumn("name")?.columnDef.meta?.link).toBe(link);
+    expect(service.query.fields.name).toEqual({ label: "Name", icon: "user" });
+  });
+
+  it("leaves out a column that reads no value, an action or an image one, unless its meta says", () => {
+    const { service } = makeService({
+      config: {
+        columns: [
+          { accessorKey: "name", meta: { label: "Name" } },
+          { id: "open", meta: { label: "Open" } },
+          { accessorKey: "id", meta: { label: "Run", type: "action" } },
+          {
+            accessorKey: "status",
+            meta: { label: "Avatar", type: "image", filterable: true },
+          },
+          {
+            accessorKey: "amount",
+            meta: { label: "Amount", filterable: false },
+          },
+        ],
+      },
+    });
+    expect(Object.keys(service.query.fields)).toEqual(["name", "status"]);
   });
 
   it("suggests days for a date column, today first in the config's zone", () => {
@@ -569,20 +503,20 @@ describe("query", () => {
     expect(state.draft).toBe("Sta");
   });
 
-  it("a change to the entries resets the page, refetches, and emits filtered", () => {
+  it("a change to the entries goes to the first page, refetches once, and emits filtered", () => {
     const { service, state, actions, filtered } = makeService();
-    state.page = 3;
+    state.pagination = { pageIndex: 3, pageSize: 10 };
     service.query.add({ kind: "literal", key: "text", value: "acme" });
-    expect(service.page).toBe(1);
+    expect(state.pagination).toEqual({ pageIndex: 0, pageSize: 10 });
     expect(actions.fetch).toHaveBeenCalledOnce();
     expect(filtered).toHaveBeenCalledWith({
       id: "test-table",
       query: "acme",
       filters: [],
     });
-    state.page = 2;
+    state.pagination = { pageIndex: 1, pageSize: 10 };
     service.query.add({ kind: "filter", key: "status", value: "Active" });
-    expect(service.page).toBe(1);
+    expect(state.pagination.pageIndex).toBe(0);
     expect(actions.fetch).toHaveBeenCalledTimes(2);
     expect(filtered).toHaveBeenLastCalledWith({
       id: "test-table",
@@ -619,6 +553,23 @@ describe("query", () => {
       { key: "created", op: "on", value: "2026-02-01" },
     ]);
     expect(service.query.draft).toBe("");
+  });
+
+  it("starts from the config's initial entries", async () => {
+    const config = {
+      ...base,
+      initialEntries: [
+        { kind: "filter" as const, key: "status", value: "Active" },
+      ],
+    };
+    const { service, actions } = makeService({ config });
+    await service.fetch();
+    expect(actions.fetch).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        filters: [{ key: "status", value: "Active" }],
+      }),
+      service,
+    );
   });
 
   it("fetch params carry the query's text and filters", async () => {
@@ -663,74 +614,68 @@ describe("query", () => {
     expect(service.currency).toBe("EUR");
     expect(service.timeZone).toBe("Europe/Berlin");
   });
-
-  it("filterableColumns excludes action and image columns by default", () => {
-    const { service } = makeService({
-      config: {
-        columns: [
-          ...fakeColumns,
-          { key: "id", label: "Open", type: "action" },
-          { key: "name", label: "Avatar", type: "image", filterable: true },
-        ],
-      },
-    });
-    const labels = service.filterableColumns.map((c) => c.label);
-    expect(labels).not.toContain("Open");
-    expect(labels).toContain("Avatar");
-    expect(labels).toContain("Name");
-  });
 });
 
 describe("middleware", () => {
-  it("get middleware shapes every read of its field", () => {
-    const { service, state } = makeService({
-      options: { get: { state: { page: (page) => page * 10 } } },
+  it("get middleware shapes every read of its field, the table's included", () => {
+    const { table, state } = makeService({
+      options: {
+        get: { state: { columnVisibility: (v) => ({ ...v, amount: false }) } },
+      },
     });
-    state.page = 2;
-    expect(service.page).toBe(20);
-    expect(state.page).toBe(2);
+    expect(table.getColumn("amount")?.getIsVisible()).toBe(false);
+    expect(state.columnVisibility).toEqual({});
   });
 
-  it("set middleware shapes the stored value, the query's slice included", () => {
-    const { service, state } = makeService({
-      options: { set: { state: { draft: (draft) => draft.trim() } } },
+  it("set middleware shapes the stored value, the table's and the query's slices included", () => {
+    const { service, table, state } = makeService({
+      options: {
+        set: {
+          state: {
+            draft: (draft) => draft.trim(),
+            pagination: (p) => ({ ...p, pageSize: Math.min(p.pageSize, 50) }),
+          },
+        },
+      },
     });
     service.query.setDraft("  acme  ");
+    table.setPageSize(100);
     expect(state.draft).toBe("acme");
     expect(service.query.draft).toBe("acme");
+    expect(state.pagination.pageSize).toBe(50);
   });
 
   it("a missing slot passes the value on", () => {
-    const { service, state } = makeService({ options: { get: {}, set: {} } });
-    service.setPageSize(50);
-    expect(state.pageSize).toBe(50);
-    expect(service.pageSize).toBe(50);
+    const { table, state } = makeService({ options: { get: {}, set: {} } });
+    table.setPageSize(50);
+    expect(state.pagination.pageSize).toBe(50);
   });
 });
 
 describe("events", () => {
-  it("emits change for every write, after the set middleware", () => {
+  it("emits change for every write, a write through the table included", () => {
     const changes: Change<FakeRow>[] = [];
-    const { service } = makeService({
-      options: { set: { state: { pageSize: (size) => Math.min(size, 50) } } },
-    });
+    const { service, table } = makeService();
     service.on("change", (change) => changes.push(change));
-    service.setPageSize(100);
+    table.setPageSize(20);
     expect(changes).toEqual([
-      { field: "pageSize", before: 25, after: 50 },
-      { field: "page", before: 1, after: 1 },
+      {
+        field: "pagination",
+        before: { pageIndex: 0, pageSize: 10 },
+        after: { pageIndex: 0, pageSize: 20 },
+      },
       { field: "loading", before: false, after: true },
     ]);
   });
 
   it("change narrows on field", () => {
-    const { service } = makeService();
+    const { service, table } = makeService();
     const seen: number[] = [];
     service.on("change", (change) => {
-      if (change.field === "page") seen.push(change.after);
+      if (change.field === "pagination") seen.push(change.after.pageSize);
     });
-    service.setPageSize(10);
-    expect(seen).toEqual([1]);
+    table.setPageSize(20);
+    expect(seen).toEqual([20]);
   });
 
   it("calls listeners in subscription order and unsubscribes", async () => {
@@ -754,12 +699,6 @@ describe("events", () => {
     await service.fetch();
     await service.fetch();
     expect(calls).toHaveBeenCalledOnce();
-  });
-
-  it("skips the change object when nothing listens", () => {
-    const { service, state } = makeService();
-    service.goToPage(1);
-    expect(state.page).toBe(1);
   });
 });
 

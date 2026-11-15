@@ -6,9 +6,9 @@ import type { FakeRow } from "#test/data/table";
 
 import { describe, expect, it } from "vitest";
 import { accessTable } from "../../../app/stores/table";
-import { fakeColumns } from "#test/data/table";
+import { fakeColumns, getRowId } from "#test/data/table";
 
-const config: Config<FakeRow> = { columns: fakeColumns, rowKey: "id" };
+const config: Config<FakeRow> = { columns: fakeColumns, getRowId };
 
 describe("accessTable", () => {
   it("initializes the container from the config defaults", () => {
@@ -16,27 +16,25 @@ describe("accessTable", () => {
     expect(state.initialized).toBe(false);
     expect(state.loading).toBe(false);
     expect(state.data).toEqual([]);
-    expect(state.page).toBe(1);
-    expect(state.pageSize).toBe(25);
-    expect(state.sortField).toBeNull();
-    expect(state.selected).toEqual(new Set());
-    expect(state.columnOrder).toEqual(["id", "name", "status", "amount"]);
+    expect(state.pagination).toEqual({ pageIndex: 0, pageSize: 10 });
+    expect(state.sorting).toEqual([]);
+    expect(state.rowSelection).toEqual({});
+    expect(state.columnOrder).toEqual([]);
     expect(state.entries).toEqual([]);
   });
 
-  it("seeds the container from the initial slice", () => {
-    const state = accessTable("t1", config, {
-      page: 3,
-      pageSize: 50,
-      sortField: "name",
-      sortDirection: "desc",
-      columnOrder: ["name", "id"],
-      entries: [{ kind: "literal", key: "text", value: "ali" }],
+  it("seeds the container from the config's initial state and entries", () => {
+    const state = accessTable("t1", {
+      ...config,
+      initialState: {
+        pagination: { pageIndex: 2, pageSize: 50 },
+        sorting: [{ id: "name", desc: true }],
+        columnOrder: ["name", "id"],
+      },
+      initialEntries: [{ kind: "literal", key: "text", value: "ali" }],
     });
-    expect(state.page).toBe(3);
-    expect(state.pageSize).toBe(50);
-    expect(state.sortField).toBe("name");
-    expect(state.sortDirection).toBe("desc");
+    expect(state.pagination).toEqual({ pageIndex: 2, pageSize: 50 });
+    expect(state.sorting).toEqual([{ id: "name", desc: true }]);
     expect(state.columnOrder).toEqual(["name", "id"]);
     expect(state.entries).toEqual([
       { kind: "literal", key: "text", value: "ali" },
@@ -46,18 +44,21 @@ describe("accessTable", () => {
   });
 
   it("same id shares state across calls and seeds only once", () => {
-    const first = accessTable("t1", config, { pageSize: 50 });
-    first.page = 2;
-    const second = accessTable("t1", config, { pageSize: 10 });
+    const sized = (pageSize: number): Config<FakeRow> => ({
+      ...config,
+      initialState: { pagination: { pageIndex: 0, pageSize } },
+    });
+    const first = accessTable("t1", sized(50));
+    first.pagination = { pageIndex: 1, pageSize: 50 };
+    const second = accessTable("t1", sized(10));
     expect(second).toBe(first);
-    expect(second.page).toBe(2);
-    expect(second.pageSize).toBe(50);
+    expect(second.pagination).toEqual({ pageIndex: 1, pageSize: 50 });
   });
 
   it("different ids get independent state", () => {
     const a = accessTable("t1", config);
     const b = accessTable("t2", config);
-    a.page = 4;
-    expect(b.page).toBe(1);
+    a.pagination = { pageIndex: 3, pageSize: 10 };
+    expect(b.pagination.pageIndex).toBe(0);
   });
 });

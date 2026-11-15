@@ -1,65 +1,65 @@
 import { describe, expect, it } from "vitest";
 import { createTableState } from "../src/state";
-import { TABLE_DEFAULT_PAGE_SIZE, TABLE_STATE_FIELDS } from "../src/constants";
-import { fakeColumns } from "./data";
+import { TABLE_STATE_FIELDS } from "../src/constants";
+import { fakeColumns, getRowId } from "./data";
 import type { FakeRow } from "./data";
+import type { Config } from "../src/types";
 
-const config = { columns: fakeColumns, rowKey: "id" as const };
+const config: Config<FakeRow> = { columns: fakeColumns, getRowId };
 
 describe("createTableState", () => {
   it("initializes every field with its default", () => {
-    const state = createTableState<FakeRow>(config);
-    expect(state).toEqual({
+    expect(createTableState<FakeRow>(config)).toEqual({
+      pagination: { pageIndex: 0, pageSize: 10 },
+      sorting: [],
+      rowSelection: {},
+      columnOrder: [],
+      columnVisibility: {},
+      columnSizing: {},
       data: [],
+      rowCount: 0,
       loading: false,
       initialized: false,
-      page: 1,
-      pageSize: TABLE_DEFAULT_PAGE_SIZE,
-      total: 0,
-      pageCount: 0,
-      sortField: null,
-      sortDirection: "asc",
-      selected: new Set(),
-      columnOrder: fakeColumns.map((c) => String(c.key)),
-      columnWidths: {},
       entries: [],
       draft: "",
       suggest: { options: [], status: "idle", more: false },
     });
   });
 
-  it("defaultColumnOrder overrides the column-derived order", () => {
+  it("starts each slice from the config's initial state", () => {
     const state = createTableState<FakeRow>({
       ...config,
-      defaultColumnOrder: ["name", "id"],
+      initialState: {
+        pagination: { pageIndex: 2, pageSize: 50 },
+        sorting: [{ id: "name", desc: true }],
+        columnVisibility: { amount: false },
+      },
+      initialEntries: [{ kind: "literal", key: "text", value: "acme" }],
     });
-    expect(state.columnOrder).toEqual(["name", "id"]);
+    expect(state.pagination).toEqual({ pageIndex: 2, pageSize: 50 });
+    expect(state.sorting).toEqual([{ id: "name", desc: true }]);
+    expect(state.columnVisibility).toEqual({ amount: false });
+    expect(state.rowSelection).toEqual({});
+    expect(state.entries).toEqual([
+      { kind: "literal", key: "text", value: "acme" },
+    ]);
   });
 
-  it("seeds columnWidths from the widths the columns declare", () => {
-    const state = createTableState<FakeRow>({
-      ...config,
-      columns: [
-        { key: "id", label: "ID", width: 80 },
-        { key: "name", label: "Name" },
-      ],
-    });
-    expect(state.columnWidths).toEqual({ id: 80 });
+  it("holds exactly the fields the service proxies", () => {
+    expect(Object.keys(createTableState<FakeRow>(config)).sort()).toEqual(
+      Object.keys(TABLE_STATE_FIELDS).sort(),
+    );
   });
 
-  it("each call returns an independent container", () => {
+  it("builds a container of its own on every call", () => {
     const a = createTableState<FakeRow>(config);
     const b = createTableState<FakeRow>(config);
-    a.page = 2;
-    a.selected.add("1");
-    expect(b.page).toBe(1);
-    expect(b.selected.size).toBe(0);
+    expect(a.pagination).not.toBe(b.pagination);
+    expect(a.rowSelection).not.toBe(b.rowSelection);
   });
 
-  it("TABLE_STATE_FIELDS names exactly the container's fields", () => {
+  it("survives a JSON round trip, as a server payload carries it", () => {
     const state = createTableState<FakeRow>(config);
-    expect(Object.keys(TABLE_STATE_FIELDS).sort()).toEqual(
-      Object.keys(state).sort(),
-    );
+    expect(JSON.parse(JSON.stringify(state))).toEqual(state);
   });
 });

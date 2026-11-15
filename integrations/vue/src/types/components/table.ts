@@ -11,7 +11,7 @@ import type {
 import type { TableBulkActionsSlots } from "./table-bulk-actions";
 import type { PT, Rendered } from "../passthrough";
 import type { Definition } from "../definition";
-import type { Events, Service } from "@zoobzio/table";
+import type { Events, RowData, Service } from "@zoobzio/table";
 import type { VNode } from "vue";
 
 /**
@@ -32,7 +32,7 @@ export type TablePassthrough = {
  * owns no feature state. The service's state container must be reactive
  * for the table to update.
  */
-export type TableProps<T> = {
+export type TableProps<T extends RowData> = {
   service: Service<T>;
   pt?: PT<TablePassthrough> & {
     head?: PT<TableHeadPassthrough<T>>;
@@ -47,7 +47,7 @@ export type TableProps<T> = {
  * fold the emit keys statically for `defineEmits`. `TABLE_EVENTS` names the
  * relayed subset and is checked against these keys.
  */
-export type TableEmits<T> = {
+export type TableEmits<T extends RowData> = {
   updated: Events<T>["updated"];
   filtered: Events<T>["filtered"];
 };
@@ -55,7 +55,7 @@ export type TableEmits<T> = {
 /**
  * The table view model, served to `defineExpose` and the slots.
  */
-export type TableContext<T> = {
+export type TableContext<T extends RowData> = {
   table: Service<T>;
   el: HTMLDivElement | null;
   settings: TablePassthrough;
@@ -64,7 +64,7 @@ export type TableContext<T> = {
 /**
  * Slots of the table: its own regions plus every child slot, relayed.
  */
-export type TableSlots<T> = TableHeadSlots<T> &
+export type TableSlots<T extends RowData> = TableHeadSlots<T> &
   TableBodySlots<T> &
   TableColumnsSlots<T> &
   TableBulkActionsSlots<T> & {
@@ -77,4 +77,7 @@ export type TableSlots<T> = TableHeadSlots<T> &
 /**
  * A table instance as data: props plus emit listeners.
  */
-export type TableDefinition<T> = Definition<TableProps<T>, TableEmits<T>>;
+export type TableDefinition<T extends RowData> = Definition<
+  TableProps<T>,
+  TableEmits<T>
+>;

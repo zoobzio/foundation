@@ -6,6 +6,7 @@ import type {
   TableColumnsProps,
   TableColumnsSlots,
 } from "../types/components/table-columns";
+import type { RowData } from "@zoobzio/table";
 import type { ComponentPublicInstance } from "vue";
 
 import Command from "./command.vue";
@@ -26,7 +27,7 @@ import {
 } from "../constants/table";
 </script>
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends RowData">
 const { service, open = undefined, pt } = defineProps<TableColumnsProps<T>>();
 
 const emit = defineEmits<TableColumnsEmits>();
@@ -40,8 +41,11 @@ const $open = useModel(
 const el = useTemplateRef<ComponentPublicInstance>("el");
 
 const settings = usePassthrough<TableColumnsPassthrough>(() => {
-  const options = service.columns.map((c) => columnOption(service, c));
-  const visible = new Set(service.columnOrder);
+  const columns = service.table.getAllLeafColumns();
+  const options = columns.map(columnOption);
+  const visible = new Set(
+    columns.filter((c) => c.getIsVisible()).map((c) => c.id),
+  );
   return {
     pt,
     recipes: {
@@ -60,7 +64,12 @@ const settings = usePassthrough<TableColumnsPassthrough>(() => {
         multiple: true,
         placeholder: TABLE_COLUMNS_PLACEHOLDER,
         "onUpdate:modelValue": (v) => {
-          service.setVisibleColumns((v ?? []).map((o) => o.value));
+          const wanted = new Set((v ?? []).map((o) => o.value));
+          service.table.setColumnVisibility(
+            Object.fromEntries(
+              columns.map((c) => [c.id, wanted.has(c.id) || !c.getCanHide()]),
+            ),
+          );
         },
       },
     },
