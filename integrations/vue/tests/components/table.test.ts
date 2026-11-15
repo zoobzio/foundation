@@ -1,8 +1,10 @@
 import type { TableProps } from "../../src/types/components/table";
 import type { FakeRow } from "#test/data/table";
 import type { DataTableColumn } from "@zoobzio/table";
+import type { FunctionalComponent } from "vue";
 
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { h } from "vue";
 import { flushPromises, mount } from "@vue/test-utils";
 import Table from "../../src/components/table.vue";
 import { makeTable } from "#test/mount/table";
@@ -73,6 +75,49 @@ describe("table", () => {
       service,
     );
     expect(name.classes()).toContain("f-data-table-sorted");
+  });
+
+  it("renders the table element within a horizontal scroller", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const scroller = wrapper.get(".f-data-table > .f-data-table-scroller");
+    expect(scroller.classes()).toContain("f-scroll-area-root");
+    expect(scroller.find(".f-scroll-area-viewport .f-table").exists()).toBe(
+      true,
+    );
+    // The toolbar and the pagination stay outside what scrolls.
+    expect(scroller.find(".f-data-table-toolbar").exists()).toBe(false);
+    expect(wrapper.findAll(".f-data-table > *").at(-1)?.element).not.toBe(
+      scroller.element,
+    );
+  });
+
+  it("holds the table element at the floor of its columns", async () => {
+    const { service } = makeTable({
+      columns: [
+        { key: "id", label: "ID", type: "number" },
+        { key: "name", label: "Name", type: "text", width: 200 },
+      ],
+    });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const table = wrapper.get(".f-table");
+    expect(table.attributes("style")).toContain("min-width: 248px");
+    service.resizeColumn("name", 900);
+    await flushPromises();
+    expect(table.attributes("style")).toContain("min-width: 948px");
+  });
+
+  it("swaps the scroller through its passthrough", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const Plain: FunctionalComponent = (_, { slots }) =>
+      h("section", slots.default?.());
+    const wrapper = mountTable({ service, pt: { scroller: { as: Plain } } });
+    expect(
+      wrapper.find("section.f-data-table-scroller > .f-table").exists(),
+    ).toBe(true);
   });
 
   it("renders a resizer on every column border and widths by value", async () => {

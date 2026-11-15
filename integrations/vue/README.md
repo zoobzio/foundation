@@ -164,6 +164,25 @@ strip on the `th`'s inline end, with `cursor: col-resize` and
 `table-layout: fixed` a `col`'s width is the column's width, while the
 default `auto` layout treats it as a preference the content can exceed.
 
+The `table` element renders within a scroller, `.f-data-table-scroller`,
+a horizontal `scroller.vue` between the toolbar and the pagination, so
+columns resized past the space the table has scroll within it, and the
+toolbar, the bulk actions, and the pagination keep their width.
+`pt.scroller` configures it or swaps it through `as`. A fixed-layout table
+is at least as wide as its sized columns add up to, whatever its `width`
+says, so the stylesheet bounds the scroller rather than the table: where
+the root is a grid or a flex container its track must be free to shrink
+(`grid-template-columns: minmax(0, 1fr)`, or `min-width: 0` on the
+scroller), or the root grows with the table and nothing scrolls. The
+table's frame (border, radius, clipping) belongs on the scroller, and the
+scrollbar is the scroller's own `.f-scroll-area-scrollbar` and
+`.f-scroll-area-thumb`. The `table` element carries the service's
+`columnsMinWidth` as an inline `min-width`, so a column that grows takes
+space from the unsized ones only down to their minimum, and from there the
+table widens and scrolls. The floor counts the data columns alone: the
+select and actions columns are the stylesheet's, and their width comes out
+of it.
+
 `form.vue` renders a headless `@zoobzio/form` service the same way: one
 `form-field.vue` per config field, each resolved to the control its `type`
 names (`input`, `textarea`, `select`, `multiSelect`, `checkbox`, `radio`,

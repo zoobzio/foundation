@@ -1,6 +1,7 @@
 import type { AutocompleteEmits, AutocompleteProps } from "./autocomplete";
 import type { FabEmits, FabProps } from "./fab";
 import type { PaginationEmits, PaginationProps } from "./pagination";
+import type { ScrollerProps } from "./scroller";
 import type { TableHeadPassthrough, TableHeadSlots } from "./table-head";
 import type { TableBodyPassthrough, TableBodySlots } from "./table-body";
 import type {
@@ -15,11 +16,14 @@ import type { VNode } from "vue";
 
 /**
  * The parts of the table that accept passthrough. `search` is the
- * autocomplete over the table's search machine.
+ * autocomplete over the table's search machine. `scroller` is the scroll
+ * area around the `table` element, which scrolls it on the inline axis
+ * once its columns outgrow the space the table has.
  */
 export type TablePassthrough = {
   search: Rendered<AutocompleteProps, AutocompleteEmits>;
   refresh: Rendered<FabProps, FabEmits>;
+  scroller: Rendered<ScrollerProps>;
   pagination: Rendered<PaginationProps, PaginationEmits>;
 };
 

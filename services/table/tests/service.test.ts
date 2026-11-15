@@ -11,6 +11,7 @@ import type {
   Actions,
   Change,
   Config,
+  DataTableColumn,
   DataTableFetchResult,
   Options,
   State,
@@ -325,6 +326,24 @@ describe("columns", () => {
     expect(service.columnMinWidth("name")).toBe(120);
     service.resizeColumn("name", 50);
     expect(service.columnWidth("name")).toBe(120);
+  });
+
+  it("columnsMinWidth holds sized columns at their width and unsized ones at the widest minimum", () => {
+    const columns: DataTableColumn<FakeRow>[] = [
+      { key: "id", label: "ID", width: 80 },
+      { key: "name", label: "Name", minWidth: 120 },
+      { key: "status", label: "Status" },
+    ];
+    const { service } = makeService({
+      config: { columns },
+      state: createTableState<FakeRow>({ columns, rowKey: "id" }),
+    });
+    // 80 sized, and two unsized that share evenly: 120 each.
+    expect(service.columnsMinWidth).toBe(80 + 2 * 120);
+    service.resizeColumn("name", 300);
+    expect(service.columnsMinWidth).toBe(80 + 300 + TABLE_MIN_COLUMN_WIDTH);
+    service.toggleColumn("status");
+    expect(service.columnsMinWidth).toBe(80 + 300);
   });
 
   it("resizeColumn replaces the widths and emits change", () => {

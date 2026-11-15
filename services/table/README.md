@@ -88,6 +88,12 @@ it names none. `resetColumnWidth(key)` restores the declared width, or
 none; `resetColumns()` restores the declared widths along with the default
 order. Each write replaces the record and emits `change`.
 
+`columnsMinWidth` is the narrowest the visible columns go together: the
+widths of the sized ones, plus room for every unsized one to hold the
+widest `minWidth` among them, as a view shares what is left evenly between
+the unsized. A view holds its table at it, so a column resized past the
+space there is leaves the others at their minimum rather than at nothing.
+
 ```ts
 const columns = [
   { key: "id", label: "ID", width: 80 },

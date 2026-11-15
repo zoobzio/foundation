@@ -14,6 +14,7 @@ import TableHead from "./table-head.vue";
 import Autocomplete from "./autocomplete.vue";
 import Fab from "./fab.vue";
 import Pagination from "./pagination.vue";
+import Scroller from "./scroller.vue";
 
 import Primitive from "./primitive.vue";
 
@@ -67,6 +68,10 @@ const settings = usePassthrough<TablePassthrough>(() => ({
       as: Fab,
       label: TABLE_REFRESH_LABEL,
       onClick: () => service.fetch(),
+    },
+    scroller: {
+      as: Scroller,
+      orientation: "horizontal",
     },
     pagination: {
       as: Pagination,
@@ -138,19 +143,24 @@ const { THead, TBody } = useForward({
       </template>
     </TableBulkActions>
 
-    <table class="f-table">
-      <colgroup>
-        <col v-if="isSelectable" class="f-data-table-select" />
-        <col
-          v-for="col in visibleColumns"
-          :key="String(col.key)"
-          :style="widthOf(col.key)"
-        />
-        <col v-if="hasActions" class="f-data-table-actions" />
-      </colgroup>
-      <THead />
-      <TBody />
-    </table>
+    <Primitive v-bind="settings.scroller" class="f-data-table-scroller">
+      <table
+        class="f-table"
+        :style="{ minWidth: `${service.columnsMinWidth}px` }"
+      >
+        <colgroup>
+          <col v-if="isSelectable" class="f-data-table-select" />
+          <col
+            v-for="col in visibleColumns"
+            :key="String(col.key)"
+            :style="widthOf(col.key)"
+          />
+          <col v-if="hasActions" class="f-data-table-actions" />
+        </colgroup>
+        <THead />
+        <TBody />
+      </table>
+    </Primitive>
 
     <slot name="pagination" v-bind="ctx">
       <Primitive v-bind="settings.pagination" />

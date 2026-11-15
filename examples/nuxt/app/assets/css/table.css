@@ -11,8 +11,11 @@
   max-width: 64rem;
 }
 
+/* One track that may shrink below its content, so a table wider than the
+   space it has scrolls in its scroller instead of widening the root. */
 .f-data-table {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   min-width: 0;
 }
@@ -295,17 +298,37 @@
 
 /* --- table ----------------------------------------------------------- */
 
+/* The scroller frames the table and scrolls it sideways once its columns
+   are resized past the space it has. */
+.f-data-table-scroller {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
+.f-data-table-scroller .f-scroll-area-scrollbar {
+  display: flex;
+  flex-direction: column;
+  height: 0.5rem;
+  padding: 1px;
+  touch-action: none;
+  user-select: none;
+}
+
+.f-data-table-scroller .f-scroll-area-thumb {
+  flex: 1;
+  background: var(--outline-muted);
+  border-radius: var(--shape-md);
+}
+
 /* A fixed layout, so a column holds the width it is resized to and the
    unsized ones share what is left. */
 .f-data-table .f-table {
   width: 100%;
   table-layout: fixed;
-  overflow: hidden;
   border-collapse: separate;
   border-spacing: 0;
-  background: var(--surface);
-  border: 1px var(--stroke-solid) var(--outline-muted);
-  border-radius: var(--shape-md);
 }
 
 .f-data-table .f-tbody {

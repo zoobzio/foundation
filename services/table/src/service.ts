@@ -317,6 +317,21 @@ export class TableService<T> implements Service<T> {
     return this.columnMap.get(key)?.minWidth ?? TABLE_MIN_COLUMN_WIDTH;
   }
 
+  get columnsMinWidth(): number {
+    let sized = 0;
+    let unsized = 0;
+    let floor = 0;
+    for (const column of this.visibleColumns) {
+      const key = String(column.key);
+      const width = this.columnWidth(key);
+      if (width === undefined) {
+        unsized += 1;
+        floor = Math.max(floor, this.columnMinWidth(key));
+      } else sized += width;
+    }
+    return sized + unsized * floor;
+  }
+
   resizeColumn(key: string, width: number): void {
     if (!this.columnMap.has(key) || !Number.isFinite(width)) return;
     const next = Math.max(this.columnMinWidth(key), Math.round(width));

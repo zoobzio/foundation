@@ -335,6 +335,14 @@ export type Service<T> = {
    */
   columnMinWidth(key: string): number;
   /**
+   * The narrowest the visible columns go together, in pixels: the widths
+   * of the sized ones, plus room for every unsized one to hold the widest
+   * minimum among them, as a view shares what is left evenly between the
+   * unsized. A view holds its table at it, so a column resized past the
+   * space there is leaves the others at their minimum, not at nothing.
+   */
+  readonly columnsMinWidth: number;
+  /**
    * Sets the width of a column, rounded to a whole pixel and held at the
    * column's minimum. An unknown key and a width that is not a finite
    * number are ignored.

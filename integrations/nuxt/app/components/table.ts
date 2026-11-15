@@ -3,7 +3,8 @@
 // draws), the layer's Checkbox for the row and select-all checkboxes, the
 // layer's Command behind the column manager, the layer's TableSearch (its
 // Autocomplete with the `magic` icon, the `/` key hint, and the `/` key
-// focusing it) as the search, and the layer's Pagination.
+// focusing it) as the search, the layer's Scroller around the `table`
+// element, and the layer's Pagination.
 // Its Fab slots draw the `refresh`, `columns`, and `actions` icons; the
 // head draws `drag` on each handle, a column's own `icon` before its
 // header, and `sort-asc` or `sort-desc` after a sorted header; a bulk action
@@ -29,6 +30,7 @@ import Checkbox from "./checkbox";
 import Command from "./command";
 import Menu from "./menu";
 import Pagination from "./pagination";
+import Scroller from "./scroller";
 import TableSearch from "./table-search";
 import { icon, iconOf, iconPart } from "./icon";
 import { cellSlots } from "./cell";
@@ -44,6 +46,7 @@ export default wrap(Core, {
     },
     refresh: { label: text("table.refresh"), ...pt?.refresh },
     pagination: { as: Pagination, ...pt?.pagination },
+    scroller: { as: Scroller, ...pt?.scroller },
     head: layer<TableHeadPassthrough<unknown>>(pt?.head, {
       selectAllCheckbox: { as: Checkbox },
       resizer: (column) => ({
