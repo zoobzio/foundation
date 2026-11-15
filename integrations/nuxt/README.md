@@ -164,7 +164,8 @@ menu, `magic` before the table's and the browser's search, `next` after an autoc
 option that enters a stage (a field or an operator; a literal option is
 terminal and draws none) and
 `expand` after the active trail option whose stage is open, and the pagination's `first`,
-`prev`, `next`, and `last`. The table's search renders through the
+`prev`, `next`, and `last`; and on the views' menu trigger, `settings`
+before its label and `expand` after it. The table's search renders through the
 layer's `TableSearch`: its Autocomplete with the `magic` icon in
 `inputPrepend` at the front of the field, before its chips, the search
 key (`TABLE_SEARCH_KEY`, `/`) as a `kbd` in `inputAppend`, and that key
@@ -400,14 +401,15 @@ must be something Nuxt's payload can carry: plain data, with `Set` and
 `Date` allowed (devalue serializes them). A second id with the same
 options is a second, independent state.
 
-| Factory          | Store            | Hooks relayed                                                                                       |
-| ---------------- | ---------------- | --------------------------------------------------------------------------------------------------- |
-| `createTable`    | `accessTable`    | `table:updated`, `table:filtered`                                                                   |
-| `createForm`     | `accessForm`     | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed` |
-| `createBrowser`  | `accessBrowser`  | `browser:updated`, `browser:navigated`, `browser:filtered`                                          |
-| `createEditor`   | `accessEditor`   | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                             |
-| `createCode`     | `accessCode`     | `code:loaded`, `code:updated`, `code:mounted`, `code:unmounted`                                     |
-| `createCalendar` | `accessCalendar` | `calendar:navigated`, `calendar:loaded`, `calendar:changed`, `calendar:selected`                    |
+| Factory          | Store            | Hooks relayed                                                                                                            |
+| ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `createTable`    | `accessTable`    | `table:updated`, `table:filtered`, `table:restored`                                                                      |
+| `createForm`     | `accessForm`     | `form:initialized`, `form:submitted`, `form:rejected`, `form:restored`, `form:reset`, `form:failed`                      |
+| `createBrowser`  | `accessBrowser`  | `browser:updated`, `browser:navigated`, `browser:filtered`, `browser:restored`                                           |
+| `createEditor`   | `accessEditor`   | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                                                  |
+| `createCode`     | `accessCode`     | `code:loaded`, `code:updated`, `code:mounted`, `code:unmounted`                                                          |
+| `createCalendar` | `accessCalendar` | `calendar:navigated`, `calendar:loaded`, `calendar:changed`, `calendar:selected`                                         |
+| `createViews`    | `accessViews`    | `views:initialized`, `views:selected`, `views:saved`, `views:renamed`, `views:removed`, `views:reverted`, `views:failed` |
 
 Every relayed payload carries the service's `id`. `useHooks` subscribes
 for one instance: each listener fires for events with that id only, and
@@ -424,6 +426,60 @@ useHooks("users", {
 
 Each relay is also logged at `debug` under the service's id (see
 [Logging](#logging)).
+
+`createViews` builds saved views over another service. Its composable
+takes what the views are over, anything with a `snapshot` and a `restore`,
+which a table and a browser service each have; `TABLE_VIEW_SCHEMA` and
+`BROWSER_VIEW_SCHEMA` are the Zod schemas of what each yields, and
+`TableView` and `BrowserView` their types. Without a `load`, a `save`, and
+a `remove` the views live in the store alone.
+
+```ts
+import { TABLE_VIEW_SCHEMA } from "@zoobzio/nuxt/constants/views";
+import { createViews } from "@zoobzio/nuxt/factories/views";
+
+const all = TABLE_VIEW_SCHEMA.parse({});
+
+export const useUserViews = createViews("users", {
+  schema: TABLE_VIEW_SCHEMA,
+  views: [
+    { id: "all", name: "All users", payload: all },
+    {
+      id: "newest",
+      name: "Newest",
+      payload: { ...all, sorting: [{ id: "created", desc: true }] },
+    },
+  ],
+  load: () => $fetch("/api/views/users"),
+  save: (view) =>
+    $fetch(`/api/views/users/${view.id}`, { method: "PUT", body: view }),
+  remove: (view) => $fetch(`/api/views/users/${view.id}`, { method: "DELETE" }),
+});
+```
+
+```vue
+<script setup lang="ts">
+import { Table, Views } from "#components";
+
+const users = useUsers();
+const views = useUserViews(users);
+// The views first: the active one is applied, and the table's first
+// fetch reads it.
+await views.init();
+await users.init();
+</script>
+
+<template>
+  <Views :service="views" />
+  <Table :service="users" />
+</template>
+```
+
+`Views` draws the views as tabs with the active view's actions in a menu
+beside them, marks the active tab once the table moves off it, and asks
+before a switch, a discard, or a delete loses anything. A view's name
+reads from the app's contract where it is a key of it, so the app's own
+views read in the visitor's locale.
 
 The hook names and payloads are declared on `RuntimeNuxtHooks` in
 `app/app.d.ts`; the option, initial-state, and hook types live in
@@ -523,7 +579,7 @@ app/
   components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts, icons in the slots, the layer's components under nested parts; icon.ts is the icon glue they share
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
-  constants/      — error page status codes, log levels, the editor's and the calendar's tools' icons and text, the table's search key
+  constants/      — error page status codes, log levels, the editor's and the calendar's tools' icons and text, the table's search key, the schemas of a table's and a browser's saved view
   assets/css/     — reset.css, loaded by the layer config
   composables/    — useAppError, useFocusKey, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   factories/      — create<Name>(id, options) → use<Name>(): Service

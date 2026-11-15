@@ -44,6 +44,7 @@ export default defineConfig({
     remove: "lucide:x",
     rule: "lucide:minus",
     search: "lucide:search",
+    settings: "lucide:settings",
     sort: "lucide:arrow-up-down",
     "sort-asc": "lucide:arrow-up",
     "sort-desc": "lucide:arrow-down",

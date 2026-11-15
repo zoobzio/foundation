@@ -35,7 +35,9 @@ query.remove(0);
 
 Any view drives the entries through `add`, `remove`, and `clear`. A filter
 with the same key and operator replaces the one held and moves to the end,
-and so does a literal with the same key.
+and so does a literal with the same key. `replace(entries)` commits a
+whole set in place of the ones held, each checked as `add` checks it, and
+emits `changed` once.
 
 ## The draft
 

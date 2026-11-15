@@ -164,6 +164,18 @@ export interface BrowserFetchParams {
   filters: BrowserFilter[];
 }
 
+/**
+ * The browser as a visitor arranged it: the part of the container a saved
+ * view holds, the sort and the query's entries. The trail, the listing,
+ * the selection, and the draft are not part of it. Plain data, so it
+ * survives JSON.
+ */
+export interface Snapshot {
+  sortField: string | null;
+  sortDirection: SortDirection;
+  entries: Entry[];
+}
+
 export interface BrowserFetchResult<T> {
   folders: BrowserFolder<T>[];
   files: T[];
@@ -289,6 +301,7 @@ export type Actions<T> = {
  * - `navigated`: the trail changed through `open` or `navigate`.
  * - `filtered`: the query's entries changed, by the search or by leaving
  *   the folder it was typed in.
+ * - `restored`: a snapshot replaced the arrangement.
  */
 export type Events<T> = {
   change: [change: Change<T>];
@@ -297,6 +310,7 @@ export type Events<T> = {
   ];
   navigated: [event: { id: string; path: string[] }];
   filtered: [event: { id: string; query: string; filters: BrowserFilter[] }];
+  restored: [event: { id: string; snapshot: Snapshot }];
 };
 
 export type Event<T> = keyof Events<T>;
@@ -400,6 +414,20 @@ export type Service<T> = {
    * a search or a refresh took out of view.
    */
   fetch(): Promise<void>;
+
+  /**
+   * The arrangement as it stands. Each member is the container's own, so
+   * a read inside a reactive scope tracks it.
+   */
+  snapshot(): Snapshot;
+  /**
+   * Puts an arrangement in place in the folder the browser stands in: the
+   * sort and the query's entries, in one fetch. Before `init` it fetches
+   * nothing: the first fetch reads what it left. The entries go through
+   * the query, so one it rejects is left out and `snapshot` then differs
+   * from what was restored.
+   */
+  restore(snapshot: Snapshot): void;
 
   /**
    * Subscribes a listener to an event. Listeners run in subscription order.

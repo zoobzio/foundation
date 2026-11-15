@@ -834,3 +834,68 @@ describe("query", () => {
     expect(service.isFiltered).toBe(true);
   });
 });
+
+describe("views", () => {
+  const arranged = {
+    sortField: "size",
+    sortDirection: "desc" as const,
+    entries: [{ kind: "filter" as const, key: "name", value: "report" }],
+  };
+
+  it("snapshots the sort and the entries", () => {
+    const { service } = makeService();
+    service.sortBy("name");
+    expect(service.snapshot()).toEqual({
+      sortField: "name",
+      sortDirection: "asc",
+      entries: [],
+    });
+  });
+
+  it("restores an arrangement in one fetch, where it stands", async () => {
+    const { service, actions, filtered } = makeService();
+    await service.init();
+    service.open(fixture(fakeFolders[0]));
+    vi.mocked(actions.fetch).mockClear();
+    filtered.mockClear();
+    const restored = vi.fn();
+    service.on("restored", restored);
+
+    service.restore(arranged);
+
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(actions.fetch).toHaveBeenCalledWith(
+      {
+        path: [fixture(fakeFolders[0]).key],
+        sortField: "size",
+        sortDirection: "desc",
+        query: "",
+        filters: [{ key: "name", value: "report" }],
+      },
+      service,
+    );
+    expect(filtered).toHaveBeenCalledOnce();
+    expect(service.snapshot()).toEqual(arranged);
+    expect(restored).toHaveBeenCalledWith({
+      id: "test-browser",
+      snapshot: arranged,
+    });
+  });
+
+  it("fetches nothing before init", async () => {
+    const { service, actions } = makeService();
+    service.restore(arranged);
+    expect(actions.fetch).not.toHaveBeenCalled();
+    await service.init();
+    expect(actions.fetch).toHaveBeenCalledOnce();
+  });
+
+  it("fetches again once the restore is done with the query", async () => {
+    const { service, actions } = makeService();
+    await service.init();
+    service.restore(arranged);
+    vi.mocked(actions.fetch).mockClear();
+    service.query.clear();
+    expect(actions.fetch).toHaveBeenCalledOnce();
+  });
+});

@@ -42,12 +42,12 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), the code editor (code.vue), and the calendar (calendar.vue)
+  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), the code editor (code.vue), the calendar (calendar.vue), and the saved views (views.vue)
   composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode, useCalendar
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough (Passthrough, Rendered, PT), forward, slots, context, definition, wrap; per-component types in core/
   utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code, calendar
-  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code, calendar
+  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code, calendar, views
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
@@ -480,3 +480,56 @@ groups, the heading, the weekdays, the days and weeks with their
 occurrences, an occurrence's time, and `open`), for a consumer's own
 rendering. The
 month grids that pick a date are `date-grid.vue` and `date-range-grid.vue`.
+
+`views.vue` renders a headless `@zoobzio/views` service: the saved views
+of a table or a browser as a row of tabs, and the actions of the active
+one in a menu beside them. The component owns one piece of state, the name
+being typed in a dialog; everything else it renders from the service and
+writes through it. It relays the service's `selected`, `saved`, `renamed`,
+`removed`, `reverted`, and `failed` events as emits. The service's state
+container must be reactive, and so must what its `read` action reads, for
+the mark of an edited view to show.
+
+```ts
+import { reactive } from "vue";
+import { ViewsService, createViewsState } from "@zoobzio/views";
+import Views from "@zoobzio/vue/components/views.vue";
+
+const views = new ViewsService(
+  "orders",
+  config,
+  reactive(createViewsState(config)),
+  {
+    read: () => table.snapshot(),
+    apply: (payload) => table.restore(payload),
+  },
+);
+await views.init();
+```
+
+```vue
+<Views :service="views" />
+<Table :service="table" />
+```
+
+The tabs are the package's own `tabs.vue`, controlled by the service: a
+tab selects its view, and stays where it was while the service holds the
+selection. While the active view has drifted the root carries
+`f-views-drifted` and its tab an empty `f-views-badge` for a stylesheet to
+draw. The menu is `menu.vue` behind a `fab.vue`, and lists `save`,
+`saveAs`, `rename`, `revert`, and `remove`, each disabled where the view
+does not allow it or there is nothing to do: a view that is not the user's
+own offers `saveAs` and, once edited, `revert`.
+
+Two dialogs open from the service's state. The confirmation opens while
+the service holds a `pending` intent and settles it: cancel, proceed, and,
+for a held selection, save, with a name field where saving makes a new
+view. It stays open when the save fails, as the service keeps the intent.
+The naming dialog takes the name of a new view or a new name for the
+active one.
+
+The parts are `tabs`, `menu`, `trigger`, and, built per kind of intent
+and per purpose, `confirm` and `naming`. The slots are `tabPrepend`,
+`tabLabel`, `badge`, `trigger`, `actionPrepend`, `actionLabel`,
+`actionAppend`, `nameLabel`, `cancelLabel`, `saveLabel`, and
+`proceedLabel`.

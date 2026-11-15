@@ -91,6 +91,7 @@
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",
     "@zoobzio/table": "workspace:*",
+    "@zoobzio/views": "workspace:*",
     "defu": "catalog:",
     "objectively": "catalog:",
     "reka-ui": "catalog:"

@@ -148,6 +148,22 @@ export interface FetchParams {
   filters: TableFilter[];
 }
 
+/**
+ * The table as a visitor arranged it: the part of the container a saved
+ * view holds. The slices are TanStack's, under their names; `pageSize` is
+ * the page's size without its index, and `entries` the query's. The page,
+ * the selection, and the draft are not part of it. Plain data, so it
+ * survives JSON.
+ */
+export interface Snapshot {
+  sorting: TableSlices["sorting"];
+  columnOrder: TableSlices["columnOrder"];
+  columnVisibility: TableSlices["columnVisibility"];
+  columnSizing: TableSlices["columnSizing"];
+  pageSize: number;
+  entries: Entry[];
+}
+
 /** One page of rows, and the count of every row the search leaves. */
 export interface FetchResult<T extends RowData> {
   data: T[];
@@ -254,11 +270,13 @@ export type Actions<T extends RowData> = {
  * - `change`: any field of the container was written.
  * - `updated`: a fetch settled, success or failure.
  * - `filtered`: the query's entries changed.
+ * - `restored`: a snapshot replaced the arrangement.
  */
 export type Events<T extends RowData> = {
   change: [change: Change<T>];
   updated: [event: { id: string; rowCount: number }];
   filtered: [event: { id: string; query: string; filters: TableFilter[] }];
+  restored: [event: { id: string; snapshot: Snapshot }];
 };
 
 export type Event<T extends RowData> = keyof Events<T>;
@@ -302,6 +320,20 @@ export type Service<T extends RowData> = {
   runBulkAction(key: string): void;
   init(): Promise<boolean>;
   fetch(): Promise<void>;
+
+  /**
+   * The arrangement as it stands. Each member is the container's own, so
+   * a read inside a reactive scope tracks it.
+   */
+  snapshot(): Snapshot;
+  /**
+   * Puts an arrangement in place: the slices, the page size, and the
+   * query's entries, from the first page, in one fetch. Before `init` it
+   * fetches nothing: the first fetch reads what it left. The entries go
+   * through the query, so one it rejects is left out and `snapshot` then
+   * differs from what was restored.
+   */
+  restore(snapshot: Snapshot): void;
 
   /**
    * Subscribes a listener to an event. Listeners run in subscription order.

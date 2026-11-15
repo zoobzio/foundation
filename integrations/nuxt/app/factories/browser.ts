@@ -14,7 +14,8 @@ import { resolveTexts } from "../utils/text";
  * the wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus as `browser:updated`, `browser:navigated`, and `browser:filtered`.
+ * bus as `browser:updated`, `browser:navigated`, `browser:filtered`, and
+ * `browser:restored`.
  * Every text of the config — the columns' and the actions' labels, the
  * root crumb's, the literals' — resolves through the app's prosary service
  * as the service is built. A config that names no `rootLabel` takes the
@@ -66,6 +67,10 @@ export const createBrowser = <T>(
     service.on("filtered", (event) => {
       log.debug("Browser filtered", event);
       nuxt.callHook("browser:filtered", event);
+    });
+    service.on("restored", (event) => {
+      log.debug("Browser restored", event);
+      nuxt.callHook("browser:restored", event);
     });
     return service;
   };

@@ -711,3 +711,94 @@ describe("init", () => {
     expect(service.initialized).toBe(true);
   });
 });
+
+describe("views", () => {
+  const arranged = {
+    sorting: [{ id: "name", desc: true }],
+    columnOrder: ["name", "id"],
+    columnVisibility: { status: false },
+    columnSizing: { name: 240 },
+    pageSize: 25,
+    entries: [{ kind: "filter" as const, key: "status", value: "Active" }],
+  };
+
+  it("snapshots the arrangement, without the page or the selection", () => {
+    const { service, table } = makeService({
+      config: { bulkActions: fakeBulkActions },
+    });
+    table.setSorting([{ id: "name", desc: false }]);
+    table.setPageIndex(2);
+    table.setRowSelection({ "1": true });
+    expect(service.snapshot()).toEqual({
+      sorting: [{ id: "name", desc: false }],
+      columnOrder: [],
+      columnVisibility: {},
+      columnSizing: {},
+      pageSize: 10,
+      entries: [],
+    });
+  });
+
+  it("restores an arrangement from the first page in one fetch", async () => {
+    const { service, table, actions, filtered } = makeService();
+    await service.init();
+    table.setPageIndex(3);
+    await Promise.resolve();
+    vi.mocked(actions.fetch).mockClear();
+    const restored = vi.fn();
+    service.on("restored", restored);
+
+    service.restore(arranged);
+
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(actions.fetch).toHaveBeenCalledWith(
+      {
+        pagination: { pageIndex: 0, pageSize: 25 },
+        sorting: arranged.sorting,
+        query: "",
+        filters: [{ key: "status", value: "Active" }],
+      },
+      service,
+    );
+    // The table reads the container, so it sees what was restored.
+    const visible = table.getVisibleLeafColumns().map((column) => column.id);
+    expect(visible.slice(0, 2)).toEqual(["name", "id"]);
+    expect(visible).not.toContain("status");
+    expect(table.getColumn("name")?.getSize()).toBe(240);
+    expect(filtered).toHaveBeenCalledOnce();
+    expect(restored).toHaveBeenCalledWith({
+      id: "test-table",
+      snapshot: arranged,
+    });
+  });
+
+  it("gives back what it was restored with", () => {
+    const { service } = makeService();
+    service.restore(arranged);
+    expect(service.snapshot()).toEqual(arranged);
+  });
+
+  it("fetches nothing before init, and the first fetch reads it", async () => {
+    const { service, actions } = makeService();
+    service.restore(arranged);
+    expect(actions.fetch).not.toHaveBeenCalled();
+    await service.init();
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(actions.fetch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pagination: { pageIndex: 0, pageSize: 25 },
+        sorting: arranged.sorting,
+      }),
+      service,
+    );
+  });
+
+  it("fetches again once the restore is done with the query", async () => {
+    const { service, actions } = makeService();
+    await service.init();
+    service.restore(arranged);
+    vi.mocked(actions.fetch).mockClear();
+    service.query.clear();
+    expect(actions.fetch).toHaveBeenCalledOnce();
+  });
+});

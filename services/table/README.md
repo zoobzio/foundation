@@ -191,6 +191,28 @@ useState(`table-${id}`, () => createTableState(config)).value; // Nuxt, shared b
 config's `initialState`, which is also what the table's resets
 (`resetColumnOrder()`, `resetColumnSizing()`, `resetSorting()`) restore.
 
+## Snapshot and restore
+
+`snapshot()` is the table as a visitor arranged it, as plain data: the
+`sorting`, `columnOrder`, `columnVisibility`, and `columnSizing` slices,
+the `pageSize`, and the query's `entries`. The page index, the selection,
+the rows, and the draft are not part of it. `restore(snapshot)` puts one
+in place from the first page, in one fetch, where writing the slices one
+at a time through the table would fetch per write. Before `init` it
+fetches nothing, and the first fetch reads what it left.
+
+```ts
+const saved = table.snapshot();
+table.table.setSorting([{ id: "total", desc: true }]);
+table.restore(saved); // one fetch
+```
+
+The pair is what [`@zoobzio/views`](../views/) reads and applies a saved
+view through. A restore gives back what it was given, with one exception:
+the entries go through the query, so an entry it rejects is left out, and
+a filter on a column with operators takes the default operator when it
+names none. Save a filter with its operator.
+
 ## Middleware
 
 `options.get.state.<field>` and `options.set.state.<field>` receive the value
@@ -212,6 +234,7 @@ the write lands. The return value removes the listener.
   through the table. `{ field, before, after }`, narrowed by `field`.
 - `updated`: a fetch settled. `{ id, rowCount }`.
 - `filtered`: the query's entries changed. `{ id, query, filters }`.
+- `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.
 
 ```ts
 const off = table.on("change", (change) => {

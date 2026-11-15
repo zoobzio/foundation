@@ -50,6 +50,7 @@ export const COMPONENTS = [
   "toaster",
   "tooltip",
   "tree",
+  "views",
 ] as const;
 
 // The components the layer wraps through `wrap` of @zoobzio/vue: one holds
@@ -97,6 +98,7 @@ export const WRAPPED = [
   "tags-input",
   "toast",
   "tree",
+  "views",
 ] as const satisfies readonly (typeof COMPONENTS)[number][];
 
 export const DEFINITIONS = [
@@ -141,6 +143,7 @@ export const DEFINITIONS = [
   "toaster",
   "tooltip",
   "tree",
+  "views",
 ] as const;
 
 // The layer's own consumer surface, keyed by the `app/` subpath that
@@ -162,12 +165,14 @@ export const LAYER = {
   ],
   "constants/log": ["LOG_ROOT_NAME", "LOG_LEVELS"],
   "constants/table": ["TABLE_SEARCH_KEY"],
+  "constants/views": ["TABLE_VIEW_SCHEMA", "BROWSER_VIEW_SCHEMA"],
   "factories/browser": ["createBrowser"],
   "factories/calendar": ["createCalendar"],
   "factories/code": ["createCode"],
   "factories/editor": ["createEditor"],
   "factories/form": ["createForm"],
   "factories/table": ["createTable"],
+  "factories/views": ["createViews"],
   "stores/browser": ["accessBrowser"],
   "stores/calendar": ["accessCalendar"],
   "stores/code": ["accessCode"],
@@ -176,6 +181,7 @@ export const LAYER = {
   "stores/log": ["accessLogs"],
   "stores/notification": ["accessNotifications"],
   "stores/table": ["accessTable"],
+  "stores/views": ["accessViews"],
   "utils/text": ["resolveText", "resolveTexts"],
 } as const satisfies Record<string, readonly string[]>;
 
@@ -225,6 +231,14 @@ export const LAYER_TYPES = {
     "TableOptions",
     "TableHooks",
     "UseTable",
+  ],
+  "types/views": [
+    "TableView",
+    "BrowserView",
+    "ViewsTarget",
+    "ViewsOptions",
+    "ViewsHooks",
+    "UseViews",
   ],
 } as const satisfies Record<string, readonly string[]>;
 
@@ -702,5 +716,16 @@ export const VUE_TYPES = {
     "TreeContext",
     "TreeSlots",
     "TreeDefinition",
+  ],
+  "components/views": [
+    "ViewsTab",
+    "ViewsAction",
+    "ViewsNaming",
+    "ViewsPassthrough",
+    "ViewsProps",
+    "ViewsEmits",
+    "ViewsContext",
+    "ViewsSlots",
+    "ViewsDefinition",
   ],
 } as const satisfies Record<string, readonly string[]>;

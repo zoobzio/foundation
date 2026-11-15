@@ -14,7 +14,7 @@ import { resolveTexts } from "../utils/text";
  * wiring (the fetch and the handlers), and `id` keys everything that
  * follows. Each call of the composable, in setup, builds a service over
  * the id's shared store and relays its domain events onto the app logger and the Nuxt hook
- * bus as `table:updated` and `table:filtered`. Every text of the config —
+ * bus as `table:updated`, `table:filtered`, and `table:restored`. Every text of the config —
  * the labels of the columns' `meta` and of the actions, the literals' — resolves through
  * the app's prosary service as the service is built, so a label that is a
  * key of the app's contract reaches the machine — and the search that
@@ -57,6 +57,10 @@ export const createTable = <T extends RowData>(
     service.on("filtered", (event) => {
       log.debug("Table filtered", event);
       nuxt.callHook("table:filtered", event);
+    });
+    service.on("restored", (event) => {
+      log.debug("Table restored", event);
+      nuxt.callHook("table:restored", event);
     });
     return service;
   };

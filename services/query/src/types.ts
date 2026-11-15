@@ -239,6 +239,7 @@ export type Service = {
   add(entry: Entry): boolean;
   remove(index: number): void;
   clear(): void;
+  replace(entries: Entry[]): boolean;
 
   setDraft(text: string): void;
   reset(): void;

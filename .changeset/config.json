@@ -19,6 +19,7 @@
       "@zoobzio/editor",
       "@zoobzio/code",
       "@zoobzio/calendar",
+      "@zoobzio/views",
       "@zoobzio/prose",
       "@zoobzio/icons",
       "@zoobzio/theme",

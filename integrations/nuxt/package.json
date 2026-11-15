@@ -61,6 +61,7 @@
     "@zoobzio/query": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/theme": "workspace:*",
+    "@zoobzio/views": "workspace:*",
     "@zoobzio/vue": "workspace:*",
     "ltrl-http": "catalog:",
     "objectively": "catalog:",

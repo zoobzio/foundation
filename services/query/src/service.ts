@@ -232,6 +232,27 @@ export class QueryService implements Service {
     this.emitChanged();
   }
 
+  /**
+   * Commits a whole set of entries in place of the ones held, as `add`
+   * would one at a time: each is checked the same way, a rejected one is
+   * left out, and of two with one identity the later stands. One
+   * `changed` follows, where `add` would emit per entry.
+   *
+   * @returns Whether the entries changed.
+   */
+  replace(entries: Entry[]): boolean {
+    let next: Entry[] = [];
+    for (const entry of entries) {
+      const checked = this.normalize(entry);
+      if (!checked) continue;
+      next = [...next.filter((e) => !this.sameIdentity(e, checked)), checked];
+    }
+    if (JSON.stringify(next) === JSON.stringify(this.entries)) return false;
+    this.state.entries = next;
+    this.emitChanged();
+    return true;
+  }
+
   private normalize(entry: Entry): Entry | undefined {
     if (entry.kind === "literal") {
       const { key, value } = entry;

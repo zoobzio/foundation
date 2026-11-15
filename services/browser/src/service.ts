@@ -9,6 +9,7 @@ import type {
   Listener,
   Options,
   Service,
+  Snapshot,
   SortDirection,
   State,
 } from "./types";
@@ -51,8 +52,9 @@ export class BrowserService<T> implements Service<T> {
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
 
   /**
-   * Set while the trail moves: the move fetches once itself, so the query
-   * it clears on the way does not fetch a second time.
+   * Set while the trail moves or a snapshot is restored: either fetches
+   * once itself, so the query it writes on the way does not fetch a
+   * second time.
    */
   private moving = false;
 
@@ -381,6 +383,29 @@ export class BrowserService<T> implements Service<T> {
 
   runBulkAction(key: string): void {
     this.wiring.bulkActions?.[key]?.(this.selected, this.selectedFolders);
+  }
+
+  // --- views -----------------------------------------------------------
+
+  snapshot(): Snapshot {
+    return {
+      sortField: this.state.sortField,
+      sortDirection: this.state.sortDirection,
+      entries: this.state.entries,
+    };
+  }
+
+  restore(snapshot: Snapshot): void {
+    this.state.sortField = snapshot.sortField;
+    this.state.sortDirection = snapshot.sortDirection;
+    this.moving = true;
+    try {
+      this.query.replace(snapshot.entries);
+    } finally {
+      this.moving = false;
+    }
+    if (this.initialized) void this.fetch();
+    this.emitter.emit("restored", { id: this.id, snapshot: this.snapshot() });
   }
 
   // --- loading ---------------------------------------------------------

@@ -6,6 +6,7 @@ import type { FormHooks } from "./types/form";
 import type { Logger } from "./types/log";
 import type { IconAlias } from "./types/icon";
 import type { TableHooks } from "./types/table";
+import type { ViewsHooks } from "./types/views";
 import type { AppMessage } from "./types/text";
 import type { CellData, RowData, TableFeatures } from "@tanstack/table-core";
 
@@ -119,7 +120,8 @@ declare module "#app" {
       CodeHooks,
       EditorHooks,
       FormHooks,
-      TableHooks {}
+      TableHooks,
+      ViewsHooks {}
 }
 
 export {};

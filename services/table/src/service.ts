@@ -7,6 +7,7 @@ import type {
   Options,
   RowData,
   Service,
+  Snapshot,
   State,
   TableInstance,
   TableSlices,
@@ -59,6 +60,12 @@ export class TableService<T extends RowData> implements Service<T> {
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
+
+  /**
+   * Set while a snapshot is restored: the restore fetches once itself, so
+   * the query it replaces on the way does not fetch a second time.
+   */
+  private restoring = false;
 
   constructor(
     public readonly id: string,
@@ -201,12 +208,45 @@ export class TableService<T extends RowData> implements Service<T> {
     if (this.state.pagination.pageIndex !== 0) {
       this.state.pagination = { ...this.state.pagination, pageIndex: 0 };
     }
-    void this.fetch();
+    if (!this.restoring) void this.fetch();
     this.emitter.emit("filtered", {
       id: this.id,
       query: this.query.text,
       filters: this.query.filters,
     });
+  }
+
+  // --- views -----------------------------------------------------------
+
+  snapshot(): Snapshot {
+    return {
+      sorting: this.state.sorting,
+      columnOrder: this.state.columnOrder,
+      columnVisibility: this.state.columnVisibility,
+      columnSizing: this.state.columnSizing,
+      pageSize: this.state.pagination.pageSize,
+      entries: this.state.entries,
+    };
+  }
+
+  /**
+   * The slices are written to the container, past the table's atoms, so
+   * none of them fetches on its own.
+   */
+  restore(snapshot: Snapshot): void {
+    this.state.sorting = snapshot.sorting;
+    this.state.columnOrder = snapshot.columnOrder;
+    this.state.columnVisibility = snapshot.columnVisibility;
+    this.state.columnSizing = snapshot.columnSizing;
+    this.state.pagination = { pageIndex: 0, pageSize: snapshot.pageSize };
+    this.restoring = true;
+    try {
+      this.query.replace(snapshot.entries);
+    } finally {
+      this.restoring = false;
+    }
+    if (this.initialized) void this.fetch();
+    this.emitter.emit("restored", { id: this.id, snapshot: this.snapshot() });
   }
 
   // --- loading ---------------------------------------------------------

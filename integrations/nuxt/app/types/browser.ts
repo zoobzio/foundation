@@ -67,7 +67,7 @@ export type BrowserOptions<T> = Omit<
 
 /**
  * The Nuxt hooks a browser relays: `browser:updated`,
- * `browser:navigated`, and `browser:filtered`, each carrying the service's payload with its
+ * `browser:navigated`, `browser:filtered`, and `browser:restored`, each carrying the service's payload with its
  * scoping `id`.
  */
 export type BrowserHooks = Hooks<"browser", Events<unknown>>;

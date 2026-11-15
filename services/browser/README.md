@@ -130,6 +130,16 @@ reactive(createBrowserState()); // Vue
 useState(`browser-${id}`, () => createBrowserState()).value; // Nuxt, shared by id
 ```
 
+## Snapshot and restore
+
+`snapshot()` is the browser as a visitor arranged it, as plain data:
+`sortField`, `sortDirection`, and the query's `entries`. The trail, the
+listing, the selection, and the draft are not part of it.
+`restore(snapshot)` puts one in place in the folder the browser stands in,
+in one fetch; before `init` it fetches nothing. The pair is what
+[`@zoobzio/views`](../views/) reads and applies a saved view through. The
+entries go through the query, so one it rejects is left out.
+
 ## Middleware
 
 `options.get.state.<field>` and `options.set.state.<field>` receive the value
@@ -151,6 +161,7 @@ the write lands. The return value removes the listener.
 - `updated`: a fetch settled, success or failure. `{ id, path, folders, files }` — the key trail and section lengths.
 - `navigated`: the trail changed through `open` or `navigate`. `{ id, path }`.
 - `filtered`: the query's entries changed, by the search or by leaving the folder it was typed in. `{ id, query, filters }`.
+- `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.
 
 ```ts
 const off = browser.on("navigated", ({ path }) => history.push(path));

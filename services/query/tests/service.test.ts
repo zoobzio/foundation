@@ -1107,3 +1107,45 @@ describe("debounced", () => {
     });
   });
 });
+
+describe("replace", () => {
+  it("commits the set in place of the entries, in one change", () => {
+    const { service, changed } = makeService();
+    service.add({ kind: "filter", key: "status", value: "Active" });
+    changed.mockClear();
+    const next: Entry[] = [
+      { kind: "filter", key: "name", value: "Alice" },
+      { kind: "literal", key: "text", value: "alice" },
+    ];
+    expect(service.replace(next)).toBe(true);
+    expect(service.entries).toEqual(next);
+    expect(changed).toHaveBeenCalledOnce();
+  });
+
+  it("checks each entry as add does", () => {
+    const { service } = makeService();
+    service.replace([
+      { kind: "literal", key: "nope", value: "x" },
+      { kind: "filter", key: "status", value: "Active" },
+      { kind: "filter", key: "status", value: "Pending" },
+      { kind: "filter", key: "name", value: "Alice" },
+    ]);
+    expect(service.entries).toEqual([
+      { kind: "filter", key: "status", value: "Pending" },
+      { kind: "filter", key: "name", value: "Alice" },
+    ]);
+  });
+
+  it("is a no-op for the entries it holds", () => {
+    const { service, changed } = makeService();
+    expect(service.replace([])).toBe(false);
+    service.add({ kind: "filter", key: "status", value: "Active" });
+    changed.mockClear();
+    expect(
+      service.replace([{ kind: "filter", key: "status", value: "Active" }]),
+    ).toBe(false);
+    expect(changed).not.toHaveBeenCalled();
+    expect(service.replace([])).toBe(true);
+    expect(service.entries).toEqual([]);
+  });
+});

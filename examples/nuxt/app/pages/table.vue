@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { Table } from "#components";
+import { Table, Views } from "#components";
 import { computed } from "vue";
 import { useOrders } from "~/composables/orders";
+import { useOrderViews } from "~/composables/order-views";
 
 const orders = useOrders();
+// The views sit over the table: the active one is applied first, so the
+// table's first fetch reads it.
+const views = useOrderViews(orders);
+await views.init();
 await orders.init();
 
 // What the next fetch is handed: the page, the sort, and the search.
@@ -26,12 +31,15 @@ const params = computed(() => ({
           <code>Status: Shipped</code>, or <code>Total: over 300</code>. Sort by
           a header, and by a second with Shift held; a third click clears the
           sort. Drag a header by its grip to move the column, drag its edge to
-          resize it.
+          resize it. The tabs are saved views of all of that: change the table
+          and the active view is marked as edited, to save, to save as a view of
+          your own, or to discard from the menu beside them.
         </p>
       </div>
     </header>
 
     <section class="demo">
+      <Views :service="views" />
       <Table :service="orders" />
     </section>
 

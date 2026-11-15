@@ -273,6 +273,9 @@ importers:
       '@zoobzio/theme':
         specifier: workspace:*
         version: link:../../packages/theme
+      '@zoobzio/views':
+        specifier: workspace:*
+        version: link:../../services/views
       '@zoobzio/vue':
         specifier: workspace:*
         version: link:../vue
@@ -346,6 +349,9 @@ importers:
       '@zoobzio/table':
         specifier: workspace:*
         version: link:../../services/table
+      '@zoobzio/views':
+        specifier: workspace:*
+        version: link:../../services/views
       defu:
         specifier: 'catalog:'
         version: 6.1.7
@@ -538,6 +544,15 @@ importers:
       objectively:
         specifier: 'catalog:'
         version: 0.3.0
+
+  services/views:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
 
 packages:
 

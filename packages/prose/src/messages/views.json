@@ -1,0 +1,86 @@
+{
+  "menu": {
+    "defaultMessage": "View",
+    "description": "The button that opens the actions of the active saved view."
+  },
+  "edited": {
+    "defaultMessage": "Edited",
+    "description": "The accessible name of the mark on the active view's tab while it has changes that are not saved."
+  },
+  "save": {
+    "defaultMessage": "Save",
+    "description": "The action that saves the changes to the active view, and the button that confirms a save."
+  },
+  "saveAs": {
+    "defaultMessage": "Save as...",
+    "description": "The action that saves the current arrangement as a new view."
+  },
+  "rename": {
+    "defaultMessage": "Rename",
+    "description": "The action that renames the active view."
+  },
+  "revert": {
+    "defaultMessage": "Discard changes",
+    "description": "The action that puts the active view back to how it was last saved."
+  },
+  "remove": {
+    "defaultMessage": "Delete",
+    "description": "The action that deletes the active view."
+  },
+  "cancel": {
+    "defaultMessage": "Cancel",
+    "description": "The button that closes a dialog of the views and changes nothing."
+  },
+  "name": {
+    "defaultMessage": "Name",
+    "description": "The label of the field a view's name is typed in."
+  },
+  "selectTitle": {
+    "defaultMessage": "Save your changes?",
+    "description": "The title of the dialog shown on switching away from a view that has changes not yet saved."
+  },
+  "selectDescription": {
+    "defaultMessage": "This view has changes that are not saved.",
+    "description": "The body of the dialog shown on switching away from a view that has changes not yet saved."
+  },
+  "selectProceed": {
+    "defaultMessage": "Discard",
+    "description": "The button that switches to the other view and loses the changes."
+  },
+  "revertTitle": {
+    "defaultMessage": "Discard your changes?",
+    "description": "The title of the dialog that confirms putting the view back to how it was last saved."
+  },
+  "revertDescription": {
+    "defaultMessage": "The view goes back to how it was last saved.",
+    "description": "The body of the dialog that confirms discarding the changes to a view."
+  },
+  "revertProceed": {
+    "defaultMessage": "Discard",
+    "description": "The button that discards the changes to the view."
+  },
+  "removeTitle": {
+    "defaultMessage": "Delete this view?",
+    "description": "The title of the dialog that confirms deleting a view."
+  },
+  "removeDescription": {
+    "defaultMessage": "The view is deleted for good.",
+    "description": "The body of the dialog that confirms deleting a view."
+  },
+  "removeProceed": {
+    "defaultMessage": "Delete",
+    "description": "The button that deletes the view."
+  },
+  "saveAsTitle": {
+    "defaultMessage": "Save as a new view",
+    "description": "The title of the dialog that names a new view."
+  },
+  "renameTitle": {
+    "defaultMessage": "Rename this view",
+    "description": "The title of the dialog that renames a view."
+  },
+  "nameDescription": {
+    "defaultMessage": "Give the view a name.",
+    "description": "The body of the dialog a view's name is typed in."
+  }
+}

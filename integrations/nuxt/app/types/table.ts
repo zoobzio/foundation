@@ -41,8 +41,8 @@ export type TableOptions<T extends RowData> = Omit<
 };
 
 /**
- * The Nuxt hooks a table relays: `table:updated` and `table:filtered`,
- * each carrying the service's payload with its scoping `id`.
+ * The Nuxt hooks a table relays: `table:updated`, `table:filtered`, and
+ * `table:restored`, each carrying the service's payload with its scoping `id`.
  */
 export type TableHooks = Hooks<"table", Events<RowData>>;
 
