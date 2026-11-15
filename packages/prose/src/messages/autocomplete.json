@@ -1,0 +1,14 @@
+{
+  "empty": {
+    "defaultMessage": "No matches",
+    "description": "Shown in an autocomplete's panel when nothing matches what is typed."
+  },
+  "loading": {
+    "defaultMessage": "Loading",
+    "description": "Shown in an autocomplete's panel while its first suggestions are being fetched."
+  },
+  "more": {
+    "defaultMessage": "Loading more",
+    "description": "Shown after an autocomplete's suggestions while further ones are being fetched."
+  }
+}

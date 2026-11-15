@@ -19,7 +19,12 @@ import Scroller from "./scroller.vue";
 import Primitive from "./primitive.vue";
 
 import { computed, useTemplateRef, watch } from "vue";
-import { AUTOCOMPLETE_MORE_LEAD } from "../constants/autocomplete";
+import {
+  AUTOCOMPLETE_EMPTY_TEXT,
+  AUTOCOMPLETE_LOADING_TEXT,
+  AUTOCOMPLETE_MORE_LEAD,
+  AUTOCOMPLETE_MORE_TEXT,
+} from "../constants/autocomplete";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
@@ -356,7 +361,7 @@ defineSlots<AutocompleteSlots>();
         <template v-if="service.suggest.status === 'extending'">
           <slot name="more" v-bind="ctx">
             <div class="f-group" role="status">
-              <span class="f-span">Loading more</span>
+              <span class="f-span">{{ AUTOCOMPLETE_MORE_TEXT }}</span>
             </div>
           </slot>
         </template>
@@ -364,13 +369,13 @@ defineSlots<AutocompleteSlots>();
           <template v-if="service.suggest.status === 'loading'">
             <slot name="loading" v-bind="ctx">
               <div class="f-group" role="status">
-                <span class="f-span">Loading</span>
+                <span class="f-span">{{ AUTOCOMPLETE_LOADING_TEXT }}</span>
               </div>
             </slot>
           </template>
           <slot v-else name="empty" v-bind="ctx">
             <div v-if="empty" class="f-group">
-              <span class="f-span">No matches</span>
+              <span class="f-span">{{ AUTOCOMPLETE_EMPTY_TEXT }}</span>
             </div>
           </slot>
         </template>

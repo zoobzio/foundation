@@ -10,6 +10,8 @@ import { reactive } from "vue";
 import { QueryService, createQueryState } from "@zoobzio/query";
 import Autocomplete from "../../../app/components/autocomplete";
 import { makeTable } from "#test/mount/table";
+import { $prosary } from "#test/mocks/app";
+import type { Page } from "@zoobzio/query";
 
 const makeQuery = () =>
   new QueryService(
@@ -134,6 +136,54 @@ describe("autocomplete wrapper", () => {
     await flushPromises();
     expect(iconsOf(wrapper, ".f-button")).toEqual([["filter", "expand"]]);
     expect(iconsOf(wrapper, ".f-autocomplete-item")).toEqual([[]]);
+  });
+
+  it("reads the panel's states from the contract", async () => {
+    const format = vi.spyOn($prosary, "format");
+    let resolve!: (page: Page) => void;
+    const pending = () => new Promise<Page>((r) => (resolve = r));
+    const service = new QueryService(
+      "test-query",
+      { fields: { owner: { label: "Owner", values: pending } } },
+      reactive(createQueryState()),
+    );
+    const wrapper = mount(Autocomplete, {
+      props: { service, empty: true },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").setValue("Owner: ");
+    await flushPromises();
+    const content = wrapper.get(".f-autocomplete-content");
+    expect(content.get(".f-group[role=status] .f-span").text()).toBe("Loading");
+    expect(format).toHaveBeenLastCalledWith("autocomplete.loading");
+    resolve({ values: ["alice"], next: 1 });
+    await flushPromises();
+    expect(content.find("[role=status]").exists()).toBe(false);
+    service.more();
+    await flushPromises();
+    expect(content.get(".f-group[role=status] .f-span").text()).toBe(
+      "Loading more",
+    );
+    expect(format).toHaveBeenCalledWith("autocomplete.more");
+    await wrapper.get("input").setValue("Owner: z");
+    resolve({ values: [] });
+    await flushPromises();
+    const empty = content.findAll(".f-group").at(-1)!;
+    expect(empty.attributes("role")).toBeUndefined();
+    expect(empty.get(".f-span").text()).toBe("No matches");
+    expect(format).toHaveBeenCalledWith("autocomplete.empty");
+  });
+
+  it("renders no empty state unless the autocomplete asks for one", async () => {
+    const wrapper = mount(Autocomplete, {
+      props: { service: makeQuery() },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").setValue("Status: zzz");
+    await flushPromises();
+    expect(wrapper.text()).not.toContain("No matches");
   });
 
   it("draws remove after each chip's label", async () => {
