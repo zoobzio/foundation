@@ -7,4 +7,5 @@ import type { State } from "./types";
 export const createQueryState = (): State => ({
   entries: [],
   draft: "",
+  suggest: { options: [], status: "idle", more: false },
 });

@@ -4,7 +4,11 @@ import { QUERY_STATE_FIELDS } from "../src/constants";
 
 describe("createQueryState", () => {
   it("initializes every field with its default", () => {
-    expect(createQueryState()).toEqual({ entries: [], draft: "" });
+    expect(createQueryState()).toEqual({
+      entries: [],
+      draft: "",
+      suggest: { options: [], status: "idle", more: false },
+    });
   });
 
   it("each call returns an independent container", () => {

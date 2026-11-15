@@ -3,6 +3,7 @@ import type {
   Filter,
   Literal,
   Service as Query,
+  Suggest,
   Values,
 } from "@zoobzio/query";
 import type {
@@ -72,9 +73,10 @@ export interface BrowserColumn<T> {
   defaultOperator?: string;
   /**
    * The values the search suggests: a list the term narrows, or a provider
-   * the term is given to. Without them the value is free entry, except on
-   * a `date` or `datetime` column, which suggests the days the query's
-   * `dateValues` generates from the term.
+   * the term is given to, which may ask an API and give its values a page
+   * at a time. Without them the value is free entry, except on a `date` or
+   * `datetime` column, which suggests the days the query's `dateValues`
+   * generates from the term.
    */
   values?: Values;
 }
@@ -229,8 +231,8 @@ export type Config<T> = {
  * folder keys in `selectedFolders`), and the query's slice.
  * The container can be a plain object or a reactive proxy. The service
  * replaces each member as a whole, so a proxy tracks every change.
- * `entries` and `draft` belong to the browser's `query` machine, their
- * only writer.
+ * `entries`, `draft`, and `suggest` belong to the browser's `query`
+ * machine, their only writer.
  */
 export type State<T> = {
   folders: BrowserFolder<T>[];
@@ -244,6 +246,7 @@ export type State<T> = {
   selectedFolders: Set<string>;
   entries: Entry[];
   draft: string;
+  suggest: Suggest;
 };
 
 export type StateKey = keyof State<unknown>;

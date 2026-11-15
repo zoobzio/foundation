@@ -119,8 +119,8 @@ lists as its sort options, each sorting through `sortBy(sortFieldFor(col))`.
 
 The service reads and writes the `state` container: the listing, the load
 flags, the trail, the file sort, the selection (`selected` and
-`selectedFolders`), and the query's `entries`
-and `draft`. The container can be a
+`selectedFolders`), and the query's `entries`,
+`draft`, and `suggest`. The container can be a
 plain object or a reactive proxy. The service replaces each member as a
 whole, so a proxy tracks every change.
 

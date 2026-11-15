@@ -114,6 +114,51 @@ const config = {
 };
 ```
 
+## Values providers
+
+A provider is asked once per change of the draft, at the field's value
+stage, and what it gives is held in `suggest`, where `items` reads it. It
+gives a list, a page, or a promise of either, so it may ask an API:
+
+```ts
+const config = {
+  fields: {
+    owner: {
+      label: "Owner",
+      values: async (term, { signal, cursor }) => {
+        const page = await users.search(term, { after: cursor, signal });
+        return { values: page.names, next: page.after };
+      },
+    },
+  },
+};
+```
+
+Beside the term it is handed the lookup: the field `key`, the `op` the
+draft names, a `signal`, and the `cursor`. A list is the whole of the
+values. A page, `{ values, next }`, is the first of more: `next` is the
+provider's own, an offset or a token, and `more()` asks again with it as
+the `cursor`, adding the page's values to the options. `undefined` or
+`null` ends the list. A value the options already hold is dropped, so a
+list that shifts between pages repeats nothing.
+
+`suggest` is `{ options, status, more }`. `status` is `loading` while the
+first page of a term is out, `extending` while a further one is, and
+`idle` once settled; `more` says whether `more()` has a page to add. While
+a term loads, the options of the term before stay, as long as the field
+and operator are the same, so a view does not flash empty between
+keystrokes. A draft that moves on aborts the lookup's `signal` and its
+result is dropped, so the options are always the last term's. A provider
+that throws or rejects settles with what was held, no page to follow, and
+a `failed` event.
+
+`debounced(provider, ms)` waits before it asks, so a term typed through
+asks once. A call for more asks at once.
+
+```ts
+values: debounced((term, { signal }) => users.search(term, { signal }), 200),
+```
+
 ## Date values
 
 `dateValues(timeZone, now?)` is a values provider for a field that filters
@@ -121,20 +166,27 @@ on a date: an unbounded, term-driven list of days, `YYYY-MM-DD`, so a
 visitor always has an option as long as the term is date syntax. Every
 option is a whole day, as choosing one commits the filter: the typed
 prefix selects a range of days rather than drilling through years and
-months. Today is read in `timeZone`, from `now` on each call.
+months. The days come a page at a time, 31 to the page, newest first, and
+`more()` adds the next: a page names the one after it by its last day, so
+the list runs on from there whatever the clock has done since. Today is
+read in `timeZone`, from `now` on each first page.
 
-| term                                          | options                                         |
-| --------------------------------------------- | ----------------------------------------------- |
-| empty                                         | the last 31 days, today first                   |
-| partial year, `2` or `202`                    | the same recent days, narrowed to the prefix    |
-| year, `2025` or `2025-`                       | the days of that year, newest first, 31 at most |
-| month, `2025-03` or `2025-03-`                | the days of that month, newest first            |
-| partial day, `2025-03-1`                      | the matching days of that month                 |
-| a complete day                                | that day alone                                  |
-| a day that does not exist, or not date syntax | nothing                                         |
+| term                                          | options                                                |
+| --------------------------------------------- | ------------------------------------------------------ |
+| empty                                         | the days back from today, with no end                  |
+| partial year, `2` or `202`                    | the days back from the latest it names, not past today |
+| year, `2025` or `2025-`                       | the days of that year                                  |
+| partial month, `2025-0`                       | the days of the months that match                      |
+| month, `2025-03` or `2025-03-`                | the days of that month, in one page                    |
+| partial day, `2025-03-1`                      | the matching days of that month                        |
+| a complete day                                | that day alone                                         |
+| a day that does not exist, or not date syntax | nothing                                                |
 
-Years and months may lie in the future; only the empty term looks back from
-today. `QUERY_DATE_VALUES_LIMIT` is the window and the cap.
+A partial year runs back from today while today's year is one it names,
+and from the last day of the latest year it names once those are past:
+`19` from `1999-12-31`. One that names only years to come lists nothing.
+A full year or a month may lie in the future. `QUERY_DATE_VALUES_LIMIT`
+is the size of a page.
 
 ```ts
 const config = {
@@ -146,8 +198,10 @@ const config = {
 
 ## The state container
 
-The service reads and writes the `state` container: the entries and the
-draft. The container can be a plain object or a reactive proxy.
+The service reads and writes the `state` container: the entries, the
+draft, and `suggest`, what a values provider has given for the draft. The
+container can be a plain object or a reactive proxy. The service may
+itself be held in a reactive proxy.
 
 ```ts
 createQueryState(); // plain: tests, Node
@@ -158,3 +212,4 @@ reactive(createQueryState()); // Vue
 
 - `change`: a field of the container was written.
 - `changed`: the committed entries changed. `{ id, entries }`.
+- `failed`: a values provider threw or rejected. `{ id, error }`.

@@ -116,10 +116,14 @@ date syntax. Today is read in the config's `timeZone`. A column's own
 `values` replace the days; `dateValues` is exported by `@zoobzio/query`,
 so a column can wrap it. The generation rule is the query's to document.
 
+A column's `values` may also be a provider that asks an API and gives its
+values a page at a time; the query's README documents the contract. The
+query emits `failed` when one throws or rejects: `table.query.on("failed", …)`.
+
 ## The state container
 
 The service reads and writes the `state` container: paging, sort, selection,
-column order, column widths, and the query's entries and draft. The container can be a
+column order, column widths, and the query's entries, draft, and suggested values. The container can be a
 plain object or a reactive proxy. The service replaces each member as a
 whole, so a proxy tracks every change.
 

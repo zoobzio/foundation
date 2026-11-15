@@ -34,4 +34,5 @@ export const BROWSER_STATE_FIELDS: Record<StateKey, null> = {
   selectedFolders: null,
   entries: null,
   draft: null,
+  suggest: null,
 };

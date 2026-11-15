@@ -1,4 +1,5 @@
 import type { AutocompleteProps } from "../../src/types/components/autocomplete";
+import type { Page, Provider } from "@zoobzio/query";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
@@ -82,7 +83,61 @@ afterEach(() => {
   while (mounted.length) mounted.pop()?.unmount();
   document.body.innerHTML = "";
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
 });
+
+/**
+ * happy-dom has no IntersectionObserver. This one records each observer
+ * and lets a test report its target in or out of view.
+ */
+const stubObserver = () => {
+  const observers: {
+    targets: Element[];
+    live: boolean;
+    report: (isIntersecting: boolean) => void;
+  }[] = [];
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      private readonly record;
+      constructor(callback: (entries: { isIntersecting: boolean }[]) => void) {
+        this.record = {
+          targets: [] as Element[],
+          live: true,
+          report: (isIntersecting: boolean) => callback([{ isIntersecting }]),
+        };
+        observers.push(this.record);
+      }
+      observe(target: Element) {
+        this.record.targets.push(target);
+      }
+      disconnect() {
+        this.record.live = false;
+      }
+    },
+  );
+  return observers;
+};
+
+/** A query over one field whose values the given provider gives. */
+const makeLookup = (values: Provider) =>
+  new QueryService(
+    "test-query",
+    { fields: { owner: { label: "Owner", values } } },
+    reactive(createQueryState()),
+  );
+
+/** A provider of `count` values, `size` to the page, by a numeric cursor. */
+const paged =
+  (count: number, size: number): Provider =>
+  (_term, lookup) => {
+    const from = (lookup.cursor as number | undefined) ?? 0;
+    const to = Math.min(from + size, count);
+    return {
+      values: Array.from({ length: to - from }, (_, i) => `v${from + i}`),
+      next: to < count ? to : undefined,
+    };
+  };
 
 describe("autocomplete", () => {
   it("drafts into the service and submits on Enter", async () => {
@@ -392,5 +447,151 @@ describe("autocomplete", () => {
     expect(rows[0]!.find(".my-item").text()).toBe(MANY[0]);
     expect(rows[0]!.find(".my-item-hint").text()).toBe("0");
     expect(wrapper.findAll(".my-trail").map((t) => t.text())).toEqual(["Many"]);
+  });
+
+  it("shows the empty state once the panel has no options, and only then", async () => {
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({ service, empty: true });
+    const input = wrapper.get("input");
+    await input.setValue("Status: ");
+    await flushPromises();
+    expect(wrapper.findAll(".f-autocomplete-item")).toHaveLength(2);
+    expect(wrapper.text()).not.toContain("No matches");
+    await input.setValue("Status: zzz");
+    await flushPromises();
+    expect(wrapper.text()).toContain("No matches");
+  });
+
+  it("shows loading while a provider's first page is out, then its options", async () => {
+    let resolve!: (values: string[]) => void;
+    const service = makeLookup(
+      () => new Promise<string[]>((r) => (resolve = r)),
+    );
+    const wrapper = mountAutocomplete({ service, empty: true });
+    const input = wrapper.get("input");
+    await input.setValue("Owner: a");
+    await flushPromises();
+    const content = wrapper.get(".f-autocomplete-content");
+    expect(content.attributes("aria-busy")).toBe("true");
+    expect(content.get("[role=status]").text()).toBe("Loading");
+    expect(wrapper.text()).not.toContain("No matches");
+    resolve(["alice", "alan"]);
+    await flushPromises();
+    expect(content.attributes("aria-busy")).toBeUndefined();
+    expect(content.find("[role=status]").exists()).toBe(false);
+    expect(
+      wrapper.findAll(".f-autocomplete-item").map((i) => i.text()),
+    ).toEqual(["alice", "alan"]);
+    // The next term loads over the options held, not over a blank panel.
+    await input.setValue("Owner: al");
+    await flushPromises();
+    expect(content.attributes("aria-busy")).toBe("true");
+    expect(content.find("[role=status]").exists()).toBe(false);
+    expect(wrapper.findAll(".f-autocomplete-item")).toHaveLength(2);
+    resolve([]);
+    await flushPromises();
+    expect(wrapper.text()).toContain("No matches");
+  });
+
+  it("renders a consumer's loading slot with the context", async () => {
+    const service = makeLookup(() => new Promise<string[]>(() => {}));
+    const wrapper = mount(Autocomplete, {
+      props: { service },
+      slots: {
+        loading: (p) => h("i", { class: "wait" }, p.service.suggest.status),
+      },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").setValue("Owner: ");
+    await flushPromises();
+    expect(wrapper.get(".wait").text()).toBe("loading");
+  });
+
+  it("asks for more while the sentinel is in view, page after page", async () => {
+    const observers = stubObserver();
+    const service = makeLookup(paged(9, 3));
+    const wrapper = mountAutocomplete({ service });
+    await wrapper.get("input").setValue("Owner: ");
+    await flushPromises();
+    const sentinel = wrapper.get(".f-autocomplete-sentinel");
+    expect(sentinel.element.parentElement).toBe(
+      wrapper.get(".f-autocomplete-viewport").element,
+    );
+    expect(sentinel.attributes("aria-hidden")).toBe("true");
+    expect(observers).toHaveLength(1);
+    expect(observers[0]!.targets).toEqual([sentinel.element]);
+    expect(wrapper.get(".f-autocomplete-item").attributes("aria-setsize")).toBe(
+      "-1",
+    );
+    // Out of view asks nothing.
+    observers[0]!.report(false);
+    await flushPromises();
+    expect(service.items).toHaveLength(3);
+    // In view asks; the page lands, and a fresh observer watches on.
+    observers[0]!.report(true);
+    await flushPromises();
+    expect(service.items).toHaveLength(6);
+    expect(observers).toHaveLength(2);
+    expect(observers[0]!.live).toBe(false);
+    expect(observers[1]!.live).toBe(true);
+    observers[1]!.report(true);
+    await flushPromises();
+    expect(service.items).toHaveLength(9);
+    // The last page: nothing more to ask, so nothing to watch.
+    expect(observers).toHaveLength(2);
+    expect(observers[1]!.live).toBe(false);
+    expect(wrapper.find(".f-autocomplete-sentinel").exists()).toBe(false);
+  });
+
+  it("shows more while a further page is out, and stops watching until it lands", async () => {
+    const observers = stubObserver();
+    let resolve!: (page: Page) => void;
+    const service = makeLookup((_term, lookup) =>
+      lookup.cursor
+        ? new Promise<Page>((r) => (resolve = r))
+        : { values: ["a"], next: 1 },
+    );
+    const wrapper = mount(Autocomplete, {
+      props: { service },
+      slots: { more: () => h("i", { class: "further" }) },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    await wrapper.get("input").setValue("Owner: ");
+    await flushPromises();
+    expect(wrapper.find(".further").exists()).toBe(false);
+    observers[0]!.report(true);
+    await flushPromises();
+    expect(service.suggest.status).toBe("extending");
+    expect(wrapper.find(".further").exists()).toBe(true);
+    expect(wrapper.get(".f-autocomplete-content").attributes("aria-busy")).toBe(
+      "true",
+    );
+    expect(observers.filter((o) => o.live)).toHaveLength(0);
+    resolve({ values: ["b"], next: 2 });
+    await flushPromises();
+    expect(wrapper.find(".further").exists()).toBe(false);
+    expect(observers.filter((o) => o.live)).toHaveLength(1);
+  });
+
+  it("renders no sentinel for a list with no more to give", async () => {
+    const observers = stubObserver();
+    const service = makeQuery();
+    const wrapper = mountAutocomplete({ service });
+    await wrapper.get("input").setValue("Many: ");
+    await flushPromises();
+    expect(wrapper.find(".f-autocomplete-sentinel").exists()).toBe(false);
+    expect(observers).toHaveLength(0);
+  });
+
+  it("stops watching when it unmounts", async () => {
+    const observers = stubObserver();
+    const service = makeLookup(paged(9, 3));
+    const wrapper = mountAutocomplete({ service });
+    await wrapper.get("input").setValue("Owner: ");
+    await flushPromises();
+    wrapper.unmount();
+    expect(observers[0]!.live).toBe(false);
   });
 });

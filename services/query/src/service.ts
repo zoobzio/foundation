@@ -7,12 +7,17 @@ import type {
   Filter,
   Listener,
   Literal,
+  Lookup,
   Option,
   Options,
+  Page,
   Parse,
+  Provider,
   Service,
   Stage,
   State,
+  Suggest,
+  SuggestStatus,
 } from "./types";
 import type { Emitter } from "@zoobzio/kit";
 
@@ -80,6 +85,26 @@ const operatorOf = (field: Field, rest: string): string | undefined => {
 };
 
 /**
+ * A lookup: its controller, which aborts it once the draft moves on, and
+ * the cursor of the page after its last.
+ */
+type Live = { controller: AbortController; cursor?: unknown };
+
+/** The scope of a lookup: the field and operator its values are for. */
+const scopeOf = (key: string, op?: string): string => `${key}\n${op ?? ""}`;
+
+/** Whether a provider's result is a page rather than the whole list. */
+const isPage = (result: readonly string[] | Page): result is Page =>
+  !Array.isArray(result);
+
+/** Whether a provider's result is still to come. */
+const isPending = <T>(result: T | Promise<T>): result is Promise<T> =>
+  typeof result === "object" &&
+  result !== null &&
+  "then" in result &&
+  typeof result.then === "function";
+
+/**
  * The headless query machine. Owns the committed entries: one entry per
  * literal and one filter per field and operator, each validated against
  * the config. Any view adds and removes entries directly.
@@ -89,6 +114,12 @@ const operatorOf = (field: Field, rest: string): string | undefined => {
  * configured fields, or `open term close` through the literal stage of a
  * configured literal, and commits as an entry. A view with no text input
  * leaves the draft alone.
+ *
+ * A field's values provider is asked once per change of the draft, at the
+ * value stage, and what it gives is held in `suggest`: a list at once, a
+ * promise once it resolves. A lookup the draft has moved on from is
+ * aborted and its result dropped. `more` asks for the page after the last
+ * while the provider names one.
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy. Each
@@ -102,6 +133,16 @@ export class QueryService implements Service {
   private readonly state: State;
   private readonly emitter: Emitter<Events> = makeEmitter();
 
+  /**
+   * The lookup of the draft's term, and the scope its options are for.
+   * The lookup is held behind a function: a view may hold the service in
+   * a reactive proxy, which wraps an object it reads off the service but
+   * hands a function back as it is, so the lookup read here is the one
+   * written, and its identity tells a late result apart.
+   */
+  private live: (() => Live) | undefined;
+  private scope: string | undefined;
+
   constructor(
     public readonly id: string,
     public readonly config: Config,
@@ -111,6 +152,7 @@ export class QueryService implements Service {
     this.state = makeProxy(state, QUERY_STATE_FIELDS, options, this.emitter);
     this.fields = config.fields;
     this.literals = config.literals ?? QUERY_LITERALS;
+    this.lookup();
   }
 
   on<E extends Event>(event: E, listener: Listener<E>): () => void {
@@ -125,6 +167,10 @@ export class QueryService implements Service {
 
   get draft(): string {
     return this.state.draft;
+  }
+
+  get suggest(): Suggest {
+    return this.state.suggest;
   }
 
   // --- entries ---------------------------------------------------------
@@ -258,11 +304,12 @@ export class QueryService implements Service {
   /**
    * The options of the active panel, narrowed by the term. The field panel
    * leads with the literal options while nothing is typed; a term narrows
-   * it to the fields alone. A value provider is given the term and its
-   * result stands as is. A literal takes no suggestions.
+   * it to the fields alone. A values provider's options are the ones
+   * `suggest` holds for the draft's field and operator: what the provider
+   * gave, as given. A literal takes no suggestions.
    */
   get items(): Option[] {
-    const { field, term } = this.parse;
+    const { key, field, op, term } = this.parse;
     const q = term.trim().toLowerCase();
     const matches = (label: string) => !q || label.toLowerCase().includes(q);
     switch (this.stage) {
@@ -283,11 +330,14 @@ export class QueryService implements Service {
           .map((o) => ({ stage: "op", value: o, label: o }));
       default: {
         const values = field?.values ?? [];
-        const list =
-          typeof values === "function"
-            ? values(term.trim())
-            : values.filter(matches);
-        return list.map((v) => ({ stage: "value", value: v, label: v }));
+        if (typeof values === "function") {
+          return this.scope === scopeOf(key ?? "", op)
+            ? this.suggest.options
+            : [];
+        }
+        return values
+          .filter(matches)
+          .map((v) => ({ stage: "value", value: v, label: v }));
       }
     }
   }
@@ -344,7 +394,7 @@ export class QueryService implements Service {
    * rather than closing it.
    */
   setDraft(text: string): void {
-    this.state.draft = text;
+    this.write(text);
     const { literal } = this.parse;
     if (!literal) return;
     const { open, close } = literal;
@@ -354,7 +404,7 @@ export class QueryService implements Service {
   }
 
   reset(): void {
-    this.state.draft = "";
+    this.write("");
   }
 
   /**
@@ -366,18 +416,20 @@ export class QueryService implements Service {
     const { key, op, term } = this.parse;
     switch (option.stage) {
       case "field":
-        this.state.draft = option.active ? "" : this.stageText(option.value);
+        this.write(option.active ? "" : this.stageText(option.value));
         return;
       case "literal": {
         const literal = this.literals[option.value];
-        if (literal) this.state.draft = `${literal.open}${term}`;
+        if (literal) this.write(`${literal.open}${term}`);
         return;
       }
       case "op":
         if (!key) return;
-        this.state.draft = option.active
-          ? this.stageText(key)
-          : this.stageText(key, option.value);
+        this.write(
+          option.active
+            ? this.stageText(key)
+            : this.stageText(key, option.value),
+        );
         return;
       default:
         if (key) this.commit({ kind: "filter", key, op, value: option.value });
@@ -407,12 +459,139 @@ export class QueryService implements Service {
     const entry = this.entries[index];
     if (!entry) return;
     this.remove(index);
-    this.state.draft = this.textFor(entry).slice(0, -1);
+    this.write(this.textFor(entry).slice(0, -1));
   }
 
   /** Adds the entry; a landed entry clears the draft. */
   private commit(entry: Entry): void {
-    if (this.add(entry)) this.state.draft = "";
+    if (this.add(entry)) this.write("");
+  }
+
+  /** Writes the draft, then looks its values up: the one writer of both. */
+  private write(text: string): void {
+    this.state.draft = text;
+    this.lookup();
+  }
+
+  // --- values ----------------------------------------------------------
+
+  /**
+   * Asks the provider of the draft's field for the page after the last.
+   * Ignored while a lookup is out, and once the provider names no page
+   * to follow. The page's values join the options; one already among
+   * them is dropped, so a list that shifts between pages repeats nothing.
+   */
+  more(): void {
+    const { options, status, more } = this.suggest;
+    const live = this.live?.();
+    if (!live || status !== "idle" || !more) return;
+    const { key, field, op, term } = this.parse;
+    const provider = field?.values;
+    if (!key || typeof provider !== "function") return;
+    this.ask(
+      provider,
+      term.trim(),
+      {
+        key,
+        ...(op && { op }),
+        signal: live.controller.signal,
+        cursor: live.cursor,
+      },
+      live,
+      "extending",
+      options,
+      options,
+    );
+  }
+
+  /**
+   * Looks up the values of the draft: aborts the lookup before, then asks
+   * the provider of the field for the first page of the term. A draft at
+   * any other stage, or on a field with no provider, holds none. The
+   * options of the term before stay until the first page lands, as long
+   * as the field and operator are the same.
+   */
+  private lookup(): void {
+    this.live?.().controller.abort();
+    this.live = undefined;
+    const { key, field, op, term } = this.parse;
+    const provider = field?.values;
+    if (!key || this.stage !== "value" || typeof provider !== "function") {
+      this.scope = undefined;
+      const { options, status, more } = this.suggest;
+      if (options.length || status !== "idle" || more) {
+        this.state.suggest = { options: [], status: "idle", more: false };
+      }
+      return;
+    }
+    const scope = scopeOf(key, op);
+    const held = scope === this.scope ? this.suggest.options : [];
+    this.scope = scope;
+    const live: Live = { controller: new AbortController() };
+    this.live = () => live;
+    this.ask(
+      provider,
+      term.trim(),
+      { key, ...(op && { op }), signal: live.controller.signal },
+      live,
+      "loading",
+      held,
+      [],
+    );
+  }
+
+  /**
+   * Asks a provider and lands its result on `base`. A list or a page
+   * lands at once; a promise shows `held` under `status` until it
+   * settles. A result whose lookup the draft has moved on from is
+   * dropped. A provider that throws or rejects settles on `base`, with no
+   * page to follow, and emits `failed`.
+   */
+  private ask(
+    provider: Provider,
+    term: string,
+    lookup: Lookup,
+    live: Live,
+    status: SuggestStatus,
+    held: Option[],
+    base: Option[],
+  ): void {
+    const land = (result: readonly string[] | Page): void => {
+      if (this.live?.() !== live) return;
+      const page = isPage(result) ? result : { values: result };
+      const seen = new Set(base.map((o) => o.value));
+      const options = [...base];
+      for (const value of page.values) {
+        if (seen.has(value)) continue;
+        seen.add(value);
+        options.push({ stage: "value", value, label: value });
+      }
+      live.cursor = page.next ?? undefined;
+      this.state.suggest = {
+        options,
+        status: "idle",
+        more: live.cursor !== undefined,
+      };
+    };
+    const fail = (error: unknown): void => {
+      if (this.live?.() !== live) return;
+      live.cursor = undefined;
+      this.state.suggest = { options: base, status: "idle", more: false };
+      this.emitter.emit("failed", { id: this.id, error });
+    };
+    let result: ReturnType<Provider>;
+    try {
+      result = provider(term, lookup);
+    } catch (error) {
+      fail(error);
+      return;
+    }
+    if (!isPending(result)) {
+      land(result);
+      return;
+    }
+    this.state.suggest = { options: held, status, more: status !== "loading" };
+    result.then(land, fail);
   }
 
   // --- text ------------------------------------------------------------

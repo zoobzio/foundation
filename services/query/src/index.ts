@@ -3,3 +3,4 @@ export * from "./constants";
 export { createQueryState } from "./state";
 export { QueryService } from "./service";
 export { dateValues } from "./dates";
+export { debounced } from "./debounced";

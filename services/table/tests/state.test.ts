@@ -24,6 +24,7 @@ describe("createTableState", () => {
       columnWidths: {},
       entries: [],
       draft: "",
+      suggest: { options: [], status: "idle", more: false },
     });
   });
 

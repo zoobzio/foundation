@@ -28,4 +28,5 @@ export const TABLE_STATE_FIELDS: Record<StateKey, null> = {
   columnWidths: null,
   entries: null,
   draft: null,
+  suggest: null,
 };

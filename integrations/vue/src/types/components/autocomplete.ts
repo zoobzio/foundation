@@ -79,7 +79,8 @@ export type AutocompletePassthrough = {
  * The component owns only `open`. The query owns the entries, the draft,
  * and the panels. `empty` renders the empty state when the active panel
  * has no options; a literal stage is terminal and renders nothing either
- * way.
+ * way. The options of a field's values provider are the service's too:
+ * the component asks for `more` as the visitor nears the end of them.
  */
 export type AutocompleteProps = {
   service: Query;
@@ -133,6 +134,10 @@ export type AutocompleteChipContext = AutocompleteContext &
  * input, append.
  * `chipPrepend` and `chipAppend` sit either side of a chip's label, within
  * the button that removes it, so a remove icon can trail the label.
+ * `loading` stands in for the options while the first page of a values
+ * provider is out and none are held, where `empty` stands once it has
+ * settled on none; the content carries `aria-busy` through either lookup.
+ * `more` follows the options while a further page is out.
  */
 export type AutocompleteSlots = {
   chips?: (props: AutocompleteContext) => VNode[];
@@ -147,6 +152,8 @@ export type AutocompleteSlots = {
   itemLabel?: (props: AutocompleteOptionContext) => VNode[];
   itemArrow?: (props: AutocompleteOptionContext) => VNode[];
   empty?: (props: AutocompleteContext) => VNode[];
+  loading?: (props: AutocompleteContext) => VNode[];
+  more?: (props: AutocompleteContext) => VNode[];
   itemPrepend?: (props: AutocompleteOptionContext) => VNode[];
   itemAppend?: (props: AutocompleteOptionContext) => VNode[];
 };

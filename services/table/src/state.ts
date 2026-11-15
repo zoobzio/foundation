@@ -39,4 +39,5 @@ export const createTableState = <T>(config: Config<T>): State<T> => ({
   columnWidths: declaredWidths(config.columns),
   entries: [],
   draft: "",
+  suggest: { options: [], status: "idle", more: false },
 });

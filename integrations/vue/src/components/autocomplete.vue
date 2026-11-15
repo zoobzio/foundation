@@ -18,7 +18,8 @@ import {
 import Scroller from "./scroller.vue";
 import Primitive from "./primitive.vue";
 
-import { computed, useTemplateRef } from "vue";
+import { computed, useTemplateRef, watch } from "vue";
+import { AUTOCOMPLETE_MORE_LEAD } from "../constants/autocomplete";
 import { usePassthrough } from "../composables/passthrough";
 import { useModel } from "../composables/model";
 import { useContext } from "../composables/context";
@@ -55,6 +56,43 @@ const $open = useModel(
 );
 
 const el = useTemplateRef<ComponentPublicInstance>("el");
+
+/**
+ * The element that asks for more: it lies over the end of the active
+ * panel's options, `AUTOCOMPLETE_MORE_LEAD` deep, so it comes into view
+ * as the visitor nears the end, by scroll or by key, before the last
+ * option does. Its height and its negative margin cancel, so it adds
+ * nothing to the scroll.
+ */
+const sentinel = useTemplateRef<HTMLElement>("sentinel");
+
+const lead = {
+  height: AUTOCOMPLETE_MORE_LEAD,
+  marginTop: `-${AUTOCOMPLETE_MORE_LEAD}`,
+  pointerEvents: "none",
+} as const;
+
+/**
+ * Asks the service for more while the sentinel is in view. An observer
+ * reports a change alone, and a page that leaves the sentinel in view
+ * changes nothing, so each settled lookup observes afresh: the new
+ * observer reports where the sentinel stands, and a page too short to
+ * fill the viewport is followed by the next. In view means on screen, so
+ * a viewport no height bounds stops once its options run off the page.
+ */
+watch(
+  [sentinel, () => service.suggest],
+  ([target, suggest], _, onCleanup) => {
+    if (!target || suggest.status !== "idle" || !suggest.more) return;
+    if (typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) service.more();
+    });
+    observer.observe(target);
+    onCleanup(() => observer.disconnect());
+  },
+  { flush: "post" },
+);
 
 /**
  * The index of the active panel: the one after the trail. Also the count of
@@ -170,6 +208,7 @@ defineSlots<AutocompleteSlots>();
       <AutocompleteContent
         v-if="shown"
         class="f-autocomplete-content"
+        :aria-busy="service.suggest.status !== 'idle' || undefined"
         v-bind="settings.content"
       >
         <div v-for="(options, p) in service.trail" :key="p" class="f-group">
@@ -208,7 +247,9 @@ defineSlots<AutocompleteSlots>();
           selection. Once a group has an option set, the active panel
           renders in a plain element with no scroller, so the viewport pt
           does not apply. The virtualizer still windows its options within
-          that element, which scrolls them once a height bounds it.
+          that element, which scrolls them once a height bounds it. The
+          sentinel renders there alone: only a values provider has more to
+          give, and its options are never the first panel's.
         -->
         <component
           :is="depth ? 'div' : Primitive"
@@ -242,6 +283,12 @@ defineSlots<AutocompleteSlots>();
                   panel: depth,
                 }"
               >
+                <!--
+                  The size of the set is unknown while a provider has more
+                  to give. Reka's item memoizes its element, so an item
+                  keeps the size it first rendered with: unknown stays
+                  true of it as pages land, where a count would go stale.
+                -->
                 <AutocompleteItem
                   class="f-autocomplete-item"
                   v-bind="
@@ -251,7 +298,9 @@ defineSlots<AutocompleteSlots>();
                       panel: depth,
                     })
                   "
-                  :aria-setsize="service.items.length"
+                  :aria-setsize="
+                    service.suggest.more ? -1 : service.items.length
+                  "
                   :aria-posinset="virtualItem.index + 1"
                 >
                   <slot
@@ -296,12 +345,35 @@ defineSlots<AutocompleteSlots>();
               </slot>
             </div>
           </AutocompleteVirtualizer>
+          <div
+            v-if="service.suggest.more"
+            ref="sentinel"
+            class="f-autocomplete-sentinel"
+            aria-hidden="true"
+            :style="lead"
+          />
         </component>
-        <slot name="empty" v-bind="ctx">
-          <div v-if="empty" class="f-group">
-            <span class="f-span">No matches</span>
-          </div>
-        </slot>
+        <template v-if="service.suggest.status === 'extending'">
+          <slot name="more" v-bind="ctx">
+            <div class="f-group" role="status">
+              <span class="f-span">Loading more</span>
+            </div>
+          </slot>
+        </template>
+        <template v-if="!service.items.length">
+          <template v-if="service.suggest.status === 'loading'">
+            <slot name="loading" v-bind="ctx">
+              <div class="f-group" role="status">
+                <span class="f-span">Loading</span>
+              </div>
+            </slot>
+          </template>
+          <slot v-else name="empty" v-bind="ctx">
+            <div v-if="empty" class="f-group">
+              <span class="f-span">No matches</span>
+            </div>
+          </slot>
+        </template>
       </AutocompleteContent>
     </div>
   </AutocompleteRoot>

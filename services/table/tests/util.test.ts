@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fields } from "../src/util";
+import type { dateValues } from "@zoobzio/query";
 import type { DataTableColumn } from "../src/types";
 import { fakeColumns } from "./data";
 import type { FakeRow } from "./data";
@@ -61,9 +62,9 @@ describe("fields", () => {
       values: expect.any(Function),
     });
     expect(result.name).toEqual({ label: "Name" });
-    const values = result.created!.values as (term: string) => string[];
-    expect(values("2025-03")).toHaveLength(31);
-    expect(values("2025-03")[0]).toBe("2025-03-31");
+    const values = result.created!.values as ReturnType<typeof dateValues>;
+    expect(values("2025-03").values).toHaveLength(31);
+    expect(values("2025-03").values[0]).toBe("2025-03-31");
   });
 
   it("lets a date column's own values win over the days", () => {

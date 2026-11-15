@@ -10,11 +10,46 @@ import type {
 } from "@zoobzio/kit";
 
 /**
- * The values a field's value stage suggests: a list the term narrows, or a
- * provider that builds the list from the term. A provider's result is used
- * as given: it owns the narrowing.
+ * A page of values: the values, and `next` when more follow. `next` is the
+ * provider's own: an offset, a token, the last value it gave. The query
+ * hands it back untouched as the `cursor` of the next call, and reads no
+ * more of it than whether it is set: `undefined` or `null` ends the list.
  */
-export type Values = readonly string[] | ((term: string) => readonly string[]);
+export type Page = {
+  values: readonly string[];
+  next?: unknown;
+};
+
+/**
+ * What a values provider is asked with, beside the term: the field `key`
+ * and the operator the draft names, a `signal` that aborts once the draft
+ * moves on, and the `cursor` of a call for more: the `next` of the page
+ * before, absent on the first.
+ */
+export type Lookup = {
+  key: string;
+  op?: string;
+  signal: AbortSignal;
+  cursor?: unknown;
+};
+
+/**
+ * A values provider: builds the values from the term. Its result is used
+ * as given: it owns the narrowing. A list is the whole of them; a `Page`
+ * is the first of more. Either may come as a promise, so a provider may
+ * ask an API. The query calls it once per change of the draft, and once
+ * more per `more`.
+ */
+export type Provider = (
+  term: string,
+  lookup: Lookup,
+) => readonly string[] | Page | Promise<readonly string[] | Page>;
+
+/**
+ * The values a field's value stage suggests: a list the term narrows, or a
+ * provider that builds them from the term.
+ */
+export type Values = readonly string[] | Provider;
 
 /**
  * A field the query can filter on. With `operators`, a filter on the field
@@ -81,13 +116,34 @@ export type Entry =
   | ({ kind: "filter" } & Filter);
 
 /**
- * The state container the service reads and writes: the committed entries
- * and the draft text. The container can be a plain object or a reactive
- * proxy.
+ * Where a provider's values stand. `loading` is the first page of a term,
+ * `extending` a page after it; `idle` is settled.
+ */
+export type SuggestStatus = "idle" | "loading" | "extending";
+
+/**
+ * The values a provider has given for the draft's term: the options so
+ * far, where the lookup stands, and whether `more` has a page to add. The
+ * options of the term before stay while the next term of the same field
+ * and operator is `loading`, so a view does not flash empty between
+ * keystrokes.
+ */
+export type Suggest = {
+  options: Option[];
+  status: SuggestStatus;
+  more: boolean;
+};
+
+/**
+ * The state container the service reads and writes: the committed entries,
+ * the draft text, and what a values provider has given for it. The
+ * container can be a plain object or a reactive proxy. The service
+ * replaces `suggest` as a whole, so a proxy tracks every change.
  */
 export type State = {
   entries: Entry[];
   draft: string;
+  suggest: Suggest;
 };
 
 export type StateKey = keyof State;
@@ -143,9 +199,12 @@ export interface Option {
  *
  * - `change`: a field of the container was written.
  * - `changed`: the committed entries changed.
+ * - `failed`: a values provider threw or rejected. The lookup settles with
+ *   what it had and no more to add.
  */
 export type Events = ChangeEvents<State> & {
   changed: [event: { id: string; entries: Entry[] }];
+  failed: [event: { id: string; error: unknown }];
 };
 
 export type Event = keyof Events;
@@ -165,6 +224,7 @@ export type Service = {
 
   readonly entries: Entry[];
   readonly draft: string;
+  readonly suggest: Suggest;
 
   readonly text: string;
   readonly filters: Filter[];
@@ -185,6 +245,7 @@ export type Service = {
   select(option: Option): void;
   submit(): void;
   unwrap(): void;
+  more(): void;
 
   stageText(key: string, op?: string): string;
   textFor(entry: Entry): string;

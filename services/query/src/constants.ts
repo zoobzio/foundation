@@ -7,6 +7,7 @@ import type { Literal, StateKey } from "./types";
 export const QUERY_STATE_FIELDS: Record<StateKey, null> = {
   entries: null,
   draft: null,
+  suggest: null,
 };
 
 /** The key of the text literal, the one `text` reads. */
@@ -28,7 +29,7 @@ export const QUERY_LITERALS: Record<string, Literal> = {
 };
 
 /**
- * The most days `dateValues` lists: the recent window an empty term looks
- * back over, and the cap on a term that names a whole year.
+ * The most days `dateValues` lists in one page: the recent window an empty
+ * term opens on, and the step each call for more adds.
  */
 export const QUERY_DATE_VALUES_LIMIT = 31;

@@ -19,4 +19,5 @@ export const createBrowserState = <T>(): State<T> => ({
   selectedFolders: new Set(),
   entries: [],
   draft: "",
+  suggest: { options: [], status: "idle", more: false },
 });
