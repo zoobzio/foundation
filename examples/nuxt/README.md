@@ -9,7 +9,8 @@ working in a real app, with real styling, before it ships.
 pnpm example:nuxt   # from the repo root, after pnpm build
 ```
 
-Then open the printed address. The first page holds a `RichText` bound to
+Then open the printed address. A header shared by every page links to
+each demo and switches the color scheme. The first page holds a `RichText` bound to
 an HTML string, with the HTML shown beneath as it changes. `/calendar`
 holds a `Calendar` over a fake backend, an array in memory dated around
 today: recurring events, an occurrence that moved and one that is off,
@@ -34,6 +35,7 @@ shown under it: try `"hopper"`, `Status: Shipped`, or `Total: over 300`.
 ## Layout
 
 ```
+app/layouts/default.vue     — the shared header: the demos and the scheme
 app/pages/index.vue         — the editor and its output
 app/pages/calendar.vue      — the calendar and the selected occurrence
 app/pages/browser.vue       — the browser and its fetch params

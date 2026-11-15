@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import type { Scope } from "@zoobzio/calendar";
 
-import { Calendar, NuxtLink } from "#components";
-import { useUntheme } from "#imports";
+import { Calendar } from "#components";
 import { computed } from "vue";
 import { useTeam } from "~/composables/team";
-
-const untheme = useUntheme();
-const dark = computed(() => untheme.config.input.color === "dark");
-const toggle = () => untheme.swap("color", dark.value ? "light" : "dark");
 
 const team = useTeam();
 await team.init();
@@ -62,21 +57,15 @@ const add = async () => {
 </script>
 
 <template>
-  <div class="page page-wide">
+  <div class="page">
     <header class="page-header">
       <div>
         <h1 class="page-title">Calendar</h1>
         <p class="page-lead">
           The calendar of the foundation layer over a fake backend: recurring
           events, an occurrence that moved, all-day spans, and a task.
-          <NuxtLink to="/">The editor</NuxtLink>,
-          <NuxtLink to="/browser">the browser</NuxtLink>, and
-          <NuxtLink to="/table">the table</NuxtLink> are the other pages.
         </p>
       </div>
-      <button type="button" class="page-scheme" @click="toggle">
-        {{ dark ? "Light" : "Dark" }}
-      </button>
     </header>
 
     <section class="demo">

@@ -276,10 +276,6 @@
 
 /* --- the example page ------------------------------------------------ */
 
-.page-wide {
-  max-width: 68rem;
-}
-
 .detail {
   display: grid;
   gap: var(--space-2);

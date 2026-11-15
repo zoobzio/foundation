@@ -6,11 +6,6 @@
  * menu the dropdown editor.css binds.
  */
 
-/* Seven columns want more room than the prose pages do. */
-.page-wide {
-  max-width: 64rem;
-}
-
 /* One track that may shrink below its content, so a table wider than the
    space it has scrolls in its scroller instead of widening the root. */
 .f-data-table {

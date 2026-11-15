@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { NuxtLink, Table } from "#components";
-import { useUntheme } from "#imports";
+import { Table } from "#components";
 import { computed } from "vue";
 import { useOrders } from "~/composables/orders";
-
-const untheme = useUntheme();
-const dark = computed(() => untheme.config.input.color === "dark");
-const toggle = () => untheme.swap("color", dark.value ? "light" : "dark");
 
 const orders = useOrders();
 await orders.init();
@@ -23,7 +18,7 @@ const params = computed(() => ({
 </script>
 
 <template>
-  <div class="page page-wide">
+  <div class="page">
     <header class="page-header">
       <div>
         <h1 class="page-title">Table</h1>
@@ -32,14 +27,9 @@ const params = computed(() => ({
           <code>/</code> to search: try <code>"hopper"</code>,
           <code>Status: Shipped</code>, or <code>Total: over 300</code>. Sort by
           a header, drag one by its grip to move the column, drag its edge to
-          resize it. <NuxtLink to="/">The editor</NuxtLink>,
-          <NuxtLink to="/calendar">the calendar</NuxtLink>, and
-          <NuxtLink to="/browser">the browser</NuxtLink> are the other pages.
+          resize it.
         </p>
       </div>
-      <button type="button" class="page-scheme" @click="toggle">
-        {{ dark ? "Light" : "Dark" }}
-      </button>
     </header>
 
     <section class="demo">
