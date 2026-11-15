@@ -231,16 +231,24 @@ table's is, hidden by `searchable: false`), the sort menu (the service's
 flips the direction; the sorted item carries `data-current` and
 `data-direction`), and the refresh. Under it is one table. Its head
 (`browser-head.vue`) is a single row attached to the listing: the
-select-all checkbox where the files are selectable, then one cell with the
+select-all checkbox where the rows are selectable, then one cell with the
 breadcrumb over the service's `trail` and, once the first fetch settles,
 the listing's counts (`summary`). The folder rows (`browser-folders.vue`)
-sit above the file rows (`browser-files.vue`), each a `tbody` of its own so
-the columns line up. Folder clicks `open`, crumb clicks `navigate` (either
+sit above the file rows (`browser-files.vue`), each a `tbody` of its own,
+and both render a cell per column, so a folder's values line up with the
+files'. A folder's label fills the first column; the other
+cells format the folder's `values` as a file's are, empty where it carries
+none. Where the service is selectable a folder row has a checkbox as a
+file row does (`pt.folders.rowCheckbox`), and the bulk actions bar counts
+both. Folder clicks `open`, crumb clicks `navigate` (either
 drops the search, which belongs to the folder it was typed in), row and
 folder menus dispatch by key through `runAction` and `runFolderAction`, and
 the bulk actions bar runs `runBulkAction` over the selection. The
 `updated`, `navigated`, and `filtered` events relay as emits. Cell slots
-cascade as the table's do (`cell:<key>`, `cell:<type>`, `cell`);
+cascade as the table's do (`cell:<key>`, `cell:<type>`, `cell`), and a
+folder's the same way under `folderCell` (`folderCell:<key>`,
+`folderCell:<type>`, `folderCell`), with the `folder` slots filling the
+label's cell;
 `crumbPrepend` and `crumbAppend` sit around a crumb's label, `sort`
 replaces the sort trigger and `sortPrepend` and `sortAppend` sit around
 its items; `noFiles` fills the empty file section, and `empty` fills the

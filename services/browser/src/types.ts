@@ -106,24 +106,29 @@ export interface FileAction<T> extends ActionDescriptor {
 }
 
 /**
- * Bulk action over the selected files — the live shape the service exposes:
+ * Bulk action over the selection — the live shape the service exposes:
  * descriptor joined with its handler, under the config key.
- * `runBulkAction(key)` dispatches by key over the service's selection.
+ * `runBulkAction(key)` dispatches by key over the service's selection: the
+ * selected file keys, then the selected folder keys.
  */
 export interface BulkAction extends ActionDescriptor {
   key: string;
-  action: (selected: Set<string>) => void;
+  action: (selected: Set<string>, folders: Set<string>) => void;
 }
 
 /**
- * A folder row — fixed on purpose: consumers map their folder data into it,
- * and folder rendering customizes through the view. Files stay generic;
- * folders do not.
+ * A folder row. Its identity is fixed: consumers map their folder data
+ * into `key` and `label`, and the label renders in the first column.
+ * `values` is what the folder shows in the other columns, keyed and
+ * formatted as a file's are (a total under a `filesize` column); a column
+ * the folder has no value for is an empty cell. `count` is a badge beside
+ * the label.
  */
-export type BrowserFolder = {
+export type BrowserFolder<T = unknown> = {
   key: string;
   label: string;
   count?: number;
+  values?: Partial<T>;
 };
 
 /**
@@ -138,9 +143,11 @@ export type BrowserCrumb = {
 
 /**
  * Parameters passed to the fetch action. The browser owns navigation and
- * file sort: `path` is the folder-key trail from the root (`[]` = root).
- * Sorting applies to files only — folders always render alphabetically,
- * enforced by the service regardless of fetch order. Its query owns the
+ * the sort: `path` is the folder-key trail from the root (`[]` = root),
+ * `sortField` and `sortDirection` the column the listing sorts by. The
+ * folders render above the files, each section in the order the fetch
+ * returns it, so whether the sort reaches the folders (by their `values`,
+ * say) is the fetch's to decide. Its query owns the
  * search: `query` is the committed free text, `filters` the committed
  * column filters. The search is typed in one folder and dropped on leaving
  * it, so a fetch that matches within `path` searches the current folder;
@@ -156,7 +163,7 @@ export interface BrowserFetchParams {
 }
 
 export interface BrowserFetchResult<T> {
-  folders: BrowserFolder[];
+  folders: BrowserFolder<T>[];
   files: T[];
 }
 
@@ -165,16 +172,17 @@ export interface BrowserFetchResult<T> {
  * the service exposes: descriptor joined with its handler, under the config
  * key. `runFolderAction(key, folder)` dispatches by key.
  */
-export interface FolderAction extends ActionDescriptor {
+export interface FolderAction<T = unknown> extends ActionDescriptor {
   key: string;
-  action: (folder: BrowserFolder) => void;
+  action: (folder: BrowserFolder<T>) => void;
 }
 
 /**
  * Config the consumer provides — pure serializable data. Actions are
  * descriptor records: the key is the action's identity, shared with the
- * handler record in `Actions`. `actions`/`bulkActions` cover files
- * (selection is files-only); `folderActions` covers folder rows.
+ * handler record in `Actions`. `actions` covers file rows, `folderActions`
+ * folder rows, and `bulkActions` the selection, files and folders alike:
+ * declaring a bulk action is what makes both selectable.
  */
 export type Config<T> = {
   columns: BrowserColumn<T>[];
@@ -217,14 +225,15 @@ export type Config<T> = {
 
 /**
  * The state container the service reads and writes: the listing, the load
- * flags, the trail, the file sort, the selection, and the query's slice.
+ * flags, the trail, the file sort, the selection (file keys in `selected`,
+ * folder keys in `selectedFolders`), and the query's slice.
  * The container can be a plain object or a reactive proxy. The service
  * replaces each member as a whole, so a proxy tracks every change.
  * `entries` and `draft` belong to the browser's `query` machine, their
  * only writer.
  */
 export type State<T> = {
-  folders: BrowserFolder[];
+  folders: BrowserFolder<T>[];
   files: T[];
   loading: boolean;
   initialized: boolean;
@@ -232,6 +241,7 @@ export type State<T> = {
   sortField: string | null;
   sortDirection: SortDirection;
   selected: Set<string>;
+  selectedFolders: Set<string>;
   entries: Entry[];
   draft: string;
 };
@@ -258,8 +268,11 @@ export type Actions<T> = {
     service: Service<T>,
   ) => Promise<BrowserFetchResult<T>>;
   actions?: Record<string, (row: T) => void>;
-  folderActions?: Record<string, (folder: BrowserFolder) => void>;
-  bulkActions?: Record<string, (selected: Set<string>) => void>;
+  folderActions?: Record<string, (folder: BrowserFolder<T>) => void>;
+  bulkActions?: Record<
+    string,
+    (selected: Set<string>, folders: Set<string>) => void
+  >;
 };
 
 /**
@@ -298,7 +311,7 @@ export type Service<T> = {
   readonly columns: BrowserColumn<T>[];
   readonly fileKey: keyof T;
   readonly actions: FileAction<T>[];
-  readonly folderActions: FolderAction[];
+  readonly folderActions: FolderAction<T>[];
   readonly bulkActions: BulkAction[];
   readonly rootLabel: Text;
   readonly searchable: boolean;
@@ -313,14 +326,17 @@ export type Service<T> = {
    */
   readonly query: Query;
 
-  readonly folders: BrowserFolder[];
+  readonly folders: BrowserFolder<T>[];
   readonly files: T[];
   readonly loading: boolean;
   readonly initialized: boolean;
   readonly path: BrowserCrumb[];
   readonly sortField: string | null;
   readonly sortDirection: SortDirection;
+  /** The keys of the selected files. */
   readonly selected: Set<string>;
+  /** The keys of the selected folders. */
+  readonly selectedFolders: Set<string>;
 
   readonly pathKeys: string[];
   readonly depth: number;
@@ -335,11 +351,18 @@ export type Service<T> = {
   readonly sortableColumns: BrowserColumn<T>[];
   /** Whether the query holds an entry: the listing is a search's result. */
   readonly isFiltered: boolean;
+  /** Whether every listed folder and file is selected. */
   readonly isAllSelected: boolean;
   readonly isIndeterminate: boolean;
   readonly selectAllState: boolean | "indeterminate";
   readonly colSpan: number;
   readonly hasSelection: boolean;
+  /** How many folders and files are selected. */
+  readonly selectionCount: number;
+  /**
+   * Whether the rows select, folders and files alike: the config declares
+   * a bulk action.
+   */
   readonly isSelectable: boolean;
   readonly hasActions: boolean;
   readonly hasFolderActions: boolean;
@@ -351,20 +374,28 @@ export type Service<T> = {
    */
   readonly isEmpty: boolean;
 
-  open(folder: BrowserFolder): void;
+  open(folder: BrowserFolder<T>): void;
   navigate(index: number): void;
   sortBy(field: string): void;
   sortFieldFor(col: BrowserColumn<T>): string;
   isSorted(col: BrowserColumn<T>): boolean;
   keyOf(row: T): string;
   toggleRow(key: string): void;
+  toggleFolder(key: string): void;
+  /** Selects every listed folder and file, or none where all are. */
   toggleAll(): void;
   clearSelection(): void;
   isRowSelected(row: T): boolean;
+  isFolderSelected(folder: BrowserFolder<T>): boolean;
   runAction(key: string, row: T): void;
-  runFolderAction(key: string, folder: BrowserFolder): void;
+  runFolderAction(key: string, folder: BrowserFolder<T>): void;
   runBulkAction(key: string): void;
   init(): Promise<boolean>;
+  /**
+   * Fetches the current folder. When it settles, the selection keeps only
+   * what the new listing still shows, so a bulk action never reaches a row
+   * a search or a refresh took out of view.
+   */
   fetch(): Promise<void>;
 
   /**

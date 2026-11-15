@@ -25,11 +25,11 @@ export const fakeFiles: FakeFile[] = [
   { id: 3, name: "notes.md", size: 512, modified: "2025-03-10T12:00:00" },
 ];
 
-/** Deliberately unsorted: the service re-sorts alphabetically. */
-export const fakeFolders: BrowserFolder[] = [
-  { key: "media", label: "Media", count: 12 },
+/** In the order a fetch returns them, which is the order they render in. */
+export const fakeFolders: BrowserFolder<FakeFile>[] = [
   { key: "archive", label: "Archive" },
   { key: "drafts", label: "Drafts" },
+  { key: "media", label: "Media", count: 12, values: { size: 4096 } },
 ];
 
 export const fakeFileActions: Record<string, ActionDescriptor> = {

@@ -51,13 +51,13 @@ describe("browser", () => {
     expect(wrapper.findAll(".f-data-browser-files tr")).toHaveLength(3);
   });
 
-  it("renders folders alphabetically above the files in one table", async () => {
+  it("renders folders above the files in one table, in the fetch's order", async () => {
     const { service } = makeBrowser();
     await service.init();
     const wrapper = mountBrowser({ service });
     const table = wrapper.get("table.f-table");
     expect(
-      table.findAll(".f-data-browser-folder .f-span").map((s) => s.text()),
+      table.findAll(".f-data-browser-folder-btn .f-span").map((s) => s.text()),
     ).toEqual(["Archive", "Drafts", "Media"]);
     const first = table.findAll(".f-data-browser-files tr").at(0);
     if (!first) throw new Error("no file rows");
@@ -304,7 +304,7 @@ describe("browser", () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
-  it("selects files and shows the bulk actions bar", async () => {
+  it("selects files and folders and shows the bulk actions bar", async () => {
     const purge = vi.fn();
     const { service } = makeBrowser(
       { bulkActions: fakeBrowserBulkActions },
@@ -313,10 +313,10 @@ describe("browser", () => {
     await service.init();
     const wrapper = mountBrowser({ service });
     expect(wrapper.find(".f-data-browser-bulk-actions").exists()).toBe(false);
-    // Folder rows keep an empty selection cell so the columns line up.
-    expect(
-      wrapper.findAll(".f-data-browser-folders td.f-data-browser-select"),
-    ).toHaveLength(3);
+    const folders = wrapper.findAll(
+      '.f-data-browser-folders [role="checkbox"]',
+    );
+    expect(folders).toHaveLength(3);
     const checkboxes = wrapper.findAll(
       '.f-data-browser-files [role="checkbox"]',
     );
@@ -326,10 +326,14 @@ describe("browser", () => {
     expect(service.selected).toEqual(new Set(["1"]));
     const bar = wrapper.get(".f-data-browser-bulk-actions");
     expect(bar.text()).toContain("1 selected");
+    await folders[0]!.trigger("click");
+    await flushPromises();
+    expect(service.selectedFolders).toEqual(new Set(["archive"]));
+    expect(bar.text()).toContain("2 selected");
     await bar.get(".f-data-browser-bulk-action").trigger("click");
-    expect(purge).toHaveBeenCalledWith(new Set(["1"]));
+    expect(purge).toHaveBeenCalledWith(new Set(["1"]), new Set(["archive"]));
     await bar.get(".f-data-browser-bulk-action-clear").trigger("click");
-    expect(service.selected.size).toBe(0);
+    expect(service.hasSelection).toBe(false);
   });
 
   it("dispatches a file action by key from the row menu", async () => {

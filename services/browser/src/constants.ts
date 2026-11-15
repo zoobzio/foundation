@@ -31,6 +31,7 @@ export const BROWSER_STATE_FIELDS: Record<StateKey, null> = {
   sortField: null,
   sortDirection: null,
   selected: null,
+  selectedFolders: null,
   entries: null,
   draft: null,
 };

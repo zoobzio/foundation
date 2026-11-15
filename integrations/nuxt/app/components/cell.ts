@@ -88,18 +88,22 @@ const boolean = ({ value }: Cell): VNode[] => {
   ];
 };
 
+/** A slot over a formatter: the scope's value in its service's formats. */
+const slot =
+  <S>(serviceOf: (scope: S) => Formats) =>
+  (format: (cell: Cell) => VNode[]) =>
+  (scope: S & { value: unknown }): VNode[] => {
+    const { currency, timeZone } = serviceOf(scope);
+    return format({ value: scope.value, currency, timeZone });
+  };
+
 /**
  * The `cell:<type>` slot defaults, over a reader of the service from the
  * slot's scope, for its currency and its time zone: `table` for the table
  * body, `browser` for the browser's files.
  */
 export const cellSlots = <S>(serviceOf: (scope: S) => Formats) => {
-  const cell =
-    (format: (cell: Cell) => VNode[]) =>
-    (scope: S & { value: unknown }): VNode[] => {
-      const { currency, timeZone } = serviceOf(scope);
-      return format({ value: scope.value, currency, timeZone });
-    };
+  const cell = slot(serviceOf);
   return {
     "cell:date": cell(date),
     "cell:datetime": cell(datetime),
@@ -107,5 +111,21 @@ export const cellSlots = <S>(serviceOf: (scope: S) => Formats) => {
     "cell:currency": cell(currency),
     "cell:filesize": cell(filesize),
     "cell:boolean": cell(boolean),
+  };
+};
+
+/**
+ * The `folderCell:<type>` slot defaults of the browser's folders: a
+ * folder's value under a column formats as a file's does.
+ */
+export const folderCellSlots = <S>(serviceOf: (scope: S) => Formats) => {
+  const cell = slot(serviceOf);
+  return {
+    "folderCell:date": cell(date),
+    "folderCell:datetime": cell(datetime),
+    "folderCell:number": cell(number),
+    "folderCell:currency": cell(currency),
+    "folderCell:filesize": cell(filesize),
+    "folderCell:boolean": cell(boolean),
   };
 };

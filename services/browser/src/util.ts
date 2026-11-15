@@ -1,11 +1,17 @@
 import type { Field, Values } from "@zoobzio/query";
-import type { BrowserColumn, BrowserFolder } from "./types";
+import type { BrowserColumn } from "./types";
 
 import { dateValues } from "@zoobzio/query";
 
-/** A copy of the folders in alphabetical label order. */
-export const sortFolders = (folders: BrowserFolder[]): BrowserFolder[] =>
-  [...folders].sort((a, b) => a.label.localeCompare(b.label));
+/**
+ * The selection a listing leaves: the keys still listed. The set itself
+ * where every key is, so an unchanged selection is not written again.
+ */
+export const prune = (selected: Set<string>, listed: string[]): Set<string> => {
+  const keys = new Set(listed);
+  const kept = new Set([...selected].filter((key) => keys.has(key)));
+  return kept.size === selected.size ? selected : kept;
+};
 
 /**
  * The query fields of the filterable columns: one per column, with the

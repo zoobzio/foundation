@@ -16,8 +16,8 @@ export const fakeFiles: FakeFile[] = [
   { id: 2, name: "hero.png", size: 1048576 },
 ];
 
-/** Deliberately unsorted: the service re-sorts alphabetically. */
+/** In the order a fetch returns them, which is the order they render in. */
 export const fakeFolders: BrowserFolder[] = [
-  { key: "media", label: "Media", count: 12 },
   { key: "archive", label: "Archive" },
+  { key: "media", label: "Media", count: 12 },
 ];

@@ -16,7 +16,7 @@ const { service } = defineProps<BrowserBulkActionsProps<T>>();
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
-const { bulkActions, selected } = useRefs(service);
+const { bulkActions, selectionCount } = useRefs(service);
 
 const ctx = useContext<BrowserBulkActionsContext<T>>(
   "browser-bulk-actions",
@@ -30,7 +30,7 @@ defineSlots<BrowserBulkActionsSlots<T>>();
 <template>
   <div ref="el" class="f-group f-data-browser-bulk-actions">
     <span class="f-span f-data-browser-bulk-actions-count">
-      {{ selected.size }} selected
+      {{ selectionCount }} selected
     </span>
     <button
       v-for="bulk in bulkActions"

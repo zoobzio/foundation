@@ -3,7 +3,7 @@
 // `/` key hint, and the `/` key focusing it), the layer's Menu for the sort
 // options and for file and folder actions (so a column's or an action's
 // `icon` draws), the layer's Breadcrumb as its trail, NuxtLink under the
-// files' `link`, the layer's Checkbox for the row and select-all
+// files' `link`, the layer's Checkbox for the file, folder and select-all
 // checkboxes. Its Fab slots draw the `sort`, `refresh` and `actions`
 // icons: the sort trigger draws `sort` until the files sort by a column,
 // then `sort-asc` or `sort-desc`, which the column's item in the menu draws
@@ -12,13 +12,16 @@
 // Its own text — the search's placeholder, the sort, refresh and actions
 // labels, the listing's counts, the empty states, the clear button — reads
 // in the visitor's locale, and a date, number, currency, file size or
-// boolean cell formats through the app's prosary service, a date or a
-// datetime in the browser's time zone.
+// boolean cell, a file's or a folder's, formats through the app's prosary
+// service, a date or a datetime in the browser's time zone.
 import type {
   BrowserFileCellContext,
   BrowserFilesPassthrough,
 } from "@zoobzio/vue/types/components/browser-files";
-import type { BrowserFoldersPassthrough } from "@zoobzio/vue/types/components/browser-folders";
+import type {
+  BrowserFolderCellContext,
+  BrowserFoldersPassthrough,
+} from "@zoobzio/vue/types/components/browser-folders";
 import type { BrowserHeadPassthrough } from "@zoobzio/vue/types/components/browser-head";
 import type { Service } from "@zoobzio/browser";
 
@@ -32,7 +35,7 @@ import Checkbox from "./checkbox";
 import Menu from "./menu";
 import TableSearch from "./table-search";
 import { icon, iconOf, iconPart } from "./icon";
-import { cellSlots } from "./cell";
+import { cellSlots, folderCellSlots } from "./cell";
 import { text, textSlot } from "./text";
 
 // The direction the files sort in, as its icon.
@@ -61,12 +64,16 @@ export default wrap(Core, {
       actionsMenu: { as: Menu },
     }),
     folders: layer<BrowserFoldersPassthrough>(pt?.folders, {
+      rowCheckbox: { as: Checkbox },
       actionsTrigger: { label: text("browser.actions") },
       actionsMenu: { as: Menu },
     }),
   }),
   slots: {
     ...cellSlots<BrowserFileCellContext<unknown>>(({ browser }) => browser),
+    ...folderCellSlots<BrowserFolderCellContext<unknown>>(
+      ({ browser }) => browser,
+    ),
     sort: ({ browser, settings }) =>
       iconPart(
         settings.sortTrigger,

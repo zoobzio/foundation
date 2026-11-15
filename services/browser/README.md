@@ -3,10 +3,10 @@
 Headless data browser service. Pure TypeScript, no framework dependency.
 
 Owns: the folder trail (open a folder, jump to a crumb), the file sort,
-the file selection, the query over its columns, and the join of action
+the selection of files and folders, the query over its columns, and the join of action
 descriptors to their handlers.
 Delegates: data loading (`fetch`) and state storage (the container).
-Folders always come back alphabetical; file order is the fetch's.
+Folders list above files; the order of each is the fetch's.
 
 The package defines its own column and action shapes (`BrowserColumn`,
 `ActionDescriptor`, `FileAction`, `FolderAction`, `BulkAction`,
@@ -33,9 +33,49 @@ browser.open({ key: "media", label: "Media" }); // descend, refetch
 browser.navigate(0); // back to the root
 browser.sortBy("name"); // asc, then desc on repeat
 browser.toggleRow("1");
+browser.toggleFolder("media");
 browser.runAction("download", file); // dispatch a file action by key
 browser.runBulkAction("purge"); // a bulk action over the selection
 ```
+
+## Folders
+
+A folder is `{ key, label, count?, values? }`. Its label renders in the
+first column, and `values` is what it shows in the others, keyed by column and formatted as a file's value is: a total in
+bytes under a `filesize` column, a latest change under a `date` one. A
+column the folder carries no value for is an empty cell. `count` is a
+badge beside the label.
+
+```ts
+fetch: async (params) => ({
+  folders: [{ key: "media", label: "Media", values: { size: 48_200_000 } }],
+  files,
+});
+```
+
+Folders render in the order the fetch returns them, as files do. The
+fetch is handed the sort, so it can order the folders by it too, by label
+under the first column and by their `values` under the others.
+
+## Selection
+
+Declaring a bulk action is what makes the rows selectable (`isSelectable`),
+folders and files alike. The file keys are in `selected` (`toggleRow`,
+`isRowSelected`), the folder keys in `selectedFolders` (`toggleFolder`,
+`isFolderSelected`): two sets, as a folder's key and a file's may be the
+same. `toggleAll`, `selectAllState`, `hasSelection`, `selectionCount`, and
+`clearSelection` read and write both, and a bulk handler is handed both:
+
+```ts
+bulkActions: {
+  purge: (selected, folders) => api.purge([...selected], [...folders]),
+}
+```
+
+The selection is the current listing's. `open` and `navigate` drop it, and
+each fetch that settles keeps only the keys it still lists, so a bulk
+action never reaches a row a search or a refresh took out of view. A fetch
+that fails leaves it as it stands.
 
 ## The trail
 
@@ -78,7 +118,8 @@ lists as its sort options, each sorting through `sortBy(sortFieldFor(col))`.
 ## The state container
 
 The service reads and writes the `state` container: the listing, the load
-flags, the trail, the file sort, the selection, and the query's `entries`
+flags, the trail, the file sort, the selection (`selected` and
+`selectedFolders`), and the query's `entries`
 and `draft`. The container can be a
 plain object or a reactive proxy. The service replaces each member as a
 whole, so a proxy tracks every change.

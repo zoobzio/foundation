@@ -73,8 +73,9 @@ describe("createBrowser", () => {
     assets.runFolderAction("rename", fakeFolders[0] as (typeof fakeFolders)[0]);
     expect(rename).toHaveBeenCalledWith(fakeFolders[0]);
     assets.toggleRow("2");
+    assets.toggleFolder("media");
     assets.runBulkAction("purge");
-    expect(purge).toHaveBeenCalledWith(new Set(["2"]));
+    expect(purge).toHaveBeenCalledWith(new Set(["2"]), new Set(["media"]));
   });
 
   it("init dispatches the wired fetch from the seeded trail", async () => {

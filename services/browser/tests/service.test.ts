@@ -99,13 +99,21 @@ describe("fetch", () => {
     expect(service.files).toEqual(fakeFiles);
   });
 
-  it("re-sorts fetched folders alphabetically by label", async () => {
-    const { service } = makeService();
+  it("keeps folders in the order the fetch returns them", async () => {
+    const folders = [
+      { key: "media", label: "Media" },
+      { key: "drafts", label: "Drafts" },
+      { key: "archive", label: "Archive" },
+    ];
+    const actions: Actions<FakeFile> = {
+      fetch: vi.fn(async () => ({ folders, files: fakeFiles })),
+    };
+    const { service } = makeService({ actions });
     await service.fetch();
     expect(service.folders.map((f) => f.label)).toEqual([
-      "Archive",
-      "Drafts",
       "Media",
+      "Drafts",
+      "Archive",
     ]);
   });
 
@@ -275,6 +283,97 @@ describe("selection", () => {
     expect(service.selected).toEqual(new Set());
   });
 
+  it("selects folders beside files, under their own keys", async () => {
+    const { service } = makeService();
+    await service.fetch();
+    const media = fixture(fakeFolders.find((f) => f.key === "media"));
+    service.toggleFolder("media");
+    expect(service.isFolderSelected(media)).toBe(true);
+    expect(service.selectedFolders).toEqual(new Set(["media"]));
+    expect(service.selected).toEqual(new Set());
+    expect(service.hasSelection).toBe(true);
+    expect(service.selectionCount).toBe(1);
+    expect(service.selectAllState).toBe("indeterminate");
+    service.toggleFolder("media");
+    expect(service.isFolderSelected(media)).toBe(false);
+    expect(service.hasSelection).toBe(false);
+  });
+
+  it("toggleAll takes every folder and file, and all means both", async () => {
+    const { service } = makeService();
+    await service.fetch();
+    service.toggleAll();
+    expect(service.selected).toEqual(new Set(["1", "2", "3"]));
+    expect(service.selectedFolders).toEqual(
+      new Set(["archive", "drafts", "media"]),
+    );
+    expect(service.selectionCount).toBe(6);
+    expect(service.selectAllState).toBe(true);
+    service.toggleFolder("drafts");
+    expect(service.selectAllState).toBe("indeterminate");
+    service.toggleAll();
+    expect(service.selectAllState).toBe(true);
+    service.toggleAll();
+    expect(service.selectionCount).toBe(0);
+  });
+
+  it("isAllSelected holds over a listing of folders alone", async () => {
+    const actions: Actions<FakeFile> = {
+      fetch: vi.fn(async () => ({ folders: fakeFolders, files: [] })),
+    };
+    const { service } = makeService({ actions });
+    await service.fetch();
+    service.toggleAll();
+    expect(service.isAllSelected).toBe(true);
+  });
+
+  it("a fetch drops what it no longer lists from the selection", async () => {
+    let result: BrowserFetchResult<FakeFile> = {
+      folders: fakeFolders,
+      files: fakeFiles,
+    };
+    const actions: Actions<FakeFile> = { fetch: vi.fn(async () => result) };
+    const { service } = makeService({ actions });
+    await service.fetch();
+    service.toggleAll();
+    result = {
+      folders: fakeFolders.filter((f) => f.key === "media"),
+      files: fakeFiles.filter((f) => f.id !== 2),
+    };
+    await service.fetch();
+    expect(service.selected).toEqual(new Set(["1", "3"]));
+    expect(service.selectedFolders).toEqual(new Set(["media"]));
+  });
+
+  it("a fetch that lists the whole selection leaves it untouched", async () => {
+    const { service, state } = makeService();
+    await service.fetch();
+    service.toggleRow("1");
+    service.toggleFolder("media");
+    const { selected, selectedFolders } = state;
+    const change = vi.fn();
+    service.on("change", change);
+    await service.fetch();
+    expect(state.selected).toBe(selected);
+    expect(state.selectedFolders).toBe(selectedFolders);
+    const written = change.mock.calls.map(
+      ([c]) => (c as Change<FakeFile>).field,
+    );
+    expect(written).toContain("files");
+    expect(written).not.toContain("selected");
+    expect(written).not.toContain("selectedFolders");
+  });
+
+  it("a failed fetch keeps the selection", async () => {
+    const actions = makeActions();
+    const { service } = makeService({ actions });
+    await service.fetch();
+    service.toggleRow("1");
+    vi.mocked(actions.fetch).mockRejectedValueOnce(new Error("down"));
+    await expect(service.fetch()).rejects.toThrow("down");
+    expect(service.selected).toEqual(new Set(["1"]));
+  });
+
   it("isAllSelected is false with no files", () => {
     const { service } = makeService();
     expect(service.isAllSelected).toBe(false);
@@ -318,8 +417,8 @@ describe("action joins", () => {
     service.folderActions.at(0)?.action(folder);
     expect(rename).toHaveBeenCalledWith(folder);
 
-    service.bulkActions.at(0)?.action(new Set(["1"]));
-    expect(purge).toHaveBeenCalledWith(new Set(["1"]));
+    service.bulkActions.at(0)?.action(new Set(["1"]), new Set(["media"]));
+    expect(purge).toHaveBeenCalledWith(new Set(["1"]), new Set(["media"]));
   });
 
   it("a descriptor without a handler is a no-op", () => {
@@ -591,8 +690,9 @@ describe("action dispatch", () => {
 
     service.toggleRow("1");
     service.toggleRow("3");
+    service.toggleFolder("media");
     service.runBulkAction("deleteSelected");
-    expect(purge).toHaveBeenCalledWith(new Set(["1", "3"]));
+    expect(purge).toHaveBeenCalledWith(new Set(["1", "3"]), new Set(["media"]));
   });
 
   it("an unknown or unhandled key is a no-op", () => {

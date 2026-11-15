@@ -1,22 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { fields, sortFolders } from "../src/util";
+import { fields, prune } from "../src/util";
 import type { BrowserColumn } from "../src/types";
-import { fakeFileColumns, fakeFolders } from "./data";
+import { fakeFileColumns } from "./data";
 import type { FakeFile } from "./data";
 
-describe("sortFolders", () => {
-  it("returns a copy in alphabetical label order", () => {
-    const sorted = sortFolders(fakeFolders);
-    expect(sorted.map((f) => f.label)).toEqual(["Archive", "Drafts", "Media"]);
-    expect(fakeFolders.map((f) => f.label)).toEqual([
-      "Media",
-      "Archive",
-      "Drafts",
-    ]);
+describe("prune", () => {
+  it("keeps the keys still listed", () => {
+    expect(prune(new Set(["1", "2", "3"]), ["3", "1", "9"])).toEqual(
+      new Set(["1", "3"]),
+    );
   });
 
-  it("handles an empty list", () => {
-    expect(sortFolders([])).toEqual([]);
+  it("returns the set itself where nothing is lost", () => {
+    const selected = new Set(["1"]);
+    expect(prune(selected, ["1", "2"])).toBe(selected);
   });
 });
 

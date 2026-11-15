@@ -26,11 +26,11 @@ import {
   BROWSER_ROOT_KEY,
   BROWSER_STATE_FIELDS,
 } from "./constants";
-import { fields, sortFolders } from "./util";
+import { fields, prune } from "./util";
 
 /**
- * The headless browser machine. Owns the folder trail, the file sort, the
- * file selection, and the query over its columns; delegates data loading
+ * The headless browser machine. Owns the folder trail, the sort, the
+ * selection of folders and files, and the query over its columns; delegates data loading
  * to `wiring.fetch` and joins the config's action descriptors to the
  * handlers in `wiring`.
  *
@@ -76,15 +76,15 @@ export class BrowserService<T> implements Service<T> {
       ([key, descriptor]) => ({
         ...descriptor,
         key,
-        action: (folder: BrowserFolder) => this.runFolderAction(key, folder),
+        action: (folder: BrowserFolder<T>) => this.runFolderAction(key, folder),
       }),
     );
     this.bulkActions = entries(config.bulkActions ?? {}).map(
       ([key, descriptor]) => ({
         ...descriptor,
         key,
-        action: (selected: Set<string>) =>
-          wiring.bulkActions?.[key]?.(selected),
+        action: (selected: Set<string>, folders: Set<string>) =>
+          wiring.bulkActions?.[key]?.(selected, folders),
       }),
     );
 
@@ -105,7 +105,7 @@ export class BrowserService<T> implements Service<T> {
 
   // --- state -----------------------------------------------------------
 
-  get folders(): BrowserFolder[] {
+  get folders(): BrowserFolder<T>[] {
     return this.state.folders;
   }
   get files(): T[] {
@@ -128,6 +128,9 @@ export class BrowserService<T> implements Service<T> {
   }
   get selected(): Set<string> {
     return this.state.selected;
+  }
+  get selectedFolders(): Set<string> {
+    return this.state.selectedFolders;
   }
   get rootLabel(): Text {
     return this.config.rootLabel ?? BROWSER_DEFAULT_ROOT_LABEL;
@@ -181,12 +184,15 @@ export class BrowserService<T> implements Service<T> {
   }
 
   get isAllSelected(): boolean {
-    if (!this.files.length) return false;
-    return this.files.every((row) => this.selected.has(this.keyOf(row)));
+    if (!this.folders.length && !this.files.length) return false;
+    return (
+      this.folders.every((folder) => this.selectedFolders.has(folder.key)) &&
+      this.files.every((row) => this.selected.has(this.keyOf(row)))
+    );
   }
 
   get isIndeterminate(): boolean {
-    if (!this.selected.size) return false;
+    if (!this.hasSelection) return false;
     return !this.isAllSelected;
   }
 
@@ -204,7 +210,11 @@ export class BrowserService<T> implements Service<T> {
   }
 
   get hasSelection(): boolean {
-    return this.selected.size > 0;
+    return this.selectionCount > 0;
+  }
+
+  get selectionCount(): number {
+    return this.selected.size + this.selectedFolders.size;
   }
 
   get isSelectable(): boolean {
@@ -238,7 +248,7 @@ export class BrowserService<T> implements Service<T> {
    * Descends into a folder: push its crumb, drop the selection and the
    * search, refetch.
    */
-  open(folder: BrowserFolder): void {
+  open(folder: BrowserFolder<T>): void {
     this.move([...this.path, { key: folder.key, label: folder.label }]);
   }
 
@@ -258,7 +268,7 @@ export class BrowserService<T> implements Service<T> {
    */
   private move(path: BrowserCrumb[]): void {
     this.state.path = path;
-    this.state.selected = new Set();
+    this.clearSelection();
     this.moving = true;
     try {
       this.query.clear();
@@ -310,20 +320,53 @@ export class BrowserService<T> implements Service<T> {
     this.state.selected = next;
   }
 
+  toggleFolder(key: string): void {
+    const next = new Set(this.selectedFolders);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    this.state.selectedFolders = next;
+  }
+
   toggleAll(): void {
     if (this.isAllSelected) {
-      this.state.selected = new Set();
+      this.clearSelection();
     } else {
       this.state.selected = new Set(this.files.map((row) => this.keyOf(row)));
+      this.state.selectedFolders = new Set(
+        this.folders.map((folder) => folder.key),
+      );
     }
   }
 
   clearSelection(): void {
     this.state.selected = new Set();
+    this.state.selectedFolders = new Set();
   }
 
   isRowSelected(row: T): boolean {
     return this.selected.has(this.keyOf(row));
+  }
+
+  isFolderSelected(folder: BrowserFolder<T>): boolean {
+    return this.selectedFolders.has(folder.key);
+  }
+
+  /**
+   * Narrows the selection to the listing: a row a fetch no longer returns
+   * (a search hid it, a refresh found it gone) leaves the selection with
+   * it. A set that loses nothing is left as it stands.
+   */
+  private pruneSelection(): void {
+    const files = prune(
+      this.selected,
+      this.files.map((row) => this.keyOf(row)),
+    );
+    if (files !== this.selected) this.state.selected = files;
+    const folders = prune(
+      this.selectedFolders,
+      this.folders.map((folder) => folder.key),
+    );
+    if (folders !== this.selectedFolders) this.state.selectedFolders = folders;
   }
 
   // --- actions ---------------------------------------------------------
@@ -332,12 +375,12 @@ export class BrowserService<T> implements Service<T> {
     this.wiring.actions?.[key]?.(row);
   }
 
-  runFolderAction(key: string, folder: BrowserFolder): void {
+  runFolderAction(key: string, folder: BrowserFolder<T>): void {
     this.wiring.folderActions?.[key]?.(folder);
   }
 
   runBulkAction(key: string): void {
-    this.wiring.bulkActions?.[key]?.(this.selected);
+    this.wiring.bulkActions?.[key]?.(this.selected, this.selectedFolders);
   }
 
   // --- loading ---------------------------------------------------------
@@ -362,10 +405,10 @@ export class BrowserService<T> implements Service<T> {
         },
         this,
       );
-      // Folders render alphabetically no matter what order the fetch
-      // returns; file order is the fetch's to decide.
-      this.state.folders = sortFolders(result.folders);
+      // The order of each section is the fetch's to decide.
+      this.state.folders = result.folders;
       this.state.files = result.files;
+      this.pruneSelection();
     } finally {
       this.state.loading = false;
       this.emitter.emit("updated", {

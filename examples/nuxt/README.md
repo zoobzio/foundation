@@ -18,7 +18,9 @@ JSCalendar object it is, with buttons that rename or remove the one
 occurrence, it and every later one, or the whole entry. `/browser` holds a
 `Browser` over a fake backend, a folder tree in memory: the search and the
 sort menu in its toolbar, the trail and the listing's counts as the head of
-its table, file and bulk actions that delete. Its `fetch` matches the
+its table, folders that show their total size and latest change in the
+files' columns, file actions that delete and a bulk action that deletes
+the selected files and folders. Its `fetch` matches the
 search within the current folder alone, and the params the next fetch is
 handed are shown beneath: try `"logo"`, `Kind: Image`, or `Size: over 10`
 (megabytes), then open a folder and watch the search clear. `/table` holds

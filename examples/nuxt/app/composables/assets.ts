@@ -142,6 +142,29 @@ const at = (path: string[]): Folder => {
 /** A size as the search takes it: megabytes, into bytes. */
 const megabytes = (value: string): number => Number(value) * 1_000_000;
 
+/** Every file at or below a folder. */
+const within = (from: Folder): Asset[] => [
+  ...from.files,
+  ...from.folders.flatMap(within),
+];
+
+/**
+ * What a folder shows in the files' columns: the bytes of everything
+ * below it under `size`, and its latest change under `modified`, where it
+ * holds a file at all.
+ */
+const summary = (from: Folder): Partial<Asset> => {
+  const assets = within(from);
+  if (!assets.length) return { size: 0 };
+  return {
+    size: assets.reduce((total, asset) => total + asset.size, 0),
+    modified: assets
+      .map((asset) => asset.modified)
+      .sort()
+      .at(-1),
+  };
+};
+
 /** The fields the backend sorts by, by the sort field a column names. */
 const SORTS: Record<string, keyof Asset | undefined> = {
   name: "name",
@@ -149,6 +172,12 @@ const SORTS: Record<string, keyof Asset | undefined> = {
   size: "size",
   modified: "modified",
 };
+
+/** The order of two values of a column: numbers by size, the rest as text. */
+const compare = (x: unknown, y: unknown): number =>
+  typeof x === "number" && typeof y === "number"
+    ? x - y
+    : String(x ?? "").localeCompare(String(y ?? ""));
 
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -192,30 +221,32 @@ const fetch = async ({
   });
 
   const field = SORTS[sortField ?? ""];
+  const sign = sortDirection === "asc" ? 1 : -1;
   if (field) {
-    const sign = sortDirection === "asc" ? 1 : -1;
-    files.sort((a, b) => {
-      const x = a[field];
-      const y = b[field];
-      const order =
-        typeof x === "number" && typeof y === "number"
-          ? x - y
-          : String(x).localeCompare(String(y));
-      return order * sign;
-    });
+    files.sort((a, b) => compare(a[field], b[field]) * sign);
   }
 
   // A column filter is about files, so it leaves the folders out; free
   // text matches a folder by its name.
-  const folders: BrowserFolder[] = filters.length
+  const folders: BrowserFolder<Asset>[] = filters.length
     ? []
     : here.folders
         .filter((f) => !term || f.label.toLowerCase().includes(term))
         .map((f) => ({
           key: f.key,
           label: f.label,
-          count: f.folders.length + f.files.length,
+          values: summary(f),
         }));
+
+  // The folders sort as the files do: by name under the name column, by
+  // what they show under another, and by name where they show nothing or
+  // nothing sorts.
+  folders.sort((a, b) => {
+    const byName = a.label.localeCompare(b.label);
+    if (!field) return byName;
+    if (field === "name") return byName * sign;
+    return compare(a.values?.[field], b.values?.[field]) * sign || byName;
+  });
 
   return { folders, files: [...files] };
 };
@@ -224,6 +255,11 @@ const fetch = async ({
 const drop = (ids: Set<string>, from: Folder = root): void => {
   from.files = from.files.filter((asset) => !ids.has(asset.id));
   for (const child of from.folders) drop(ids, child);
+};
+
+/** Drops the folders of one folder by key, with everything below them. */
+const dropFolders = (keys: Set<string>, from: Folder): void => {
+  from.folders = from.folders.filter((f) => !keys.has(f.key));
 };
 
 export const useAssets = createBrowser<Asset>("assets", {
@@ -276,9 +312,11 @@ export const useAssets = createBrowser<Asset>("assets", {
     remove: {
       label: "Delete",
       icon: "remove",
-      action: (selected) => {
-        drop(new Set(selected));
+      action: (selected, folders) => {
         const assets = useAssets();
+        // Folder keys are the current folder's: they are selected in it.
+        dropFolders(new Set(folders), at(assets.pathKeys));
+        drop(new Set(selected));
         assets.clearSelection();
         assets.fetch();
       },

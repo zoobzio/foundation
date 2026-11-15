@@ -6,6 +6,7 @@ import type {
   BrowserFoldersSlots,
 } from "../types/components/browser-folders";
 
+import Checkbox from "./checkbox.vue";
 import Fab from "./fab.vue";
 import Menu from "./menu.vue";
 
@@ -15,6 +16,7 @@ import { useTemplateRef } from "vue";
 import { useRefs } from "../composables/ref";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { cell } from "../utils/format";
 import { BROWSER_ACTIONS_LABEL } from "../constants/browser";
 </script>
 
@@ -35,6 +37,7 @@ const {
 const settings = usePassthrough<BrowserFoldersPassthrough>(() => ({
   pt,
   recipes: {
+    rowCheckbox: { as: Checkbox },
     actionsMenu: {
       as: Menu,
       groups: [{ key: "folder-actions", items: folderActions.value }],
@@ -61,11 +64,18 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
       v-for="folder in folders"
       :key="folder.key"
       class="f-tr f-data-browser-folder"
+      :class="{ 'f-data-browser-selected': service.isFolderSelected(folder) }"
     >
-      <!-- Selection is files-only; the empty cell keeps column alignment. -->
-      <td v-if="isSelectable" class="f-td f-data-browser-select" />
-      <td class="f-td" :colspan="columns.length">
-        <slot name="folder" v-bind="{ ...ctx, folder }">
+      <td v-if="isSelectable" class="f-td f-data-browser-select">
+        <Primitive
+          v-bind="settings.rowCheckbox"
+          :model-value="service.isFolderSelected(folder)"
+          @update:model-value="service.toggleFolder(folder.key)"
+        />
+      </td>
+      <td v-for="(col, index) in columns" :key="String(col.key)" class="f-td">
+        <!-- The folder's label fills the first column. -->
+        <slot v-if="index === 0" name="folder" v-bind="{ ...ctx, folder }">
           <button
             type="button"
             class="f-button f-data-browser-folder-btn"
@@ -83,6 +93,52 @@ const slots = defineSlots<BrowserFoldersSlots<T>>();
               {{ folder.count }}
             </span>
           </button>
+        </slot>
+        <!-- 1. folderCell:<key> overrides one column -->
+        <slot
+          v-else-if="slots[`folderCell:${String(col.key)}`]"
+          :name="`folderCell:${String(col.key)}`"
+          v-bind="{
+            ...ctx,
+            folder,
+            column: col,
+            value: folder.values?.[col.key],
+          }"
+        />
+        <!-- 2. folderCell:<type> overrides all columns of a type -->
+        <slot
+          v-else-if="col.type && slots[`folderCell:${col.type}`]"
+          :name="`folderCell:${col.type}`"
+          v-bind="{
+            ...ctx,
+            folder,
+            column: col,
+            value: folder.values?.[col.key],
+          }"
+        />
+        <!-- 3. folderCell overrides all cells; 4. the value by its type,
+             and nothing where the folder carries none -->
+        <slot
+          v-else
+          name="folderCell"
+          v-bind="{
+            ...ctx,
+            folder,
+            column: col,
+            value: folder.values?.[col.key],
+          }"
+        >
+          <span v-if="folder.values?.[col.key] != null" class="f-span">
+            {{
+              cell(
+                folder.values[col.key],
+                col.type,
+                service.locale,
+                service.currency,
+                service.timeZone,
+              )
+            }}
+          </span>
         </slot>
       </td>
       <td

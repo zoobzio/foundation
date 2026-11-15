@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import Browser from "../../../app/components/browser";
 import { $prosary } from "#test/mocks/app";
-import { makeBrowser } from "#test/mount/browser";
+import { linkedFiles, makeBrowser } from "#test/mount/browser";
 
 const mounted: { unmount: () => void }[] = [];
 
@@ -213,6 +213,40 @@ describe("browser wrapper", () => {
     const cells = wrapper.findAll("tbody td").map((td) => td.text());
     expect(cells).toContain("1");
     expect(cells).toContain("Yes");
+  });
+
+  it("formats a folder's values as a file's and draws its checkbox", async () => {
+    const { service } = makeBrowser(
+      {
+        columns: [
+          { key: "name", label: "Name", type: "text" },
+          { key: "id", label: "Size", type: "filesize" },
+        ],
+        bulkActions: { purge: { label: "Purge" } },
+      },
+      { bulkActions: { purge: vi.fn() } },
+      {
+        folders: [{ key: "media", label: "Media", values: { id: 2048 } }],
+        files: linkedFiles,
+      },
+    );
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    await flushPromises();
+    const row = wrapper.get(".f-data-browser-folder");
+    const size = $prosary.number(2, {
+      style: "unit",
+      unit: "kilobyte",
+      unitDisplay: "short",
+      maximumFractionDigits: 1,
+    });
+    expect(row.findAll("td").map((td) => td.text())).toEqual([
+      "",
+      "Media",
+      size,
+    ]);
+    await row.get('[role="checkbox"]').trigger("click");
+    expect(service.selectedFolders).toEqual(new Set(["media"]));
   });
 
   it("formats date and datetime cells in the browser's time zone", async () => {

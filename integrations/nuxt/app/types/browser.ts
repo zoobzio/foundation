@@ -20,14 +20,14 @@ export type BrowserAction<T> = Bound<ActionDescriptor, FileAction<T>["action"]>;
 /**
  * A folder action: its descriptor and its handler, under the config key.
  */
-export type BrowserFolderAction = Bound<
+export type BrowserFolderAction<T = unknown> = Bound<
   ActionDescriptor,
-  FolderAction["action"]
+  FolderAction<T>["action"]
 >;
 
 /**
- * A bulk action over the selected files: its descriptor and its handler,
- * under the config key.
+ * A bulk action over the selected files and folders: its descriptor and
+ * its handler, under the config key.
  */
 export type BrowserBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 
@@ -40,7 +40,12 @@ export type BrowserBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 export type BrowserInitial<T> = Partial<
   Pick<
     State<T>,
-    "path" | "sortField" | "sortDirection" | "selected" | "entries"
+    | "path"
+    | "sortField"
+    | "sortDirection"
+    | "selected"
+    | "selectedFolders"
+    | "entries"
   >
 >;
 
@@ -55,7 +60,7 @@ export type BrowserOptions<T> = Omit<
 > & {
   fetch: Actions<T>["fetch"];
   actions?: Record<string, BrowserAction<T>>;
-  folderActions?: Record<string, BrowserFolderAction>;
+  folderActions?: Record<string, BrowserFolderAction<T>>;
   bulkActions?: Record<string, BrowserBulkAction>;
   initial?: BrowserInitial<T>;
 };
