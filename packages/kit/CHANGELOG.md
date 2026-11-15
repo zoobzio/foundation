@@ -1,5 +1,11 @@
 # @zoobzio/kit
 
+## 0.1.11
+
+### Patch Changes
+
+- [`a365fe4`](https://github.com/zoobzio/foundation/commit/a365fe4a423c09e6ec11aaaaea1cd46fa0c8e7c6) Thanks [@zoobzio](https://github.com/zoobzio)! - Version bump.
+
 ## 0.1.10
 
 ## 0.1.9
