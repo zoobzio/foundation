@@ -602,6 +602,23 @@ describe("trail", () => {
     ]);
   });
 
+  it("carries the root link and each opened folder's link", () => {
+    const { service } = makeService({
+      config: { rootLink: { to: "/files" } },
+    });
+    service.open({
+      key: "media",
+      label: "Media",
+      link: { to: "/files/media" },
+    });
+    service.open({ key: "2025", label: "2025" });
+    expect(service.trail).toEqual([
+      { key: "", label: "Home", link: { to: "/files" } },
+      { key: "media", label: "Media", link: { to: "/files/media" } },
+      { key: "media/2025", label: "2025" },
+    ]);
+  });
+
   it("indexes line up with navigate", () => {
     const { service, state } = makeService();
     state.path = [

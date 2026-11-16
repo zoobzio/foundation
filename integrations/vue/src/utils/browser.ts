@@ -4,12 +4,14 @@ import type { BrowserColumn, Service } from "@zoobzio/browser";
 
 /**
  * The browser's trail as breadcrumb items. Each item carries its trail
- * index, which is what `navigate` takes when the crumb is selected.
+ * index, which is what `navigate` takes when the crumb is selected, and the
+ * crumb's `link`, which renders it as an anchor.
  */
 export const crumbItems = <T>(browser: Service<T>): BrowserCrumbItem[] =>
   browser.trail.map((crumb, index) => ({
     key: crumb.key,
     label: crumb.label,
+    link: crumb.link,
     index,
   }));
 

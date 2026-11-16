@@ -89,6 +89,13 @@ browser.trail; // [{ key: "", label: "Home" }, { key: "media", label: "Media" }]
 browser.navigate(browser.trail.findIndex((c) => c.key === "media"));
 ```
 
+A crumb can carry a `link` (`{ to, target? }`), which a view renders as an
+anchor instead of a button. The root crumb takes it from `rootLink` in the
+config, and every other crumb from the `link` of the folder it was opened
+from. The link is data for the view only: the browser does not read the
+URL, so landing on a folder's link is the consumer's to seed through the
+initial `path`.
+
 ## The search
 
 `query` is a query machine over the filterable columns: one field per

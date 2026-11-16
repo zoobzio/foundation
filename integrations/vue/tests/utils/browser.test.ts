@@ -22,6 +22,19 @@ describe("crumbItems", () => {
       { key: "media/2025", label: "2025", index: 2 },
     ]);
   });
+
+  it("carries a crumb's link onto its item", () => {
+    const { service, state } = makeBrowser({ rootLink: { to: "/files" } });
+    state.path = [
+      { key: "media", label: "Media", link: { to: "/files/media" } },
+      { key: "2025", label: "2025" },
+    ];
+    expect(crumbItems(service)).toEqual([
+      { key: "", label: "Home", index: 0, link: { to: "/files" } },
+      { key: "media", label: "Media", index: 1, link: { to: "/files/media" } },
+      { key: "media/2025", label: "2025", index: 2 },
+    ]);
+  });
 });
 
 describe("sortItems", () => {

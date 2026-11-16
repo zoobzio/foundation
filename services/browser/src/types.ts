@@ -124,23 +124,36 @@ export interface BulkAction extends ActionDescriptor {
  * `values` is what the folder shows in the other columns, keyed and
  * formatted as a file's are (a total under a `filesize` column); a column
  * the folder has no value for is an empty cell. `count` is a badge beside
- * the label.
+ * the label. `link` is where the folder lives as a URL: its crumb carries it
+ * once the folder is opened, and a view renders that crumb as an anchor.
  */
 export type BrowserFolder<T = unknown> = {
   key: string;
   label: string;
   count?: number;
   values?: Partial<T>;
+  link?: BrowserLink;
+};
+
+/**
+ * Where a crumb points as a URL. A view renders a crumb with a link as an
+ * anchor and one without as a button.
+ */
+export type BrowserLink = {
+  to: string;
+  target?: "_blank" | "_self";
 };
 
 /**
  * One step of the navigation trail. State keeps the full crumb (key and
  * label) so breadcrumb labels survive navigation without a refetch; fetch
- * params and events carry keys only.
+ * params and events carry keys only. `link` comes from the folder the crumb
+ * was opened from, or from `rootLink` for the root crumb.
  */
 export type BrowserCrumb = {
   key: string;
   label: Text;
+  link?: BrowserLink;
 };
 
 /**
@@ -205,6 +218,10 @@ export type Config<T> = {
    * The label of the root crumb. Defaults to `Home`.
    */
   rootLabel?: Text;
+  /**
+   * The link of the root crumb. Without it the root crumb has none.
+   */
+  rootLink?: BrowserLink;
   actions?: Record<string, ActionDescriptor>;
   folderActions?: Record<string, ActionDescriptor>;
   bulkActions?: Record<string, ActionDescriptor>;

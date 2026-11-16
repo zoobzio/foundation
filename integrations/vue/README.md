@@ -285,7 +285,9 @@ cells format the folder's `values` as a file's are, empty where it carries
 none. Where the service is selectable a folder row has a checkbox as a
 file row does (`pt.folders.rowCheckbox`), and the bulk actions bar counts
 both. Folder clicks `open`, crumb clicks `navigate` (either
-drops the search, which belongs to the folder it was typed in), row and
+drops the search, which belongs to the folder it was typed in); a crumb
+whose folder carries a `link` (or the root crumb under `rootLink`) renders
+as an anchor to it and still calls `navigate` on click, row and
 folder menus dispatch by key through `runAction` and `runFolderAction`, and
 the bulk actions bar runs `runBulkAction` over the selection. The
 `updated`, `navigated`, and `filtered` events relay as emits. Cell slots

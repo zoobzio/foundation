@@ -245,6 +245,17 @@ describe("browser", () => {
     expect(shown.findAll(".f-data-browser-files tr")).toHaveLength(1);
   });
 
+  it("renders a crumb with a link as an anchor that still navigates", async () => {
+    const { service, state } = makeBrowser({ rootLink: { to: "/files" } });
+    state.path = [{ key: "media", label: "Media" }];
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    const root = wrapper.find(".f-data-browser-breadcrumb a.f-anchor");
+    expect(root.attributes("href")).toBe("/files");
+    await root.trigger("click");
+    expect(service.pathKeys).toEqual([]);
+  });
+
   it("opens a folder through the service and grows the trail", async () => {
     const { service, fetch } = makeBrowser();
     await service.init();

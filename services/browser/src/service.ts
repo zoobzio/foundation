@@ -163,10 +163,15 @@ export class BrowserService<T> implements Service<T> {
   get trail(): BrowserCrumb[] {
     const keys = this.pathKeys;
     return [
-      { key: BROWSER_ROOT_KEY, label: this.rootLabel },
+      {
+        key: BROWSER_ROOT_KEY,
+        label: this.rootLabel,
+        link: this.config.rootLink,
+      },
       ...this.path.map((crumb, index) => ({
         key: keys.slice(0, index + 1).join("/"),
         label: crumb.label,
+        link: crumb.link,
       })),
     ];
   }
@@ -251,7 +256,10 @@ export class BrowserService<T> implements Service<T> {
    * search, refetch.
    */
   open(folder: BrowserFolder<T>): void {
-    this.move([...this.path, { key: folder.key, label: folder.label }]);
+    this.move([
+      ...this.path,
+      { key: folder.key, label: folder.label, link: folder.link },
+    ]);
   }
 
   /**
