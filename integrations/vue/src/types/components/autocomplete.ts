@@ -8,7 +8,7 @@ import type {
 } from "../passthrough";
 import type { Definition } from "../definition";
 import type {
-  Entry as QueryEntry,
+  Clause as QueryClause,
   Option as QueryOption,
   Service as Query,
 } from "@zoobzio/query";
@@ -24,7 +24,7 @@ import type {
   AutocompleteItemEmits,
 } from "reka-ui";
 
-export type { QueryEntry, QueryOption };
+export type { QueryClause, QueryOption };
 
 /**
  * An item's render position: its panel and its index in that panel. The datum
@@ -37,11 +37,11 @@ export type AutocompleteAnchor = {
 };
 
 /**
- * A chip's position in the chip row: the committed entry and its index in
- * the query's entries.
+ * A chip's position in the chip row: the committed clause and its index in
+ * the query's clauses.
  */
 export type AutocompleteChipAnchor = {
-  entry: QueryEntry;
+  clause: QueryClause;
   index: number;
 };
 
@@ -76,7 +76,7 @@ export type AutocompletePassthrough = {
 
 /**
  * Props of the autocomplete: the headless query service plus passthrough.
- * The component owns only `open`. The query owns the entries, the draft,
+ * The component owns only `open`. The query owns the clauses, the draft,
  * and the panels. `empty` renders the empty state when the active panel
  * has no options; a literal stage is terminal and renders nothing either
  * way. The options of a field's values provider are the service's too:

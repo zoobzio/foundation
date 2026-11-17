@@ -1,5 +1,5 @@
 import type {
-  Entry,
+  Clause,
   Filter,
   Literal,
   Service as Query,
@@ -179,14 +179,14 @@ export interface BrowserFetchParams {
 
 /**
  * The browser as a visitor arranged it: the part of the container a saved
- * view holds, the sort and the query's entries. The trail, the listing,
+ * view holds, the sort and the query's clauses. The trail, the listing,
  * the selection, and the draft are not part of it. Plain data, so it
  * survives JSON.
  */
 export interface Snapshot {
   sortField: string | null;
   sortDirection: SortDirection;
-  entries: Entry[];
+  clauses: Clause[];
 }
 
 export interface BrowserFetchResult<T> {
@@ -260,7 +260,7 @@ export type Config<T> = {
  * folder keys in `selectedFolders`), and the query's slice.
  * The container can be a plain object or a reactive proxy. The service
  * replaces each member as a whole, so a proxy tracks every change.
- * `entries`, `draft`, and `suggest` belong to the browser's `query`
+ * `clauses`, `draft`, and `suggest` belong to the browser's `query`
  * machine, their only writer.
  */
 export type State<T> = {
@@ -273,7 +273,7 @@ export type State<T> = {
   sortDirection: SortDirection;
   selected: Set<string>;
   selectedFolders: Set<string>;
-  entries: Entry[];
+  clauses: Clause[];
   draft: string;
   suggest: Suggest;
 };
@@ -316,7 +316,7 @@ export type Actions<T> = {
  * - `updated`: a fetch settled, success or failure. `path` is the key trail,
  *   `folders`/`files` the section lengths.
  * - `navigated`: the trail changed through `open` or `navigate`.
- * - `filtered`: the query's entries changed, by the search or by leaving
+ * - `filtered`: the query's clauses changed, by the search or by leaving
  *   the folder it was typed in.
  * - `restored`: a snapshot replaced the arrangement.
  */
@@ -356,7 +356,7 @@ export type Service<T> = {
   /**
    * The query machine over the filterable columns: one field per column,
    * with the operators and values the column declares. A change to its
-   * entries refetches the current folder; leaving the folder clears it.
+   * clauses refetches the current folder; leaving the folder clears it.
    */
   readonly query: Query;
 
@@ -383,7 +383,7 @@ export type Service<T> = {
   readonly filterableColumns: BrowserColumn<T>[];
   /** The columns the files sort by: what a view lists as its sort options. */
   readonly sortableColumns: BrowserColumn<T>[];
-  /** Whether the query holds an entry: the listing is a search's result. */
+  /** Whether the query holds a clause: the listing is a search's result. */
   readonly isFiltered: boolean;
   /** Whether every listed folder and file is selected. */
   readonly isAllSelected: boolean;
@@ -439,8 +439,8 @@ export type Service<T> = {
   snapshot(): Snapshot;
   /**
    * Puts an arrangement in place in the folder the browser stands in: the
-   * sort and the query's entries, in one fetch. Before `init` it fetches
-   * nothing: the first fetch reads what it left. The entries go through
+   * sort and the query's clauses, in one fetch. Before `init` it fetches
+   * nothing: the first fetch reads what it left. The clauses go through
    * the query, so one it rejects is left out and `snapshot` then differs
    * from what was restored.
    */

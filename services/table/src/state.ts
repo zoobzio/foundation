@@ -6,7 +6,7 @@ import { features } from "./features";
 /**
  * Builds the initial state container: each slice of the TanStack table at
  * its default, under the config's `initialState`, an empty page, and the
- * query's entries. The result is a plain object. Wrap it in a reactive
+ * query's clauses. The result is a plain object. Wrap it in a reactive
  * proxy to track reads and writes.
  */
 export const createTableState = <T extends RowData>(
@@ -24,7 +24,7 @@ export const createTableState = <T extends RowData>(
     rowCount: 0,
     loading: false,
     initialized: false,
-    entries: config.initialEntries ?? [],
+    clauses: config.initialClauses ?? [],
     draft: "",
     suggest: { options: [], status: "idle", more: false },
   };

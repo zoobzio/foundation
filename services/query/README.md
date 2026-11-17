@@ -2,9 +2,9 @@
 
 Headless query service. Pure TypeScript, no framework dependency.
 
-Owns: the committed entries — one entry per literal and one filter per
+Owns: the committed clauses — one clause per literal and one filter per
 field and operator, validated against the config — and a draft that a text
-view composes an entry through.
+view composes a clause through.
 Delegates: state storage (the container). A consumer reads `text` and
 `filters` and reacts to `changed`.
 
@@ -33,15 +33,15 @@ query.text; // "alice"
 query.remove(0);
 ```
 
-Any view drives the entries through `add`, `remove`, and `clear`. A filter
+Any view drives the clauses through `add`, `remove`, and `clear`. A filter
 with the same key and operator replaces the one held and moves to the end,
-and so does a literal with the same key. `replace(entries)` commits a
+and so does a literal with the same key. `replace(clauses)` commits a
 whole set in place of the ones held, each checked as `add` checks it, and
 emits `changed` once.
 
 ## The draft
 
-A text view composes an entry through the draft. The draft is the grammar
+A text view composes a clause through the draft. The draft is the grammar
 `Label: op term` or `open term close`: `Label: term` is a field's value
 stage, `Label: op term` an operator field's, a draft that opens with a
 literal's `open` the literal stage, and other text the field stage, a
@@ -49,7 +49,7 @@ label being named. An operator is read once its space is typed, so
 `Amount: ov` is still the operator stage. A chip's label is the text that
 made it. `items`, `trail`, `panels`, and `hint` derive from it. `select`
 enters a stage from a panel option or commits a value. `submit` commits
-the term. `unwrap` takes the last entry back into the draft.
+the term. `unwrap` takes the last clause back into the draft.
 
 ```ts
 query.setDraft("Amount: over 4");
@@ -62,7 +62,7 @@ query.submit(); // add({ kind: "filter", key: "amount", op: "over", value: "4" }
 A literal is a value written between its own characters, with no stage to
 suggest from: a label for its option, and the `open` and `close` that
 delimit it. The config's `literals` are keyed as its fields are, by the
-identity a literal entry carries, and default to the text literal alone:
+identity a literal clause carries, and default to the text literal alone:
 `text`, free text between quotes under `Search`, the one `text` reads.
 Free text is quoted so a word that is also a field's label is never taken
 for one.
@@ -82,7 +82,7 @@ query.setDraft('"alice"'); // add({ kind: "literal", key: "text", value: "alice"
 
 A literal's `open` and `close` may differ, and may be longer than one
 character; the longest `open` the draft starts with wins. `textFor` of a
-literal entry is its value between the characters, the string `labelFor`
+literal clause is its value between the characters, the string `labelFor`
 gives and `unwrap` hands back minus the last character.
 
 ```ts
@@ -200,7 +200,7 @@ const config = {
 
 ## The state container
 
-The service reads and writes the `state` container: the entries, the
+The service reads and writes the `state` container: the clauses, the
 draft, and `suggest`, what a values provider has given for the draft. The
 container can be a plain object or a reactive proxy. The service may
 itself be held in a reactive proxy.
@@ -213,5 +213,5 @@ reactive(createQueryState()); // Vue
 ## Events
 
 - `change`: a field of the container was written.
-- `changed`: the committed entries changed. `{ id, entries }`.
+- `changed`: the committed clauses changed. `{ id, clauses }`.
 - `failed`: a values provider threw or rejected. `{ id, error }`.

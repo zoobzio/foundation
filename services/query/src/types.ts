@@ -84,7 +84,7 @@ export interface Literal {
 /**
  * Config the consumer provides. Plain data, except that a field's `values`
  * may be a provider. Fields are keyed by the identity a filter carries,
- * literals by the identity a literal entry carries.
+ * literals by the identity a literal clause carries.
  */
 export type Config = {
   fields: Record<string, Field>;
@@ -108,10 +108,10 @@ export type Filter = {
 };
 
 /**
- * A committed entry: a literal, or a field filter. The query holds one
- * entry per literal and one filter per field and operator.
+ * A committed clause: a literal, or a field filter. The query holds one
+ * clause per literal and one filter per field and operator.
  */
-export type Entry =
+export type Clause =
   | { kind: "literal"; key: string; value: string }
   | ({ kind: "filter" } & Filter);
 
@@ -135,13 +135,13 @@ export type Suggest = {
 };
 
 /**
- * The state container the service reads and writes: the committed entries,
+ * The state container the service reads and writes: the committed clauses,
  * the draft text, and what a values provider has given for it. The
  * container can be a plain object or a reactive proxy. The service
  * replaces `suggest` as a whole, so a proxy tracks every change.
  */
 export type State = {
-  entries: Entry[];
+  clauses: Clause[];
   draft: string;
   suggest: Suggest;
 };
@@ -198,12 +198,12 @@ export interface Option {
  * The events of a query service, keyed by name.
  *
  * - `change`: a field of the container was written.
- * - `changed`: the committed entries changed.
+ * - `changed`: the committed clauses changed.
  * - `failed`: a values provider threw or rejected. The lookup settles with
  *   what it had and no more to add.
  */
 export type Events = ChangeEvents<State> & {
-  changed: [event: { id: string; entries: Entry[] }];
+  changed: [event: { id: string; clauses: Clause[] }];
   failed: [event: { id: string; error: unknown }];
 };
 
@@ -212,9 +212,9 @@ export type Event = keyof Events;
 export type Listener<E extends Event> = KitListener<Events, E>;
 
 /**
- * The query machine: the committed entries any view adds to and removes
- * from, plus a draft a text view composes an entry through. `text` is the
- * value of the entry of the `text` literal, the quoted free text.
+ * The query machine: the committed clauses any view adds to and removes
+ * from, plus a draft a text view composes a clause through. `text` is the
+ * value of the clause of the `text` literal, the quoted free text.
  */
 export type Service = {
   readonly id: string;
@@ -222,7 +222,7 @@ export type Service = {
   readonly fields: Record<string, Field>;
   readonly literals: Record<string, Literal>;
 
-  readonly entries: Entry[];
+  readonly clauses: Clause[];
   readonly draft: string;
   readonly suggest: Suggest;
 
@@ -236,10 +236,10 @@ export type Service = {
   readonly panels: Option[][];
   readonly hint: string;
 
-  add(entry: Entry): boolean;
+  add(clause: Clause): boolean;
   remove(index: number): void;
   clear(): void;
-  replace(entries: Entry[]): boolean;
+  replace(clauses: Clause[]): boolean;
 
   setDraft(text: string): void;
   reset(): void;
@@ -249,8 +249,8 @@ export type Service = {
   more(): void;
 
   stageText(key: string, op?: string): string;
-  textFor(entry: Entry): string;
-  labelFor(entry: Entry): string;
+  textFor(clause: Clause): string;
+  labelFor(clause: Clause): string;
 
   on<E extends Event>(event: E, listener: Listener<E>): () => void;
 };

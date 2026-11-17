@@ -1,6 +1,6 @@
 import type {
   Config,
-  Entry,
+  Clause,
   Event,
   Events,
   Field,
@@ -105,14 +105,14 @@ const isPending = <T>(result: T | Promise<T>): result is Promise<T> =>
   typeof result.then === "function";
 
 /**
- * The headless query machine. Owns the committed entries: one entry per
+ * The headless query machine. Owns the committed clauses: one clause per
  * literal and one filter per field and operator, each validated against
- * the config. Any view adds and removes entries directly.
+ * the config. Any view adds and removes clauses directly.
  *
  * Owns a draft as well, for a text view: the draft walks the grammar
  * `Label: op term` through the field, operator and value stages of the
  * configured fields, or `open term close` through the literal stage of a
- * configured literal, and commits as an entry. A view with no text input
+ * configured literal, and commits as a clause. A view with no text input
  * leaves the draft alone.
  *
  * A field's values provider is asked once per change of the draft, at the
@@ -123,7 +123,7 @@ const isPending = <T>(result: T | Promise<T>): result is Promise<T> =>
  *
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy. Each
- * write emits `change`; a change to the entries emits `changed`. `on`
+ * write emits `change`; a change to the clauses emits `changed`. `on`
  * subscribes.
  */
 export class QueryService implements Service {
@@ -161,8 +161,8 @@ export class QueryService implements Service {
 
   // --- state -----------------------------------------------------------
 
-  get entries(): Entry[] {
-    return this.state.entries;
+  get clauses(): Clause[] {
+    return this.state.clauses;
   }
 
   get draft(): string {
@@ -173,29 +173,29 @@ export class QueryService implements Service {
     return this.state.suggest;
   }
 
-  // --- entries ---------------------------------------------------------
+  // --- clauses --------------------------------------------------------
 
   get text(): string {
-    const entry = this.entries.find(
+    const clause = this.clauses.find(
       (e) => e.kind === "literal" && e.key === QUERY_TEXT_KEY,
     );
-    return entry?.value ?? "";
+    return clause?.value ?? "";
   }
 
   get filters(): Filter[] {
     const result: Filter[] = [];
-    for (const entry of this.entries) {
-      if (entry.kind !== "filter") continue;
-      const { key, op, value } = entry;
+    for (const clause of this.clauses) {
+      if (clause.kind !== "filter") continue;
+      const { key, op, value } = clause;
       result.push(op ? { key, op, value } : { key, value });
     }
     return result;
   }
 
   /**
-   * Commits an entry. An entry with the same identity (a literal's key, or
+   * Commits a clause. A clause with the same identity (a literal's key, or
    * a filter's key and operator) is replaced and moved to the end, so order
-   * tracks recency. An entry equal to one already held is a no-op.
+   * tracks recency. A clause equal to one already held is a no-op.
    *
    * A filter on an operator field takes the field's default operator when
    * none is given, and is rejected when its operator is not accepted. A
@@ -203,17 +203,17 @@ export class QueryService implements Service {
    * on a key that is not a field passes through as given. A literal is
    * rejected when its key is not a configured literal, or when empty.
    *
-   * @returns Whether the entries changed.
+   * @returns Whether the clauses changed.
    */
-  add(entry: Entry): boolean {
-    const next = this.normalize(entry);
+  add(clause: Clause): boolean {
+    const next = this.normalize(clause);
     if (!next) return false;
-    const last = this.entries.at(-1);
+    const last = this.clauses.at(-1);
     if (last && this.sameIdentity(last, next) && last.value === next.value) {
       return false;
     }
-    this.state.entries = [
-      ...this.entries.filter((e) => !this.sameIdentity(e, next)),
+    this.state.clauses = [
+      ...this.clauses.filter((e) => !this.sameIdentity(e, next)),
       next,
     ];
     this.emitChanged();
@@ -221,46 +221,46 @@ export class QueryService implements Service {
   }
 
   remove(index: number): void {
-    if (index < 0 || index >= this.entries.length) return;
-    this.state.entries = this.entries.filter((_, i) => i !== index);
+    if (index < 0 || index >= this.clauses.length) return;
+    this.state.clauses = this.clauses.filter((_, i) => i !== index);
     this.emitChanged();
   }
 
   clear(): void {
-    if (!this.entries.length) return;
-    this.state.entries = [];
+    if (!this.clauses.length) return;
+    this.state.clauses = [];
     this.emitChanged();
   }
 
   /**
-   * Commits a whole set of entries in place of the ones held, as `add`
+   * Commits a whole set of clauses in place of the ones held, as `add`
    * would one at a time: each is checked the same way, a rejected one is
    * left out, and of two with one identity the later stands. One
-   * `changed` follows, where `add` would emit per entry.
+   * `changed` follows, where `add` would emit per clause.
    *
-   * @returns Whether the entries changed.
+   * @returns Whether the clauses changed.
    */
-  replace(entries: Entry[]): boolean {
-    let next: Entry[] = [];
-    for (const entry of entries) {
-      const checked = this.normalize(entry);
+  replace(clauses: Clause[]): boolean {
+    let next: Clause[] = [];
+    for (const clause of clauses) {
+      const checked = this.normalize(clause);
       if (!checked) continue;
       next = [...next.filter((e) => !this.sameIdentity(e, checked)), checked];
     }
-    if (JSON.stringify(next) === JSON.stringify(this.entries)) return false;
-    this.state.entries = next;
+    if (JSON.stringify(next) === JSON.stringify(this.clauses)) return false;
+    this.state.clauses = next;
     this.emitChanged();
     return true;
   }
 
-  private normalize(entry: Entry): Entry | undefined {
-    if (entry.kind === "literal") {
-      const { key, value } = entry;
+  private normalize(clause: Clause): Clause | undefined {
+    if (clause.kind === "literal") {
+      const { key, value } = clause;
       if (!this.literals[key] || !value) return undefined;
       return { kind: "literal", key, value };
     }
-    const { key, value } = entry;
-    let op = entry.op;
+    const { key, value } = clause;
+    let op = clause.op;
     const field = this.fields[key];
     if (field) {
       const accepted = field.operators ?? [];
@@ -276,14 +276,14 @@ export class QueryService implements Service {
       : { kind: "filter", key, value };
   }
 
-  private sameIdentity(a: Entry, b: Entry): boolean {
+  private sameIdentity(a: Clause, b: Clause): boolean {
     if (a.kind !== b.kind || a.key !== b.key) return false;
     if (a.kind === "literal" || b.kind === "literal") return true;
     return a.op === b.op;
   }
 
   private emitChanged(): void {
-    this.emitter.emit("changed", { id: this.id, entries: this.entries });
+    this.emitter.emit("changed", { id: this.id, clauses: this.clauses });
   }
 
   // --- derived ---------------------------------------------------------
@@ -471,21 +471,21 @@ export class QueryService implements Service {
   }
 
   /**
-   * Takes the last entry back into the draft, minus one character, so
-   * entries erase like continuous text: a literal loses the last character
+   * Takes the last clause back into the draft, minus one character, so
+   * clauses erase like continuous text: a literal loses the last character
    * of its `close` and is back in the literal stage.
    */
   unwrap(): void {
-    const index = this.entries.length - 1;
-    const entry = this.entries[index];
-    if (!entry) return;
+    const index = this.clauses.length - 1;
+    const clause = this.clauses[index];
+    if (!clause) return;
     this.remove(index);
-    this.write(this.textFor(entry).slice(0, -1));
+    this.write(this.textFor(clause).slice(0, -1));
   }
 
-  /** Adds the entry; a landed entry clears the draft. */
-  private commit(entry: Entry): void {
-    if (this.add(entry)) this.write("");
+  /** Adds the clause; a landed clause clears the draft. */
+  private commit(clause: Clause): void {
+    if (this.add(clause)) this.write("");
   }
 
   /** Writes the draft, then looks its values up: the one writer of both. */
@@ -623,25 +623,25 @@ export class QueryService implements Service {
   }
 
   /**
-   * The text that commits an entry: `Label: op value`, or the literal's
+   * The text that commits a clause: `Label: op value`, or the literal's
    * value between its characters, `"text"`. A literal whose key is not
    * configured is written bare.
    */
-  textFor(entry: Entry): string {
-    if (entry.kind === "literal") {
-      const literal = this.literals[entry.key];
-      if (!literal) return entry.value;
-      return `${literal.open}${entry.value}${literal.close}`;
+  textFor(clause: Clause): string {
+    if (clause.kind === "literal") {
+      const literal = this.literals[clause.key];
+      if (!literal) return clause.value;
+      return `${literal.open}${clause.value}${literal.close}`;
     }
-    return `${this.stageText(entry.key, entry.op)}${entry.value}`;
+    return `${this.stageText(clause.key, clause.op)}${clause.value}`;
   }
 
   /**
-   * The display label of an entry: its text, so a chip reads as the draft
+   * The display label of a clause: its text, so a chip reads as the draft
    * that made it.
    */
-  labelFor(entry: Entry): string {
-    return this.textFor(entry);
+  labelFor(clause: Clause): string {
+    return this.textFor(clause);
   }
 
   private labelOf(key: string): string {

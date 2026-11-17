@@ -19,7 +19,7 @@ describe("createBrowserState", () => {
       sortDirection: BROWSER_DEFAULT_SORT_DIRECTION,
       selected: new Set(),
       selectedFolders: new Set(),
-      entries: [],
+      clauses: [],
       draft: "",
       suggest: { options: [], status: "idle", more: false },
     });

@@ -204,7 +204,7 @@ describe("autocomplete wrapper", () => {
       );
     }
     await chips[0]!.trigger("click");
-    expect(service.query.entries).toHaveLength(1);
+    expect(service.query.clauses).toHaveLength(1);
   });
 
   it("renders the active panel with no scroller once a group has an option set", async () => {

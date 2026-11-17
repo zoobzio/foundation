@@ -102,7 +102,7 @@ initial `path`.
 column, with the `operators`, `defaultOperator`, and `values` the column
 declares, as a table's columns do. Every column is filterable but an
 `action` or `image` one, unless its `filterable` says otherwise. A change
-to the query's entries refetches the current folder and emits `filtered`;
+to the query's clauses refetches the current folder and emits `filtered`;
 the fetch is handed the committed free text as `query` and the column
 filters as `filters`, beside the `path` they were typed in.
 
@@ -112,7 +112,7 @@ browser.query.add({ kind: "literal", key: "text", value: "logo" });
 ```
 
 A search belongs to the folder it was typed in: `open` and `navigate` drop
-its entries and its draft, in the one fetch the move makes. So a fetch that
+its clauses and its draft, in the one fetch the move makes. So a fetch that
 matches within `path` searches the current folder; how far below `path` it
 reaches, and whether it matches folders, is the fetch's to decide. Under
 `isFiltered` a settled `isEmpty` is a search with no match rather than an
@@ -126,7 +126,7 @@ lists as its sort options, each sorting through `sortBy(sortFieldFor(col))`.
 
 The service reads and writes the `state` container: the listing, the load
 flags, the trail, the file sort, the selection (`selected` and
-`selectedFolders`), and the query's `entries`,
+`selectedFolders`), and the query's `clauses`,
 `draft`, and `suggest`. The container can be a
 plain object or a reactive proxy. The service replaces each member as a
 whole, so a proxy tracks every change.
@@ -140,12 +140,12 @@ useState(`browser-${id}`, () => createBrowserState()).value; // Nuxt, shared by 
 ## Snapshot and restore
 
 `snapshot()` is the browser as a visitor arranged it, as plain data:
-`sortField`, `sortDirection`, and the query's `entries`. The trail, the
+`sortField`, `sortDirection`, and the query's `clauses`. The trail, the
 listing, the selection, and the draft are not part of it.
 `restore(snapshot)` puts one in place in the folder the browser stands in,
 in one fetch; before `init` it fetches nothing. The pair is what
 [`@zoobzio/views`](../views/) reads and applies a saved view through. The
-entries go through the query, so one it rejects is left out.
+clauses go through the query, so one it rejects is left out.
 
 ## Middleware
 
@@ -167,7 +167,7 @@ the write lands. The return value removes the listener.
 - `change`: a field of the container was written. `{ field, before, after }`, narrowed by `field`.
 - `updated`: a fetch settled, success or failure. `{ id, path, folders, files }` — the key trail and section lengths.
 - `navigated`: the trail changed through `open` or `navigate`. `{ id, path }`.
-- `filtered`: the query's entries changed, by the search or by leaving the folder it was typed in. `{ id, query, filters }`.
+- `filtered`: the query's clauses changed, by the search or by leaving the folder it was typed in. `{ id, query, filters }`.
 - `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.
 
 ```ts

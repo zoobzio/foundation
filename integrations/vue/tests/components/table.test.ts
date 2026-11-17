@@ -400,7 +400,7 @@ describe("table", () => {
     expect((input.element as HTMLInputElement).value).toBe("");
   });
 
-  it("shows the committed entries as chips and unwinds one by click", async () => {
+  it("shows the committed clauses as chips and unwinds one by click", async () => {
     const { service } = makeTable();
     service.query.add({ kind: "literal", key: "text", value: "alice" });
     service.query.add({ kind: "filter", key: "status", value: "Active" });

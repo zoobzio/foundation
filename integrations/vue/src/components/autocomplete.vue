@@ -138,7 +138,7 @@ const settings = usePassthrough<AutocompletePassthrough>(() => ({
         if (
           event.key === "Backspace" &&
           !service.draft &&
-          service.entries.length
+          service.clauses.length
         ) {
           event.preventDefault();
           service.unwrap();
@@ -184,14 +184,14 @@ defineSlots<AutocompleteSlots>();
     <slot name="inputPrepend" v-bind="ctx" />
     <slot name="chips" v-bind="ctx">
       <template
-        v-for="(entry, i) in service.entries"
-        :key="service.textFor(entry)"
+        v-for="(clause, i) in service.clauses"
+        :key="service.textFor(clause)"
       >
-        <slot name="chip" v-bind="{ ...ctx, entry, index: i }">
+        <slot name="chip" v-bind="{ ...ctx, clause, index: i }">
           <button type="button" class="f-chip" @click="service.remove(i)">
-            <slot name="chipPrepend" v-bind="{ ...ctx, entry, index: i }" />
-            {{ service.labelFor(entry) }}
-            <slot name="chipAppend" v-bind="{ ...ctx, entry, index: i }" />
+            <slot name="chipPrepend" v-bind="{ ...ctx, clause, index: i }" />
+            {{ service.labelFor(clause) }}
+            <slot name="chipAppend" v-bind="{ ...ctx, clause, index: i }" />
           </button>
         </slot>
       </template>

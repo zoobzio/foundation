@@ -20,10 +20,10 @@ describe("accessTable", () => {
     expect(state.sorting).toEqual([]);
     expect(state.rowSelection).toEqual({});
     expect(state.columnOrder).toEqual([]);
-    expect(state.entries).toEqual([]);
+    expect(state.clauses).toEqual([]);
   });
 
-  it("seeds the container from the config's initial state and entries", () => {
+  it("seeds the container from the config's initial state and clauses", () => {
     const state = accessTable("t1", {
       ...config,
       initialState: {
@@ -31,12 +31,12 @@ describe("accessTable", () => {
         sorting: [{ id: "name", desc: true }],
         columnOrder: ["name", "id"],
       },
-      initialEntries: [{ kind: "literal", key: "text", value: "ali" }],
+      initialClauses: [{ kind: "literal", key: "text", value: "ali" }],
     });
     expect(state.pagination).toEqual({ pageIndex: 2, pageSize: 50 });
     expect(state.sorting).toEqual([{ id: "name", desc: true }]);
     expect(state.columnOrder).toEqual(["name", "id"]);
-    expect(state.entries).toEqual([
+    expect(state.clauses).toEqual([
       { kind: "literal", key: "text", value: "ali" },
     ]);
     expect(state.data).toEqual([]);

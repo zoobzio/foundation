@@ -164,10 +164,10 @@ describe("autocomplete", () => {
     event.preventDefault();
     input.element.dispatchEvent(event);
     await flushPromises();
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
   });
 
-  it("unwraps the last entry on Backspace over an empty draft only", async () => {
+  it("unwraps the last clause on Backspace over an empty draft only", async () => {
     const service = makeQuery();
     service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "status", value: "Active" });
@@ -194,17 +194,17 @@ describe("autocomplete", () => {
     await input.setValue("alice");
     await input.trigger("keydown", { key: "Enter" });
     await flushPromises();
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
     expect((input.element as HTMLInputElement).value).toBe("alice");
     await input.setValue('"alice');
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
     await input.setValue('"alice"');
     await flushPromises();
     expect(service.text).toBe("alice");
     expect((input.element as HTMLInputElement).value).toBe("");
   });
 
-  it("renders the entries as chips and removes one by click", async () => {
+  it("renders the clauses as chips and removes one by click", async () => {
     const service = makeQuery();
     service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "amount", value: "40" });
@@ -213,7 +213,7 @@ describe("autocomplete", () => {
     const chips = wrapper.findAll(".f-chip");
     expect(chips.map((c) => c.text())).toEqual(['"alice"', "Amount: over 40"]);
     await chips[0]!.trigger("click");
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "filter", key: "amount", op: "over", value: "40" },
     ]);
   });
@@ -374,7 +374,7 @@ describe("autocomplete", () => {
     const wrapper = mount(Autocomplete, {
       props: { service },
       slots: {
-        chipPrepend: (p) => h("i", { class: "lead" }, p.entry.kind),
+        chipPrepend: (p) => h("i", { class: "lead" }, p.clause.kind),
         chipAppend: (p) => h("i", { class: "trail" }, String(p.index)),
       },
       attachTo: document.body,

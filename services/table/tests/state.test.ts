@@ -20,7 +20,7 @@ describe("createTableState", () => {
       rowCount: 0,
       loading: false,
       initialized: false,
-      entries: [],
+      clauses: [],
       draft: "",
       suggest: { options: [], status: "idle", more: false },
     });
@@ -34,13 +34,13 @@ describe("createTableState", () => {
         sorting: [{ id: "name", desc: true }],
         columnVisibility: { amount: false },
       },
-      initialEntries: [{ kind: "literal", key: "text", value: "acme" }],
+      initialClauses: [{ kind: "literal", key: "text", value: "acme" }],
     });
     expect(state.pagination).toEqual({ pageIndex: 2, pageSize: 50 });
     expect(state.sorting).toEqual([{ id: "name", desc: true }]);
     expect(state.columnVisibility).toEqual({ amount: false });
     expect(state.rowSelection).toEqual({});
-    expect(state.entries).toEqual([
+    expect(state.clauses).toEqual([
       { kind: "literal", key: "text", value: "acme" },
     ]);
   });

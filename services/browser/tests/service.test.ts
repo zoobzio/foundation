@@ -762,18 +762,18 @@ describe("query", () => {
     expect(service.query.items[0]?.label).toBe("Find");
   });
 
-  it("holds its entries and draft in the browser's container", () => {
+  it("holds its clauses and draft in the browser's container", () => {
     const { service, state } = makeService();
     service.query.add({ kind: "literal", key: "text", value: "logo" });
     service.query.setDraft("Na");
-    expect(state.entries).toEqual([
+    expect(state.clauses).toEqual([
       { kind: "literal", key: "text", value: "logo" },
     ]);
     expect(state.draft).toBe("Na");
     expect(service.isFiltered).toBe(true);
   });
 
-  it("a change to the entries refetches the folder it stands in and emits filtered", () => {
+  it("a change to the clauses refetches the folder it stands in and emits filtered", () => {
     const { service, state, actions, filtered } = makeService();
     state.path = [{ key: "media", label: "Media" }];
 
@@ -811,7 +811,7 @@ describe("query", () => {
 
     service.open({ key: "media", label: "Media" });
 
-    expect(service.query.entries).toEqual([]);
+    expect(service.query.clauses).toEqual([]);
     expect(service.query.draft).toBe("");
     expect(actions.fetch).toHaveBeenCalledTimes(1);
     expect(actions.fetch).toHaveBeenCalledWith(
@@ -828,7 +828,7 @@ describe("query", () => {
     service.query.add({ kind: "literal", key: "text", value: "hero" });
     vi.mocked(actions.fetch).mockClear();
     service.navigate(0);
-    expect(service.query.entries).toEqual([]);
+    expect(service.query.clauses).toEqual([]);
     expect(actions.fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -856,16 +856,16 @@ describe("views", () => {
   const arranged = {
     sortField: "size",
     sortDirection: "desc" as const,
-    entries: [{ kind: "filter" as const, key: "name", value: "report" }],
+    clauses: [{ kind: "filter" as const, key: "name", value: "report" }],
   };
 
-  it("snapshots the sort and the entries", () => {
+  it("snapshots the sort and the clauses", () => {
     const { service } = makeService();
     service.sortBy("name");
     expect(service.snapshot()).toEqual({
       sortField: "name",
       sortDirection: "asc",
-      entries: [],
+      clauses: [],
     });
   });
 

@@ -24,7 +24,7 @@ export const useOrderViews = createViews("orders", {
         ...all,
         sorting: [{ id: "placed", desc: false }],
         columnVisibility: { gift: false },
-        entries: [{ kind: "filter", key: "status", value: "Paid" }],
+        clauses: [{ kind: "filter", key: "status", value: "Paid" }],
       },
     },
     {
@@ -35,7 +35,7 @@ export const useOrderViews = createViews("orders", {
         sorting: [{ id: "total", desc: true }],
         columnOrder: ["id", "total", "customer"],
         pageSize: 25,
-        entries: [{ kind: "filter", key: "total", op: "over", value: "300" }],
+        clauses: [{ kind: "filter", key: "total", op: "over", value: "300" }],
       },
     },
   ],

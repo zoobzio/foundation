@@ -33,7 +33,7 @@ export type BrowserBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 
 /**
  * The slice of the state container a browser may start from: the trail,
- * the file sort, the selection, and the search's entries the consumer
+ * the file sort, the selection, and the search's clauses the consumer
  * chooses, never what a fetch fills in. It seeds the `useState` record, so it must survive Nuxt's
  * payload (devalue carries the `Set`).
  */
@@ -45,7 +45,7 @@ export type BrowserInitial<T> = Partial<
     | "sortDirection"
     | "selected"
     | "selectedFolders"
-    | "entries"
+    | "clauses"
   >
 >;
 

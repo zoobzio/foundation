@@ -25,7 +25,7 @@ const active: TableView = {
   sorting: [{ id: "name", desc: true }],
   columnVisibility: { amount: false },
   pageSize: 25,
-  entries: [{ kind: "filter", key: "status", value: "Active" }],
+  clauses: [{ kind: "filter", key: "status", value: "Active" }],
 };
 
 const makeOptions = (
@@ -190,6 +190,19 @@ describe("createViews", () => {
     const { table } = makeTable("orders");
     table.restore(active);
     expect(restored).toHaveBeenCalledWith({ id: "orders", snapshot: active });
+  });
+
+  it("reads a view stored before the query's clauses were renamed", () => {
+    const stored = [{ kind: "filter", key: "status", value: "Active" }];
+    expect(TABLE_VIEW_SCHEMA.parse({ entries: stored }).clauses).toEqual(
+      stored,
+    );
+    expect(BROWSER_VIEW_SCHEMA.parse({ entries: stored }).clauses).toEqual(
+      stored,
+    );
+    expect(
+      TABLE_VIEW_SCHEMA.parse({ entries: stored, clauses: [] }).clauses,
+    ).toEqual([]);
   });
 
   it("sits over a browser through the browser's schema", async () => {

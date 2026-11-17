@@ -30,7 +30,7 @@ export type TableBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 /**
  * What `createTable` takes: the headless config with each action's handler
  * joined to its descriptor, and the fetch mechanism. The config's
- * `initialState` and `initialEntries` are what the table starts from: they
+ * `initialState` and `initialClauses` are what the table starts from: they
  * seed the `useState` record, so they must survive Nuxt's payload.
  */
 export type TableOptions<T extends RowData> = Omit<

@@ -5,7 +5,7 @@ import type { State } from "./types";
  * it in a reactive proxy to track reads and writes.
  */
 export const createQueryState = (): State => ({
-  entries: [],
+  clauses: [],
   draft: "",
   suggest: { options: [], status: "idle", more: false },
 });

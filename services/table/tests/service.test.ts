@@ -501,17 +501,17 @@ describe("query", () => {
     expect(service.query.text).toBe("acme");
   });
 
-  it("holds its entries and draft in the table's container", () => {
+  it("holds its clauses and draft in the table's container", () => {
     const { service, state } = makeService();
     service.query.add({ kind: "literal", key: "text", value: "acme" });
     service.query.setDraft("Sta");
-    expect(state.entries).toEqual([
+    expect(state.clauses).toEqual([
       { kind: "literal", key: "text", value: "acme" },
     ]);
     expect(state.draft).toBe("Sta");
   });
 
-  it("a change to the entries goes to the first page, refetches once, and emits filtered", () => {
+  it("a change to the clauses goes to the first page, refetches once, and emits filtered", () => {
     const { service, state, actions, filtered } = makeService();
     state.pagination = { pageIndex: 3, pageSize: 10 };
     service.query.add({ kind: "literal", key: "text", value: "acme" });
@@ -535,7 +535,7 @@ describe("query", () => {
     expect(actions.fetch).toHaveBeenCalledTimes(3);
   });
 
-  it("a rejected or repeated entry does not refetch", () => {
+  it("a rejected or repeated clause does not refetch", () => {
     const { service, actions } = makeService();
     service.query.add({
       kind: "filter",
@@ -563,10 +563,10 @@ describe("query", () => {
     expect(service.query.draft).toBe("");
   });
 
-  it("starts from the config's initial entries", async () => {
+  it("starts from the config's initial clauses", async () => {
     const config = {
       ...base,
-      initialEntries: [
+      initialClauses: [
         { kind: "filter" as const, key: "status", value: "Active" },
       ],
     };
@@ -720,7 +720,7 @@ describe("views", () => {
     columnVisibility: { status: false },
     columnSizing: { name: 240 },
     pageSize: 25,
-    entries: [{ kind: "filter" as const, key: "status", value: "Active" }],
+    clauses: [{ kind: "filter" as const, key: "status", value: "Active" }],
   };
 
   it("snapshots the arrangement, without the page or the selection", () => {
@@ -736,7 +736,7 @@ describe("views", () => {
       columnVisibility: {},
       columnSizing: {},
       pageSize: 10,
-      entries: [],
+      clauses: [],
     });
   });
 
@@ -928,7 +928,7 @@ describe("permissions", () => {
       columnVisibility: {},
       columnSizing: {},
       pageSize: 50,
-      entries: [],
+      clauses: [],
     });
     expect(state.sorting).toEqual([{ id: "name", desc: true }]);
     expect(state.columnOrder).toEqual(["amount", "id"]);

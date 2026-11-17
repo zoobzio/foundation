@@ -44,7 +44,7 @@ export const TABLE_STATE_FIELDS: Record<StateKey, null> = {
   rowCount: null,
   loading: null,
   initialized: null,
-  entries: null,
+  clauses: null,
   draft: null,
   suggest: null,
 };

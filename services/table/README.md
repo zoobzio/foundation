@@ -46,7 +46,7 @@ any other but the ones the service sets itself (`features`, `data`,
 (`enableSorting`, `enableMultiSort`, `enableHiding`,
 `enableColumnResizing`, and `enableRowSelection` as a boolean). Beside
 them sit the service's own: `actions`, `bulkActions`, `permissions`,
-`literals`, `initialEntries`, `locale`, `currency`, and `timeZone`.
+`literals`, `initialClauses`, `locale`, `currency`, and `timeZone`.
 
 The registered features are `features`, exported with its type `Features`:
 row pagination, row sorting, row selection, column ordering, column
@@ -138,7 +138,7 @@ table reads its page count from.
 
 A write of `pagination` or `sorting` refetches, unless it changes nothing.
 A sort stays on the page it was made on. A change of page size keeps the
-top row in view. A change of the query's entries goes to the first page.
+top row in view. A change of the query's clauses goes to the first page.
 
 ### Columns
 
@@ -189,10 +189,10 @@ or the draft a text view composes through. Free text is the query's
 `text` literal, quoted in the draft, `"acme"`, and the field panel leads
 with the option that opens the quote, labelled `Search`; the config's
 `literals` replace the query's, so the option can be relabelled or a
-literal added beside it. A change to its entries goes to the
+literal added beside it. A change to its clauses goes to the
 first page, refetches, and emits `filtered`. The fetch params carry its
-`text` as `query` and its `filters`. `initialEntries` in the config are the
-entries it starts from.
+`text` as `query` and its `filters`. `initialClauses` in the config are the
+clauses it starts from.
 
 ```ts
 users.query.add({ kind: "filter", key: "status", value: "Active" });
@@ -224,7 +224,7 @@ The service reads and writes the `state` container, and so does the table:
 each slice of TanStack's state sits in it under TanStack's name
 (`pagination`, `sorting`, `rowSelection`, `columnOrder`,
 `columnVisibility`, `columnSizing`), beside the fetched page (`data`,
-`rowCount`), `loading`, `initialized`, and the query's entries, draft, and
+`rowCount`), `loading`, `initialized`, and the query's clauses, draft, and
 suggested values. The table holds no state of its own: every read of a
 slice is a read of the container, so a write from anywhere (a hydrated
 payload, another service over the same container) is what the table
@@ -246,7 +246,7 @@ config's `initialState`, which is also what the table's resets
 
 `snapshot()` is the table as a visitor arranged it, as plain data: the
 `sorting`, `columnOrder`, `columnVisibility`, and `columnSizing` slices,
-the `pageSize`, and the query's `entries`. The page index, the selection,
+the `pageSize`, and the query's `clauses`. The page index, the selection,
 the rows, and the draft are not part of it. `restore(snapshot)` puts one
 in place from the first page, in one fetch, where writing the slices one
 at a time through the table would fetch per write. Before `init` it
@@ -260,7 +260,7 @@ table.restore(saved); // one fetch
 
 The pair is what [`@zoobzio/views`](../views/) reads and applies a saved
 view through. A restore gives back what it was given, with one exception:
-the entries go through the query, so an entry it rejects is left out, and
+the clauses go through the query, so a clause it rejects is left out, and
 a filter on a column with operators takes the default operator when it
 names none. Save a filter with its operator.
 
@@ -284,7 +284,7 @@ the write lands. The return value removes the listener.
 - `change`: a field of the container was written, by the service or
   through the table. `{ field, before, after }`, narrowed by `field`.
 - `updated`: a fetch settled. `{ id, rowCount }`.
-- `filtered`: the query's entries changed. `{ id, query, filters }`.
+- `filtered`: the query's clauses changed. `{ id, query, filters }`.
 - `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.
 
 ```ts

@@ -1,12 +1,12 @@
 // Constructor-injected seams — a plain state container and vi.fn()
-// listeners. Every test drives the entries or the draft and asserts the
+// listeners. Every test drives the clauses or the draft and asserts the
 // new state, the panels, and the events.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { QueryService } from "../src/service";
 import { createQueryState } from "../src/state";
 import { QUERY_TEXT_LITERAL } from "../src/constants";
 import { debounced } from "../src/debounced";
-import type { Config, Entry, Lookup, Page } from "../src/types";
+import type { Config, Clause, Lookup, Page } from "../src/types";
 import { fakeConfig, NEST, TAG, TWO } from "./data";
 
 const makeService = (config: Config = fakeConfig) => {
@@ -23,13 +23,13 @@ describe("add", () => {
     expect(
       service.add({ kind: "filter", key: "status", value: "Active" }),
     ).toBe(true);
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "filter", key: "status", value: "Active" },
     ]);
     expect(service.filters).toEqual([{ key: "status", value: "Active" }]);
     expect(changed).toHaveBeenCalledExactlyOnceWith({
       id: "search",
-      entries: service.entries,
+      clauses: service.clauses,
     });
   });
 
@@ -40,14 +40,14 @@ describe("add", () => {
     expect(service.filters).toEqual([]);
   });
 
-  it("replaces a same-identity entry and moves it to the end", () => {
+  it("replaces a same-identity clause and moves it to the end", () => {
     const { service } = makeService();
     service.add({ kind: "filter", key: "status", value: "quoted" });
     service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "name", value: "Alice" });
     service.add({ kind: "filter", key: "status", value: "draft" });
     service.add({ kind: "literal", key: "text", value: "bob" });
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "filter", key: "name", value: "Alice" },
       { kind: "filter", key: "status", value: "draft" },
       { kind: "literal", key: "text", value: "bob" },
@@ -80,7 +80,7 @@ describe("add", () => {
     ]);
   });
 
-  it("an entry equal to the last one is a no-op", () => {
+  it("a clause equal to the last one is a no-op", () => {
     const { service, changed } = makeService();
     service.add({ kind: "literal", key: "text", value: "alice" });
     changed.mockClear();
@@ -109,7 +109,7 @@ describe("add", () => {
     expect(service.add({ kind: "filter", key: "amount", value: "4" })).toBe(
       false,
     );
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
     expect(changed).not.toHaveBeenCalled();
   });
 
@@ -135,12 +135,12 @@ describe("add", () => {
     ).toBe(false);
   });
 
-  it("holds one entry per literal key", () => {
+  it("holds one clause per literal key", () => {
     const { service } = makeService({ ...fakeConfig, literals: TWO });
     service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "literal", key: "tag", value: "urgent" });
     service.add({ kind: "literal", key: "text", value: "bob" });
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "literal", key: "tag", value: "urgent" },
       { kind: "literal", key: "text", value: "bob" },
     ]);
@@ -149,13 +149,13 @@ describe("add", () => {
 });
 
 describe("remove and clear", () => {
-  it("remove drops exactly the indexed entry", () => {
+  it("remove drops exactly the indexed clause", () => {
     const { service, changed } = makeService();
     service.add({ kind: "filter", key: "status", value: "Active" });
     service.add({ kind: "filter", key: "name", value: "Alice" });
     changed.mockClear();
     service.remove(0);
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "filter", key: "name", value: "Alice" },
     ]);
     expect(changed).toHaveBeenCalledOnce();
@@ -164,13 +164,13 @@ describe("remove and clear", () => {
     expect(changed).toHaveBeenCalledOnce();
   });
 
-  it("clear empties the entries once", () => {
+  it("clear empties the clauses once", () => {
     const { service, changed } = makeService();
     service.clear();
     expect(changed).not.toHaveBeenCalled();
     service.add({ kind: "literal", key: "text", value: "alice" });
     service.clear();
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
     expect(changed).toHaveBeenCalledTimes(2);
   });
 });
@@ -454,13 +454,13 @@ describe("select", () => {
     const { service, changed } = makeService();
     service.setDraft("Amount: over 4");
     service.select({ stage: "value", value: "40", label: "40" });
-    const entry: Entry = {
+    const clause: Clause = {
       kind: "filter",
       key: "amount",
       op: "over",
       value: "40",
     };
-    expect(service.entries).toEqual([entry]);
+    expect(service.clauses).toEqual([clause]);
     expect(changed).toHaveBeenCalledOnce();
     expect(service.draft).toBe("");
   });
@@ -477,7 +477,7 @@ describe("submit", () => {
     const { service } = makeService();
     service.setDraft("Status: Active ");
     service.submit();
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "filter", key: "status", value: "Active" },
     ]);
     expect(service.draft).toBe("");
@@ -487,7 +487,7 @@ describe("submit", () => {
     const { service } = makeService();
     service.setDraft('"alice ');
     service.submit();
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "literal", key: "text", value: "alice" },
     ]);
     expect(service.draft).toBe("");
@@ -498,7 +498,7 @@ describe("submit", () => {
     service.setDraft('"alice');
     expect(changed).not.toHaveBeenCalled();
     service.setDraft('"alice"');
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "literal", key: "text", value: "alice" },
     ]);
     expect(changed).toHaveBeenCalledOnce();
@@ -510,15 +510,15 @@ describe("submit", () => {
     // A literal with its own characters commits on its own close.
     const tags = makeService({ ...fakeConfig, literals: TWO });
     tags.service.setDraft("(urgent");
-    expect(tags.service.entries).toEqual([]);
+    expect(tags.service.clauses).toEqual([]);
     tags.service.setDraft("(urgent)");
-    expect(tags.service.entries).toEqual([
+    expect(tags.service.clauses).toEqual([
       { kind: "literal", key: "tag", value: "urgent" },
     ]);
     tags.service.setDraft("((a)");
-    expect(tags.service.entries).toHaveLength(1);
+    expect(tags.service.clauses).toHaveLength(1);
     tags.service.setDraft("((a))");
-    expect(tags.service.entries.at(-1)).toEqual({
+    expect(tags.service.clauses.at(-1)).toEqual({
       kind: "literal",
       key: "nest",
       value: "a",
@@ -545,27 +545,27 @@ describe("submit", () => {
     expect(service.draft).toBe('"alice"');
   });
 
-  it("keeps the draft when the entry is rejected", () => {
+  it("keeps the draft when the clause is rejected", () => {
     const { service } = makeService();
     service.setDraft("Amount: 4");
     service.submit();
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
     expect(service.draft).toBe("Amount: 4");
   });
 });
 
 describe("unwrap", () => {
-  it("takes the last entry back as text minus one character", () => {
+  it("takes the last clause back as text minus one character", () => {
     const { service } = makeService();
     service.add({ kind: "literal", key: "text", value: "alice" });
     service.add({ kind: "filter", key: "status", value: "Active" });
     service.unwrap();
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "literal", key: "text", value: "alice" },
     ]);
     expect(service.draft).toBe("Status: Activ");
     service.unwrap();
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
     expect(service.draft).toBe('"alice');
     expect(service.stage).toBe("literal");
     service.unwrap();
@@ -574,12 +574,12 @@ describe("unwrap", () => {
 });
 
 describe("text", () => {
-  it("formats stage text, entry text and entry labels", () => {
+  it("formats stage text, clause text and clause labels", () => {
     const { service } = makeService();
     expect(service.stageText("status")).toBe("Status: ");
     expect(service.stageText("amount", "over")).toBe("Amount: over ");
     expect(service.stageText("ghost")).toBe("ghost: ");
-    const filter: Entry = {
+    const filter: Clause = {
       kind: "filter",
       key: "amount",
       op: "over",
@@ -587,10 +587,10 @@ describe("text", () => {
     };
     expect(service.textFor(filter)).toBe("Amount: over 4");
     expect(service.labelFor(filter)).toBe("Amount: over 4");
-    const text: Entry = { kind: "literal", key: "text", value: "alice" };
+    const text: Clause = { kind: "literal", key: "text", value: "alice" };
     expect(service.textFor(text)).toBe('"alice"');
     expect(service.labelFor(text)).toBe('"alice"');
-    const ghost: Entry = { kind: "literal", key: "ghost", value: "x" };
+    const ghost: Clause = { kind: "literal", key: "ghost", value: "x" };
     expect(service.textFor(ghost)).toBe("x");
   });
 });
@@ -1109,20 +1109,20 @@ describe("debounced", () => {
 });
 
 describe("replace", () => {
-  it("commits the set in place of the entries, in one change", () => {
+  it("commits the set in place of the clauses, in one change", () => {
     const { service, changed } = makeService();
     service.add({ kind: "filter", key: "status", value: "Active" });
     changed.mockClear();
-    const next: Entry[] = [
+    const next: Clause[] = [
       { kind: "filter", key: "name", value: "Alice" },
       { kind: "literal", key: "text", value: "alice" },
     ];
     expect(service.replace(next)).toBe(true);
-    expect(service.entries).toEqual(next);
+    expect(service.clauses).toEqual(next);
     expect(changed).toHaveBeenCalledOnce();
   });
 
-  it("checks each entry as add does", () => {
+  it("checks each clause as add does", () => {
     const { service } = makeService();
     service.replace([
       { kind: "literal", key: "nope", value: "x" },
@@ -1130,13 +1130,13 @@ describe("replace", () => {
       { kind: "filter", key: "status", value: "Pending" },
       { kind: "filter", key: "name", value: "Alice" },
     ]);
-    expect(service.entries).toEqual([
+    expect(service.clauses).toEqual([
       { kind: "filter", key: "status", value: "Pending" },
       { kind: "filter", key: "name", value: "Alice" },
     ]);
   });
 
-  it("is a no-op for the entries it holds", () => {
+  it("is a no-op for the clauses it holds", () => {
     const { service, changed } = makeService();
     expect(service.replace([])).toBe(false);
     service.add({ kind: "filter", key: "status", value: "Active" });
@@ -1146,6 +1146,6 @@ describe("replace", () => {
     ).toBe(false);
     expect(changed).not.toHaveBeenCalled();
     expect(service.replace([])).toBe(true);
-    expect(service.entries).toEqual([]);
+    expect(service.clauses).toEqual([]);
   });
 });

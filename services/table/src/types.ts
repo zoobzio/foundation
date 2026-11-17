@@ -1,6 +1,6 @@
 import type { Features } from "./features";
 import type {
-  Entry,
+  Clause,
   Filter,
   Literal,
   Service as Query,
@@ -156,7 +156,7 @@ export interface FetchParams {
 /**
  * The table as a visitor arranged it: the part of the container a saved
  * view holds. The slices are TanStack's, under their names; `pageSize` is
- * the page's size without its index, and `entries` the query's. The page,
+ * the page's size without its index, and `clauses` the query's. The page,
  * the selection, and the draft are not part of it. Plain data, so it
  * survives JSON.
  */
@@ -166,7 +166,7 @@ export interface Snapshot {
   columnVisibility: TableSlices["columnVisibility"];
   columnSizing: TableSlices["columnSizing"];
   pageSize: number;
-  entries: Entry[];
+  clauses: Clause[];
 }
 
 /** One page of rows, and the count of every row the search leaves. */
@@ -269,8 +269,8 @@ export type Config<T extends RowData> = Omit<
    * the fetch's `query`.
    */
   literals?: Record<string, Literal>;
-  /** The entries the query starts from. */
-  initialEntries?: Entry[];
+  /** The clauses the query starts from. */
+  initialClauses?: Clause[];
   /** The BCP 47 locale cells format in. Defaults to `en-US`. */
   locale?: string;
   /** The ISO 4217 code currency cells format in. Defaults to `USD`. */
@@ -294,7 +294,7 @@ export type State<T extends RowData> = TableSlices & {
   rowCount: number;
   loading: boolean;
   initialized: boolean;
-  entries: Entry[];
+  clauses: Clause[];
   draft: string;
   suggest: Suggest;
 };
@@ -331,7 +331,7 @@ export type Actions<T extends RowData> = {
  *
  * - `change`: any field of the container was written.
  * - `updated`: a fetch settled, success or failure.
- * - `filtered`: the query's entries changed.
+ * - `filtered`: the query's clauses changed.
  * - `restored`: a snapshot replaced the arrangement.
  */
 export type Events<T extends RowData> = {
@@ -362,7 +362,7 @@ export type Service<T extends RowData> = {
   /**
    * The query machine over the filterable columns: one field per column,
    * with the operators and values the column declares. A change to its
-   * entries refetches from the first page.
+   * clauses refetches from the first page.
    */
   readonly query: Query;
 
@@ -402,8 +402,8 @@ export type Service<T extends RowData> = {
   snapshot(): Snapshot;
   /**
    * Puts an arrangement in place: the slices, the page size, and the
-   * query's entries, from the first page, in one fetch. Before `init` it
-   * fetches nothing: the first fetch reads what it left. The entries go
+   * query's clauses, from the first page, in one fetch. Before `init` it
+   * fetches nothing: the first fetch reads what it left. The clauses go
    * through the query, so one it rejects is left out and `snapshot` then
    * differs from what was restored.
    */

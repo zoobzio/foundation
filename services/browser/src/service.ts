@@ -187,7 +187,7 @@ export class BrowserService<T> implements Service<T> {
   }
 
   get isFiltered(): boolean {
-    return this.state.entries.length > 0;
+    return this.state.clauses.length > 0;
   }
 
   get isAllSelected(): boolean {
@@ -273,7 +273,7 @@ export class BrowserService<T> implements Service<T> {
 
   /**
    * Moves the trail. The selection and the search belong to the folder
-   * they were made in, so both are dropped: the committed entries (which
+   * they were made in, so both are dropped: the committed clauses (which
    * emits `filtered`) and the draft being typed. One fetch follows.
    */
   private move(path: BrowserCrumb[]): void {
@@ -399,7 +399,7 @@ export class BrowserService<T> implements Service<T> {
     return {
       sortField: this.state.sortField,
       sortDirection: this.state.sortDirection,
-      entries: this.state.entries,
+      clauses: this.state.clauses,
     };
   }
 
@@ -408,7 +408,7 @@ export class BrowserService<T> implements Service<T> {
     this.state.sortDirection = snapshot.sortDirection;
     this.moving = true;
     try {
-      this.query.replace(snapshot.entries);
+      this.query.replace(snapshot.clauses);
     } finally {
       this.moving = false;
     }

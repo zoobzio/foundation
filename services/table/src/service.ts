@@ -53,7 +53,7 @@ type SliceAtom<V> = {
  * names, and is read and written through the `options` middleware. It can
  * be a plain object or a reactive proxy; each member is replaced as a
  * whole. Each write emits `change`; a write of `pagination` or `sorting`
- * refetches, and a change of the query's entries refetches from the first
+ * refetches, and a change of the query's clauses refetches from the first
  * page. `on` subscribes.
  */
 export class TableService<T extends RowData> implements Service<T> {
@@ -92,7 +92,7 @@ export class TableService<T extends RowData> implements Service<T> {
       permissions: _p,
       enableRowSelection,
       literals,
-      initialEntries: _e,
+      initialClauses: _e,
       locale: _l,
       currency: _c,
       timeZone: _z,
@@ -281,7 +281,7 @@ export class TableService<T extends RowData> implements Service<T> {
       columnVisibility: this.state.columnVisibility,
       columnSizing: this.state.columnSizing,
       pageSize: this.state.pagination.pageSize,
-      entries: this.state.entries,
+      clauses: this.state.clauses,
     };
   }
 
@@ -297,7 +297,7 @@ export class TableService<T extends RowData> implements Service<T> {
     this.state.pagination = { pageIndex: 0, pageSize: snapshot.pageSize };
     this.restoring = true;
     try {
-      this.query.replace(snapshot.entries);
+      this.query.replace(snapshot.clauses);
     } finally {
       this.restoring = false;
     }

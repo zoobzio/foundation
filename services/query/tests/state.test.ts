@@ -5,7 +5,7 @@ import { QUERY_STATE_FIELDS } from "../src/constants";
 describe("createQueryState", () => {
   it("initializes every field with its default", () => {
     expect(createQueryState()).toEqual({
-      entries: [],
+      clauses: [],
       draft: "",
       suggest: { options: [], status: "idle", more: false },
     });
@@ -14,8 +14,8 @@ describe("createQueryState", () => {
   it("each call returns an independent container", () => {
     const a = createQueryState();
     const b = createQueryState();
-    a.entries.push({ kind: "literal", key: "text", value: "x" });
-    expect(b.entries).toEqual([]);
+    a.clauses.push({ kind: "literal", key: "text", value: "x" });
+    expect(b.clauses).toEqual([]);
   });
 
   it("QUERY_STATE_FIELDS names exactly the container's fields", () => {
