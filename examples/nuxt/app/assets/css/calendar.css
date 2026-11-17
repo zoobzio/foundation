@@ -1,9 +1,61 @@
 /*
- * The calendar, bound to the layer's bare hooks: the root, the toolbar and
- * its tools, separators and search, the grid of days, the agenda, and the occurrences.
+ * The calendar, bound to the layer's bare hooks: the root, the controls
+ * with their search and refresh, the body, its toolbar with its tools and
+ * separators, the grid of days, the agenda, and the occurrences.
  */
 
 .f-data-calendar {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* --- controls -------------------------------------------------------- */
+
+.f-data-calendar-controls {
+  display: flex;
+  align-items: stretch;
+  /* The refresh keeps to the end where there is no search. */
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* The refresh button: icon-only, the label is the name. */
+.f-data-calendar-controls > .f-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.f-data-calendar-controls > .f-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.f-data-calendar-controls > .f-button:hover {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    var(--surface)
+  );
+}
+
+.f-data-calendar-controls > .f-button:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: -1px;
+}
+
+/* --- body ------------------------------------------------------------ */
+
+.f-data-calendar-body {
   display: grid;
   overflow: hidden;
   background: var(--surface);
@@ -43,8 +95,7 @@
 .f-data-calendar-search {
   position: relative;
   display: flex;
-  /* A row of its own, under the tools. */
-  flex: 1 1 100%;
+  flex: 1;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-1) var(--space-2);

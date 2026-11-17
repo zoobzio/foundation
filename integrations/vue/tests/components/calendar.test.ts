@@ -347,6 +347,35 @@ describe("calendar", () => {
     expect(wrapper.emitted("filtered")).toHaveLength(1);
   });
 
+  it("stands the search over the toolbar, outside it", async () => {
+    const { service } = makeCalendar({
+      fields: { team: { label: "Team" } },
+    });
+    const wrapper = await mountCalendar({ service });
+    const controls = wrapper.get(".f-data-calendar-controls");
+    expect(controls.find(".f-data-calendar-search").exists()).toBe(true);
+    const body = wrapper.get(".f-data-calendar-body");
+    expect(body.find(".f-data-calendar-search").exists()).toBe(false);
+    expect(body.find(".f-data-calendar-toolbar").exists()).toBe(true);
+    expect(body.find(".f-data-calendar-grid").exists()).toBe(true);
+  });
+
+  it("refetches the range from the refresh control", async () => {
+    const { service, fetch } = makeCalendar();
+    const wrapper = await mountCalendar({ service });
+    const refresh = wrapper.get(
+      '.f-data-calendar-controls button[aria-label="Refresh"]',
+    );
+    expect(refresh.text()).toBe("Refresh");
+    await refresh.trigger("click");
+    await flushPromises();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenLastCalledWith(
+      { range: service.range, query: "", filters: [] },
+      service,
+    );
+  });
+
   it("exposes its context", async () => {
     const { service } = makeCalendar();
     const wrapper = await mountCalendar({ service });

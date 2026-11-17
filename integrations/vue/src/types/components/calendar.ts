@@ -86,24 +86,26 @@ export interface CalendarDay {
 }
 
 /**
- * The parts of the calendar that accept passthrough. `toolbar` is reka's
- * toolbar root, which gives the controls one tab stop and arrow-key
- * focus; `separator` is the divider between two groups; `tool` is each
- * button, built per tool, a Fab rendered through `Primitive` with the
- * tool's label as its accessible name; `search` is the autocomplete over
- * the calendar's search machine, after the tools, where the service is
- * searchable; `grid` is the table of the month,
- * week, and day views, and `agenda` the list of the agenda view;
+ * The parts of the calendar that accept passthrough. `search` is the
+ * autocomplete over the calendar's search machine, where the service is
+ * searchable, and `refresh` refetches the range: the controls, a row of
+ * their own over the calendar. `toolbar` is reka's toolbar root, which
+ * gives the tools one tab stop and arrow-key focus; `separator` is the
+ * divider between two groups; `tool` is each button, built per tool, a
+ * Fab rendered through `Primitive` with the tool's label as its
+ * accessible name; `grid` is the table of the month, week, and day
+ * views, and `agenda` the list of the agenda view;
  * `weekday`, `day`, `dayLabel`, and `occurrence` are built per item.
  */
 export type CalendarPassthrough = {
+  search: Rendered<AutocompleteProps, AutocompleteEmits>;
+  refresh: Rendered<FabProps, FabEmits>;
   toolbar: Passthrough<ToolbarRootProps & HTMLAttributes>;
   separator: PassthroughIter<
     CalendarGroup,
     ToolbarSeparatorProps & HTMLAttributes
   >;
   tool: RenderedIter<CalendarTool, FabProps & ButtonHTMLAttributes, FabEmits>;
-  search: Rendered<AutocompleteProps, AutocompleteEmits>;
   grid: Passthrough<TableHTMLAttributes>;
   agenda: Passthrough<OlHTMLAttributes>;
   weekday: PassthroughIter<CalendarWeekday, ThHTMLAttributes>;
@@ -163,21 +165,25 @@ export type CalendarContext<I, O> = {
 };
 
 /**
- * Slots of the calendar. `toolbar` replaces the whole toolbar;
+ * Slots of the calendar. `controls` replaces the row over the calendar,
+ * `search` its search, where the service is searchable, and `refresh` its
+ * refresh button. `toolbar` replaces the whole toolbar;
  * `toolbarPrepend` and `toolbarAppend` add controls before and after its
  * tools, inside its focus order; `separator` replaces the divider before a
  * group, given the group; `heading` replaces the heading; `tool` replaces
  * one button, given the tool, roving focus included; `toolPrepend`,
  * `toolLabel`, and `toolAppend` fill the button, so a label slot that
  * draws an icon makes the button icon-only while the tool's label stays
- * its accessible name. `search` replaces the search, where the service is
- * searchable. `weekday` replaces a column heading's content.
+ * its accessible name. `weekday` replaces a column heading's content.
  * `day` replaces a day's content, `dayLabel` its date button, and
  * `occurrence` one occurrence's button; `occurrenceTime` and
  * `occurrenceLabel` fill that button. `empty` is what the agenda shows
  * with no occurrence in its days.
  */
 export type CalendarSlots<I, O> = {
+  controls?: (props: CalendarContext<I, O>) => VNode[];
+  search?: (props: CalendarContext<I, O>) => VNode[];
+  refresh?: (props: CalendarContext<I, O>) => VNode[];
   toolbar?: (props: CalendarContext<I, O>) => VNode[];
   toolbarPrepend?: (props: CalendarContext<I, O>) => VNode[];
   toolbarAppend?: (props: CalendarContext<I, O>) => VNode[];
@@ -195,7 +201,6 @@ export type CalendarSlots<I, O> = {
   toolAppend?: (
     props: CalendarContext<I, O> & { tool: CalendarTool },
   ) => VNode[];
-  search?: (props: CalendarContext<I, O>) => VNode[];
   weekday?: (
     props: CalendarContext<I, O> & { weekday: CalendarWeekday },
   ) => VNode[];

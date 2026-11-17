@@ -83,6 +83,16 @@ describe("calendar wrapper", () => {
     expect(search.find("kbd").exists()).toBe(true);
   });
 
+  it("draws the refresh as an icon, named by its label", async () => {
+    const made = makeCalendar();
+    const wrapper = await mountCalendar(made);
+    const refresh = wrapper.get('button[aria-label="Refresh"]');
+    expect(refresh.text()).toBe("");
+    expect(refresh.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "refresh",
+    );
+  });
+
   it("says so when the agenda is empty", async () => {
     const wrapper = await mountCalendar(
       makeCalendar({ view: "agenda" }, {}, []),

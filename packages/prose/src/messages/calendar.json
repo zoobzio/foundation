@@ -39,6 +39,10 @@
     "defaultMessage": "Search...",
     "description": "The placeholder of the calendar's search, which searches the days the calendar shows."
   },
+  "refresh": {
+    "defaultMessage": "Refresh",
+    "description": "The button that fetches the days the calendar shows again."
+  },
   "text": {
     "defaultMessage": "Search",
     "description": "The label of the search's text literal: the option that opens the quote and takes free text, leading the field panel."

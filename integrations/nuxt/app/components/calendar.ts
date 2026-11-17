@@ -3,8 +3,10 @@
 // two steps draw their icons in place of their labels; today and the views
 // keep their names as text. Its search, where the service is searchable,
 // is the layer's TableSearch (the Autocomplete with the `magic` icon, the
-// search key, and that key focusing it), under the visitor's placeholder. An untitled occurrence and the empty agenda
-// read in the visitor's locale too.
+// search key, and that key focusing it), under the visitor's placeholder,
+// and its refresh draws the `refresh` icon under the visitor's label. An
+// untitled occurrence and the empty agenda read in the visitor's locale
+// too.
 import type {
   CalendarPassthrough,
   CalendarTool,
@@ -17,7 +19,7 @@ import { h } from "vue";
 import { layer } from "@zoobzio/vue/utils/passthrough";
 import { wrap } from "@zoobzio/vue/utils/wrap";
 import TableSearch from "./table-search";
-import { iconOf } from "./icon";
+import { iconOf, iconPart } from "./icon";
 import { text, textIn, textSlot } from "./text";
 import { toolIcon, toolText } from "../utils/calendar";
 
@@ -45,10 +47,12 @@ const toolLabel = (tool: CalendarTool): VNode[] => {
 export default wrap(Core, {
   pt: (pt) =>
     layer<CalendarPassthrough>(pt, {
-      tool: toolLayer,
       search: { as: TableSearch, placeholder: text("calendar.search") },
+      refresh: { label: text("calendar.refresh") },
+      tool: toolLayer,
     }),
   slots: {
+    refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
     toolLabel: ({ tool }) => toolLabel(tool),
     // A title is the entry's own text, never a message; only the name of
     // an entry without one is the layer's.

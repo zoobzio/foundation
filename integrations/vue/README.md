@@ -479,16 +479,23 @@ the service offers one view. A button carries `f-data-calendar-tool`,
 `tool`, `toolPrepend`, `toolLabel`, and `toolAppend` slots reach one tool
 at a time, so a consumer dresses a button without rebuilding the bar; the
 `toolbarPrepend` and `toolbarAppend` slots add controls of the consumer's
-own before and after the tools, inside the same toolbar. Where the service
-is `searchable` (its config names `fields` or `literals`, or says so), the
-toolbar ends in the search: the autocomplete over `service.query`, under
-`f-data-calendar-search`, which the `search` part and slot reach.
+own before and after the tools, inside the same toolbar.
 
-The parts are `toolbar`, `separator`, `tool`, `search`, `grid`, `agenda`, `weekday`,
-`day`, `dayLabel`, and `occurrence`; the slots are `toolbar`,
-`toolbarPrepend`, `toolbarAppend`, `separator`, `heading`, `tool`,
-`toolPrepend`, `toolLabel`, `toolAppend`, `search`, `weekday`, `day`, `dayLabel`,
-`occurrence`, `occurrenceTime`, `occurrenceLabel`, and `empty`.
+Over the toolbar, outside it, stand the controls, a row of their own under
+`f-data-calendar-controls`, as a table's and a browser's stand over
+theirs: the search, where the service is `searchable` (its config names
+`fields` or `literals`, or says so), the autocomplete over `service.query`
+under `f-data-calendar-search`; and the refresh, a Fab that fetches the
+range again. The `search` and `refresh` parts and slots reach each, and
+the `controls` slot replaces the row. The toolbar and the view under it
+sit together in `f-data-calendar-body`.
+
+The parts are `search`, `refresh`, `toolbar`, `separator`, `tool`, `grid`,
+`agenda`, `weekday`, `day`, `dayLabel`, and `occurrence`; the slots are
+`controls`, `search`, `refresh`, `toolbar`, `toolbarPrepend`,
+`toolbarAppend`, `separator`, `heading`, `tool`, `toolPrepend`,
+`toolLabel`, `toolAppend`, `weekday`, `day`, `dayLabel`, `occurrence`,
+`occurrenceTime`, `occurrenceLabel`, and `empty`.
 `useCalendar(service)` is the view model on its own (the tools and their
 groups, the heading, the weekdays, the days and weeks with their
 occurrences, an occurrence's time, and `open`), for a consumer's own

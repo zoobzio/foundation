@@ -33,6 +33,7 @@ export const CALENDAR_NEXT_LABEL = "Next";
 export const CALENDAR_UNTITLED_LABEL = "Untitled";
 export const CALENDAR_EMPTY_TEXT = "Nothing scheduled";
 export const CALENDAR_SEARCH_PLACEHOLDER = "Search...";
+export const CALENDAR_REFRESH_LABEL = "Refresh";
 
 /** The name of each view, as its tool reads. */
 export const CALENDAR_VIEW_LABELS: Record<View, string> = {
