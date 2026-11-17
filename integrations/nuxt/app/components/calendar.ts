@@ -1,7 +1,9 @@
 // The vue calendar with its toolbar dressed: each tool is named in the
 // visitor's locale, the name its accessible name and its tooltip, and the
 // two steps draw their icons in place of their labels; today and the views
-// keep their names as text. An untitled occurrence and the empty agenda
+// keep their names as text. Its search, where the service is searchable,
+// is the layer's TableSearch (the Autocomplete with the `magic` icon, the
+// search key, and that key focusing it), under the visitor's placeholder. An untitled occurrence and the empty agenda
 // read in the visitor's locale too.
 import type {
   CalendarPassthrough,
@@ -14,6 +16,7 @@ import Core from "@zoobzio/vue/components/calendar.vue";
 import { h } from "vue";
 import { layer } from "@zoobzio/vue/utils/passthrough";
 import { wrap } from "@zoobzio/vue/utils/wrap";
+import TableSearch from "./table-search";
 import { iconOf } from "./icon";
 import { text, textIn, textSlot } from "./text";
 import { toolIcon, toolText } from "../utils/calendar";
@@ -40,7 +43,11 @@ const toolLabel = (tool: CalendarTool): VNode[] => {
 };
 
 export default wrap(Core, {
-  pt: (pt) => layer<CalendarPassthrough>(pt, { tool: toolLayer }),
+  pt: (pt) =>
+    layer<CalendarPassthrough>(pt, {
+      tool: toolLayer,
+      search: { as: TableSearch, placeholder: text("calendar.search") },
+    }),
   slots: {
     toolLabel: ({ tool }) => toolLabel(tool),
     // A title is the entry's own text, never a message; only the name of

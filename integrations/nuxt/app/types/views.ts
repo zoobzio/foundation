@@ -1,6 +1,7 @@
 import type { Hooks } from "./hooks";
 import type {
   BROWSER_VIEW_SCHEMA,
+  CALENDAR_VIEW_SCHEMA,
   TABLE_VIEW_SCHEMA,
 } from "../constants/views";
 import type { Actions, Config, Events, Service } from "@zoobzio/views";
@@ -19,8 +20,15 @@ export type TableView = z.output<typeof TABLE_VIEW_SCHEMA>;
 export type BrowserView = z.output<typeof BROWSER_VIEW_SCHEMA>;
 
 /**
+ * The payload of a calendar's saved view, as `CALENDAR_VIEW_SCHEMA` yields
+ * it: the calendar's `Snapshot`.
+ */
+export type CalendarView = z.output<typeof CALENDAR_VIEW_SCHEMA>;
+
+/**
  * What views are over: anything that yields its arrangement and takes one
- * back. A table service and a browser service are each one. `snapshot`
+ * back. A table service, a browser service, and a calendar service are
+ * each one. `snapshot`
  * must read reactive state for the drift to show.
  */
 export type ViewsTarget<P> = {

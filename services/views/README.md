@@ -55,8 +55,8 @@ await views.select("recent"); // applies it: one `apply`
 
 The payload type is inferred from the schema: `ViewsService<P>` takes a
 `ZodType<P>`, and every view, `read`, `apply`, and event is typed by it.
-`@zoobzio/table` and `@zoobzio/browser` each have a `snapshot()` and a
-`restore()` made to be the `read` and the `apply`.
+`@zoobzio/table`, `@zoobzio/browser`, and `@zoobzio/calendar` each have a
+`snapshot()` and a `restore()` made to be the `read` and the `apply`.
 
 ## Views
 

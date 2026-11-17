@@ -312,6 +312,41 @@ describe("calendar", () => {
     expect(next.attributes("aria-label")).toBe("Next");
   });
 
+  it("renders no search unless the service is searchable", async () => {
+    const { service } = makeCalendar();
+    const wrapper = await mountCalendar({ service });
+    expect(wrapper.find(".f-data-calendar-search").exists()).toBe(false);
+  });
+
+  it("searches through the query: a committed clause refetches the range", async () => {
+    const { service, fetch } = makeCalendar({
+      fields: { team: { label: "Team", values: ["Design", "Platform"] } },
+    });
+    const wrapper = await mountCalendar({
+      service,
+      pt: { search: { placeholder: "Find" } },
+    });
+    const input = wrapper.get(".f-data-calendar-search input");
+    expect(input.attributes("placeholder")).toBe("Find");
+    await input.setValue("Team: Design");
+    await input.trigger("keydown", { key: "Enter" });
+    await flushPromises();
+    expect(service.query.filters).toEqual([{ key: "team", value: "Design" }]);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenLastCalledWith(
+      {
+        range: service.range,
+        query: "",
+        filters: [{ key: "team", value: "Design" }],
+      },
+      service,
+    );
+    expect(wrapper.findAll(".f-chip").map((c) => c.text())).toEqual([
+      "Team: Design",
+    ]);
+    expect(wrapper.emitted("filtered")).toHaveLength(1);
+  });
+
   it("exposes its context", async () => {
     const { service } = makeCalendar();
     const wrapper = await mountCalendar({ service });

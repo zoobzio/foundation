@@ -34,5 +34,13 @@
   "empty": {
     "defaultMessage": "Nothing scheduled",
     "description": "The text of the calendar's agenda when no event or task falls in the days it shows."
+  },
+  "search": {
+    "defaultMessage": "Search...",
+    "description": "The placeholder of the calendar's search, which searches the days the calendar shows."
+  },
+  "text": {
+    "defaultMessage": "Search",
+    "description": "The label of the search's text literal: the option that opens the quote and takes free text, leading the field panel."
   }
 }

@@ -11,9 +11,12 @@ import { describe, expect, it, vi } from "vitest";
 import { useNuxtApp } from "#app";
 import {
   BROWSER_VIEW_SCHEMA,
+  CALENDAR_VIEW_SCHEMA,
   TABLE_VIEW_SCHEMA,
 } from "../../../app/constants/views";
+import { json } from "@zoobzio/calendar";
 import { createBrowser } from "../../../app/factories/browser";
+import { createCalendar } from "../../../app/factories/calendar";
 import { createTable } from "../../../app/factories/table";
 import { createViews } from "../../../app/factories/views";
 import { fakeColumns, fakeRows, getRowId } from "#test/data/table";
@@ -231,5 +234,50 @@ describe("createViews", () => {
     await views.select("named", { force: true });
     expect(browser.sortDirection).toBe("desc");
     expect(views.drifted).toBe(false);
+  });
+
+  it("sits over a calendar through the calendar's schema", async () => {
+    const fetch = vi.fn(async () => []);
+    const calendar = createCalendar("team", {
+      ...json,
+      fetch,
+      fields: { team: { label: "Team" } },
+      initial: { date: "2026-03-04" },
+    })();
+    const base = CALENDAR_VIEW_SCHEMA.parse({});
+    const views = createViews("team", {
+      schema: CALENDAR_VIEW_SCHEMA,
+      views: [
+        { id: "all", name: "All", payload: base },
+        {
+          id: "design",
+          name: "Design week",
+          payload: {
+            view: "week" as const,
+            clauses: [
+              { kind: "filter" as const, key: "team", value: "Design" },
+            ],
+          },
+        },
+      ],
+    })(calendar);
+    await views.init();
+    await calendar.init();
+    calendar.next();
+    expect(views.drifted).toBe(false);
+    calendar.show("agenda");
+    expect(views.drifted).toBe(true);
+    await views.select("design", { force: true });
+    expect(calendar.view).toBe("week");
+    expect(calendar.query.filters).toEqual([{ key: "team", value: "Design" }]);
+    expect(views.drifted).toBe(false);
+    expect(fetch).toHaveBeenLastCalledWith(
+      {
+        range: calendar.range,
+        query: "",
+        filters: [{ key: "team", value: "Design" }],
+      },
+      calendar,
+    );
   });
 });

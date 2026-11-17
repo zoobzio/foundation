@@ -81,4 +81,7 @@ export const CALENDAR_STATE_FIELDS: Record<StateKey, null> = {
   initialized: null,
   revision: null,
   selected: null,
+  clauses: null,
+  draft: null,
+  suggest: null,
 };

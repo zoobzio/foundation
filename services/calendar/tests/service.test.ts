@@ -110,7 +110,10 @@ describe("loading", () => {
     expect(await service.init()).toBe(true);
     await service.init();
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(fetch).toHaveBeenCalledWith(service.range, service);
+    expect(fetch).toHaveBeenCalledWith(
+      { range: service.range, query: "", filters: [] },
+      service,
+    );
     expect(read).toHaveBeenCalledWith(expect.any(Array), service.context);
     expect(service.entries.map((e) => e.uid)).toEqual(["a"]);
     expect(service.revision).toBe(1);
@@ -181,7 +184,10 @@ describe("navigation", () => {
       range: { start: "2026-06-29T00:00:00Z", end: "2026-07-06T00:00:00Z" },
     });
     expect(fetch).toHaveBeenCalledTimes(5);
-    expect(fetch).toHaveBeenLastCalledWith(service.range, service);
+    expect(fetch).toHaveBeenLastCalledWith(
+      { range: service.range, query: "", filters: [] },
+      service,
+    );
   });
 
   it("ignores a view it does not offer, the view it is in, and the date it is on", async () => {
@@ -538,5 +544,176 @@ describe("remove", () => {
       service.remove("w#2026-03-16T09:00:00", "all"),
     ).rejects.toThrow("refused");
     expect(service.entries).toEqual([weekly()]);
+  });
+});
+
+const fields = {
+  team: { label: "Team", values: ["Design", "Platform"] },
+  status: { label: "Status", operators: ["is", "is not"] },
+};
+
+describe("search", () => {
+  it("holds the query's clauses and draft in the calendar's container", () => {
+    const { service, state } = make({ config: { fields } });
+    service.query.setDraft("Team: Des");
+    service.query.add({ kind: "filter", key: "team", value: "Design" });
+    expect(state.draft).toBe("Team: Des");
+    expect(state.clauses).toEqual([
+      { kind: "filter", key: "team", value: "Design" },
+    ]);
+    expect(service.query.fields).toEqual(fields);
+  });
+
+  it("a change to the clauses refetches the range with them and emits filtered", async () => {
+    const { service, fetch } = await loaded([], { config: { fields } });
+    const filtered = vi.fn();
+    service.on("filtered", filtered);
+    service.query.add({ kind: "literal", key: "text", value: "standup" });
+    service.query.add({
+      kind: "filter",
+      key: "status",
+      op: "is",
+      value: "confirmed",
+    });
+    const filters = [{ key: "status", op: "is", value: "confirmed" }];
+    expect(fetch).toHaveBeenCalledTimes(3);
+    expect(fetch).toHaveBeenLastCalledWith(
+      { range: service.range, query: "standup", filters },
+      service,
+    );
+    expect(filtered).toHaveBeenLastCalledWith({
+      id: "cal",
+      query: "standup",
+      filters,
+    });
+  });
+
+  it("a rejected or repeated clause does not refetch", async () => {
+    const { service, fetch } = await loaded([], { config: { fields } });
+    service.query.add({ kind: "filter", key: "team", value: "Design" });
+    service.query.add({ kind: "filter", key: "team", value: "Design" });
+    service.query.add({
+      kind: "filter",
+      key: "status",
+      op: "near",
+      value: "x",
+    });
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps the clauses as the view and the date move", async () => {
+    const { service, fetch } = await loaded([], { config: { fields } });
+    service.query.add({ kind: "filter", key: "team", value: "Design" });
+    service.next();
+    expect(fetch).toHaveBeenLastCalledWith(
+      {
+        range: service.range,
+        query: "",
+        filters: [{ key: "team", value: "Design" }],
+      },
+      service,
+    );
+  });
+
+  it("starts from the config's initial clauses", async () => {
+    const initialClauses = [
+      { kind: "filter" as const, key: "team", value: "Platform" },
+    ];
+    const { service, fetch } = make({ config: { fields, initialClauses } });
+    await service.init();
+    expect(service.query.clauses).toEqual(initialClauses);
+    expect(fetch).toHaveBeenCalledWith(
+      {
+        range: service.range,
+        query: "",
+        filters: [{ key: "team", value: "Platform" }],
+      },
+      service,
+    );
+  });
+
+  it("is searchable where the config names fields or literals, or says so", () => {
+    expect(make().service.searchable).toBe(false);
+    expect(make({ config: { fields } }).service.searchable).toBe(true);
+    expect(make({ config: { literals: {} } }).service.searchable).toBe(true);
+    expect(make({ config: { searchable: true } }).service.searchable).toBe(
+      true,
+    );
+    expect(
+      make({ config: { fields, searchable: false } }).service.searchable,
+    ).toBe(false);
+  });
+});
+
+describe("views", () => {
+  const saved = {
+    view: "week" as const,
+    clauses: [{ kind: "filter" as const, key: "team", value: "Design" }],
+  };
+
+  it("snapshots the view and the clauses", () => {
+    const { service } = make({ config: { fields } });
+    expect(service.snapshot()).toEqual({ view: "month", clauses: [] });
+    service.query.add(saved.clauses[0]!);
+    expect(service.snapshot()).toEqual({
+      view: "month",
+      clauses: saved.clauses,
+    });
+  });
+
+  it("restores a snapshot in one fetch, and emits", async () => {
+    const { service, fetch } = await loaded([], { config: { fields } });
+    const navigated = vi.fn();
+    const filtered = vi.fn();
+    const restored = vi.fn();
+    service.on("navigated", navigated);
+    service.on("filtered", filtered);
+    service.on("restored", restored);
+    const date = service.date;
+    service.restore(saved);
+    expect(service.snapshot()).toEqual(saved);
+    expect(service.date).toBe(date);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenLastCalledWith(
+      {
+        range: service.range,
+        query: "",
+        filters: [{ key: "team", value: "Design" }],
+      },
+      service,
+    );
+    expect(navigated).toHaveBeenCalledTimes(1);
+    expect(filtered).toHaveBeenCalledTimes(1);
+    expect(restored).toHaveBeenCalledWith({ id: "cal", snapshot: saved });
+  });
+
+  it("fetches nothing before init: the first fetch reads what it left", async () => {
+    const { service, fetch } = make({ config: { fields } });
+    service.restore(saved);
+    expect(fetch).not.toHaveBeenCalled();
+    await service.init();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(
+      {
+        range: service.range,
+        query: "",
+        filters: [{ key: "team", value: "Design" }],
+      },
+      service,
+    );
+  });
+
+  it("leaves out a view the calendar does not offer and a clause the query rejects", async () => {
+    const { service } = await loaded([], {
+      config: { fields, views: ["month", "agenda"] },
+    });
+    const navigated = vi.fn();
+    service.on("navigated", navigated);
+    service.restore({
+      view: "week",
+      clauses: [{ kind: "filter", key: "status", op: "near", value: "x" }],
+    });
+    expect(service.snapshot()).toEqual({ view: "month", clauses: [] });
+    expect(navigated).not.toHaveBeenCalled();
   });
 });

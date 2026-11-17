@@ -7,6 +7,7 @@ import type {
   CalendarSlots,
 } from "../types/components/calendar";
 
+import Autocomplete from "./autocomplete.vue";
 import Fab from "./fab.vue";
 import Primitive from "./primitive.vue";
 
@@ -22,6 +23,7 @@ import {
   CALENDAR_EMPTY_TEXT,
   CALENDAR_EVENTS,
   CALENDAR_HEADING_GROUP,
+  CALENDAR_SEARCH_PLACEHOLDER,
   CALENDAR_UNTITLED_LABEL,
 } from "../constants/calendar";
 </script>
@@ -56,6 +58,11 @@ const settings = usePassthrough<CalendarPassthrough>(() => ({
       disabled: tool.disabled,
       onClick: () => tool.run(),
     }),
+    search: {
+      as: Autocomplete,
+      service: service.query,
+      placeholder: CALENDAR_SEARCH_PLACEHOLDER,
+    },
     grid: {},
     agenda: {},
     weekday: (weekday) => ({ scope: "col", abbr: weekday.name }),
@@ -135,6 +142,9 @@ defineSlots<CalendarSlots<I, O>>();
             </h2>
           </slot>
         </template>
+        <slot v-if="service.searchable" name="search" v-bind="ctx">
+          <Primitive v-bind="settings.search" class="f-data-calendar-search" />
+        </slot>
         <slot name="toolbarAppend" v-bind="ctx" />
       </ToolbarRoot>
     </slot>

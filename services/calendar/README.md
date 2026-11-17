@@ -7,8 +7,9 @@ and its time on Temporal.
 
 Owns: the view and the date it is anchored on, the range they span, the
 entries the range loaded, the occurrences the entries recur into, the
-selection, and the commands that change an entry, one occurrence of it, or
-an occurrence and every later one. Delegates: data loading (`fetch`),
+selection, the commands that change an entry, one occurrence of it, or
+an occurrence and every later one, and the query over the fields the
+config declares. Delegates: data loading (`fetch`),
 persistence (`save`), the entries' form (`read` and `write`), and state
 storage (the container).
 
@@ -25,7 +26,7 @@ const calendar = new CalendarService(
   createCalendarState(config),
   {
     ...json,
-    fetch: (range) => api.entries(range.start, range.end),
+    fetch: ({ range }) => api.entries(range.start, range.end),
     save: (mutation) => api.store(mutation.entries, mutation.removed),
   },
 );
@@ -76,7 +77,7 @@ Call.
 
 ## Config
 
-Pure data.
+Plain data, except that a field's `values` may be a provider.
 
 | Key              | Default        | Meaning                                                                      |
 | ---------------- | -------------- | ---------------------------------------------------------------------------- |
@@ -85,6 +86,48 @@ Pure data.
 | `timeZone`       | `UTC`          | The zone the days are days of, a floating entry is placed in, today reads in |
 | `locale`         | `en-US`        | The locale a view formats in                                                 |
 | `firstDayOfWeek` | `mo`           | The day a week starts on                                                     |
+| `fields`         | none           | The fields the query filters on, keyed by the identity a filter carries      |
+| `literals`       | the query's    | The literals of the query; the `text` literal is the fetch's `query`         |
+| `initialClauses` | none           | The clauses the query starts from                                            |
+| `searchable`     | see below      | Whether a view renders the search: by default, with `fields` or `literals`   |
+
+## Search
+
+`calendar.query` is a [`@zoobzio/query`](../query/) service over the
+config's `fields`: the model of an entry as a search reads it.
+
+```ts
+const config = {
+  fields: {
+    team: { label: "Team", values: ["Design", "Platform"] },
+    status: { label: "Status", operators: ["is", "is not"] },
+  },
+};
+
+// fetch: ({ range, query, filters }) => api.entries({ range, query, filters })
+
+calendar.query.add({ kind: "filter", key: "team", value: "Design" });
+```
+
+The fetch is handed `{ range, query, filters }`: the range the view shows,
+the committed free text, and the committed field filters. It answers with
+the entries of the range that match them, a recurring one whole, as
+before. The calendar gives a field, an operator, and the text no meaning,
+and reads none of them off its entries: the window is the range, and the
+search is whatever the backend makes of the rest. A change to the query's
+clauses fetches the range again and emits `filtered`; a move of the view
+or the date fetches the new range with the clauses as they stand.
+
+## Views
+
+`snapshot()` is the calendar as a visitor arranged it, `{ view, clauses }`,
+and `restore(snapshot)` puts one in place in one fetch: the pair
+[`@zoobzio/views`](../views/) reads and applies through. The date is not
+part of it, so a saved view opens on the day the calendar stands on and a
+step through time is not an edit of it. Before `init`, `restore` fetches
+nothing: the first fetch reads what it left. A view the calendar does not
+offer is left out, and so is a clause the query rejects; `snapshot` then
+differs from what was restored.
 
 ## Occurrences
 
@@ -165,7 +208,8 @@ reactive(createCalendarState(config)); // Vue
 ```
 
 The container holds the view, the date, the entries, the fetch flags, the
-revision, and the selected key. The entries are plain JSON, so the
+revision, the selected key, and the query's clauses, draft, and
+suggestions. The entries are plain JSON, so the
 container crosses SSR as it stands. The service is never wrapped by a
 reactive proxy itself; its getters read the container, so a reactive
 container tracks them.
@@ -186,3 +230,5 @@ after the write lands. The return value removes the listener.
 - `loaded`: a fetch settled, success or failure, or a source was loaded. `{ id, range, revision }`.
 - `changed`: a command changed the entries and its save settled. `{ id, revision, mutation }`.
 - `selected`: the selected occurrence changed. `{ id, key }`.
+- `filtered`: the query's clauses changed. `{ id, query, filters }`.
+- `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.

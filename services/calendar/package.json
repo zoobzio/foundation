@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@zoobzio/kit": "workspace:*",
+    "@zoobzio/query": "workspace:*",
     "rrule-temporal": "catalog:",
     "temporal-polyfill": "catalog:"
   }

@@ -23,9 +23,10 @@ turn the documents a consumer holds into the editor's and back; the code
 service owns a CodeMirror state with no view, and the consumer's own
 CodeMirror extensions decide language, theme, and keymaps. The calendar
 holds JSCalendar entries and expands their recurrence through
-rrule-temporal. The views hold no payload of their own: they sit over a
-table or a browser, whose `snapshot` and `restore` they read and apply
-through. The table, the
+rrule-temporal, and searches through a query over the fields its config
+declares. The views hold no payload of their own: they sit over a table,
+a browser, or a calendar, whose `snapshot` and `restore` they read and
+apply through. The table, the
 form, the browser, the calendar, and the views render through [`@zoobzio/vue`](../integrations/vue/),
 and their Nuxt wiring lives in [`@zoobzio/nuxt`](../integrations/nuxt/) as
 `stores/<name>.ts` and `factories/<name>.ts`.

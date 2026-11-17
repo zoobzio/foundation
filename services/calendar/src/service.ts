@@ -11,13 +11,16 @@ import type {
   Range,
   Scope,
   Service,
+  Snapshot,
   State,
   View,
 } from "./types";
 import type { Entry, LocalDateTime, PatchObject, Weekday } from "./jscalendar";
 import type { Found } from "./recur";
+import type { Service as Query } from "@zoobzio/query";
 import type { Emitter } from "@zoobzio/kit";
 
+import { QueryService } from "@zoobzio/query";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   CALENDAR_DEFAULT_FIRST_DAY_OF_WEEK,
@@ -54,8 +57,9 @@ type Read = {
 
 /**
  * The headless calendar machine. Owns the view, the date it is anchored
- * on, the range they span, the entries the range loaded, and the
- * occurrences the entries recur into; delegates data loading to
+ * on, the range they span, the entries the range loaded, the occurrences
+ * the entries recur into, and the query over the config's fields;
+ * delegates data loading to
  * `actions.fetch`, persistence to `actions.save`, and the entries' form to
  * the reader and the writer. The entries are JSCalendar: the service reads
  * what schedules one and carries the rest as it found it.
@@ -63,19 +67,26 @@ type Read = {
  * The service reads and writes the `state` container through the `options`
  * middleware. The container can be a plain object or a reactive proxy; the
  * service replaces each member as a whole. Each write emits `change`, and
- * the domain methods emit `navigated`, `loaded`, `changed`, and
- * `selected`. `on` subscribes.
+ * the domain methods emit `navigated`, `loaded`, `changed`, `selected`,
+ * `filtered`, and `restored`. A move of the view or the date refetches,
+ * and so does a change of the query's clauses. `on` subscribes.
  */
 export class CalendarService<I, O> implements Service<I, O> {
   public readonly config: Config;
   public readonly context: Context;
   public readonly views: View[];
+  public readonly query: Query;
 
   private readonly state: State;
   private readonly emitter: Emitter<Events<O>> = makeEmitter();
   private readonly firstDayOfWeek: Weekday;
   private request = 0;
   private read: Read | null = null;
+  /**
+   * Set while a snapshot is restored: the restore fetches once itself, so
+   * the query it replaces on the way does not fetch a second time.
+   */
+  private restoring = false;
 
   constructor(
     public readonly id: string,
@@ -93,6 +104,16 @@ export class CalendarService<I, O> implements Service<I, O> {
       timeZone: config.timeZone ?? CALENDAR_DEFAULT_TIME_ZONE,
       locale: config.locale ?? CALENDAR_DEFAULT_LOCALE,
     };
+
+    this.query = new QueryService(
+      `${id}-query`,
+      {
+        fields: config.fields ?? {},
+        ...(config.literals && { literals: config.literals }),
+      },
+      this.state,
+    );
+    this.query.on("changed", () => this.refilter());
 
     // A non-extensible object is never wrapped by a reactive proxy (Vue
     // skips non-extensible targets), so the occurrences read last stay a
@@ -127,6 +148,10 @@ export class CalendarService<I, O> implements Service<I, O> {
   }
   get selected(): string | null {
     return this.state.selected;
+  }
+  get searchable(): boolean {
+    const { searchable, fields, literals } = this.config;
+    return searchable ?? (fields !== undefined || literals !== undefined);
   }
 
   // --- time ------------------------------------------------------------
@@ -219,7 +244,10 @@ export class CalendarService<I, O> implements Service<I, O> {
     const range = this.range;
     this.state.loading = true;
     try {
-      const source = await this.actions.fetch(range, this);
+      const source = await this.actions.fetch(
+        { range, query: this.query.text, filters: this.query.filters },
+        this,
+      );
       if (request !== this.request) return;
       this.state.entries = this.actions.read(source, this.context);
       this.state.revision = this.revision + 1;
@@ -279,6 +307,50 @@ export class CalendarService<I, O> implements Service<I, O> {
       range: this.range,
     });
     this.fetch();
+  }
+
+  // --- search ----------------------------------------------------------
+
+  /** The query changed what the entries are: the range is fetched again. */
+  private refilter(): void {
+    if (!this.restoring) void this.fetch();
+    this.emitter.emit("filtered", {
+      id: this.id,
+      query: this.query.text,
+      filters: this.query.filters,
+    });
+  }
+
+  // --- views -----------------------------------------------------------
+
+  snapshot(): Snapshot {
+    return { view: this.state.view, clauses: this.state.clauses };
+  }
+
+  /**
+   * The view is written to the container, past `show`, so it does not
+   * fetch on its own; where it moves, `navigated` still follows.
+   */
+  restore(snapshot: Snapshot): void {
+    const moved =
+      snapshot.view !== this.view && this.views.includes(snapshot.view);
+    if (moved) this.state.view = snapshot.view;
+    this.restoring = true;
+    try {
+      this.query.replace(snapshot.clauses);
+    } finally {
+      this.restoring = false;
+    }
+    if (moved) {
+      this.emitter.emit("navigated", {
+        id: this.id,
+        view: this.view,
+        date: this.date,
+        range: this.range,
+      });
+    }
+    if (this.initialized) void this.fetch();
+    this.emitter.emit("restored", { id: this.id, snapshot: this.snapshot() });
   }
 
   // --- selection -------------------------------------------------------

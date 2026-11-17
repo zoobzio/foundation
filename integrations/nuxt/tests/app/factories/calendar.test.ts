@@ -53,7 +53,10 @@ describe("createCalendar", () => {
     const options = makeOptions({ read, save });
     const team = createCalendar("team", options)();
     await team.init();
-    expect(options.fetch).toHaveBeenCalledWith(team.range, team);
+    expect(options.fetch).toHaveBeenCalledWith(
+      { range: team.range, query: "", filters: [] },
+      team,
+    );
     expect(read).toHaveBeenCalledWith(fakeEntries, team.context);
     await team.remove("lunch");
     expect(save).toHaveBeenCalledWith(
@@ -88,6 +91,50 @@ describe("createCalendar", () => {
     expect(hooks["calendar:navigated"]).toHaveBeenCalledWith(
       expect.objectContaining({ id: "team", view: "week" }),
     );
+  });
+
+  it("relays a search and a restore onto the Nuxt hook bus", async () => {
+    const hooks = {
+      "calendar:filtered": vi.fn(),
+      "calendar:restored": vi.fn(),
+    };
+    useNuxtApp().hooks.addHooks(hooks);
+    const team = createCalendar(
+      "team",
+      makeOptions({ fields: { team: { label: "Team" } } }),
+    )();
+    await team.init();
+    team.query.add({ kind: "filter", key: "team", value: "Design" });
+    expect(hooks["calendar:filtered"]).toHaveBeenCalledWith({
+      id: "team",
+      query: "",
+      filters: [{ key: "team", value: "Design" }],
+    });
+    team.restore({ view: "week", clauses: [] });
+    expect(hooks["calendar:restored"]).toHaveBeenCalledWith({
+      id: "team",
+      snapshot: { view: "week", clauses: [] },
+    });
+  });
+
+  it("lays the contract's text literal under a config that searches and names none", () => {
+    const plain = createCalendar("plain", makeOptions())();
+    expect(plain.config.literals).toBeUndefined();
+    expect(plain.searchable).toBe(false);
+    const team = createCalendar(
+      "team",
+      makeOptions({ fields: { status: { label: "calendar.agenda" } } }),
+    )();
+    expect(team.searchable).toBe(true);
+    expect(team.query.fields.status?.label).toBe("Agenda");
+    expect(team.query.literals.text?.label).toBe("Search");
+    const tagged = createCalendar(
+      "tagged",
+      makeOptions({
+        literals: { tag: { label: "Tag", open: "#", close: " " } },
+      }),
+    )();
+    expect(tagged.query.literals.text).toBeUndefined();
   });
 
   it("logs each relayed event under the service's id", () => {

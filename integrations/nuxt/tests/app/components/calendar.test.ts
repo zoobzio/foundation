@@ -72,6 +72,17 @@ describe("calendar wrapper", () => {
     expect(wrapper.get('[data-key="offsite"] .f-span').text()).toBe("Untitled");
   });
 
+  it("dresses the search of a searchable calendar, and renders none otherwise", async () => {
+    const plain = await mountCalendar(makeCalendar());
+    expect(plain.find(".f-data-calendar-search").exists()).toBe(false);
+    const wrapper = await mountCalendar(
+      makeCalendar({ fields: { team: { label: "Team" } } }),
+    );
+    const search = wrapper.get(".f-data-calendar-search");
+    expect(search.get("input").attributes("placeholder")).toBe("Search...");
+    expect(search.find("kbd").exists()).toBe(true);
+  });
+
   it("says so when the agenda is empty", async () => {
     const wrapper = await mountCalendar(
       makeCalendar({ view: "agenda" }, {}, []),

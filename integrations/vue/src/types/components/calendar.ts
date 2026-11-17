@@ -1,9 +1,11 @@
 import type { Text } from "@zoobzio/kit";
+import type { AutocompleteEmits, AutocompleteProps } from "./autocomplete";
 import type { FabEmits, FabProps } from "./fab";
 import type {
   Passthrough,
   PassthroughIter,
   PT,
+  Rendered,
   RenderedIter,
 } from "../passthrough";
 import type { Definition } from "../definition";
@@ -88,7 +90,9 @@ export interface CalendarDay {
  * toolbar root, which gives the controls one tab stop and arrow-key
  * focus; `separator` is the divider between two groups; `tool` is each
  * button, built per tool, a Fab rendered through `Primitive` with the
- * tool's label as its accessible name; `grid` is the table of the month,
+ * tool's label as its accessible name; `search` is the autocomplete over
+ * the calendar's search machine, after the tools, where the service is
+ * searchable; `grid` is the table of the month,
  * week, and day views, and `agenda` the list of the agenda view;
  * `weekday`, `day`, `dayLabel`, and `occurrence` are built per item.
  */
@@ -99,6 +103,7 @@ export type CalendarPassthrough = {
     ToolbarSeparatorProps & HTMLAttributes
   >;
   tool: RenderedIter<CalendarTool, FabProps & ButtonHTMLAttributes, FabEmits>;
+  search: Rendered<AutocompleteProps, AutocompleteEmits>;
   grid: Passthrough<TableHTMLAttributes>;
   agenda: Passthrough<OlHTMLAttributes>;
   weekday: PassthroughIter<CalendarWeekday, ThHTMLAttributes>;
@@ -128,6 +133,8 @@ export type CalendarEmits<O> = {
   loaded: Events<O>["loaded"];
   changed: Events<O>["changed"];
   selected: Events<O>["selected"];
+  filtered: Events<O>["filtered"];
+  restored: Events<O>["restored"];
 };
 
 /**
@@ -163,7 +170,8 @@ export type CalendarContext<I, O> = {
  * one button, given the tool, roving focus included; `toolPrepend`,
  * `toolLabel`, and `toolAppend` fill the button, so a label slot that
  * draws an icon makes the button icon-only while the tool's label stays
- * its accessible name. `weekday` replaces a column heading's content.
+ * its accessible name. `search` replaces the search, where the service is
+ * searchable. `weekday` replaces a column heading's content.
  * `day` replaces a day's content, `dayLabel` its date button, and
  * `occurrence` one occurrence's button; `occurrenceTime` and
  * `occurrenceLabel` fill that button. `empty` is what the agenda shows
@@ -187,6 +195,7 @@ export type CalendarSlots<I, O> = {
   toolAppend?: (
     props: CalendarContext<I, O> & { tool: CalendarTool },
   ) => VNode[];
+  search?: (props: CalendarContext<I, O>) => VNode[];
   weekday?: (
     props: CalendarContext<I, O> & { weekday: CalendarWeekday },
   ) => VNode[];

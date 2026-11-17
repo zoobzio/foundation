@@ -28,8 +28,8 @@ export type CalendarOptions<I, O> = Config &
 
 /**
  * The Nuxt hooks a calendar relays: `calendar:navigated`,
- * `calendar:loaded`, `calendar:changed`, and `calendar:selected`, each
- * carrying the service's payload with its scoping `id`.
+ * `calendar:loaded`, `calendar:changed`, `calendar:selected`,
+ * `calendar:filtered`, and `calendar:restored`, each carrying the service's payload with its scoping `id`.
  */
 export type CalendarHooks = Hooks<"calendar", Events<unknown>>;
 

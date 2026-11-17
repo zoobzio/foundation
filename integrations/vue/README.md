@@ -441,7 +441,7 @@ per week and a cell per day; the agenda view is a list of the days that
 hold an occurrence. Each day lists the occurrences that touch it, so one
 that spans three days is in each. The component owns no feature state: it
 reads the service, calls its methods, and relays its `navigated`, `loaded`,
-`changed`, and `selected` events as emits.
+`changed`, `selected`, `filtered`, and `restored` events as emits.
 
 ```ts
 import { reactive } from "vue";
@@ -479,12 +479,15 @@ the service offers one view. A button carries `f-data-calendar-tool`,
 `tool`, `toolPrepend`, `toolLabel`, and `toolAppend` slots reach one tool
 at a time, so a consumer dresses a button without rebuilding the bar; the
 `toolbarPrepend` and `toolbarAppend` slots add controls of the consumer's
-own before and after the tools, inside the same toolbar.
+own before and after the tools, inside the same toolbar. Where the service
+is `searchable` (its config names `fields` or `literals`, or says so), the
+toolbar ends in the search: the autocomplete over `service.query`, under
+`f-data-calendar-search`, which the `search` part and slot reach.
 
-The parts are `toolbar`, `separator`, `tool`, `grid`, `agenda`, `weekday`,
+The parts are `toolbar`, `separator`, `tool`, `search`, `grid`, `agenda`, `weekday`,
 `day`, `dayLabel`, and `occurrence`; the slots are `toolbar`,
 `toolbarPrepend`, `toolbarAppend`, `separator`, `heading`, `tool`,
-`toolPrepend`, `toolLabel`, `toolAppend`, `weekday`, `day`, `dayLabel`,
+`toolPrepend`, `toolLabel`, `toolAppend`, `search`, `weekday`, `day`, `dayLabel`,
 `occurrence`, `occurrenceTime`, `occurrenceLabel`, and `empty`.
 `useCalendar(service)` is the view model on its own (the tools and their
 groups, the heading, the weekdays, the days and weeks with their

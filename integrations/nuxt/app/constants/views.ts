@@ -48,6 +48,16 @@ export const TABLE_VIEW_SCHEMA = z.preprocess(
 );
 
 /**
+ * The schema of a calendar's saved view: what the calendar's `snapshot`
+ * yields and its `restore` takes. The view alone, and the search: a saved
+ * view opens on the day the calendar stands on.
+ */
+export const CALENDAR_VIEW_SCHEMA = z.object({
+  view: z.enum(["month", "week", "day", "agenda"]).default("month"),
+  clauses: z.array(clause).default([]),
+});
+
+/**
  * The schema of a browser's saved view: what the browser's `snapshot`
  * yields and its `restore` takes.
  */

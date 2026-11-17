@@ -1,7 +1,7 @@
 // The team calendar of the example: a calendar over a fake backend, an
 // array in memory that `fetch` reads and `save` writes. The entries are
 // dated around today, so the page always has something on it.
-import type { Doc, JSCalendar, Mutation } from "@zoobzio/calendar";
+import type { Doc, FetchParams, JSCalendar, Mutation } from "@zoobzio/calendar";
 
 import { json } from "@zoobzio/calendar";
 import { createCalendar } from "@zoobzio/nuxt/factories/calendar";
@@ -100,10 +100,22 @@ let entries: Doc = [
 
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** The backend's read: every entry, a recurring one whole. */
-const fetch = async (): Promise<Doc> => {
+/**
+ * The backend's read: every entry the search leaves, a recurring one
+ * whole. The text is looked for in the title, and a `type` filter keeps
+ * the events or the tasks.
+ */
+const fetch = async ({ query, filters }: FetchParams): Promise<Doc> => {
   await pause(150);
-  return structuredClone(entries);
+  const text = query.toLowerCase();
+  const types = filters.filter((f) => f.key === "type").map((f) => f.value);
+  return structuredClone(
+    entries.filter(
+      (entry) =>
+        (entry.title ?? "").toLowerCase().includes(text) &&
+        types.every((type) => entry["@type"] === type),
+    ),
+  );
 };
 
 /** The backend's write: the stored entries replace by `uid`, the removed go. */
@@ -122,6 +134,7 @@ export const useTeam = createCalendar<Doc, Doc>("team", {
   ...json,
   fetch,
   save,
+  fields: { type: { label: "Type", values: ["Event", "Task"] } },
   timeZone: "UTC",
   firstDayOfWeek: "mo",
 });

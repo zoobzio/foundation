@@ -7,6 +7,14 @@ import type {
   Weekday,
 } from "./jscalendar";
 import type {
+  Clause,
+  Field,
+  Filter,
+  Literal,
+  Service as Query,
+  Suggest,
+} from "@zoobzio/query";
+import type {
   Change as KitChange,
   ChangeEvents,
   Changers as KitChangers,
@@ -44,7 +52,32 @@ export type Range = {
 };
 
 /**
- * Config the consumer provides — pure serializable data.
+ * What the fetch is handed: the range the view shows, and the search:
+ * `query` is the committed free text, `filters` the committed field
+ * filters. The calendar gives neither a meaning: the consumer answers
+ * with the entries of the range that match them.
+ */
+export type FetchParams = {
+  range: Range;
+  query: string;
+  filters: Filter[];
+};
+
+/**
+ * The calendar as a visitor arranged it: the part of the container a
+ * saved view holds, the view and the query's clauses. The date, the
+ * entries, the selection, and the draft are not part of it: a saved view
+ * opens on the day the calendar stands on. Plain data, so it survives
+ * JSON.
+ */
+export type Snapshot = {
+  view: View;
+  clauses: Clause[];
+};
+
+/**
+ * Config the consumer provides. Plain serializable data, except that a
+ * field's `values` may be a provider.
  */
 export type Config = {
   /** The views the calendar offers. Defaults to all of them. */
@@ -61,6 +94,29 @@ export type Config = {
   locale?: string;
   /** The day a week starts on. Defaults to `mo`. */
   firstDayOfWeek?: Weekday;
+  /**
+   * The fields the query filters on, keyed by the identity a filter
+   * carries: the model of an entry as a search reads it, a calendar, a
+   * category, a participant. The calendar reads none of them off its
+   * entries: the fetch is handed the filters and answers for them.
+   * Defaults to none.
+   */
+  fields?: Record<string, Field>;
+  /**
+   * The literals of the query, handed to it as given. Defaults to the
+   * query's, the text literal alone; the calendar reads the `text` literal
+   * as the fetch's `query`.
+   */
+  literals?: Record<string, Literal>;
+  /** The clauses the query starts from. */
+  initialClauses?: Clause[];
+  /**
+   * Whether a UI renders the toolbar search. Defaults to whether the
+   * config names `fields` or `literals`. A hint for the view layer only:
+   * the search surface on the service (`query`, the fetch params) stays
+   * live for imperative use.
+   */
+  searchable?: boolean;
 };
 
 /**
@@ -101,8 +157,9 @@ export type Scope = "one" | "following" | "all";
 /**
  * The state container the service reads and writes: the view, the day it
  * is anchored on, the entries the range loaded, the fetch flags, the
- * revision, which counts every change to the entries, and the selected
- * occurrence. The entries are JSCalendar, plain JSON, so the container
+ * revision, which counts every change to the entries, the selected
+ * occurrence, and the query's slice: its clauses, its draft, and what a
+ * values provider has given for it. The entries are JSCalendar, plain JSON, so the container
  * carries them across SSR as it stands. The occurrences are not here:
  * they are read from the entries and the range. The container can be a
  * plain object or a reactive proxy; the service replaces each member as a
@@ -116,6 +173,9 @@ export type State = {
   initialized: boolean;
   revision: number;
   selected: string | null;
+  clauses: Clause[];
+  draft: string;
+  suggest: Suggest;
 };
 
 export type StateKey = keyof State;
@@ -169,11 +229,12 @@ export type Mutation<O> = {
  */
 export type Actions<I, O> = Codec<I, O> & {
   /**
-   * Loads the entries of a range, in the consumer's form. Every entry
-   * with an occurrence inside the range belongs in the result, a
-   * recurring one whole: the service expands its rule.
+   * Loads the entries of a range that the search leaves, in the
+   * consumer's form. Every such entry with an occurrence inside the range
+   * belongs in the result, a recurring one whole: the service expands its
+   * rule.
    */
-  fetch: (range: Range, service: Service<I, O>) => Promise<I>;
+  fetch: (params: FetchParams, service: Service<I, O>) => Promise<I>;
   /**
    * Persists a change the service has already applied to its entries. A
    * rejection puts the entries back as they were and reaches the caller
@@ -195,12 +256,16 @@ export type Actions<I, O> = Codec<I, O> & {
  * - `loaded`: a fetch settled, success or failure, or a source was loaded.
  * - `changed`: a command changed the entries, and the save, if any, settled.
  * - `selected`: the selected occurrence changed.
+ * - `filtered`: the query's clauses changed.
+ * - `restored`: a snapshot replaced the arrangement.
  */
 export type Events<O> = ChangeEvents<State> & {
   navigated: [event: { id: string; view: View; date: Day; range: Range }];
   loaded: [event: { id: string; range: Range; revision: number }];
   changed: [event: { id: string; revision: number; mutation: Mutation<O> }];
   selected: [event: { id: string; key: string | null }];
+  filtered: [event: { id: string; query: string; filters: Filter[] }];
+  restored: [event: { id: string; snapshot: Snapshot }];
 };
 
 export type Event<O> = keyof Events<O>;
@@ -217,6 +282,13 @@ export type Service<I, O> = {
   readonly config: Config;
   readonly context: Context;
   readonly views: View[];
+  readonly searchable: boolean;
+
+  /**
+   * The query machine over the config's fields. A change to its clauses
+   * refetches the range.
+   */
+  readonly query: Query;
 
   readonly view: View;
   readonly date: Day;
@@ -268,6 +340,20 @@ export type Service<I, O> = {
   update(key: string, patch: PatchObject, scope?: Scope): Promise<void>;
   /** Removes an occurrence, an occurrence and every later one, or its entry. */
   remove(key: string, scope?: Scope): Promise<void>;
+
+  /**
+   * The arrangement as it stands. Each member is the container's own, so
+   * a read inside a reactive scope tracks it.
+   */
+  snapshot(): Snapshot;
+  /**
+   * Puts an arrangement in place: the view and the query's clauses, in
+   * one fetch. Before `init` it fetches nothing: the first fetch reads
+   * what it left. A view the calendar does not offer is left out, and so
+   * is a clause the query rejects: `snapshot` then differs from what was
+   * restored.
+   */
+  restore(snapshot: Snapshot): void;
 
   on<E extends Event<O>>(event: E, listener: Listener<O, E>): () => void;
 };

@@ -165,7 +165,11 @@ export const LAYER = {
   ],
   "constants/log": ["LOG_ROOT_NAME", "LOG_LEVELS"],
   "constants/table": ["TABLE_SEARCH_KEY"],
-  "constants/views": ["TABLE_VIEW_SCHEMA", "BROWSER_VIEW_SCHEMA"],
+  "constants/views": [
+    "TABLE_VIEW_SCHEMA",
+    "BROWSER_VIEW_SCHEMA",
+    "CALENDAR_VIEW_SCHEMA",
+  ],
   "factories/browser": ["createBrowser"],
   "factories/calendar": ["createCalendar"],
   "factories/code": ["createCode"],
@@ -235,6 +239,7 @@ export const LAYER_TYPES = {
   "types/views": [
     "TableView",
     "BrowserView",
+    "CalendarView",
     "ViewsTarget",
     "ViewsOptions",
     "ViewsHooks",

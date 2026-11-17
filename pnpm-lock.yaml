@@ -460,6 +460,9 @@ importers:
       '@zoobzio/kit':
         specifier: workspace:*
         version: link:../../packages/kit
+      '@zoobzio/query':
+        specifier: workspace:*
+        version: link:../query
       rrule-temporal:
         specifier: 'catalog:'
         version: 2.2.9

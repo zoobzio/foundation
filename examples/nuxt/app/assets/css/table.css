@@ -87,7 +87,7 @@
   color: var(--on-surface-muted);
 }
 
-/* A committed entry: click to remove it. */
+/* A committed clause: click to remove it. */
 .f-data-table-search .f-chip {
   display: inline-flex;
   align-items: center;
