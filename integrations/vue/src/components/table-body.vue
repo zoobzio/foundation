@@ -20,7 +20,7 @@ import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
 import { cell as format } from "../utils/format";
 import { TABLE_ACTIONS_LABEL, TABLE_EMPTY_TEXT } from "../constants/table";
-import { columnLabel, isSelectable } from "../utils/table";
+import { columnLabel, isSelectable, pinClass, pinStyle } from "../utils/table";
 </script>
 
 <script setup lang="ts" generic="T extends RowData">
@@ -91,7 +91,14 @@ defineSlots<TableBodySlots<T>>();
         class="f-tr"
         :class="{ 'f-data-table-selected': row.getIsSelected() }"
       >
-        <td v-if="isSelectable(table)" class="f-td f-data-table-select">
+        <td
+          v-if="isSelectable(table)"
+          class="f-td f-data-table-select"
+          :class="{
+            'f-data-table-pinned f-data-table-pinned-start':
+              table.getIsSomeColumnsPinned('start'),
+          }"
+        >
           <Primitive
             v-bind="settings.rowCheckbox"
             :model-value="row.getIsSelected()"
@@ -99,7 +106,13 @@ defineSlots<TableBodySlots<T>>();
             @update:model-value="row.toggleSelected()"
           />
         </td>
-        <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="f-td">
+        <td
+          v-for="cell in row.getVisibleCells()"
+          :key="cell.id"
+          class="f-td"
+          :class="pinClass(cell.column)"
+          :style="pinStyle(cell.column)"
+        >
           <!-- 1. cell:<id> overrides one column -->
           <slot
             v-if="slots[`cell:${cell.column.id}`]"
@@ -166,7 +179,13 @@ defineSlots<TableBodySlots<T>>();
             </span>
           </slot>
         </td>
-        <td v-if="service.actions.length" class="f-td f-data-table-actions">
+        <td
+          v-if="service.actions.length"
+          class="f-td f-data-table-actions f-data-table-pinned f-data-table-pinned-end"
+          :class="{
+            'f-data-table-pinned-edge': !table.getIsSomeColumnsPinned('end'),
+          }"
+        >
           <Primitive
             v-bind="settings.actionsMenu"
             @select="service.runAction($event.key, row.original)"

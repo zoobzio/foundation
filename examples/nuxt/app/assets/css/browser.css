@@ -547,19 +547,11 @@
   border-color: var(--primary);
 }
 
-.f-data-browser .f-checkbox-root[data-state="checked"] svg {
-  visibility: visible;
-}
-
-/* Some of the files: a dash in place of the check. */
-.f-data-browser .f-checkbox-root[data-state="indeterminate"] .f-group {
-  width: 0.5rem;
-  height: 2px;
-  background: var(--surface);
-}
-
+/* Checked, the check; some of the files, the minus the checkbox draws in
+   its place. */
+.f-data-browser .f-checkbox-root[data-state="checked"] svg,
 .f-data-browser .f-checkbox-root[data-state="indeterminate"] svg {
-  display: none;
+  visibility: visible;
 }
 
 .f-data-browser .f-checkbox-root:focus-visible {

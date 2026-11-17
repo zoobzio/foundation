@@ -19,7 +19,7 @@ import Scroller from "./scroller.vue";
 
 import Primitive from "./primitive.vue";
 
-import { useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useServiceEmits } from "../composables/events";
 import { useForward } from "../composables/forward";
 import { usePassthrough } from "../composables/passthrough";
@@ -29,7 +29,7 @@ import {
   TABLE_REFRESH_LABEL,
   TABLE_SEARCH_PLACEHOLDER,
 } from "../constants/table";
-import { columnWidth, isSelectable } from "../utils/table";
+import { columnWidth, isSelectable, layoutColumns } from "../utils/table";
 </script>
 
 <script setup lang="ts" generic="T extends RowData">
@@ -42,6 +42,14 @@ useServiceEmits(service, TABLE_EVENTS, emit);
 const el = useTemplateRef<HTMLDivElement>("el");
 
 const table = service.table;
+
+// The least the table is wide: its columns at their sizes, and the room
+// the stylesheet keeps for the checkbox column and the actions column,
+// which are no columns of the table's.
+const minWidth = computed(
+  () =>
+    `calc(${table.getTotalSize()}px + var(--f-data-table-start-inset, 0px) + var(--f-data-table-end-inset, 0px))`,
+);
 
 const widthOf = (width: number | undefined) =>
   width === undefined ? undefined : { width: `${width}px` };
@@ -104,7 +112,11 @@ const { THead, TBody } = useForward({
   <div
     ref="el"
     class="f-group f-data-table"
-    :class="{ 'f-data-table-loading': service.loading }"
+    :class="{
+      'f-data-table-loading': service.loading,
+      'f-data-table-selectable': isSelectable(table),
+      'f-data-table-actionable': service.actions.length > 0,
+    }"
   >
     <slot name="toolbar" v-bind="ctx">
       <div class="f-group f-data-table-toolbar">
@@ -142,11 +154,11 @@ const { THead, TBody } = useForward({
     </TableBulkActions>
 
     <Primitive v-bind="settings.scroller" class="f-data-table-scroller">
-      <table class="f-table" :style="{ minWidth: `${table.getTotalSize()}px` }">
+      <table class="f-table" :style="{ minWidth }">
         <colgroup>
           <col v-if="isSelectable(table)" class="f-data-table-select" />
           <col
-            v-for="col in table.getVisibleLeafColumns()"
+            v-for="col in layoutColumns(table)"
             :key="col.id"
             :style="widthOf(columnWidth(col))"
           />

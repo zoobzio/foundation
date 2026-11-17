@@ -99,6 +99,7 @@ const config = {
 | `hide`        | No column hides: `column.getCanHide()` is `false`.                                |
 | `reorder`     | A write of the column order through the table is dropped.                         |
 | `resize`      | No column resizes: `column.getCanResize()` is `false`.                            |
+| `pin`         | No column pins: `column.getCanPin()` is `false`.                                  |
 | `pageSize`    | A change of the page size through the table is dropped.                           |
 | `refresh`     | A view renders no refresh. `fetch()` itself always fetches.                       |
 
@@ -222,7 +223,7 @@ query emits `failed` when one throws or rejects: `users.query.on("failed", …)`
 
 The service reads and writes the `state` container, and so does the table:
 each slice of TanStack's state sits in it under TanStack's name
-(`pagination`, `sorting`, `rowSelection`, `columnOrder`,
+(`pagination`, `sorting`, `rowSelection`, `columnOrder`, `columnPinning`,
 `columnVisibility`, `columnSizing`), beside the fetched page (`data`,
 `rowCount`), `loading`, `initialized`, and the query's clauses, draft, and
 suggested values. The table holds no state of its own: every read of a
@@ -245,7 +246,8 @@ config's `initialState`, which is also what the table's resets
 ## Snapshot and restore
 
 `snapshot()` is the table as a visitor arranged it, as plain data: the
-`sorting`, `columnOrder`, `columnVisibility`, and `columnSizing` slices,
+`sorting`, `columnOrder`, `columnPinning`, `columnVisibility`, and
+`columnSizing` slices,
 the `pageSize`, and the query's `clauses`. The page index, the selection,
 the rows, and the draft are not part of it. `restore(snapshot)` puts one
 in place from the first page, in one fetch, where writing the slices one

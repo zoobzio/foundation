@@ -14,6 +14,7 @@ describe("createTableState", () => {
       sorting: [],
       rowSelection: {},
       columnOrder: [],
+      columnPinning: { start: [], end: [] },
       columnVisibility: {},
       columnSizing: {},
       data: [],

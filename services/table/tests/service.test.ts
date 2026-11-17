@@ -63,6 +63,10 @@ const makeService = (
 const ids = (service: TableService<FakeRow>): string[] =>
   service.table.getVisibleLeafColumns().map((c) => c.id);
 
+/** The columns as the head lays them out: the pinned ones lead and trail. */
+const heads = (service: TableService<FakeRow>): string[] =>
+  service.table.getLeafHeaders().map((header) => header.column.id);
+
 describe("fetch", () => {
   it("passes the pagination and sorting slices and applies the result", async () => {
     const { service, table, state, actions } = makeService();
@@ -247,13 +251,14 @@ describe("refetching", () => {
     expect(table.getRowModel().rows.map((r) => r.original)).toEqual(fakeRows);
   });
 
-  it("a write of selection, order, visibility, or size does not refetch", async () => {
+  it("a write of selection, order, pinning, visibility, or size does not refetch", async () => {
     const { service, table, actions } = makeService({
       config: { bulkActions: fakeBulkActions },
     });
     await service.fetch();
     table.toggleAllPageRowsSelected(true);
     table.setColumnOrder(["amount"]);
+    table.getColumn("amount")?.pin("end");
     table.getColumn("name")?.toggleVisibility(false);
     table.setColumnSizing({ name: 200 });
     expect(actions.fetch).toHaveBeenCalledOnce();
@@ -276,6 +281,47 @@ describe("columns", () => {
     expect(table.getColumn("name")?.getSize()).toBe(120);
     expect(table.getColumn("amount")?.getSize()).toBe(300);
     expect(table.getTotalSize()).toBe(80 + 120 + 150 + 150 + 300);
+  });
+});
+
+describe("pinning", () => {
+  it("a pinned column leads or trails the rest, and the container holds where", () => {
+    const { service, table, state } = makeService();
+    table.getColumn("amount")?.pin("start");
+    table.getColumn("id")?.pin("end");
+    expect(state.columnPinning).toEqual({ start: ["amount"], end: ["id"] });
+    expect(heads(service)).toEqual([
+      "amount",
+      "name",
+      "status",
+      "created",
+      "id",
+    ]);
+    expect(table.getColumn("amount")?.getIsPinned()).toBe("start");
+
+    table.getColumn("amount")?.pin(false);
+    expect(state.columnPinning).toEqual({ start: [], end: ["id"] });
+    expect(heads(service)).toEqual([
+      "name",
+      "status",
+      "created",
+      "amount",
+      "id",
+    ]);
+  });
+
+  it("starts from the config's initial state, and a column may refuse", () => {
+    const { service, table } = makeService({
+      config: {
+        columns: fakeColumns.map((column, i) =>
+          i === 1 ? { ...column, enablePinning: false } : column,
+        ),
+        initialState: { columnPinning: { start: ["status"], end: [] } },
+      },
+    });
+    expect(heads(service).at(0)).toBe("status");
+    expect(table.getColumn("name")?.getCanPin()).toBe(false);
+    expect(table.getColumn("status")?.getCanPin()).toBe(true);
   });
 });
 
@@ -717,6 +763,7 @@ describe("views", () => {
   const arranged = {
     sorting: [{ id: "name", desc: true }],
     columnOrder: ["name", "id"],
+    columnPinning: { start: ["amount"], end: [] },
     columnVisibility: { status: false },
     columnSizing: { name: 240 },
     pageSize: 25,
@@ -733,6 +780,7 @@ describe("views", () => {
     expect(service.snapshot()).toEqual({
       sorting: [{ id: "name", desc: false }],
       columnOrder: [],
+      columnPinning: { start: [], end: [] },
       columnVisibility: {},
       columnSizing: {},
       pageSize: 10,
@@ -764,6 +812,7 @@ describe("views", () => {
     // The table reads the container, so it sees what was restored.
     const visible = table.getVisibleLeafColumns().map((column) => column.id);
     expect(visible.slice(0, 2)).toEqual(["name", "id"]);
+    expect(heads(service).at(0)).toBe("amount");
     expect(visible).not.toContain("status");
     expect(table.getColumn("name")?.getSize()).toBe(240);
     expect(filtered).toHaveBeenCalledOnce();
@@ -826,7 +875,7 @@ describe("permissions", () => {
     expect(table.getColumn("name")?.getCanSort()).toBe(false);
   });
 
-  it("answers the table's own checks: sort, multi-sort, hide, resize", () => {
+  it("answers the table's own checks: sort, multi-sort, hide, resize, pin", () => {
     const { table } = makeService({
       config: {
         permissions: {
@@ -834,6 +883,7 @@ describe("permissions", () => {
           multiSort: false,
           hide: false,
           resize: false,
+          pin: false,
         },
       },
     });
@@ -842,12 +892,14 @@ describe("permissions", () => {
     expect(name?.getCanMultiSort()).toBe(false);
     expect(name?.getCanHide()).toBe(false);
     expect(name?.getCanResize()).toBe(false);
+    expect(name?.getCanPin()).toBe(false);
 
     const open = makeService().table;
     expect(open.getColumn("name")?.getCanSort()).toBe(true);
     expect(open.getColumn("name")?.getCanMultiSort()).toBe(true);
     expect(open.getColumn("name")?.getCanHide()).toBe(true);
     expect(open.getColumn("name")?.getCanResize()).toBe(true);
+    expect(open.getColumn("name")?.getCanPin()).toBe(true);
     // A column's own switch still stands under a granted permission.
     expect(open.getColumn("status")?.getCanSort()).toBe(false);
     expect(open.getColumn("id")?.getCanHide()).toBe(false);
@@ -919,12 +971,18 @@ describe("permissions", () => {
   it("restores a snapshot whatever the permissions say", () => {
     const { service, state } = makeService({
       config: {
-        permissions: { sort: false, reorder: false, pageSize: false },
+        permissions: {
+          sort: false,
+          reorder: false,
+          pin: false,
+          pageSize: false,
+        },
       },
     });
     service.restore({
       sorting: [{ id: "name", desc: true }],
       columnOrder: ["amount", "id"],
+      columnPinning: { start: [], end: ["name"] },
       columnVisibility: {},
       columnSizing: {},
       pageSize: 50,
@@ -932,6 +990,7 @@ describe("permissions", () => {
     });
     expect(state.sorting).toEqual([{ id: "name", desc: true }]);
     expect(state.columnOrder).toEqual(["amount", "id"]);
+    expect(state.columnPinning).toEqual({ start: [], end: ["name"] });
     expect(state.pagination.pageSize).toBe(50);
   });
 });

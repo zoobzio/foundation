@@ -404,6 +404,12 @@
   border: 0;
 }
 
+/* The label holds the start of the header, and its controls the end. */
+.f-data-table-header,
+.f-data-table-header-btn {
+  margin-inline-end: auto;
+}
+
 .f-data-table-header-btn {
   cursor: pointer;
 }
@@ -511,6 +517,115 @@
   background: transparent;
 }
 
+/* --- pinned columns -------------------------------------------------- */
+
+/* The room the pinned columns keep for the checkbox column at the start
+   and the actions column at the end: a pinned cell's inline offset is past
+   these. */
+.f-data-table-selectable {
+  --f-data-table-start-inset: 2.5rem;
+}
+
+.f-data-table-actionable {
+  --f-data-table-end-inset: 3rem;
+}
+
+/* The pinned cells stack over the ones that scroll beneath them, and no
+   further: the scroller's bar stays above the table. */
+.f-data-table .f-table {
+  isolation: isolate;
+}
+
+/* A pinned cell sticks at the offset the component gives it inline. The
+   actions column is always pinned to the end; the checkbox column is
+   pinned once a column is pinned to the start. */
+.f-data-table .f-data-table-pinned {
+  position: sticky;
+  z-index: 1;
+}
+
+.f-data-table .f-data-table-select.f-data-table-pinned {
+  inset-inline-start: 0;
+}
+
+.f-data-table .f-data-table-actions.f-data-table-pinned {
+  inset-inline-end: 0;
+}
+
+/* Opaque, so the cells beneath do not show through: the row's tints are
+   mixed into the surface rather than laid over it. */
+.f-data-table .f-td.f-data-table-pinned {
+  background: var(--surface);
+}
+
+.f-data-table .f-data-table-selected .f-td.f-data-table-pinned {
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+}
+
+.f-data-table .f-tbody .f-tr:hover .f-td.f-data-table-pinned {
+  background: color-mix(
+    in srgb,
+    var(--on-surface) calc(var(--state-hover) * 100%),
+    var(--surface)
+  );
+}
+
+/* The pinned column that borders the ones that scroll. */
+.f-data-table .f-data-table-pinned-start.f-data-table-pinned-edge {
+  border-inline-end: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+.f-data-table .f-data-table-pinned-end.f-data-table-pinned-edge {
+  border-inline-start: 1px var(--stroke-solid) var(--outline-muted);
+}
+
+/* The button a column is pinned from: there on hover as the grip is, and
+   for as long as the column is pinned or its menu is open. It takes no
+   room until then, so a narrow header keeps its label. */
+.f-data-table-pin {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  height: 1.25rem;
+  padding: 0;
+  overflow: hidden;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--shape-md);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.f-data-table-head .f-th:hover .f-data-table-pin,
+.f-data-table-pinned .f-data-table-pin,
+.f-data-table-pin:focus-visible,
+.f-data-table-pin[data-state="open"] {
+  width: 1.25rem;
+  opacity: 1;
+}
+
+.f-data-table-pin:hover,
+.f-data-table-pin[data-state="open"] {
+  color: var(--on-surface);
+}
+
+.f-data-table-pin:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: 2px;
+}
+
+.f-data-table-pinned .f-data-table-pin {
+  color: var(--primary);
+}
+
+.f-data-table-pin svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
 /* A row's actions trigger. */
 .f-data-table-actions .f-button {
   display: inline-flex;
@@ -581,19 +696,11 @@
   border-color: var(--primary);
 }
 
-:is(.f-data-table, .f-listbox-item) .f-checkbox-root[data-state="checked"] svg {
-  visibility: visible;
-}
-
-/* Some of the page's rows: a dash in place of the check. */
-.f-data-table .f-checkbox-root[data-state="indeterminate"] .f-group {
-  width: 0.5rem;
-  height: 2px;
-  background: var(--surface);
-}
-
+/* Checked, the check; some of the page's rows, the minus the checkbox
+   draws in its place. */
+:is(.f-data-table, .f-listbox-item) .f-checkbox-root[data-state="checked"] svg,
 .f-data-table .f-checkbox-root[data-state="indeterminate"] svg {
-  display: none;
+  visibility: visible;
 }
 
 .f-data-table .f-checkbox-root:focus-visible {

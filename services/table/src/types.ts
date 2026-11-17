@@ -163,6 +163,7 @@ export interface FetchParams {
 export interface Snapshot {
   sorting: TableSlices["sorting"];
   columnOrder: TableSlices["columnOrder"];
+  columnPinning: TableSlices["columnPinning"];
   columnVisibility: TableSlices["columnVisibility"];
   columnSizing: TableSlices["columnSizing"];
   pageSize: number;
@@ -193,13 +194,15 @@ type Owned =
 /**
  * The TanStack Table options the `permissions` answer for: the table-wide
  * switches of its features. A column's own (`enableSorting`,
- * `enableHiding`, `enableResizing` on its definition) stay the column's.
+ * `enableHiding`, `enableResizing`, `enablePinning` on its definition) stay
+ * the column's.
  */
 type Gated =
   | "enableSorting"
   | "enableMultiSort"
   | "enableHiding"
   | "enableColumnResizing"
+  | "enableColumnPinning"
   | "enableRowSelection";
 
 /**
@@ -216,6 +219,7 @@ type Gated =
  * - `hide`: show and hide columns.
  * - `reorder`: move a column.
  * - `resize`: resize a column.
+ * - `pin`: pin a column to the start or the end of the table, and unpin it.
  * - `pageSize`: change the size of the page.
  * - `refresh`: refetch from the toolbar. `fetch()` itself always fetches.
  */
@@ -229,6 +233,7 @@ export type Permission =
   | "hide"
   | "reorder"
   | "resize"
+  | "pin"
   | "pageSize"
   | "refresh";
 
@@ -383,7 +388,7 @@ export type Service<T extends RowData> = {
    * Whether a permission is granted: as the config's `permissions` say,
    * or its default. The table's own answers follow it
    * (`column.getCanSort()`, `getCanHide()`, `getCanResize()`,
-   * `row.getCanSelect()`), and a write of the column order or the page
+   * `getCanPin()`, `row.getCanSelect()`), and a write of the column order or the page
    * size through the table is dropped without its permission.
    */
   can(permission: Permission): boolean;

@@ -147,7 +147,7 @@ names no icon of its own (the text literal, the one that opens the quote
 free text is typed in); `remove` on a tag's, a file's, and an image
 input's remove button, `image` in an image input's placeholder and
 `camera` before its pick label; `remove` also after an autocomplete chip's label; `close` on a toast's; `top` on a scroller's back-to-top; `check`
-in a checkbox; the editor's and rich text's tools by key (`bold`,
+in a checkbox, and `indeterminate` in its place while the checkbox is neither on nor off, as a table's or a browser's select-all is over some of its rows; the editor's and rich text's tools by key (`bold`,
 `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`), each drawn in place
 of the button's text so the toolbar is icon-only, with the tool's label in
 the visitor's locale as the button's accessible name and its `title`, and
@@ -156,7 +156,9 @@ visitor's locale as its entries do; the calendar's steps by key (`prev`,
 `next`, see `CALENDAR_TOOL_ICONS`), drawn the same way, while today and
 the views keep their names as text; and on
 the table and browser, `refresh`, `columns`, `actions`, `drag`,
-`sort-asc` or `sort-desc` after a sorted header, `folder` before a
+`sort-asc` or `sort-desc` after a sorted header, `pin` as the button of a
+column's pin menu (`unpin` once the column is pinned) with `pin-start`,
+`pin-end`, and `unpin` before its items, `folder` before a
 folder, `folder-open` before the root crumb of the browser's trail, `sort`
 as the browser's sort trigger until its files sort by a column and
 `sort-asc` or `sort-desc` from then on, as after that column's item in the

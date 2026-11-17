@@ -14,6 +14,14 @@ export const TABLE_ACTIONS_LABEL = "Actions";
 export const TABLE_EMPTY_TEXT = "No data";
 export const TABLE_CLEAR_SELECTION_LABEL = "Clear";
 export const TABLE_RESIZE_LABEL = "Resize";
+export const TABLE_PIN_LABEL = "Pin";
+
+/** The items of a column's pin menu, by the key each carries. */
+export const TABLE_PIN_LABELS = {
+  start: "Pin left",
+  end: "Pin right",
+  none: "Unpin",
+} as const;
 
 export const TABLE_COLUMNS_PLACEHOLDER = "Search columns...";
 export const TABLE_SEARCH_PLACEHOLDER = "Search...";

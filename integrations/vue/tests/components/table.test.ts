@@ -13,6 +13,9 @@ import { RouterLink } from "#test/mount/link";
 
 const mounted: { unmount: () => void }[] = [];
 
+/** A header's own text: its label, without the controls beside it. */
+const LABEL = ".f-data-table-header-btn, .f-data-table-header";
+
 const mountTable = (
   props: TableProps<FakeRow>,
   slots: Record<string, string> = {},
@@ -46,7 +49,7 @@ describe("table", () => {
     const { service } = makeTable();
     await service.init();
     const wrapper = mountTable({ service });
-    expect(wrapper.findAll("thead th").map((th) => th.text())).toEqual([
+    expect(wrapper.findAll(LABEL).map((label) => label.text())).toEqual([
       "ID",
       "Name",
       "Status",
@@ -66,7 +69,9 @@ describe("table", () => {
     const { service, fetch } = makeTable();
     await service.init();
     const wrapper = mountTable({ service });
-    const name = wrapper.findAll("thead th").find((th) => th.text() === "Name");
+    const name = wrapper
+      .findAll("thead th")
+      .find((th) => th.find(LABEL).text() === "Name");
     if (!name) throw new Error("no Name header");
     await name.get("button").trigger("click");
     expect(fetch).toHaveBeenLastCalledWith(
@@ -87,7 +92,9 @@ describe("table", () => {
     await service.init();
     const wrapper = mountTable({ service });
     const header = (label: string) => {
-      const th = wrapper.findAll("thead th").find((h) => h.text() === label);
+      const th = wrapper
+        .findAll("thead th")
+        .find((h) => h.find(LABEL).text() === label);
       if (!th) throw new Error(`no ${label} header`);
       return th;
     };
@@ -97,7 +104,9 @@ describe("table", () => {
       { id: "name", desc: false },
       { id: "amount", desc: true },
     ]);
-    expect(header("Status").find("button").exists()).toBe(false);
+    expect(header("Status").find(".f-data-table-header-btn").exists()).toBe(
+      false,
+    );
   });
 
   it("renders the table element within a horizontal scroller", async () => {
@@ -126,10 +135,10 @@ describe("table", () => {
     await service.init();
     const wrapper = mountTable({ service });
     const table = wrapper.get(".f-table");
-    expect(table.attributes("style")).toContain("min-width: 350px");
+    expect(table.attributes("style")).toContain("min-width: calc(350px +");
     service.table.setColumnSizing({ name: 900 });
     await flushPromises();
-    expect(table.attributes("style")).toContain("min-width: 1050px");
+    expect(table.attributes("style")).toContain("min-width: calc(1050px +");
   });
 
   it("swaps the scroller through its passthrough", async () => {
@@ -447,6 +456,7 @@ describe("table", () => {
     expect(wrapper.find(".f-data-table-header-btn").exists()).toBe(true);
     expect(wrapper.find(".f-data-table-drag-handle").exists()).toBe(true);
     expect(wrapper.find(".f-data-table-resizer").exists()).toBe(true);
+    expect(wrapper.find(".f-data-table-pin").exists()).toBe(true);
     expect(wrapper.find("th.f-data-table-select").exists()).toBe(true);
     expect(wrapper.find("th.f-data-table-actions").exists()).toBe(true);
     expect(wrapper.find("thead th:nth-child(2)").attributes("draggable")).toBe(
@@ -463,6 +473,7 @@ describe("table", () => {
       hide: false,
       reorder: false,
       resize: false,
+      pin: false,
       pageSize: false,
       refresh: false,
     });
@@ -481,6 +492,7 @@ describe("table", () => {
     expect(wrapper.find(".f-data-table-header-btn").exists()).toBe(false);
     expect(wrapper.find(".f-data-table-drag-handle").exists()).toBe(false);
     expect(wrapper.find(".f-data-table-resizer").exists()).toBe(false);
+    expect(wrapper.find(".f-data-table-pin").exists()).toBe(false);
     expect(wrapper.find(".f-data-table-select").exists()).toBe(false);
     expect(wrapper.find(".f-data-table-actions").exists()).toBe(false);
     expect(wrapper.find("thead th").attributes("draggable")).toBeUndefined();
@@ -495,6 +507,129 @@ describe("table", () => {
     expect(labels()).toContain("Refresh");
     expect(wrapper.find(".f-data-table-header-btn").exists()).toBe(true);
     expect(wrapper.find(".f-data-table-resizer").exists()).toBe(true);
+  });
+
+  it("lays pinned columns out at the sides, and sticks their cells past the ones before", async () => {
+    const { service } = makeTable({
+      initialState: {
+        columnPinning: { start: ["amount", "name"], end: ["id"] },
+      },
+    });
+    await service.init();
+    const wrapper = mountTable({ service });
+    const order = ["Amount", "Name", "Status", "Created", "Site", "ID"];
+    expect(wrapper.findAll(LABEL).map((label) => label.text())).toEqual(order);
+    // The widths stand in the same order: the last unpinned column is the
+    // one that holds none.
+    const widths = wrapper
+      .findAll("colgroup col")
+      .map((col) => col.attributes("style"));
+    expect(widths.map((w) => w === undefined)).toEqual([
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+    ]);
+
+    const heads = wrapper.findAll("thead th");
+    const cells = wrapper.findAll("tbody tr:first-child td");
+    for (const row of [heads, cells]) {
+      expect(row[0]?.classes()).toContain("f-data-table-pinned-start");
+      expect(row[0]?.classes()).not.toContain("f-data-table-pinned-edge");
+      expect(row[0]?.attributes("style")).toContain("+ 0px)");
+      expect(row[1]?.classes()).toContain("f-data-table-pinned-edge");
+      expect(row[1]?.attributes("style")).toContain(
+        "inset-inline-start: calc(var(--f-data-table-start-inset, 0px) + 150px)",
+      );
+      expect(row[2]?.classes()).not.toContain("f-data-table-pinned");
+      expect(row[2]?.attributes("style")).toBeUndefined();
+      expect(row[5]?.classes()).toContain("f-data-table-pinned-end");
+      expect(row[5]?.classes()).toContain("f-data-table-pinned-edge");
+      expect(row[5]?.attributes("style")).toContain(
+        "inset-inline-end: calc(var(--f-data-table-end-inset, 0px) + 0px)",
+      );
+    }
+  });
+
+  it("pins a column from its header's menu, and unpins it", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const trigger = () => {
+      const th = wrapper
+        .findAll("thead th")
+        .find((h) => h.find(LABEL).text() === "Status");
+      if (!th) throw new Error("no Status header");
+      return th.get(".f-data-table-pin");
+    };
+    const choose = async (label: string) => {
+      await trigger().trigger("click");
+      await flushPromises();
+      const item = [...document.querySelectorAll(".f-dropdown-menu-item")].find(
+        (el) => el.textContent?.trim() === label,
+      );
+      if (!(item instanceof HTMLElement)) throw new Error(`no ${label} item`);
+      item.click();
+      await flushPromises();
+    };
+    expect(trigger().attributes("aria-label")).toBe("Pin Status");
+
+    await choose("Pin right");
+    expect(service.table.atoms.columnPinning.get()).toEqual({
+      start: [],
+      end: ["status"],
+    });
+    expect(wrapper.findAll(LABEL).at(-1)?.text()).toBe("Status");
+
+    await choose("Pin left");
+    expect(wrapper.findAll(LABEL).at(0)?.text()).toBe("Status");
+
+    await trigger().trigger("click");
+    await flushPromises();
+    const offered = [...document.querySelectorAll(".f-dropdown-menu-item")].map(
+      (el) => el.textContent?.trim(),
+    );
+    expect(offered).toEqual(["Pin right", "Unpin"]);
+    await trigger().trigger("click");
+    await choose("Unpin");
+    expect(service.table.atoms.columnPinning.get()).toEqual({
+      start: [],
+      end: [],
+    });
+  });
+
+  it("keeps the actions column pinned to the end, and the checkbox column beside start pins", async () => {
+    const { service } = makeTable(
+      { actions: fakeActions, bulkActions: fakeBulkActions },
+      { actions: { edit: vi.fn() }, bulkActions: { removeSelected: vi.fn() } },
+    );
+    await service.init();
+    const wrapper = mountTable({ service });
+    expect(wrapper.classes()).toContain("f-data-table-selectable");
+    expect(wrapper.classes()).toContain("f-data-table-actionable");
+    for (const cell of ["th", "td"]) {
+      const actions = wrapper.get(`${cell}.f-data-table-actions`);
+      expect(actions.classes()).toContain("f-data-table-pinned-end");
+      expect(actions.classes()).toContain("f-data-table-pinned-edge");
+      expect(
+        wrapper.get(`${cell}.f-data-table-select`).classes(),
+      ).not.toContain("f-data-table-pinned");
+    }
+
+    service.table.getColumn("name")?.pin("start");
+    service.table.getColumn("amount")?.pin("end");
+    await flushPromises();
+    for (const cell of ["th", "td"]) {
+      // The pinned column borders the unpinned ones now.
+      expect(
+        wrapper.get(`${cell}.f-data-table-actions`).classes(),
+      ).not.toContain("f-data-table-pinned-edge");
+      expect(wrapper.get(`${cell}.f-data-table-select`).classes()).toContain(
+        "f-data-table-pinned-start",
+      );
+    }
   });
 
   it("pt overrides reach their part", () => {

@@ -156,7 +156,7 @@ export const useOrders = createTable<Order>("orders", {
   columns: [
     {
       accessorKey: "id",
-      size: 96,
+      size: 112,
       enableHiding: false,
       meta: { label: "Order", type: "text" },
     },
@@ -203,7 +203,10 @@ export const useOrders = createTable<Order>("orders", {
       meta: { label: "Gift", type: "boolean", values: ["Yes", "No"] },
     },
   ],
-  initialState: { sorting: [{ id: "placed", desc: true }] },
+  initialState: {
+    sorting: [{ id: "placed", desc: true }],
+    columnPinning: { start: ["id"], end: [] },
+  },
   fetch,
   actions: {
     refund: {

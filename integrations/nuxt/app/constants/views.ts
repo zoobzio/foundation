@@ -40,6 +40,12 @@ export const TABLE_VIEW_SCHEMA = z.preprocess(
       .array(z.object({ id: z.string(), desc: z.boolean() }))
       .default([]),
     columnOrder: z.array(z.string()).default([]),
+    columnPinning: z
+      .object({
+        start: z.array(z.string()).default([]),
+        end: z.array(z.string()).default([]),
+      })
+      .default({ start: [], end: [] }),
     columnVisibility: z.record(z.string(), z.boolean()).default({}),
     columnSizing: z.record(z.string(), z.number()).default({}),
     pageSize: z.number().int().positive().default(10),

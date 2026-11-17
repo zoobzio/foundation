@@ -157,7 +157,8 @@ The table renders what the service's `permissions` grant, and follows a
 reactive record as it changes. Without `search`, `hide`, or `refresh` the
 toolbar has no search, column manager, or refresh; without `sort` a header
 is plain text; without `reorder` a header has no drag handle and does not
-drag; without `resize`, or on a column with `enableResizing: false`, it
+drag; without `pin`, or on a column with `enablePinning: false`, it has
+no pin menu; without `resize`, or on a column with `enableResizing: false`, it
 has no resizer; without `pageSize` the pagination has no size picker
 (`pagination.vue` takes `sizable: false`); and without `select`,
 `bulkActions`, or `actions` the checkbox and actions columns are gone.
@@ -183,17 +184,45 @@ as its value; `pt.head.resizer` builds its attributes per column.
 
 The table renders the sizes by value: a `colgroup` with one `col` per
 rendered column, each data column's `col` carrying its size as an inline
-`width`, but the last visible one, which carries none. The `table` element
-carries the total of the sizes as an inline `min-width`. Under
+`width`, but the last visible unpinned one, which carries none. The `table`
+element carries the total of the sizes as an inline `min-width`. Under
 `table-layout: fixed` and `width: 100%`, which the stylesheet sets, every
 column then holds exactly its size, the last takes what the table has left
 while it is wider than its columns, and once they outgrow it the table
 widens and scrolls. A resize of the last column starts from the width it
-is rendered at. The total counts the data columns alone: the select and
-actions columns are the stylesheet's, and their width comes out of the
-last column's. The package ships no styles, so the stylesheet also places
+is rendered at. The total counts the data columns, and past them the two
+custom properties the stylesheet may set on the root for the columns that
+are its own: `--f-data-table-start-inset`, the width of the select column,
+on `.f-data-table-selectable`, and `--f-data-table-end-inset`, the width
+of the actions column, on `.f-data-table-actionable`. Where it sets
+neither, their width comes out of the last column's. The package ships no
+styles, so the stylesheet also places
 the resizer on the border (an absolutely positioned strip on the `th`'s
 inline end, with `cursor: col-resize` and `touch-action: none`).
+
+A column pins to the start or the end of the table (TanStack's
+`columnPinning`, `{ start, end }`: left and right in a left-to-right
+layout), where it stays while the others scroll beneath it. The head, the
+rows, and the `colgroup` lay the columns out pinned to the start, then
+unpinned, then pinned to the end. A pinned column's `th` and `td` carry
+`f-data-table-pinned`, `f-data-table-pinned-start` or
+`f-data-table-pinned-end`, `f-data-table-pinned-edge` on the column that
+borders the unpinned ones, and where they stick as an inline
+`inset-inline-start` or `inset-inline-end`: the sizes of the pinned
+columns before them, past the inset property of that side. The stylesheet
+makes the class stick (`position: sticky`, a `z-index`, and an opaque
+background, so a row's tints must be mixed into the surface on a pinned
+cell). The actions column always carries the pinned classes of the end,
+and the select column those of the start once a column is pinned there;
+the stylesheet sticks them at `0`. Each header whose column pins
+(`column.getCanPin()`: the `pin` permission, and no `enablePinning: false`
+on the column) holds a menu of the sides the column is not on and, once
+pinned, `Unpin`, opened by a `button.f-data-table-pin` named for the
+column (`Pin Name`). `pt.head.pinMenu` and `pt.head.pinTrigger` build them
+per column, the `pin` slot replaces the button, and `pinPrepend` and
+`pinAppend` sit beside an item. A drag moves a column within its region:
+among the unpinned ones it writes the column order, among the ones pinned
+to a side that side's pinning order, and across regions nothing.
 
 The `table` element renders within a scroller, `.f-data-table-scroller`,
 a horizontal `scroller.vue` between the toolbar and the pagination, so

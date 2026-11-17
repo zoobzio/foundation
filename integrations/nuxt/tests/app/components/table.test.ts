@@ -143,6 +143,43 @@ describe("table wrapper", () => {
     expect(resizers[0]?.attributes("role")).toBe("separator");
   });
 
+  it("draws each column's pin, and its menu's items with their icons", async () => {
+    const { service } = makeTable();
+    await service.init();
+    const wrapper = mountTable({ service });
+    const pins = () => wrapper.findAll("th button.f-data-table-pin");
+    expect(pins()).toHaveLength(3);
+    expect(pins()[0]?.attributes("aria-label")).toBe("Pin ID");
+    expect(pins()[0]?.text()).toBe("");
+    expect(pins()[0]?.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "pin",
+    );
+
+    await pins()[1]?.trigger("pointerdown", { button: 0, ctrlKey: false });
+    await pins()[1]?.trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    expect(items.map((el) => el.textContent?.trim())).toEqual([
+      "Pin left",
+      "Pin right",
+    ]);
+    expect(
+      items.map((el) =>
+        el.querySelector("svg[data-icon]")?.getAttribute("data-icon"),
+      ),
+    ).toEqual(["pin-start", "pin-end"]);
+
+    items[0]?.click();
+    await flushPromises();
+    expect(service.table.atoms.columnPinning.get().start).toHaveLength(1);
+    // The pinned column leads now, and its button says so.
+    expect(pins()[0]?.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "unpin",
+    );
+  });
+
   it("draws the sort direction after a sorted header", async () => {
     const { service } = makeTable({
       columns: [

@@ -2,6 +2,7 @@ import type { TableReactivityBindings } from "@tanstack/table-core/reactivity";
 
 import {
   columnOrderingFeature,
+  columnPinningFeature,
   columnResizingFeature,
   columnSizingFeature,
   columnVisibilityFeature,
@@ -53,6 +54,7 @@ export const features = tableFeatures({
   rowSortingFeature,
   rowSelectionFeature,
   columnOrderingFeature,
+  columnPinningFeature,
   columnVisibilityFeature,
   columnSizingFeature,
   columnResizingFeature,

@@ -31,9 +31,12 @@ const params = computed(() => ({
           <code>Status: Shipped</code>, or <code>Total: over 300</code>. Sort by
           a header, and by a second with Shift held; a third click clears the
           sort. Drag a header by its grip to move the column, drag its edge to
-          resize it. The tabs are saved views of all of that: change the table
-          and the active view is marked as edited, to save, to save as a view of
-          your own, or to discard from the menu beside them.
+          resize it. Pin a column from the pin in its header: it holds its side
+          of the table while the others scroll beneath it, as the order's number
+          does from the start and a row's actions always do. The tabs are saved
+          views of all of that: change the table and the active view is marked
+          as edited, to save, to save as a view of your own, or to discard from
+          the menu beside them.
         </p>
       </div>
     </header>

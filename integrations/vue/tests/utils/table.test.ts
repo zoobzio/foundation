@@ -6,6 +6,8 @@ import {
   columnLabel,
   columnOption,
   columnWidth,
+  layoutColumns,
+  pinItems,
   isSelectable,
   moveColumn,
   selectAllState,
@@ -75,6 +77,50 @@ describe("moveColumn", () => {
     moveColumn(table, "ghost", "id");
     expect(table.atoms.columnOrder.get()).toEqual([]);
   });
+
+  it("moves a pinned column within its side, and never across regions", () => {
+    const { table } = makeTable({
+      initialState: { columnPinning: { start: ["id", "name"], end: ["site"] } },
+    }).service;
+    moveColumn(table, "id", "name");
+    expect(table.atoms.columnPinning.get()).toEqual({
+      start: ["name", "id"],
+      end: ["site"],
+    });
+    moveColumn(table, "id", "status");
+    moveColumn(table, "status", "site");
+    moveColumn(table, "name", "site");
+    expect(table.atoms.columnPinning.get().start).toEqual(["name", "id"]);
+    expect(table.atoms.columnOrder.get()).toEqual([]);
+    expect(layoutColumns(table).map((column) => column.id)).toEqual([
+      "name",
+      "id",
+      "status",
+      "created",
+      "amount",
+      "site",
+    ]);
+  });
+});
+
+describe("pinItems", () => {
+  it("offers each side the column is not on, and to unpin a pinned one", () => {
+    const { table } = makeTable().service;
+    const column = table.getColumn("name");
+    if (!column) throw new Error("no column");
+    const keys = () => pinItems(column).map((item) => item.key);
+    expect(pinItems(column).map((item) => item.label)).toEqual([
+      "Pin left",
+      "Pin right",
+    ]);
+    column.pin("start");
+    expect(keys()).toEqual(["end", "none"]);
+    column.pin("end");
+    expect(keys()).toEqual(["start", "none"]);
+    expect(
+      pinItems(column, { start: "S", end: "E", none: "N" }).map((i) => i.label),
+    ).toEqual(["S", "N"]);
+  });
 });
 
 describe("isSelectable", () => {
@@ -111,5 +157,19 @@ describe("columnWidth", () => {
     expect(widths()).toEqual([80, 150, undefined]);
     table.getColumn("amount")?.toggleVisibility(false);
     expect(widths().slice(0, 2)).toEqual([80, undefined]);
+  });
+
+  it("is the size of a pinned column, wherever it stands", () => {
+    const table = tableOf([
+      { accessorKey: "id", size: 80 },
+      { accessorKey: "name" },
+      { accessorKey: "amount", size: 90 },
+    ]);
+    table.getColumn("amount")?.pin("end");
+    expect(table.getAllLeafColumns().map(columnWidth)).toEqual([
+      80,
+      undefined,
+      90,
+    ]);
   });
 });

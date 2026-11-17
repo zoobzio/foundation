@@ -18,6 +18,7 @@ export const TABLE_DEFAULT_PERMISSIONS: Record<Permission, boolean> = {
   hide: true,
   reorder: true,
   resize: true,
+  pin: true,
   pageSize: true,
   refresh: true,
 };
@@ -30,6 +31,7 @@ export const TABLE_SLICES: Record<keyof TableSlices, null> = {
   sorting: null,
   rowSelection: null,
   columnOrder: null,
+  columnPinning: null,
   columnVisibility: null,
   columnSizing: null,
 };

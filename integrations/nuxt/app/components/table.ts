@@ -7,8 +7,10 @@
 // element, and the layer's Pagination.
 // Its Fab slots draw the `refresh`, `columns`, and `actions` icons; the
 // head draws `drag` on each handle, a column's own `icon` before its
-// header, and `sort-asc` or `sort-desc` after a sorted header; a bulk action
-// draws its own `icon`. Its own text — the toolbar's labels and
+// header, and `sort-asc` or `sort-desc` after a sorted header; a column's
+// pin menu is the layer's Menu, opened by `pin` (`unpin` on a pinned
+// column), its items drawn with `pin-start`, `pin-end`, and `unpin`; a bulk
+// action draws its own `icon`. Its own text — the toolbar's labels and
 // placeholders, the empty state, the clear button, the name of a column's
 // resizer — reads in the
 // visitor's locale, and a date, number, currency, file size or boolean
@@ -23,7 +25,7 @@ import type { TableColumnsPassthrough } from "@zoobzio/vue/types/components/tabl
 import type { TableHeadPassthrough } from "@zoobzio/vue/types/components/table-head";
 
 import Core from "@zoobzio/vue/components/table.vue";
-import { columnLabel } from "@zoobzio/vue/utils/table";
+import { columnLabel, pinItems } from "@zoobzio/vue/utils/table";
 
 import NuxtLink from "#app/components/nuxt-link";
 import { layer } from "@zoobzio/vue/utils/passthrough";
@@ -37,6 +39,13 @@ import TableSearch from "./table-search";
 import { icon, iconOf, iconPart } from "./icon";
 import { cellSlots } from "./cell";
 import { text, textSlot } from "./text";
+
+/** The icon of each item of a column's pin menu. */
+const PIN_ICONS = {
+  start: "pin-start",
+  end: "pin-end",
+  none: "unpin",
+} as const;
 
 export default wrap(Core, {
   pt: (pt) => ({
@@ -56,6 +65,22 @@ export default wrap(Core, {
           column: text(columnLabel(column)),
         }),
       }),
+      pinMenu: (column) => ({
+        as: Menu,
+        groups: [
+          {
+            key: "pin",
+            items: pinItems(column, {
+              start: text("table.pinStart"),
+              end: text("table.pinEnd"),
+              none: text("table.unpin"),
+            }).map((item) => ({ ...item, icon: PIN_ICONS[item.key] })),
+          },
+        ],
+      }),
+      pinTrigger: (column) => ({
+        label: text("table.pin", { column: text(columnLabel(column)) }),
+      }),
     }),
     body: layer<TableBodyPassthrough<RowData>>(pt?.body, {
       link: () => ({ as: NuxtLink }),
@@ -74,6 +99,11 @@ export default wrap(Core, {
     columns: ({ settings }) => iconPart(settings.trigger, "columns"),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
     dragPrepend: () => [icon("drag")],
+    pin: ({ settings, column }) =>
+      iconPart(
+        { ...settings.pinTrigger(column), class: "f-data-table-pin" },
+        column.getIsPinned() ? "unpin" : "pin",
+      ),
     headerPrepend: ({ column }) => iconOf(column.columnDef.meta?.icon),
     headerAppend: ({ column }) => {
       const sorted = column.getIsSorted();

@@ -7,10 +7,14 @@ import type { TableView } from "@zoobzio/nuxt/types/views";
 import { TABLE_VIEW_SCHEMA } from "@zoobzio/nuxt/constants/views";
 import { createViews } from "@zoobzio/nuxt/factories/views";
 
-/** The table as it starts: newest first, every column, ten to a page. */
+/**
+ * The table as it starts: newest first, every column, ten to a page, the
+ * order's number pinned to the start.
+ */
 const all: TableView = {
   ...TABLE_VIEW_SCHEMA.parse({}),
   sorting: [{ id: "placed", desc: true }],
+  columnPinning: { start: ["id"], end: [] },
 };
 
 export const useOrderViews = createViews("orders", {

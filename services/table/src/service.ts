@@ -133,6 +133,7 @@ export class TableService<T extends RowData> implements Service<T> {
         columnOrder: this.slice("columnOrder", false, () =>
           this.can("reorder"),
         ),
+        columnPinning: this.slice("columnPinning"),
         columnVisibility: this.slice("columnVisibility"),
         columnSizing: this.slice("columnSizing"),
       } satisfies Record<keyof typeof TABLE_SLICES, unknown>,
@@ -152,6 +153,7 @@ export class TableService<T extends RowData> implements Service<T> {
       enableMultiSort: gate("multiSort"),
       enableHiding: gate("hide"),
       enableColumnResizing: gate("resize"),
+      enableColumnPinning: gate("pin"),
       enableRowSelection: {
         get: () =>
           this.can("select") && this.bulkActions.length > 0
@@ -278,6 +280,7 @@ export class TableService<T extends RowData> implements Service<T> {
     return {
       sorting: this.state.sorting,
       columnOrder: this.state.columnOrder,
+      columnPinning: this.state.columnPinning,
       columnVisibility: this.state.columnVisibility,
       columnSizing: this.state.columnSizing,
       pageSize: this.state.pagination.pageSize,
@@ -292,6 +295,7 @@ export class TableService<T extends RowData> implements Service<T> {
   restore(snapshot: Snapshot): void {
     this.state.sorting = snapshot.sorting;
     this.state.columnOrder = snapshot.columnOrder;
+    this.state.columnPinning = snapshot.columnPinning;
     this.state.columnVisibility = snapshot.columnVisibility;
     this.state.columnSizing = snapshot.columnSizing;
     this.state.pagination = { pageIndex: 0, pageSize: snapshot.pageSize };

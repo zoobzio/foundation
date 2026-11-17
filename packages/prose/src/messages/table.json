@@ -23,6 +23,22 @@
     "defaultMessage": "Resize {column}",
     "description": "The accessible name of the handle on a column's border that resizes the column."
   },
+  "pin": {
+    "defaultMessage": "Pin {column}",
+    "description": "The accessible name of the button on a column's header that opens the menu the column is pinned from."
+  },
+  "pinStart": {
+    "defaultMessage": "Pin left",
+    "description": "The item of a column's pin menu that pins the column to the start of the table, where it stays while the others scroll."
+  },
+  "pinEnd": {
+    "defaultMessage": "Pin right",
+    "description": "The item of a column's pin menu that pins the column to the end of the table, where it stays while the others scroll."
+  },
+  "unpin": {
+    "defaultMessage": "Unpin",
+    "description": "The item of a column's pin menu that puts a pinned column back among the others."
+  },
   "searchColumns": {
     "defaultMessage": "Search columns...",
     "description": "The placeholder of the column manager's search."
