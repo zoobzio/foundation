@@ -1,5 +1,15 @@
 # @zoobzio/calendar
 
+## 0.1.12
+
+### Patch Changes
+
+- [`3494a66`](https://github.com/zoobzio/foundation/commit/3494a669729827097a9e222763f62f873e19c995) Thanks [@zoobzio](https://github.com/zoobzio)! - The calendar searches and saves views. Its config declares the `fields` (and `literals`, `initialClauses`) of a query the service holds as `query`; a change to the clauses refetches the range and emits `filtered`. `snapshot()` and `restore()` hold `{ view, clauses }`, so the views sit over a calendar as over a table, through `CALENDAR_VIEW_SCHEMA`. Breaking: `fetch` is handed `{ range, query, filters }` where it was handed the range. The Vue calendar renders the search in its toolbar where the service is `searchable`, and the Nuxt layer dresses it and relays `calendar:filtered` and `calendar:restored`.
+
+- Updated dependencies [[`86c4cd2`](https://github.com/zoobzio/foundation/commit/86c4cd25d1ae20e20f7f7d91c2da607a241da05b)]:
+  - @zoobzio/query@0.1.12
+  - @zoobzio/kit@0.1.12
+
 ## 0.1.11
 
 ### Patch Changes

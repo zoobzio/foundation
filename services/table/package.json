@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/table",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Headless data table service: a TanStack Table over a state container, with server-side paging and sort, and a query over the columns. No framework dependency.",
   "license": "MIT",
   "author": {

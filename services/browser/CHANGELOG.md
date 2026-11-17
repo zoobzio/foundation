@@ -1,5 +1,17 @@
 # @zoobzio/browser
 
+## 0.1.12
+
+### Patch Changes
+
+- [`6a25d6c`](https://github.com/zoobzio/foundation/commit/6a25d6cffcf9b0efc56ba1d2bc5052769312251e) Thanks [@zoobzio](https://github.com/zoobzio)! - Browser crumbs can be links: a folder's `link` and the config's `rootLink` reach the trail, and the browser head renders those crumbs as anchors.
+
+- [`86c4cd2`](https://github.com/zoobzio/foundation/commit/86c4cd25d1ae20e20f7f7d91c2da607a241da05b) Thanks [@zoobzio](https://github.com/zoobzio)! - The query's committed entries are its clauses. Breaking: the `Entry` type is `Clause`, and `entries` is `clauses` on the query service, its state container, and its `changed` event; on the table's and the browser's containers and snapshots; and the table's `initialEntries` config is `initialClauses`. The autocomplete's chip slots are handed `clause` in place of `entry`, and `QueryEntry` is `QueryClause`. `TABLE_VIEW_SCHEMA` and `BROWSER_VIEW_SCHEMA` read a view stored under `entries` as its `clauses`; each is now a preprocess over its object, so an app that extends one extends its `out`.
+
+- Updated dependencies [[`86c4cd2`](https://github.com/zoobzio/foundation/commit/86c4cd25d1ae20e20f7f7d91c2da607a241da05b)]:
+  - @zoobzio/query@0.1.12
+  - @zoobzio/kit@0.1.12
+
 ## 0.1.11
 
 ### Patch Changes
