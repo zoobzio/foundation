@@ -101,7 +101,7 @@ const config = {
 | `resize`      | No column resizes: `column.getCanResize()` is `false`.                            |
 | `pin`         | No column pins: `column.getCanPin()` is `false`.                                  |
 | `pageSize`    | A change of the page size through the table is dropped.                           |
-| `refresh`     | A view renders no refresh. `fetch()` itself always fetches.                       |
+| `refresh`     | A view renders no refresh, and no sync menu. `fetch()` itself always fetches.     |
 
 `service.can(permission)` is the check, and the table's own answers follow
 it, so a view that renders from `getCanSort()` or `getCanHide()` needs
@@ -219,14 +219,58 @@ A column's `values` may also be a provider that asks an API and gives its
 values a page at a time; the query's README documents the contract. The
 query emits `failed` when one throws or rejects: `users.query.on("failed", …)`.
 
+## Sync
+
+A table refreshes by `fetch`. With a `refresh` in its wiring it also has
+a `sync`, a [`@zoobzio/sync`](../sync/) service over its container, and a
+visitor may keep the page alive on an interval. Without one
+`service.sync` is `undefined`.
+
+The refresh is the sync's poll. It is handed what the fetch is, and
+`since`, the mark of the page the table holds, and answers one of three
+ways:
+
+```ts
+// One round trip: the endpoint the fetch asks, with `since`. It answers
+// nothing where nothing changed, and the page as it now stands where
+// something did.
+refresh: async (params) => (await api.users(params)) ?? null,
+
+// A cheap probe: `true` and the table fetches again itself.
+refresh: ({ since }) => api.usersChanged(since),
+```
+
+Nothing, or `false`, keeps the page and the mark. A page lands as a
+fetch's does, without `loading`, so a table kept alive does not flicker,
+and emits `updated`. One that comes back to a table that has moved on
+since (a fetch began, or landed) is dropped.
+
+Every page that lands marks the sync: with the result's own `since`
+where it names one (the server's reading of its clock, a version), and
+otherwise with the visitor's clock as the request was made. So `fetch` may
+return `{ data, rowCount, since }` and the next refresh is asked from exactly there.
+
+`config.sync` is the sync's config: the `intervals` a visitor may pick
+from and the `interval` the table starts on, off by default. The sync
+polls only while a view watches it; see its README for the loop.
+
+```ts
+const synced = { ...config, sync: { interval: 30_000 } };
+const table = new TableService("table", synced, createTableState(synced), {
+  fetch,
+  refresh,
+});
+const stop = table.sync?.watch();
+```
+
 ## The state container
 
 The service reads and writes the `state` container, and so does the table:
 each slice of TanStack's state sits in it under TanStack's name
 (`pagination`, `sorting`, `rowSelection`, `columnOrder`, `columnPinning`,
 `columnVisibility`, `columnSizing`), beside the fetched page (`data`,
-`rowCount`), `loading`, `initialized`, and the query's clauses, draft, and
-suggested values. The table holds no state of its own: every read of a
+`rowCount`), `loading`, `initialized`, the query's clauses, draft, and
+suggested values, and the sync's `interval`, `since`, and `syncing`. The table holds no state of its own: every read of a
 slice is a read of the container, so a write from anywhere (a hydrated
 payload, another service over the same container) is what the table
 renders next. The container can be a plain object or a reactive proxy.
@@ -241,18 +285,24 @@ useState(`table-${id}`, () => createTableState(config)).value; // Nuxt, shared b
 
 `createTableState` starts each slice from TanStack's default under the
 config's `initialState`, which is also what the table's resets
-(`resetColumnOrder()`, `resetColumnSizing()`, `resetSorting()`) restore.
+(`resetColumnOrder()`, `resetColumnSizing()`, `resetSorting()`) restore,
+and the sync on the config's `sync.interval`.
 
 ## Snapshot and restore
 
 `snapshot()` is the table as a visitor arranged it, as plain data: the
 `sorting`, `columnOrder`, `columnPinning`, `columnVisibility`, and
 `columnSizing` slices,
-the `pageSize`, and the query's `clauses`. The page index, the selection,
+the `pageSize`, the query's `clauses`, and the sync's `interval`. The page index, the selection,
 the rows, and the draft are not part of it. `restore(snapshot)` puts one
 in place from the first page, in one fetch, where writing the slices one
 at a time through the table would fetch per write. Before `init` it
 fetches nothing, and the first fetch reads what it left.
+
+The `interval` is the sync's, so a saved view carries how it keeps itself
+up to date: restoring one sets the interval through the sync, which starts
+its wait over, and an interval the sync does not offer is left out. A
+service with no sync keeps the interval its container holds.
 
 ```ts
 const saved = table.snapshot();
@@ -285,7 +335,7 @@ the write lands. The return value removes the listener.
 
 - `change`: a field of the container was written, by the service or
   through the table. `{ field, before, after }`, narrowed by `field`.
-- `updated`: a fetch settled. `{ id, rowCount }`.
+- `updated`: a fetch settled, or a refresh landed a page. `{ id, rowCount }`.
 - `filtered`: the query's clauses changed. `{ id, query, filters }`.
 - `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.
 

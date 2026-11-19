@@ -24,7 +24,17 @@ describe("createTableState", () => {
       clauses: [],
       draft: "",
       suggest: { options: [], status: "idle", more: false },
+      interval: 0,
+      since: null,
+      syncing: false,
     });
+  });
+
+  it("starts the sync on the config's interval", () => {
+    expect(
+      createTableState<FakeRow>({ ...config, sync: { interval: 30_000 } })
+        .interval,
+    ).toBe(30_000);
   });
 
   it("starts each slice from the config's initial state", () => {

@@ -59,6 +59,7 @@
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/prose": "workspace:*",
     "@zoobzio/query": "workspace:*",
+    "@zoobzio/sync": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/theme": "workspace:*",
     "@zoobzio/views": "workspace:*",

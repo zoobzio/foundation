@@ -93,6 +93,26 @@ describe("createCalendar", () => {
     );
   });
 
+  it("gives the calendar a sync where the options name a refresh, and logs a poll that fails", async () => {
+    expect(createCalendar("team", makeOptions())().sync).toBeUndefined();
+    const error = new Error("down");
+    const refresh = vi.fn(async () => {
+      throw error;
+    });
+    const team = createCalendar(
+      "synced",
+      makeOptions({ refresh, sync: { interval: 30_000 } }),
+    )();
+    expect(team.sync?.interval).toBe(30_000);
+    await team.init();
+    await team.sync?.poll();
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(useNuxtApp().$logger("synced").warn).toHaveBeenCalledWith(
+      "Calendar sync failed",
+      { error },
+    );
+  });
+
   it("relays a search and a restore onto the Nuxt hook bus", async () => {
     const hooks = {
       "calendar:filtered": vi.fn(),
@@ -110,10 +130,10 @@ describe("createCalendar", () => {
       query: "",
       filters: [{ key: "team", value: "Design" }],
     });
-    team.restore({ view: "week", clauses: [] });
+    team.restore({ view: "week", clauses: [], interval: 0 });
     expect(hooks["calendar:restored"]).toHaveBeenCalledWith({
       id: "team",
-      snapshot: { view: "week", clauses: [] },
+      snapshot: { view: "week", clauses: [], interval: 0 },
     });
   });
 

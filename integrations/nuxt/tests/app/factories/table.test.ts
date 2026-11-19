@@ -77,6 +77,26 @@ describe("createTable", () => {
     expect(purge).toHaveBeenCalledWith(["2"]);
   });
 
+  it("gives the table a sync where the options name a refresh, and logs a poll that fails", async () => {
+    expect(createTable("users", makeOptions())().sync).toBeUndefined();
+    const error = new Error("down");
+    const refresh = vi.fn(async () => {
+      throw error;
+    });
+    const users = createTable(
+      "synced",
+      makeOptions({ refresh, sync: { interval: 30_000 } }),
+    )();
+    expect(users.sync?.interval).toBe(30_000);
+    await users.init();
+    await users.sync?.poll();
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(useNuxtApp().$logger("synced").warn).toHaveBeenCalledWith(
+      "Table sync failed",
+      { error },
+    );
+  });
+
   it("leaves a table without actions unselectable", () => {
     const users = createTable("users", makeOptions())();
     expect(users.actions).toEqual([]);

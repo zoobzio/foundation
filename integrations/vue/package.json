@@ -90,6 +90,7 @@
     "@zoobzio/form": "workspace:*",
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",
+    "@zoobzio/sync": "workspace:*",
     "@zoobzio/table": "workspace:*",
     "@zoobzio/views": "workspace:*",
     "defu": "catalog:",

@@ -27,7 +27,10 @@ handed are shown beneath: try `"logo"`, `Kind: Image`, or `Size: over 10`
 (megabytes), then open a folder and watch the search clear. `/table` holds
 a `Table` over a fake backend, an array of orders in memory that its
 `fetch` narrows, sorts, and pages: the search (the `/` key focuses it), the
-column manager and refresh in its toolbar, headers that sort, drag to
+column manager and refresh in its toolbar (a menu, as the table has a
+`refresh` that answers whether an order changed since its page was read:
+refresh now, or pick the interval the table keeps itself up to date on),
+headers that sort, drag to
 reorder, and resize at their edge, row and bulk actions that refund and
 delete, and the pagination beneath. The params the next fetch is handed are
 shown under it: try `"hopper"`, `Status: Shipped`, or `Total: over 300`.

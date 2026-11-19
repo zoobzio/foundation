@@ -1,7 +1,7 @@
 import type { CalendarProps } from "../../src/types/components/calendar";
 import type { Doc } from "@zoobzio/calendar";
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { flushPromises, mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import Calendar from "../../src/components/calendar.vue";
@@ -358,6 +358,41 @@ describe("calendar", () => {
     expect(body.find(".f-data-calendar-search").exists()).toBe(false);
     expect(body.find(".f-data-calendar-toolbar").exists()).toBe(true);
     expect(body.find(".f-data-calendar-grid").exists()).toBe(true);
+  });
+
+  it("refreshes from a menu where the calendar has a sync", async () => {
+    const refresh = vi.fn(async () => false);
+    const { service, fetch } = makeCalendar({}, { refresh });
+    const wrapper = await mountCalendar({ service });
+    const root = wrapper.get(".f-data-calendar");
+    const trigger = wrapper.get(
+      '.f-data-calendar-controls button[aria-label="Refresh"]',
+    );
+    const item = (label: string) =>
+      Array.from(
+        document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+      ).find((el) => el.textContent?.includes(label));
+    const open = async () => {
+      await trigger.trigger("click", { button: 0, ctrlKey: false });
+      await flushPromises();
+    };
+    // The button opens the menu: it fetches nothing itself.
+    await open();
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(item("Off")?.hasAttribute("data-current")).toBe(true);
+    expect(root.attributes("data-live")).toBeUndefined();
+
+    item("Every 30 seconds")?.click();
+    await flushPromises();
+    expect(service.sync?.interval).toBe(30_000);
+    expect(root.attributes("data-live")).toBe("true");
+    await open();
+    expect(item("Every 30 seconds")?.hasAttribute("data-current")).toBe(true);
+
+    item("Refresh now")?.click();
+    await flushPromises();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(refresh).not.toHaveBeenCalled();
   });
 
   it("refetches the range from the refresh control", async () => {

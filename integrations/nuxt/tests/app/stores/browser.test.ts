@@ -33,6 +33,14 @@ describe("accessBrowser", () => {
     expect(state.files).toEqual([]);
   });
 
+  it("starts the sync on the config's interval", () => {
+    const state = accessBrowser<FakeFile>("b-sync", undefined, {
+      sync: { interval: 30_000 },
+    });
+    expect(state.interval).toBe(30_000);
+    expect(state.since).toBeNull();
+  });
+
   it("same id shares state across calls and seeds only once", () => {
     const first = accessBrowser<FakeFile>("b1", { sortField: "size" });
     first.loading = true;

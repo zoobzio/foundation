@@ -4,7 +4,10 @@
 // keep their names as text. Its search, where the service is searchable,
 // is the layer's TableSearch (the Autocomplete with the `magic` icon, the
 // search key, and that key focusing it), under the visitor's placeholder,
-// and its refresh draws the `refresh` icon under the visitor's label. An
+// and its refresh draws the `refresh` icon under the visitor's label;
+// where the calendar has a sync, the menu behind it is the layer's Menu,
+// its items in the visitor's locale and `check` after the interval the
+// sync is on. An
 // untitled occurrence and the empty agenda read in the visitor's locale
 // too.
 import type {
@@ -18,7 +21,9 @@ import Core from "@zoobzio/vue/components/calendar.vue";
 import { h } from "vue";
 import { layer } from "@zoobzio/vue/utils/passthrough";
 import { wrap } from "@zoobzio/vue/utils/wrap";
+import Menu from "./menu";
 import TableSearch from "./table-search";
+import { syncLabel, syncMark } from "./sync";
 import { iconOf, iconPart } from "./icon";
 import { text, textIn, textSlot } from "./text";
 import { toolIcon, toolText } from "../utils/calendar";
@@ -49,10 +54,13 @@ export default wrap(Core, {
     layer<CalendarPassthrough>(pt, {
       search: { as: TableSearch, placeholder: text("calendar.search") },
       refresh: { label: text("calendar.refresh") },
+      syncMenu: { as: Menu },
       tool: toolLayer,
     }),
   slots: {
     refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
+    syncLabel: ({ item }) => syncLabel(item),
+    syncAppend: ({ calendar, item }) => syncMark(calendar.sync, item),
     toolLabel: ({ tool }) => toolLabel(tool),
     // A title is the entry's own text, never a message; only the name of
     // an entry without one is the layer's.

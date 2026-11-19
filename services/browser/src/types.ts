@@ -7,6 +7,11 @@ import type {
   Values,
 } from "@zoobzio/query";
 import type {
+  Config as SyncConfig,
+  Service as Sync,
+  State as SyncState,
+} from "@zoobzio/sync";
+import type {
   Change as KitChange,
   Changers as KitChangers,
   Changes as KitChanges,
@@ -179,7 +184,7 @@ export interface BrowserFetchParams {
 
 /**
  * The browser as a visitor arranged it: the part of the container a saved
- * view holds, the sort and the query's clauses. The trail, the listing,
+ * view holds, the sort, the query's clauses, and the interval of the sync. The trail, the listing,
  * the selection, and the draft are not part of it. Plain data, so it
  * survives JSON.
  */
@@ -187,12 +192,41 @@ export interface Snapshot {
   sortField: string | null;
   sortDirection: SortDirection;
   clauses: Clause[];
+  interval: number;
 }
 
+/**
+ * The listing of a folder. `since` is the mark the listing is whole as of,
+ * what the next refresh is asked for changes since: the server's own
+ * reading of its clock, say. Without it the mark is the visitor's clock as
+ * the request was made.
+ */
 export interface BrowserFetchResult<T> {
   folders: BrowserFolder<T>[];
   files: T[];
+  since?: string;
 }
+
+/**
+ * What the refresh is handed: what the fetch is, and `since`, the mark of
+ * the listing the browser holds.
+ */
+export interface BrowserRefreshParams extends BrowserFetchParams {
+  since: string;
+}
+
+/**
+ * What a refresh answers. Nothing, or `false`: nothing changed, and the
+ * browser keeps its listing. `true`: something did, and the browser
+ * fetches the folder again itself. A result: the listing as it now
+ * stands, landed as a fetch's is.
+ */
+export type BrowserRefreshResult<T> =
+  | BrowserFetchResult<T>
+  | boolean
+  | null
+  | undefined
+  | void;
 
 /**
  * Folder action — rendered per-folder in an actions menu. The live shape
@@ -239,6 +273,12 @@ export type Config<T> = {
    */
   literals?: Record<string, Literal>;
   /**
+   * The sync's config, handed to it as given: the intervals a visitor may
+   * pick from, and the one the browser starts on. Read only where the
+   * wiring names a `refresh`.
+   */
+  sync?: SyncConfig;
+  /**
    * The BCP 47 locale cells format in. Defaults to `en-US`.
    */
   locale?: string;
@@ -257,13 +297,14 @@ export type Config<T> = {
 /**
  * The state container the service reads and writes: the listing, the load
  * flags, the trail, the file sort, the selection (file keys in `selected`,
- * folder keys in `selectedFolders`), and the query's slice.
+ * folder keys in `selectedFolders`), the query's slice, and the sync's.
  * The container can be a plain object or a reactive proxy. The service
  * replaces each member as a whole, so a proxy tracks every change.
  * `clauses`, `draft`, and `suggest` belong to the browser's `query`
- * machine, their only writer.
+ * machine, their only writer, and `interval`, `since`, and `syncing` to its
+ * `sync`.
  */
-export type State<T> = {
+export type State<T> = SyncState & {
   folders: BrowserFolder<T>[];
   files: T[];
   loading: boolean;
@@ -299,6 +340,16 @@ export type Actions<T> = {
     params: BrowserFetchParams,
     service: Service<T>,
   ) => Promise<BrowserFetchResult<T>>;
+  /**
+   * The poll of the browser's sync: asked what changed in the folder since
+   * the listing the browser holds was read. With it the browser has a
+   * `sync`, and a visitor may keep the listing alive on an interval;
+   * without it the browser refreshes by `fetch` alone.
+   */
+  refresh?: (
+    params: BrowserRefreshParams,
+    service: Service<T>,
+  ) => BrowserRefreshResult<T> | Promise<BrowserRefreshResult<T>>;
   actions?: Record<string, (row: T) => void>;
   folderActions?: Record<string, (folder: BrowserFolder<T>) => void>;
   bulkActions?: Record<
@@ -313,7 +364,8 @@ export type Actions<T> = {
  * a listener reads the new state.
  *
  * - `change`: any field of the container was written.
- * - `updated`: a fetch settled, success or failure. `path` is the key trail,
+ * - `updated`: a fetch settled, success or failure, or a refresh landed a
+ *   listing. `path` is the key trail,
  *   `folders`/`files` the section lengths.
  * - `navigated`: the trail changed through `open` or `navigate`.
  * - `filtered`: the query's clauses changed, by the search or by leaving
@@ -359,6 +411,14 @@ export type Service<T> = {
    * clauses refetches the current folder; leaving the folder clears it.
    */
   readonly query: Query;
+
+  /**
+   * The sync machine, where the wiring names a `refresh`: the interval a
+   * visitor keeps the listing alive on. It polls the refresh with the mark
+   * of the listing held, and every listing that lands marks it anew.
+   * `undefined` without a refresh.
+   */
+  readonly sync: Sync | undefined;
 
   readonly folders: BrowserFolder<T>[];
   readonly files: T[];

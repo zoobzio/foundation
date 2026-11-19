@@ -3,8 +3,8 @@
 // layer's text for an untitled occurrence and an empty agenda.
 import type { Doc } from "@zoobzio/calendar";
 
-import { afterEach, describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { flushPromises, mount } from "@vue/test-utils";
 import Calendar from "../../../app/components/calendar";
 import { makeCalendar } from "#test/mount/calendar";
 
@@ -91,6 +91,32 @@ describe("calendar wrapper", () => {
     expect(refresh.get("svg[data-icon]").attributes("data-icon")).toBe(
       "refresh",
     );
+  });
+
+  it("draws the sync menu in the visitor's locale, and marks the interval it is on", async () => {
+    const made = makeCalendar({}, { refresh: vi.fn() });
+    const wrapper = await mountCalendar(made);
+    made.service.sync?.setInterval(60_000);
+    await wrapper
+      .get('button[aria-label="Refresh"]')
+      .trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    expect(items.map((el) => el.textContent?.trim())).toEqual([
+      "Refresh now",
+      "Off",
+      "Every 10 seconds",
+      "Every 30 seconds",
+      "Every minute",
+      "Every 5 minutes",
+    ]);
+    expect(
+      items.map((el) =>
+        el.querySelector("svg[data-icon]")?.getAttribute("data-icon"),
+      ),
+    ).toEqual([undefined, undefined, undefined, undefined, "check", undefined]);
   });
 
   it("says so when the agenda is empty", async () => {

@@ -2,7 +2,7 @@
 // fake, and vi.fn() listeners. Every test drives a state transition and
 // asserts both the new state and the side-channel contracts (fetch params,
 // events).
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BrowserService } from "../src/service";
 import { createBrowserState } from "../src/state";
 import type {
@@ -857,6 +857,7 @@ describe("views", () => {
     sortField: "size",
     sortDirection: "desc" as const,
     clauses: [{ kind: "filter" as const, key: "name", value: "report" }],
+    interval: 0,
   };
 
   it("snapshots the sort and the clauses", () => {
@@ -866,6 +867,7 @@ describe("views", () => {
       sortField: "name",
       sortDirection: "asc",
       clauses: [],
+      interval: 0,
     });
   });
 
@@ -914,5 +916,270 @@ describe("views", () => {
     vi.mocked(actions.fetch).mockClear();
     service.query.clear();
     expect(actions.fetch).toHaveBeenCalledOnce();
+  });
+});
+
+const synced = (
+  refresh: NonNullable<Actions<FakeFile>["refresh"]>,
+  config: Partial<Config<FakeFile>> = {},
+) => {
+  const base = makeActions();
+  const actions = {
+    ...base,
+    fetch: vi.mocked(base.fetch),
+    refresh: vi.fn(refresh),
+  };
+  const state = createBrowserState<FakeFile>(config);
+  return { ...makeService({ actions, config, state }), actions };
+};
+
+describe("sync", () => {
+  const AT = "2026-01-01T00:00:00.000Z";
+  const fresh = { folders: [], files: fakeFiles.slice(0, 1) };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(AT));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("has no sync without a refresh", () => {
+    expect(makeService().service.sync).toBeUndefined();
+  });
+
+  it("has a sync over the container with one, on the config's interval", () => {
+    const { service, state } = synced(() => false, {
+      sync: { intervals: [5_000], interval: 5_000 },
+    });
+    expect(service.sync?.id).toBe("test-browser-sync");
+    expect(service.sync?.intervals).toEqual([5_000]);
+    expect(service.sync?.interval).toBe(5_000);
+    service.sync?.setInterval(0);
+    expect(state.interval).toBe(0);
+  });
+
+  it("marks a fetch with the time its request was made", async () => {
+    const { service, state, actions } = synced(() => false);
+    actions.fetch.mockImplementationOnce(async () => {
+      vi.setSystemTime(new Date("2026-01-01T00:00:09.000Z"));
+      return { folders: fakeFolders, files: fakeFiles };
+    });
+    await service.init();
+    expect(state.since).toBe(AT);
+  });
+
+  it("marks a fetch with the since its result names", async () => {
+    const { service, state, actions } = synced(() => false);
+    actions.fetch.mockResolvedValueOnce({
+      folders: fakeFolders,
+      files: fakeFiles,
+      since: "v1",
+    });
+    await service.init();
+    expect(state.since).toBe("v1");
+  });
+
+  it("hands the refresh the fetch's params and the mark", async () => {
+    const { service, actions } = synced(() => false);
+    await service.init();
+    await service.sync?.poll();
+    expect(actions.refresh).toHaveBeenCalledExactlyOnceWith(
+      {
+        path: [],
+        sortField: null,
+        sortDirection: "asc",
+        query: "",
+        filters: [],
+        since: AT,
+      },
+      service,
+    );
+  });
+
+  it("keeps the page, and the mark, where nothing changed", async () => {
+    for (const answer of [false, null, undefined]) {
+      const { service, state, actions, updated } = synced(() => answer);
+      await service.init();
+      updated.mockClear();
+      vi.setSystemTime(new Date("2026-01-01T00:01:00.000Z"));
+      await service.sync?.poll();
+      expect(state.files).toBe(fakeFiles);
+      expect(state.since).toBe(AT);
+      expect(actions.fetch).toHaveBeenCalledOnce();
+      expect(updated).not.toHaveBeenCalled();
+      vi.setSystemTime(new Date(AT));
+    }
+  });
+
+  it("narrows the selection to the listing a refresh lands", async () => {
+    const { service, state } = synced(async () => fresh);
+    await service.init();
+    service.toggleAll();
+    await service.sync?.poll();
+    expect(state.selected).toEqual(new Set(["1"]));
+    expect(state.selectedFolders).toEqual(new Set());
+  });
+
+  it("lands the page a refresh answers with, quietly", async () => {
+    const { service, state, actions, updated } = synced(async () => fresh);
+    await service.init();
+    updated.mockClear();
+    const loading: boolean[] = [];
+    service.on("change", (change) => {
+      if (change.field === "loading") loading.push(change.after);
+    });
+    vi.setSystemTime(new Date("2026-01-01T00:01:00.000Z"));
+    await service.sync?.poll();
+    expect(state.folders).toBe(fresh.folders);
+    expect(state.files).toBe(fresh.files);
+    expect(state.since).toBe("2026-01-01T00:01:00.000Z");
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(loading).toEqual([]);
+    expect(updated).toHaveBeenCalledExactlyOnceWith({
+      id: "test-browser",
+      path: [],
+      folders: 0,
+      files: 1,
+    });
+  });
+
+  it("fetches the page itself where the refresh answers true", async () => {
+    const { service, state, actions } = synced(() => true);
+    await service.init();
+    actions.fetch.mockResolvedValueOnce(fresh);
+    await service.sync?.poll();
+    expect(actions.fetch).toHaveBeenCalledTimes(2);
+    expect(state.files).toBe(fresh.files);
+  });
+
+  it("polls nothing before the first fetch", async () => {
+    const { service, state, actions } = synced(() => true);
+    state.since = AT;
+    await service.sync?.poll();
+    expect(actions.refresh).not.toHaveBeenCalled();
+  });
+
+  it("drops a page that comes back to a browser that has moved on", async () => {
+    let settle: (page: BrowserFetchResult<FakeFile>) => void = () => {};
+    const { service, state } = synced(
+      () =>
+        new Promise<BrowserFetchResult<FakeFile>>(
+          (resolve) => (settle = resolve),
+        ),
+    );
+    await service.init();
+    const out = service.sync?.poll();
+    vi.setSystemTime(new Date("2026-01-01T00:00:05.000Z"));
+    await service.fetch();
+    settle(fresh);
+    await out;
+    expect(state.files).toBe(fakeFiles);
+    expect(state.since).toBe("2026-01-01T00:00:05.000Z");
+  });
+
+  it("drops a page that comes back while a fetch is out", async () => {
+    let settle: (page: BrowserFetchResult<FakeFile>) => void = () => {};
+    const { service, state, actions } = synced(
+      () =>
+        new Promise<BrowserFetchResult<FakeFile>>(
+          (resolve) => (settle = resolve),
+        ),
+    );
+    await service.init();
+    const out = service.sync?.poll();
+    actions.fetch.mockReturnValueOnce(new Promise(() => {}));
+    void service.fetch();
+    settle(fresh);
+    await out;
+    expect(state.files).toBe(fakeFiles);
+  });
+
+  it("emits failed on the sync for a refresh that rejects", async () => {
+    const error = new Error("down");
+    const { service, state } = synced(async () => {
+      throw error;
+    });
+    const failed = vi.fn();
+    service.sync?.on("failed", failed);
+    await service.init();
+    await service.sync?.poll();
+    expect(failed).toHaveBeenCalledExactlyOnceWith({
+      id: "test-browser-sync",
+      error,
+    });
+    expect(state.files).toBe(fakeFiles);
+  });
+
+  it("keeps the page alive on the interval while watched", async () => {
+    const { service, actions } = synced(() => false, {
+      sync: { interval: 10_000 },
+    });
+    await service.init();
+    const stop = service.sync?.watch();
+    await vi.advanceTimersByTimeAsync(9_000);
+    await service.fetch();
+    await vi.advanceTimersByTimeAsync(9_999);
+    expect(actions.refresh).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(actions.refresh).toHaveBeenCalledOnce();
+    stop?.();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(actions.refresh).toHaveBeenCalledOnce();
+  });
+});
+
+describe("sync in a view", () => {
+  const live = (interval: number) => ({
+    sortField: null,
+    sortDirection: "asc" as const,
+    clauses: [],
+    interval,
+  });
+
+  it("snapshots the interval the sync is on", () => {
+    const { service } = synced(() => false);
+    service.sync?.setInterval(30_000);
+    expect(service.snapshot().interval).toBe(30_000);
+  });
+
+  it("restores the interval through the sync, so the wait starts over on it", async () => {
+    vi.useFakeTimers();
+    try {
+      const { service, actions } = synced(() => false);
+      await service.init();
+      const changed = vi.fn();
+      service.sync?.on("changed", changed);
+      const stop = service.sync?.watch();
+      service.restore(live(10_000));
+      expect(service.snapshot().interval).toBe(10_000);
+      expect(changed).toHaveBeenCalledExactlyOnceWith({
+        id: "test-browser-sync",
+        interval: 10_000,
+      });
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(actions.refresh).toHaveBeenCalledOnce();
+      service.restore(live(0));
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(actions.refresh).toHaveBeenCalledOnce();
+      stop?.();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("leaves out an interval the sync does not offer", () => {
+    const { service } = synced(() => false);
+    service.sync?.setInterval(30_000);
+    service.restore(live(1));
+    expect(service.snapshot().interval).toBe(30_000);
+  });
+
+  it("keeps the interval it holds where there is no sync to set it", () => {
+    const { service } = makeService();
+    service.restore(live(30_000));
+    expect(service.snapshot().interval).toBe(0);
   });
 });

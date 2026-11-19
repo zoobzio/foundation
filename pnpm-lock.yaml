@@ -267,6 +267,9 @@ importers:
       '@zoobzio/query':
         specifier: workspace:*
         version: link:../../services/query
+      '@zoobzio/sync':
+        specifier: workspace:*
+        version: link:../../services/sync
       '@zoobzio/table':
         specifier: workspace:*
         version: link:../../services/table
@@ -346,6 +349,9 @@ importers:
       '@zoobzio/query':
         specifier: workspace:*
         version: link:../../services/query
+      '@zoobzio/sync':
+        specifier: workspace:*
+        version: link:../../services/sync
       '@zoobzio/table':
         specifier: workspace:*
         version: link:../../services/table
@@ -451,6 +457,9 @@ importers:
       '@zoobzio/query':
         specifier: workspace:*
         version: link:../query
+      '@zoobzio/sync':
+        specifier: workspace:*
+        version: link:../sync
       objectively:
         specifier: 'catalog:'
         version: 0.3.0
@@ -463,6 +472,9 @@ importers:
       '@zoobzio/query':
         specifier: workspace:*
         version: link:../query
+      '@zoobzio/sync':
+        specifier: workspace:*
+        version: link:../sync
       rrule-temporal:
         specifier: 'catalog:'
         version: 2.2.9
@@ -533,6 +545,12 @@ importers:
         specifier: 'catalog:'
         version: 0.3.0
 
+  services/sync:
+    dependencies:
+      '@zoobzio/kit':
+        specifier: workspace:*
+        version: link:../../packages/kit
+
   services/table:
     dependencies:
       '@tanstack/table-core':
@@ -544,6 +562,9 @@ importers:
       '@zoobzio/query':
         specifier: workspace:*
         version: link:../query
+      '@zoobzio/sync':
+        specifier: workspace:*
+        version: link:../sync
       objectively:
         specifier: 'catalog:'
         version: 0.3.0

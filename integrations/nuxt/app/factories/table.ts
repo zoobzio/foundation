@@ -25,14 +25,15 @@ import { resolveTexts } from "../utils/text";
  * the search's placeholder does. The composable takes the permissions of
  * the visitor it is called for, as a record, a ref, or a getter: they
  * stand over the options' `permissions`, key by key, and are read on every
- * check. The machine itself is `@zoobzio/table`;
+ * check. With a `refresh` among the options the table has a sync, whose
+ * failed polls are logged as warnings. The machine itself is `@zoobzio/table`;
  * the Vue table renders it through its `service` prop.
  */
 export const createTable = <T extends RowData>(
   id: string,
   options: TableOptions<T>,
 ): UseTable<T> => {
-  const { fetch, actions, bulkActions, ...rest } = options;
+  const { fetch, refresh, actions, bulkActions, ...rest } = options;
   const rows = split(actions);
   const bulk = split(bulkActions);
   const config: Config<T> = {
@@ -45,6 +46,7 @@ export const createTable = <T extends RowData>(
   };
   const wiring: Actions<T> = {
     fetch,
+    ...(refresh && { refresh }),
     actions: rows.handlers,
     bulkActions: bulk.handlers,
   };
@@ -71,6 +73,11 @@ export const createTable = <T extends RowData>(
     service.on("restored", (event) => {
       log.debug("Table restored", event);
       nuxt.callHook("table:restored", event);
+    });
+    // A poll that fails is no one's to catch: it is logged, and the sync
+    // keeps its pace.
+    service.sync?.on("failed", ({ error }) => {
+      log.warn("Table sync failed", { error });
     });
     return service;
   };

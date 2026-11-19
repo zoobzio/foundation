@@ -1,12 +1,13 @@
 import type { Config, RowData, State } from "./types";
 
 import { getInitialTableState } from "@tanstack/table-core";
+import { createSyncState } from "@zoobzio/sync";
 import { features } from "./features";
 
 /**
  * Builds the initial state container: each slice of the TanStack table at
- * its default, under the config's `initialState`, an empty page, and the
- * query's clauses. The result is a plain object. Wrap it in a reactive
+ * its default, under the config's `initialState`, an empty page, the
+ * query's clauses, and the sync's interval. The result is a plain object. Wrap it in a reactive
  * proxy to track reads and writes.
  */
 export const createTableState = <T extends RowData>(
@@ -27,5 +28,6 @@ export const createTableState = <T extends RowData>(
     clauses: config.initialClauses ?? [],
     draft: "",
     suggest: { options: [], status: "idle", more: false },
+    ...createSyncState(config.sync),
   };
 };

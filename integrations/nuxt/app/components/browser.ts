@@ -7,7 +7,9 @@
 // checkboxes. Its Fab slots draw the `sort`, `refresh` and `actions`
 // icons: the sort trigger draws `sort` until the files sort by a column,
 // then `sort-asc` or `sort-desc`, which the column's item in the menu draws
-// too. The root crumb draws `folder-open`, a crumb below it its own `icon`,
+// too. Where the browser has a sync, the menu behind the refresh is the
+// layer's Menu, its items in the visitor's locale and `check` after the
+// interval the sync is on. The root crumb draws `folder-open`, a crumb below it its own `icon`,
 // a folder draws `folder` before its name, a bulk action its own `icon`.
 // Its own text — the search's placeholder, the sort, refresh and actions
 // labels, the listing's counts, the empty states, the clear button — reads
@@ -36,6 +38,7 @@ import Menu from "./menu";
 import TableSearch from "./table-search";
 import { icon, iconOf, iconPart } from "./icon";
 import { cellSlots, folderCellSlots } from "./cell";
+import { syncLabel, syncMark } from "./sync";
 import { text, textSlot } from "./text";
 
 // The direction the files sort in, as its icon.
@@ -57,6 +60,7 @@ export default wrap(Core, {
       selectAllCheckbox: { as: Checkbox },
     }),
     refresh: { label: text("browser.refresh"), ...pt?.refresh },
+    syncMenu: { as: Menu, ...pt?.syncMenu },
     files: layer<BrowserFilesPassthrough<unknown>>(pt?.files, {
       link: () => ({ as: NuxtLink }),
       rowCheckbox: { as: Checkbox },
@@ -92,6 +96,8 @@ export default wrap(Core, {
         }),
       ),
     refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
+    syncLabel: ({ item }) => syncLabel(item),
+    syncAppend: ({ browser, item }) => syncMark(browser.sync, item),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
     folderActions: ({ settings }) =>
       iconPart(settings.actionsTrigger, "actions"),

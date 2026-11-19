@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+/**
+ * The interval of the sync, in milliseconds: off, zero, where a view was
+ * stored before it carried one.
+ */
+const interval = z.number().int().nonnegative().default(0);
+
 const clause = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("literal"),
@@ -50,17 +56,20 @@ export const TABLE_VIEW_SCHEMA = z.preprocess(
     columnSizing: z.record(z.string(), z.number()).default({}),
     pageSize: z.number().int().positive().default(10),
     clauses: z.array(clause).default([]),
+    interval,
   }),
 );
 
 /**
  * The schema of a calendar's saved view: what the calendar's `snapshot`
- * yields and its `restore` takes. The view alone, and the search: a saved
+ * yields and its `restore` takes. The view alone, the search, and the
+ * sync's interval: a saved
  * view opens on the day the calendar stands on.
  */
 export const CALENDAR_VIEW_SCHEMA = z.object({
   view: z.enum(["month", "week", "day", "agenda"]).default("month"),
   clauses: z.array(clause).default([]),
+  interval,
 });
 
 /**
@@ -73,5 +82,6 @@ export const BROWSER_VIEW_SCHEMA = z.preprocess(
     sortField: z.string().nullable().default(null),
     sortDirection: z.enum(["asc", "desc"]).default("asc"),
     clauses: z.array(clause).default([]),
+    interval,
   }),
 );

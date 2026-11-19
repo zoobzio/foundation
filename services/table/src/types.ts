@@ -8,6 +8,11 @@ import type {
   Values,
 } from "@zoobzio/query";
 import type {
+  Config as SyncConfig,
+  Service as Sync,
+  State as SyncState,
+} from "@zoobzio/sync";
+import type {
   Change as KitChange,
   Changers as KitChangers,
   Changes as KitChanges,
@@ -156,7 +161,8 @@ export interface FetchParams {
 /**
  * The table as a visitor arranged it: the part of the container a saved
  * view holds. The slices are TanStack's, under their names; `pageSize` is
- * the page's size without its index, and `clauses` the query's. The page,
+ * the page's size without its index, `clauses` the query's, and `interval`
+ * the sync's. The page,
  * the selection, and the draft are not part of it. Plain data, so it
  * survives JSON.
  */
@@ -168,13 +174,41 @@ export interface Snapshot {
   columnSizing: TableSlices["columnSizing"];
   pageSize: number;
   clauses: Clause[];
+  interval: number;
 }
 
-/** One page of rows, and the count of every row the search leaves. */
+/**
+ * One page of rows, and the count of every row the search leaves. `since`
+ * is the mark the page is whole as of, what the next refresh is asked for
+ * changes since: the server's own reading of its clock, say. Without it
+ * the mark is the visitor's clock as the request was made.
+ */
 export interface FetchResult<T extends RowData> {
   data: T[];
   rowCount: number;
+  since?: string;
 }
+
+/**
+ * What the refresh is handed: what the fetch is, and `since`, the mark of
+ * the page the table holds.
+ */
+export interface RefreshParams extends FetchParams {
+  since: string;
+}
+
+/**
+ * What a refresh answers. Nothing, or `false`: nothing changed, and the
+ * table keeps its page. `true`: something did, and the table fetches the
+ * page again itself. A result: the page as it now stands, landed as a
+ * fetch's is.
+ */
+export type RefreshResult<T extends RowData> =
+  | FetchResult<T>
+  | boolean
+  | null
+  | undefined
+  | void;
 
 /**
  * The TanStack Table options the service sets itself: the state is the
@@ -276,6 +310,12 @@ export type Config<T extends RowData> = Omit<
   literals?: Record<string, Literal>;
   /** The clauses the query starts from. */
   initialClauses?: Clause[];
+  /**
+   * The sync's config, handed to it as given: the intervals a visitor may
+   * pick from, and the one the table starts on. Read only where the wiring
+   * names a `refresh`.
+   */
+  sync?: SyncConfig;
   /** The BCP 47 locale cells format in. Defaults to `en-US`. */
   locale?: string;
   /** The ISO 4217 code currency cells format in. Defaults to `USD`. */
@@ -290,19 +330,21 @@ export type Config<T extends RowData> = Omit<
 
 /**
  * The state container the service reads and writes: the slices of the
- * TanStack table under their own names, the fetched page, and the query's
- * slice. The container can be a plain object or a reactive proxy. Each
- * member is replaced as a whole, so a proxy tracks every change.
+ * TanStack table under their own names, the fetched page, the query's
+ * slice, and the sync's. The container can be a plain object or a reactive
+ * proxy. Each member is replaced as a whole, so a proxy tracks every
+ * change.
  */
-export type State<T extends RowData> = TableSlices & {
-  data: T[];
-  rowCount: number;
-  loading: boolean;
-  initialized: boolean;
-  clauses: Clause[];
-  draft: string;
-  suggest: Suggest;
-};
+export type State<T extends RowData> = TableSlices &
+  SyncState & {
+    data: T[];
+    rowCount: number;
+    loading: boolean;
+    initialized: boolean;
+    clauses: Clause[];
+    draft: string;
+    suggest: Suggest;
+  };
 
 export type StateKey = keyof State<RowData>;
 
@@ -325,6 +367,16 @@ export type Changers<T extends RowData> = KitChangers<State<T>>;
  */
 export type Actions<T extends RowData> = {
   fetch: (params: FetchParams, service: Service<T>) => Promise<FetchResult<T>>;
+  /**
+   * The poll of the table's sync: asked what changed since the page the
+   * table holds was read. With it the table has a `sync`, and a visitor
+   * may keep the page alive on an interval; without it the table
+   * refreshes by `fetch` alone.
+   */
+  refresh?: (
+    params: RefreshParams,
+    service: Service<T>,
+  ) => RefreshResult<T> | Promise<RefreshResult<T>>;
   actions?: Record<string, (row: T) => void>;
   bulkActions?: Record<string, (selected: string[]) => void>;
 };
@@ -335,7 +387,8 @@ export type Actions<T extends RowData> = {
  * reads the new state.
  *
  * - `change`: any field of the container was written.
- * - `updated`: a fetch settled, success or failure.
+ * - `updated`: a fetch settled, success or failure, or a refresh landed a
+ *   page.
  * - `filtered`: the query's clauses changed.
  * - `restored`: a snapshot replaced the arrangement.
  */
@@ -370,6 +423,14 @@ export type Service<T extends RowData> = {
    * clauses refetches from the first page.
    */
   readonly query: Query;
+
+  /**
+   * The sync machine, where the wiring names a `refresh`: the interval a
+   * visitor keeps the page alive on. It polls the refresh with the mark of
+   * the page held, and every page that lands marks it anew. `undefined`
+   * without a refresh.
+   */
+  readonly sync: Sync | undefined;
 
   /** The row actions; none without the `actions` permission. */
   readonly actions: RowAction<T>[];

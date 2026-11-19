@@ -29,7 +29,8 @@ export type TableBulkAction = Bound<ActionDescriptor, BulkAction["action"]>;
 
 /**
  * What `createTable` takes: the headless config with each action's handler
- * joined to its descriptor, and the fetch mechanism. The config's
+ * joined to its descriptor, the fetch mechanism, and the `refresh` that
+ * gives the table its sync where there is one. The config's
  * `initialState` and `initialClauses` are what the table starts from: they
  * seed the `useState` record, so they must survive Nuxt's payload.
  */
@@ -38,6 +39,7 @@ export type TableOptions<T extends RowData> = Omit<
   "actions" | "bulkActions"
 > & {
   fetch: Actions<T>["fetch"];
+  refresh?: Actions<T>["refresh"];
   actions?: Record<string, TableAction<T>>;
   bulkActions?: Record<string, TableBulkAction>;
 };

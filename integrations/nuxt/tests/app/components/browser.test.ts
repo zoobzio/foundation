@@ -72,6 +72,35 @@ describe("browser wrapper", () => {
     expect(crumb.text()).toBe("Root");
   });
 
+  it("draws the sync menu in the visitor's locale, and marks the interval it is on", async () => {
+    const { service } = makeBrowser({}, { refresh: vi.fn() });
+    await service.init();
+    service.sync?.setInterval(60_000);
+    const wrapper = mountBrowser({ service });
+    const trigger = wrapper.get('button[aria-label="Refresh"]');
+    expect(trigger.get("svg[data-icon]").attributes("data-icon")).toBe(
+      "refresh",
+    );
+    await trigger.trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    expect(items.map((el) => el.textContent?.trim())).toEqual([
+      "Refresh now",
+      "Off",
+      "Every 10 seconds",
+      "Every 30 seconds",
+      "Every minute",
+      "Every 5 minutes",
+    ]);
+    expect(
+      items.map((el) =>
+        el.querySelector("svg[data-icon]")?.getAttribute("data-icon"),
+      ),
+    ).toEqual([undefined, undefined, undefined, undefined, "check", undefined]);
+  });
+
   it("draws the refresh, folder, and action icons", async () => {
     const { service } = makeBrowser(
       {

@@ -1,6 +1,7 @@
 import type { AutocompleteEmits, AutocompleteProps } from "./autocomplete";
 import type { FabEmits, FabProps } from "./fab";
 import type { MenuEmits, MenuItem, MenuProps } from "./menu";
+import type { SyncItem } from "./sync";
 import type { BrowserHeadPassthrough, BrowserHeadSlots } from "./browser-head";
 import type {
   BrowserFoldersPassthrough,
@@ -28,13 +29,16 @@ export interface BrowserSortItem extends MenuItem {
  * The parts of the browser that accept passthrough. `search` is the
  * autocomplete over the browser's search machine; `sortMenu` lists the
  * sortable columns behind `sortTrigger`; `refresh` refetches the current
- * folder.
+ * folder, and where the browser has a sync is the trigger of `syncMenu`
+ * instead, which refreshes at once or sets the interval the listing is
+ * kept alive on.
  */
 export type BrowserPassthrough = {
   search: Rendered<AutocompleteProps, AutocompleteEmits>;
   sortMenu: Rendered<MenuProps<BrowserSortItem>, MenuEmits<BrowserSortItem>>;
   sortTrigger: Rendered<FabProps>;
   refresh: Rendered<FabProps, FabEmits>;
+  syncMenu: Rendered<MenuProps<SyncItem>, MenuEmits<SyncItem>>;
 };
 
 /**
@@ -77,6 +81,9 @@ export type BrowserContext<T> = {
  * `sort` replaces the sort menu's trigger; `sortPrepend` and `sortAppend`
  * sit around each of its items. `empty` fills the one row the body is
  * once a folder settles with neither folders nor files, under the head.
+ * `refresh` replaces the refresh button, which is the sync menu's trigger
+ * where the browser has a sync; `syncPrepend` and `syncAppend` sit around
+ * each of that menu's items, and `syncLabel` replaces an item's label.
  */
 export type BrowserSlots<T> = BrowserHeadSlots<T> &
   BrowserFoldersSlots<T> &
@@ -93,6 +100,9 @@ export type BrowserSlots<T> = BrowserHeadSlots<T> &
     ) => VNode[];
     empty?: (props: BrowserContext<T>) => VNode[];
     refresh?: (props: BrowserContext<T>) => VNode[];
+    syncPrepend?: (props: BrowserContext<T> & { item: SyncItem }) => VNode[];
+    syncLabel?: (props: BrowserContext<T> & { item: SyncItem }) => VNode[];
+    syncAppend?: (props: BrowserContext<T> & { item: SyncItem }) => VNode[];
   };
 
 /**

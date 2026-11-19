@@ -89,6 +89,7 @@ Plain data, except that a field's `values` may be a provider.
 | `fields`         | none           | The fields the query filters on, keyed by the identity a filter carries      |
 | `literals`       | the query's    | The literals of the query; the `text` literal is the fetch's `query`         |
 | `initialClauses` | none           | The clauses the query starts from                                            |
+| `sync`           | off            | The sync's config: its `intervals`, and the `interval` it starts on          |
 | `searchable`     | see below      | Whether a view renders the search: by default, with `fields` or `literals`   |
 
 ## Search
@@ -120,7 +121,8 @@ or the date fetches the new range with the clauses as they stand.
 
 ## Views
 
-`snapshot()` is the calendar as a visitor arranged it, `{ view, clauses }`,
+`snapshot()` is the calendar as a visitor arranged it,
+`{ view, clauses, interval }`,
 and `restore(snapshot)` puts one in place in one fetch: the pair
 [`@zoobzio/views`](../views/) reads and applies through. The date is not
 part of it, so a saved view opens on the day the calendar stands on and a
@@ -128,6 +130,47 @@ step through time is not an edit of it. Before `init`, `restore` fetches
 nothing: the first fetch reads what it left. A view the calendar does not
 offer is left out, and so is a clause the query rejects; `snapshot` then
 differs from what was restored.
+
+The `interval` is the sync's, so a saved view carries how it keeps itself
+up to date: restoring one sets the interval through the sync, which starts
+its wait over, and an interval the sync does not offer is left out. A
+service with no sync keeps the interval its container holds.
+
+## Sync
+
+A calendar refreshes by `fetch`. With a `refresh` among its actions it
+also has a `sync`, a [`@zoobzio/sync`](../sync/) service over its
+container, and a visitor may keep the range alive on an interval. Without
+one `service.sync` is `undefined`.
+
+The refresh is the sync's poll. It is handed what the fetch is, and
+`since`, the mark of the entries the calendar holds, and answers one of
+three ways:
+
+```ts
+// One round trip: the endpoint the fetch asks, with `since`. It answers
+// nothing where nothing changed, and the entries of the range as they now
+// stand, in the form the reader takes, where something did.
+refresh: async (params) => (await api.entries(params)) ?? null,
+
+// A cheap probe: `true` and the calendar fetches the range again itself.
+refresh: ({ since }) => api.entriesChanged(since),
+```
+
+Nothing, or `false`, keeps the entries and the mark. A source lands as a
+fetch's does, through the reader, without `loading`, and emits `loaded`.
+One that comes back to a calendar that has moved on since is dropped: a
+fetch began, a command changed the entries, or a save is out, and nothing
+is polled while one is. So a poll never lands over a change of the
+visitor's own that has yet to be saved.
+
+Every load marks the sync with the calendar's clock, `now`, as its request
+was made. The source is the consumer's own form, so it carries no mark of
+its own as a table's result may.
+
+`config.sync` is the sync's config: the `intervals` a visitor may pick
+from and the `interval` the calendar starts on, off by default. The sync
+polls only while a view watches it; see its README for the loop.
 
 ## Occurrences
 
@@ -208,8 +251,8 @@ reactive(createCalendarState(config)); // Vue
 ```
 
 The container holds the view, the date, the entries, the fetch flags, the
-revision, the selected key, and the query's clauses, draft, and
-suggestions. The entries are plain JSON, so the
+revision, the selected key, the query's clauses, draft, and
+suggestions, and the sync's `interval`, `since`, and `syncing`. The entries are plain JSON, so the
 container crosses SSR as it stands. The service is never wrapped by a
 reactive proxy itself; its getters read the container, so a reactive
 container tracks them.
@@ -227,7 +270,7 @@ after the write lands. The return value removes the listener.
 
 - `change`: a field of the container was written. `{ field, before, after }`.
 - `navigated`: the view or the date moved. `{ id, view, date, range }`.
-- `loaded`: a fetch settled, success or failure, or a source was loaded. `{ id, range, revision }`.
+- `loaded`: a fetch settled, success or failure, a source was loaded, or a refresh landed the entries. `{ id, range, revision }`.
 - `changed`: a command changed the entries and its save settled. `{ id, revision, mutation }`.
 - `selected`: the selected occurrence changed. `{ id, key }`.
 - `filtered`: the query's clauses changed. `{ id, query, filters }`.

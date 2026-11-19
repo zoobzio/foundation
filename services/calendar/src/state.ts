@@ -1,5 +1,6 @@
 import type { Config, State } from "./types";
 
+import { createSyncState } from "@zoobzio/sync";
 import { CALENDAR_DEFAULT_TIME_ZONE, CALENDAR_VIEWS } from "./constants";
 import { dayOf } from "./time";
 
@@ -7,8 +8,8 @@ import { dayOf } from "./time";
  * Builds the initial state container from config defaults. The result is
  * a plain object. Wrap it in a reactive proxy to track reads and writes.
  * The calendar starts on today, as the day reads in the config's time
- * zone, in the config's view, with no entries and the config's initial
- * clauses.
+ * zone, in the config's view, with no entries, the config's initial
+ * clauses, and the sync on the config's interval.
  */
 export const createCalendarState = (
   config: Config = {},
@@ -24,4 +25,5 @@ export const createCalendarState = (
   clauses: config.initialClauses ?? [],
   draft: "",
   suggest: { options: [], status: "idle", more: false },
+  ...createSyncState(config.sync),
 });

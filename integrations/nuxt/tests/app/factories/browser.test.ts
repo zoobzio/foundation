@@ -124,6 +124,26 @@ describe("createBrowser", () => {
     });
   });
 
+  it("gives the browser a sync where the options name a refresh, and logs a poll that fails", async () => {
+    expect(createBrowser("assets", makeOptions())().sync).toBeUndefined();
+    const error = new Error("down");
+    const refresh = vi.fn(async () => {
+      throw error;
+    });
+    const assets = createBrowser(
+      "synced",
+      makeOptions({ refresh, sync: { interval: 30_000 } }),
+    )();
+    expect(assets.sync?.interval).toBe(30_000);
+    await assets.init();
+    await assets.sync?.poll();
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(useNuxtApp().$logger("synced").warn).toHaveBeenCalledWith(
+      "Browser sync failed",
+      { error },
+    );
+  });
+
   it("labels the search's text literal from the contract", () => {
     const assets = createBrowser("assets", makeOptions())();
     expect(assets.query.items[0]?.label).toBe("Search");

@@ -22,7 +22,16 @@ describe("createBrowserState", () => {
       clauses: [],
       draft: "",
       suggest: { options: [], status: "idle", more: false },
+      interval: 0,
+      since: null,
+      syncing: false,
     });
+  });
+
+  it("starts the sync on the config's interval", () => {
+    expect(
+      createBrowserState<FakeFile>({ sync: { interval: 30_000 } }).interval,
+    ).toBe(30_000);
   });
 
   it("each call returns an independent container", () => {

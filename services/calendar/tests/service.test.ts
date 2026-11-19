@@ -649,15 +649,21 @@ describe("views", () => {
   const saved = {
     view: "week" as const,
     clauses: [{ kind: "filter" as const, key: "team", value: "Design" }],
+    interval: 0,
   };
 
   it("snapshots the view and the clauses", () => {
     const { service } = make({ config: { fields } });
-    expect(service.snapshot()).toEqual({ view: "month", clauses: [] });
+    expect(service.snapshot()).toEqual({
+      view: "month",
+      clauses: [],
+      interval: 0,
+    });
     service.query.add(saved.clauses[0]!);
     expect(service.snapshot()).toEqual({
       view: "month",
       clauses: saved.clauses,
+      interval: 0,
     });
   });
 
@@ -712,8 +718,169 @@ describe("views", () => {
     service.restore({
       view: "week",
       clauses: [{ kind: "filter", key: "status", op: "near", value: "x" }],
+      interval: 0,
     });
-    expect(service.snapshot()).toEqual({ view: "month", clauses: [] });
+    expect(service.snapshot()).toEqual({
+      view: "month",
+      clauses: [],
+      interval: 0,
+    });
     expect(navigated).not.toHaveBeenCalled();
+  });
+});
+
+describe("sync", () => {
+  const AT = NOW.toISOString();
+  const first = [event("a", "2026-03-05T09:00:00", { title: "First" })];
+  const fresh = [event("b", "2026-03-06T09:00:00", { title: "Fresh" })];
+
+  type Refresh = NonNullable<Actions<Doc, Doc>["refresh"]>;
+
+  const synced = async (refresh: Refresh, config: Config = {}) => {
+    const spy = vi.fn(refresh);
+    const made = await loaded(first, { config, actions: { refresh: spy } });
+    const loadedEvent = vi.fn();
+    made.service.on("loaded", loadedEvent);
+    return { ...made, refresh: spy, loaded: loadedEvent };
+  };
+
+  it("has no sync without a refresh", () => {
+    expect(make().service.sync).toBeUndefined();
+  });
+
+  it("has a sync over the container with one, on the config's interval", async () => {
+    const { service, state } = await synced(() => false, {
+      sync: { intervals: [5_000], interval: 5_000 },
+    });
+    expect(service.sync?.id).toBe("cal-sync");
+    expect(service.sync?.interval).toBe(5_000);
+    service.sync?.setInterval(0);
+    expect(state.interval).toBe(0);
+  });
+
+  it("marks a fetch, and a load, with the calendar's clock", async () => {
+    const { service, state } = await synced(() => false);
+    expect(state.since).toBe(AT);
+    state.since = null;
+    service.load(fresh);
+    expect(state.since).toBe(AT);
+  });
+
+  it("hands the refresh the fetch's params and the mark", async () => {
+    const { service, refresh } = await synced(() => false);
+    await service.sync?.poll();
+    expect(refresh).toHaveBeenCalledExactlyOnceWith(
+      { range: service.range, query: "", filters: [], since: AT },
+      service,
+    );
+  });
+
+  it("keeps the entries where nothing changed", async () => {
+    for (const answer of [false, null, undefined]) {
+      const { service, fetch, loaded } = await synced(() => answer);
+      await service.sync?.poll();
+      expect(service.entries).toEqual(first);
+      expect(fetch).toHaveBeenCalledOnce();
+      expect(loaded).not.toHaveBeenCalled();
+    }
+  });
+
+  it("lands the source a refresh answers with, quietly", async () => {
+    const { service, state, fetch, loaded } = await synced(async () => fresh);
+    const loading: boolean[] = [];
+    service.on("change", (change) => {
+      if (change.field === "loading") loading.push(change.after);
+    });
+    const revision = service.revision;
+    await service.sync?.poll();
+    expect(service.entries).toEqual(fresh);
+    expect(service.revision).toBe(revision + 1);
+    expect(state.since).toBe(AT);
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(loading).toEqual([]);
+    expect(loaded).toHaveBeenCalledExactlyOnceWith({
+      id: "cal",
+      range: service.range,
+      revision: revision + 1,
+    });
+  });
+
+  it("lands an empty source: no entries is an answer", async () => {
+    const { service } = await synced(async () => []);
+    await service.sync?.poll();
+    expect(service.entries).toEqual([]);
+  });
+
+  it("fetches the range itself where the refresh answers true", async () => {
+    const { service, fetch } = await synced(() => true);
+    fetch.mockResolvedValueOnce(fresh);
+    await service.sync?.poll();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(service.entries).toEqual(fresh);
+  });
+
+  it("drops a source that comes back to a calendar that has moved on", async () => {
+    let settle: (source: Doc) => void = () => {};
+    const { service } = await synced(
+      () => new Promise<Doc>((resolve) => (settle = resolve)),
+    );
+    const out = service.sync?.poll();
+    service.next();
+    settle(fresh);
+    await out;
+    expect(service.entries).not.toEqual(fresh);
+  });
+
+  it("drops a source that comes back over a change of the visitor's own", async () => {
+    let settle: (source: Doc) => void = () => {};
+    const { service } = await synced(
+      () => new Promise<Doc>((resolve) => (settle = resolve)),
+    );
+    const out = service.sync?.poll();
+    await service.create(event("mine", "2026-03-07T09:00:00"));
+    settle(fresh);
+    await out;
+    expect(service.entries.map((entry) => entry.uid)).toEqual(["a", "mine"]);
+  });
+
+  it("polls nothing while a save is out", async () => {
+    let saved = () => {};
+    const refresh = vi.fn(async () => fresh);
+    const { service } = await loaded(first, {
+      actions: {
+        refresh,
+        save: () => new Promise<void>((resolve) => (saved = resolve)),
+      },
+    });
+    const creating = service.create(event("mine", "2026-03-07T09:00:00"));
+    await service.sync?.poll();
+    expect(refresh).not.toHaveBeenCalled();
+    saved();
+    await creating;
+    await service.sync?.poll();
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(service.entries).toEqual(fresh);
+  });
+
+  it("emits failed on the sync for a refresh that rejects", async () => {
+    const error = new Error("down");
+    const { service } = await synced(async () => {
+      throw error;
+    });
+    const failed = vi.fn();
+    service.sync?.on("failed", failed);
+    await service.sync?.poll();
+    expect(failed).toHaveBeenCalledExactlyOnceWith({ id: "cal-sync", error });
+    expect(service.entries).toEqual(first);
+  });
+
+  it("carries the interval in its snapshot, and restores it through the sync", async () => {
+    const { service } = await synced(() => false);
+    service.sync?.setInterval(30_000);
+    expect(service.snapshot().interval).toBe(30_000);
+    service.restore({ view: "month", clauses: [], interval: 10_000 });
+    expect(service.sync?.interval).toBe(10_000);
+    service.restore({ view: "month", clauses: [], interval: 1 });
+    expect(service.snapshot().interval).toBe(10_000);
   });
 });

@@ -2,7 +2,12 @@
 // memory that `fetch` reads. The backend does what a real one would: it
 // narrows the orders by the search, sorts them, and hands back one page
 // with the total, so the table holds a page and never the whole list.
-import type { FetchParams, FetchResult, TableFilter } from "@zoobzio/table";
+import type {
+  FetchParams,
+  FetchResult,
+  RefreshParams,
+  TableFilter,
+} from "@zoobzio/table";
 
 import { createTable } from "@zoobzio/nuxt/factories/table";
 
@@ -70,6 +75,21 @@ let orders: Order[] = Array.from({ length: 137 }, (_, i) => {
     gift: random() < 0.2,
   };
 });
+
+/**
+ * When the orders last changed, as the backend's own clock reads: what a
+ * refresh is answered from. Every write moves it.
+ */
+let changed = new Date().toISOString();
+
+/** The number the next order to come in takes. */
+let next = 1000 + orders.length;
+
+/** Writes the orders, and notes when. */
+const write = (written: Order[]): void => {
+  orders = written;
+  changed = new Date().toISOString();
+};
 
 /** Whether an order passes one committed column filter. */
 const passes = (order: Order, { key, op, value }: TableFilter): boolean => {
@@ -150,6 +170,33 @@ const fetch = async ({
   };
 };
 
+/**
+ * The backend's answer to a poll: whether an order changed since the page
+ * the table holds was read. It answers `true` and the table fetches the
+ * page again itself; a backend that would rather answer in one round trip
+ * returns the page instead. So the example has something to show, a new
+ * order comes in now and then between polls.
+ */
+const refresh = async ({ since }: RefreshParams): Promise<boolean> => {
+  await pause(50);
+  if (random() < 0.5) {
+    const items = 1 + Math.floor(random() * 8);
+    write([
+      ...orders,
+      {
+        id: `#${next++}`,
+        customer: `${pick(FIRST)} ${pick(LAST)}`,
+        status: "Pending",
+        items,
+        total: Math.round(items * (8 + random() * 90) * 100) / 100,
+        placed: ago(0),
+        gift: false,
+      },
+    ]);
+  }
+  return changed > since;
+};
+
 export const useOrders = createTable<Order>("orders", {
   getRowId: (order) => order.id,
   defaultColumn: { minSize: 48 },
@@ -208,13 +255,16 @@ export const useOrders = createTable<Order>("orders", {
     columnPinning: { start: ["id"], end: [] },
   },
   fetch,
+  refresh,
   actions: {
     refund: {
       label: "Refund",
       icon: "undo",
       action: (order) => {
-        orders = orders.map((o) =>
-          o.id === order.id ? { ...o, status: "Refunded" } : o,
+        write(
+          orders.map((o) =>
+            o.id === order.id ? { ...o, status: "Refunded" } : o,
+          ),
         );
         useOrders().fetch();
       },
@@ -223,7 +273,7 @@ export const useOrders = createTable<Order>("orders", {
       label: "Delete",
       icon: "remove",
       action: (order) => {
-        orders = orders.filter((o) => o.id !== order.id);
+        write(orders.filter((o) => o.id !== order.id));
         useOrders().fetch();
       },
     },
@@ -233,7 +283,7 @@ export const useOrders = createTable<Order>("orders", {
       label: "Delete",
       icon: "remove",
       action: (selected) => {
-        orders = orders.filter((o) => !selected.includes(o.id));
+        write(orders.filter((o) => !selected.includes(o.id)));
         const service = useOrders();
         service.table.resetRowSelection(true);
         service.fetch();

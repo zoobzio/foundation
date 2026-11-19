@@ -315,6 +315,93 @@ describe("browser", () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
+  it("refreshes from a menu where the browser has a sync", async () => {
+    const refresh = vi.fn(async () => false);
+    const { service, fetch } = makeBrowser({}, { refresh });
+    await service.init();
+    const wrapper = mountBrowser({ service });
+    const root = wrapper.get(".f-data-browser");
+    const trigger = wrapper.get('button[aria-label="Refresh"]');
+    const pick = async (label: string) => {
+      await trigger.trigger("click", { button: 0, ctrlKey: false });
+      await flushPromises();
+      const item = menuItem(label);
+      if (!item) throw new Error(`no rendered ${label} item`);
+      return item;
+    };
+    // The button opens the menu: it fetches nothing itself.
+    const off = await pick("Off");
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(off.hasAttribute("data-current")).toBe(true);
+    expect(root.classes()).not.toContain("f-data-browser-live");
+    expect(menuItem("Every 10 seconds")).toBeDefined();
+    expect(menuItem("Every 5 minutes")).toBeDefined();
+
+    const thirty = menuItem("Every 30 seconds");
+    thirty?.click();
+    await flushPromises();
+    expect(service.sync?.interval).toBe(30_000);
+    expect(root.classes()).toContain("f-data-browser-live");
+    expect((await pick("Every 30 seconds")).hasAttribute("data-current")).toBe(
+      true,
+    );
+    expect(menuItem("Off")?.hasAttribute("data-current")).toBe(false);
+
+    menuItem("Refresh now")?.click();
+    await flushPromises();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it("keeps the browser alive on the interval while it is mounted", async () => {
+    vi.useFakeTimers();
+    try {
+      const refresh = vi.fn(async () => false);
+      const { service } = makeBrowser(
+        { sync: { interval: 10_000 } },
+        { refresh },
+      );
+      service.sync?.setInterval(10_000);
+      await service.init();
+      const wrapper = mountBrowser({ service });
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(refresh).toHaveBeenCalledOnce();
+      wrapper.unmount();
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(refresh).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("relays the sync menu's item slots", async () => {
+    const { service } = makeBrowser({}, { refresh: vi.fn() });
+    await service.init();
+    const wrapper = mountBrowser(
+      { service },
+      {
+        syncPrepend: `<template #syncPrepend="{ item }"><i>{{ item.key }}</i></template>`,
+        syncLabel: `<template #syncLabel="{ item }"><b>{{ item.interval ?? "go" }}</b></template>`,
+        syncAppend: `<template #syncAppend><u>!</u></template>`,
+      },
+    );
+    await wrapper
+      .get('button[aria-label="Refresh"]')
+      .trigger("click", { button: 0, ctrlKey: false });
+    await flushPromises();
+    const items = Array.from(
+      document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'),
+    );
+    expect(items.map((el) => el.textContent?.trim())).toEqual([
+      "nowgo!",
+      "off0!",
+      "1000010000!",
+      "3000030000!",
+      "6000060000!",
+      "300000300000!",
+    ]);
+  });
+
   it("selects files and folders and shows the bulk actions bar", async () => {
     const purge = vi.fn();
     const { service } = makeBrowser(

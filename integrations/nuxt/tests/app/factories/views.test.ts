@@ -195,6 +195,45 @@ describe("createViews", () => {
     expect(restored).toHaveBeenCalledWith({ id: "orders", snapshot: active });
   });
 
+  it("carries the sync's interval in a view, off where a stored one names none", () => {
+    for (const schema of [
+      TABLE_VIEW_SCHEMA,
+      BROWSER_VIEW_SCHEMA,
+      CALENDAR_VIEW_SCHEMA,
+    ]) {
+      expect(schema.parse({}).interval).toBe(0);
+      expect(schema.parse({ interval: 30_000 }).interval).toBe(30_000);
+      expect(schema.safeParse({ interval: -1 }).success).toBe(false);
+    }
+  });
+
+  it("moves a synced table's interval with the view, and drifts on a change of it", async () => {
+    const table = createTable<FakeRow>("live-orders", {
+      columns: fakeColumns,
+      getRowId,
+      fetch: vi.fn(async () => ({ data: fakeRows, rowCount: 3 })),
+      refresh: vi.fn(async () => false),
+    })();
+    const views = createViews(
+      "live-orders",
+      makeOptions({
+        views: [
+          { id: "all", name: "All", payload: all },
+          { id: "live", name: "Live", payload: { ...all, interval: 30_000 } },
+        ],
+      }),
+    )(table);
+    await views.init();
+    expect(table.sync?.interval).toBe(0);
+    await views.select("live");
+    expect(table.sync?.interval).toBe(30_000);
+    expect(views.drifted).toBe(false);
+    table.sync?.setInterval(60_000);
+    expect(views.drifted).toBe(true);
+    await views.select("all", { force: true });
+    expect(table.sync?.interval).toBe(0);
+  });
+
   it("reads a view stored before the query's clauses were renamed", () => {
     const stored = [{ kind: "filter", key: "status", value: "Active" }];
     expect(TABLE_VIEW_SCHEMA.parse({ entries: stored }).clauses).toEqual(

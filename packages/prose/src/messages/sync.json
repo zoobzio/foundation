@@ -1,0 +1,18 @@
+{
+  "now": {
+    "defaultMessage": "Refresh now",
+    "description": "The first item of the menu behind a table's or a browser's refresh button, where it keeps itself up to date: fetches again at once."
+  },
+  "off": {
+    "defaultMessage": "Off",
+    "description": "The item of the refresh menu that stops the table or the browser from refreshing on its own."
+  },
+  "seconds": {
+    "defaultMessage": "Every {count, plural, one {second} other {# seconds}}",
+    "description": "An item of the refresh menu: how often the table or the browser refreshes on its own, where that is a number of seconds."
+  },
+  "minutes": {
+    "defaultMessage": "Every {count, plural, one {minute} other {# minutes}}",
+    "description": "An item of the refresh menu: how often the table or the browser refreshes on its own, where that is a number of whole minutes."
+  }
+}

@@ -43,11 +43,11 @@ const picker = defineSelect({
 ```
 src/
   components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), the code editor (code.vue), the calendar (calendar.vue), and the saved views (views.vue)
-  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useEditor, useCode, useCalendar
+  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useSync, useEditor, useCode, useCalendar
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough (Passthrough, Rendered, PT), forward, slots, context, definition, wrap; per-component types in core/
-  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, editor, code, calendar
-  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, editor, code, calendar, views
+  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, sync, editor, code, calendar
+  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, sync, editor, code, calendar, views
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
@@ -152,6 +152,16 @@ sorts, and a third click clears it. The `th` carries
 `aria-sort`. The checkbox column renders while the table's
 `enableRowSelection` is on, which a config with bulk actions turns on; the
 head's checkbox selects the rows of the page.
+
+Where the service has a `sync` (its wiring names a `refresh`), the refresh
+button is the trigger of a menu, the `syncMenu` part, in place of fetching
+itself: its first item refreshes now, and the rest set the interval the
+table keeps its page alive on, off and each one the sync offers, the one it
+is on carrying `data-current`. The `syncPrepend`, `syncLabel`, and
+`syncAppend` slots reach each item. The table watches the sync while it is
+mounted and the document is visible (`useSync`), and polls at once when
+the document comes back into view. Its root carries `f-data-table-live`
+while an interval is set and `f-data-table-syncing` while a poll is out.
 
 The table renders what the service's `permissions` grant, and follows a
 reactive record as it changes. Without `search`, `hide`, or `refresh` the
@@ -302,7 +312,10 @@ holds the search (the autocomplete over the service's `query`, as the
 table's is, hidden by `searchable: false`), the sort menu (the service's
 `sortableColumns` behind a Fab; an item sorts by its column, and again
 flips the direction; the sorted item carries `data-current` and
-`data-direction`), and the refresh. Under it is one table. Its head
+`data-direction`), and the refresh, which is the trigger of the sync menu
+where the service has a `sync`, as the table's is, with the same part,
+slots, and `f-data-browser-live` and `f-data-browser-syncing` on the
+root. Under it is one table. Its head
 (`browser-head.vue`) is a single row attached to the listing: the
 select-all checkbox where the rows are selectable, then one cell with the
 breadcrumb over the service's `trail` and, once the first fetch settles,
@@ -515,13 +528,18 @@ Over the toolbar, outside it, stand the controls, a row of their own under
 theirs: the search, where the service is `searchable` (its config names
 `fields` or `literals`, or says so), the autocomplete over `service.query`
 under `f-data-calendar-search`; and the refresh, a Fab that fetches the
-range again. The `search` and `refresh` parts and slots reach each, and
+range again, or where the service has a `sync` the trigger of the sync
+menu, as the table's is, with the same `syncMenu` part and `syncPrepend`,
+`syncLabel`, and `syncAppend` slots; the root carries `data-live` while an
+interval is set and `data-syncing` while a poll is out. The `search` and
+`refresh` parts and slots reach each, and
 the `controls` slot replaces the row. The toolbar and the view under it
 sit together in `f-data-calendar-body`.
 
-The parts are `search`, `refresh`, `toolbar`, `separator`, `tool`, `grid`,
+The parts are `search`, `refresh`, `syncMenu`, `toolbar`, `separator`, `tool`, `grid`,
 `agenda`, `weekday`, `day`, `dayLabel`, and `occurrence`; the slots are
-`controls`, `search`, `refresh`, `toolbar`, `toolbarPrepend`,
+`controls`, `search`, `refresh`, `syncPrepend`, `syncLabel`, `syncAppend`,
+`toolbar`, `toolbarPrepend`,
 `toolbarAppend`, `separator`, `heading`, `tool`, `toolPrepend`,
 `toolLabel`, `toolAppend`, `weekday`, `day`, `dayLabel`, `occurrence`,
 `occurrenceTime`, `occurrenceLabel`, and `empty`.

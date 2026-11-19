@@ -23,7 +23,9 @@ import { useForward } from "../composables/forward";
 import { useRefs } from "../composables/ref";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { useSync } from "../composables/sync";
 import { sortItems } from "../utils/browser";
+import { isSyncCurrent, selectSync, syncGroups } from "../utils/sync";
 import {
   BROWSER_EMPTY_TEXT,
   BROWSER_EVENTS,
@@ -40,6 +42,9 @@ const { service, pt } = defineProps<BrowserProps<T>>();
 const emit = defineEmits<BrowserEmits<T>>();
 
 useServiceEmits(service, BROWSER_EVENTS, emit);
+
+// The listing is kept alive while the browser is on screen.
+useSync(() => service.sync);
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
@@ -69,10 +74,26 @@ const settings = usePassthrough<BrowserPassthrough>(() => ({
       onSelect: (item) => service.sortBy(item.key),
     },
     sortTrigger: { as: Fab, label: BROWSER_SORT_LABEL },
+    // With a sync the button is the trigger of the sync menu, which
+    // refreshes at once from its first item.
     refresh: {
       as: Fab,
       label: BROWSER_REFRESH_LABEL,
-      onClick: () => service.fetch(),
+      ...(!service.sync && { onClick: () => service.fetch() }),
+    },
+    syncMenu: {
+      as: Menu,
+      groups: service.sync ? syncGroups(service.sync) : [],
+      align: "end",
+      // The item of the interval the sync is on is marked.
+      pt: {
+        item: (item) => ({
+          "data-current": isSyncCurrent(service.sync, item) ? "" : undefined,
+        }),
+      },
+      onSelect: (item) => {
+        if (service.sync) selectSync(service.sync, item, () => service.fetch());
+      },
     },
   },
 }));
@@ -110,7 +131,11 @@ const { Head, Folders, Files } = useForward({
   <div
     ref="el"
     class="f-group f-data-browser"
-    :class="{ 'f-data-browser-loading': service.loading }"
+    :class="{
+      'f-data-browser-loading': service.loading,
+      'f-data-browser-live': service.sync?.active,
+      'f-data-browser-syncing': service.sync?.syncing,
+    }"
   >
     <slot name="toolbar" v-bind="ctx">
       <div class="f-group f-data-browser-toolbar">
@@ -128,7 +153,21 @@ const { Head, Folders, Files } = useForward({
             <slot name="sortAppend" v-bind="{ ...ctx, item }" />
           </template>
         </Primitive>
-        <slot name="refresh" v-bind="ctx">
+        <Primitive v-if="service.sync" v-bind="settings.syncMenu">
+          <slot name="refresh" v-bind="ctx">
+            <Primitive v-bind="settings.refresh" />
+          </slot>
+          <template v-if="slots.syncPrepend" #itemPrepend="{ item }">
+            <slot name="syncPrepend" v-bind="{ ...ctx, item }" />
+          </template>
+          <template v-if="slots.syncLabel" #itemLabel="{ item }">
+            <slot name="syncLabel" v-bind="{ ...ctx, item }" />
+          </template>
+          <template v-if="slots.syncAppend" #itemAppend="{ item }">
+            <slot name="syncAppend" v-bind="{ ...ctx, item }" />
+          </template>
+        </Primitive>
+        <slot v-else name="refresh" v-bind="ctx">
           <Primitive v-bind="settings.refresh" />
         </slot>
       </div>

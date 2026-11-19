@@ -122,12 +122,61 @@ empty folder. `searchable: false` hides the search in a view and leaves
 `sortableColumns` are the columns that declare `sortable`: what a view
 lists as its sort options, each sorting through `sortBy(sortFieldFor(col))`.
 
+## Sync
+
+A browser refreshes by `fetch`. With a `refresh` in its wiring it also has
+a `sync`, a [`@zoobzio/sync`](../sync/) service over its container, and a
+visitor may keep the listing alive on an interval. Without one
+`service.sync` is `undefined`.
+
+The refresh is the sync's poll. It is handed what the fetch is, and
+`since`, the mark of the listing the browser holds, and answers one of three
+ways:
+
+```ts
+// One round trip: the endpoint the fetch asks, with `since`. It answers
+// nothing where nothing changed, and the listing as it now stands where
+// something did.
+refresh: async (params) => (await api.assets(params)) ?? null,
+
+// A cheap probe: `true` and the browser fetches again itself.
+refresh: ({ since }) => api.assetsChanged(since),
+```
+
+Nothing, or `false`, keeps the listing and the mark. A listing lands as a
+fetch's does, without `loading`, so a browser kept alive does not flicker,
+narrows the selection to it, and emits `updated`. One that comes back to a browser that has moved on
+since (a fetch began, or landed) is dropped.
+
+Every listing that lands marks the sync: with the result's own `since`
+where it names one (the server's reading of its clock, a version), and
+otherwise with the visitor's clock as the request was made. So `fetch` may
+return `{ folders, files, since }` and the next refresh is asked from exactly there.
+
+`config.sync` is the sync's config: the `intervals` a visitor may pick
+from and the `interval` the browser starts on, off by default. The sync
+polls only while a view watches it; see its README for the loop.
+
+```ts
+const synced = { ...config, sync: { interval: 30_000 } };
+const browser = new BrowserService(
+  "browser",
+  synced,
+  createBrowserState(synced),
+  {
+    fetch,
+    refresh,
+  },
+);
+const stop = browser.sync?.watch();
+```
+
 ## The state container
 
 The service reads and writes the `state` container: the listing, the load
 flags, the trail, the file sort, the selection (`selected` and
-`selectedFolders`), and the query's `clauses`,
-`draft`, and `suggest`. The container can be a
+`selectedFolders`), the query's `clauses`,
+`draft`, and `suggest`, and the sync's `interval`, `since`, and `syncing`. The container can be a
 plain object or a reactive proxy. The service replaces each member as a
 whole, so a proxy tracks every change.
 
@@ -137,15 +186,24 @@ reactive(createBrowserState()); // Vue
 useState(`browser-${id}`, () => createBrowserState()).value; // Nuxt, shared by id
 ```
 
+`createBrowserState(config)` starts the sync on the config's
+`sync.interval`.
+
 ## Snapshot and restore
 
 `snapshot()` is the browser as a visitor arranged it, as plain data:
-`sortField`, `sortDirection`, and the query's `clauses`. The trail, the
+`sortField`, `sortDirection`, the query's `clauses`, and the sync's
+`interval`. The trail, the
 listing, the selection, and the draft are not part of it.
 `restore(snapshot)` puts one in place in the folder the browser stands in,
 in one fetch; before `init` it fetches nothing. The pair is what
 [`@zoobzio/views`](../views/) reads and applies a saved view through. The
 clauses go through the query, so one it rejects is left out.
+
+The `interval` is the sync's, so a saved view carries how it keeps itself
+up to date: restoring one sets the interval through the sync, which starts
+its wait over, and an interval the sync does not offer is left out. A
+service with no sync keeps the interval its container holds.
 
 ## Middleware
 
@@ -165,7 +223,7 @@ new BrowserService(id, config, state, wiring, {
 the write lands. The return value removes the listener.
 
 - `change`: a field of the container was written. `{ field, before, after }`, narrowed by `field`.
-- `updated`: a fetch settled, success or failure. `{ id, path, folders, files }` — the key trail and section lengths.
+- `updated`: a fetch settled, success or failure, or a refresh landed a listing. `{ id, path, folders, files }` — the key trail and section lengths.
 - `navigated`: the trail changed through `open` or `navigate`. `{ id, path }`.
 - `filtered`: the query's clauses changed, by the search or by leaving the folder it was typed in. `{ id, query, filters }`.
 - `restored`: a snapshot replaced the arrangement. `{ id, snapshot }`.

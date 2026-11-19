@@ -21,7 +21,9 @@ import { resolveTexts } from "../utils/text";
  * as the service is built. A config that names no `rootLabel` takes the
  * contract's `browser.root`, and one that names no `literals` the query's
  * text literal under `browser.text`, so the root crumb and the search's
- * leading option read in the visitor's locale. The machine itself is
+ * leading option read in the visitor's locale. With a `refresh` among the
+ * options the browser has a sync, whose failed polls are logged as
+ * warnings. The machine itself is
  * `@zoobzio/browser`; the Vue browser renders it through its `service`
  * prop.
  */
@@ -29,8 +31,15 @@ export const createBrowser = <T>(
   id: string,
   options: BrowserOptions<T>,
 ): UseBrowser<T> => {
-  const { fetch, actions, folderActions, bulkActions, initial, ...rest } =
-    options;
+  const {
+    fetch,
+    refresh,
+    actions,
+    folderActions,
+    bulkActions,
+    initial,
+    ...rest
+  } = options;
   const files = split(actions);
   const folders = split(folderActions);
   const bulk = split(bulkActions);
@@ -46,6 +55,7 @@ export const createBrowser = <T>(
   };
   const wiring: Actions<T> = {
     fetch,
+    ...(refresh && { refresh }),
     actions: files.handlers,
     folderActions: folders.handlers,
     bulkActions: bulk.handlers,
@@ -54,7 +64,7 @@ export const createBrowser = <T>(
     const nuxt = useNuxtApp();
     const log = nuxt.$logger(id);
     const resolved = resolveTexts(nuxt.$prosary, config);
-    const state = accessBrowser<T>(id, initial);
+    const state = accessBrowser<T>(id, initial, config);
     const service = new BrowserService(id, resolved, state, wiring);
     service.on("updated", (event) => {
       log.debug("Browser updated", event);
@@ -71,6 +81,11 @@ export const createBrowser = <T>(
     service.on("restored", (event) => {
       log.debug("Browser restored", event);
       nuxt.callHook("browser:restored", event);
+    });
+    // A poll that fails is no one's to catch: it is logged, and the sync
+    // keeps its pace.
+    service.sync?.on("failed", ({ error }) => {
+      log.warn("Browser sync failed", { error });
     });
     return service;
   };

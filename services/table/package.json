@@ -38,6 +38,7 @@
     "@tanstack/table-core": "catalog:",
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",
+    "@zoobzio/sync": "workspace:*",
     "objectively": "catalog:"
   }
 }

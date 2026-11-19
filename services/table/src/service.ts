@@ -5,6 +5,8 @@ import type {
   Events,
   Listener,
   BulkAction,
+  FetchParams,
+  FetchResult,
   Options,
   Permission,
   RowAction,
@@ -16,12 +18,14 @@ import type {
   TableSlices,
 } from "./types";
 import type { Service as Query } from "@zoobzio/query";
+import type { Service as Sync } from "@zoobzio/sync";
 import type { Emitter } from "@zoobzio/kit";
 import type { Updater } from "@tanstack/table-core";
 
 import { entries } from "objectively";
 import { constructTable, functionalUpdate } from "@tanstack/table-core";
 import { QueryService } from "@zoobzio/query";
+import { SyncService } from "@zoobzio/sync";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   TABLE_DEFAULT_CURRENCY,
@@ -55,10 +59,15 @@ type SliceAtom<V> = {
  * whole. Each write emits `change`; a write of `pagination` or `sorting`
  * refetches, and a change of the query's clauses refetches from the first
  * page. `on` subscribes.
+ *
+ * Where the wiring names a `refresh`, the table has a sync: it polls the
+ * refresh for what changed since the page held was read, on the interval
+ * a visitor sets, and every page that lands marks it anew.
  */
 export class TableService<T extends RowData> implements Service<T> {
   readonly table: TableInstance<T>;
   readonly query: Query;
+  readonly sync: Sync | undefined;
 
   /** The actions the config names, whatever the permissions say. */
   private readonly named: { rows: RowAction<T>[]; bulk: BulkAction[] };
@@ -93,6 +102,7 @@ export class TableService<T extends RowData> implements Service<T> {
       enableRowSelection,
       literals,
       initialClauses: _e,
+      sync,
       locale: _l,
       currency: _c,
       timeZone: _z,
@@ -172,6 +182,12 @@ export class TableService<T extends RowData> implements Service<T> {
       this.state,
     );
     this.query.on("changed", () => this.refilter());
+
+    this.sync = wiring.refresh
+      ? new SyncService(`${id}-sync`, sync ?? {}, this.state, {
+          poll: (since) => this.refresh(since),
+        })
+      : undefined;
   }
 
   on<E extends Event<T>>(event: E, listener: Listener<T, E>): () => void {
@@ -285,6 +301,7 @@ export class TableService<T extends RowData> implements Service<T> {
       columnSizing: this.state.columnSizing,
       pageSize: this.state.pagination.pageSize,
       clauses: this.state.clauses,
+      interval: this.state.interval,
     };
   }
 
@@ -299,6 +316,7 @@ export class TableService<T extends RowData> implements Service<T> {
     this.state.columnVisibility = snapshot.columnVisibility;
     this.state.columnSizing = snapshot.columnSizing;
     this.state.pagination = { pageIndex: 0, pageSize: snapshot.pageSize };
+    this.sync?.setInterval(snapshot.interval);
     this.restoring = true;
     try {
       this.query.replace(snapshot.clauses);
@@ -320,24 +338,62 @@ export class TableService<T extends RowData> implements Service<T> {
 
   async fetch(): Promise<void> {
     this.state.loading = true;
+    const at = now();
     try {
-      const result = await this.wiring.fetch(
-        {
-          pagination: this.state.pagination,
-          sorting: this.state.sorting,
-          query: this.query.text,
-          filters: this.query.filters,
-        },
-        this,
-      );
-      this.state.data = result.data;
-      this.state.rowCount = result.rowCount;
+      this.land(await this.wiring.fetch(this.params(), this), at);
     } finally {
       this.state.loading = false;
       this.emitter.emit("updated", { id: this.id, rowCount: this.rowCount });
     }
   }
+
+  /** What the fetch is handed, as the container stands. */
+  private params(): FetchParams {
+    return {
+      pagination: this.state.pagination,
+      sorting: this.state.sorting,
+      query: this.query.text,
+      filters: this.query.filters,
+    };
+  }
+
+  /**
+   * Lands a page, and marks the sync with it: the result's own `since`,
+   * or `at`, the time its request was made, so a change made while the
+   * request was out is not passed over.
+   */
+  private land(result: FetchResult<T>, at: string): void {
+    this.state.data = result.data;
+    this.state.rowCount = result.rowCount;
+    this.sync?.mark(result.since ?? at);
+  }
+
+  /**
+   * The sync's poll: asks the wiring's refresh what changed since the
+   * page held was read, and lands the page it answers with, or fetches it
+   * where the answer is `true`. Quiet: `loading` is the fetch's alone, so
+   * a table kept alive does not flicker. Nothing before the first fetch,
+   * or while one is out. A page that comes back to a table that has moved
+   * on since (a fetch began, or landed) is dropped: the fetch is the
+   * newer word.
+   */
+  private async refresh(since: string): Promise<void> {
+    const refresh = this.wiring.refresh;
+    if (!refresh || !this.initialized || this.loading) return;
+    const at = now();
+    const params = this.params();
+    const answer = await refresh({ ...params, since }, this);
+    if (!answer) return;
+    const result =
+      answer === true ? await this.wiring.fetch(params, this) : answer;
+    if (this.loading || this.state.since !== since) return;
+    this.land(result, at);
+    this.emitter.emit("updated", { id: this.id, rowCount: this.rowCount });
+  }
 }
+
+/** The time a request is made, as the mark a page takes without its own. */
+const now = (): string => new Date().toISOString();
 
 /** Whether a write to a slice leaves it as it was, member for member. */
 const same = (before: unknown, after: unknown): boolean =>

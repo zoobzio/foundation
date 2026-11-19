@@ -33,10 +33,12 @@ const params = computed(() => ({
           sort. Drag a header by its grip to move the column, drag its edge to
           resize it. Pin a column from the pin in its header: it holds its side
           of the table while the others scroll beneath it, as the order's number
-          does from the start and a row's actions always do. The tabs are saved
-          views of all of that: change the table and the active view is marked
-          as edited, to save, to save as a view of your own, or to discard from
-          the menu beside them.
+          does from the start and a row's actions always do. The refresh opens a
+          menu: refresh now, or pick an interval and the table keeps itself up
+          to date, asking the backend what changed since its page was read, as
+          new orders come in. The tabs are saved views of all of that: change
+          the table and the active view is marked as edited, to save, to save as
+          a view of your own, or to discard from the menu beside them.
         </p>
       </div>
     </header>

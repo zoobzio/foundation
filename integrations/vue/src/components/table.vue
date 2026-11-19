@@ -14,6 +14,7 @@ import TableColumns from "./table-columns.vue";
 import TableHead from "./table-head.vue";
 import Autocomplete from "./autocomplete.vue";
 import Fab from "./fab.vue";
+import Menu from "./menu.vue";
 import Pagination from "./pagination.vue";
 import Scroller from "./scroller.vue";
 
@@ -24,11 +25,13 @@ import { useServiceEmits } from "../composables/events";
 import { useForward } from "../composables/forward";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { useSync } from "../composables/sync";
 import {
   TABLE_EVENTS,
   TABLE_REFRESH_LABEL,
   TABLE_SEARCH_PLACEHOLDER,
 } from "../constants/table";
+import { isSyncCurrent, selectSync, syncGroups } from "../utils/sync";
 import { columnWidth, isSelectable, layoutColumns } from "../utils/table";
 </script>
 
@@ -38,6 +41,9 @@ const { service, pt } = defineProps<TableProps<T>>();
 const emit = defineEmits<TableEmits<T>>();
 
 useServiceEmits(service, TABLE_EVENTS, emit);
+
+// The page is kept alive while the table is on screen.
+useSync(() => service.sync);
 
 const el = useTemplateRef<HTMLDivElement>("el");
 
@@ -62,10 +68,26 @@ const settings = usePassthrough<TablePassthrough>(() => ({
       service: service.query,
       placeholder: TABLE_SEARCH_PLACEHOLDER,
     },
+    // With a sync the button is the trigger of the sync menu, which
+    // refreshes at once from its first item.
     refresh: {
       as: Fab,
       label: TABLE_REFRESH_LABEL,
-      onClick: () => service.fetch(),
+      ...(!service.sync && { onClick: () => service.fetch() }),
+    },
+    syncMenu: {
+      as: Menu,
+      groups: service.sync ? syncGroups(service.sync) : [],
+      align: "end",
+      // The item of the interval the sync is on is marked.
+      pt: {
+        item: (item) => ({
+          "data-current": isSyncCurrent(service.sync, item) ? "" : undefined,
+        }),
+      },
+      onSelect: (item) => {
+        if (service.sync) selectSync(service.sync, item, () => service.fetch());
+      },
     },
     scroller: {
       as: Scroller,
@@ -114,6 +136,8 @@ const { THead, TBody } = useForward({
     class="f-group f-data-table"
     :class="{
       'f-data-table-loading': service.loading,
+      'f-data-table-live': service.sync?.active,
+      'f-data-table-syncing': service.sync?.syncing,
       'f-data-table-selectable': isSelectable(table),
       'f-data-table-actionable': service.actions.length > 0,
     }"
@@ -132,9 +156,25 @@ const { THead, TBody } = useForward({
             <slot name="columns" v-bind="slotProps" />
           </template>
         </TableColumns>
-        <slot v-if="service.can('refresh')" name="refresh" v-bind="ctx">
-          <Primitive v-bind="settings.refresh" />
-        </slot>
+        <template v-if="service.can('refresh')">
+          <Primitive v-if="service.sync" v-bind="settings.syncMenu">
+            <slot name="refresh" v-bind="ctx">
+              <Primitive v-bind="settings.refresh" />
+            </slot>
+            <template v-if="slots.syncPrepend" #itemPrepend="{ item }">
+              <slot name="syncPrepend" v-bind="{ ...ctx, item }" />
+            </template>
+            <template v-if="slots.syncLabel" #itemLabel="{ item }">
+              <slot name="syncLabel" v-bind="{ ...ctx, item }" />
+            </template>
+            <template v-if="slots.syncAppend" #itemAppend="{ item }">
+              <slot name="syncAppend" v-bind="{ ...ctx, item }" />
+            </template>
+          </Primitive>
+          <slot v-else name="refresh" v-bind="ctx">
+            <Primitive v-bind="settings.refresh" />
+          </slot>
+        </template>
       </div>
     </slot>
 

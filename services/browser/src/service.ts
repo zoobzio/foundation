@@ -2,6 +2,8 @@ import type {
   Actions,
   BrowserColumn,
   BrowserCrumb,
+  BrowserFetchParams,
+  BrowserFetchResult,
   BrowserFolder,
   Config,
   Event,
@@ -14,10 +16,12 @@ import type {
   State,
 } from "./types";
 import type { Service as Query } from "@zoobzio/query";
+import type { Service as Sync } from "@zoobzio/sync";
 import type { Emitter, Text } from "@zoobzio/kit";
 
 import { entries } from "objectively";
 import { QueryService } from "@zoobzio/query";
+import { SyncService } from "@zoobzio/sync";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   BROWSER_DEFAULT_CURRENCY,
@@ -39,6 +43,11 @@ import { fields, prune } from "./util";
  * middleware. The container can be a plain object or a reactive proxy; the
  * service replaces each member as a whole. Each write emits `change`, and
  * the domain methods emit `updated`, `navigated`, and `filtered`. `on` subscribes.
+ *
+ * Where the wiring names a `refresh`, the browser has a sync: it polls the
+ * refresh for what changed in the folder since the listing held was read,
+ * on the interval a visitor sets, and every listing that lands marks it
+ * anew.
  */
 export class BrowserService<T> implements Service<T> {
   readonly columns: BrowserColumn<T>[];
@@ -47,6 +56,7 @@ export class BrowserService<T> implements Service<T> {
   readonly folderActions: Service<T>["folderActions"];
   readonly bulkActions: Service<T>["bulkActions"];
   readonly query: Query;
+  readonly sync: Sync | undefined;
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
@@ -99,6 +109,12 @@ export class BrowserService<T> implements Service<T> {
       this.state,
     );
     this.query.on("changed", () => this.refilter());
+
+    this.sync = wiring.refresh
+      ? new SyncService(`${id}-sync`, config.sync ?? {}, this.state, {
+          poll: (since) => this.refresh(since),
+        })
+      : undefined;
   }
 
   on<E extends Event<T>>(event: E, listener: Listener<T, E>): () => void {
@@ -400,12 +416,14 @@ export class BrowserService<T> implements Service<T> {
       sortField: this.state.sortField,
       sortDirection: this.state.sortDirection,
       clauses: this.state.clauses,
+      interval: this.state.interval,
     };
   }
 
   restore(snapshot: Snapshot): void {
     this.state.sortField = snapshot.sortField;
     this.state.sortDirection = snapshot.sortDirection;
+    this.sync?.setInterval(snapshot.interval);
     this.moving = true;
     try {
       this.query.replace(snapshot.clauses);
@@ -427,29 +445,71 @@ export class BrowserService<T> implements Service<T> {
 
   async fetch(): Promise<void> {
     this.state.loading = true;
+    const at = now();
     try {
-      const result = await this.wiring.fetch(
-        {
-          path: this.pathKeys,
-          sortField: this.sortField,
-          sortDirection: this.sortDirection,
-          query: this.query.text,
-          filters: this.query.filters,
-        },
-        this,
-      );
-      // The order of each section is the fetch's to decide.
-      this.state.folders = result.folders;
-      this.state.files = result.files;
-      this.pruneSelection();
+      this.land(await this.wiring.fetch(this.params(), this), at);
     } finally {
       this.state.loading = false;
-      this.emitter.emit("updated", {
-        id: this.id,
-        path: this.pathKeys,
-        folders: this.folders.length,
-        files: this.files.length,
-      });
+      this.emitUpdated();
     }
   }
+
+  /** What the fetch is handed, as the container stands. */
+  private params(): BrowserFetchParams {
+    return {
+      path: this.pathKeys,
+      sortField: this.sortField,
+      sortDirection: this.sortDirection,
+      query: this.query.text,
+      filters: this.query.filters,
+    };
+  }
+
+  /**
+   * Lands a listing, and marks the sync with it: the result's own `since`,
+   * or `at`, the time its request was made, so a change made while the
+   * request was out is not passed over.
+   */
+  private land(result: BrowserFetchResult<T>, at: string): void {
+    // The order of each section is the fetch's to decide.
+    this.state.folders = result.folders;
+    this.state.files = result.files;
+    this.pruneSelection();
+    this.sync?.mark(result.since ?? at);
+  }
+
+  private emitUpdated(): void {
+    this.emitter.emit("updated", {
+      id: this.id,
+      path: this.pathKeys,
+      folders: this.folders.length,
+      files: this.files.length,
+    });
+  }
+
+  /**
+   * The sync's poll: asks the wiring's refresh what changed in the folder
+   * since the listing held was read, and lands the listing it answers
+   * with, or fetches it where the answer is `true`. Quiet: `loading` is
+   * the fetch's alone, so a browser kept alive does not flicker. Nothing
+   * before the first fetch, or while one is out. A listing that comes back
+   * to a browser that has moved on since (a fetch began, or landed) is
+   * dropped: the fetch is the newer word.
+   */
+  private async refresh(since: string): Promise<void> {
+    const refresh = this.wiring.refresh;
+    if (!refresh || !this.initialized || this.loading) return;
+    const at = now();
+    const params = this.params();
+    const answer = await refresh({ ...params, since }, this);
+    if (!answer) return;
+    const result =
+      answer === true ? await this.wiring.fetch(params, this) : answer;
+    if (this.loading || this.state.since !== since) return;
+    this.land(result, at);
+    this.emitUpdated();
+  }
 }
+
+/** The time a request is made, as the mark a listing takes without its own. */
+const now = (): string => new Date().toISOString();

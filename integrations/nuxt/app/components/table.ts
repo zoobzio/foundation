@@ -5,7 +5,10 @@
 // Autocomplete with the `magic` icon, the `/` key hint, and the `/` key
 // focusing it) as the search, the layer's Scroller around the `table`
 // element, and the layer's Pagination.
-// Its Fab slots draw the `refresh`, `columns`, and `actions` icons; the
+// Its Fab slots draw the `refresh`, `columns`, and `actions` icons; where
+// the table has a sync, the menu behind the refresh is the layer's Menu,
+// its items in the visitor's locale and `check` after the interval the
+// sync is on; the
 // head draws `drag` on each handle, a column's own `icon` before its
 // header, and `sort-asc` or `sort-desc` after a sorted header; a column's
 // pin menu is the layer's Menu, opened by `pin` (`unpin` on a pinned
@@ -38,6 +41,7 @@ import Scroller from "./scroller";
 import TableSearch from "./table-search";
 import { icon, iconOf, iconPart } from "./icon";
 import { cellSlots } from "./cell";
+import { syncLabel, syncMark } from "./sync";
 import { text, textSlot } from "./text";
 
 /** The icon of each item of a column's pin menu. */
@@ -56,6 +60,7 @@ export default wrap(Core, {
       ...pt?.search,
     },
     refresh: { label: text("table.refresh"), ...pt?.refresh },
+    syncMenu: { as: Menu, ...pt?.syncMenu },
     pagination: { as: Pagination, ...pt?.pagination },
     scroller: { as: Scroller, ...pt?.scroller },
     head: layer<TableHeadPassthrough<RowData>>(pt?.head, {
@@ -96,6 +101,8 @@ export default wrap(Core, {
   slots: {
     ...cellSlots<TableCellContext<RowData>>(({ table }) => table),
     refresh: ({ settings }) => iconPart(settings.refresh, "refresh"),
+    syncLabel: ({ item }) => syncLabel(item),
+    syncAppend: ({ table, item }) => syncMark(table.sync, item),
     columns: ({ settings }) => iconPart(settings.trigger, "columns"),
     actions: ({ settings }) => iconPart(settings.actionsTrigger, "actions"),
     dragPrepend: () => [icon("drag")],

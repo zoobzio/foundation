@@ -1,3 +1,5 @@
+import type { MenuEmits, MenuProps } from "./menu";
+import type { SyncItem } from "./sync";
 import type { Text } from "@zoobzio/kit";
 import type { AutocompleteEmits, AutocompleteProps } from "./autocomplete";
 import type { FabEmits, FabProps } from "./fab";
@@ -88,8 +90,10 @@ export interface CalendarDay {
 /**
  * The parts of the calendar that accept passthrough. `search` is the
  * autocomplete over the calendar's search machine, where the service is
- * searchable, and `refresh` refetches the range: the controls, a row of
- * their own over the calendar. `toolbar` is reka's toolbar root, which
+ * searchable, and `refresh` refetches the range, or where the calendar
+ * has a sync is the trigger of `syncMenu`, which refreshes at once or sets
+ * the interval the range is kept alive on: the controls, a row of their
+ * own over the calendar. `toolbar` is reka's toolbar root, which
  * gives the tools one tab stop and arrow-key focus; `separator` is the
  * divider between two groups; `tool` is each button, built per tool, a
  * Fab rendered through `Primitive` with the tool's label as its
@@ -100,6 +104,7 @@ export interface CalendarDay {
 export type CalendarPassthrough = {
   search: Rendered<AutocompleteProps, AutocompleteEmits>;
   refresh: Rendered<FabProps, FabEmits>;
+  syncMenu: Rendered<MenuProps<SyncItem>, MenuEmits<SyncItem>>;
   toolbar: Passthrough<ToolbarRootProps & HTMLAttributes>;
   separator: PassthroughIter<
     CalendarGroup,
@@ -167,7 +172,9 @@ export type CalendarContext<I, O> = {
 /**
  * Slots of the calendar. `controls` replaces the row over the calendar,
  * `search` its search, where the service is searchable, and `refresh` its
- * refresh button. `toolbar` replaces the whole toolbar;
+ * refresh button, which is the sync menu's trigger where the calendar has
+ * a sync; `syncPrepend` and `syncAppend` sit around each of that menu's
+ * items, and `syncLabel` replaces an item's label. `toolbar` replaces the whole toolbar;
  * `toolbarPrepend` and `toolbarAppend` add controls before and after its
  * tools, inside its focus order; `separator` replaces the divider before a
  * group, given the group; `heading` replaces the heading; `tool` replaces
@@ -184,6 +191,9 @@ export type CalendarSlots<I, O> = {
   controls?: (props: CalendarContext<I, O>) => VNode[];
   search?: (props: CalendarContext<I, O>) => VNode[];
   refresh?: (props: CalendarContext<I, O>) => VNode[];
+  syncPrepend?: (props: CalendarContext<I, O> & { item: SyncItem }) => VNode[];
+  syncLabel?: (props: CalendarContext<I, O> & { item: SyncItem }) => VNode[];
+  syncAppend?: (props: CalendarContext<I, O> & { item: SyncItem }) => VNode[];
   toolbar?: (props: CalendarContext<I, O>) => VNode[];
   toolbarPrepend?: (props: CalendarContext<I, O>) => VNode[];
   toolbarAppend?: (props: CalendarContext<I, O>) => VNode[];

@@ -15,6 +15,11 @@ import type {
   Suggest,
 } from "@zoobzio/query";
 import type {
+  Config as SyncConfig,
+  Service as Sync,
+  State as SyncState,
+} from "@zoobzio/sync";
+import type {
   Change as KitChange,
   ChangeEvents,
   Changers as KitChangers,
@@ -64,8 +69,26 @@ export type FetchParams = {
 };
 
 /**
+ * What the refresh is handed: what the fetch is, and `since`, the mark of
+ * the entries the calendar holds.
+ */
+export type RefreshParams = FetchParams & {
+  since: string;
+};
+
+/**
+ * What a refresh answers. Nothing, or `false`: nothing changed, and the
+ * calendar keeps its entries. `true`: something did, and the calendar
+ * fetches the range again itself. Anything else is the entries of the
+ * range as they now stand, in the consumer's form, read in as a fetch's
+ * are.
+ */
+export type RefreshResult<I> = I | boolean | null | undefined | void;
+
+/**
  * The calendar as a visitor arranged it: the part of the container a
- * saved view holds, the view and the query's clauses. The date, the
+ * saved view holds, the view, the query's clauses, and the interval of
+ * the sync. The date, the
  * entries, the selection, and the draft are not part of it: a saved view
  * opens on the day the calendar stands on. Plain data, so it survives
  * JSON.
@@ -73,6 +96,7 @@ export type FetchParams = {
 export type Snapshot = {
   view: View;
   clauses: Clause[];
+  interval: number;
 };
 
 /**
@@ -80,6 +104,12 @@ export type Snapshot = {
  * field's `values` may be a provider.
  */
 export type Config = {
+  /**
+   * The sync's config, handed to it as given: the intervals a visitor may
+   * pick from, and the one the calendar starts on. Read only where the
+   * actions name a `refresh`.
+   */
+  sync?: SyncConfig;
   /** The views the calendar offers. Defaults to all of them. */
   views?: View[];
   /** The view a fresh container starts in. Defaults to the first of `views`. */
@@ -158,14 +188,15 @@ export type Scope = "one" | "following" | "all";
  * The state container the service reads and writes: the view, the day it
  * is anchored on, the entries the range loaded, the fetch flags, the
  * revision, which counts every change to the entries, the selected
- * occurrence, and the query's slice: its clauses, its draft, and what a
- * values provider has given for it. The entries are JSCalendar, plain JSON, so the container
+ * occurrence, the query's slice: its clauses, its draft, and what a
+ * values provider has given for it, and the sync's: its interval, its
+ * mark, and whether a poll is out. The entries are JSCalendar, plain JSON, so the container
  * carries them across SSR as it stands. The occurrences are not here:
  * they are read from the entries and the range. The container can be a
  * plain object or a reactive proxy; the service replaces each member as a
  * whole.
  */
-export type State = {
+export type State = SyncState & {
   view: View;
   date: Day;
   entries: Entry[];
@@ -236,6 +267,16 @@ export type Actions<I, O> = Codec<I, O> & {
    */
   fetch: (params: FetchParams, service: Service<I, O>) => Promise<I>;
   /**
+   * The poll of the calendar's sync: asked what changed in the range
+   * since the entries the calendar holds were read. With it the calendar
+   * has a `sync`, and a visitor may keep the range alive on an interval;
+   * without it the calendar refreshes by `fetch` alone.
+   */
+  refresh?: (
+    params: RefreshParams,
+    service: Service<I, O>,
+  ) => RefreshResult<I> | Promise<RefreshResult<I>>;
+  /**
    * Persists a change the service has already applied to its entries. A
    * rejection puts the entries back as they were and reaches the caller
    * of the command. Without it a change stays in the container, and
@@ -253,7 +294,8 @@ export type Actions<I, O> = Codec<I, O> & {
  *
  * - `change`: a field of the container was written.
  * - `navigated`: the view or the date moved, and with them the range.
- * - `loaded`: a fetch settled, success or failure, or a source was loaded.
+ * - `loaded`: a fetch settled, success or failure, a source was loaded, or
+ *   a refresh landed the entries.
  * - `changed`: a command changed the entries, and the save, if any, settled.
  * - `selected`: the selected occurrence changed.
  * - `filtered`: the query's clauses changed.
@@ -283,6 +325,14 @@ export type Service<I, O> = {
   readonly context: Context;
   readonly views: View[];
   readonly searchable: boolean;
+
+  /**
+   * The sync machine, where the actions name a `refresh`: the interval a
+   * visitor keeps the range alive on. It polls the refresh with the mark
+   * of the entries held, and every load marks it anew. `undefined`
+   * without a refresh.
+   */
+  readonly sync: Sync | undefined;
 
   /**
    * The query machine over the config's fields. A change to its clauses

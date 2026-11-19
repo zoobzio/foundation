@@ -426,6 +426,13 @@ const users = useUsers(() => ({
 | `createCalendar` | `accessCalendar` | `calendar:navigated`, `calendar:loaded`, `calendar:changed`, `calendar:selected`, `calendar:filtered`, `calendar:restored` |
 | `createViews`    | `accessViews`    | `views:initialized`, `views:selected`, `views:saved`, `views:renamed`, `views:removed`, `views:reverted`, `views:failed`   |
 
+`createTable`, `createBrowser`, and `createCalendar` take a `refresh` beside the `fetch`: with
+it the service has a sync, the refresh button opens the sync menu, its
+items read in the visitor's locale (`sync.now`, `sync.off`, `sync.seconds`,
+`sync.minutes`) with `check` after the interval the sync is on, and a poll
+that fails is logged as a warning under the service's id. The interval a
+visitor picks lives in the id's shared container, so it outlives the page.
+
 Every relayed payload carries the service's `id`. `useHooks` subscribes
 for one instance: each listener fires for events with that id only, and
 the subscriptions leave with the calling scope, so call it in setup.
@@ -447,7 +454,9 @@ takes what the views are over, anything with a `snapshot` and a `restore`,
 which a table, a browser, and a calendar service each have;
 `TABLE_VIEW_SCHEMA`, `BROWSER_VIEW_SCHEMA`, and `CALENDAR_VIEW_SCHEMA` are
 the Zod schemas of what each yields, and `TableView`, `BrowserView`, and
-`CalendarView` their types. Without a `load`, a `save`, and
+`CalendarView` their types. Each carries the sync's `interval`, off where
+a view stored before it names none, so a saved view keeps itself up to
+date as it was saved to. Without a `load`, a `save`, and
 a `remove` the views live in the store alone.
 
 ```ts

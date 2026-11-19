@@ -3,7 +3,7 @@
 // tests what it computes: every test drives the service's own part — the
 // container as the owner of the table's state, the fetch a write causes,
 // the query, the actions, the events.
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TableService } from "../src/service";
 import { createTableState } from "../src/state";
 import { TABLE_DEFAULT_PERMISSIONS } from "../src/constants";
@@ -768,6 +768,7 @@ describe("views", () => {
     columnSizing: { name: 240 },
     pageSize: 25,
     clauses: [{ kind: "filter" as const, key: "status", value: "Active" }],
+    interval: 0,
   };
 
   it("snapshots the arrangement, without the page or the selection", () => {
@@ -785,6 +786,7 @@ describe("views", () => {
       columnSizing: {},
       pageSize: 10,
       clauses: [],
+      interval: 0,
     });
   });
 
@@ -987,10 +989,260 @@ describe("permissions", () => {
       columnSizing: {},
       pageSize: 50,
       clauses: [],
+      interval: 0,
     });
     expect(state.sorting).toEqual([{ id: "name", desc: true }]);
     expect(state.columnOrder).toEqual(["amount", "id"]);
     expect(state.columnPinning).toEqual({ start: [], end: ["name"] });
     expect(state.pagination.pageSize).toBe(50);
+  });
+});
+
+const synced = (
+  refresh: NonNullable<Actions<FakeRow>["refresh"]>,
+  config: Partial<Config<FakeRow>> = {},
+) => {
+  const actions = { ...makeActions(), refresh: vi.fn(refresh) };
+  return { ...makeService({ actions, config }), actions };
+};
+
+describe("sync", () => {
+  const AT = "2026-01-01T00:00:00.000Z";
+  const fresh: FakeRow[] = fakeRows.slice(0, 1);
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(AT));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("has no sync without a refresh", () => {
+    expect(makeService().service.sync).toBeUndefined();
+  });
+
+  it("has a sync over the container with one, on the config's interval", () => {
+    const { service, state } = synced(() => false, {
+      sync: { intervals: [5_000], interval: 5_000 },
+    });
+    expect(service.sync?.id).toBe("test-table-sync");
+    expect(service.sync?.intervals).toEqual([5_000]);
+    expect(service.sync?.interval).toBe(5_000);
+    service.sync?.setInterval(0);
+    expect(state.interval).toBe(0);
+  });
+
+  it("marks a fetch with the time its request was made", async () => {
+    const { service, state, actions } = synced(() => false);
+    actions.fetch.mockImplementationOnce(async () => {
+      vi.setSystemTime(new Date("2026-01-01T00:00:09.000Z"));
+      return { data: fakeRows, rowCount: 40 };
+    });
+    await service.init();
+    expect(state.since).toBe(AT);
+  });
+
+  it("marks a fetch with the since its result names", async () => {
+    const { service, state, actions } = synced(() => false);
+    actions.fetch.mockResolvedValueOnce({
+      data: fakeRows,
+      rowCount: 40,
+      since: "v1",
+    });
+    await service.init();
+    expect(state.since).toBe("v1");
+  });
+
+  it("hands the refresh the fetch's params and the mark", async () => {
+    const { service, actions } = synced(() => false);
+    await service.init();
+    await service.sync?.poll();
+    expect(actions.refresh).toHaveBeenCalledExactlyOnceWith(
+      {
+        pagination: { pageIndex: 0, pageSize: 10 },
+        sorting: [],
+        query: "",
+        filters: [],
+        since: AT,
+      },
+      service,
+    );
+  });
+
+  it("keeps the page, and the mark, where nothing changed", async () => {
+    for (const answer of [false, null, undefined]) {
+      const { service, state, actions, updated } = synced(() => answer);
+      await service.init();
+      updated.mockClear();
+      vi.setSystemTime(new Date("2026-01-01T00:01:00.000Z"));
+      await service.sync?.poll();
+      expect(state.data).toBe(fakeRows);
+      expect(state.since).toBe(AT);
+      expect(actions.fetch).toHaveBeenCalledOnce();
+      expect(updated).not.toHaveBeenCalled();
+      vi.setSystemTime(new Date(AT));
+    }
+  });
+
+  it("lands the page a refresh answers with, quietly", async () => {
+    const { service, state, actions, updated } = synced(async () => ({
+      data: fresh,
+      rowCount: 1,
+    }));
+    await service.init();
+    updated.mockClear();
+    const loading: boolean[] = [];
+    service.on("change", (change) => {
+      if (change.field === "loading") loading.push(change.after);
+    });
+    vi.setSystemTime(new Date("2026-01-01T00:01:00.000Z"));
+    await service.sync?.poll();
+    expect(state.data).toBe(fresh);
+    expect(state.rowCount).toBe(1);
+    expect(state.since).toBe("2026-01-01T00:01:00.000Z");
+    expect(actions.fetch).toHaveBeenCalledOnce();
+    expect(loading).toEqual([]);
+    expect(updated).toHaveBeenCalledExactlyOnceWith({
+      id: "test-table",
+      rowCount: 1,
+    });
+  });
+
+  it("fetches the page itself where the refresh answers true", async () => {
+    const { service, state, actions } = synced(() => true);
+    await service.init();
+    actions.fetch.mockResolvedValueOnce({ data: fresh, rowCount: 1 });
+    await service.sync?.poll();
+    expect(actions.fetch).toHaveBeenCalledTimes(2);
+    expect(state.data).toBe(fresh);
+  });
+
+  it("polls nothing before the first fetch", async () => {
+    const { service, state, actions } = synced(() => true);
+    state.since = AT;
+    await service.sync?.poll();
+    expect(actions.refresh).not.toHaveBeenCalled();
+  });
+
+  it("drops a page that comes back to a table that has moved on", async () => {
+    let settle: (page: FetchResult<FakeRow>) => void = () => {};
+    const { service, state } = synced(
+      () => new Promise<FetchResult<FakeRow>>((resolve) => (settle = resolve)),
+    );
+    await service.init();
+    const out = service.sync?.poll();
+    vi.setSystemTime(new Date("2026-01-01T00:00:05.000Z"));
+    await service.fetch();
+    settle({ data: fresh, rowCount: 1 });
+    await out;
+    expect(state.data).toBe(fakeRows);
+    expect(state.since).toBe("2026-01-01T00:00:05.000Z");
+  });
+
+  it("drops a page that comes back while a fetch is out", async () => {
+    let settle: (page: FetchResult<FakeRow>) => void = () => {};
+    const { service, state, actions } = synced(
+      () => new Promise<FetchResult<FakeRow>>((resolve) => (settle = resolve)),
+    );
+    await service.init();
+    const out = service.sync?.poll();
+    actions.fetch.mockReturnValueOnce(new Promise(() => {}));
+    void service.fetch();
+    settle({ data: fresh, rowCount: 1 });
+    await out;
+    expect(state.data).toBe(fakeRows);
+  });
+
+  it("emits failed on the sync for a refresh that rejects", async () => {
+    const error = new Error("down");
+    const { service, state } = synced(async () => {
+      throw error;
+    });
+    const failed = vi.fn();
+    service.sync?.on("failed", failed);
+    await service.init();
+    await service.sync?.poll();
+    expect(failed).toHaveBeenCalledExactlyOnceWith({
+      id: "test-table-sync",
+      error,
+    });
+    expect(state.data).toBe(fakeRows);
+  });
+
+  it("keeps the page alive on the interval while watched", async () => {
+    const { service, actions } = synced(() => false, {
+      sync: { interval: 10_000 },
+    });
+    await service.init();
+    const stop = service.sync?.watch();
+    await vi.advanceTimersByTimeAsync(9_000);
+    await service.fetch();
+    await vi.advanceTimersByTimeAsync(9_999);
+    expect(actions.refresh).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(actions.refresh).toHaveBeenCalledOnce();
+    stop?.();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(actions.refresh).toHaveBeenCalledOnce();
+  });
+});
+
+describe("sync in a view", () => {
+  const live = (interval: number) => ({
+    sorting: [],
+    columnOrder: [],
+    columnPinning: { start: [], end: [] },
+    columnVisibility: {},
+    columnSizing: {},
+    pageSize: 10,
+    clauses: [],
+
+    interval,
+  });
+
+  it("snapshots the interval the sync is on", () => {
+    const { service } = synced(() => false);
+    service.sync?.setInterval(30_000);
+    expect(service.snapshot().interval).toBe(30_000);
+  });
+
+  it("restores the interval through the sync, so the wait starts over on it", async () => {
+    vi.useFakeTimers();
+    try {
+      const { service, actions } = synced(() => false);
+      await service.init();
+      const changed = vi.fn();
+      service.sync?.on("changed", changed);
+      const stop = service.sync?.watch();
+      service.restore(live(10_000));
+      expect(service.snapshot().interval).toBe(10_000);
+      expect(changed).toHaveBeenCalledExactlyOnceWith({
+        id: "test-table-sync",
+        interval: 10_000,
+      });
+      await vi.advanceTimersByTimeAsync(10_000);
+      expect(actions.refresh).toHaveBeenCalledOnce();
+      service.restore(live(0));
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(actions.refresh).toHaveBeenCalledOnce();
+      stop?.();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("leaves out an interval the sync does not offer", () => {
+    const { service } = synced(() => false);
+    service.sync?.setInterval(30_000);
+    service.restore(live(1));
+    expect(service.snapshot().interval).toBe(30_000);
+  });
+
+  it("keeps the interval it holds where there is no sync to set it", () => {
+    const { service } = makeService();
+    service.restore(live(30_000));
+    expect(service.snapshot().interval).toBe(0);
   });
 });

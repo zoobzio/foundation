@@ -5,6 +5,7 @@ import type {
   Day,
   Event,
   Events,
+  FetchParams,
   Listener,
   Occurrence,
   Options,
@@ -18,9 +19,11 @@ import type {
 import type { Entry, LocalDateTime, PatchObject, Weekday } from "./jscalendar";
 import type { Found } from "./recur";
 import type { Service as Query } from "@zoobzio/query";
+import type { Service as Sync } from "@zoobzio/sync";
 import type { Emitter } from "@zoobzio/kit";
 
 import { QueryService } from "@zoobzio/query";
+import { SyncService } from "@zoobzio/sync";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   CALENDAR_DEFAULT_FIRST_DAY_OF_WEEK,
@@ -76,11 +79,14 @@ export class CalendarService<I, O> implements Service<I, O> {
   public readonly context: Context;
   public readonly views: View[];
   public readonly query: Query;
+  public readonly sync: Sync | undefined;
 
   private readonly state: State;
   private readonly emitter: Emitter<Events<O>> = makeEmitter();
   private readonly firstDayOfWeek: Weekday;
   private request = 0;
+  /** How many saves are out: a refresh lands nothing over one. */
+  private saving = 0;
   private read: Read | null = null;
   /**
    * Set while a snapshot is restored: the restore fetches once itself, so
@@ -114,6 +120,12 @@ export class CalendarService<I, O> implements Service<I, O> {
       this.state,
     );
     this.query.on("changed", () => this.refilter());
+
+    this.sync = actions.refresh
+      ? new SyncService(`${id}-sync`, config.sync ?? {}, this.state, {
+          poll: (since) => this.refresh(since),
+        })
+      : undefined;
 
     // A non-extensible object is never wrapped by a reactive proxy (Vue
     // skips non-extensible targets), so the occurrences read last stay a
@@ -241,16 +253,14 @@ export class CalendarService<I, O> implements Service<I, O> {
    */
   async fetch(): Promise<void> {
     const request = ++this.request;
-    const range = this.range;
+    const params = this.params();
+    const { range } = params;
+    const at = this.now().toISOString();
     this.state.loading = true;
     try {
-      const source = await this.actions.fetch(
-        { range, query: this.query.text, filters: this.query.filters },
-        this,
-      );
+      const source = await this.actions.fetch(params, this);
       if (request !== this.request) return;
-      this.state.entries = this.actions.read(source, this.context);
-      this.state.revision = this.revision + 1;
+      this.land(source, at);
     } finally {
       if (request === this.request) {
         this.state.loading = false;
@@ -263,10 +273,66 @@ export class CalendarService<I, O> implements Service<I, O> {
     }
   }
 
-  load(source: I): void {
-    this.request += 1;
+  /** What the fetch is handed, as the container stands. */
+  private params(): FetchParams {
+    return {
+      range: this.range,
+      query: this.query.text,
+      filters: this.query.filters,
+    };
+  }
+
+  /**
+   * Lands a source as the entries, and marks the sync with `at`, the time
+   * its request was made, so a change made while the request was out is
+   * not passed over.
+   */
+  private land(source: I, at: string): void {
     this.state.entries = this.actions.read(source, this.context);
     this.state.revision = this.revision + 1;
+    this.sync?.mark(at);
+  }
+
+  /**
+   * The sync's poll: asks the actions' refresh what changed in the range
+   * since the entries held were read, and lands the source it answers
+   * with, or fetches it where the answer is `true`. Quiet: `loading` is
+   * the fetch's alone, so a calendar kept alive does not flicker. Nothing
+   * before the first fetch, or while a fetch or a save is out. A source
+   * that comes back to a calendar that has moved on since (a fetch began,
+   * the entries changed, a save is out) is dropped: what the visitor did
+   * is the newer word.
+   */
+  private async refresh(since: string): Promise<void> {
+    const refresh = this.actions.refresh;
+    if (!refresh || !this.initialized || this.loading || this.saving) return;
+    const request = this.request;
+    const revision = this.revision;
+    const params = this.params();
+    const at = this.now().toISOString();
+    const answer = await refresh({ ...params, since }, this);
+    if (answer === undefined || answer === null || answer === false) return;
+    const source =
+      answer === true ? await this.actions.fetch(params, this) : answer;
+    if (
+      request !== this.request ||
+      revision !== this.revision ||
+      this.saving ||
+      this.state.since !== since
+    ) {
+      return;
+    }
+    this.land(source, at);
+    this.emitter.emit("loaded", {
+      id: this.id,
+      range: params.range,
+      revision: this.revision,
+    });
+  }
+
+  load(source: I): void {
+    this.request += 1;
+    this.land(source, this.now().toISOString());
     this.state.loading = false;
     this.state.initialized = true;
     this.emitter.emit("loaded", {
@@ -324,7 +390,11 @@ export class CalendarService<I, O> implements Service<I, O> {
   // --- views -----------------------------------------------------------
 
   snapshot(): Snapshot {
-    return { view: this.state.view, clauses: this.state.clauses };
+    return {
+      view: this.state.view,
+      clauses: this.state.clauses,
+      interval: this.state.interval,
+    };
   }
 
   /**
@@ -335,6 +405,7 @@ export class CalendarService<I, O> implements Service<I, O> {
     const moved =
       snapshot.view !== this.view && this.views.includes(snapshot.view);
     if (moved) this.state.view = snapshot.view;
+    this.sync?.setInterval(snapshot.interval);
     this.restoring = true;
     try {
       this.query.replace(snapshot.clauses);
@@ -560,6 +631,7 @@ export class CalendarService<I, O> implements Service<I, O> {
       entries: this.actions.write(stored, this.context),
       removed: this.actions.write(removed, this.context),
     };
+    this.saving += 1;
     try {
       await this.actions.save?.(mutation, this);
     } catch (error) {
@@ -568,6 +640,8 @@ export class CalendarService<I, O> implements Service<I, O> {
         this.state.revision = this.revision + 1;
       }
       throw error;
+    } finally {
+      this.saving -= 1;
     }
     this.emitter.emit("changed", {
       id: this.id,

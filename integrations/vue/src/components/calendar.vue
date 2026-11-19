@@ -9,6 +9,7 @@ import type {
 
 import Autocomplete from "./autocomplete.vue";
 import Fab from "./fab.vue";
+import Menu from "./menu.vue";
 import Primitive from "./primitive.vue";
 
 import { ToolbarButton, ToolbarRoot, ToolbarSeparator } from "reka-ui";
@@ -19,6 +20,8 @@ import { useRefs } from "../composables/ref";
 import { useCalendar } from "../composables/calendar";
 import { usePassthrough } from "../composables/passthrough";
 import { useContext } from "../composables/context";
+import { useSync } from "../composables/sync";
+import { isSyncCurrent, selectSync, syncGroups } from "../utils/sync";
 import {
   CALENDAR_EMPTY_TEXT,
   CALENDAR_EVENTS,
@@ -36,6 +39,9 @@ const emit = defineEmits<CalendarEmits<O>>();
 
 useServiceEmits(service, CALENDAR_EVENTS, emit);
 
+// The range is kept alive while the calendar is on screen.
+useSync(() => service.sync);
+
 const el = useTemplateRef<HTMLDivElement>("el");
 
 const { view, loading, selected, occurrences } = useRefs(service);
@@ -51,10 +57,26 @@ const settings = usePassthrough<CalendarPassthrough>(() => ({
       service: service.query,
       placeholder: CALENDAR_SEARCH_PLACEHOLDER,
     },
+    // With a sync the button is the trigger of the sync menu, which
+    // refreshes at once from its first item.
     refresh: {
       as: Fab,
       label: CALENDAR_REFRESH_LABEL,
-      onClick: () => service.fetch(),
+      ...(!service.sync && { onClick: () => service.fetch() }),
+    },
+    syncMenu: {
+      as: Menu,
+      groups: service.sync ? syncGroups(service.sync) : [],
+      align: "end",
+      // The item of the interval the sync is on is marked.
+      pt: {
+        item: (item) => ({
+          "data-current": isSyncCurrent(service.sync, item) ? "" : undefined,
+        }),
+      },
+      onSelect: (item) => {
+        if (service.sync) selectSync(service.sync, item, () => service.fetch());
+      },
     },
     toolbar: {},
     separator: () => ({}),
@@ -102,7 +124,7 @@ const ctx = useContext<CalendarContext<I, O>>("calendar", () => ({
 }));
 
 defineExpose({ ctx });
-defineSlots<CalendarSlots<I, O>>();
+const slots = defineSlots<CalendarSlots<I, O>>();
 </script>
 
 <template>
@@ -111,13 +133,29 @@ defineSlots<CalendarSlots<I, O>>();
     class="f-group f-data-calendar"
     :data-view="view"
     :data-loading="loading || undefined"
+    :data-live="service.sync?.active || undefined"
+    :data-syncing="service.sync?.syncing || undefined"
   >
     <slot name="controls" v-bind="ctx">
       <div class="f-group f-data-calendar-controls">
         <slot v-if="service.searchable" name="search" v-bind="ctx">
           <Primitive v-bind="settings.search" class="f-data-calendar-search" />
         </slot>
-        <slot name="refresh" v-bind="ctx">
+        <Primitive v-if="service.sync" v-bind="settings.syncMenu">
+          <slot name="refresh" v-bind="ctx">
+            <Primitive v-bind="settings.refresh" />
+          </slot>
+          <template v-if="slots.syncPrepend" #itemPrepend="{ item }">
+            <slot name="syncPrepend" v-bind="{ ...ctx, item }" />
+          </template>
+          <template v-if="slots.syncLabel" #itemLabel="{ item }">
+            <slot name="syncLabel" v-bind="{ ...ctx, item }" />
+          </template>
+          <template v-if="slots.syncAppend" #itemAppend="{ item }">
+            <slot name="syncAppend" v-bind="{ ...ctx, item }" />
+          </template>
+        </Primitive>
+        <slot v-else name="refresh" v-bind="ctx">
           <Primitive v-bind="settings.refresh" />
         </slot>
       </div>

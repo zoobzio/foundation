@@ -51,7 +51,8 @@ export type BrowserInitial<T> = Partial<
 
 /**
  * What `createBrowser` takes: the headless config with each action's
- * handler joined to its descriptor, the fetch mechanism, and the initial
+ * handler joined to its descriptor, the fetch mechanism, the `refresh`
+ * that gives the browser its sync where there is one, and the initial
  * state.
  */
 export type BrowserOptions<T> = Omit<
@@ -59,6 +60,7 @@ export type BrowserOptions<T> = Omit<
   "actions" | "folderActions" | "bulkActions"
 > & {
   fetch: Actions<T>["fetch"];
+  refresh?: Actions<T>["refresh"];
   actions?: Record<string, BrowserAction<T>>;
   folderActions?: Record<string, BrowserFolderAction<T>>;
   bulkActions?: Record<string, BrowserBulkAction>;

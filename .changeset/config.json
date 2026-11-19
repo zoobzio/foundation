@@ -13,6 +13,7 @@
     [
       "@zoobzio/kit",
       "@zoobzio/query",
+      "@zoobzio/sync",
       "@zoobzio/browser",
       "@zoobzio/form",
       "@zoobzio/table",
