@@ -1,11 +1,4 @@
-import type {
-  Entry,
-  LocalDateTime,
-  PatchObject,
-  TimeZoneId,
-  UTCDateTime,
-  Weekday,
-} from "./jscalendar";
+import type { JSCalendar, Occurrence, Range } from "@zoobzio/time";
 import type {
   Clause,
   Field,
@@ -35,7 +28,7 @@ import type {
  * The calendar's own form: JSCalendar entries. What a reader produces and
  * a writer consumes.
  */
-export type Doc = Entry[];
+export type Doc = JSCalendar.Entry[];
 
 /**
  * How much of time a view shows at once.
@@ -46,15 +39,6 @@ export type View = "month" | "week" | "day" | "agenda";
  * A calendar day, `YYYY-MM-DD`, as it reads in the config's time zone.
  */
 export type Day = string;
-
-/**
- * A span of time between two instants: from `start`, up to and not
- * including `end`.
- */
-export type Range = {
-  start: UTCDateTime;
-  end: UTCDateTime;
-};
 
 /**
  * What the fetch is handed: the range the view shows, and the search:
@@ -119,11 +103,11 @@ export type Config = {
    * days of, a floating entry is placed in, and `today` is read in.
    * Defaults to `UTC`, so a server and a browser lay out the same days.
    */
-  timeZone?: TimeZoneId;
+  timeZone?: JSCalendar.TimeZoneId;
   /** The BCP 47 locale a view formats in. Defaults to `en-US`. */
   locale?: string;
   /** The day a week starts on. Defaults to `mo`. */
-  firstDayOfWeek?: Weekday;
+  firstDayOfWeek?: JSCalendar.Weekday;
   /**
    * The fields the query filters on, keyed by the identity a filter
    * carries: the model of an entry as a search reads it, a calendar, a
@@ -150,34 +134,6 @@ export type Config = {
 };
 
 /**
- * One occurrence of an entry inside the range: the entry itself where it
- * does not recur, or one instance of its recurrence.
- */
-export type Occurrence = {
-  /**
-   * The occurrence's identity: the entry's `uid`, joined with the
-   * recurrence id where the entry recurs.
-   */
-  key: string;
-  /** The `uid` of the entry it is an occurrence of. */
-  uid: string;
-  /** The recurrence id, where the entry recurs. */
-  recurrenceId?: LocalDateTime;
-  /**
-   * The occurrence as a JSCalendar object: the entry with its override
-   * applied, its `recurrenceId` set, and its rule and overrides left out.
-   * The entry itself where it does not recur.
-   */
-  entry: Entry;
-  /** The instant it starts. */
-  start: UTCDateTime;
-  /** The instant it ends. The start, for an entry with no duration. */
-  end: UTCDateTime;
-  /** Whether the entry shows without its time. */
-  allDay: boolean;
-};
-
-/**
  * How much of a recurring entry a change reaches: the one occurrence, the
  * occurrence and every later one, or the whole entry. An entry that does
  * not recur has `all` alone.
@@ -199,7 +155,7 @@ export type Scope = "one" | "following" | "all";
 export type State = SyncState & {
   view: View;
   date: Day;
-  entries: Entry[];
+  entries: JSCalendar.Entry[];
   loading: boolean;
   initialized: boolean;
   revision: number;
@@ -222,7 +178,7 @@ export type Changers = KitChangers<State>;
  * locale it reads in.
  */
 export type Context = {
-  timeZone: TimeZoneId;
+  timeZone: JSCalendar.TimeZoneId;
   locale: string;
 };
 
@@ -342,7 +298,7 @@ export type Service<I, O> = {
 
   readonly view: View;
   readonly date: Day;
-  readonly entries: Entry[];
+  readonly entries: JSCalendar.Entry[];
   readonly loading: boolean;
   readonly initialized: boolean;
   readonly revision: number;
@@ -380,14 +336,18 @@ export type Service<I, O> = {
   occurrencesOn(day: Day): Occurrence[];
 
   /** Adds an entry. */
-  create(entry: Entry): Promise<void>;
+  create(entry: JSCalendar.Entry): Promise<void>;
   /**
    * Patches an occurrence, an occurrence and every later one, or its
    * whole entry. `one` writes the patch into the entry's
    * `recurrenceOverrides`; `following` cuts the entry's rule short and
    * adds the entry that follows it; `all` patches the entry.
    */
-  update(key: string, patch: PatchObject, scope?: Scope): Promise<void>;
+  update(
+    key: string,
+    patch: JSCalendar.PatchObject,
+    scope?: Scope,
+  ): Promise<void>;
   /** Removes an occurrence, an occurrence and every later one, or its entry. */
   remove(key: string, scope?: Scope): Promise<void>;
 

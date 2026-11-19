@@ -12,6 +12,7 @@
   "fixed": [
     [
       "@zoobzio/kit",
+      "@zoobzio/time",
       "@zoobzio/query",
       "@zoobzio/sync",
       "@zoobzio/browser",

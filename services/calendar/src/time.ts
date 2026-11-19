@@ -1,57 +1,12 @@
-import type { Day, Range, View } from "./types";
-import type {
-  LocalDateTime,
-  TimeZoneId,
-  UTCDateTime,
-  Weekday,
-} from "./jscalendar";
+import type { Day, View } from "./types";
+import type { JSCalendar, Range } from "@zoobzio/time";
 
 import { Temporal } from "temporal-polyfill";
+import { utc } from "@zoobzio/time";
 import { CALENDAR_AGENDA_DAYS, CALENDAR_WEEKDAYS } from "./constants";
 
-/**
- * A local date-time in a zone. A value inside a zone's gap or overlap
- * reads with the offset before the transition, as JSCalendar defines it,
- * which is Temporal's `compatible`.
- */
-export const zoned = (
-  local: LocalDateTime,
-  zone: TimeZoneId,
-): Temporal.ZonedDateTime =>
-  Temporal.PlainDateTime.from(local).toZonedDateTime(zone, {
-    disambiguation: "compatible",
-  });
-
-/** A zoned date-time as a local date-time, to the second. */
-export const local = (value: Temporal.ZonedDateTime): LocalDateTime =>
-  value.toPlainDateTime().toString({ smallestUnit: "second" });
-
-/** A zoned date-time as an instant, to the second. */
-export const utc = (value: Temporal.ZonedDateTime): UTCDateTime =>
-  value.toInstant().toString({ smallestUnit: "second" });
-
-/** A local date-time in the one spelling the service compares by. */
-export const normal = (value: LocalDateTime): LocalDateTime =>
-  Temporal.PlainDateTime.from(value).toString({ smallestUnit: "second" });
-
-/** A local date-time moved by the wall-clock distance between two others. */
-export const shift = (
-  value: LocalDateTime,
-  from: LocalDateTime,
-  to: LocalDateTime,
-): LocalDateTime =>
-  Temporal.PlainDateTime.from(value)
-    .add(Temporal.PlainDateTime.from(from).until(to))
-    .toString({ smallestUnit: "second" });
-
-/** An instant in time, to the second, as `now` reads. */
-export const stamp = (now: Date): UTCDateTime =>
-  Temporal.Instant.fromEpochMilliseconds(now.getTime()).toString({
-    smallestUnit: "second",
-  });
-
 /** The day an instant falls on in a zone. */
-export const dayOf = (now: Date, zone: TimeZoneId): Day =>
+export const dayOf = (now: Date, zone: JSCalendar.TimeZoneId): Day =>
   Temporal.Instant.fromEpochMilliseconds(now.getTime())
     .toZonedDateTimeISO(zone)
     .toPlainDate()
@@ -64,7 +19,7 @@ export const day = (value: Day): Day =>
 /** The first day of the week a day falls in. */
 const weekStart = (
   value: Temporal.PlainDate,
-  first: Weekday,
+  first: JSCalendar.Weekday,
 ): Temporal.PlainDate => {
   const offset = CALENDAR_WEEKDAYS.indexOf(first) + 1;
   return value.subtract({ days: (value.dayOfWeek - offset + 7) % 7 });
@@ -74,7 +29,11 @@ const weekStart = (
  * The days a view shows around a date: the whole weeks a month touches,
  * the week, the day, or the agenda's run of days from the date.
  */
-export const daysOf = (view: View, date: Day, first: Weekday): Day[] => {
+export const daysOf = (
+  view: View,
+  date: Day,
+  first: JSCalendar.Weekday,
+): Day[] => {
   const at = Temporal.PlainDate.from(date);
   let start = at;
   let count = 1;
@@ -98,7 +57,7 @@ export const daysOf = (view: View, date: Day, first: Weekday): Day[] => {
  * The span of a run of days in a zone: from the start of the first to the
  * start of the day after the last.
  */
-export const rangeOf = (days: Day[], zone: TimeZoneId): Range => {
+export const rangeOf = (days: Day[], zone: JSCalendar.TimeZoneId): Range => {
   const head = Temporal.PlainDate.from(days[0] ?? "1970-01-01");
   const tail = Temporal.PlainDate.from(days[days.length - 1] ?? head);
   return {

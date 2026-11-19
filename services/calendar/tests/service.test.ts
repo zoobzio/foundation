@@ -14,8 +14,10 @@ import type {
   Options,
   State,
 } from "../src/types";
-import type { Entry } from "../src/jscalendar";
+import type { JSCalendar } from "../src";
 import { event } from "./data";
+
+type Entry = JSCalendar.Entry;
 
 const NOW = new Date("2026-03-04T12:00:00Z");
 

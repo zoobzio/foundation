@@ -38,7 +38,7 @@
     "@zoobzio/kit": "workspace:*",
     "@zoobzio/query": "workspace:*",
     "@zoobzio/sync": "workspace:*",
-    "rrule-temporal": "catalog:",
+    "@zoobzio/time": "workspace:*",
     "temporal-polyfill": "catalog:"
   }
 }

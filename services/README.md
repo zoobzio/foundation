@@ -24,7 +24,7 @@ turn the documents a consumer holds into the editor's and back; the code
 service owns a CodeMirror state with no view, and the consumer's own
 CodeMirror extensions decide language, theme, and keymaps. The calendar
 holds JSCalendar entries and expands their recurrence through
-rrule-temporal, and searches through a query over the fields its config
+[`@zoobzio/time`](../packages/time/), and searches through a query over the fields its config
 declares. The table, the browser, and the calendar keep what they hold alive
 through a sync, where their wiring names a `refresh` to poll. The views hold no payload of their own: they sit over a table,
 a browser, or a calendar, whose `snapshot` and `restore` they read and

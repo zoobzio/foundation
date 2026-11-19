@@ -1,4 +1,4 @@
-export type * as JSCalendar from "./jscalendar";
+export type { JSCalendar, Occurrence, Range } from "@zoobzio/time";
 export * from "./types";
 export * from "./constants";
 export { createCalendarState } from "./state";

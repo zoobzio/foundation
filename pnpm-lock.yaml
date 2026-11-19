@@ -449,6 +449,15 @@ importers:
         specifier: 'catalog:'
         version: 5.0.3(@types/node@26.6.6)(@vitest/coverage-v8@5.0.3)(happy-dom@20.10.6)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.1))
 
+  packages/time:
+    dependencies:
+      rrule-temporal:
+        specifier: 'catalog:'
+        version: 2.2.9
+      temporal-polyfill:
+        specifier: 'catalog:'
+        version: 1.0.8
+
   services/browser:
     dependencies:
       '@zoobzio/kit':
@@ -475,9 +484,9 @@ importers:
       '@zoobzio/sync':
         specifier: workspace:*
         version: link:../sync
-      rrule-temporal:
-        specifier: 'catalog:'
-        version: 2.2.9
+      '@zoobzio/time':
+        specifier: workspace:*
+        version: link:../../packages/time
       temporal-polyfill:
         specifier: 'catalog:'
         version: 1.0.8

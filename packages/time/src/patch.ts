@@ -1,6 +1,6 @@
 import type { PatchObject } from "./jscalendar";
 
-import { CALENDAR_OVERRIDE_CLOSED, CALENDAR_OVERRIDE_FIXED } from "./constants";
+import { TIME_OVERRIDE_CLOSED, TIME_OVERRIDE_FIXED } from "./constants";
 
 type Json = Record<string, unknown> | unknown[];
 
@@ -76,8 +76,8 @@ export const overrides = (changes: PatchObject): boolean => {
   }
   return pointers.every((pointer) => {
     const path = pointer.split("/");
-    if (CALENDAR_OVERRIDE_CLOSED.includes(path[0] ?? "")) return false;
-    return !CALENDAR_OVERRIDE_FIXED.some((fixed) => {
+    if (TIME_OVERRIDE_CLOSED.includes(path[0] ?? "")) return false;
+    return !TIME_OVERRIDE_FIXED.some((fixed) => {
       const shape = fixed.split("/");
       return (
         shape.length === path.length &&

@@ -1,4 +1,4 @@
-import type { Occurrence, Range } from "./types";
+import type { Found, Range } from "./types";
 import type {
   Entry,
   LocalDateTime,
@@ -9,16 +9,13 @@ import type {
 import { RRuleTemporal } from "rrule-temporal";
 import { Temporal } from "temporal-polyfill";
 import {
-  CALENDAR_DEFAULT_SCALE,
-  CALENDAR_FREQUENCIES,
-  CALENDAR_NO_DURATION,
-  CALENDAR_SKIPS,
+  TIME_DEFAULT_SCALE,
+  TIME_FREQUENCIES,
+  TIME_NO_DURATION,
+  TIME_SKIPS,
 } from "./constants";
 import { overrides, patch } from "./patch";
-import { local, normal, shift, utc, zoned } from "./time";
-
-/** An occurrence with the entry it was read from, by its place in the entries. */
-export type Found = { occurrence: Occurrence; source: number };
+import { local, normal, shift, utc, zoned } from "./zone";
 
 type Span = { start: Temporal.ZonedDateTime; end: Temporal.ZonedDateTime };
 
@@ -35,7 +32,7 @@ export const keyOf = (uid: string, recurrenceId?: LocalDateTime): string =>
 
 /**
  * The span an entry takes, in its own zone or, floating, in the
- * calendar's: an event from its start for its duration, a task from its
+ * given one: an event from its start for its duration, a task from its
  * start to its due time, or at the one of the two it names. A task that
  * names neither takes none.
  */
@@ -43,7 +40,7 @@ const spanOf = (entry: Entry, zone: TimeZoneId): Span | null => {
   const at = entry.timeZone ?? zone;
   if (entry["@type"] === "Event") {
     const start = zoned(entry.start, at);
-    return { start, end: start.add(entry.duration ?? CALENDAR_NO_DURATION) };
+    return { start, end: start.add(entry.duration ?? TIME_NO_DURATION) };
   }
   const anchor = entry.start ?? entry.due;
   if (anchor === undefined) return null;
@@ -65,16 +62,16 @@ export const ruleOf = (
 ): RRuleTemporal<Temporal.ZonedDateTime> => {
   const zone = start.timeZoneId;
   // SKIP is read with RSCALE alone, so a rule that skips names its scale.
-  const scale = rule.rscale ?? (rule.skip ? CALENDAR_DEFAULT_SCALE : undefined);
+  const scale = rule.rscale ?? (rule.skip ? TIME_DEFAULT_SCALE : undefined);
   return new RRuleTemporal<Temporal.ZonedDateTime>({
     temporal: Temporal,
     dtstart: start,
     tzid: zone,
     includeDtstart: true,
-    freq: CALENDAR_FREQUENCIES[rule.frequency],
+    freq: TIME_FREQUENCIES[rule.frequency],
     interval: rule.interval,
     rscale: scale?.toUpperCase(),
-    skip: rule.skip && CALENDAR_SKIPS[rule.skip],
+    skip: rule.skip && TIME_SKIPS[rule.skip],
     wkst: rule.firstDayOfWeek?.toUpperCase(),
     byDay: rule.byDay?.map(
       (entry) => `${entry.nthOfPeriod ?? ""}${entry.day.toUpperCase()}`,

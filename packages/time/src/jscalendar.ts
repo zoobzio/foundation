@@ -1,11 +1,11 @@
 /**
- * JSCalendar 2.0, the calendar's own form, as types: what a reader
- * produces and a writer consumes. After draft-ietf-calext-jscalendarbis-22,
- * the revision of RFC 8984 in IETF Last Call; the names, the types, and
- * the defaults below are the draft's.
+ * JSCalendar 2.0 as types: the form the calendar services hold their
+ * entries in, what a reader produces and a writer consumes. After
+ * draft-ietf-calext-jscalendarbis-22, the revision of RFC 8984 in IETF
+ * Last Call; the names, the types, and the defaults below are the draft's.
  *
- * The types describe the whole format, not the part the service
- * interprets. The service reads what schedules an entry (its start, its
+ * The types describe the whole format, not the part a service
+ * interprets. A service reads what schedules an entry (its start, its
  * duration, its time zones, its recurrence) and carries every other
  * property as it found it, a property it does not know included: the
  * format requires that an unknown property be preserved.

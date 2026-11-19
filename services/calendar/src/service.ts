@@ -7,17 +7,14 @@ import type {
   Events,
   FetchParams,
   Listener,
-  Occurrence,
   Options,
-  Range,
   Scope,
   Service,
   Snapshot,
   State,
   View,
 } from "./types";
-import type { Entry, LocalDateTime, PatchObject, Weekday } from "./jscalendar";
-import type { Found } from "./recur";
+import type { Found, JSCalendar, Occurrence, Range } from "@zoobzio/time";
 import type { Service as Query } from "@zoobzio/query";
 import type { Service as Sync } from "@zoobzio/sync";
 import type { Emitter, Loader } from "@zoobzio/kit";
@@ -32,22 +29,28 @@ import {
   CALENDAR_STATE_FIELDS,
   CALENDAR_VIEWS,
 } from "./constants";
-import { copy, merge, overrides, patch } from "./patch";
-import { expand, recurs, ruleOf } from "./recur";
 import {
-  day,
-  dayOf,
-  daysOf,
+  copy,
+  expand,
   local,
+  merge,
   normal,
-  rangeOf,
+  overrides,
+  patch,
+  recurs,
+  ruleOf,
   shift,
   stamp,
-  step,
   zoned,
-} from "./time";
+} from "@zoobzio/time";
+import { day, dayOf, daysOf, rangeOf, step } from "./time";
 
 declare const crypto: { randomUUID(): string };
+
+type Entry = JSCalendar.Entry;
+type LocalDateTime = JSCalendar.LocalDateTime;
+type PatchObject = JSCalendar.PatchObject;
+type Weekday = JSCalendar.Weekday;
 
 /** The occurrences read last, and what they were read from. */
 type Read = {

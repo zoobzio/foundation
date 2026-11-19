@@ -2,8 +2,8 @@
 
 Headless calendar service. Pure TypeScript, no framework dependency; its
 entries are [JSCalendar](https://datatracker.ietf.org/doc/draft-ietf-calext-jscalendarbis/)
-2.0, its recurrence runs on [rrule-temporal](https://github.com/ggaabe/rrule-temporal),
-and its time on Temporal.
+2.0, and their format, their recurrence, and their time are
+[`@zoobzio/time`](../../packages/time/)'s, on Temporal.
 
 Owns: the view and the date it is anchored on, the range they span, the
 entries the range loaded, the occurrences the entries recur into, the
@@ -44,7 +44,8 @@ await calendar.remove(key, "all");
 ## The entries
 
 The calendar's own form is JSCalendar: an `Event` or a `Task`, as plain
-JSON. The package exports the whole format as types under `JSCalendar`:
+JSON. The package exports the whole format as types under `JSCalendar`,
+from `@zoobzio/time`:
 
 ```ts
 import type { JSCalendar } from "@zoobzio/calendar";

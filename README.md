@@ -33,12 +33,12 @@ import { defineSelect } from "@zoobzio/vue/definitions/select";
 
 ## Architecture
 
-| Tier       | Where                | What it is                                                                                                                                                     |
-| ---------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Packages   | `packages/*`         | The kit the services share (emitter, state proxy, codecs) in [`@zoobzio/kit`](./packages/kit/), and the built contracts: prose, icons, theme.                  |
-| Services   | `services/*`         | Headless data machines (query, sync, browser, form, table, editor, code, calendar, views) in pure TypeScript, each built on [`@zoobzio/kit`](./packages/kit/). |
-| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.                       |
-| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                                          |
+| Tier       | Where                | What it is                                                                                                                                                                                                                        |
+| ---------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Packages   | `packages/*`         | The kit the services share (emitter, state proxy, codecs) in [`@zoobzio/kit`](./packages/kit/), the time they read (JSCalendar, recurrence) in [`@zoobzio/time`](./packages/time/), and the built contracts: prose, icons, theme. |
+| Services   | `services/*`         | Headless data machines (query, sync, browser, form, table, editor, code, calendar, views) in pure TypeScript, each built on [`@zoobzio/kit`](./packages/kit/).                                                                    |
+| Components | `integrations/vue/`  | Unstyled composites of [reka-ui](https://reka-ui.com) primitives and semantic HTML (`f-*` classes), with full passthrough & slotthrough.                                                                                          |
+| Nuxt       | `integrations/nuxt/` | The Nuxt layer: `useState`-backed stores, hook-bus factories, and the app shell over `@zoobzio/vue` and the services.                                                                                                             |
 
 Each data component pairs a **definition** (`defineTable`, `defineForm`,
 `defineEditor`, `defineCode`, `defineCalendar`, …) —
@@ -62,6 +62,7 @@ import surface:
 ```
 packages/
   kit/            — @zoobzio/kit: the emitter, state proxy, and types the services share
+  time/           — @zoobzio/time: JSCalendar entries, their patch, their recurrence over a range, and zone arithmetic on Temporal
   prose/          — @zoobzio/prose: the text the components render by default, built by @prosary/kit (generated from message files)
   icons/          — @zoobzio/icons: the icon contract the Nuxt layer draws by default, built by icon-sheets (generated, no source)
   theme/          — @zoobzio/theme: the foundation theme over the aurora preset of untheme, the Nuxt layer's default (generated from a palette and a roles file)
