@@ -68,6 +68,26 @@ const heads = (service: TableService<FakeRow>): string[] =>
   service.table.getLeafHeaders().map((header) => header.column.id);
 
 describe("fetch", () => {
+  it("drops a fetch that settles after a later one began", async () => {
+    const pages: ((result: FetchResult<FakeRow>) => void)[] = [];
+    const fetch = vi.fn(
+      () => new Promise<FetchResult<FakeRow>>((resolve) => pages.push(resolve)),
+    );
+    const { service, state, updated } = makeService({ actions: { fetch } });
+    const first = service.fetch();
+    const second = service.fetch();
+
+    pages[1]?.({ data: fakeRows.slice(0, 1), rowCount: 1 });
+    await second;
+    pages[0]?.({ data: fakeRows, rowCount: 40 });
+    await first;
+
+    expect(state.data).toEqual(fakeRows.slice(0, 1));
+    expect(state.rowCount).toBe(1);
+    expect(state.loading).toBe(false);
+    expect(updated).toHaveBeenCalledTimes(1);
+  });
+
   it("passes the pagination and sorting slices and applies the result", async () => {
     const { service, table, state, actions } = makeService();
     state.pagination = { pageIndex: 1, pageSize: 10 };

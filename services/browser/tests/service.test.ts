@@ -75,6 +75,29 @@ describe("config", () => {
 });
 
 describe("fetch", () => {
+  it("drops a fetch that settles after a later one began", async () => {
+    const listings: ((result: BrowserFetchResult<FakeFile>) => void)[] = [];
+    const fetch = vi.fn(
+      () =>
+        new Promise<BrowserFetchResult<FakeFile>>((resolve) =>
+          listings.push(resolve),
+        ),
+    );
+    const { service, state, updated } = makeService({ actions: { fetch } });
+    const first = service.fetch();
+    const second = service.fetch();
+
+    listings[1]?.({ folders: [], files: fakeFiles.slice(0, 1) });
+    await second;
+    listings[0]?.({ folders: fakeFolders, files: fakeFiles });
+    await first;
+
+    expect(state.folders).toEqual([]);
+    expect(state.files).toEqual(fakeFiles.slice(0, 1));
+    expect(state.loading).toBe(false);
+    expect(updated).toHaveBeenCalledTimes(1);
+  });
+
   it("passes the path and sort params and applies the result", async () => {
     const { service, state, actions } = makeService();
     state.path = [

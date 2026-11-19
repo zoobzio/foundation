@@ -17,12 +17,12 @@ import type {
 } from "./types";
 import type { Service as Query } from "@zoobzio/query";
 import type { Service as Sync } from "@zoobzio/sync";
-import type { Emitter, Text } from "@zoobzio/kit";
+import type { Emitter, Loader, Text } from "@zoobzio/kit";
 
 import { entries } from "objectively";
 import { QueryService } from "@zoobzio/query";
 import { SyncService } from "@zoobzio/sync";
-import { makeEmitter, makeProxy } from "@zoobzio/kit";
+import { makeEmitter, makeLoader, makeProxy } from "@zoobzio/kit";
 import {
   BROWSER_DEFAULT_CURRENCY,
   BROWSER_DEFAULT_LOCALE,
@@ -60,6 +60,12 @@ export class BrowserService<T> implements Service<T> {
 
   private readonly state: State<T>;
   private readonly emitter: Emitter<Events<T>> = makeEmitter();
+  /**
+   * The order between the fetches and the sync's refreshes: a fetch that
+   * settles after a later one began is dropped, and a refresh is quiet,
+   * and dropped where the browser has moved on since it was asked.
+   */
+  private readonly loader: Loader<BrowserFetchResult<T>>;
 
   /**
    * Set while the trail moves or a snapshot is restored: either fetches
@@ -110,9 +116,23 @@ export class BrowserService<T> implements Service<T> {
     );
     this.query.on("changed", () => this.refilter());
 
-    this.sync = wiring.refresh
+    const { refresh } = wiring;
+    this.loader = makeLoader<BrowserFetchParams, BrowserFetchResult<T>>(
+      this.state,
+      {
+        params: () => this.params(),
+        fetch: (params) => wiring.fetch(params, this),
+        ...(refresh && {
+          refresh: (params, since) => refresh({ ...params, since }, this),
+        }),
+        land: (result, at) => this.land(result, at),
+        settled: () => this.emitUpdated(),
+      },
+    );
+
+    this.sync = refresh
       ? new SyncService(`${id}-sync`, config.sync ?? {}, this.state, {
-          poll: (since) => this.refresh(since),
+          poll: (since) => this.loader.refresh(since),
         })
       : undefined;
   }
@@ -436,22 +456,12 @@ export class BrowserService<T> implements Service<T> {
 
   // --- loading ---------------------------------------------------------
 
-  async init(): Promise<boolean> {
-    if (this.initialized) return true;
-    this.state.initialized = true;
-    await this.fetch();
-    return true;
+  init(): Promise<boolean> {
+    return this.loader.init();
   }
 
-  async fetch(): Promise<void> {
-    this.state.loading = true;
-    const at = now();
-    try {
-      this.land(await this.wiring.fetch(this.params(), this), at);
-    } finally {
-      this.state.loading = false;
-      this.emitUpdated();
-    }
+  fetch(): Promise<void> {
+    return this.loader.fetch();
   }
 
   /** What the fetch is handed, as the container stands. */
@@ -486,30 +496,4 @@ export class BrowserService<T> implements Service<T> {
       files: this.files.length,
     });
   }
-
-  /**
-   * The sync's poll: asks the wiring's refresh what changed in the folder
-   * since the listing held was read, and lands the listing it answers
-   * with, or fetches it where the answer is `true`. Quiet: `loading` is
-   * the fetch's alone, so a browser kept alive does not flicker. Nothing
-   * before the first fetch, or while one is out. A listing that comes back
-   * to a browser that has moved on since (a fetch began, or landed) is
-   * dropped: the fetch is the newer word.
-   */
-  private async refresh(since: string): Promise<void> {
-    const refresh = this.wiring.refresh;
-    if (!refresh || !this.initialized || this.loading) return;
-    const at = now();
-    const params = this.params();
-    const answer = await refresh({ ...params, since }, this);
-    if (!answer) return;
-    const result =
-      answer === true ? await this.wiring.fetch(params, this) : answer;
-    if (this.loading || this.state.since !== since) return;
-    this.land(result, at);
-    this.emitUpdated();
-  }
 }
-
-/** The time a request is made, as the mark a listing takes without its own. */
-const now = (): string => new Date().toISOString();

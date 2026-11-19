@@ -127,3 +127,80 @@ export interface TextMap {}
  * in any form {@link TextMap} admits.
  */
 export type Text = string | TextMap[keyof TextMap];
+
+/**
+ * The fields of a container a loader reads and writes: whether a fetch is
+ * out, whether the first fetch was asked for, and the mark of what is
+ * held, which a sync keeps. A service's own container carries them among
+ * its fields.
+ */
+export type LoaderState = {
+  loading: boolean;
+  initialized: boolean;
+  since: string | null;
+};
+
+/**
+ * What a refresh answers. Nothing, or `false`: nothing changed, and the
+ * owner keeps what it holds. `true`: something did, and the loader fetches
+ * again itself. Anything else is the result as it now stands, landed as a
+ * fetch's is.
+ */
+export type Refreshed<R> = R | boolean | null | undefined | void;
+
+/**
+ * What the owner of a loader supplies. `P` is what its fetch is handed,
+ * `R` what the fetch answers.
+ */
+export type LoaderActions<P, R> = {
+  /** What the fetch is handed, as the container stands. */
+  params: () => P;
+  /** Loads a result. */
+  fetch: (params: P) => Promise<R>;
+  /**
+   * Asks what changed since the mark. Without it the loader's `refresh`
+   * does nothing.
+   */
+  refresh?: (params: P, since: string) => Refreshed<R> | Promise<Refreshed<R>>;
+  /**
+   * Lands a result in the container, and marks the sync with it: `at` is
+   * the time its request was made, the mark of a result that names none
+   * of its own, so a change made while the request was out is not passed
+   * over.
+   */
+  land: (result: R, at: string) => void;
+  /**
+   * Called once a fetch settles, success or failure, a refresh lands, or
+   * a result is loaded, with the params it was asked with: where the
+   * owner emits its event.
+   */
+  settled?: (params: P) => void;
+  /** The clock a request's time is read from. Defaults to the system's. */
+  now?: () => Date;
+  /**
+   * Whether the owner has work out that a refresh must not land over: a
+   * save, say. Nothing is refreshed while it does.
+   */
+  busy?: () => boolean;
+  /**
+   * What the owner holds, as a value that moves when it changes by
+   * another hand than the loader's: a revision, say. A refresh that comes
+   * back to another version is dropped.
+   */
+  version?: () => unknown;
+};
+
+/**
+ * The loader of a service: the order between its first fetch, its
+ * fetches, the refreshes its sync polls, and the results it is handed.
+ */
+export type Loader<R> = {
+  /** Fetches once, where the container was not initialized. */
+  init(): Promise<boolean>;
+  /** Fetches. A fetch that settles after a later one began is dropped. */
+  fetch(): Promise<void>;
+  /** The poll of a sync: asks what changed since the mark, and lands it. */
+  refresh(since: string): Promise<void>;
+  /** Lands a result with no fetch. A fetch that is out is dropped. */
+  load(result: R): void;
+};

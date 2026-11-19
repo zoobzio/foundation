@@ -11,13 +11,17 @@ dependency.
   write through `options.set.state.<field>`, then lands in the container and
   emits `change` with `{ field, before, after }`. A key outside `fields` goes
   straight to the container.
+- `makeLoader(state, actions)`: the loader of a service that holds what a
+  fetch answered: `init`, `fetch`, the quiet `refresh` a sync polls, and
+  `load`. It owns the order between them; see below.
 - `change(field, before, after)`: builds one change object.
 - `compose(a, b, …)`: chains steps into one. Each step takes the value and
   the service's context; a step that needs no context takes one argument.
 - The types the above are described in: `Middleware<S>`, `Options<S>`,
   `Fields<S>`, `Changes<S>`, `Change<S, K>`, `Changers<S>`, `ChangeEvents<S>`,
   `EventMap`, `Emitter<M>`, `Listener<M, E>`, `Listeners<M>`, `Step<A, B, C>`,
-  `Codec<I, D, O, C>`.
+  `Codec<I, D, O, C>`, `LoaderState`, `LoaderActions<P, R>`, `Loader<R>`,
+  `Refreshed<R>`.
 
 Everything is generic over the container shape `S`. A service binds them to
 its own `State<T>` and re-exports the bound aliases, so a consumer of
@@ -53,3 +57,43 @@ emitter.on("change", (change) => {
 
 state.query = " acme "; // stored as "acme", emits change
 ```
+
+## The loader
+
+A service that loads (a table, a browser, a calendar) hands its container
+and its seams to `makeLoader` and keeps the promises every one of them
+makes:
+
+```ts
+const loader = makeLoader<Params, Result>(state, {
+  params: () => ({ page: state.page }), // what the fetch is handed
+  fetch: (params) => api.rows(params),
+  refresh: (params, since) => api.rowsSince(params, since), // optional
+  land: (result, at) => {
+    state.rows = result.rows;
+    sync.mark(result.since ?? at); // `at`: when the request was made
+  },
+  settled: (params) => emitter.emit("updated", { id }),
+  busy: () => saving > 0, // optional: work a refresh must not land over
+  version: () => state.revision, // optional: moves when the owner changes
+});
+```
+
+- `init()` fetches once, where the container was not `initialized`.
+- `fetch()` holds `loading`, lands the result, and is `settled`, success or
+  failure. One that settles after a later one began is dropped: it lands
+  nothing, leaves `loading` to the later one, and is not `settled`. Its
+  rejection still reaches its caller.
+- `refresh(since)` is the poll of a sync. It is quiet, `loading` being the
+  fetch's alone, and asks nothing before the first fetch, while one is
+  out, or while the owner is `busy`. The answer is a `Refreshed<R>`:
+  nothing or `false` keeps what is held, `true` fetches again, and a
+  result lands as a fetch's does. One that comes back to an owner that has
+  moved on since (a fetch began, the mark moved, the owner is busy, its
+  `version` changed) is dropped.
+- `load(result)` lands a result the owner was handed, with no fetch, and
+  drops a fetch that is out.
+
+The container carries `loading`, `initialized`, and `since` among its
+fields (`LoaderState`); the loader writes the first two and reads the
+third, and the result and the mark are the owner's to write, in `land`.

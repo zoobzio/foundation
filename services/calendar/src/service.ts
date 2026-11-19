@@ -20,11 +20,11 @@ import type { Entry, LocalDateTime, PatchObject, Weekday } from "./jscalendar";
 import type { Found } from "./recur";
 import type { Service as Query } from "@zoobzio/query";
 import type { Service as Sync } from "@zoobzio/sync";
-import type { Emitter } from "@zoobzio/kit";
+import type { Emitter, Loader } from "@zoobzio/kit";
 
 import { QueryService } from "@zoobzio/query";
 import { SyncService } from "@zoobzio/sync";
-import { makeEmitter, makeProxy } from "@zoobzio/kit";
+import { makeEmitter, makeLoader, makeProxy } from "@zoobzio/kit";
 import {
   CALENDAR_DEFAULT_FIRST_DAY_OF_WEEK,
   CALENDAR_DEFAULT_LOCALE,
@@ -84,7 +84,14 @@ export class CalendarService<I, O> implements Service<I, O> {
   private readonly state: State;
   private readonly emitter: Emitter<Events<O>> = makeEmitter();
   private readonly firstDayOfWeek: Weekday;
-  private request = 0;
+  /**
+   * The order between the fetches, the loads, and the sync's refreshes. A
+   * refresh is quiet, asks nothing while a save is out, and is dropped
+   * where the calendar has moved on since it was asked (a fetch began,
+   * the entries changed, a save is out): what the visitor did is the
+   * newer word.
+   */
+  private readonly loader: Loader<I>;
   /** How many saves are out: a refresh lands nothing over one. */
   private saving = 0;
   private read: Read | null = null;
@@ -121,9 +128,28 @@ export class CalendarService<I, O> implements Service<I, O> {
     );
     this.query.on("changed", () => this.refilter());
 
-    this.sync = actions.refresh
+    const { refresh } = actions;
+    this.loader = makeLoader<FetchParams, I>(this.state, {
+      params: () => this.params(),
+      fetch: (params) => actions.fetch(params, this),
+      ...(refresh && {
+        refresh: (params, since) => refresh({ ...params, since }, this),
+      }),
+      land: (source, at) => this.land(source, at),
+      settled: ({ range }) =>
+        this.emitter.emit("loaded", {
+          id: this.id,
+          range,
+          revision: this.revision,
+        }),
+      now: () => this.now(),
+      busy: () => this.saving > 0,
+      version: () => this.revision,
+    });
+
+    this.sync = refresh
       ? new SyncService(`${id}-sync`, config.sync ?? {}, this.state, {
-          poll: (since) => this.refresh(since),
+          poll: (since) => this.loader.refresh(since),
         })
       : undefined;
 
@@ -239,11 +265,8 @@ export class CalendarService<I, O> implements Service<I, O> {
 
   // --- loading ---------------------------------------------------------
 
-  async init(): Promise<boolean> {
-    if (this.initialized) return true;
-    this.state.initialized = true;
-    await this.fetch();
-    return true;
+  init(): Promise<boolean> {
+    return this.loader.init();
   }
 
   /**
@@ -251,26 +274,8 @@ export class CalendarService<I, O> implements Service<I, O> {
    * settles after a later one began is dropped: the range it loaded is no
    * longer the one shown.
    */
-  async fetch(): Promise<void> {
-    const request = ++this.request;
-    const params = this.params();
-    const { range } = params;
-    const at = this.now().toISOString();
-    this.state.loading = true;
-    try {
-      const source = await this.actions.fetch(params, this);
-      if (request !== this.request) return;
-      this.land(source, at);
-    } finally {
-      if (request === this.request) {
-        this.state.loading = false;
-        this.emitter.emit("loaded", {
-          id: this.id,
-          range,
-          revision: this.revision,
-        });
-      }
-    }
+  fetch(): Promise<void> {
+    return this.loader.fetch();
   }
 
   /** What the fetch is handed, as the container stands. */
@@ -293,53 +298,8 @@ export class CalendarService<I, O> implements Service<I, O> {
     this.sync?.mark(at);
   }
 
-  /**
-   * The sync's poll: asks the actions' refresh what changed in the range
-   * since the entries held were read, and lands the source it answers
-   * with, or fetches it where the answer is `true`. Quiet: `loading` is
-   * the fetch's alone, so a calendar kept alive does not flicker. Nothing
-   * before the first fetch, or while a fetch or a save is out. A source
-   * that comes back to a calendar that has moved on since (a fetch began,
-   * the entries changed, a save is out) is dropped: what the visitor did
-   * is the newer word.
-   */
-  private async refresh(since: string): Promise<void> {
-    const refresh = this.actions.refresh;
-    if (!refresh || !this.initialized || this.loading || this.saving) return;
-    const request = this.request;
-    const revision = this.revision;
-    const params = this.params();
-    const at = this.now().toISOString();
-    const answer = await refresh({ ...params, since }, this);
-    if (answer === undefined || answer === null || answer === false) return;
-    const source =
-      answer === true ? await this.actions.fetch(params, this) : answer;
-    if (
-      request !== this.request ||
-      revision !== this.revision ||
-      this.saving ||
-      this.state.since !== since
-    ) {
-      return;
-    }
-    this.land(source, at);
-    this.emitter.emit("loaded", {
-      id: this.id,
-      range: params.range,
-      revision: this.revision,
-    });
-  }
-
   load(source: I): void {
-    this.request += 1;
-    this.land(source, this.now().toISOString());
-    this.state.loading = false;
-    this.state.initialized = true;
-    this.emitter.emit("loaded", {
-      id: this.id,
-      range: this.range,
-      revision: this.revision,
-    });
+    this.loader.load(source);
   }
 
   // --- navigation ------------------------------------------------------
