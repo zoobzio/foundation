@@ -1,29 +1,9 @@
-import type { Day, View } from "./types";
-import type { JSCalendar, Range } from "@zoobzio/time";
+import type { View } from "./types";
+import type { Day, JSCalendar, Range } from "@zoobzio/time";
 
 import { Temporal } from "temporal-polyfill";
-import { utc } from "@zoobzio/time";
-import { CALENDAR_AGENDA_DAYS, CALENDAR_WEEKDAYS } from "./constants";
-
-/** The day an instant falls on in a zone. */
-export const dayOf = (now: Date, zone: JSCalendar.TimeZoneId): Day =>
-  Temporal.Instant.fromEpochMilliseconds(now.getTime())
-    .toZonedDateTimeISO(zone)
-    .toPlainDate()
-    .toString();
-
-/** A day in its one spelling. Throws for a value that is not a day. */
-export const day = (value: Day): Day =>
-  Temporal.PlainDate.from(value).toString();
-
-/** The first day of the week a day falls in. */
-const weekStart = (
-  value: Temporal.PlainDate,
-  first: JSCalendar.Weekday,
-): Temporal.PlainDate => {
-  const offset = CALENDAR_WEEKDAYS.indexOf(first) + 1;
-  return value.subtract({ days: (value.dayOfWeek - offset + 7) % 7 });
-};
+import { utc, weekStart } from "@zoobzio/time";
+import { CALENDAR_AGENDA_DAYS } from "./constants";
 
 /**
  * The days a view shows around a date: the whole weeks a month touches,

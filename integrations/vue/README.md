@@ -42,12 +42,12 @@ const picker = defineSelect({
 
 ```
 src/
-  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), the code editor (code.vue), the calendar (calendar.vue), and the saved views (views.vue)
-  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useSync, useEditor, useCode, useCalendar
+  components/        — interactive components (34) plus the stateless data components: the table (table.vue and its table-* parts), the form (form.vue and form-field.vue), the browser (browser.vue and its browser-* parts), the editor (editor.vue), the code editor (code.vue), the calendar (calendar.vue), the timeline (timeline.vue), and the saved views (views.vue)
+  composables/       — usePassthrough, useForward, useModel, useContext, useSelection, useSearch, useScroller, useDrag, useKeywords, usePaginate, useServiceRefs, useServiceEmits, useSync, useEditor, useCode, useCalendar, useTimeline
   definitions/       — define<Name>(definition | source) constructors
   types/             — common, events, passthrough (Passthrough, Rendered, PT), forward, slots, context, definition, wrap; per-component types in core/
-  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, sync, editor, code, calendar
-  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, sync, editor, code, calendar, views
+  utils/             — passthrough merge, forward render, part (renders a Rendered part's `as`), wrap (a component with a pt layer and slot defaults), define runtime, date, file, keywords, paginate, table, browser, sync, editor, code, calendar, timeline
+  constants/         — constants by domain: date, filter, pagination, popper, scroll, selection, form, table, browser, sync, editor, code, calendar, timeline, views
 tests/               — vitest + happy-dom, mirroring src/ path-for-path
 ```
 
@@ -548,6 +548,65 @@ groups, the heading, the weekdays, the days and weeks with their
 occurrences, an occurrence's time, and `open`), for a consumer's own
 rendering. The
 month grids that pick a date are `date-grid.vue` and `date-range-grid.vue`.
+
+`timeline.vue` renders a headless `@zoobzio/timeline` service: records
+in the order of their time, a card each, under the day each falls on. The
+groups are a list (`f-data-timeline-groups`), each a
+`f-data-timeline-group` with its heading, the day as the timeline's locale
+reads it, over the list of its records; a record is an `article`,
+`f-data-timeline-record`, holding a button that selects it
+(`f-data-timeline-record-label`, pressed while it is the selection) and
+its time, in the timeline's zone. Under the records stands the button
+that loads the next batch (`f-data-timeline-more`), while the service has
+`more`. The component owns no feature state: it reads the service, calls
+its methods, and relays its `loaded`, `appended`, `selected`, `filtered`,
+and `restored` events as emits.
+
+```ts
+import { reactive } from "vue";
+import { TimelineService, createTimelineState } from "@zoobzio/timeline";
+import Timeline from "@zoobzio/vue/components/timeline.vue";
+
+const config = { key: "sha", label: "message" } as const;
+const state = reactive(createTimelineState<Commit>(config));
+const service = new TimelineService<Commit>("history", config, state, {
+  fetch,
+});
+service.init();
+```
+
+```vue
+<Timeline :service="service" @selected="onSelected">
+  <template #recordAppend="{ item }">
+    <code>{{ item.record.sha }}</code>
+  </template>
+</Timeline>
+```
+
+The card is the consumer's to draw. The `record` slot replaces it whole,
+given the `item` (its `key`, the `record` itself, its `label`, and its
+`time`) and its `group`; `recordPrepend` and `recordAppend` add to the
+default card around what it holds, `recordLabel` fills the button that
+selects it, and `recordTime` replaces its time. A record's time reads as
+the time alone under a day's heading, and with its date where the
+timeline groups by the month, the year, or nothing; a timeline that
+groups by nothing has no heading.
+
+The component is unstyled and lays nothing out: the root carries
+`data-order` (`desc` or `asc`), `data-loading` while the records are
+fetched anew, and `data-appending` while a further batch is out; a group
+`data-group` (its day, month, or year) and `data-today` while today falls
+in it; and a card `data-key` and `data-selected`, for a stylesheet to
+read. Over the records stand the controls, the search and the refresh or
+sync menu, as over a calendar's, under `f-data-timeline-controls`.
+
+The parts are `search`, `refresh`, `syncMenu`, `groups`, `group`,
+`heading`, `record`, `label`, and `more`; the slots are `controls`,
+`search`, `refresh`, `syncPrepend`, `syncLabel`, `syncAppend`, `group`,
+`heading`, `record`, `recordPrepend`, `recordLabel`, `recordTime`,
+`recordAppend`, `empty`, and `more`. `useTimeline(service)` is the view
+model on its own, the groups with their records as cards read them, for a
+consumer's own rendering.
 
 `views.vue` renders a headless `@zoobzio/views` service: the saved views
 of a table or a browser as a row of tabs, and the actions of the active

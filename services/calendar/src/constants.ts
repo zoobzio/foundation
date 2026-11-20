@@ -1,6 +1,8 @@
 import type { StateKey, View } from "./types";
 import type { JSCalendar } from "@zoobzio/time";
 
+import { TIME_WEEKDAYS } from "@zoobzio/time";
+
 /** The views, in the order a view offers them. */
 export const CALENDAR_VIEWS: View[] = ["month", "week", "day", "agenda"];
 
@@ -12,15 +14,7 @@ export const CALENDAR_DEFAULT_FIRST_DAY_OF_WEEK: JSCalendar.Weekday = "mo";
 export const CALENDAR_AGENDA_DAYS = 30;
 
 /** The weekdays in ISO order: Monday is the first day of the ISO week. */
-export const CALENDAR_WEEKDAYS: JSCalendar.Weekday[] = [
-  "mo",
-  "tu",
-  "we",
-  "th",
-  "fr",
-  "sa",
-  "su",
-];
+export const CALENDAR_WEEKDAYS: JSCalendar.Weekday[] = TIME_WEEKDAYS;
 
 /**
  * The fields of the container, for key-driven iteration independent of a

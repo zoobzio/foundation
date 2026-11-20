@@ -3,6 +3,7 @@ import type {
   BROWSER_VIEW_SCHEMA,
   CALENDAR_VIEW_SCHEMA,
   TABLE_VIEW_SCHEMA,
+  TIMELINE_VIEW_SCHEMA,
 } from "../constants/views";
 import type { Actions, Config, Events, Service } from "@zoobzio/views";
 import type { z } from "zod";
@@ -24,6 +25,12 @@ export type BrowserView = z.output<typeof BROWSER_VIEW_SCHEMA>;
  * it: the calendar's `Snapshot`.
  */
 export type CalendarView = z.output<typeof CALENDAR_VIEW_SCHEMA>;
+
+/**
+ * The payload of a timeline's saved view, as `TIMELINE_VIEW_SCHEMA` yields
+ * it: the timeline's `Snapshot`.
+ */
+export type TimelineView = z.output<typeof TIMELINE_VIEW_SCHEMA>;
 
 /**
  * What views are over: anything that yields its arrangement and takes one

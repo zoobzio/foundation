@@ -1,4 +1,4 @@
-import type { JSCalendar, Occurrence, Range } from "@zoobzio/time";
+import type { Day, JSCalendar, Occurrence, Range, Scope } from "@zoobzio/time";
 import type {
   Clause,
   Field,
@@ -34,11 +34,6 @@ export type Doc = JSCalendar.Entry[];
  * How much of time a view shows at once.
  */
 export type View = "month" | "week" | "day" | "agenda";
-
-/**
- * A calendar day, `YYYY-MM-DD`, as it reads in the config's time zone.
- */
-export type Day = string;
 
 /**
  * What the fetch is handed: the range the view shows, and the search:
@@ -132,13 +127,6 @@ export type Config = {
    */
   searchable?: boolean;
 };
-
-/**
- * How much of a recurring entry a change reaches: the one occurrence, the
- * occurrence and every later one, or the whole entry. An entry that does
- * not recur has `all` alone.
- */
-export type Scope = "one" | "following" | "all";
 
 /**
  * The state container the service reads and writes: the view, the day it

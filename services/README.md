@@ -15,6 +15,7 @@ event emitter, the state container proxy, and their types) live in
 | [`@zoobzio/editor`](./editor/)     | Editor service: one rich text document over tiptap, a feature set, commands, json/html/hast codecs    |
 | [`@zoobzio/code`](./code/)         | Code service: one text document over CodeMirror, history, the consumer's extensions, text codec       |
 | [`@zoobzio/calendar`](./calendar/) | Calendar service: JSCalendar entries over a range, recurrence, occurrences, scoped changes            |
+| [`@zoobzio/timeline`](./timeline/) | Timeline service: records in the order of their time, a batch at a time by cursor, grouped by day     |
 | [`@zoobzio/views`](./views/)       | Views service: saved payloads over a Zod schema, the active view, drift from it, save and delete      |
 
 Each service has its own README with usage, the state container contract,
@@ -23,12 +24,12 @@ by a dependency: the editor owns a tiptap editor with no DOM, and its codecs
 turn the documents a consumer holds into the editor's and back; the code
 service owns a CodeMirror state with no view, and the consumer's own
 CodeMirror extensions decide language, theme, and keymaps. The calendar
-holds JSCalendar entries and expands their recurrence through
+holds JSCalendar entries and expands and edits them through
 [`@zoobzio/time`](../packages/time/), and searches through a query over the fields its config
-declares. The table, the browser, and the calendar keep what they hold alive
+declares; the timeline holds the consumer's own records, and searches the same way. The table, the browser, the calendar, and the timeline keep what they hold alive
 through a sync, where their wiring names a `refresh` to poll. The views hold no payload of their own: they sit over a table,
-a browser, or a calendar, whose `snapshot` and `restore` they read and
+a browser, a calendar, or a timeline, whose `snapshot` and `restore` they read and
 apply through. The table, the
-form, the browser, the calendar, and the views render through [`@zoobzio/vue`](../integrations/vue/),
+form, the browser, the calendar, the timeline, and the views render through [`@zoobzio/vue`](../integrations/vue/),
 and their Nuxt wiring lives in [`@zoobzio/nuxt`](../integrations/nuxt/) as
 `stores/<name>.ts` and `factories/<name>.ts`.

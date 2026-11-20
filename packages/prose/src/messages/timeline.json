@@ -1,0 +1,22 @@
+{
+  "empty": {
+    "defaultMessage": "Nothing yet",
+    "description": "The text of the timeline when it holds no record."
+  },
+  "more": {
+    "defaultMessage": "Load more",
+    "description": "The button under the timeline's records that loads the next batch of them."
+  },
+  "search": {
+    "defaultMessage": "Search...",
+    "description": "The placeholder of the timeline's search."
+  },
+  "refresh": {
+    "defaultMessage": "Refresh",
+    "description": "The button that fetches the timeline's records again, from the first."
+  },
+  "text": {
+    "defaultMessage": "Search",
+    "description": "The label of the search's text literal: the option that opens the quote and takes free text, leading the field panel."
+  }
+}

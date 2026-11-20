@@ -1,18 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { day, dayOf, daysOf, rangeOf, step } from "../src/time";
-
-describe("day", () => {
-  it("rejects a day that is not one", () => {
-    expect(day("2026-03-02")).toBe("2026-03-02");
-    expect(() => day("2026-02-30")).toThrow(RangeError);
-  });
-
-  it("reads the day of an instant in a zone", () => {
-    const now = new Date("2026-03-02T23:30:00Z");
-    expect(dayOf(now, "UTC")).toBe("2026-03-02");
-    expect(dayOf(now, "Asia/Tokyo")).toBe("2026-03-03");
-  });
-});
+import { daysOf, rangeOf, step } from "../src/time";
 
 describe("daysOf", () => {
   it("shows the whole weeks a month touches", () => {

@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     "~/assets/css/app.css",
     "~/assets/css/editor.css",
     "~/assets/css/calendar.css",
+    "~/assets/css/timeline.css",
     "~/assets/css/browser.css",
     "~/assets/css/table.css",
     "~/assets/css/views.css",

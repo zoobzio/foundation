@@ -92,6 +92,7 @@
     "@zoobzio/query": "workspace:*",
     "@zoobzio/sync": "workspace:*",
     "@zoobzio/table": "workspace:*",
+    "@zoobzio/timeline": "workspace:*",
     "@zoobzio/views": "workspace:*",
     "defu": "catalog:",
     "objectively": "catalog:",

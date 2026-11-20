@@ -2,19 +2,26 @@ import type {
   Actions,
   Config,
   Context,
-  Day,
   Event,
   Events,
   FetchParams,
   Listener,
   Options,
-  Scope,
   Service,
   Snapshot,
   State,
   View,
 } from "./types";
-import type { Found, JSCalendar, Occurrence, Range } from "@zoobzio/time";
+import type {
+  Day,
+  Edit,
+  Editing,
+  Found,
+  JSCalendar,
+  Occurrence,
+  Range,
+  Scope,
+} from "@zoobzio/time";
 import type { Service as Query } from "@zoobzio/query";
 import type { Service as Sync } from "@zoobzio/sync";
 import type { Emitter, Loader } from "@zoobzio/kit";
@@ -30,25 +37,18 @@ import {
   CALENDAR_VIEWS,
 } from "./constants";
 import {
-  copy,
+  createEntry,
+  day,
+  dayOf,
   expand,
-  local,
-  merge,
-  normal,
-  overrides,
-  patch,
-  recurs,
-  ruleOf,
-  shift,
-  stamp,
-  zoned,
+  removeEntry,
+  updateEntry,
 } from "@zoobzio/time";
-import { day, dayOf, daysOf, rangeOf, step } from "./time";
+import { daysOf, rangeOf, step } from "./time";
 
 declare const crypto: { randomUUID(): string };
 
 type Entry = JSCalendar.Entry;
-type LocalDateTime = JSCalendar.LocalDateTime;
 type PatchObject = JSCalendar.PatchObject;
 type Weekday = JSCalendar.Weekday;
 
@@ -398,7 +398,7 @@ export class CalendarService<I, O> implements Service<I, O> {
   // --- commands --------------------------------------------------------
 
   async create(entry: Entry): Promise<void> {
-    await this.commit("all", [...this.entries, entry], [entry], []);
+    await this.commit(createEntry(this.entries, entry));
   }
 
   async update(
@@ -406,171 +406,37 @@ export class CalendarService<I, O> implements Service<I, O> {
     changes: PatchObject,
     scope?: Scope,
   ): Promise<void> {
-    const { source, index, id, reach } = this.target(key, scope);
-    if (reach === "one" && id !== undefined) {
-      if (!overrides(changes) || "excluded" in changes) {
-        throw new Error(`A patch of one occurrence cannot change its entry`);
-      }
-      const next = this.override(source, id, (held) => merge(held, changes));
-      await this.commit(reach, this.replaced(index, [next]), [next], []);
-      return;
-    }
-    if (reach === "following" && id !== undefined) {
-      const [head, tail] = this.split(source, id);
-      const next = patch(tail, changes);
-      // The overrides were keyed to the old start; a new start leaves them
-      // naming occurrences the rule no longer gives.
-      if ("start" in changes) delete next.recurrenceOverrides;
-      await this.commit(
-        reach,
-        this.replaced(index, [head, next]),
-        [head, next],
-        [],
-      );
-      return;
-    }
-    const next = this.touch(patch(source, changes));
-    await this.commit("all", this.replaced(index, [next]), [next], []);
+    await this.commit(
+      updateEntry(
+        this.entries,
+        this.expanded().found,
+        key,
+        changes,
+        scope,
+        this.editing(),
+      ),
+    );
   }
 
   async remove(key: string, scope?: Scope): Promise<void> {
-    const { source, index, id, reach } = this.target(key, scope);
-    if (reach === "one" && id !== undefined) {
-      const next = this.override(source, id, () => ({ excluded: true }));
-      await this.commit(reach, this.replaced(index, [next]), [next], []);
-      return;
-    }
-    if (reach === "following" && id !== undefined) {
-      const [head] = this.split(source, id);
-      delete head.relatedTo;
-      if (source.relatedTo) head.relatedTo = copy(source.relatedTo);
-      await this.commit(reach, this.replaced(index, [head]), [head], []);
-      return;
-    }
-    await this.commit("all", this.replaced(index, []), [], [source]);
+    await this.commit(
+      removeEntry(
+        this.entries,
+        this.expanded().found,
+        key,
+        scope,
+        this.editing(),
+      ),
+    );
   }
 
-  /**
-   * The entry a command reaches through an occurrence, and how far. An
-   * entry that does not recur is reached whole. A recurring one is reached
-   * at the one occurrence unless the scope says otherwise; `following`
-   * from its first occurrence is the whole entry, and an entry with no
-   * rule has no later occurrences to follow, so it is the one.
-   */
-  private target(
-    key: string,
-    scope?: Scope,
-  ): { source: Entry; index: number; id?: LocalDateTime; reach: Scope } {
-    const hit = this.expanded().found.find((f) => f.occurrence.key === key);
-    const source = hit === undefined ? undefined : this.entries[hit.source];
-    if (hit === undefined || source === undefined) {
-      throw new Error(`No occurrence "${key}" in the range`);
-    }
-    const index = hit.source;
-    const id = hit.occurrence.recurrenceId;
-    if (!recurs(source) || id === undefined || source.start === undefined) {
-      return { source, index, reach: "all" };
-    }
-    let reach = scope ?? "one";
-    if (reach === "following") {
-      if (source.recurrenceRule === undefined) reach = "one";
-      else if (id <= normal(source.start)) reach = "all";
-    }
-    return { source, index, id, reach };
-  }
-
-  /** The entries with the one at an index replaced by others, or by none. */
-  private replaced(index: number, by: Entry[]): Entry[] {
-    const entries = this.entries;
-    return [...entries.slice(0, index), ...by, ...entries.slice(index + 1)];
-  }
-
-  /** An entry as changed now: its `updated` and its `sequence` moved on. */
-  private touch<T extends Entry>(entry: T): T {
+  /** What an edit reads of the calendar: its zone, its clock, its uids. */
+  private editing(): Editing {
     return {
-      ...entry,
-      updated: stamp(this.now()),
-      sequence: (entry.sequence ?? 0) + 1,
+      zone: this.context.timeZone,
+      now: this.now(),
+      uid: () => this.actions.uid?.() ?? crypto.randomUUID(),
     };
-  }
-
-  /** An entry with the override of one occurrence rewritten. */
-  private override(
-    source: Entry,
-    id: LocalDateTime,
-    write: (held: PatchObject) => PatchObject,
-  ): Entry {
-    const next = copy(source);
-    const held = next.recurrenceOverrides ?? {};
-    const at = Object.keys(held).find((k) => normal(k) === id) ?? id;
-    next.recurrenceOverrides = { ...held, [at]: write(held[at] ?? {}) };
-    return this.touch(next);
-  }
-
-  /**
-   * Cuts a recurring entry in two at an occurrence, as JSCalendar makes a
-   * change to this and every later occurrence: the entry, its rule ending
-   * at the occurrence before, and a new entry that starts at the
-   * occurrence and carries the rule on. Each names the other in
-   * `relatedTo`, the first as `next` and the second as `first`, and each
-   * keeps the overrides of its own side.
-   */
-  private split(source: Entry, id: LocalDateTime): [Entry, Entry] {
-    const head = copy(source);
-    const tail = copy(source);
-    const rule = source.recurrenceRule;
-    const from = source.start;
-    if (rule === undefined || from === undefined) {
-      throw new Error(`Entry "${source.uid}" has no rule to cut`);
-    }
-    const zone = source.timeZone ?? this.context.timeZone;
-    const at = zoned(id, zone);
-    const run = ruleOf(rule, zoned(from, zone));
-    const last = run.previous(at, false);
-    const { count, ...open } = copy(rule);
-
-    head.recurrenceRule = {
-      ...open,
-      until: last === null ? normal(from) : local(last),
-    };
-    tail.recurrenceRule =
-      count === undefined
-        ? { ...open }
-        : {
-            ...open,
-            count: Math.max(
-              1,
-              count - run.all((occurrence) => local(occurrence) < id).length,
-            ),
-          };
-
-    const held = Object.entries(source.recurrenceOverrides ?? {});
-    const before = held.filter(([k]) => normal(k) < id);
-    const after = held.filter(([k]) => normal(k) >= id);
-    delete head.recurrenceOverrides;
-    delete tail.recurrenceOverrides;
-    if (before.length)
-      head.recurrenceOverrides = copy(Object.fromEntries(before));
-    if (after.length)
-      tail.recurrenceOverrides = copy(Object.fromEntries(after));
-
-    const uid = this.actions.uid?.() ?? crypto.randomUUID();
-    const first =
-      Object.entries(source.relatedTo ?? {}).find(
-        ([, relation]) => relation.relation?.first === true,
-      )?.[0] ?? source.uid;
-    head.relatedTo = {
-      ...head.relatedTo,
-      [uid]: { relation: { next: true } },
-    };
-    tail.relatedTo = { [first]: { relation: { first: true } } };
-    tail.uid = uid;
-    tail.start = id;
-    if (tail["@type"] === "Task" && tail.due !== undefined) {
-      tail.due = shift(tail.due, from, id);
-    }
-    delete tail.sequence;
-    return [this.touch(head), { ...tail, updated: stamp(this.now()) }];
   }
 
   /**
@@ -579,12 +445,12 @@ export class CalendarService<I, O> implements Service<I, O> {
    * again since, and the rejection reaches the caller. `changed` is
    * emitted once the change stands.
    */
-  private async commit(
-    scope: Scope,
-    entries: Entry[],
-    stored: Entry[],
-    removed: Entry[],
-  ): Promise<void> {
+  private async commit({
+    scope,
+    entries,
+    stored,
+    removed,
+  }: Edit): Promise<void> {
     const before = this.entries;
     this.state.entries = entries;
     this.state.revision = this.revision + 1;

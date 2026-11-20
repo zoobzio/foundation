@@ -73,6 +73,16 @@ export const CALENDAR_VIEW_SCHEMA = z.object({
 });
 
 /**
+ * The schema of a timeline's saved view: what the timeline's `snapshot`
+ * yields and its `restore` takes. The search and the sync's interval: a
+ * saved view opens on the latest records, however far down it was read.
+ */
+export const TIMELINE_VIEW_SCHEMA = z.object({
+  clauses: z.array(clause).default([]),
+  interval,
+});
+
+/**
  * The schema of a browser's saved view: what the browser's `snapshot`
  * yields and its `restore` takes.
  */

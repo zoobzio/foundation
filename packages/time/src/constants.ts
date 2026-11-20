@@ -1,4 +1,15 @@
-import type { Frequency, RecurrenceRule } from "./jscalendar";
+import type { Frequency, RecurrenceRule, Weekday } from "./jscalendar";
+
+/** The weekdays in ISO order: Monday is the first day of the ISO week. */
+export const TIME_WEEKDAYS: Weekday[] = [
+  "mo",
+  "tu",
+  "we",
+  "th",
+  "fr",
+  "sa",
+  "su",
+];
 
 /** The calendar system a rule counts in where it names none. */
 export const TIME_DEFAULT_SCALE = "gregorian";

@@ -7,7 +7,7 @@ into over a range, on [rrule-temporal](https://github.com/ggaabe/rrule-temporal)
 and the zone arithmetic under both, on Temporal.
 
 A service over time holds JSCalendar entries and reads them through this
-package; [`@zoobzio/calendar`](../../services/calendar/) is the first. It
+package, as [`@zoobzio/calendar`](../../services/calendar/) does. It
 holds no state and knows no view: what a service shows of time, and how it
 moves through it, is the service's own.
 
@@ -73,6 +73,25 @@ remove.
 - `copy(value)`: a copy as plain JSON, whatever proxy the value is read
   through.
 
+## Edits
+
+A change to the entries, worked out and not yet made: an `Edit` is
+`{ scope, entries, stored, removed }`, the entries as they stand after it,
+the ones to store, and the ones to delete. A service applies it and
+persists it.
+
+- `createEntry(entries, entry)`: adds an entry.
+- `updateEntry(entries, found, key, changes, scope, editing)`: patches an
+  occurrence (`one`, into the entry's `recurrenceOverrides`), an occurrence
+  and every later one (`following`, cutting the entry in two as the format
+  describes), or the whole entry (`all`).
+- `removeEntry(entries, found, key, scope, editing)`: excludes an
+  occurrence, ends the rule before it, or removes the entry.
+
+`found` is the expansion the key is read from, and `editing` what the edit
+reads of its owner: `{ zone, now, uid }`. An entry that does not recur is
+always reached whole; a recurring one defaults to `one`.
+
 ## Zones
 
 The format's two spellings of a time, a `LocalDateTime` and a
@@ -87,3 +106,13 @@ The format's two spellings of a time, a `LocalDateTime` and a
 - `shift(value, from, to)`: a local date-time moved by the wall-clock
   distance between two others.
 - `stamp(now)`: a `Date` as an instant, to the second.
+
+## Days
+
+A `Day` is a calendar day, `YYYY-MM-DD`, as it reads in a zone.
+
+- `dayOf(now, zone)`: the day an instant falls on in a zone.
+- `day(value)`: a day in its one spelling; throws for a value that is not
+  one.
+- `weekStart(date, first)`: the first day of the week a `Temporal.PlainDate`
+  falls in, where weeks start on `first`.

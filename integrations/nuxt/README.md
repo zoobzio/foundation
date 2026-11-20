@@ -424,9 +424,10 @@ const users = useUsers(() => ({
 | `createEditor`   | `accessEditor`   | `editor:loaded`, `editor:updated`, `editor:mounted`, `editor:unmounted`                                                    |
 | `createCode`     | `accessCode`     | `code:loaded`, `code:updated`, `code:mounted`, `code:unmounted`                                                            |
 | `createCalendar` | `accessCalendar` | `calendar:navigated`, `calendar:loaded`, `calendar:changed`, `calendar:selected`, `calendar:filtered`, `calendar:restored` |
+| `createTimeline` | `accessTimeline` | `timeline:loaded`, `timeline:appended`, `timeline:selected`, `timeline:filtered`, `timeline:restored`                      |
 | `createViews`    | `accessViews`    | `views:initialized`, `views:selected`, `views:saved`, `views:renamed`, `views:removed`, `views:reverted`, `views:failed`   |
 
-`createTable`, `createBrowser`, and `createCalendar` take a `refresh` beside the `fetch`: with
+`createTable`, `createBrowser`, `createCalendar`, and `createTimeline` take a `refresh` beside the `fetch`: with
 it the service has a sync, the refresh button opens the sync menu, its
 items read in the visitor's locale (`sync.now`, `sync.off`, `sync.seconds`,
 `sync.minutes`) with `check` after the interval the sync is on, and a poll
@@ -451,10 +452,10 @@ Each relay is also logged at `debug` under the service's id (see
 
 `createViews` builds saved views over another service. Its composable
 takes what the views are over, anything with a `snapshot` and a `restore`,
-which a table, a browser, and a calendar service each have;
-`TABLE_VIEW_SCHEMA`, `BROWSER_VIEW_SCHEMA`, and `CALENDAR_VIEW_SCHEMA` are
-the Zod schemas of what each yields, and `TableView`, `BrowserView`, and
-`CalendarView` their types. Each carries the sync's `interval`, off where
+which a table, a browser, a calendar, and a timeline service each have;
+`TABLE_VIEW_SCHEMA`, `BROWSER_VIEW_SCHEMA`, `CALENDAR_VIEW_SCHEMA`, and
+`TIMELINE_VIEW_SCHEMA` are the Zod schemas of what each yields, and
+`TableView`, `BrowserView`, `CalendarView`, and `TimelineView` their types. Each carries the sync's `interval`, off where
 a view stored before it names none, so a saved view keeps itself up to
 date as it was saved to. Without a `load`, a `save`, and
 a `remove` the views live in the store alone.
@@ -604,7 +605,7 @@ app/
   components/     — the wrapped vue components: wrap(<Core>, { pt, slots }), NuxtLink under link parts, icons in the slots, the layer's components under nested parts; icon.ts is the icon glue they share
   error.vue       — the error page
   app.d.ts        — RuntimeNuxtHooks augmentation for the relayed events; the vue item types and the headless action descriptors widened with `icon`
-  constants/      — error page status codes, log levels, the editor's and the calendar's tools' icons and text, the table's search key, the schemas of a table's, a browser's and a calendar's saved view
+  constants/      — error page status codes, log levels, the editor's and the calendar's tools' icons and text, the table's search key, the schemas of a table's, a browser's, a calendar's and a timeline's saved view
   assets/css/     — reset.css, loaded by the layer config
   composables/    — useAppError, useFocusKey, useHooks, useLogger, useNotifications, useRequest, useLazyRequest
   factories/      — create<Name>(id, options) → use<Name>(): Service

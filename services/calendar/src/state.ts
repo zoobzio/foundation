@@ -1,8 +1,8 @@
 import type { Config, State } from "./types";
 
 import { createSyncState } from "@zoobzio/sync";
+import { dayOf } from "@zoobzio/time";
 import { CALENDAR_DEFAULT_TIME_ZONE, CALENDAR_VIEWS } from "./constants";
-import { dayOf } from "./time";
 
 /**
  * Builds the initial state container from config defaults. The result is

@@ -11,6 +11,7 @@ const toggle = () => untheme.swap("color", dark.value ? "light" : "dark");
 const demos = [
   { to: "/", label: "Editor" },
   { to: "/calendar", label: "Calendar" },
+  { to: "/timeline", label: "Timeline" },
   { to: "/browser", label: "Browser" },
   { to: "/table", label: "Table" },
 ];

@@ -1,7 +1,7 @@
 # examples/nuxt
 
-A fake app that extends the foundation Nuxt layer and renders four pages,
-the rich text editor, the calendar, the browser, and the table, with a mock stylesheet
+A fake app that extends the foundation Nuxt layer and renders five pages,
+the rich text editor, the calendar, the timeline, the browser, and the table, with a mock stylesheet
 over the layer's tokens. It is where a change to any of them is seen
 working in a real app, with real styling, before it ships.
 
@@ -16,7 +16,12 @@ holds a `Calendar` over a fake backend, an array in memory dated around
 today: recurring events, an occurrence that moved and one that is off,
 all-day spans, and a task. Selecting an occurrence shows it as the
 JSCalendar object it is, with buttons that rename or remove the one
-occurrence, it and every later one, or the whole entry. `/browser` holds a
+occurrence, it and every later one, or the whole entry. `/timeline` holds
+a `Timeline` over another fake backend, a commit history dated back from
+now: a card per commit under the day it was made, the latest first,
+twelve at a time, with the button under them loading the next batch. The
+search filters by message and by author, and a button pushes a commit to
+the backend and reads the history again from the top. `/browser` holds a
 `Browser` over a fake backend, a folder tree in memory: the search and the
 sort menu in its toolbar, the trail and the listing's counts as the head of
 its table, folders that show their total size and latest change in the
@@ -41,19 +46,22 @@ shown under it: try `"hopper"`, `Status: Shipped`, or `Total: over 300`.
 app/layouts/default.vue     — the shared header: the demos and the scheme
 app/pages/index.vue         — the editor and its output
 app/pages/calendar.vue      — the calendar and the selected occurrence
+app/pages/timeline.vue      — the timeline and the selected commit
 app/pages/browser.vue       — the browser and its fetch params
 app/pages/table.vue         — the table and its fetch params
 app/composables/team.ts     — the calendar's factory and its fake backend
+app/composables/history.ts  — the timeline's factory and its fake backend
 app/composables/assets.ts   — the browser's factory and its fake backend
 app/composables/orders.ts   — the table's factory and its fake backend
 app/assets/css/app.css      — the page shell, on aurora's tokens
 app/assets/css/editor.css   — the editor: toolbar, tools, separators, content
 app/assets/css/calendar.css — the calendar: toolbar, grid, agenda, occurrences
+app/assets/css/timeline.css — the timeline: search, groups, cards, load more
 app/assets/css/browser.css  — the browser: search, sort, head, rows, checkboxes
 app/assets/css/table.css    — the table: search, columns, headers, rows, pagination
 nuxt.config.ts              — extends @zoobzio/nuxt, loads the stylesheets
 ```
 
 The layer ships no CSS of its own beyond a reset: every `f-*` class is a
-bare hook. `editor.css`, `calendar.css`, `browser.css`, and `table.css` are
+bare hook. `editor.css`, `calendar.css`, `timeline.css`, `browser.css`, and `table.css` are
 one way to bind them, and the shape another app would copy and change.

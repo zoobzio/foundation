@@ -1,6 +1,11 @@
 import type { Entry, LocalDateTime, UTCDateTime } from "./jscalendar";
 
 /**
+ * A calendar day, `YYYY-MM-DD`, as it reads in a zone.
+ */
+export type Day = string;
+
+/**
  * A span of time between two instants: from `start`, up to and not
  * including `end`.
  */
