@@ -5,7 +5,8 @@ import type { StarterKitOptions } from "@tiptap/starter-kit";
 /**
  * The feature set as StarterKit options: a feature that is off removes its
  * extensions; one that is on, or unset, keeps the defaults. `headings`
- * narrows the levels when it lists them.
+ * narrows the levels when it lists them. A link is edited where it is
+ * clicked, so a click places the caret and never follows the link.
  */
 export const features = (config: Config): Partial<StarterKitOptions> => {
   const off = (flag: boolean | undefined): false | undefined =>
@@ -23,7 +24,7 @@ export const features = (config: Config): Partial<StarterKitOptions> => {
     orderedList: lists,
     listItem: lists,
     listKeymap: lists,
-    link: off(config.links),
+    link: config.links === false ? false : { openOnClick: false },
     code,
     codeBlock: code,
     blockquote: off(config.blockquote),

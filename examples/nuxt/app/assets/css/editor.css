@@ -1,7 +1,7 @@
 /*
  * The editor, bound to the layer's bare hooks: the root, the toolbar and
- * its tools and separators, and the content host, which is ProseMirror's
- * element once the editor is on.
+ * its tools and separators, the prompt a link or an image opens, and the
+ * content host, which is ProseMirror's element once the editor is on.
  */
 
 .f-data-editor {
@@ -70,7 +70,10 @@
   outline-offset: -1px;
 }
 
-.f-data-editor-tool[aria-pressed="true"] {
+/* A prompt's button is not pressed; `data-active` says what it set (a
+   link, an image) is at the selection. */
+.f-data-editor-tool[aria-pressed="true"],
+.f-data-editor-tool[data-active] {
   color: var(--primary);
   background: color-mix(in srgb, var(--primary) 14%, transparent);
   border-color: color-mix(in srgb, var(--primary) 30%, transparent);
@@ -81,6 +84,75 @@
   opacity: 0.5;
   cursor: default;
   background: transparent;
+}
+
+/* --- prompt ---------------------------------------------------------- */
+
+/* The popover a link or an image opens: its fields, one over the next,
+   then the buttons side by side. */
+.f-popover-content[data-prompt] {
+  z-index: 50;
+  width: 18rem;
+  padding: var(--space-3);
+  background: var(--surface-container);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.f-data-editor-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.f-data-editor-field {
+  display: grid;
+  flex: 1 0 100%;
+  gap: var(--space-1);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface-muted);
+}
+
+.f-data-editor-input {
+  height: 2rem;
+  padding: 0 var(--space-2);
+  font: inherit;
+  color: var(--on-surface);
+  background: var(--surface);
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  outline: none;
+}
+
+.f-data-editor-input:focus-visible {
+  border-color: var(--primary);
+}
+
+.f-data-editor-submit,
+.f-data-editor-clear {
+  height: 2rem;
+  padding: 0 var(--space-3);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-letter-spacing);
+  color: var(--on-surface);
+  background: transparent;
+  border: 1px var(--stroke-solid) var(--outline-muted);
+  border-radius: var(--shape-md);
+  cursor: pointer;
+}
+
+.f-data-editor-submit {
+  color: var(--surface);
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.f-data-editor-submit:focus-visible,
+.f-data-editor-clear:focus-visible {
+  outline: var(--border-focus);
+  outline-offset: 1px;
 }
 
 /* --- block type dropdown --------------------------------------------- */
@@ -272,4 +344,18 @@
 .f-data-editor-content a {
   color: var(--primary);
   text-decoration: underline;
+}
+
+/* An image sits in its line and never runs wider than the text. */
+.f-data-editor-content img {
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+  border-radius: var(--shape-sm, 4px);
+}
+
+/* The node selection: an image clicked, which the image tool then edits. */
+.f-data-editor-content img.ProseMirror-selectednode {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

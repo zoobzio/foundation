@@ -36,6 +36,7 @@ export default defineConfig({
     italic: "lucide:italic",
     keywords: "lucide:tags",
     last: "lucide:chevrons-right",
+    link: "lucide:link",
     magic: "lucide:wand-sparkles",
     next: "lucide:chevron-right",
     "ordered-list": "lucide:list-ordered",

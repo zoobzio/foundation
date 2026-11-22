@@ -150,7 +150,7 @@ input's remove button, `image` in an image input's placeholder and
 in a checkbox, and `indeterminate` in its place while the checkbox is neither on nor off, as a table's or a browser's select-all is over some of its rows; the editor's and rich text's tools by key (`bold`,
 `bullet-list`, `undo`, …, see `EDITOR_TOOL_ICONS`), each drawn in place
 of the button's text so the toolbar is icon-only, with the tool's label in
-the visitor's locale as the button's accessible name and its `title`, and
+the visitor's locale as the button's accessible name and its `title`, the labels of the link's and the image's prompt (see `EDITOR_FIELD_TEXT`) in that locale too, and
 `expand` after the block type dropdown's text, which reads in the
 visitor's locale as its entries do; the calendar's steps by key (`prev`,
 `next`, see `CALENDAR_TOOL_ICONS`), drawn the same way, while today and

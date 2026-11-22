@@ -1,18 +1,23 @@
 import type {
   EditorBlock,
+  EditorField,
   EditorGroup,
   EditorTool,
   EditorToolGroup,
   EditorToolKind,
+  EditorValues,
 } from "../types/components/editor";
 import type { Service } from "@zoobzio/editor";
 
 import {
+  EDITOR_ALT_LABEL,
   EDITOR_BLOCKQUOTE_LABEL,
   EDITOR_BULLET_LIST_LABEL,
   EDITOR_CODE_BLOCK_LABEL,
   EDITOR_HEADING_LABEL,
   EDITOR_HEADING_LEVELS,
+  EDITOR_IMAGE_LABEL,
+  EDITOR_LINK_LABEL,
   EDITOR_MARKS,
   EDITOR_ORDERED_LIST_LABEL,
   EDITOR_PARAGRAPH_KEY,
@@ -21,12 +26,23 @@ import {
   EDITOR_RULE_LABEL,
   EDITOR_TOOL_GROUPS,
   EDITOR_UNDO_LABEL,
+  EDITOR_URL_LABEL,
 } from "../constants/editor";
+
+/** An attribute at the selection as a field's value: its text, or none. */
+const text = (value: unknown): string =>
+  typeof value === "string" ? value : "";
+
+/** What was typed into a field, without the space around it. */
+const typed = (values: EditorValues | undefined, key: string): string =>
+  values?.[key]?.trim() ?? "";
 
 /**
  * The toolbar of a service: one tool per mark and node its schema holds,
- * in a fixed order by group (the headings first, then the marks, the
- * lists, the blocks), then undo and redo when history is on. Reads
+ * in a fixed order by group (the headings first, then the marks with the
+ * link after them, the lists, the blocks, the image), then undo and redo
+ * when history is on. The link and the image are prompts: each asks for
+ * its values and runs with them. Reads
  * the service's `active` and `can`, so a computed over it follows the
  * selection: a tool is `active` where its mark or node is, and `disabled`
  * where its command would not apply. A heading level asks the service,
@@ -43,7 +59,8 @@ export const editorTools = <I, O>(service: Service<I, O>): EditorTool[] => {
     group: EditorToolGroup,
     on: boolean,
     enabled: boolean,
-    run: () => unknown,
+    run: (values?: EditorValues) => unknown,
+    prompt: Pick<EditorTool, "fields" | "clear"> = {},
   ): void => {
     tools.push({
       key,
@@ -52,7 +69,8 @@ export const editorTools = <I, O>(service: Service<I, O>): EditorTool[] => {
       group,
       active: on,
       disabled: !enabled,
-      run: () => run(),
+      run: (values) => run(values),
+      ...prompt,
     });
   };
 
@@ -83,6 +101,35 @@ export const editorTools = <I, O>(service: Service<I, O>): EditorTool[] => {
       active[name] ?? false,
       can.toggle(name),
       () => service.toggle(name),
+    );
+  }
+  if (marks.link) {
+    const on = active.link ?? false;
+    const unlink = () => service.link(null);
+    tool(
+      "link",
+      EDITOR_LINK_LABEL,
+      "prompt",
+      "marks",
+      on,
+      can.toggle("link"),
+      // An address typed away is the link taken away.
+      (values) => {
+        const href = typed(values, "href");
+        return href ? service.link(href) : unlink();
+      },
+      {
+        fields: (): EditorField[] => [
+          {
+            key: "href",
+            label: EDITOR_URL_LABEL,
+            value: text(service.attributes("link").href),
+            url: true,
+            required: false,
+          },
+        ],
+        clear: on ? unlink : undefined,
+      },
     );
   }
   if (nodes.bulletList) {
@@ -138,6 +185,47 @@ export const editorTools = <I, O>(service: Service<I, O>): EditorTool[] => {
       false,
       can.insert({ type: "horizontalRule" }),
       () => service.insert({ type: "horizontalRule" }),
+    );
+  }
+  if (nodes.image) {
+    tool(
+      "image",
+      EDITOR_IMAGE_LABEL,
+      "prompt",
+      "media",
+      active.image ?? false,
+      can.insert({ type: "image", attrs: { src: "" } }),
+      // Over a selected image the values replace its own; anywhere else
+      // they are a new image at the selection. No address, no image.
+      (values) => {
+        const src = typed(values, "src");
+        if (!src) return false;
+        const attrs = { src, alt: typed(values, "alt") || null };
+        return service.isActive("image")
+          ? service.run((chain) => chain.updateAttributes("image", attrs))
+          : service.insert({ type: "image", attrs });
+      },
+      {
+        fields: (): EditorField[] => {
+          const attrs = service.attributes("image");
+          return [
+            {
+              key: "src",
+              label: EDITOR_URL_LABEL,
+              value: text(attrs.src),
+              url: true,
+              required: true,
+            },
+            {
+              key: "alt",
+              label: EDITOR_ALT_LABEL,
+              value: text(attrs.alt),
+              url: false,
+              required: false,
+            },
+          ];
+        },
+      },
     );
   }
   if (service.config.history !== false) {

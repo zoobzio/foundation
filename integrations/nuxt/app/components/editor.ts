@@ -3,7 +3,8 @@
 // accessible name and its tooltip. A tool the layer has no icon for keeps
 // its label as text. The block type dropdown reads its trigger and its
 // entries in the visitor's locale, with the `expand` icon after the
-// trigger's text.
+// trigger's text, and the prompts of the link and the image read theirs
+// there too.
 import type { EditorPassthrough } from "@zoobzio/vue/types/components/editor";
 
 import Core from "@zoobzio/vue/components/editor.vue";
@@ -14,6 +15,9 @@ import {
   blockAppend,
   blockItemLabel,
   blockLabel,
+  clearLabel,
+  fieldLabel,
+  submitLabel,
   toolLabel,
   toolLayer,
 } from "./editor-tool";
@@ -25,5 +29,8 @@ export default wrap(Core, {
     blockLabel: ({ block }) => blockLabel(block),
     blockAppend: () => blockAppend(),
     blockItemLabel: ({ item }) => blockItemLabel(item),
+    fieldLabel: ({ field }) => fieldLabel(field),
+    submitLabel: () => submitLabel(),
+    clearLabel: () => clearLabel(),
   },
 });

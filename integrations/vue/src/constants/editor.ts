@@ -15,6 +15,7 @@ export const EDITOR_TOOL_GROUPS: readonly EditorToolGroup[] = [
   "marks",
   "lists",
   "blocks",
+  "media",
   "history",
 ];
 
@@ -42,5 +43,15 @@ export const EDITOR_ORDERED_LIST_LABEL = "Ordered list";
 export const EDITOR_BLOCKQUOTE_LABEL = "Quote";
 export const EDITOR_CODE_BLOCK_LABEL = "Code block";
 export const EDITOR_RULE_LABEL = "Rule";
+export const EDITOR_LINK_LABEL = "Link";
+export const EDITOR_IMAGE_LABEL = "Image";
 export const EDITOR_UNDO_LABEL = "Undo";
 export const EDITOR_REDO_LABEL = "Redo";
+
+/** The labels of a prompt's fields: a link's address, an image's, its text. */
+export const EDITOR_URL_LABEL = "URL";
+export const EDITOR_ALT_LABEL = "Alt text";
+
+/** The buttons of a prompt: the one that applies it, the one that removes. */
+export const EDITOR_APPLY_LABEL = "Apply";
+export const EDITOR_REMOVE_LABEL = "Remove";

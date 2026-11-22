@@ -1,18 +1,19 @@
 // The tool glue the editor and rich text wrappers share: the layer under
 // `pt.tool` that names each button in the visitor's locale, the label slot
-// that draws its icon, and the block type dropdown's trigger and items in
-// the visitor's locale. It sits with the wrappers, as `icon.ts` and
+// that draws its icon, the block type dropdown's trigger and items in the
+// visitor's locale, and the labels of a prompt's fields and buttons. It sits with the wrappers, as `icon.ts` and
 // `text.ts` do, because it renders through them; `utils/editor` holds the
 // lookups alone, which the factories reach without a Nuxt app.
 import type {
   EditorBlock,
+  EditorField,
   EditorTool,
 } from "@zoobzio/vue/types/components/editor";
 import type { VNode } from "vue";
 
 import { icon, iconOf } from "./icon";
 import { text, textIn, textSlot } from "./text";
-import { toolIcon, toolText } from "../utils/editor";
+import { fieldText, toolIcon, toolText } from "../utils/editor";
 
 /**
  * The label of a tool as the visitor reads it: the contract's message for
@@ -61,3 +62,19 @@ export const blockAppend = (): VNode[] => [icon("expand")];
 
 /** One entry of the block type dropdown, by name. */
 export const blockItemLabel = (item: EditorBlock): VNode[] => blockText(item);
+
+/**
+ * The label of a prompt's field, in a span as the editor's own renders it:
+ * the contract's message for the fields the layer names, the field's own
+ * label otherwise.
+ */
+export const fieldLabel = (field: EditorField): VNode[] =>
+  textIn("span", "f-span", fieldText(field.key) ?? field.label);
+
+/** The text of the button that applies a prompt. */
+export const submitLabel = (): VNode[] =>
+  textIn("span", "f-span", "editor.apply");
+
+/** The text of the button that removes what a prompt set. */
+export const clearLabel = (): VNode[] =>
+  textIn("span", "f-span", "editor.remove");

@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@tiptap/core": "catalog:",
+    "@tiptap/extension-image": "catalog:",
     "@tiptap/html": "catalog:",
     "@tiptap/pm": "catalog:",
     "@tiptap/starter-kit": "catalog:",

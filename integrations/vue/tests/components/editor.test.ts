@@ -120,9 +120,11 @@ describe("editor", () => {
       "underline",
       "strike",
       "code",
+      "link",
       "blockquote",
       "codeBlock",
       "horizontalRule",
+      "image",
       "undo",
       "redo",
     ]);
@@ -164,6 +166,7 @@ describe("editor", () => {
       "marks",
       "marks",
       "marks",
+      "marks",
       "|",
       "lists",
       "lists",
@@ -171,6 +174,8 @@ describe("editor", () => {
       "blocks",
       "blocks",
       "blocks",
+      "|",
+      "media",
       "|",
       "history",
       "history",
@@ -187,7 +192,7 @@ describe("editor", () => {
       history: false,
     });
     const wrapper = mountEditor({ service });
-    expect(wrapper.findAll(".f-data-editor-separator")).toHaveLength(1);
+    expect(wrapper.findAll(".f-data-editor-separator")).toHaveLength(2);
     expect(
       wrapper
         .findAll(".f-data-editor-tool")
@@ -198,9 +203,11 @@ describe("editor", () => {
       "marks",
       "marks",
       "marks",
+      "marks",
       "blocks",
       "blocks",
       "blocks",
+      "media",
     ]);
   });
 
@@ -208,7 +215,7 @@ describe("editor", () => {
     const { service } = makeEditor({ headings: false });
     const wrapper = mountEditor({ service });
     expect(wrapper.find(".f-data-editor-block").exists()).toBe(false);
-    expect(wrapper.findAll(".f-data-editor-separator")).toHaveLength(3);
+    expect(wrapper.findAll(".f-data-editor-separator")).toHaveLength(4);
   });
 
   it("the dropdown names the block at the selection", async () => {
@@ -442,6 +449,252 @@ describe("editor", () => {
     expect(service.active.bold).toBe(true);
     expect(bold.attributes("aria-pressed")).toBe("true");
     expect(wrapper.get(".f-data-editor-content strong").text()).toBe("Hello");
+  });
+
+  describe("prompts", () => {
+    const prompt = (key: string) =>
+      document.body.querySelector<HTMLElement>(`[data-prompt="${key}"]`);
+    const input = (key: string, field: string) =>
+      prompt(key)!.querySelector<HTMLInputElement>(`input[name="${field}"]`)!;
+    const type = (el: HTMLInputElement, value: string) => {
+      el.value = value;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+    /**
+     * The frame after a prompt acts: the editor takes focus back on the
+     * next frame, as it does long before a person reaches for a button.
+     */
+    const frame = () =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    const send = async (key: string) => {
+      prompt(key)!
+        .querySelector("form")!
+        .dispatchEvent(
+          new Event("submit", { bubbles: true, cancelable: true }),
+        );
+      await flushPromises();
+    };
+
+    it("a prompt's button opens a popover and is never pressed", async () => {
+      const { service } = makeEditor();
+      const wrapper = mountEditor({ service });
+      const image = wrapper.get('[data-tool="image"]');
+      expect(image.attributes("aria-haspopup")).toBe("dialog");
+      expect(image.attributes("aria-expanded")).toBe("false");
+      expect(image.attributes("aria-pressed")).toBeUndefined();
+      expect(image.attributes("aria-label")).toBe("Image");
+      expect(prompt("image")).toBeNull();
+      await image.trigger("click");
+      await flushPromises();
+      expect(image.attributes("aria-expanded")).toBe("true");
+      expect(service.mounted).toBe(true);
+      const fields = Array.from(
+        prompt("image")!.querySelectorAll<HTMLElement>(".f-data-editor-field"),
+      );
+      expect(fields.map((el) => el.dataset.field)).toEqual(["src", "alt"]);
+      expect(fields.map((el) => el.textContent?.trim())).toEqual([
+        "URL",
+        "Alt text",
+      ]);
+      expect(input("image", "src").required).toBe(true);
+      expect(input("image", "src").getAttribute("inputmode")).toBe("url");
+      expect(input("image", "alt").required).toBe(false);
+      expect(
+        prompt("image")!.querySelector(".f-data-editor-submit")?.textContent,
+      ).toBe("Apply");
+      expect(prompt("image")!.querySelector(".f-data-editor-clear")).toBeNull();
+    });
+
+    it("the image prompt inserts an image where the caret is", async () => {
+      const { service } = makeEditor();
+      service.load(hello);
+      service.run((chain) => chain.setTextSelection(6));
+      const wrapper = mountEditor({ service });
+      await wrapper.get('[data-tool="image"]').trigger("click");
+      await flushPromises();
+      type(input("image", "src"), "/a.png");
+      type(input("image", "alt"), "A");
+      await send("image");
+      expect(prompt("image")).toBeNull();
+      const img = wrapper.get(".f-data-editor-content p img");
+      expect(img.attributes("src")).toBe("/a.png");
+      expect(img.attributes("alt")).toBe("A");
+      expect(wrapper.get(".f-data-editor-content").text()).toBe("Hello world");
+    });
+
+    it("the link prompt links the selection, reopens on its address, and removes it", async () => {
+      const { service } = makeEditor();
+      service.load(hello);
+      service.run((chain) => chain.setTextSelection({ from: 1, to: 6 }));
+      const wrapper = mountEditor({ service });
+      const link = wrapper.get('[data-tool="link"]');
+      expect(link.attributes("data-active")).toBeUndefined();
+      await link.trigger("click");
+      await flushPromises();
+      expect(input("link", "href").value).toBe("");
+      expect(prompt("link")!.querySelector(".f-data-editor-clear")).toBeNull();
+      type(input("link", "href"), "https://example.com");
+      await send("link");
+      expect(prompt("link")).toBeNull();
+      const anchor = wrapper.get(".f-data-editor-content a");
+      expect(anchor.attributes("href")).toBe("https://example.com");
+      expect(anchor.text()).toBe("Hello");
+      expect(link.attributes("data-active")).toBe("");
+
+      await frame();
+      await link.trigger("click");
+      await flushPromises();
+      expect(input("link", "href").value).toBe("https://example.com");
+      const remove = prompt("link")!.querySelector<HTMLElement>(
+        ".f-data-editor-clear",
+      )!;
+      expect(remove.textContent).toBe("Remove");
+      remove.click();
+      await flushPromises();
+      expect(prompt("link")).toBeNull();
+      expect(wrapper.find(".f-data-editor-content a").exists()).toBe(false);
+      expect(link.attributes("data-active")).toBeUndefined();
+    });
+
+    it("a dismissed prompt changes nothing, and the next opens fresh", async () => {
+      const { service } = makeEditor();
+      service.load(hello);
+      const wrapper = mountEditor({ service });
+      const image = wrapper.get('[data-tool="image"]');
+      await image.trigger("click");
+      await flushPromises();
+      type(input("image", "src"), "/a.png");
+      document.body.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+      );
+      await flushPromises();
+      expect(prompt("image")).toBeNull();
+      expect(service.json).toEqual(hello);
+      await image.trigger("click");
+      await flushPromises();
+      expect(input("image", "src").value).toBe("");
+    });
+
+    it("opening one prompt closes another", async () => {
+      const { service } = makeEditor();
+      const wrapper = mountEditor({ service });
+      await wrapper.get('[data-tool="link"]').trigger("click");
+      await flushPromises();
+      expect(prompt("link")).not.toBeNull();
+      await wrapper.get('[data-tool="image"]').trigger("click");
+      await flushPromises();
+      expect(prompt("link")).toBeNull();
+      expect(prompt("image")).not.toBeNull();
+      expect(input("image", "src").value).toBe("");
+    });
+
+    it("the prompt slot replaces the form, with the values and the actions", async () => {
+      const { service } = makeEditor();
+      service.load(hello);
+      const wrapper = mountEditor(
+        { service },
+        {
+          prompt: `<button class="custom" @click="params.values.src = '/c.png'; params.submit()">{{ params.fields.length }}</button>`,
+        },
+      );
+      await wrapper.get('[data-tool="image"]').trigger("click");
+      await flushPromises();
+      expect(prompt("image")!.querySelector("form")).toBeNull();
+      const custom = prompt("image")!.querySelector<HTMLElement>(".custom")!;
+      expect(custom.textContent).toBe("2");
+      custom.click();
+      await flushPromises();
+      expect(prompt("image")).toBeNull();
+      // By its address: ProseMirror draws an image of its own beside an
+      // inline node that starts a paragraph.
+      expect(
+        wrapper.get(".f-data-editor-content img[src]").attributes("src"),
+      ).toBe("/c.png");
+    });
+
+    it("a tool's own prompt slot replaces its form alone", async () => {
+      const { service } = makeEditor();
+      service.load(hello);
+      const wrapper = mountEditor(
+        { service },
+        {
+          "prompt-image": `<button class="picker" @click="params.values.src = '/up.png'; params.submit()">{{ params.tool.key }}</button>`,
+        },
+      );
+      await wrapper.get('[data-tool="link"]').trigger("click");
+      await flushPromises();
+      expect(prompt("link")!.querySelector("form")).not.toBeNull();
+      expect(prompt("link")!.querySelector(".picker")).toBeNull();
+      await wrapper.get('[data-tool="image"]').trigger("click");
+      await flushPromises();
+      expect(prompt("image")!.querySelector("form")).toBeNull();
+      const picker = prompt("image")!.querySelector<HTMLElement>(".picker")!;
+      expect(picker.textContent).toBe("image");
+      picker.click();
+      await flushPromises();
+      expect(prompt("image")).toBeNull();
+      expect(
+        wrapper.get(".f-data-editor-content img[src]").attributes("src"),
+      ).toBe("/up.png");
+    });
+
+    it("a tool's own prompt slot wins over the shared one", async () => {
+      const { service } = makeEditor();
+      const wrapper = mountEditor(
+        { service },
+        {
+          prompt: '<button class="shared">{{ params.tool.key }}</button>',
+          "prompt-image": '<button class="own">{{ params.tool.key }}</button>',
+        },
+      );
+      await wrapper.get('[data-tool="link"]').trigger("click");
+      await flushPromises();
+      expect(prompt("link")!.querySelector(".shared")?.textContent).toBe(
+        "link",
+      );
+      await wrapper.get('[data-tool="image"]').trigger("click");
+      await flushPromises();
+      expect(prompt("image")!.querySelector(".own")?.textContent).toBe("image");
+      expect(prompt("image")!.querySelector(".shared")).toBeNull();
+    });
+
+    it("the label slots and passthrough reach the form", async () => {
+      const { service } = makeEditor();
+      service.load(hello);
+      service.run((chain) => chain.setTextSelection({ from: 1, to: 6 }));
+      service.link("https://example.com");
+      const wrapper = mountEditor(
+        {
+          service,
+          pt: {
+            form: (tool) => ({ id: `form-${tool.key}` }),
+            field: (field) => ({ placeholder: field.key }),
+            submit: () => ({ title: "go" }),
+            clear: () => ({ title: "gone" }),
+          },
+        },
+        {
+          fieldLabel: "<i>{{ params.field.key }}</i>",
+          submitLabel: "<i>ok</i>",
+          clearLabel: "<i>no</i>",
+        },
+      );
+      await wrapper.get('[data-tool="link"]').trigger("click");
+      await flushPromises();
+      const form = prompt("link")!.querySelector("form")!;
+      expect(form.id).toBe("form-link");
+      expect(form.querySelector(".f-data-editor-field i")?.textContent).toBe(
+        "href",
+      );
+      expect(input("link", "href").placeholder).toBe("href");
+      const submit = form.querySelector(".f-data-editor-submit")!;
+      expect(submit.getAttribute("title")).toBe("go");
+      expect(submit.getAttribute("type")).toBe("submit");
+      expect(submit.textContent).toBe("ok");
+      const clear = form.querySelector(".f-data-editor-clear")!;
+      expect(clear.getAttribute("title")).toBe("gone");
+      expect(clear.textContent).toBe("no");
+    });
   });
 
   it("relays the service's events as emits", () => {

@@ -9,6 +9,8 @@ const html = ref(`<h1>Field notes</h1>
 <li>Select a word and press <em>bold</em>: the selection stays put.</li>
 <li>Tab into the toolbar from the text, then use the arrow keys.</li>
 <li>Undo is off until there is something to undo.</li>
+<li>Select a word and press <em>link</em>, or put the caret in <a href="https://tiptap.dev">a link</a> to change or remove it.</li>
+<li>Press <em>image</em> and give it an address; click an image, then the button, to change it.</li>
 </ul>
 <blockquote><p>Inside a code block the marks turn off, because the block admits none.</p></blockquote>
 <pre><code>const can = editor.can.toggle("bold"); // false here</code></pre>`);

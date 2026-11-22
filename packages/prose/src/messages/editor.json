@@ -23,6 +23,30 @@
     "defaultMessage": "Heading {level}",
     "description": "The toolbar's block type dropdown entry for a heading, and the trigger's text when the selection is in one; the level is 1 to 6."
   },
+  "link": {
+    "defaultMessage": "Link",
+    "description": "The toolbar button that opens the prompt for a link's address, to link the selected text or change the link the caret is in."
+  },
+  "image": {
+    "defaultMessage": "Image",
+    "description": "The toolbar button that opens the prompt for an image's address and alternative text, to insert an image or change the selected one."
+  },
+  "url": {
+    "defaultMessage": "URL",
+    "description": "The label of the address field in the link prompt and the image prompt: the web address the link points to, or the image is loaded from."
+  },
+  "alt": {
+    "defaultMessage": "Alt text",
+    "description": "The label of the image prompt's field for the image's alternative text, read out in place of the image."
+  },
+  "apply": {
+    "defaultMessage": "Apply",
+    "description": "The button of the link prompt and the image prompt that applies what was typed to the document."
+  },
+  "remove": {
+    "defaultMessage": "Remove",
+    "description": "The button of the link prompt that removes the link at the selection, leaving its text."
+  },
   "bulletList": {
     "defaultMessage": "Bullet list",
     "description": "The toolbar button for a bulleted list."

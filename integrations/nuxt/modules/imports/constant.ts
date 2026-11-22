@@ -161,7 +161,11 @@ export const LAYER = {
   "composables/notification": ["useNotifications"],
   "composables/request": ["useRequest", "useLazyRequest"],
   "constants/calendar": ["CALENDAR_TOOL_ICONS", "CALENDAR_TOOL_TEXT"],
-  "constants/editor": ["EDITOR_TOOL_ICONS", "EDITOR_TOOL_TEXT"],
+  "constants/editor": [
+    "EDITOR_TOOL_ICONS",
+    "EDITOR_TOOL_TEXT",
+    "EDITOR_FIELD_TEXT",
+  ],
   "constants/error": [
     "ERROR_DEFAULT_STATUS_CODE",
     "ERROR_NOT_FOUND_STATUS_CODE",

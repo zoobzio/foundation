@@ -16,11 +16,13 @@ import type { ChainedCommands, Extensions, JSONContent } from "@tiptap/core";
 
 import { Editor } from "@tiptap/core";
 import { EditorState, Selection } from "@tiptap/pm/state";
+import { Image } from "@tiptap/extension-image";
 import { StarterKit } from "@tiptap/starter-kit";
 import { makeEmitter, makeProxy } from "@zoobzio/kit";
 import {
   EDITOR_BLOCK_FALLBACK,
   EDITOR_EMPTY_DOCUMENT,
+  EDITOR_LINK,
   EDITOR_LIST_ITEM,
   EDITOR_STATE_FIELDS,
 } from "./constants";
@@ -61,6 +63,9 @@ export class EditorService<I, O> implements Service<I, O> {
 
     const extensions: Extensions = [
       StarterKit.configure(features(config)),
+      // Inline, as an image is in HTML and in Markdown: a block image
+      // splits the paragraph an image sits in when a document is read.
+      ...(config.images === false ? [] : [Image.configure({ inline: true })]),
       ...(actions.extensions ?? []),
     ];
     this.editor = new Editor({
@@ -226,6 +231,36 @@ export class EditorService<I, O> implements Service<I, O> {
     return this.editor.commands.insertContent(content);
   }
 
+  /**
+   * Refused when links are off: the mark is not there. An `href` is asked
+   * of the link extension before anything is chained, since a chain runs
+   * what follows a refused command. With the caret in plain text there is
+   * nothing to link, so the `href` is inserted as the link's own text.
+   */
+  link(href: string | null): boolean {
+    if (!this.editor.schema.marks[EDITOR_LINK]) return false;
+    if (href === null) {
+      return this.editor.chain().extendMarkRange(EDITOR_LINK).unsetLink().run();
+    }
+    if (!this.editor.can().setLink({ href })) return false;
+    // JSON, not a string: a string is parsed as HTML, which needs a DOM.
+    if (
+      this.editor.state.selection.empty &&
+      !this.editor.isActive(EDITOR_LINK)
+    ) {
+      return this.editor.commands.insertContent({
+        type: "text",
+        text: href,
+        marks: [{ type: EDITOR_LINK, attrs: { href } }],
+      });
+    }
+    return this.editor
+      .chain()
+      .extendMarkRange(EDITOR_LINK)
+      .setLink({ href })
+      .run();
+  }
+
   /** Refused when history is off: the commands are not there. */
   undo(): boolean {
     const { undo } = this.editor.commands;
@@ -243,6 +278,10 @@ export class EditorService<I, O> implements Service<I, O> {
 
   isActive(name: string, attrs?: Record<string, unknown>): boolean {
     return this.editor.isActive(name, attrs);
+  }
+
+  attributes(name: string): Record<string, unknown> {
+    return this.editor.getAttributes(name);
   }
 
   // --- element ---------------------------------------------------------

@@ -10,19 +10,28 @@ import type {
 } from "../passthrough";
 import type { Definition } from "../definition";
 import type { Events, Service } from "@zoobzio/editor";
+import type { PopoverEmits, PopoverProps } from "./popover";
 import type { ToolbarRootProps, ToolbarSeparatorProps } from "reka-ui";
-import type { ButtonHTMLAttributes, HTMLAttributes, VNode } from "vue";
+import type {
+  ButtonHTMLAttributes,
+  FormHTMLAttributes,
+  HTMLAttributes,
+  InputHTMLAttributes,
+  VNode,
+} from "vue";
 
 /**
  * What a tool does when pressed. A `toggle` turns a mark or node on and
  * off and reports `aria-pressed`; an `action` runs once (undo, redo, a
- * rule) and is never pressed.
+ * rule) and is never pressed; a `prompt` asks for values first (a link's
+ * address, an image's address and text) and runs with them.
  */
-export type EditorToolKind = "toggle" | "action";
+export type EditorToolKind = "toggle" | "action" | "prompt";
 
 /**
  * The groups of the toolbar, in order: the headings, the marks, the
- * lists, the other blocks (quote, code block, rule), and history. A
+ * lists, the other blocks (quote, code block, rule), the media (image),
+ * and history. A
  * separator stands between one group and the next. The headings render
  * as one dropdown, the block type, rather than as a button each.
  */
@@ -31,7 +40,27 @@ export type EditorToolGroup =
   | "marks"
   | "lists"
   | "blocks"
+  | "media"
   | "history";
+
+/**
+ * One field of a prompt: a value the tool takes before it runs. `key`
+ * names the attribute it sets (`href`, `src`, `alt`); `value` is that
+ * attribute at the selection, so a prompt over a link opens on its
+ * address; `url` says the value is an address, for the keyboard a touch
+ * device offers. A field that is `required` holds the prompt back while
+ * empty.
+ */
+export interface EditorField {
+  key: string;
+  label: Text;
+  value: string;
+  url: boolean;
+  required: boolean;
+}
+
+/** What a prompt hands its tool: each field's value, by the field's key. */
+export type EditorValues = Record<string, string>;
 
 /**
  * One tool of the toolbar: a button over one command of the service. `key`
@@ -39,6 +68,11 @@ export type EditorToolGroup =
  * `undo`); `active` follows the selection; `disabled` says the command
  * would not apply there (a mark inside a code block, undo with nothing
  * to undo).
+ *
+ * A prompt carries `fields`, read when it opens, so each value is the
+ * selection's at that moment, and `run` takes what was typed. Where the
+ * tool has something to take away (the link at the selection), `clear`
+ * removes it.
  */
 export interface EditorTool {
   key: string;
@@ -47,7 +81,9 @@ export interface EditorTool {
   group: EditorToolGroup;
   active: boolean;
   disabled: boolean;
-  run: () => void;
+  run: (values?: EditorValues) => void;
+  fields?: () => EditorField[];
+  clear?: () => void;
 }
 
 /**
@@ -76,8 +112,12 @@ export interface EditorBlock extends MenuItem {
  * block type dropdown, a Menu rendered through `Primitive` over the
  * blocks, whose trigger the editor renders in the toolbar's focus order;
  * `tool` is each button, built per tool, a Fab rendered through
- * `Primitive` with the tool's label as its accessible name; `content` is
- * the element the service mounts the editor into.
+ * `Primitive` with the tool's label as its accessible name; `prompt` is
+ * the Popover a prompt tool opens, rendered through `Primitive` with the
+ * tool's button as its trigger, and `form`, `field`, `submit`, and `clear`
+ * are what it holds: the form, each field's input, the button that
+ * applies, and the one that removes; `content` is the element the service
+ * mounts the editor into.
  */
 export type EditorPassthrough = {
   toolbar: Passthrough<ToolbarRootProps & HTMLAttributes>;
@@ -87,6 +127,11 @@ export type EditorPassthrough = {
   >;
   block: Rendered<MenuProps<EditorBlock>, MenuEmits<EditorBlock>>;
   tool: RenderedIter<EditorTool, FabProps & ButtonHTMLAttributes, FabEmits>;
+  prompt: RenderedIter<EditorTool, PopoverProps, PopoverEmits>;
+  form: PassthroughIter<EditorTool, FormHTMLAttributes>;
+  field: PassthroughIter<EditorField, InputHTMLAttributes>;
+  submit: PassthroughIter<EditorTool, ButtonHTMLAttributes>;
+  clear: PassthroughIter<EditorTool, ButtonHTMLAttributes>;
   content: Passthrough<HTMLAttributes>;
 };
 
@@ -131,6 +176,21 @@ export type EditorContext<I, O> = {
 };
 
 /**
+ * An open prompt, as its slot receives it: the tool, its fields as read
+ * when it opened, the values typed so far by field key (written through,
+ * so a custom form binds them), `submit`, which runs the tool with them,
+ * and `clear`, which removes what the tool set. Both close the prompt and
+ * hand focus back to the document.
+ */
+export type EditorPrompt = {
+  tool: EditorTool;
+  fields: EditorField[];
+  values: EditorValues;
+  submit: () => void;
+  clear: () => void;
+};
+
+/**
  * Slots of the editor. `toolbar` replaces the whole toolbar; `separator`
  * replaces the divider before a group, given the group; `block` replaces
  * the block type dropdown, roving focus included, and `blockLabel`,
@@ -139,6 +199,11 @@ export type EditorContext<I, O> = {
  * tool, roving focus included; `toolPrepend`, `toolLabel`, and
  * `toolAppend` fill the button, so a label slot that draws an icon makes
  * the button icon-only while the tool's label stays its accessible name.
+ * `prompt` replaces what every prompt tool's popover holds, given the
+ * open prompt, and `prompt-<key>` replaces one tool's alone
+ * (`prompt-image`, `prompt-link`), so an app's own image picker leaves the
+ * link's form as it is; the tool's own slot wins over `prompt`.
+ * `fieldLabel`, `submitLabel`, and `clearLabel` fill the default form.
  */
 export type EditorSlots<I, O> = {
   toolbar?: (props: EditorContext<I, O>) => VNode[];
@@ -160,6 +225,16 @@ export type EditorSlots<I, O> = {
   toolPrepend?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
   toolLabel?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
   toolAppend?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
+  prompt?: (props: EditorContext<I, O> & EditorPrompt) => VNode[];
+  fieldLabel?: (
+    props: EditorContext<I, O> & { tool: EditorTool; field: EditorField },
+  ) => VNode[];
+  submitLabel?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
+  clearLabel?: (props: EditorContext<I, O> & { tool: EditorTool }) => VNode[];
+} & {
+  [key: `prompt-${string}`]:
+    | ((props: EditorContext<I, O> & EditorPrompt) => VNode[])
+    | undefined;
 };
 
 /**

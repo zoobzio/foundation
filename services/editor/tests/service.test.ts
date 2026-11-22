@@ -306,6 +306,113 @@ describe("commands", () => {
     ]);
   });
 
+  it("link sets the link over the selection, and null removes it", () => {
+    const { service } = makeService();
+    service.load(hello);
+    select(service, 1, 6);
+    expect(service.link("https://example.com")).toBe(true);
+    expect(service.active.link).toBe(true);
+    expect(service.attributes("link").href).toBe("https://example.com");
+    expect(service.link(null)).toBe(true);
+    expect(service.active.link).toBe(false);
+    expect(service.attributes("link")).toEqual({});
+  });
+
+  it("link reaches the whole link from a caret inside it", () => {
+    const { service } = makeService();
+    service.load(hello);
+    select(service, 1, 6);
+    service.link("https://example.com");
+    select(service, 3, 3);
+    expect(service.link("https://example.org")).toBe(true);
+    expect(service.json.content?.[0]?.content?.[0]).toMatchObject({
+      text: "Hello",
+      marks: [{ type: "link", attrs: { href: "https://example.org" } }],
+    });
+    select(service, 3, 3);
+    expect(service.link(null)).toBe(true);
+    expect(service.json.content?.[0]?.content).toEqual([
+      { type: "text", text: "Hello world" },
+    ]);
+  });
+
+  it("link inserts the href as its own text at a caret in plain text", () => {
+    const { service } = makeService();
+    service.load(hello);
+    select(service, 1, 1);
+    expect(service.link("https://example.com")).toBe(true);
+    expect(service.json.content?.[0]?.content).toEqual([
+      {
+        type: "text",
+        text: "https://example.com",
+        marks: [
+          {
+            type: "link",
+            attrs: expect.objectContaining({ href: "https://example.com" }),
+          },
+        ],
+      },
+      { type: "text", text: "Hello world" },
+    ]);
+  });
+
+  it("link refuses a protocol the extension does not allow", () => {
+    const { service, updated } = makeService();
+    service.load(hello);
+    select(service, 1, 6);
+    expect(service.link("javascript:alert(1)")).toBe(false);
+    expect(service.active.link).toBe(false);
+    select(service, 1, 1);
+    expect(service.link("javascript:alert(1)")).toBe(false);
+    expect(service.json).toEqual(hello);
+    expect(updated).not.toHaveBeenCalled();
+  });
+
+  it("link is refused when links are off", () => {
+    const { service } = makeService({ config: { links: false } });
+    service.load(hello);
+    select(service, 1, 6);
+    expect(service.link("https://example.com")).toBe(false);
+    expect(service.link(null)).toBe(false);
+  });
+
+  it("insert adds an image inline, and attributes reads it once selected", () => {
+    const { service } = makeService();
+    service.load(hello);
+    select(service, 6, 6);
+    const image = {
+      type: "image",
+      attrs: { src: "/a.png", alt: "A" },
+    };
+    expect(service.can.insert(image)).toBe(true);
+    expect(service.insert(image)).toBe(true);
+    expect(service.json.content).toHaveLength(1);
+    expect(service.json.content?.[0]?.content?.map((n) => n.type)).toEqual([
+      "text",
+      "image",
+      "text",
+    ]);
+    expect(service.attributes("image")).toEqual({});
+    service.run((chain) => chain.setNodeSelection(6));
+    expect(service.active.image).toBe(true);
+    expect(service.attributes("image")).toMatchObject({
+      src: "/a.png",
+      alt: "A",
+    });
+  });
+
+  it("an image alone is not an empty document", () => {
+    const { service } = makeService();
+    service.insert({ type: "image", attrs: { src: "/a.png" } });
+    expect(service.empty).toBe(false);
+  });
+
+  it("the image node is gone when images are off", () => {
+    const { service } = makeService({ config: { images: false } });
+    expect(service.context.schema.nodes.image).toBeUndefined();
+    expect(service.active).not.toHaveProperty("image");
+  });
+
   it("undo and redo walk the history", () => {
     const { service } = makeService();
     service.load(hello);

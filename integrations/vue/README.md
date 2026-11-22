@@ -374,8 +374,9 @@ service.init();
 ```
 
 `editor.vue` renders a headless `@zoobzio/editor` service: a toolbar
-grouped as a rich text editor's is (the block type; the marks; the lists;
-quote, code block, and rule; then undo and redo) with a separator between
+grouped as a rich text editor's is (the block type; the marks and the
+link; the lists; quote, code block, and rule; the image; then undo and
+redo) with a separator between
 groups, over a host `div` that shows the document as static HTML. The
 block type is one dropdown, the package's Menu, over the paragraph and the
 headings the service offers by level; its trigger names the block at the
@@ -396,6 +397,26 @@ command applies to stays where it is. A toggle (a mark, a block) reports
 `aria-pressed` from the service's `active`; an action (undo, redo, rule)
 never does. A tool is disabled where the service's `can` says its command
 would not apply: a mark inside a code block, undo with nothing to undo.
+
+The link and the image are prompts: the button opens the package's
+Popover over a small form, and the tool runs with what was typed. The
+link asks for an address and links the selection, or changes the link
+the caret is in; it opens on that link's address, with a button that
+removes it, and an address typed away removes it too. The image asks for
+an address and an alternative text and inserts the image at the caret, or,
+with an image selected, opens on its values and replaces them. A prompt's
+button is never pressed: `data-active` says its link or image is at the
+selection. Applying or removing hands focus back to the document;
+dismissing changes nothing. `pt.prompt` is the Popover's props, built per
+tool, and `pt.form`, `pt.field`, `pt.submit`, and `pt.clear` reach the
+form, each input, and the two buttons; the `prompt` slot replaces the form of
+every prompt and `prompt-<key>` that of one tool alone (`prompt-image`,
+`prompt-link`), the tool's own winning; each receives the tool, its
+`fields`, the `values` typed so far, and `submit` and `clear`, and
+`fieldLabel`, `submitLabel`, and `clearLabel` fill the default form. The
+editor stores an image's address only: an app that takes uploads fills
+`prompt-image` with its own picker, which sets `values.src` to the address
+it gets back and calls `submit`, and the link's form stays as it is.
 The `loaded`, `updated`, `mounted`, and `unmounted` events relay as
 emits; `data-mounted` on the root says the editor is on. `pt.tool` is
 built per tool, `pt.separator` per group, and `pt.block` is the Menu's

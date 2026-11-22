@@ -54,6 +54,45 @@ describe("rich-text", () => {
     ]);
   });
 
+  it("keeps an image and a link of the model, and models them back", async () => {
+    const source =
+      '<p>See <img src="/a.png" alt="A"> and <a href="https://example.com">this</a></p>';
+    const wrapper = mountRichText({ modelValue: source });
+    const host = wrapper.get(".f-data-editor-content");
+    expect(host.get("img").attributes()).toMatchObject({
+      src: "/a.png",
+      alt: "A",
+    });
+    expect(host.get("a").attributes("href")).toBe("https://example.com");
+    ctxOf(wrapper).editor.insert({
+      type: "image",
+      attrs: { src: "/b.png" },
+    });
+    await nextTick();
+    const [value] = wrapper.emitted("update:modelValue")!.at(-1)!;
+    expect(value).toContain('<img src="/b.png">');
+    expect(value).toContain('<img src="/a.png" alt="A">');
+    expect(value).toContain('href="https://example.com"');
+  });
+
+  it("an image alone is not an empty document", async () => {
+    const wrapper = mountRichText();
+    ctxOf(wrapper).editor.insert({ type: "image", attrs: { src: "/a.png" } });
+    await nextTick();
+    expect(wrapper.emitted("update:modelValue")).toEqual([
+      ['<p><img src="/a.png"></p>'],
+    ]);
+  });
+
+  it("drops an image of the model with images off", () => {
+    const wrapper = mountRichText({
+      modelValue: '<p>See <img src="/a.png"></p>',
+      features: { images: false },
+    });
+    expect(wrapper.find(".f-data-editor-content img").exists()).toBe(false);
+    expect(wrapper.find('[data-tool="image"]').exists()).toBe(false);
+  });
+
   it("an empty document models as an empty string", async () => {
     const wrapper = mountRichText({ modelValue: "<p>Hello</p>" });
     ctxOf(wrapper).editor.run((chain) => chain.clearContent(true));

@@ -1,7 +1,11 @@
 import type { IconAlias } from "../types/icon";
 import type { AppMessage } from "../types/text";
 
-import { EDITOR_TOOL_ICONS, EDITOR_TOOL_TEXT } from "../constants/editor";
+import {
+  EDITOR_FIELD_TEXT,
+  EDITOR_TOOL_ICONS,
+  EDITOR_TOOL_TEXT,
+} from "../constants/editor";
 
 /**
  * The icon of an editor tool, by its key. A heading has none: it is an
@@ -22,3 +26,11 @@ export const toolText = (key: string): AppMessage | undefined => {
   if (heading) return ["editor.heading", { level: Number(heading[1]) }];
   return EDITOR_TOOL_TEXT[key];
 };
+
+/**
+ * The text of a prompt's field, by its key, as a message of the contract.
+ * A field the layer does not name — one of a tool an app adds — has none,
+ * and its own label stands.
+ */
+export const fieldText = (key: string): AppMessage | undefined =>
+  EDITOR_FIELD_TEXT[key];

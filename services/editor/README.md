@@ -5,7 +5,7 @@ dependency; built on [tiptap](https://tiptap.dev) and ProseMirror.
 
 Owns: one document, the feature set it is edited with, the commands, and
 the snapshot a view reads (revision, empty, active marks and nodes,
-mounted). Delegates: the document's form (`read` and `write`), any nodes
+mounted). Links and inline images are part of the feature set. Delegates: the document's form (`read` and `write`), any nodes
 and marks beyond the feature set (`extensions`), and state storage (the
 container). The editor builds and runs with no DOM; `mount` attaches it to
 an element later.
@@ -28,6 +28,10 @@ editor.toggle("bold"); // marks
 editor.block("heading", { level: 2 }); // block nodes, back to a paragraph
 editor.wrap("blockquote"); // wrapping nodes
 editor.list("bulletList"); // lists
+editor.link("https://example.com"); // the selection, or the link the caret is in
+editor.attributes("link").href; // what is at the selection
+editor.link(null); // removes it
+editor.insert({ type: "image", attrs: { src: "/a.png", alt: "A" } });
 editor.undo();
 editor.can.toggle("bold"); // false inside a code block
 editor.can.undo(); // false with nothing to undo
@@ -48,11 +52,36 @@ turned off.
 | ------------ | ------------------------------------------------ |
 | `headings`   | headings; a list of levels narrows them          |
 | `lists`      | bullet and ordered lists                         |
-| `links`      | links                                            |
+| `links`      | links; `link()` is refused                       |
 | `code`       | inline code and code blocks                      |
 | `blockquote` | block quotes                                     |
 | `rule`       | the horizontal rule                              |
+| `images`     | images                                           |
 | `history`    | undo and redo; `undo()` and `redo()` are refused |
+
+## Links and images
+
+`link(href)` sets the link over the selection. With the caret inside a
+link the whole link is the target, so one call changes its address; with
+the caret in plain text there is nothing to link, and the `href` is
+inserted as the link's own text. `link(null)` removes the link, keeping
+its text. An `href` whose protocol the link extension does not allow
+(`javascript:`) is refused and nothing changes. A click on a link in the
+editor places the caret and never follows it.
+
+An image is an inline node holding a `src` and, optionally, an `alt` and a
+`title`: `insert({ type: "image", attrs })` adds one at the selection. It
+is inline because an image is inline in HTML and in Markdown: `<p>text
+<img> text</p>` and `![alt](src)` read and write back as they were, where a
+block image would split the paragraph. The editor stores the address and
+nothing else; the browser loads it. An app that takes uploads stores the
+file itself and inserts the address it gets back. A `data:` address is
+dropped on read.
+
+`attributes(name)` reads the attributes of a mark or node at the
+selection: a link's `href`, a selected image's `src` and `alt`. It is a
+plain read, tied to neither the revision nor the snapshot, for a view to
+ask when it opens a prompt.
 
 ## Readers and writers
 

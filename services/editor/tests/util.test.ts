@@ -5,9 +5,10 @@ import { features, same, snapshot } from "../src/util";
 import { hello } from "./data";
 
 describe("features", () => {
-  it("keeps every default when nothing is set", () => {
-    const options = features({});
+  it("keeps every default when nothing is set, but a link's click", () => {
+    const { link, ...options } = features({});
     expect(Object.values(options).every((v) => v === undefined)).toBe(true);
+    expect(link).toEqual({ openOnClick: false });
   });
 
   it("removes the extensions of a feature that is off", () => {

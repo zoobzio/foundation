@@ -33,6 +33,9 @@ describe("editor wrapper", () => {
     expect(icon("bold")).toBe("bold");
     expect(icon("bulletList")).toBe("bullet-list");
     expect(icon("undo")).toBe("undo");
+    expect(icon("link")).toBe("link");
+    expect(icon("image")).toBe("image");
+    expect(tool("image").attributes("aria-label")).toBe("Image");
     expect(tool("bold").text()).toBe("");
     expect(tool("bold").attributes("aria-label")).toBe("Bold");
     expect(tool("bold").attributes("title")).toBe("Bold");
@@ -70,7 +73,7 @@ describe("editor wrapper", () => {
       attachTo: document.body,
     });
     mounted.push(wrapper);
-    expect(wrapper.findAll(".f-data-editor-separator")).toHaveLength(4);
+    expect(wrapper.findAll(".f-data-editor-separator")).toHaveLength(5);
     expect(
       wrapper.get('button[data-tool="bold"]').attributes("aria-pressed"),
     ).toBe("false");
@@ -80,6 +83,37 @@ describe("editor wrapper", () => {
     expect(wrapper.get(".f-data-editor-toolbar").attributes("role")).toBe(
       "toolbar",
     );
+  });
+
+  it("reads a prompt's fields and buttons from the contract", async () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.run((chain) => chain.setTextSelection({ from: 1, to: 6 }));
+    service.link("https://example.com");
+    const wrapper = mount(Editor<Doc, Doc>, {
+      props: { service },
+      attachTo: document.body,
+    });
+    mounted.push(wrapper);
+    const labels = (key: string) =>
+      Array.from(
+        document.querySelectorAll(
+          `[data-prompt="${key}"] .f-data-editor-field span.f-span`,
+        ),
+      ).map((el) => el.textContent);
+    const button = (key: string, part: string) =>
+      document.querySelector(
+        `[data-prompt="${key}"] .f-data-editor-${part} span.f-span`,
+      )?.textContent;
+    await wrapper.get('button[data-tool="link"]').trigger("click");
+    await flushPromises();
+    expect(labels("link")).toEqual(["URL"]);
+    expect(button("link", "submit")).toBe("Apply");
+    expect(button("link", "clear")).toBe("Remove");
+    await wrapper.get('button[data-tool="image"]').trigger("click");
+    await flushPromises();
+    expect(labels("image")).toEqual(["URL", "Alt text"]);
+    expect(button("image", "submit")).toBe("Apply");
   });
 
   it("composes a consumer's pt.tool over the layer's label", () => {

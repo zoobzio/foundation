@@ -25,11 +25,13 @@ describe("editorTools", () => {
       "underline",
       "strike",
       "code",
+      "link",
       "bulletList",
       "orderedList",
       "blockquote",
       "codeBlock",
       "horizontalRule",
+      "image",
       "undo",
       "redo",
     ]);
@@ -41,6 +43,8 @@ describe("editorTools", () => {
       lists: false,
       code: false,
       rule: false,
+      links: false,
+      images: false,
       history: false,
     });
     expect(keys(editorTools(service))).toEqual([
@@ -83,6 +87,8 @@ describe("editorTools", () => {
       kind: "action",
       group: "blocks",
     });
+    expect(by("link")).toMatchObject({ kind: "prompt", group: "marks" });
+    expect(by("image")).toMatchObject({ kind: "prompt", group: "media" });
     expect(by("undo")).toMatchObject({ kind: "action", group: "history" });
     expect(by("heading-3").label).toBe("Heading 3");
   });
@@ -119,18 +125,123 @@ describe("editorTools", () => {
   });
 });
 
+describe("the link tool", () => {
+  const link = (service: ReturnType<typeof makeEditor>["service"]) =>
+    editorTools(service).find((t) => t.key === "link")!;
+
+  it("asks for an address and links the selection with it", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.run((chain) => chain.setTextSelection({ from: 1, to: 6 }));
+    const tool = link(service);
+    expect(tool.active).toBe(false);
+    expect(tool.clear).toBeUndefined();
+    expect(tool.fields?.()).toEqual([
+      { key: "href", label: "URL", value: "", url: true, required: false },
+    ]);
+    tool.run({ href: "  https://example.com  " });
+    expect(service.attributes("link").href).toBe("https://example.com");
+  });
+
+  it("opens on the address at the selection, and removes the link", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.run((chain) => chain.setTextSelection({ from: 1, to: 6 }));
+    service.link("https://example.com");
+    service.run((chain) => chain.setTextSelection(3));
+    const tool = link(service);
+    expect(tool.active).toBe(true);
+    expect(tool.fields?.()[0]?.value).toBe("https://example.com");
+    tool.clear?.();
+    expect(service.json).toEqual(hello);
+  });
+
+  it("an address typed away takes the link away", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.run((chain) => chain.setTextSelection({ from: 1, to: 6 }));
+    service.link("https://example.com");
+    link(service).run({ href: " " });
+    expect(service.active.link).toBe(false);
+  });
+
+  it("is off where a mark would not apply", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.block("codeBlock");
+    expect(link(service).disabled).toBe(true);
+  });
+});
+
+describe("the image tool", () => {
+  const image = (service: ReturnType<typeof makeEditor>["service"]) =>
+    editorTools(service).find((t) => t.key === "image")!;
+
+  it("asks for an address and a text, and inserts the image inline", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.run((chain) => chain.setTextSelection(6));
+    const tool = image(service);
+    expect(tool.active).toBe(false);
+    expect(tool.clear).toBeUndefined();
+    expect(tool.fields?.()).toEqual([
+      { key: "src", label: "URL", value: "", url: true, required: true },
+      { key: "alt", label: "Alt text", value: "", url: false, required: false },
+    ]);
+    tool.run({ src: "/a.png", alt: "A" });
+    expect(service.json.content).toHaveLength(1);
+    expect(service.json.content?.[0]?.content?.[1]).toMatchObject({
+      type: "image",
+      attrs: { src: "/a.png", alt: "A" },
+    });
+  });
+
+  it("inserts nothing with no address", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    image(service).run({ src: "  ", alt: "A" });
+    image(service).run();
+    expect(service.json).toEqual(hello);
+  });
+
+  it("opens on a selected image and replaces its values", () => {
+    const { service } = makeEditor();
+    service.load(hello);
+    service.run((chain) => chain.setTextSelection(6));
+    image(service).run({ src: "/a.png", alt: "A" });
+    service.run((chain) => chain.setNodeSelection(6));
+    const tool = image(service);
+    expect(tool.active).toBe(true);
+    expect(tool.fields?.().map((f) => f.value)).toEqual(["/a.png", "A"]);
+    tool.run({ src: "/b.png", alt: "" });
+    const content = service.json.content?.[0]?.content;
+    expect(content?.filter((n) => n.type === "image")).toHaveLength(1);
+    expect(content?.[1]).toMatchObject({
+      type: "image",
+      attrs: { src: "/b.png", alt: null },
+    });
+  });
+});
+
 describe("editorGroups", () => {
   it("groups the tools in toolbar order, leaving out an empty group", () => {
     const { service } = makeEditor({ headings: false, history: false });
     const groups = editorGroups(editorTools(service));
-    expect(groups.map((g) => g.name)).toEqual(["marks", "lists", "blocks"]);
+    expect(groups.map((g) => g.name)).toEqual([
+      "marks",
+      "lists",
+      "blocks",
+      "media",
+    ]);
     expect(groups[0]?.tools.map((t) => t.key)).toEqual([
       "bold",
       "italic",
       "underline",
       "strike",
       "code",
+      "link",
     ]);
+    expect(groups[3]?.tools.map((t) => t.key)).toEqual(["image"]);
     expect(groups[2]?.tools.map((t) => t.key)).toEqual([
       "blockquote",
       "codeBlock",

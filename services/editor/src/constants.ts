@@ -15,6 +15,9 @@ export const EDITOR_STATE_FIELDS: Record<StateKey, null> = {
 /** The node a block toggles back to. */
 export const EDITOR_BLOCK_FALLBACK = "paragraph";
 
+/** The link mark. */
+export const EDITOR_LINK = "link";
+
 /** The item node of every list the feature set offers. */
 export const EDITOR_LIST_ITEM = "listItem";
 

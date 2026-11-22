@@ -2,11 +2,12 @@ import type { Context } from "../src/types";
 import type { JSONContent } from "@tiptap/core";
 
 import { getSchema } from "@tiptap/core";
+import { Image } from "@tiptap/extension-image";
 import { StarterKit } from "@tiptap/starter-kit";
 
 /** The context of an editor over the default feature set. */
 export const context = (): Context => {
-  const extensions = [StarterKit];
+  const extensions = [StarterKit, Image.configure({ inline: true })];
   return { schema: getSchema(extensions), extensions };
 };
 

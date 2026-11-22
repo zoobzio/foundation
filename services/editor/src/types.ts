@@ -29,7 +29,8 @@ export type Level = 1 | 2 | 3 | 4 | 5 | 6;
  * the editor offers. Every feature is on unless turned off. `headings`
  * lists the levels offered; `false` removes headings. `code` covers inline
  * code and code blocks; `lists` covers bullet and ordered lists; `rule` is
- * the horizontal rule; `history` is undo and redo.
+ * the horizontal rule; `images` is the inline image, a `src` the browser
+ * loads; `history` is undo and redo.
  */
 export type Config = {
   headings?: Level[] | false;
@@ -38,6 +39,7 @@ export type Config = {
   code?: boolean;
   blockquote?: boolean;
   rule?: boolean;
+  images?: boolean;
   history?: boolean;
 };
 
@@ -179,10 +181,25 @@ export type Service<I, O> = {
   wrap(node: string, attrs?: Record<string, unknown>): boolean;
   list(node: string): boolean;
   insert(content: Doc | Doc[]): boolean;
+  /**
+   * Sets the link at the selection to `href`, or removes it with `null`.
+   * With the caret inside a link, the whole link is the target; with the
+   * caret in plain text, the `href` is inserted as the link's text.
+   * Refused when links are off, and for an `href` whose protocol the link
+   * extension does not allow (`javascript:`).
+   */
+  link(href: string | null): boolean;
   undo(): boolean;
   redo(): boolean;
   run(commands: (chain: ChainedCommands) => ChainedCommands): boolean;
   isActive(name: string, attrs?: Record<string, unknown>): boolean;
+  /**
+   * The attributes of a mark or node at the selection, by name: a link's
+   * `href`, a selected image's `src` and `alt`. Empty where it is not at
+   * the selection. A plain read, tied to nothing: ask when the answer is
+   * needed.
+   */
+  attributes(name: string): Record<string, unknown>;
 
   focus(position?: "start" | "end" | "all" | number): boolean;
   /** Takes the element over as the editor's DOM; its content is replaced by the document's. */
