@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/sync",
-  "version": "0.1.11",
+  "version": "0.1.13",
   "description": "Headless sync service: a polling interval a visitor sets, the time of the last sync, and the loop that polls for what changed since. No framework dependency.",
   "license": "MIT",
   "author": {

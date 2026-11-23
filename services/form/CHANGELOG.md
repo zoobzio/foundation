@@ -1,5 +1,12 @@
 # @zoobzio/form
 
+## 0.1.13
+
+### Patch Changes
+
+- Updated dependencies [[`d37dab6`](https://github.com/zoobzio/foundation/commit/d37dab630a8df85e577b0fcb34ce3412aea40ea0)]:
+  - @zoobzio/kit@0.1.13
+
 ## 0.1.12
 
 ### Patch Changes

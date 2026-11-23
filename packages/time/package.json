@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/time",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "The time the headless services share: JSCalendar 2.0 as types, the patch its entries change by, the recurrence they expand into over a range, and the zone arithmetic under both, on Temporal. No framework dependency.",
   "license": "MIT",
   "author": {

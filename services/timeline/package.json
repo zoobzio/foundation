@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/timeline",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Headless timeline service: records in the order of their time, a batch at a time by cursor, grouped under the day, month, or year each falls in, with a search over the fields the config declares. No framework dependency.",
   "license": "MIT",
   "author": {

@@ -1,6 +1,6 @@
 {
   "name": "@zoobzio/views",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Headless saved views service: named payloads over a Zod schema, the active view, drift from it, and the save, rename, and delete lifecycle. No framework dependency.",
   "license": "MIT",
   "author": {
